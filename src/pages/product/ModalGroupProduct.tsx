@@ -168,8 +168,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                             </Box>
 
                             <TextField
-                                className="input-padding"
                                 variant="outlined"
+                                size="small"
                                 fullWidth
                                 required
                                 value={tenNhomHangHoa}
@@ -182,12 +182,13 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                             </Box>
 
                             <Autocomplete
+                                size="small"
                                 fullWidth
                                 disablePortal
                                 multiple={false}
-                                // onChange={(event: any, newValue: string | null, reason = 'selectOption') => {
-                                //     setIdParent(newValue);
-                                // }}
+                                onChange={(event: any, newValue: any) => {
+                                    setIdParent(newValue);
+                                }}
                                 options={dataNhomHang.filter(
                                     (x: ModelNhomHangHoa) => x.id !== null
                                 )}
@@ -204,6 +205,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                                 <span>Màu sắc</span>
                             </Box>
                             <TextField
+                                size="small"
                                 onClick={() => setColorToggle(!colorToggle)}
                                 fullWidth
                                 InputProps={{

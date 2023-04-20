@@ -57,7 +57,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
             )
             .then((response) => {
                 setListPermission(response.data.result['permissions']);
-                console.log(response.data.result['permissions']);
+                // console.log(response.data.result['permissions']);
             })
             .catch((error) => console.log(error));
     }, defaultPermission);

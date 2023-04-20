@@ -19,6 +19,7 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 
 import '../../App.css';
+import './style.css';
 import Utils from '../../utils/utils';
 import { CreateOrEditProduct, Get_DMHangHoa } from '../../services/product/service';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
@@ -39,8 +40,8 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
     const [objNhom, setObjNhomHang] = useState<ModelNhomHangHoa | null>(null);
 
     const [tenHangHoa, setTenHangHoa] = useState('');
-    const [idNhomHangHoa, setIdNhomHangHoa] = useState(null);
-    const [tenNhomHang, setTenNhomHang] = useState(null);
+    const [idNhomHangHoa, setIdNhomHangHoa] = useState<string | null>(null);
+    const [tenNhomHang, setTenNhomHang] = useState('');
     const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(2);
     const [soPhutThucHien, setSoPhutThucHien] = useState('');
     const [moTa, setMoTa] = useState('');
@@ -50,12 +51,6 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
     const [tyLeChuyenDoi, setTyLeChuyenDoi] = useState(1);
     const [giaBan, setGiaBan] = useState('');
     const [laDonViTinhChuan, setLaDonViTinhChuan] = useState(1);
-
-    function choseNhomHang(item: any) {
-        // setIdNhomHangHoa(item.id);
-        setTenNhomHang(item.tenNhomHang);
-        console.log('idnhom ', item);
-    }
 
     function CheckSave() {
         if (Utils.checkNull(tenHangHoa)) {
@@ -71,11 +66,12 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
         objNew.id = Utils.GuidEmpty;
         objNew.tenHangHoa = tenHangHoa;
         objNew.tenHangHoa_KhongDau = Utils.strToEnglish(tenHangHoa);
-        objNew.idNhomHangHoa = null;
+        objNew.idNhomHangHoa = idNhomHangHoa;
         objNew.idLoaiHangHoa = idLoaiHangHoa;
         objNew.soPhutThucHien = Utils.checkNull(soPhutThucHien) ? 0 : soPhutThucHien;
         objNew.moTa = moTa;
         objNew.trangThai = 1;
+        console.log(idNhomHangHoa);
 
         objNew.tenNhomHang = tenNhomHang ?? '';
         objNew.tenLoaiHangHoa = idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
@@ -115,7 +111,7 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     variant="outlined"
                                     fullWidth
                                     required
-                                    style={{ fontSize: 10 }}
+                                    size="small"
                                     placeholder="Mã tự động"
                                     value={maHangHoa}
                                     onChange={(event) => setMaHangHoa(event.target.value)}
@@ -128,6 +124,7 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                 </Box>
                                 <TextField
                                     variant="outlined"
+                                    size="small"
                                     fullWidth
                                     required
                                     value={tenHangHoa}
@@ -140,13 +137,20 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                 </Box>
 
                                 <Autocomplete
+                                    size="small"
                                     fullWidth
                                     disablePortal
-                                    value={idNhomHangHoa}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    inputValue={tenNhomHang ?? ''}
                                     options={dataNhomHang.filter(
-                                        (x: ModelNhomHangHoa) => x.id != null
+                                        (x: ModelNhomHangHoa) => x.id !== null
                                     )}
-                                    onChange={(event, newValue) => choseNhomHang(newValue)}
+                                    onChange={(event, newValue) =>
+                                        setIdNhomHangHoa(newValue?.id ?? null)
+                                    }
+                                    onInputChange={(event, newInputValue) => {
+                                        setTenNhomHang(newInputValue);
+                                    }}
                                     getOptionLabel={(option: ModelNhomHangHoa) =>
                                         option.tenNhomHang ? option.tenNhomHang : ''
                                     }
@@ -162,6 +166,7 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     </Box>
                                     <TextField
                                         variant="outlined"
+                                        size="small"
                                         fullWidth
                                         placeholder="0"
                                         value={giaBan}
@@ -174,6 +179,7 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     </Box>
                                     <TextField
                                         variant="outlined"
+                                        size="small"
                                         fullWidth
                                         placeholder="0"
                                         value={soPhutThucHien}

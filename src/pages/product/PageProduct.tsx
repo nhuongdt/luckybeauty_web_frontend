@@ -216,14 +216,14 @@ export default function PageProduct() {
     return (
         <>
             <ModalNhomHangHoa
-                dataNhomHang={lstProduct}
+                dataNhomHang={lstProductGroup}
                 show={showModalNhomHang}
                 isNew={isNewNhomHang}
                 id={idNhomHangHoa}
                 handleClose={() => setShowModalNhomHang(false)}
                 handleSave={saveNhomHang}></ModalNhomHangHoa>
             <ModalHangHoa
-                dataNhomHang={lstProduct}
+                dataNhomHang={lstProductGroup}
                 show={showModalHangHoa}
                 id={idNhomHangHoa}
                 isNew={isNewProduct}
@@ -288,7 +288,9 @@ export default function PageProduct() {
                             lg={6}
                             style={{ paddingLeft: '30px' }}
                             className="page-title-search">
-                            <TextField sx={{ width: 7 / 10 }}>tim kiem</TextField>
+                            <TextField size="small" sx={{ width: 7 / 10 }}>
+                                tim kiem
+                            </TextField>
                         </Grid>
                         <Grid
                             item
