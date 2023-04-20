@@ -1,7 +1,7 @@
 enum TenantAvailabilityState {
-  Available = 1,
-  InActive,
-  NotFound,
+    Available = 1,
+    InActive,
+    NotFound
 }
 
-export default TenantAvailabilityState
+export default TenantAvailabilityState;

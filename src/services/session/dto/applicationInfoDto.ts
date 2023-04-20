@@ -1,13 +1,13 @@
 export default class ApplicationInfoDto {
-  version!: string
+    version!: string;
 
-  releaseDate!: Date
+    releaseDate!: Date;
 
-  features: Feature[] = []
+    features: Feature[] = [];
 }
 
 class Feature {
-  name!: string
+    name!: string;
 
-  included!: boolean
+    included!: boolean;
 }

@@ -1,11 +1,11 @@
-import ApplicationInfoDto from './applicationInfoDto'
-import TenantLoginInfoDto from './tenantLoginInfoDto'
-import UserLoginInfoDto from './userLoginInfoDto'
+import ApplicationInfoDto from './applicationInfoDto';
+import TenantLoginInfoDto from './tenantLoginInfoDto';
+import UserLoginInfoDto from './userLoginInfoDto';
 
 export class GetCurrentLoginInformations {
-  application!: ApplicationInfoDto
+    application!: ApplicationInfoDto;
 
-  user!: UserLoginInfoDto
+    user!: UserLoginInfoDto;
 
-  tenant!: TenantLoginInfoDto
+    tenant!: TenantLoginInfoDto;
 }

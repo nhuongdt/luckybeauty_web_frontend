@@ -1,42 +1,37 @@
-.bg-table{
-    background-color: #F2EBF0;
+.bg-table {
+    background-color: #f2ebf0;
 }
-.text-th-table{
+.text-th-table {
     font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-align-items: center;
-/* Neutral/70 */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    align-items: center;
+    /* Neutral/70 */
 
-color: #666466;
-
+    color: #666466;
 }
-.text-td-table{
+.text-td-table {
     font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-/* identical to box height, or 133% */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    /* identical to box height, or 133% */
 
+    /* Neutral/90 */
 
-/* Neutral/90 */
-
-color: #333233;
-
+    color: #333233;
 }
 
-.pagination-view-record{
+.pagination-view-record {
     font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 20px;
-/* identical to box height, or 143% */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    /* identical to box height, or 143% */
 
-
-color: #666666;
-
+    color: #666666;
 }

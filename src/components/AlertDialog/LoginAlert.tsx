@@ -8,26 +8,25 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 
-const LoginAlertDialog = ({open,confirmLogin}:any) => {
-  return (
-    <div>
-      <Dialog
-        open={open}
-        keepMounted
-        onClose={confirmLogin}
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle>{"Phiên làm việc đã hết hiệu lực"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={confirmLogin}>Agree</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
-}
-export default LoginAlertDialog
+const LoginAlertDialog = ({ open, confirmLogin }: any) => {
+    return (
+        <div>
+            <Dialog
+                open={open}
+                keepMounted
+                onClose={confirmLogin}
+                aria-describedby="alert-dialog-slide-description">
+                <DialogTitle>{'Phiên làm việc đã hết hiệu lực'}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={confirmLogin}>Agree</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
+    );
+};
+export default LoginAlertDialog;

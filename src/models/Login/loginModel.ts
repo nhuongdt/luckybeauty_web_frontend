@@ -1,29 +1,29 @@
-import { makeAutoObservable, observable } from 'mobx'
+import { makeAutoObservable, observable } from 'mobx';
 
 class LoginModel {
-  tenancyName!: string
+    tenancyName!: string;
 
-  userNameOrEmailAddress!: string
+    userNameOrEmailAddress!: string;
 
-  password!: string
+    password!: string;
 
-  rememberMe!: boolean
+    rememberMe!: boolean;
 
-  showModal!: boolean
-  constructor(){
-    makeAutoObservable(this,{
-      rememberMe:observable,
-      showModal:observable
-    })
-  }
+    showModal!: boolean;
+    constructor() {
+        makeAutoObservable(this, {
+            rememberMe: observable,
+            showModal: observable
+        });
+    }
 
-  toggleRememberMe = () => {
-    this.rememberMe = !this.rememberMe
-  }
+    toggleRememberMe = () => {
+        this.rememberMe = !this.rememberMe;
+    };
 
-  toggleShowModal = () => {
-    this.showModal = !this.showModal
-  }
+    toggleShowModal = () => {
+        this.showModal = !this.showModal;
+    };
 }
 
-export default LoginModel
+export default LoginModel;

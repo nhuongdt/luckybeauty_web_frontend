@@ -1,12 +1,12 @@
-import RoleModel from './roleModel'
-import PermissionModel from './permissionModel'
+import RoleModel from './roleModel';
+import PermissionModel from './permissionModel';
 
 class RoleEditModel {
-  role: RoleModel = new RoleModel()
+    role: RoleModel = new RoleModel();
 
-  permissions: PermissionModel[] = []
+    permissions: PermissionModel[] = [];
 
-  grantedPermissionNames: string[] = []
+    grantedPermissionNames: string[] = [];
 }
 
-export default RoleEditModel
+export default RoleEditModel;

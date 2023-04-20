@@ -1,439 +1,434 @@
 export declare namespace abp {
-  let appPath: string
+    let appPath: string;
 
-  let pageLoadTime: Date
+    let pageLoadTime: Date;
 
-  function toAbsAppPath(path: string): string
+    function toAbsAppPath(path: string): string;
 
-  namespace multiTenancy {
-    enum sides {
-      TENANT = 1,
+    namespace multiTenancy {
+        enum sides {
+            TENANT = 1,
 
-      HOST = 2,
+            HOST = 2
+        }
+
+        let isEnabled: boolean;
+
+        let ignoreFeatureCheckForHostUsers: boolean;
+
+        let tenantIdCookieName: string;
+
+        function setTenantIdCookie(tenantId?: number): void;
+
+        function getTenantIdCookie(): number;
     }
 
-    let isEnabled: boolean
+    interface IAbpSession {
+        readonly userId?: number;
 
-    let ignoreFeatureCheckForHostUsers: boolean
+        readonly tenantId?: number;
 
-    let tenantIdCookieName: string
+        readonly impersonatorUserId?: number;
 
-    function setTenantIdCookie(tenantId?: number): void
+        readonly impersonatorTenantId?: number;
 
-    function getTenantIdCookie(): number
-  }
-
-  interface IAbpSession {
-    readonly userId?: number
-
-    readonly tenantId?: number
-
-    readonly impersonatorUserId?: number
-
-    readonly impersonatorTenantId?: number
-
-    readonly multiTenancySide: multiTenancy.sides
-  }
-
-  let session: IAbpSession
-
-  namespace localization {
-    interface ILanguageInfo {
-      name: string
-
-      displayName: string
-
-      icon: string
-
-      isDefault: boolean
-
-      isDisabled: boolean
+        readonly multiTenancySide: multiTenancy.sides;
     }
 
-    interface ILocalizationSource {
-      name: string
+    let session: IAbpSession;
 
-      type: string
+    namespace localization {
+        interface ILanguageInfo {
+            name: string;
+
+            displayName: string;
+
+            icon: string;
+
+            isDefault: boolean;
+
+            isDisabled: boolean;
+        }
+
+        interface ILocalizationSource {
+            name: string;
+
+            type: string;
+        }
+
+        let languages: ILanguageInfo[];
+
+        let currentLanguage: ILanguageInfo;
+
+        let sources: ILocalizationSource[];
+
+        let defaultSourceName: string;
+
+        let values: { [key: string]: string };
+
+        let abpWeb: (key: string) => string;
+
+        function localize(key: string, sourceName: string): string;
+
+        function getSource(sourceName: string): (key: string) => string;
+
+        function isCurrentCulture(name: string): boolean;
     }
 
-    let languages: ILanguageInfo[]
+    namespace auth {
+        let allPermissions: { [name: string]: boolean };
 
-    let currentLanguage: ILanguageInfo
+        let grantedPermissions: { [name: string]: boolean };
 
-    let sources: ILocalizationSource[]
+        function isGranted(permissionName: string): boolean;
 
-    let defaultSourceName: string
+        function isAnyGranted(...args: string[]): boolean;
 
-    let values: { [key: string]: string }
+        function areAllGranted(...args: string[]): boolean;
 
-    let abpWeb: (key: string) => string
+        let tokenCookieName: string;
 
-    function localize(key: string, sourceName: string): string
+        /**
+         * Saves auth token.
+         * @param authToken The token to be saved.
+         * @param expireDate Optional expire date. If not specified, token will be deleted at end of the session.
+         */
+        function setToken(authToken: string, expireDate?: Date): void;
 
-    function getSource(sourceName: string): (key: string) => string
+        function getToken(): string;
 
-    function isCurrentCulture(name: string): boolean
-  }
+        function clearToken(): void;
 
-  namespace auth {
-    let allPermissions: { [name: string]: boolean }
+        let refreshTokenCookieName: string;
 
-    let grantedPermissions: { [name: string]: boolean }
+        /**
+         * Saves refreshToken token.
+         * @param refreshToken The token to be saved.
+         * @param expireDate Optional expire date. If not specified, token will be deleted at end of the session.
+         */
+        function setRefreshToken(refreshToken: string, expireDate?: Date): void;
 
-    function isGranted(permissionName: string): boolean
+        function getRefreshToken(): string;
 
-    function isAnyGranted(...args: string[]): boolean
-
-    function areAllGranted(...args: string[]): boolean
-
-    let tokenCookieName: string
-
-    /**
-     * Saves auth token.
-     * @param authToken The token to be saved.
-     * @param expireDate Optional expire date. If not specified, token will be deleted at end of the session.
-     */
-    function setToken(authToken: string, expireDate?: Date): void
-
-    function getToken(): string
-
-    function clearToken(): void
-
-    let refreshTokenCookieName: string
-
-    /**
-     * Saves refreshToken token.
-     * @param refreshToken The token to be saved.
-     * @param expireDate Optional expire date. If not specified, token will be deleted at end of the session.
-     */
-    function setRefreshToken(refreshToken: string, expireDate?: Date): void
-
-    function getRefreshToken(): string
-
-    function clearRefreshToken(): void
-  }
-
-  namespace features {
-    interface IFeature {
-      value: string
+        function clearRefreshToken(): void;
     }
 
-    let allFeatures: { [name: string]: IFeature }
+    namespace features {
+        interface IFeature {
+            value: string;
+        }
 
-    function get(name: string): IFeature
+        let allFeatures: { [name: string]: IFeature };
 
-    function getValue(name: string): string
+        function get(name: string): IFeature;
 
-    function isEnabled(name: string): boolean
-  }
+        function getValue(name: string): string;
 
-  namespace setting {
-    let values: { [name: string]: string }
-
-    function get(name: string): string
-
-    function getBoolean(name: string): boolean
-
-    function getInt(name: string): number
-
-    enum settingScopes {
-      Application = 1,
-
-      Tenant = 2,
-
-      User = 4,
-    }
-  }
-
-  namespace nav {
-    interface IMenu {
-      name: string
-
-      displayName?: string
-
-      customData?: any
-
-      items: IMenuItem[]
+        function isEnabled(name: string): boolean;
     }
 
-    interface IMenuItem {
-      name: string
+    namespace setting {
+        let values: { [name: string]: string };
 
-      order: number
+        function get(name: string): string;
 
-      displayName?: string
+        function getBoolean(name: string): boolean;
 
-      icon?: string
+        function getInt(name: string): number;
 
-      url?: string
+        enum settingScopes {
+            Application = 1,
 
-      customData?: any
+            Tenant = 2,
 
-      items: IMenuItem[]
+            User = 4
+        }
     }
 
-    let menus: { [name: string]: IMenu }
-  }
+    namespace nav {
+        interface IMenu {
+            name: string;
 
-  namespace notifications {
-    enum severity {
-      INFO,
-      SUCCESS,
-      WARN,
-      ERROR,
-      FATAL,
+            displayName?: string;
+
+            customData?: any;
+
+            items: IMenuItem[];
+        }
+
+        interface IMenuItem {
+            name: string;
+
+            order: number;
+
+            displayName?: string;
+
+            icon?: string;
+
+            url?: string;
+
+            customData?: any;
+
+            items: IMenuItem[];
+        }
+
+        let menus: { [name: string]: IMenu };
     }
 
-    enum userNotificationState {
-      UNREAD,
-      READ,
+    namespace notifications {
+        enum severity {
+            INFO,
+            SUCCESS,
+            WARN,
+            ERROR,
+            FATAL
+        }
+
+        enum userNotificationState {
+            UNREAD,
+            READ
+        }
+
+        //TODO: We can extend this interface to define built-in notification types, like ILocalizableMessageNotificationData
+        interface INotificationData {
+            type: string;
+
+            properties: any;
+        }
+
+        interface INotification {
+            id: string;
+
+            notificationName: string;
+
+            severity: severity;
+
+            entityType?: any;
+
+            entityTypeName?: string;
+
+            entityId?: any;
+
+            data: INotificationData;
+
+            creationTime: Date;
+        }
+
+        interface IUserNotification {
+            id: string;
+
+            userId: number;
+
+            state: userNotificationState;
+
+            notification: INotification;
+        }
+
+        let messageFormatters: any;
+
+        function getUserNotificationStateAsString(
+            userNotificationState: userNotificationState
+        ): string;
+
+        function getUiNotifyFuncBySeverity(
+            severity: severity
+        ): (message: string, title?: string, options?: any) => void;
+
+        function getFormattedMessageFromUserNotification(
+            userNotification: IUserNotification
+        ): string;
+
+        function showUiNotifyForUserNotification(
+            userNotification: IUserNotification,
+            options?: any
+        ): void;
     }
 
-    //TODO: We can extend this interface to define built-in notification types, like ILocalizableMessageNotificationData
-    interface INotificationData {
-      type: string
+    namespace log {
+        enum levels {
+            DEBUG,
+            INFO,
+            WARN,
+            ERROR,
+            FATAL
+        }
 
-      properties: any
+        let level: levels;
+
+        function log(logObject?: any, logLevel?: levels): void;
+
+        function debug(logObject?: any): void;
+
+        function info(logObject?: any): void;
+
+        function warn(logObject?: any): void;
+
+        function error(logObject?: any): void;
+
+        function fatal(logObject?: any): void;
     }
 
-    interface INotification {
-      id: string
+    namespace notify {
+        function info(message: string, title?: string, options?: any): void;
 
-      notificationName: string
+        function success(message: string, title?: string, options?: any): void;
 
-      severity: severity
+        function warn(message: string, title?: string, options?: any): void;
 
-      entityType?: any
-
-      entityTypeName?: string
-
-      entityId?: any
-
-      data: INotificationData
-
-      creationTime: Date
+        function error(message: string, title?: string, options?: any): void;
     }
 
-    interface IUserNotification {
-      id: string
+    namespace message {
+        //TODO: these methods return jQuery.Promise instead of any. fix it.
 
-      userId: number
+        function info(message: string, title?: string, options?: any): any;
 
-      state: userNotificationState
+        function success(message: string, title?: string, options?: any): any;
 
-      notification: INotification
+        function warn(message: string, title?: string, options?: any): any;
+
+        function error(message: string, title?: string, options?: any): any;
+
+        function confirm(
+            message: string,
+            title?: string,
+            callback?: (result: boolean) => void,
+            options?: any
+        ): any;
     }
 
-    let messageFormatters: any
+    namespace ui {
+        function block(elm?: any): void;
 
-    function getUserNotificationStateAsString(
-      userNotificationState: userNotificationState
-    ): string
+        function unblock(elm?: any): void;
 
-    function getUiNotifyFuncBySeverity(
-      severity: severity
-    ): (message: string, title?: string, options?: any) => void
+        function setBusy(elm?: any, optionsOrPromise?: any): void;
 
-    function getFormattedMessageFromUserNotification(
-      userNotification: IUserNotification
-    ): string
-
-    function showUiNotifyForUserNotification(
-      userNotification: IUserNotification,
-      options?: any
-    ): void
-  }
-
-  namespace log {
-    enum levels {
-      DEBUG,
-      INFO,
-      WARN,
-      ERROR,
-      FATAL,
+        function clearBusy(elm?: any): void;
     }
 
-    let level: levels
+    namespace event {
+        function on(eventName: string, callback: (...args: any[]) => void): void;
 
-    function log(logObject?: any, logLevel?: levels): void
+        function off(eventName: string, callback: (...args: any[]) => void): void;
 
-    function debug(logObject?: any): void
-
-    function info(logObject?: any): void
-
-    function warn(logObject?: any): void
-
-    function error(logObject?: any): void
-
-    function fatal(logObject?: any): void
-  }
-
-  namespace notify {
-    function info(message: string, title?: string, options?: any): void
-
-    function success(message: string, title?: string, options?: any): void
-
-    function warn(message: string, title?: string, options?: any): void
-
-    function error(message: string, title?: string, options?: any): void
-  }
-
-  namespace message {
-    //TODO: these methods return jQuery.Promise instead of any. fix it.
-
-    function info(message: string, title?: string, options?: any): any
-
-    function success(message: string, title?: string, options?: any): any
-
-    function warn(message: string, title?: string, options?: any): any
-
-    function error(message: string, title?: string, options?: any): any
-
-    function confirm(
-      message: string,
-      title?: string,
-      callback?: (result: boolean) => void,
-      options?: any
-    ): any
-  }
-
-  namespace ui {
-    function block(elm?: any): void
-
-    function unblock(elm?: any): void
-
-    function setBusy(elm?: any, optionsOrPromise?: any): void
-
-    function clearBusy(elm?: any): void
-  }
-
-  namespace event {
-    function on(eventName: string, callback: (...args: any[]) => void): void
-
-    function off(eventName: string, callback: (...args: any[]) => void): void
-
-    function trigger(eventName: string, ...args: any[]): void
-  }
-
-  interface INameValue {
-    name: string
-    value?: any
-  }
-
-  namespace utils {
-    function createNamespace(root: any, ns: string): any
-
-    function replaceAll(str: string, search: string, replacement: any): string
-
-    function formatString(str: string, ...args: any[]): string
-
-    function toPascalCase(str: string): string
-
-    function toCamelCase(str: string): string
-
-    function truncateString(str: string, maxLength: number): string
-
-    function truncateStringWithPostfix(
-      str: string,
-      maxLength: number,
-      postfix?: string
-    ): string
-
-    function isFunction(obj: any): boolean
-
-    function buildQueryString(
-      parameterInfos: INameValue[],
-      includeQuestionMark?: boolean
-    ): string
-
-    /**
-     * Sets a cookie value for given key.
-     * This is a simple implementation created to be used by ABP.
-     * Please use a complete cookie library if you need.
-     * @param {string} key
-     * @param {string} value
-     * @param {Date} expireDate (optional). If not specified the cookie will expire at the end of session.
-     * @param {string} path (optional)
-     */
-    function setCookieValue(
-      key: string,
-      value: string,
-      expireDate?: Date,
-      path?: string
-    ): void
-
-    /**
-     * Gets a cookie with given key.
-     * This is a simple implementation created to be used by ABP.
-     * Please use a complete cookie library if you need.
-     * @param {string} key
-     * @returns {string} Cookie value or null
-     */
-    function getCookieValue(key: string): string
-
-    /**
-     * Deletes cookie for given key.
-     * This is a simple implementation created to be used by ABP.
-     * Please use a complete cookie library if you need.
-     * @param {string} key
-     * @param {string} path (optional)
-     */
-    function deleteCookie(key: string, path?: string): void
-  }
-
-  namespace timing {
-    interface IClockProvider {
-      supportsMultipleTimezone: boolean
-
-      now(): Date
-
-      normalize(date: Date): Date
+        function trigger(eventName: string, ...args: any[]): void;
     }
 
-    interface ITimeZoneInfo {
-      windows: {
-        timeZoneId: string
-
-        baseUtcOffsetInMilliseconds: number
-
-        currentUtcOffsetInMilliseconds: number
-
-        isDaylightSavingTimeNow: boolean
-      }
-
-      iana: {
-        timeZoneId: string
-      }
+    interface INameValue {
+        name: string;
+        value?: any;
     }
 
-    const utcClockProvider: IClockProvider
+    namespace utils {
+        function createNamespace(root: any, ns: string): any;
 
-    const localClockProvider: IClockProvider
+        function replaceAll(str: string, search: string, replacement: any): string;
 
-    const unspecifiedClockProvider: IClockProvider
+        function formatString(str: string, ...args: any[]): string;
 
-    function convertToUserTimezone(date: Date): Date
+        function toPascalCase(str: string): string;
 
-    let timeZoneInfo: ITimeZoneInfo
-  }
+        function toCamelCase(str: string): string;
 
-  namespace clock {
-    let provider: timing.IClockProvider
+        function truncateString(str: string, maxLength: number): string;
 
-    function now(): Date
+        function truncateStringWithPostfix(
+            str: string,
+            maxLength: number,
+            postfix?: string
+        ): string;
 
-    function normalize(date: Date): Date
-  }
+        function isFunction(obj: any): boolean;
 
-  namespace security {
-    namespace antiForgery {
-      let tokenCookieName: string
+        function buildQueryString(
+            parameterInfos: INameValue[],
+            includeQuestionMark?: boolean
+        ): string;
 
-      let tokenHeaderName: string
+        /**
+         * Sets a cookie value for given key.
+         * This is a simple implementation created to be used by ABP.
+         * Please use a complete cookie library if you need.
+         * @param {string} key
+         * @param {string} value
+         * @param {Date} expireDate (optional). If not specified the cookie will expire at the end of session.
+         * @param {string} path (optional)
+         */
+        function setCookieValue(key: string, value: string, expireDate?: Date, path?: string): void;
 
-      function getToken(): string
+        /**
+         * Gets a cookie with given key.
+         * This is a simple implementation created to be used by ABP.
+         * Please use a complete cookie library if you need.
+         * @param {string} key
+         * @returns {string} Cookie value or null
+         */
+        function getCookieValue(key: string): string;
+
+        /**
+         * Deletes cookie for given key.
+         * This is a simple implementation created to be used by ABP.
+         * Please use a complete cookie library if you need.
+         * @param {string} key
+         * @param {string} path (optional)
+         */
+        function deleteCookie(key: string, path?: string): void;
     }
-  }
+
+    namespace timing {
+        interface IClockProvider {
+            supportsMultipleTimezone: boolean;
+
+            now(): Date;
+
+            normalize(date: Date): Date;
+        }
+
+        interface ITimeZoneInfo {
+            windows: {
+                timeZoneId: string;
+
+                baseUtcOffsetInMilliseconds: number;
+
+                currentUtcOffsetInMilliseconds: number;
+
+                isDaylightSavingTimeNow: boolean;
+            };
+
+            iana: {
+                timeZoneId: string;
+            };
+        }
+
+        const utcClockProvider: IClockProvider;
+
+        const localClockProvider: IClockProvider;
+
+        const unspecifiedClockProvider: IClockProvider;
+
+        function convertToUserTimezone(date: Date): Date;
+
+        let timeZoneInfo: ITimeZoneInfo;
+    }
+
+    namespace clock {
+        let provider: timing.IClockProvider;
+
+        function now(): Date;
+
+        function normalize(date: Date): Date;
+    }
+
+    namespace security {
+        namespace antiForgery {
+            let tokenCookieName: string;
+
+            let tokenHeaderName: string;
+
+            function getToken(): string;
+        }
+    }
 }
 
-export = abp
+export = abp;

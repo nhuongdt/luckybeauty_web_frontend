@@ -1,11 +1,11 @@
 class TenantModel {
-  tenancyName!: string
+    tenancyName!: string;
 
-  name!: string
+    name!: string;
 
-  isActive!: boolean
+    isActive!: boolean;
 
-  id!: number
+    id!: number;
 }
 
-export default TenantModel
+export default TenantModel;

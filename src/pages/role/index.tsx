@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const RoleScreen = () => {
-  return (
-    <div>RoleScreen</div>
-  )
-}
+    return <div>RoleScreen</div>;
+};
 
-export default RoleScreen
+export default RoleScreen;

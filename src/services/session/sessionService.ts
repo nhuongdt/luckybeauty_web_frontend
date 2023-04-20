@@ -1,21 +1,18 @@
-import { GetCurrentLoginInformations } from './dto/getCurrentLoginInformations'
-import http from '../httpService'
+import { GetCurrentLoginInformations } from './dto/getCurrentLoginInformations';
+import http from '../httpService';
 import Cookies from 'js-cookie';
-declare let abp: any
+declare let abp: any;
 
 class SessionService {
-  public async getCurrentLoginInformations(): Promise<GetCurrentLoginInformations> {
-    const result = await http.get(
-      'api/services/app/Session/GetCurrentLoginInformations',
-      {
-        headers: {
-          'Abp.TenantId': Cookies.get('TenantId')
-        },
-      }
-    )
+    public async getCurrentLoginInformations(): Promise<GetCurrentLoginInformations> {
+        const result = await http.get('api/services/app/Session/GetCurrentLoginInformations', {
+            headers: {
+                'Abp.TenantId': Cookies.get('TenantId')
+            }
+        });
 
-    return result.data.result
-  }
+        return result.data.result;
+    }
 }
 
-export default new SessionService()
+export default new SessionService();

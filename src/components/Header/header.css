@@ -1,16 +1,10 @@
 .header {
-    align-items:
-        center;
-    background-color:
-        #ffffff;
-    border:
-        solid 0.1rem #e6e1e6;
-    box-sizing:
-        border-box;
-   
-    height:
-        70px;
-    
-    width:
-        100%;
+    align-items: center;
+    background-color: #ffffff;
+    border: solid 0.1rem #e6e1e6;
+    box-sizing: border-box;
+
+    height: 70px;
+
+    width: 100%;
 }

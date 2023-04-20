@@ -1,7 +1,7 @@
 .btn-login {
     width: 552px;
     height: 48px;
-    background: #7C3367;
+    background: #7c3367;
     border-radius: 14px;
     margin-top: 24px;
     margin-bottom: 24px;
@@ -16,7 +16,7 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 24px;
-    color: #FFFFFF;
+    color: #ffffff;
 }
 
 .login-input {
@@ -36,32 +36,32 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 24px;
-    color: #4C4B4C;
+    color: #4c4b4c;
 }
-.form-text-float-right{
+.form-text-float-right {
     float: right;
     width: 105px;
-height: 20px;
-left: 501px;
-top: 507px;
-font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 20px;
-text-align: right;
-color: #0078D7;
+    height: 20px;
+    left: 501px;
+    top: 507px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: right;
+    color: #0078d7;
 }
-.a{
-    text-decoration:none
+.a {
+    text-decoration: none;
 }
-.input-check{
-justify-content: center;
-height: 20px;
-font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 20px;
-color: #999699;
+.input-check {
+    justify-content: center;
+    height: 20px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: #999699;
 }
