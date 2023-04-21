@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import Sider from "antd/es/layout/Sider";
 import { appRouters } from "../routers/index";
 import "./sider_menu.css";
-import { List } from "@mui/icons-material";
 import { Avatar, Divider, ListItemButton, ListItemIcon, ListItemText, Menu, Stack, Toolbar, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import SiderMenuItem from "./SiderMenuItem";
 import SiderSubMenuItem from "./SiderSubMenuItem";
 import Cookies from "js-cookie";
-import axios from "axios";
 import LogoutIcon from '@mui/icons-material/Logout';
+import http from "../../services/httpService";
 interface Props {
   collapsed: boolean;
   toggle: () => void;
@@ -34,7 +33,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
     const userId = Cookies.get('userId')
     const token = Cookies.get("accessToken")
     const encryptedAccessToken = Cookies.get("encryptedAccessToken")
-    axios.post(`https://localhost:44311/api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`,{
+    http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`,{
       headers:{
         "accept": "text/plain",
         "Authorization": "Bearer " + token,
@@ -42,9 +41,9 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
 
       }
     })
-    .then(response =>{ setListPermission(response.data.result['permissions']); console.log(response.data.result['permissions'])})
+    .then(response =>{ setListPermission(response.data.result['permissions']);})
     .catch(error => console.log(error));
-  }, defaultPermission);
+  },[]);
   return (
     <Sider
       collapsed={collapsed}
@@ -54,32 +53,33 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
       theme="light"
       className="side-menu"
     >
-      <Toolbar>
+      <Toolbar style={{ textAlign: "center", marginTop: 15, marginBottom: 10 }}>
         <Avatar
             alt="Lucky Beauty"
             src="../../images/user.png"
             sx={{ width: 28, height: 28 }}
           />  
-          <span className="p-2">
+          {collapsed?null:<span className="p-2">
           <Typography variant="h6" noWrap component="span">
           Lucky Beauty
           </Typography>
-          </span>
+          </span>}
         </Toolbar>
       <Divider variant="fullWidth" light={false}/>
       {mainAppRoutes.map((menuItem) => {
         if (menuItem.children.length > 0) {
-          return SiderSubMenuItem(menuItem, lstPermission);
+          return SiderSubMenuItem(menuItem, lstPermission,collapsed);
         } else {
-          return SiderMenuItem(menuItem, lstPermission);
+          return SiderMenuItem(menuItem, lstPermission,collapsed);
         }
        
       })}
-       <ListItemButton  component={Link} to="/logout" className='active-menu-bg'>
+       <ListItemButton key={"logout"}  component={Link} to="/logout" className='active-menu-bg'>
         {/* <Link to={menuItem.path}> </Link> */}
-        <Stack alignItems="center"  direction="row" spacing={1} style={{width:'100%'}}>
+        <Stack alignItems="center" className={collapsed?'menu-item':''}  direction="row" spacing={1} style={{width:'100%'}}>
         <ListItemIcon className='menu-item-icon'><LogoutIcon/></ListItemIcon>
-         <ListItemText  primary="Đăng xuất" className='menu-item-title'></ListItemText>
+        {collapsed?null:<ListItemText  primary="Đăng xuất" className='menu-item-title'></ListItemText>}
+         
         </Stack>
          
         

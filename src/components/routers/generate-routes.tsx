@@ -10,11 +10,11 @@ const renderRoutes= () => {
           appRouters.mainRoutes.map(
             ({layout:Layout,routes},index)=>{
               return <Route element={<Layout/>} key={index}>
-                <Route>
+                <Route key={index}>
                 {routes.map(({ component: Component, path, name ,children})=>{
                     if(children.length>0){
                       return (
-                        <Route>
+                        <Route key={path}>
                           {
                             children.map((route,index)=>{
                               return (

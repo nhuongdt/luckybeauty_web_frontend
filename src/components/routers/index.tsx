@@ -137,7 +137,7 @@ export const appRouters: AppRouteProps={
         showInMenu: true,
         isLayout: false,
         children:[],
-        component: LoadableComponent(() => import('../../pages/service')),
+        component: LoadableComponent(() => import('../../pages/dich-vu')),
       },
       {
         path: '/admin',
@@ -183,7 +183,7 @@ export const appRouters: AppRouteProps={
             component: LoadableComponent(() => import('../../pages/tenant')),
           }
         ],
-        component: LoadableComponent(() => import('../../pages/service')),
+        component: LoadableComponent(() => import('../../pages/dich-vu')),
       },
       {
         path: '/exception?:type',

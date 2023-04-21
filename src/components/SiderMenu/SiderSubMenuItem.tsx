@@ -11,7 +11,7 @@ import abpClient from "../abp-custom";
 import { useLocation } from "react-router-dom";
 import './sider_menu.css'
 import { Stack } from "@mui/material";
-const SiderSubMenuItem = (MenuItem: any,lstPermission:string[]) => {
+const SiderSubMenuItem = (MenuItem: any,lstPermission:string[],isCollapse:boolean) => {
   const [open, setOpen] = React.useState(false);
 
   const handleClick = () => {
@@ -21,10 +21,10 @@ const SiderSubMenuItem = (MenuItem: any,lstPermission:string[]) => {
   if(abpClient.isGrandPermission(MenuItem.permission,lstPermission)){
       return (
     <>
-      <ListItemButton onClick={handleClick} className='active-menu-bg'>
+      <ListItemButton onClick={handleClick} key={MenuItem.name} className='active-menu-bg'>
       <Stack alignItems="center"  direction="row" spacing={1} className={location.pathname===MenuItem.path?'active-menu-item':'menu-item'} style={{width:'100%'}}>
         <ListItemIcon className={location.pathname===MenuItem.path?'active-menu-item-icon':'menu-item-icon'}>{MenuItem.icon}</ListItemIcon>
-         <ListItemText  primary={MenuItem.title} className={location.pathname===MenuItem.path?'active-menu-item-title':'menu-item-title'}></ListItemText>
+        {isCollapse?null:<ListItemText  primary={MenuItem.title} className={location.pathname===MenuItem.path?'active-menu-item-title':'menu-item-title'}></ListItemText>} 
         </Stack>
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
@@ -32,9 +32,9 @@ const SiderSubMenuItem = (MenuItem: any,lstPermission:string[]) => {
         <List component="div" disablePadding>
           {MenuItem.children.map((menu: any) => {
             if(menu.children.length>0){
-                return SiderSubMenuItem(menu.children,lstPermission)
+                return SiderSubMenuItem(menu.children,lstPermission,isCollapse)
             }
-            return SiderMenuItem(menu,lstPermission)
+            return SiderMenuItem(menu,lstPermission,isCollapse)
           })}
         </List>
       </Collapse>

@@ -36,7 +36,7 @@ const MainAppLayout:React.FC = () => {
             <Outlet />
             <LoginAlertDialog open={open} confirmLogin={confirm}/>
           </Content>
-          <Footer/>
+          {/* <Footer/> */}
         </Layout>
       </Layout></>
       )

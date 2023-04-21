@@ -4,13 +4,14 @@
 // import { L } from '../lib/abpUtility'
 import { Modal } from 'antd'
 import axios from 'axios'
+import { error } from 'console';
 import Cookies from 'js-cookie';
 const qs = require('qs')
 
 //declare let abp: any
 
 const http = axios.create({
-  baseURL: 'https://localhost:44311/',
+  baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
   timeout: 30000,
   paramsSerializer: function (params) {
     return qs.stringify(params, {
@@ -20,19 +21,14 @@ const http = axios.create({
 })
 
 http.interceptors.request.use(
-  function (config) {
-    console.log(Cookies.get('accessToken'))
-    if (!Cookies.get('accessToken')) {
-      config.headers.common.Authorization = 'Bearer ' + Cookies.get('accessToken')
+  config=>{
+    if (Cookies.get('accessToken')!==null||Cookies.get('accessToken')!==undefined) {
+    config.headers.Authorization = 'Bearer ' + Cookies.get('accessToken')
     }
-
-    // config.headers.common['X-XSRF-TOKEN'] = Cookies.get("encryptedAccessToken")
-    // config.headers.common['Abp.TenantId'] = Cookies.get('TenantId')
-
+    
     return config
-  },
-  function (error) {
-    return Promise.reject(error)
+  },error=>{
+    return Promise.reject(error);
   }
 )
 

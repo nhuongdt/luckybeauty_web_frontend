@@ -27,7 +27,6 @@ const LoginScreen: React.FC = ()=>{
     loginModel.userNameOrEmailAddress = userName
     loginModel.password = password
     loginModel.rememberMe = remember
-    console.log(loginModel.tenancyName)
     await changeTenant(loginModel.tenancyName)
     const login =await LoginService.Login(loginModel)
     sessionStorage.setItem('rememberMe', loginModel.rememberMe ? '1' : '0')

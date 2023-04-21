@@ -1,13 +1,13 @@
 import { Guid } from "guid-typescript";
-export default interface CreateOrUpdateNhanSuDto{
-    id: Guid,
+export interface CreateOrUpdateNhanSuDto{
+    id: string,
     maNhanVien: string,
     tenNhanVien:string,
     diaChi:string,
     soDienThoai:string,
     cccd?: string,
     ngaySinh?: string,
-    kieuNgaySinh:number,
+    kieuNgaySinh?:number,
     gioiTinh:number,
     ngayCap?: string,
     noiCap?: string,

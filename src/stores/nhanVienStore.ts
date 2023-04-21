@@ -1,6 +1,6 @@
 import { Guid } from "guid-typescript";
 import { PagedResultDto } from "../services/dto/pagedResultDto";
-import CreateOrUpdateNhanSuDto from "../services/nhan-vien/dto/createOrUpdateNhanVienDto";
+import {CreateOrUpdateNhanSuDto} from "../services/nhan-vien/dto/createOrUpdateNhanVienDto";
 import NhanSuItemDto from "../services/nhan-vien/dto/nhanSuItemDto";
 import NhanVienService from "../services/nhan-vien/nhanVienService";
 import NhanSuDto from "../services/nhan-vien/dto/nhanSuDto";
@@ -10,7 +10,7 @@ import { makeAutoObservable } from "mobx";
 class NhanVienStore{
     listNhanVien!: PagedResultDto<NhanSuItemDto>
     createEditNhanVien! : CreateOrUpdateNhanSuDto
-    id!: Guid
+    id!: string
     constructor(){
         makeAutoObservable(this)
     }
@@ -21,7 +21,7 @@ class NhanVienStore{
            result
         )
     }
-    async delete(id:Guid){
+    async delete(id:string){
         const result = await NhanVienService.delete(id)
         this.listNhanVien.items.filter(x=>x.id!==id)
     }
