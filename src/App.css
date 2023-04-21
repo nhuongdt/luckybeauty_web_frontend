@@ -94,3 +94,7 @@
 .MuiDialogActions-root.MuiDialogActions-spacing {
     padding-right: 24px;
 }
+
+.table-hover {
+    background-color: cccc;
+}

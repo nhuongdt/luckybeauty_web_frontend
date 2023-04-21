@@ -2,13 +2,10 @@ import * as React from 'react';
 import { ReactNode } from 'react';
 
 import {
-    Avatar,
-    AvatarGroup,
     Box,
     Button,
-    Icon,
+    ButtonGroup,
     IconButton,
-    SvgIcon,
     Grid,
     List,
     ListItem,
@@ -17,8 +14,6 @@ import {
     ListItemButton,
     ListItemSecondaryAction,
     ListItemText,
-    MenuItem,
-    Stack,
     TextField,
     Typography,
     Divider,
@@ -28,8 +23,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
-    Checkbox
+    Checkbox,
+    colors
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -43,11 +38,39 @@ import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { array, object } from 'prop-types';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import InfoIcon from '@mui/icons-material/Info';
+import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { isJSDocNullableType } from 'typescript';
+import Utils from '../../utils/utils';
 
 interface Props {
     children?: ReactNode;
     // any props that come into the component
 }
+const themeListItemText = createTheme({
+    components: {
+        // Name of the component
+        MuiListItemText: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    // Some CSS
+                    '& span': {
+                        fontSize: '12px',
+                        color: 'blue'
+                    },
+                    ':not(eq(2)': {
+                        fontSize: '12px',
+                        color: 'blue'
+                    }
+                }
+            }
+        }
+    }
+});
 
 export function NhomHangHoas({ dataNhomHang }: any) {
     const [isHovering, setIsHovering] = useState(false);
@@ -84,7 +107,29 @@ export function NhomHangHoas({ dataNhomHang }: any) {
     );
 }
 
-export const TableProduct = ({ dataHangHoa }: any) => {
+export const TableProduct = ({ dataHangHoa, handleClickActionRow }: any) => {
+    const [showAction, setShowAction] = useState({ index: 0, value: false });
+    const [showListAction, setshowListAction] = useState(true);
+    const [idQuyDoi, setIdQuyDoi] = useState('');
+    const [isHover, setIsHover] = useState(false);
+
+    const doActionRow = (action: number) => {
+        handleClickActionRow(action, idQuyDoi);
+    };
+
+    const hoverRow = (event: any, idQuyDoi: string, index: number) => {
+        switch (event.type) {
+            case 'mouseenter': // enter
+                setShowAction({ index: index, value: true });
+                break;
+            case 'mouseleave': //leave
+                setShowAction({ index: index, value: false });
+                break;
+        }
+        setshowListAction(false);
+        setIdQuyDoi(idQuyDoi);
+        setIsHover(event.type === 'mouseenter');
+    };
     return (
         <>
             <TableContainer>
@@ -94,7 +139,7 @@ export const TableProduct = ({ dataHangHoa }: any) => {
                             <TableCell sx={{ width: 1 / 25 }}>
                                 <Checkbox />
                             </TableCell>
-                            <TableCell sx={{ width: 1 / 10 }}>Mã dịch vụ</TableCell>
+                            <TableCell sx={{ width: 1 / 8 }}>Mã dịch vụ</TableCell>
                             <TableCell>Tên dịch vụ</TableCell>
                             <TableCell sx={{ width: 1 / 6 }}>Nhóm dịch vụ</TableCell>
                             <TableCell sx={{ width: 1 / 12 }}>Đơn giá</TableCell>
@@ -104,10 +149,21 @@ export const TableProduct = ({ dataHangHoa }: any) => {
                         </TableRow>
                     </TableHead>
                     <TableBody className="table-body">
-                        {dataHangHoa.map((row: any) => (
+                        {dataHangHoa.map((row: any, index: any) => (
                             <TableRow
-                                key={row.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                // sx={{ backgroundColor: isHover ? 'red' : 'none' }}
+                                key={row.idDonViQuyDoi}
+                                onMouseLeave={(event) => {
+                                    hoverRow(event, row.idDonViQuyDoi, index);
+                                }}
+                                onMouseEnter={(event) => {
+                                    hoverRow(event, row.idDonViQuyDoi, index);
+                                }}
+                                sx={{
+                                    backgroundColor:
+                                        isHover && idQuyDoi == row.idDonViQuyDoi ? '#cccc' : 'none',
+                                    '&:last-child td, &:last-child th': { border: 0 }
+                                }}>
                                 <TableCell sx={{ width: 1 / 25 }}>
                                     <Checkbox />
                                 </TableCell>
@@ -117,7 +173,7 @@ export const TableProduct = ({ dataHangHoa }: any) => {
                                     {row.tenNhomHang}
                                 </TableCell>
                                 <TableCell sx={{ width: 1 / 12 }} align="right">
-                                    {row.giaBan}
+                                    {Utils.formatNumber(row.giaBan)}
                                 </TableCell>
                                 <TableCell sx={{ width: 1 / 10 }} align="center">
                                     0
@@ -125,7 +181,29 @@ export const TableProduct = ({ dataHangHoa }: any) => {
                                 <TableCell sx={{ width: 1 / 6 }} align="left">
                                     {row.txtTrangThaiHang}
                                 </TableCell>
-                                <TableCell sx={{ width: 1 / 25 }}></TableCell>
+                                <TableCell sx={{ width: 1 / 25 }}>
+                                    <MoreHorizIcon
+                                        fontSize="small"
+                                        onClick={() => {
+                                            setshowListAction(true);
+                                            setIdQuyDoi(row.idDonViQuyDoi);
+                                        }}
+                                        sx={{
+                                            display:
+                                                showAction.index == index && showAction.value
+                                                    ? 'block'
+                                                    : 'none'
+                                        }}
+                                    />
+                                    <ListAction
+                                        showAction={
+                                            showAction.index == index &&
+                                            showAction.value &&
+                                            showListAction
+                                        }
+                                        handleClickAction={doActionRow}
+                                    />
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -135,28 +213,69 @@ export const TableProduct = ({ dataHangHoa }: any) => {
     );
 };
 
+export const ListAction = ({ showAction, handleClickAction }: any) => {
+    return (
+        <Box sx={{ display: showAction ? 'block' : 'none' }} className="list-icon-action">
+            <List>
+                <ListItem
+                    onClick={(event) => handleClickAction(0)}
+                    secondaryAction={
+                        <IconButton edge="end" aria-label="add">
+                            <InfoIcon fontSize="small" />
+                        </IconButton>
+                    }>
+                    <ThemeProvider theme={themeListItemText}>
+                        <ListItemText primary="Xem" />
+                    </ThemeProvider>
+                </ListItem>
+                <ListItem
+                    onClick={(event) => handleClickAction(1)}
+                    secondaryAction={
+                        <IconButton edge="end" aria-label="edit">
+                            <ModeEditOutlineIcon className="icon" />
+                        </IconButton>
+                    }>
+                    <ThemeProvider theme={themeListItemText}>
+                        <ListItemText primary="Sửa" />
+                    </ThemeProvider>
+                </ListItem>
+                <ListItem
+                    onClick={(event) => handleClickAction(2)}
+                    secondaryAction={
+                        <IconButton edge="end" aria-label="delete">
+                            <DeleteOutlineIcon className="icon" />
+                        </IconButton>
+                    }>
+                    <ThemeProvider theme={themeListItemText}>
+                        <ListItemText primary="Xóa" />
+                    </ThemeProvider>
+                </ListItem>
+            </List>
+        </Box>
+    );
+};
+
 export default function PageProduct() {
     const [showModalNhomHang, setShowModalNhomHang] = useState(false);
     const [idNhomHangHoa, setIdNhomHangHoa] = useState(false);
-    const [showModalHangHoa, setShowModalHangHoa] = useState(false);
     const [isNewNhomHang, setIsNewNhomHang] = useState(false);
-    const [isNewProduct, setIsNewProduct] = useState(false);
 
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [lstProduct, setLstProduct] = useState<ModelHangHoaDto[]>([]);
 
-    useEffect(() => {
-        GetDM_NhomHangHoa().then((data) => {
-            const obj = {
-                id: String,
-                maNhomHang: '',
-                tenNhomHang: 'Tất cả',
-                laNhomhangHoa: false
-            };
-            data.items.unshift(obj);
-            setLstProductGroup(data.items);
-        });
+    const [triggerModalProduct, setTriggerModalProduct] = useState({
+        showModal: false,
+        isNew: false,
+        idQuiDoi: ''
+    });
 
+    const PageLoad = async () => {
+        GetListHangHoa();
+        GetListNhomHangHoa();
+        console.log('into');
+    };
+
+    const GetListHangHoa = async () => {
         const param = {
             idNhomHangHoas: '',
             paramSearch: {
@@ -167,10 +286,17 @@ export default function PageProduct() {
                 typeSort: ''
             }
         };
+        const list = await Get_DMHangHoa(param);
+        setLstProduct(list.items);
+    };
 
-        Get_DMHangHoa(param).then((data) => {
-            setLstProduct(data.items);
-        });
+    const GetListNhomHangHoa = async () => {
+        const list = await GetDM_NhomHangHoa();
+        setLstProductGroup(list.items);
+    };
+
+    useEffect(() => {
+        PageLoad();
     }, []);
 
     function showModalAddNhomHang(id?: string) {
@@ -182,13 +308,13 @@ export default function PageProduct() {
         setShowModalNhomHang(true);
     }
 
-    function showModalAddProduct(id?: string) {
-        if (id) {
-            setIsNewProduct(false);
-        } else {
-            setIsNewProduct(true);
-        }
-        setShowModalHangHoa(true);
+    function showModalAddProduct(action?: number, id = '') {
+        // todo action
+        setTriggerModalProduct({
+            showModal: true,
+            isNew: Utils.checkNull(id),
+            idQuiDoi: id
+        });
     }
 
     function saveNhomHang(objNew: ModelNhomHangHoa) {
@@ -200,17 +326,22 @@ export default function PageProduct() {
     }
 
     function saveProduct(objNew: ModelHangHoaDto) {
-        setLstProduct((oldArr) => {
-            const copy = [...oldArr];
-            const newRow = { ...objNew };
-            const dvChuan = objNew.donViQuiDois.filter((x) => x.laDonViTinhChuan === 1);
-            newRow.idDonViQuyDoi = dvChuan[0].id;
-            newRow.maHangHoa = dvChuan[0].maHangHoa;
-            newRow.giaBan = dvChuan[0].giaBan;
-            newRow.tenDonViTinh = dvChuan[0].tenDonViTinh;
-            copy.unshift(newRow);
-            return copy;
-        });
+        if (triggerModalProduct.isNew) {
+            setLstProduct((oldArr) => {
+                const copy = [...oldArr];
+                const newRow = { ...objNew };
+                const dvChuan = objNew.donViQuiDois.filter((x) => x.laDonViTinhChuan === 1);
+                newRow.idDonViQuyDoi = dvChuan[0].id;
+                newRow.maHangHoa = dvChuan[0].maHangHoa;
+                newRow.giaBan = dvChuan[0].giaBan;
+                newRow.tenDonViTinh = dvChuan[0].tenDonViTinh;
+
+                copy.unshift(newRow);
+                return copy;
+            });
+        } else {
+            GetListHangHoa();
+        }
     }
 
     return (
@@ -224,10 +355,7 @@ export default function PageProduct() {
                 handleSave={saveNhomHang}></ModalNhomHangHoa>
             <ModalHangHoa
                 dataNhomHang={lstProductGroup}
-                show={showModalHangHoa}
-                id={idNhomHangHoa}
-                isNew={isNewProduct}
-                handleClose={() => setShowModalHangHoa(false)}
+                trigger={triggerModalProduct}
                 handleSave={saveProduct}></ModalHangHoa>
 
             <Grid container rowSpacing={1} columnSpacing={2}>
@@ -321,7 +449,10 @@ export default function PageProduct() {
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <TableProduct dataHangHoa={lstProduct} />
+                            <TableProduct
+                                dataHangHoa={lstProduct}
+                                handleClickActionRow={showModalAddProduct}
+                            />
                         </Grid>
                     </Grid>
                 </Grid>

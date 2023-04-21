@@ -21,8 +21,9 @@ import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import '../../App.css';
 import './style.css';
 import Utils from '../../utils/utils';
-import { CreateOrEditProduct, Get_DMHangHoa } from '../../services/product/service';
+import { CreateOrEditProduct, GetDetailProduct } from '../../services/product/service';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
+import utils from '../../utils/utils';
 // const customTheme = createMuiTheme({
 //   overrides: {
 //     MuiInput: {
@@ -35,56 +36,59 @@ import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
 //     }
 //   });
 
-export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNew }: any) {
-    // const [showModal, setShowModal] = useState(false);
-    const [objNhom, setObjNhomHang] = useState<ModelNhomHangHoa | null>(null);
+export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
+    const [open, setOpen] = useState(false);
+    const [isNew, setIsNew] = useState(false);
+    const [product, setProduct] = useState(new ModelHangHoaDto());
+    const [wasClickSave, setWasClickSave] = useState(false);
 
-    const [tenHangHoa, setTenHangHoa] = useState('');
-    const [idNhomHangHoa, setIdNhomHangHoa] = useState<string | null>(null);
-    const [tenNhomHang, setTenNhomHang] = useState('');
-    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(2);
-    const [soPhutThucHien, setSoPhutThucHien] = useState('');
-    const [moTa, setMoTa] = useState('');
-
-    const [maHangHoa, setMaHangHoa] = useState('');
-    const [tenDonViTinh, setTenDonViTinh] = useState('');
-    const [tyLeChuyenDoi, setTyLeChuyenDoi] = useState(1);
-    const [giaBan, setGiaBan] = useState('');
-    const [laDonViTinhChuan, setLaDonViTinhChuan] = useState(1);
-
-    function CheckSave() {
-        if (Utils.checkNull(tenHangHoa)) {
-            return 'Vui lòng nhập tên hàng hóa';
+    const showModal = async (id: string) => {
+        if (id) {
+            const obj = await GetDetailProduct(id);
+            setProduct(obj);
+        } else {
+            setProduct(new ModelHangHoaDto());
         }
-        return '';
-    }
+        console.log('product ', product);
+    };
+
+    useEffect(() => {
+        if (trigger.showModal) {
+            setOpen(true);
+            showModal(trigger.idQuiDoi);
+        }
+        setIsNew(trigger.isNew);
+        setWasClickSave(false);
+    }, [trigger]);
+
+    const CheckSave = () => {
+        if (Utils.checkNull(product.tenHangHoa ?? '')) {
+            return false;
+        }
+        return true;
+    };
 
     async function saveProduct() {
-        handleClose();
-
-        const objNew = new ModelHangHoaDto();
-        objNew.id = Utils.GuidEmpty;
-        objNew.tenHangHoa = tenHangHoa;
-        objNew.tenHangHoa_KhongDau = Utils.strToEnglish(tenHangHoa);
-        objNew.idNhomHangHoa = idNhomHangHoa;
-        objNew.idLoaiHangHoa = idLoaiHangHoa;
-        objNew.soPhutThucHien = Utils.checkNull(soPhutThucHien) ? 0 : soPhutThucHien;
-        objNew.moTa = moTa;
-        objNew.trangThai = 1;
-        console.log(idNhomHangHoa);
-
-        objNew.tenNhomHang = tenNhomHang ?? '';
-        objNew.tenLoaiHangHoa = idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
+        setWasClickSave(true);
+        if (wasClickSave) {
+            return;
+        }
+        const check = CheckSave();
+        if (!check) {
+            return;
+        }
+        const objNew = { ...product };
+        objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
 
         objNew.donViQuiDois = [
             {
-                id: Utils.GuidEmpty,
-                maHangHoa: maHangHoa,
-                tenDonViTinh: tenDonViTinh,
-                tyLeChuyenDoi: tyLeChuyenDoi,
-                giaBan: Utils.checkNull(giaBan) ? 0 : giaBan,
-                laDonViTinhChuan: laDonViTinhChuan
+                id: objNew.idDonViQuyDoi,
+                maHangHoa: objNew.maHangHoa,
+                tenDonViTinh: '',
+                tyLeChuyenDoi: objNew.tyLeChuyenDoi,
+                giaBan: objNew.giaBan,
+                laDonViTinhChuan: objNew.laDonViTinhChuan
             }
         ];
 
@@ -92,10 +96,11 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
         objNew.id = data.id;
         objNew.donViQuiDois = [...data.donViQuiDois];
         handleSave(objNew);
+        setOpen(false);
     }
     return (
         <>
-            <Dialog open={show} onClose={() => handleClose()} fullWidth maxWidth="md">
+            <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
                 <DialogTitle> {isNew ? 'Thêm' : 'Cập nhật'} dịch vụ</DialogTitle>
                 <DialogContent>
                     <Grid container>
@@ -113,8 +118,12 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     required
                                     size="small"
                                     placeholder="Mã tự động"
-                                    value={maHangHoa}
-                                    onChange={(event) => setMaHangHoa(event.target.value)}
+                                    value={product.maHangHoa}
+                                    onChange={(event) =>
+                                        setProduct((itemOlds) => {
+                                            return { ...itemOlds, maHangHoa: event.target.value };
+                                        })
+                                    }
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
@@ -127,8 +136,18 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     size="small"
                                     fullWidth
                                     required
-                                    value={tenHangHoa}
-                                    onChange={(event) => setTenHangHoa(event.target.value)}
+                                    error={wasClickSave && Utils.checkNull(product.tenHangHoa)}
+                                    helperText={
+                                        wasClickSave && Utils.checkNull(product.tenHangHoa)
+                                            ? 'Vui lòng nhập tên hàng hóa'
+                                            : ''
+                                    }
+                                    value={product.tenHangHoa}
+                                    onChange={(event) =>
+                                        setProduct((itemOlds) => {
+                                            return { ...itemOlds, tenHangHoa: event.target.value };
+                                        })
+                                    }
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
@@ -141,15 +160,22 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     fullWidth
                                     disablePortal
                                     isOptionEqualToValue={(option, value) => option.id === value.id}
-                                    inputValue={tenNhomHang ?? ''}
+                                    inputValue={product.tenNhomHang}
                                     options={dataNhomHang.filter(
                                         (x: ModelNhomHangHoa) => x.id !== null
                                     )}
                                     onChange={(event, newValue) =>
-                                        setIdNhomHangHoa(newValue?.id ?? null)
+                                        setProduct((itemOlds) => {
+                                            return {
+                                                ...itemOlds,
+                                                idNhomHangHoa: newValue?.id ?? null
+                                            };
+                                        })
                                     }
                                     onInputChange={(event, newInputValue) => {
-                                        setTenNhomHang(newInputValue);
+                                        setProduct((itemOlds) => {
+                                            return { ...itemOlds, tenNhomHang: newInputValue };
+                                        });
                                     }}
                                     getOptionLabel={(option: ModelNhomHangHoa) =>
                                         option.tenNhomHang ? option.tenNhomHang : ''
@@ -169,8 +195,12 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                         size="small"
                                         fullWidth
                                         placeholder="0"
-                                        value={giaBan}
-                                        onChange={(event) => setGiaBan(event.target.value)}
+                                        value={product.giaBan}
+                                        onChange={(event) =>
+                                            setProduct((itemOlds) => {
+                                                return { ...itemOlds, giaBan: event.target.value };
+                                            })
+                                        }
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} lg={6} sx={{ PluginArray: 4 }}>
@@ -182,8 +212,15 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                         size="small"
                                         fullWidth
                                         placeholder="0"
-                                        value={soPhutThucHien}
-                                        onChange={(event) => setSoPhutThucHien(event.target.value)}
+                                        value={product.soPhutThucHien}
+                                        onChange={(event) =>
+                                            setProduct((itemOlds) => {
+                                                return {
+                                                    ...itemOlds,
+                                                    soPhutThucHien: event.target.value
+                                                };
+                                            })
+                                        }
                                     />
                                 </Grid>
                             </Grid>
@@ -197,8 +234,15 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                     fullWidth
                                     multiline
                                     rows="2"
-                                    value={moTa}
-                                    onChange={(event) => setMoTa(event.target.value)}
+                                    value={product.moTa}
+                                    onChange={(event) =>
+                                        setProduct((itemOlds) => {
+                                            return {
+                                                ...itemOlds,
+                                                moTa: event.target.value
+                                            };
+                                        })
+                                    }
                                 />
                             </Grid>
                         </Grid>
@@ -207,7 +251,9 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                                 display="grid"
                                 sx={{ border: '2px dashed #cccc', p: 5, ml: 4 }}
                                 className="text-center">
-                                <InsertDriveFileIcon className="icon-size" />
+                                <Box>
+                                    <InsertDriveFileIcon className="icon-size" />
+                                </Box>
                                 <Box sx={{ pt: 2 }}>
                                     <CloudDoneIcon
                                         style={{ paddingRight: '5px', color: '#7C3367' }}
@@ -228,7 +274,7 @@ export function ModalHangHoa({ dataNhomHang, handleClose, handleSave, show, isNe
                     <Button
                         variant="outlined"
                         sx={{ borderColor: '#7C3367' }}
-                        onClick={() => handleClose()}>
+                        onClick={() => setOpen(false)}>
                         Hủy
                     </Button>
                 </DialogActions>

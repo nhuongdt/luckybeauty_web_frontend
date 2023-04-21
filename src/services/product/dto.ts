@@ -4,7 +4,7 @@ export class ModelHangHoaDto {
     id?: string = Utils.GuidEmpty;
     tenHangHoa?: string = '';
     tenHangHoa_KhongDau?: string = '';
-    idNhomHangHoa?: string | null;
+    idNhomHangHoa?: string | null = '';
     idLoaiHangHoa?: number = 2;
     soPhutThucHien?: number | string = '0';
     moTa?: string = '';
@@ -49,7 +49,7 @@ export class ModelHangHoaDto {
 
 /* group product */
 export class ModelNhomHangHoa {
-    id?: string = Utils.GuidEmpty;
+    id: string = Utils.GuidEmpty;
     maNhomHang? = '';
     tenNhomHang? = '';
     tenNhomHang_KhongDau = '';

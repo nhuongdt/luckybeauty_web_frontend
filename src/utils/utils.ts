@@ -122,14 +122,14 @@ class Utils {
             ?.join('')
             ?.toUpperCase();
     };
-    Remove_LastComma = (str: string) => {
+    Remove_LastComma = (str: string | null | undefined) => {
         if (str !== null && str !== undefined && str.length > 1) {
             return str.replace(/(^[,\s]+)|([,\s]+$)/g, '');
         } else {
             return '';
         }
     };
-    checkNull = (input: string) => {
+    checkNull = (input: string | null | undefined) => {
         return input === null || input === undefined || input.toString().replace(/\s+/g, '') === '';
     };
     formatNumberToFloat = (objVal: any) => {

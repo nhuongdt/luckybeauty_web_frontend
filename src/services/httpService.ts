@@ -24,7 +24,7 @@ const http = axios.create({
 
 http.interceptors.request.use(
     function (config) {
-        console.log(Cookies.get('accessToken'));
+        // console.log(Cookies.get('accessToken'));
         if (!Cookies.get('accessToken')) {
             config.headers.common.Authorization = 'Bearer ' + Cookies.get('accessToken');
         }
