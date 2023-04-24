@@ -42,7 +42,7 @@ const CreateOrEditUser = ({ visible, onCancel,modalType, onOk }: ICreateOrEditUs
     onOk={onOk}
     >
         <Form layout="vertical">
-        <Tabs defaultActiveKey={"role"} size={"large"} tabBarGutter={64}>
+        <Tabs defaultActiveKey={"user"} size={"large"} tabBarGutter={64}>
             
         <TabPane tab="User detail" key={"user"}>
         <Grid container spacing={1}>
