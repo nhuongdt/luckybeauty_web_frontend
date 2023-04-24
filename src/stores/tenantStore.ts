@@ -1,5 +1,4 @@
 import { makeAutoObservable } from 'mobx'
-
 import CreateTenantInput from '../services/tenant/dto/createTenantInput'
 import { EntityDto } from '../services/dto/entityDto'
 import { GetAllTenantOutput } from '../services/tenant/dto/getAllTenantOutput'
@@ -10,14 +9,14 @@ import UpdateTenantInput from '../services/tenant/dto/updateTenantInput'
 import tenantService from '../services/tenant/tenantService'
 
 class TenantStore {
-  tenants!: PagedResultDto<GetAllTenantOutput> 
+  tenants!: PagedResultDto<GetAllTenantOutput>
 
-  tenantModel: TenantModel = new TenantModel();
+  tenantModel: TenantModel = new TenantModel()
 
-  constructor() {
+  constructor(){
     makeAutoObservable(this)
-    
   }
+
   async create(createTenantInput: CreateTenantInput) {
     await tenantService.create(createTenantInput)
   }
@@ -45,7 +44,7 @@ class TenantStore {
       (x: GetAllTenantOutput) => x.id !== entityDto.id
     )
   }
-  async get(entityDto: EntityDto) {
+  async get(entityDto: number) {
     const result = await tenantService.get(entityDto)
     this.tenantModel = result
   }

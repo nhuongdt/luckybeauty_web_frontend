@@ -27,7 +27,7 @@ class TenantService {
     return result.data
   }
 
-  public async get(entityDto: EntityDto): Promise<GetTenantOutput> {
+  public async get(entityDto: number): Promise<GetTenantOutput> {
     const result = await http.get('api/services/app/Tenant/Get', {
       params: entityDto,
     })

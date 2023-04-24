@@ -1,4 +1,4 @@
-import { action, observable,makeObservable, makeAutoObservable } from 'mobx'
+import {  makeAutoObservable } from 'mobx'
 
 import type { CreateRoleInput } from '../services/role/dto/createRoleInput'
 import { EntityDto } from '../services/dto/entityDto'
@@ -63,7 +63,7 @@ class RoleStore {
     this.allPermissions = result
   }
 
-  async getRoleForEdit(entityDto: EntityDto) {
+  async getRoleForEdit(entityDto: number) {
     const result = await roleService.getRoleForEdit(entityDto)
     this.roleEdit.grantedPermissionNames = result.grantedPermissionNames
     this.roleEdit.permissions = result.permissions

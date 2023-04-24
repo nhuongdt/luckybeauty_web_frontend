@@ -243,7 +243,7 @@ class EmployeeScreen extends Component {
                     <td className="text-td-table">{item.diaChi}</td>
                     <td className="text-td-table">{item.tenChucVu}</td>
                     <td className="text-td-table"><CalendarMonthIcon fontSize="small"/> {new Date(item.ngayVaoLam).toLocaleDateString('en-GB')}</td>
-                    <td className="text-td-table"><Space wrap direction="horizontal">
+                    <td className="text-td-table" style={{width: '150px'}}><Space wrap direction="horizontal">
                         <Button
                           type="primary"
                           icon={<EditOutlined />}

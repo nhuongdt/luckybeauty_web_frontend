@@ -234,7 +234,7 @@ class CustomerScreen extends Component {
                       ).toLocaleDateString("en-GB")}
                     </td>
                     <td className="text-secondary">{item.tenNguonKhach}</td>
-                    <td className="text-td-table">
+                    <td className="text-td-table" style={{width: '150px'}}>
                       <Space wrap direction="horizontal">
                         <Button
                           type="primary"

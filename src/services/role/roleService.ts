@@ -54,11 +54,9 @@ class RoleService {
   }
 
   public async getRoleForEdit(
-    entityDto: EntityDto
+    id: number
   ): Promise<GetRoleForEditOutput> {
-    const result = await http.get('api/services/app/Role/GetRoleForEdit', {
-      params: entityDto,
-    })
+    const result = await http.get(`api/services/app/Role/GetRoleForEdit?Id=${id}`,)
     return result.data.result
   }
 

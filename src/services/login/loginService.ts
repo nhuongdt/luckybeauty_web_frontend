@@ -4,7 +4,7 @@ import Cookies from "js-cookie"
 import LoginModel from "../../models/Login/loginModel"
 const qs = require('qs')
 const http = axios.create({
-    baseURL: 'https://localhost:44311/',
+    baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
     timeout: 30000,
     paramsSerializer: function (params) {
       return qs.stringify(params, {

@@ -9,4 +9,5 @@ export interface GetAllUserOutput {
   creationTime: Date
   roleNames: string[]
   id: number
+  nhanSuId: string
 }
