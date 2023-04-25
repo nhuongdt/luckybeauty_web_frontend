@@ -1,7 +1,7 @@
 import Utils from '../../utils/utils';
 
 export class ModelHangHoaDto {
-    id?: string = Utils.GuidEmpty;
+    id?: string | null = Utils.GuidEmpty;
     tenHangHoa?: string = '';
     tenHangHoa_KhongDau?: string = '';
     idNhomHangHoa?: string | null = '';
@@ -56,13 +56,13 @@ export class ModelNhomHangHoa {
     moTa? = '';
     idParent: string | null = null;
     color = '';
-    laNhomHangHoa = true;
+    laNhomHangHoa = false;
 
     constructor(
         id: string = Utils.GuidEmpty,
         maNhomHang = '',
         tenNhomHang = '',
-        laNhomHangHoa = true
+        laNhomHangHoa = false
     ) {
         this.id = id;
         this.maNhomHang = maNhomHang;

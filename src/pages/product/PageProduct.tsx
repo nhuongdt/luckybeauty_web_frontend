@@ -25,6 +25,7 @@ import {
     TableHead,
     TableRow,
     Checkbox,
+    InputAdornment,
     colors
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -43,6 +44,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import InfoIcon from '@mui/icons-material/Info';
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SearchIcon from '@mui/icons-material/Search';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { isJSDocNullableType } from 'typescript';
 import Utils from '../../utils/utils';
@@ -293,7 +295,10 @@ export default function PageProduct() {
 
     const GetListNhomHangHoa = async () => {
         const list = await GetDM_NhomHangHoa();
-        setLstProductGroup(list.items);
+        const lstAll = [...list.items];
+        const obj = new ModelNhomHangHoa('', '', 'Tất cả');
+        lstAll.unshift(obj);
+        setLstProductGroup(lstAll);
     };
 
     useEffect(() => {
@@ -359,7 +364,7 @@ export default function PageProduct() {
                 trigger={triggerModalProduct}
                 handleSave={saveProduct}></ModalHangHoa>
 
-            <Grid container rowSpacing={1} columnSpacing={2}>
+            <Grid container rowSpacing={1} columnSpacing={2} style={{ paddingTop: '10px' }}>
                 <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
                     <Typography variant="h5">Danh mục dịch vụ</Typography>
                 </Grid>
@@ -417,9 +422,17 @@ export default function PageProduct() {
                             lg={6}
                             style={{ paddingLeft: '30px' }}
                             className="page-title-search">
-                            <TextField size="small" sx={{ width: 7 / 10 }}>
-                                tim kiem
-                            </TextField>
+                            <TextField
+                                size="small"
+                                sx={{ width: 7 / 10 }}
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    )
+                                }}></TextField>
                         </Grid>
                         <Grid
                             item
@@ -434,14 +447,22 @@ export default function PageProduct() {
                                 justifyContent="flex-end"
                                 style={{ paddingTop: '3px' }}>
                                 <Button
-                                    variant="contained"
-                                    style={{ marginRight: 8 }}
+                                    variant="outlined"
+                                    style={{
+                                        marginRight: 8,
+                                        borderColor: '#6c757d',
+                                        color: '#343a40'
+                                    }}
                                     className="btnSecond"
                                     startIcon={<FileUploadIcon />}>
                                     Nhập
                                 </Button>
                                 <Button
-                                    variant="contained"
+                                    variant="outlined"
+                                    style={{
+                                        borderColor: '#6c757d',
+                                        color: '#343a40'
+                                    }}
                                     color="error"
                                     className="btnSecond"
                                     startIcon={<FileDownloadIcon />}>
@@ -463,6 +484,26 @@ export default function PageProduct() {
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                             /> */}
+                        </Grid>
+
+                        <Grid
+                            container
+                            className="text-center"
+                            sx={{ display: lstProduct.length == 0 ? 'block' : 'none' }}>
+                            <Grid
+                                item
+                                xs={12}
+                                sm={12}
+                                sx={{
+                                    bgcolor: '#FAEBD7',
+                                    height: 35,
+                                    justifyItems: 'center',
+                                    alignItems: 'center',
+                                    paddingTop: 1 / 2
+                                }}
+                                style={{ fontStyle: 'Italic' }}>
+                                Không có dữ liệu
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

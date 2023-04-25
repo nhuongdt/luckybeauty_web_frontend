@@ -190,7 +190,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                                     setIdParent(newValue);
                                 }}
                                 options={dataNhomHang.filter(
-                                    (x: ModelNhomHangHoa) => x.id !== null
+                                    (x: ModelNhomHangHoa) => x.id !== null && x.id !== ''
                                 )}
                                 getOptionLabel={(option: ModelNhomHangHoa) =>
                                     option.tenNhomHang ? option.tenNhomHang : ''

@@ -56,7 +56,7 @@ export const GetDM_NhomHangHoa = async () => {
         .then((res: { data: { result: any } }) => {
             return res.data.result;
         });
-    console.log('GetDM_NhomHangHoa ', process.env.REACT_APP_BASE_URL_LOCAL);
+    console.log('GetDM_NhomHangHoa ', xx);
     return xx;
 };
 
