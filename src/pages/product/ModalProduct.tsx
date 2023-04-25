@@ -173,7 +173,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     isOptionEqualToValue={(option, value) => option.id === value.id}
                                     inputValue={product.tenNhomHang}
                                     options={dataNhomHang.filter(
-                                        (x: ModelNhomHangHoa) => x.id !== null
+                                        (x: ModelNhomHangHoa) => x.id !== null && x.id !== ''
                                     )}
                                     onChange={(event, newValue) =>
                                         setProduct((itemOlds) => {
