@@ -15,17 +15,13 @@ class TenantService {
         return result.data.result;
     }
 
-    public async delete(entityDto: EntityDto) {
-        const result = await http.delete('api/services/app/Tenant/Delete', {
-            params: entityDto
-        });
+    public async delete(entityDto: number) {
+        const result = await http.delete(`api/services/app/Tenant/Delete?Id=${entityDto}`);
         return result.data;
     }
 
     public async get(entityDto: number): Promise<GetTenantOutput> {
-        const result = await http.get('api/services/app/Tenant/Get', {
-            params: entityDto
-        });
+        const result = await http.get(`api/services/app/Tenant/Get?Id=${entityDto}`);
         return result.data.result;
     }
 

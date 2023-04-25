@@ -85,7 +85,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                     return SiderMenuItem(menuItem, lstPermission, collapsed);
                 }
             })}
-            <ListItemButton key={'logout'} component={Link} to="/logout" className="active-menu-bg">
+            <ListItemButton key={'logout'} component={Link} to="/login" className="active-menu-bg">
                 {/* <Link to={menuItem.path}> </Link> */}
                 <Stack
                     alignItems="center"

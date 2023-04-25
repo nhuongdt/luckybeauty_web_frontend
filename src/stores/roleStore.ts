@@ -51,7 +51,7 @@ class RoleStore {
     }
 
     async delete(entityDto: EntityDto) {
-        await roleService.delete(entityDto);
+        await roleService.delete(entityDto.id);
         this.roles.items = this.roles.items.filter((x: GetAllRoleOutput) => x.id !== entityDto.id);
     }
 
@@ -68,7 +68,7 @@ class RoleStore {
     }
 
     async get(entityDto: EntityDto) {
-        const result = await roleService.get(entityDto);
+        const result = await roleService.get(entityDto.id);
         this.roles = result.data.result;
     }
 
