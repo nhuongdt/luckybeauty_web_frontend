@@ -1,5 +1,5 @@
 import http from '../httpService';
-import { ModelHangHoaDto, ModelNhomHangHoa, IPagedProductSearchDto } from './dto';
+import { ModelHangHoaDto, ModelNhomHangHoa, PagedProductSearchDto } from './dto';
 
 export const GetDetailProduct = async (id: string) => {
     const data = await http
@@ -10,7 +10,7 @@ export const GetDetailProduct = async (id: string) => {
     console.log('GetDetailProduct ', data);
     return data;
 };
-export const Get_DMHangHoa = async (input: IPagedProductSearchDto) => {
+export const Get_DMHangHoa = async (input: PagedProductSearchDto) => {
     const xx = await http
         .post(`${process.env.REACT_APP_BASE_URL_LOCAL}HangHoa/GetDMHangHoa`, input)
         .then((res: { data: { result: any } }) => {

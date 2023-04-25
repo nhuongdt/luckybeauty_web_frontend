@@ -94,3 +94,8 @@
 .MuiDialogActions-root.MuiDialogActions-spacing {
     padding-right: 24px;
 }
+
+.MuiTablePagination-selectLabel,
+.MuiTablePagination-displayedRows {
+    margin-bottom: 0;
+}

@@ -1,5 +1,5 @@
 import Utils from '../../utils/utils';
-import { IParamSearchDto } from '../dto/IParamSearchDto';
+import { ParamSearchDto } from '../dto/ParamSearchDto';
 
 export class ModelHangHoaDto {
     id?: string | null = Utils.GuidEmpty;
@@ -73,7 +73,6 @@ export class ModelNhomHangHoa {
 }
 
 /* search */
-export interface IPagedProductSearchDto {
-    idNhomHangHoas: string;
-    paramSearch: IParamSearchDto;
+export class PagedProductSearchDto extends ParamSearchDto {
+    idNhomHangHoas?: string = '';
 }

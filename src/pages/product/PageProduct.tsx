@@ -18,7 +18,9 @@ import {
     Typography,
     Divider,
     Table,
+    TableFooter,
     TablePagination,
+    Pagination,
     TableBody,
     TableCell,
     TableContainer,
@@ -26,6 +28,7 @@ import {
     TableRow,
     Checkbox,
     InputAdornment,
+    Stack,
     colors
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -39,7 +42,7 @@ import GroupProductService from '../../services/product/GroupProductService';
 import {
     ModelNhomHangHoa,
     ModelHangHoaDto,
-    IPagedProductSearchDto
+    PagedProductSearchDto
 } from '../../services/product/dto';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
@@ -53,6 +56,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { isJSDocNullableType } from 'typescript';
 import Utils from '../../utils/utils';
+import { ListGroup } from 'react-bootstrap';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
+import { Get_DMHangHoa } from '../../services/product/service';
 
 interface Props {
     children?: ReactNode;
@@ -115,112 +121,6 @@ export function NhomHangHoas({ dataNhomHang }: any) {
     );
 }
 
-export const TableProduct = ({ dataHangHoa, handleClickActionRow }: any) => {
-    const [showAction, setShowAction] = useState({ index: 0, value: false });
-    const [showListAction, setshowListAction] = useState(true);
-    const [idQuyDoi, setIdQuyDoi] = useState('');
-    const [isHover, setIsHover] = useState(false);
-
-    const doActionRow = (action: number) => {
-        handleClickActionRow(action, idQuyDoi);
-    };
-
-    const hoverRow = (event: any, idQuyDoi: string, index: number) => {
-        switch (event.type) {
-            case 'mouseenter': // enter
-                setShowAction({ index: index, value: true });
-                break;
-            case 'mouseleave': //leave
-                setShowAction({ index: index, value: false });
-                break;
-        }
-        setshowListAction(false);
-        setIdQuyDoi(idQuyDoi);
-        setIsHover(event.type === 'mouseenter');
-    };
-    return (
-        <>
-            <TableContainer>
-                <Table>
-                    <TableHead className="table-head">
-                        <TableRow>
-                            <TableCell sx={{ width: 1 / 25 }}>
-                                <Checkbox />
-                            </TableCell>
-                            <TableCell sx={{ width: 1 / 8 }}>Mã dịch vụ</TableCell>
-                            <TableCell>Tên dịch vụ</TableCell>
-                            <TableCell sx={{ width: 1 / 6 }}>Nhóm dịch vụ</TableCell>
-                            <TableCell sx={{ width: 1 / 12 }}>Đơn giá</TableCell>
-                            <TableCell sx={{ width: 1 / 10 }}>Thời gian</TableCell>
-                            <TableCell sx={{ width: 1 / 6 }}>Trạng thái</TableCell>
-                            <TableCell sx={{ width: 1 / 25 }}>#</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody className="table-body">
-                        {dataHangHoa.map((row: any, index: any) => (
-                            <TableRow
-                                // sx={{ backgroundColor: isHover ? 'red' : 'none' }}
-                                key={row.idDonViQuyDoi}
-                                onMouseLeave={(event) => {
-                                    hoverRow(event, row.idDonViQuyDoi, index);
-                                }}
-                                onMouseEnter={(event) => {
-                                    hoverRow(event, row.idDonViQuyDoi, index);
-                                }}
-                                sx={{
-                                    backgroundColor:
-                                        isHover && idQuyDoi == row.idDonViQuyDoi ? '#cccc' : 'none',
-                                    '&:last-child td, &:last-child th': { border: 0 }
-                                }}>
-                                <TableCell sx={{ width: 1 / 25 }}>
-                                    <Checkbox />
-                                </TableCell>
-                                <TableCell sx={{ width: 1 / 10 }}>{row.maHangHoa}</TableCell>
-                                <TableCell align="left">{row.tenHangHoa}</TableCell>
-                                <TableCell sx={{ width: 1 / 6 }} align="left">
-                                    {row.tenNhomHang}
-                                </TableCell>
-                                <TableCell sx={{ width: 1 / 12 }} align="right">
-                                    {Utils.formatNumber(row.giaBan)}
-                                </TableCell>
-                                <TableCell sx={{ width: 1 / 10 }} align="center">
-                                    0
-                                </TableCell>
-                                <TableCell sx={{ width: 1 / 6 }} align="left">
-                                    {row.txtTrangThaiHang}
-                                </TableCell>
-                                <TableCell sx={{ width: 1 / 25 }}>
-                                    <MoreHorizIcon
-                                        fontSize="small"
-                                        onClick={() => {
-                                            setshowListAction(true);
-                                            setIdQuyDoi(row.idDonViQuyDoi);
-                                        }}
-                                        sx={{
-                                            display:
-                                                showAction.index == index && showAction.value
-                                                    ? 'block'
-                                                    : 'none'
-                                        }}
-                                    />
-                                    <ListAction
-                                        showAction={
-                                            showAction.index == index &&
-                                            showAction.value &&
-                                            showListAction
-                                        }
-                                        handleClickAction={doActionRow}
-                                    />
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </>
-    );
-};
-
 export const ListAction = ({ showAction, handleClickAction }: any) => {
     return (
         <Box sx={{ display: showAction ? 'block' : 'none' }} className="list-icon-action">
@@ -263,13 +163,41 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
     );
 };
 
-export default function PageProduct() {
+export const LabelDisplayedRows = ({ currentPage, pageSize, totalCount }: any) => {
+    const [fromRow, setFromRow] = useState();
+    const to = (currentPage + 1) * pageSize;
+    const [toRow, setToRow] = useState(to);
+    console.log('fromRow', fromRow);
+    if (toRow > totalCount) {
+        setToRow(totalCount);
+    }
+
+    // useEffect(() => {
+    //     const from = (currentPage - 1) * pageSize + 1;
+    //     return from;
+    // }, [fromRow, toRow]);
+
+    return (
+        <>
+            <Typography variant="body2" style={{ paddingTop: '6px' }}>
+                Hiển thị {fromRow} đến {toRow} bản ghi
+            </Typography>
+        </>
+    );
+};
+
+export default function PageProduct({ handleClickActionRow }: any) {
     const [showModalNhomHang, setShowModalNhomHang] = useState(false);
     const [idNhomHangHoa, setIdNhomHangHoa] = useState(false);
     const [isNewNhomHang, setIsNewNhomHang] = useState(false);
 
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
-    const [lstProduct, setLstProduct] = useState<ModelHangHoaDto[]>([]);
+    const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
+        totalCount: 0,
+        totalPage: 0,
+        items: []
+    });
+    // const [totalPage, setLstProduct] = useState<ModelHangHoaDto[]>([]);
 
     const [triggerModalProduct, setTriggerModalProduct] = useState({
         showModal: false,
@@ -277,15 +205,13 @@ export default function PageProduct() {
         idQuiDoi: ''
     });
 
-    const [filterPageProduct, setFilterPageProduct] = useState<IPagedProductSearchDto>({
+    const [filterPageProduct, setFilterPageProduct] = useState<PagedProductSearchDto>({
         idNhomHangHoas: '',
-        paramSearch: {
-            textSearch: '',
-            currentPage: 0,
-            pageSize: 10,
-            columnSort: '',
-            typeSort: ''
-        }
+        textSearch: '',
+        currentPage: 1,
+        pageSize: 1,
+        columnSort: '',
+        typeSort: ''
     });
 
     const PageLoad = async () => {
@@ -296,7 +222,13 @@ export default function PageProduct() {
 
     const GetListHangHoa = async () => {
         const list = await ProductService.Get_DMHangHoa(filterPageProduct);
-        setLstProduct(list.items);
+        // setLstProduct(list.items);
+        console.log('list.totalCount ', list.totalCount);
+        setPageDataProduct({
+            totalCount: list.totalCount,
+            totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
+            items: list.items
+        });
     };
 
     const GetListNhomHangHoa = async () => {
@@ -339,8 +271,20 @@ export default function PageProduct() {
 
     function saveProduct(objNew: ModelHangHoaDto) {
         if (triggerModalProduct.isNew) {
-            setLstProduct((oldArr) => {
-                const copy = [...oldArr];
+            // setLstProduct((oldArr) => {
+            //     const copy = [...oldArr];
+            //     const newRow = { ...objNew };
+            //     const dvChuan = objNew.donViQuiDois.filter((x) => x.laDonViTinhChuan === 1);
+            //     newRow.idDonViQuyDoi = dvChuan[0].id;
+            //     newRow.maHangHoa = dvChuan[0].maHangHoa;
+            //     newRow.giaBan = dvChuan[0].giaBan;
+            //     newRow.tenDonViTinh = dvChuan[0].tenDonViTinh;
+
+            //     copy.unshift(newRow);
+            //     return copy;
+            // });
+            setPageDataProduct((olds) => {
+                const copy = { ...olds };
                 const newRow = { ...objNew };
                 const dvChuan = objNew.donViQuiDois.filter((x) => x.laDonViTinhChuan === 1);
                 newRow.idDonViQuyDoi = dvChuan[0].id;
@@ -348,7 +292,9 @@ export default function PageProduct() {
                 newRow.giaBan = dvChuan[0].giaBan;
                 newRow.tenDonViTinh = dvChuan[0].tenDonViTinh;
 
-                copy.unshift(newRow);
+                copy.items.unshift(newRow);
+                copy.totalCount += 1;
+                copy.totalPage = Utils.getTotalPage(copy.totalCount, filterPageProduct.pageSize);
                 return copy;
             });
         } else {
@@ -356,11 +302,44 @@ export default function PageProduct() {
         }
     }
 
-    const handleChangePage = () => {
-        console.log('into');
+    const handleChangePage = (event: any, value: number) => {
+        console.log('FilterPageProduct ', filterPageProduct);
+        setFilterPageProduct((itemOlds: any) => {
+            return {
+                ...itemOlds,
+                currentPage: value
+            };
+        });
+        GetListHangHoa();
     };
-    const handleChangeRowsPerPage = () => {
-        console.log('into');
+    const handleKeyDownTextSearch = (event: any) => {
+        if (event.keyCode === 13) {
+            console.log('Enter key pressed');
+        }
+    };
+
+    /* state in table */
+    const [showAction, setShowAction] = useState({ index: 0, value: false });
+    const [showListAction, setshowListAction] = useState(true);
+    const [idQuyDoi, setIdQuyDoi] = useState('');
+    const [isHover, setIsHover] = useState(false);
+
+    const doActionRow = (action: number) => {
+        handleClickActionRow(action, idQuyDoi);
+    };
+
+    const hoverRow = (event: any, idQuyDoi: string, index: number) => {
+        switch (event.type) {
+            case 'mouseenter': // enter
+                setShowAction({ index: index, value: true });
+                break;
+            case 'mouseleave': //leave
+                setShowAction({ index: index, value: false });
+                break;
+        }
+        setshowListAction(false);
+        setIdQuyDoi(idQuyDoi);
+        setIsHover(event.type === 'mouseenter');
     };
 
     return (
@@ -377,7 +356,7 @@ export default function PageProduct() {
                 trigger={triggerModalProduct}
                 handleSave={saveProduct}></ModalHangHoa>
 
-            <Grid container rowSpacing={1} columnSpacing={2} style={{ paddingTop: '10px' }}>
+            <Grid container rowSpacing={1} style={{ paddingTop: '10px' }}>
                 <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
                     <Typography variant="h5">Danh mục dịch vụ</Typography>
                 </Grid>
@@ -445,6 +424,17 @@ export default function PageProduct() {
                                             <SearchIcon />
                                         </InputAdornment>
                                     )
+                                }}
+                                onChange={(event) =>
+                                    setFilterPageProduct((itemOlds: any) => {
+                                        return {
+                                            ...itemOlds,
+                                            textSearch: event.target.value
+                                        };
+                                    })
+                                }
+                                onKeyDown={(event) => {
+                                    handleKeyDownTextSearch(event);
                                 }}></TextField>
                         </Grid>
                         <Grid
@@ -483,17 +473,124 @@ export default function PageProduct() {
                                 </Button>
                             </Box>
                         </Grid>
+
                         <Grid item xs={12} sm={12} md={12} lg={12}>
-                            <TableProduct
-                                dataHangHoa={lstProduct}
-                                handleClickActionRow={showModalAddProduct}
-                            />
+                            <TableContainer>
+                                <Table>
+                                    <TableHead className="table-head">
+                                        <TableRow>
+                                            <TableCell sx={{ width: 1 / 25 }}>
+                                                <Checkbox />
+                                            </TableCell>
+                                            <TableCell sx={{ width: 1 / 8 }}>Mã dịch vụ</TableCell>
+                                            <TableCell>Tên dịch vụ</TableCell>
+                                            <TableCell sx={{ width: 1 / 6 }}>
+                                                Nhóm dịch vụ
+                                            </TableCell>
+                                            <TableCell sx={{ width: 1 / 12 }}>Đơn giá</TableCell>
+                                            <TableCell sx={{ width: 1 / 10 }}>Thời gian</TableCell>
+                                            <TableCell sx={{ width: 1 / 6 }}>Trạng thái</TableCell>
+                                            <TableCell sx={{ width: 1 / 25 }}>#</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody className="table-body">
+                                        {pageDataProduct.items.map((row: any, index: any) => (
+                                            <TableRow
+                                                // sx={{ backgroundColor: isHover ? 'red' : 'none' }}
+                                                key={row.idDonViQuyDoi}
+                                                onMouseLeave={(event) => {
+                                                    hoverRow(event, row.idDonViQuyDoi, index);
+                                                }}
+                                                onMouseEnter={(event) => {
+                                                    hoverRow(event, row.idDonViQuyDoi, index);
+                                                }}
+                                                sx={{
+                                                    backgroundColor:
+                                                        isHover && idQuyDoi == row.idDonViQuyDoi
+                                                            ? '#cccc'
+                                                            : 'none',
+                                                    '&:last-child td, &:last-child th': {
+                                                        border: 0
+                                                    }
+                                                }}>
+                                                <TableCell sx={{ width: 1 / 25 }}>
+                                                    <Checkbox />
+                                                </TableCell>
+                                                <TableCell sx={{ width: 1 / 10 }}>
+                                                    {row.maHangHoa}
+                                                </TableCell>
+                                                <TableCell align="left">{row.tenHangHoa}</TableCell>
+                                                <TableCell sx={{ width: 1 / 6 }} align="left">
+                                                    {row.tenNhomHang}
+                                                </TableCell>
+                                                <TableCell sx={{ width: 1 / 12 }} align="right">
+                                                    {Utils.formatNumber(row.giaBan)}
+                                                </TableCell>
+                                                <TableCell sx={{ width: 1 / 10 }} align="center">
+                                                    0
+                                                </TableCell>
+                                                <TableCell sx={{ width: 1 / 6 }} align="left">
+                                                    {row.txtTrangThaiHang}
+                                                </TableCell>
+                                                <TableCell sx={{ width: 1 / 25 }}>
+                                                    <MoreHorizIcon
+                                                        fontSize="small"
+                                                        onClick={() => {
+                                                            setshowListAction(true);
+                                                            setIdQuyDoi(row.idDonViQuyDoi);
+                                                        }}
+                                                        sx={{
+                                                            display:
+                                                                showAction.index == index &&
+                                                                showAction.value
+                                                                    ? 'block'
+                                                                    : 'none'
+                                                        }}
+                                                    />
+                                                    <ListAction
+                                                        showAction={
+                                                            showAction.index == index &&
+                                                            showAction.value &&
+                                                            showListAction
+                                                        }
+                                                        handleClickAction={doActionRow}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Grid>
+                        <Grid container rowSpacing={2} columnSpacing={2}>
+                            <Grid item xs={4} md={4} lg={4} sm={4}></Grid>
+                            <Grid item xs={8} md={8} lg={8} sm={8} style={{ paddingRight: '16px' }}>
+                                <Stack direction="row" spacing={2} style={{ float: 'right' }}>
+                                    <LabelDisplayedRows
+                                        currentPage={filterPageProduct.currentPage}
+                                        pageSize={filterPageProduct.pageSize}
+                                        totalCount={pageDataProduct.totalCount}
+                                    />
+                                    <Pagination
+                                        shape="rounded"
+                                        color="primary"
+                                        count={pageDataProduct.totalPage}
+                                        page={filterPageProduct.currentPage}
+                                        defaultPage={filterPageProduct.currentPage}
+                                        style={{
+                                            display:
+                                                pageDataProduct.totalPage > 1 ? 'block' : 'none'
+                                        }}
+                                        onChange={handleChangePage}
+                                    />
+                                </Stack>
+                            </Grid>
                         </Grid>
 
                         <Grid
                             container
                             className="text-center"
-                            sx={{ display: lstProduct.length == 0 ? 'block' : 'none' }}>
+                            sx={{ display: pageDataProduct.totalCount == 0 ? 'block' : 'none' }}>
                             <Grid
                                 item
                                 xs={12}

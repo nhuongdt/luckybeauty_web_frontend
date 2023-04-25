@@ -1,5 +1,5 @@
 import http from '../httpService';
-import { ModelHangHoaDto, ModelNhomHangHoa, IPagedProductSearchDto } from './dto';
+import { ModelHangHoaDto, ModelNhomHangHoa, PagedProductSearchDto } from './dto';
 class GroupProductService {
     GetNhomHangHoa_byID = async (id: string) => {
         const xx = await http

@@ -1,7 +1,10 @@
 import http from '../httpService';
-import { ModelHangHoaDto, ModelNhomHangHoa, IPagedProductSearchDto } from './dto';
+import { PagedResultDto } from '../dto/pagedResultDto';
+
+import { ModelHangHoaDto, ModelNhomHangHoa, PagedProductSearchDto } from './dto';
+
 class ProductService {
-    GetDetailProduct = async (id: string) => {
+    GetDetailProduct = async (id: string): Promise<PagedResultDto<ModelHangHoaDto>> => {
         const data = await http
             .get(`api/services/app/HangHoa/GetDetailProduct?idDonViQuyDoi=${id}`)
             .then((res) => {
@@ -10,7 +13,7 @@ class ProductService {
         console.log('GetDetailProduct ', data);
         return data;
     };
-    Get_DMHangHoa = async (input: IPagedProductSearchDto) => {
+    Get_DMHangHoa = async (input: PagedProductSearchDto) => {
         const xx = await http
             .post(`api/services/app/HangHoa/GetDMHangHoa`, input)
             .then((res: { data: { result: any } }) => {

@@ -165,6 +165,9 @@ class Utils {
             event.preventDefault();
         }
     };
+    getTotalPage = (totalCount = 0, pageSize = 10) => {
+        return Math.ceil(totalCount / pageSize);
+    };
 }
 
 export default new Utils();
