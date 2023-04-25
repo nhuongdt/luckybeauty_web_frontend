@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FormEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
 import { Button, FormInstance, Space } from 'antd';
 import { EntityDto } from '../../services/dto/entityDto';
@@ -40,7 +40,16 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         listRole: [] as GetAllRoleOutput[],
         totalCount: 0,
         allPermissions: [] as GetAllPermissionsOutput[],
-        roleEdit: {} as RoleEditModel,
+        roleEdit: {
+            grantedPermissionNames: [],
+            role: {
+                name: '',
+                displayName: '',
+                description: '',
+                id: 0
+            },
+            permissions: [{ name: '', displayName: '', description: '' }]
+        } as RoleEditModel,
         currentPage: 1,
         totalPage: 0,
         startIndex: 1
@@ -96,23 +105,20 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                 roleId: id,
                 roleEdit: roleForEdit
             });
+            setTimeout(() => {
+                this.formRef.current?.setFieldsValue({
+                    ...roleForEdit.role,
+                    grantedPermissions: roleForEdit.grantedPermissionNames
+                });
+            }, 100);
         }
 
         this.setState({ roleId: id });
         this.Modal();
-
-        // setTimeout(() => {
-        //   this.formRef.current?.setFieldsValue({
-        //     ...this.props.roleStore.roleEdit.role,
-        //     grantedPermissions:
-        //       this.props.roleStore.roleEdit.grantedPermissionNames,
-        //   })
-        // }, 100)
     }
 
-    delete(input: EntityDto) {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this;
+    async delete(id: number) {
+        await roleService.delete(id);
     }
 
     handleCreate = () => {
@@ -130,8 +136,9 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         });
     };
 
-    handleSearch = (value: string) => {
-        this.setState({ filter: value }, async () => this.getAll());
+    handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+        const filter = event.target.value;
+        this.setState({ filter: filter }, async () => this.getAll());
     };
     render() {
         return (
@@ -293,7 +300,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                     modalType={this.state.roleId === 0 ? 'Thêm mới quyền' : 'Cập nhật quyền'}
                     onOk={this.handleCreate}
                     permissions={this.state.allPermissions}
-                    //formRef={this.formRef}
+                    formRef={this.formRef}
                 />
             </div>
         );

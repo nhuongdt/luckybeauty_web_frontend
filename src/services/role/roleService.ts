@@ -31,10 +31,8 @@ class RoleService {
         return result.data.result as UpdateRoleOutput;
     }
 
-    public async delete(entityDto: EntityDto) {
-        const result = await http.delete('api/services/app/Role/Delete', {
-            params: entityDto
-        });
+    public async delete(entityDto: number) {
+        const result = await http.delete(`api/services/app/Role/Delete?id=${entityDto}`);
         return result.data;
     }
 
@@ -48,10 +46,8 @@ class RoleService {
         return result.data.result;
     }
 
-    public async get(entityDto: EntityDto) {
-        const result = await http.get('api/services/app/Role/Get', {
-            params: entityDto
-        });
+    public async get(entityDto: number) {
+        const result = await http.get(`api/services/app/Role/Get?id=${entityDto}`);
         return result.data;
     }
 

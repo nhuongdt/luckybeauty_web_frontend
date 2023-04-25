@@ -38,10 +38,10 @@ class TenantStore {
             return x;
         });
     }
-    async delete(entityDto: EntityDto) {
+    async delete(entityDto: number) {
         await tenantService.delete(entityDto);
         this.tenants.items = this.tenants.items.filter(
-            (x: GetAllTenantOutput) => x.id !== entityDto.id
+            (x: GetAllTenantOutput) => x.id !== entityDto
         );
     }
     async get(entityDto: number) {

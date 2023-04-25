@@ -9,6 +9,7 @@ export interface ICreateOrEditRoleProps {
     modalType: string;
     onOk: () => void;
     permissions: GetAllPermissionsOutput[];
+    formRef: React.RefObject<FormInstance>;
 }
 
 const CreateOrEditRole = ({
@@ -16,7 +17,8 @@ const CreateOrEditRole = ({
     onCancel,
     modalType,
     onOk,
-    permissions
+    permissions,
+    formRef
 }: ICreateOrEditRoleProps) => {
     const [grantedPermissions, setGrantedPermissions] = useState([] as string[]);
     const [searchValue, setSearchValue] = useState('');
@@ -60,7 +62,7 @@ const CreateOrEditRole = ({
             onOk={onOk}
             destroyOnClose={true}
             width={648}>
-            <Form layout="vertical">
+            <Form layout="vertical" ref={formRef}>
                 <Tabs defaultActiveKey={'role'} size={'small'} tabBarGutter={64}>
                     <TabPane tab="RoleDetails" key={'role'}>
                         <Form.Item label="RoleName" name={'name'}>
@@ -74,31 +76,33 @@ const CreateOrEditRole = ({
                         </Form.Item>
                     </TabPane>
                     <TabPane tab="RolePermission" key={'permission'} forceRender={true}>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}></div>
-                        <div style={{ marginBottom: 16 }}>
-                            <Input
-                                placeholder="Search"
-                                size="large"
-                                value={searchValue}
-                                onChange={handleSearchChange}
-                            />
-                        </div>
-                        <div style={{ maxHeight: 400, overflowY: 'auto' }}>
-                            <Checkbox checked={checkAll} onChange={handleCheckAllChange}>
-                                Check All
-                            </Checkbox>
-                            {filteredOptions.map((option) => (
-                                <div>
-                                    <Checkbox
-                                        key={option.value}
-                                        value={option.value}
-                                        onChange={(e) => handleCheckboxChange(e.target.value)}
-                                        checked={grantedPermissions.includes(option.value)}>
-                                        {option.label}
-                                    </Checkbox>
-                                </div>
-                            ))}
-                        </div>
+                        <Form.Item name={'grantedPermissions'} valuePropName={'value'}>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}></div>
+                            <div style={{ marginBottom: 16 }}>
+                                <Input
+                                    placeholder="Search"
+                                    size="large"
+                                    value={searchValue}
+                                    onChange={handleSearchChange}
+                                />
+                            </div>
+                            <div style={{ maxHeight: 400, overflowY: 'auto' }}>
+                                <Checkbox checked={checkAll} onChange={handleCheckAllChange}>
+                                    Check All
+                                </Checkbox>
+                                {filteredOptions.map((option) => (
+                                    <div>
+                                        <Checkbox
+                                            key={option.value}
+                                            value={option.value}
+                                            onChange={(e) => handleCheckboxChange(e.target.value)}
+                                            checked={grantedPermissions.includes(option.value)}>
+                                            {option.label}
+                                        </Checkbox>
+                                    </div>
+                                ))}
+                            </div>
+                        </Form.Item>
                     </TabPane>
                 </Tabs>
             </Form>
