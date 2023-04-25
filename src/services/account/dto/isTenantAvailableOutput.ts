@@ -1,7 +1,7 @@
-import TenantAvailabilityState from './tenantAvailabilityState'
+import TenantAvailabilityState from './tenantAvailabilityState';
 
 export default class IsTenantAvaibleOutput {
-  state!: TenantAvailabilityState
+    state!: TenantAvailabilityState;
 
-  tenantId!: number
+    tenantId!: number;
 }

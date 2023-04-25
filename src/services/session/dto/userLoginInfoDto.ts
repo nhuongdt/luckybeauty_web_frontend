@@ -1,11 +1,11 @@
-import { EntityDto } from './../../dto/entityDto'
+import { EntityDto } from './../../dto/entityDto';
 
 export default class UserLoginInfoDto extends EntityDto {
-  name!: string
+    name!: string;
 
-  surname!: string
+    surname!: string;
 
-  userName!: string
+    userName!: string;
 
-  emailAddress!: string
+    emailAddress!: string;
 }

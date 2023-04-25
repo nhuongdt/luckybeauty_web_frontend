@@ -1,4 +1,4 @@
 export interface SuggestChiNhanhDto {
-    id:          string;
+    id: string;
     tenChiNhanh: string;
 }

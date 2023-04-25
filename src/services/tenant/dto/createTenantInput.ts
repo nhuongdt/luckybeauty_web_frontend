@@ -1,11 +1,11 @@
 export default class CreateTenantInput {
-  tenancyName!: string
+    tenancyName!: string;
 
-  name!: string
+    name!: string;
 
-  adminEmailAddress!: string
+    adminEmailAddress!: string;
 
-  connectionString!: string
+    connectionString!: string;
 
-  isActive!: boolean
+    isActive!: boolean;
 }

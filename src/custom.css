@@ -1,93 +1,88 @@
-.btn-import{
+.btn-import {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background: #FFFFFF;
+    background: #ffffff;
     height: 40px;
-    border: 1px solid #E6E1E6;
+    border: 1px solid #e6e1e6;
     border-radius: 4px;
 }
-.btn-export{
+.btn-export {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background: #FFFFFF;
+    background: #ffffff;
     height: 40px;
-    border: 1px solid #E6E1E6;
+    border: 1px solid #e6e1e6;
     border-radius: 4px;
 }
-.btn-add-item{
-    color: #FFFAFF;
-    background-color: #7C3367;
+.btn-add-item {
+    color: #fffaff;
+    background-color: #7c3367;
     height: 40px;
     border-radius: 4px;
     justify-content: center;
     align-items: center;
 }
-.input-search{
+.input-search {
     box-sizing: border-box;
     justify-content: center;
     align-items: flex-start;
     justify-content: center;
     align-items: flex-start;
-    background: #FFFAFF;
-    border: 1px solid #CDC9CD;
+    background: #fffaff;
+    border: 1px solid #cdc9cd;
     border-radius: 8px;
     height: 40px;
 }
-.text-secondary{
+.text-secondary {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    color: #009EF7;
+    color: #009ef7;
 }
-.text-neutral-90{
+.text-neutral-90 {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
     align-items: center;
     color: #333233;
 }
-.bg-table{
-    background-color: #F2EBF0;
+.bg-table {
+    background-color: #f2ebf0;
 }
-.text-th-table{
+.text-th-table {
     font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-align-items: center;
-align-content: center;
-/* Neutral/70 */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    align-items: center;
+    align-content: center;
+    /* Neutral/70 */
 
-color: #666466;
-
+    color: #666466;
 }
-.text-td-table{
+.text-td-table {
     font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 12px;
-line-height: 16px;
-/* identical to box height, or 133% */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    /* identical to box height, or 133% */
 
+    /* Neutral/90 */
 
-/* Neutral/90 */
-
-color: #333233;
-
+    color: #333233;
 }
 
-.pagination-view-record{
+.pagination-view-record {
     font-family: 'Roboto';
-font-style: normal;
-font-weight: 400;
-font-size: 14px;
-line-height: 20px;
-/* identical to box height, or 143% */
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    /* identical to box height, or 143% */
 
-
-color: #666666;
-
+    color: #666666;
 }

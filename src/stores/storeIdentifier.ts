@@ -1,15 +1,15 @@
 export default class Stores {
-  static AuthenticationStore = 'authenticationStore'
+    static AuthenticationStore = 'authenticationStore';
 
-  static RoleStore = 'roleStore'
+    static RoleStore = 'roleStore';
 
-  static TenantStore = 'tenantStore'
+    static TenantStore = 'tenantStore';
 
-  static UserStore = 'userStore'
+    static UserStore = 'userStore';
 
-  static SessionStore = 'sessionStore'
+    static SessionStore = 'sessionStore';
 
-  static AccountStore = 'accountStore'
+    static AccountStore = 'accountStore';
 
-  static NhanVienStore = 'nhanVienStore'
+    static NhanVienStore = 'nhanVienStore';
 }

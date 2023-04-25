@@ -1,0 +1,20 @@
+.list-nhomhanghoa {
+    height: 400px;
+    overflow-y: auto;
+}
+
+.list-icon-action {
+    width: 100px;
+    position: absolute;
+    z-index: 1;
+    right: 30px;
+    background-color: #fffff0;
+}
+
+.list-icon-action .icon {
+    font-size: 18px;
+}
+
+.list-icon-action .MuiListItemTex {
+    font-size: 10px;
+}

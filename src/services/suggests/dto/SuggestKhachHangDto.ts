@@ -1,5 +1,5 @@
 export interface SuggestKhachHangDto {
-    id:           string;
+    id: string;
     tenKhachHang: string;
-    soDienThoai:  string;
+    soDienThoai: string;
 }

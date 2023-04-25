@@ -1,4 +1,4 @@
 export interface SuggestPhongBanDto {
-    id:          string;
+    id: string;
     tenPhongBan: string;
 }

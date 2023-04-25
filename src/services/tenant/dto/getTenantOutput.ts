@@ -1,9 +1,9 @@
 export default class GetTenantOutput {
-  tenancyName!: string
+    tenancyName!: string;
 
-  name!: string
+    name!: string;
 
-  isActive!: boolean
+    isActive!: boolean;
 
-  id!: number
+    id!: number;
 }
