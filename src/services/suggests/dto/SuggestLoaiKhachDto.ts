@@ -1,4 +1,4 @@
 export interface SuggestLoaiKhachDto {
-    id:      number;
+    id: number;
     tenLoai: string;
 }

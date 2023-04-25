@@ -61,6 +61,17 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         setWasClickSave(false);
     }, [trigger]);
 
+    const editGiaBan = (event: any) => {
+        setProduct((itemOlds) => {
+            return {
+                ...itemOlds,
+                giaBan: Utils.formatNumber(event.target.value)
+            };
+        });
+        const xx = Utils.formatNumber(product.giaBan ?? '');
+        console.log(xx, product.giaBan);
+    };
+
     const CheckSave = () => {
         if (Utils.checkNull(product.tenHangHoa ?? '')) {
             return false;
@@ -196,11 +207,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         fullWidth
                                         placeholder="0"
                                         value={product.giaBan}
-                                        onChange={(event) =>
-                                            setProduct((itemOlds) => {
-                                                return { ...itemOlds, giaBan: event.target.value };
-                                            })
+                                        onKeyPress={(event) =>
+                                            Utils.keypressNumber_limitNumber(event)
                                         }
+                                        onChange={(event) => editGiaBan(event)}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} lg={6} sx={{ PluginArray: 4 }}>
@@ -212,6 +222,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         size="small"
                                         fullWidth
                                         placeholder="0"
+                                        type="number"
                                         value={product.soPhutThucHien}
                                         onChange={(event) =>
                                             setProduct((itemOlds) => {

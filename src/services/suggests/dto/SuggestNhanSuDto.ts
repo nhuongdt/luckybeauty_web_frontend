@@ -1,5 +1,5 @@
 export interface SuggestNhanSuDto {
-    id:          string;
+    id: string;
     tenNhanVien: string;
     soDienThoai: string;
 }

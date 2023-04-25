@@ -54,7 +54,7 @@
 
 .icon-size {
     font-size: 40px;
-    color: #7C3367;
+    color: #7c3367;
 }
 
 .grid-color {
@@ -93,8 +93,4 @@
 
 .MuiDialogActions-root.MuiDialogActions-spacing {
     padding-right: 24px;
-}
-
-.table-hover {
-    background-color: cccc;
 }

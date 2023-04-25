@@ -31,19 +31,6 @@ const MainAppLayout: React.FC = () => {
         navigate('/login');
     };
     return (
-      <><Layout style={{ minHeight: '100vh' }}>
-        <AppSiderMenu collapsed={collapsed} toggle={toggle}/>
-        <Layout>
-          <Header collapsed={collapsed} toggle={toggle}/>
-          <Content>
-            <Outlet />
-            <LoginAlertDialog open={open} confirmLogin={confirm}/>
-          </Content>
-          {/* <Footer/> */}
-        </Layout>
-      </Layout></>
-      )
-}
         <>
             <Layout style={{ minHeight: '100vh' }}>
                 <AppSiderMenu collapsed={collapsed} toggle={toggle} />
@@ -53,7 +40,7 @@ const MainAppLayout: React.FC = () => {
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Content>
-                    <Footer />
+                    {/* <Footer/> */}
                 </Layout>
             </Layout>
         </>

@@ -10,6 +10,7 @@ declare let abp: any;
 
 class Utils {
     GuidEmpty = '00000000-0000-0000-0000-000000000000';
+    pageOption = [10, 20, 30, 40, 50];
     loadScript(url: string) {
         const script = document.createElement('script');
         script.type = 'text/javascript';
@@ -148,22 +149,22 @@ class Utils {
         if (number === undefined || number === null) {
             return 0;
         } else {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            const toFloat = number.toString().replace(/,/g, '');
+            return toFloat.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
     };
-    // getCurrentClockProvider(
-    //   currentProviderName: string
-    // ): abpTypings.timing.IClockProvider {
-    //   if (currentProviderName === 'unspecifiedClockProvider') {
-    //     return abp.timing.unspecifiedClockProvider
-    //   }
+    keypressNumber_limitNumber = (event: any) => {
+        const keyCode = event.keyCode || event.which;
+        const val = event.target.value;
 
-    //   if (currentProviderName === 'utcClockProvider') {
-    //     return abp.timing.utcClockProvider
-    //   }
-
-    //   return abp.timing.localClockProvider
-    // }
+        // 46(.), 48(0), 57(9)
+        if ((keyCode !== 46 || val.indexOf('.') !== -1) && (keyCode < 48 || keyCode > 57)) {
+            if (event.which !== 46 || val.indexOf('.') !== -1) {
+                //alert('Chỉ được nhập một dấu .');
+            }
+            event.preventDefault();
+        }
+    };
 }
 
 export default new Utils();

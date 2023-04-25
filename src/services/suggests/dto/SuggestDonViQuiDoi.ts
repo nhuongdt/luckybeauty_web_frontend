@@ -1,4 +1,4 @@
 export interface SuggestDonViQuiDoiDto {
-    id:       string;
+    id: string;
     tenDonVi: string;
 }

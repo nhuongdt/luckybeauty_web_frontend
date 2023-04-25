@@ -1,4 +1,4 @@
 export interface SuggestNguonKhachDto {
-    id:            string;
+    id: string;
     tenNguonKhach: string;
 }

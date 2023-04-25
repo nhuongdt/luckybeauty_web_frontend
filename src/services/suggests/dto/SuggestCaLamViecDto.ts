@@ -1,4 +1,4 @@
 export interface SuggestCaLamViecDto {
-    id:    string;
+    id: string;
     tenCa: string;
 }

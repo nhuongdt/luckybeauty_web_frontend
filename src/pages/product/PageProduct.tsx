@@ -18,6 +18,7 @@ import {
     Typography,
     Divider,
     Table,
+    TablePagination,
     TableBody,
     TableCell,
     TableContainer,
@@ -453,6 +454,15 @@ export default function PageProduct() {
                                 dataHangHoa={lstProduct}
                                 handleClickActionRow={showModalAddProduct}
                             />
+                            {/* <TablePagination
+                                rowsPerPageOptions={Utils.pageOption}
+                                component="div"
+                                count={rows.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            /> */}
                         </Grid>
                     </Grid>
                 </Grid>

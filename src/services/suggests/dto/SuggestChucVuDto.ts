@@ -1,4 +1,4 @@
 export interface SuggestChucVuDto {
-    idChucVu:  string;
+    idChucVu: string;
     tenChucVu: string;
 }

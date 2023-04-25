@@ -1,4 +1,4 @@
 export interface SuggestLoaiHangHoaDto {
-    id:      number;
+    id: number;
     tenLoai: string;
 }

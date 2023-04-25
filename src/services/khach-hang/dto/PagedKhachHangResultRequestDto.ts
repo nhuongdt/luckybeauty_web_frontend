@@ -1,5 +1,5 @@
-import { PagedFilterAndSortedRequest } from '../../dto/pagedFilterAndSortedRequest'
+import { PagedFilterAndSortedRequest } from '../../dto/pagedFilterAndSortedRequest';
 
 export interface PagedKhachHangResultRequestDto extends PagedFilterAndSortedRequest {
-    keyword: string
+    keyword: string;
 }

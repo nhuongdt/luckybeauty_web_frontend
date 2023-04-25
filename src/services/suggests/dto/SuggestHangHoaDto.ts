@@ -1,4 +1,4 @@
 export interface SuggestHangHoaDto {
-    id:         string;
+    id: string;
     tenHangHoa: string;
 }
