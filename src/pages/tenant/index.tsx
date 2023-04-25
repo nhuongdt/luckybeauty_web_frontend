@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, FormEventHandler } from "react";
 import { inject, observer } from 'mobx-react'
 import { GetAllTenantOutput } from "../../services/tenant/dto/getAllTenantOutput";
 import CreateTenantInput from "../../services/tenant/dto/createTenantInput";
@@ -12,6 +12,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { DeleteOutline } from "@mui/icons-material";
 import Stores from "../../stores/storeIdentifier";
 import CreateOrEditTenant from "./create-or-edit-tenant";
+import TenantModel from "../../models/Tenants/TenantModel";
 export interface ITenantProps {
   
 }
@@ -27,6 +28,7 @@ export interface ITenantState {
   currentPage: number;
   totalPage: number;
   startIndex: number;
+  createOrEditTenant: TenantModel;
 }
 class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
   formRef = React.createRef<FormInstance>();
@@ -40,7 +42,8 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
     totalCount: 0,
     currentPage: 1,
     totalPage: 0,
-    startIndex: 1
+    startIndex: 1,
+    createOrEditTenant: {id: 0,isActive: true,name: '',tenancyName: ''} as TenantModel
   };
 
   async componentDidMount() {
@@ -78,23 +81,40 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
 
    createOrUpdateModalOpen = async (entityDto: number) => {
     if (entityDto === 0) {
-      //tenantService.create();
+      this.formRef.current?.resetFields();
+      this.setState({
+        createOrEditTenant: {id: 0,isActive: true,name: '',tenancyName: ''}
+      })
     } else {
-      await tenantService.get(entityDto);
+       const createOrEdit =  await tenantService.get(entityDto);
+       this.setState({
+        createOrEditTenant: {
+          id: entityDto,
+          isActive : createOrEdit.isActive,
+          name: createOrEdit.name,
+          tenancyName: createOrEdit.tenancyName
+        }
+      })
+      this.formRef.current?.setFieldsValue({
+        ...createOrEdit,
+      });
+
     }
 
     this.setState({ tenantId: entityDto });
     this.Modal();
 
     // setTimeout(() => {
-    //   if (entityDto.id !== 0) {
+    //   if (entityDto !== 0) {
     //     this.formRef.current?.setFieldsValue({
-    //       ...this.props.tenantStore.tenantModel,
+    //       ...this.state.createOrEditTenant,
     //     });
     //   } else {
     //     this.formRef.current?.resetFields();
     //   }
     // }, 100);
+
+    
   }
 
   delete(input: EntityDto) {
@@ -118,8 +138,9 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
     });
   };
 
-  handleSearch = (value: string) => {
-    this.setState({ filter: value }, async () => this.getAll());
+  handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    const filter = event.target.value;
+    this.setState({ filter: filter }, async () => this.getAll());
   };
 
   render(): React.ReactNode {
@@ -160,7 +181,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                   <i className="fa-thin fa-magnifying-glass"></i>
                   <input
                     type="text"
-                    //onChange={()=>{this.handleSearch()}}
+                    onChange={this.handleSearch}
                     className="input-search"
                     placeholder="Tìm kiếm ..."
                   />
@@ -239,10 +260,10 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                               type="primary"
                               icon={<EditOutlined />}
                               onClick={() => {
-                                // this.setState({
-                                //   idNhanSu: item.id,
-                                // });
-                                // this.onOpenDialog();
+                                this.setState({
+                                  tenantId: item.id,
+                                });
+                                this.createOrUpdateModalOpen(item.id);
                               }}
                             />
                             <Button
@@ -294,8 +315,10 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
           </div>
         </div>
         <CreateOrEditTenant
+        formRef={this.formRef}
          visible={this.state.modalVisible}
          modalType={this.state.tenantId===0?"Thêm mới tenant":"Cập nhật tenant"}
+         tenantId={this.state.tenantId}
          onCancel={() =>
           this.setState({
             modalVisible: false,
