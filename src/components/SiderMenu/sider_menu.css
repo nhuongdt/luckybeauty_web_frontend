@@ -1,57 +1,61 @@
-.active-menu-bg {
-    background: #f2ebf0;
+.active-menu-bg{
+    background: #F2EBF0;
     height: 56px;
+    align-items: center;
+    justify-items: center;
+    text-align: center;
+    justify-content: center;
 }
-.active-menu-item {
-    color: #7c3367;
+.active-menu-item{
+    color: #7C3367;
     height: 40px;
     align-items: center;
-
-    justify-content: space-between;
-    background: #f2ebf0;
+    
+    justify-content: center;
+    background: #F2EBF0;
     border-radius: 6px;
     padding: 8px 13px 8px 12px;
 }
-.menu-item {
+.menu-item{
     align-items: center;
-    padding: 8px 13px 8px 12px;
-    height: 40px;
-    justify-content: space-between;
-    background: #ffffff;
-    border-radius: 6px;
+padding: 8px 13px 8px 12px;
+height: 40px;
+justify-content: center;
+background: #FFFFFF;
+border-radius: 6px;
 }
-.active-menu-item-icon {
-    color: #7c3367;
+.active-menu-item-icon{
+    color: #7C3367;
     height: 40px;
     align-items: center;
-
-    justify-content: space-between;
-    background-color: #f2ebf0;
-    border-radius: 6px;
-    padding: 8px 13px 8px 12px;
-}
-.menu-item-icon {
-    align-items: center;
-    padding: 8px 13px 8px 12px;
-    height: 40px;
-    justify-content: space-between;
-    background: #ffffff;
-    border-radius: 6px;
-}
-.active-menu-item-title {
-    color: #7c3367;
-    height: 40px;
-    align-items: center;
-    justify-content: space-between;
-    background: #f2ebf0;
+    
+    justify-content: center;
+    background-color: #F2EBF0;
     border-radius: 6px;
     padding: 8px 13px 8px 12px;
 }
-.menu-item-title {
+.menu-item-icon{
     align-items: center;
-    padding: 8px 13px 8px 12px;
+padding: 8px 13px 8px 12px;
+height: 40px;
+justify-content: center;
+background: #FFFFFF;
+border-radius: 6px;
+}
+.active-menu-item-title{
+    color: #7C3367;
     height: 40px;
+    align-items: center;
     justify-content: space-between;
-    background: #ffffff;
+    background: #F2EBF0;
     border-radius: 6px;
+    padding: 8px 13px 8px 12px;
+}
+.menu-item-title{
+    align-items: center;
+padding: 8px 13px 8px 12px;
+height: 40px;
+justify-content: space-between;
+background: #FFFFFF;
+border-radius: 6px;
 }

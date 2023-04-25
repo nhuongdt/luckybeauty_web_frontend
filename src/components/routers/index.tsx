@@ -11,7 +11,6 @@ import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import CottageIcon from '@mui/icons-material/Cottage';
-const PageProduct = lazy(() => import('../../pages/product/PageProduct'));
 // ico
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
@@ -35,174 +34,181 @@ export type AppRouteProps = {
     mainRoutes: RenderRouteProps[];
 };
 
-export const appRouters: AppRouteProps = {
-    mainRoutes: [
+export const appRouters: AppRouteProps={
+  mainRoutes:
+  [
+    {
+      layout: AnonymousLayout,
+      name: 'AnonymousLayout',
+      routes:[
         {
-            layout: AnonymousLayout,
-            name: 'AnonymousLayout',
-            routes: [
-                {
-                    path: '/login',
-                    name: 'login',
-                    permission: '',
-                    children: [],
-                    title: 'Login',
-                    icon: '',
-                    component: LoadableComponent(() => import('../../pages/login')),
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/register',
-                    name: 'register',
-                    permission: '',
-                    children: [],
-                    title: 'Register',
-                    icon: null,
-                    component: LoadableComponent(() => import('../../pages/register')),
-                    isLayout: true,
-                    showInMenu: false
-                }
-            ]
+          path: '/login',
+          name: 'login',
+          permission:'',
+          children:[],
+          title: 'Login',
+          icon : '',
+          component: LoadableComponent(
+            () => import('../../pages/login')
+          ),
+          isLayout: true,
+          showInMenu: false,
         },
         {
-            layout: MainAppLayout,
-            name: 'MainAppLayout',
-            routes: [
-                {
-                    path: '/',
-                    name: 'home',
-                    permission: '',
-                    title: 'Home',
-                    icon: null,
-                    component: LoadableComponent(() => import('../../pages/dashboard')),
-                    children: [],
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/',
-                    name: 'dashboard',
-                    permission: '',
-                    title: 'Dashboard',
-                    icon: <CottageIcon />,
-                    children: [],
-                    showInMenu: true,
-                    isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
-                },
-                {
-                    path: '/lich-hens',
-                    name: 'lich hen',
-                    permission: '',
-                    title: 'Lịch hẹn',
-                    icon: <CalendarMonthOutlinedIcon />,
-                    children: [],
-                    showInMenu: true,
-                    isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
-                },
-                {
-                    path: '/khach-hangs',
-                    permission: '',
-                    title: 'Khách hàng',
-                    name: 'khachhang',
-                    icon: <PermContactCalendarIcon />,
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/customer'))
-                },
-                {
-                    path: '/nhan-viens',
-                    permission: '',
-                    title: 'Nhân viên',
-                    name: 'nhanvien',
-                    icon: <PeopleAltIcon />,
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/employee'))
-                },
-                {
-                    path: '/dich-vus',
-                    permission: '',
-                    title: 'Dich vụ',
-                    icon: <BallotOutlinedIcon />,
-                    name: 'dichvu',
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/product/PageProduct'))
-                },
-                {
-                    path: '/admin',
-                    permission: '',
-                    title: 'Quản trị',
-                    icon: <LockPersonIcon />,
-                    name: 'QuanTri',
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [
-                        {
-                            path: '/users',
-                            permission: 'Pages.Administration.Users',
-                            title: 'Users',
-                            name: 'user',
-                            icon: null,
-                            children: [],
-                            showInMenu: true,
-                            isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/user'))
-                        },
-                        {
-                            path: '/roles',
-                            permission: 'Pages.Administration.Roles',
-                            title: 'Roles',
-                            name: 'role',
-                            icon: null,
-                            showInMenu: true,
-                            isLayout: false,
-                            children: [],
-                            component: LoadableComponent(() => import('../../pages/role'))
-                        },
-                        {
-                            path: '/tenants',
-                            permission: 'Pages.Tenants',
-                            title: 'Tenants',
-                            name: 'tenant',
-                            icon: null,
-                            showInMenu: true,
-                            children: [],
-
-                            isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/tenant'))
-                        }
-                    ],
-                    component: LoadableComponent(() => import('../../pages/service'))
-                },
-                {
-                    path: '/exception?:type',
-                    permission: '',
-                    title: 'exception',
-                    icon: null,
-                    name: 'exception',
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/Exception'))
-                }
-            ]
-        }
+          path: '/register',
+          name: 'register',
+          permission:'',
+          children:[],
+          title: 'Register',
+          icon:null,
+          component: LoadableComponent(() => import('../../pages/register')),
+          isLayout: true,
+          showInMenu: false,
+        },
+      ]
+    },
+    {
+      layout: MainAppLayout,
+      name: 'MainAppLayout',
+      routes: [
+      {
+        path: '/',
+        name: 'home',
+        permission: '',
+        title: 'Home',
+        icon: null,
+        component: LoadableComponent(
+          () => import('../../pages/dashboard')
+        ),
+        children:[],
+        isLayout: true,
+        showInMenu: false,
+      },
+      {
+        path: '/',
+        name: 'dashboard',
+        permission: '', 
+        title: 'Dashboard',
+        icon: <CottageIcon />,
+        children:[],
+        showInMenu: true,
+        isLayout: false,
+        component: LoadableComponent(() => import('../../pages/dashboard')),
+      },
+      {
+        path: '/lich-hens',
+        name: 'lich hen',
+        permission: '', 
+        title: 'Lịch hẹn',
+        icon: <CalendarMonthOutlinedIcon />,
+        children:[],
+        showInMenu: true,
+        isLayout: false,
+        component: LoadableComponent(() => import('../../pages/dashboard')),
+      }
+      ,
+      {
+        path: '/khach-hangs',
+        permission: '',
+        title: 'Khách hàng',
+        name: 'khachhang',
+        icon: <PermContactCalendarIcon/>,
+        showInMenu: true,
+        isLayout: false,
+        children:[],
+        component: LoadableComponent(() => import('../../pages/customer')),
+      },
+      {
+        path: '/nhan-viens',
+        permission: '',
+        title: 'Nhân viên',
+        name: 'nhanvien',
+        icon: <PeopleAltIcon/>,
+        showInMenu: true,
+        isLayout: false,
+        children:[],
+        component: LoadableComponent(() => import('../../pages/employee')),
+      },
+      {
+        path: '/dich-vus',
+        permission: '',
+        title: 'Dich vụ',
+        icon: <BallotOutlinedIcon/>,
+        name: 'dichvu',
+        showInMenu: true,
+        isLayout: false,
+        children:[],
+        component: LoadableComponent(() => import('../../pages/dich-vu')),
+      },
+      {
+        path: '/admin',
+        permission: '',
+        title: 'Quản trị',
+        icon: <LockPersonIcon/>,
+        name: 'QuanTri',
+        showInMenu: true,
+        isLayout: false,
+        children:[
+          {
+            path: '/users',
+            permission: 'Pages.Administration.Users',
+            title: 'Users',
+            name: 'user',
+            icon: null,
+            children:[],
+            showInMenu: true,
+            isLayout: false,
+            component: LoadableComponent(() => import('../../pages/user')),
+          },
+          {
+            path: '/roles',
+            permission: 'Pages.Administration.Roles',
+            title: 'Roles',
+            name: 'role',
+            icon: null,
+            showInMenu: true,
+            isLayout: false,
+            children:[],
+            component: LoadableComponent(() => import('../../pages/role')),
+          },
+          {
+            path: '/tenants',
+            permission: 'Pages.Tenants',
+            title: 'Tenants',
+            name: 'tenant',
+            icon: null,
+            showInMenu: true,
+            children:[],
+            
+            isLayout: false,
+            component: LoadableComponent(() => import('../../pages/tenant')),
+          }
+        ],
+        component: LoadableComponent(() => import('../../pages/dich-vu')),
+      },
+      {
+        path: '/exception?:type',
+        permission: '',
+        title: 'exception',
+        icon: null,
+        name: 'exception',
+        showInMenu: false,
+        isLayout: false,
+        children:[],
+        component: LoadableComponent(() => import('../../pages/Exception')),
+      },
     ]
-};
-
-function flattenRoutes(routes: RouteProps[], flatList: RouteProps[] = []) {
-    routes.forEach((route) => {
-        flatList.push(route);
-        if (route.children) {
-            flattenRoutes(route.children, flatList);
-        }
+    }
+  ]
+}
+  
+  
+  function flattenRoutes(routes: RouteProps[], flatList: RouteProps[] = []) {
+    routes.forEach(route => {
+      flatList.push(route);
+      if (route.children) {
+        flattenRoutes(route.children, flatList);
+      }
     });
     return flatList;
 }
