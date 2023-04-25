@@ -34,8 +34,13 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 
 import { useState, useEffect, useRef } from 'react';
-import { GetDM_NhomHangHoa, Get_DMHangHoa } from '../../services/product/service';
-import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
+import ProductService from '../../services/product/ProductService';
+import GroupProductService from '../../services/product/GroupProductService';
+import {
+    ModelNhomHangHoa,
+    ModelHangHoaDto,
+    IPagedProductSearchDto
+} from '../../services/product/dto';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { array, object } from 'prop-types';
@@ -272,6 +277,17 @@ export default function PageProduct() {
         idQuiDoi: ''
     });
 
+    const [filterPageProduct, setFilterPageProduct] = useState<IPagedProductSearchDto>({
+        idNhomHangHoas: '',
+        paramSearch: {
+            textSearch: '',
+            currentPage: 0,
+            pageSize: 10,
+            columnSort: '',
+            typeSort: ''
+        }
+    });
+
     const PageLoad = async () => {
         GetListHangHoa();
         GetListNhomHangHoa();
@@ -279,22 +295,12 @@ export default function PageProduct() {
     };
 
     const GetListHangHoa = async () => {
-        const param = {
-            idNhomHangHoas: '',
-            paramSearch: {
-                textSearch: '',
-                currentPage: 0,
-                pageSize: 10,
-                columnSort: '',
-                typeSort: ''
-            }
-        };
-        const list = await Get_DMHangHoa(param);
+        const list = await ProductService.Get_DMHangHoa(filterPageProduct);
         setLstProduct(list.items);
     };
 
     const GetListNhomHangHoa = async () => {
-        const list = await GetDM_NhomHangHoa();
+        const list = await GroupProductService.GetDM_NhomHangHoa();
         const lstAll = [...list.items];
         const obj = new ModelNhomHangHoa('', '', 'Tất cả');
         lstAll.unshift(obj);
@@ -349,6 +355,13 @@ export default function PageProduct() {
             GetListHangHoa();
         }
     }
+
+    const handleChangePage = () => {
+        console.log('into');
+    };
+    const handleChangeRowsPerPage = () => {
+        console.log('into');
+    };
 
     return (
         <>
@@ -475,15 +488,6 @@ export default function PageProduct() {
                                 dataHangHoa={lstProduct}
                                 handleClickActionRow={showModalAddProduct}
                             />
-                            {/* <TablePagination
-                                rowsPerPageOptions={Utils.pageOption}
-                                component="div"
-                                count={rows.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            /> */}
                         </Grid>
 
                         <Grid
