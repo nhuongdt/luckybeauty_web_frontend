@@ -76,15 +76,13 @@
 }
 
 .table-head tr th {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 3px 5px;
     border-color: #cccc;
     text-align: center;
 }
 
 .table-body tr td {
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 3px;
 }
 
 .MuiButtonBase-root.btnSecond {
@@ -98,4 +96,24 @@
 .MuiTablePagination-selectLabel,
 .MuiTablePagination-displayedRows {
     margin-bottom: 0;
+}
+
+
+/* style text in button */
+
+.MuiButton-root {
+    text-transform: initial;
+}
+
+
+/* button paging selected */
+
+.MuiPaginationItem-root.Mui-selected {
+    background-color: #7c3367;
+    color: white;
+}
+
+.MuiPaginationItem-root.Mui-selected:hover {
+    background-color: red;
+    color: white;
 }

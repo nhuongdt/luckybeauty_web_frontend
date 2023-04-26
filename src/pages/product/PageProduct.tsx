@@ -29,6 +29,10 @@ import {
     Checkbox,
     InputAdornment,
     Stack,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
     colors
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -164,29 +168,47 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
 };
 
 export const LabelDisplayedRows = ({ currentPage, pageSize, totalCount }: any) => {
-    const [fromRow, setFromRow] = useState();
-    const to = (currentPage + 1) * pageSize;
-    const [toRow, setToRow] = useState(to);
-    console.log('fromRow', fromRow);
-    if (toRow > totalCount) {
-        setToRow(totalCount);
-    }
-
-    // useEffect(() => {
-    //     const from = (currentPage - 1) * pageSize + 1;
-    //     return from;
-    // }, [fromRow, toRow]);
-
     return (
         <>
             <Typography variant="body2" style={{ paddingTop: '6px' }}>
-                Hiển thị {fromRow} đến {toRow} bản ghi
+                Hiển thị {(currentPage - 1) * pageSize + 1} -{' '}
+                {currentPage * pageSize > totalCount ? totalCount : currentPage * pageSize} của{' '}
+                {totalCount} bản ghi
             </Typography>
         </>
     );
 };
 
-export default function PageProduct({ handleClickActionRow }: any) {
+export const OptionPage = ({ changeNumberOfpage }: any) => {
+    const [value, setValue] = useState(1);
+    const [text, setText] = useState('1');
+    const lst = [
+        { value: 1, text: '1/ trang' },
+        { value: 2, text: '2/ trang' },
+        { value: 3, text: '3/ trang' }
+    ];
+    const handleChange = (event: any, item: any) => {
+        setValue(event.target.value);
+        setText(item.props.children);
+        changeNumberOfpage(event.target.value);
+    };
+    return (
+        <>
+            <Box sx={{ minWidth: 120 }}>
+                <FormControl variant="standard">
+                    {/* <InputLabel>{text}</InputLabel> */}
+                    <Select value={value} onChange={handleChange}>
+                        {lst.map((item: any, index: number) => (
+                            <MenuItem value={item.value}>{item.text}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Box>
+        </>
+    );
+};
+
+export default function PageProduct() {
     const [showModalNhomHang, setShowModalNhomHang] = useState(false);
     const [idNhomHangHoa, setIdNhomHangHoa] = useState(false);
     const [isNewNhomHang, setIsNewNhomHang] = useState(false);
@@ -209,21 +231,13 @@ export default function PageProduct({ handleClickActionRow }: any) {
         idNhomHangHoas: '',
         textSearch: '',
         currentPage: 1,
-        pageSize: 1,
+        pageSize: 2,
         columnSort: '',
         typeSort: ''
     });
 
-    const PageLoad = async () => {
-        GetListHangHoa();
-        GetListNhomHangHoa();
-        console.log('into');
-    };
-
     const GetListHangHoa = async () => {
         const list = await ProductService.Get_DMHangHoa(filterPageProduct);
-        // setLstProduct(list.items);
-        console.log('list.totalCount ', list.totalCount);
         setPageDataProduct({
             totalCount: list.totalCount,
             totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
@@ -240,8 +254,12 @@ export default function PageProduct({ handleClickActionRow }: any) {
     };
 
     useEffect(() => {
-        PageLoad();
+        GetListNhomHangHoa();
     }, []);
+
+    useEffect(() => {
+        GetListHangHoa();
+    }, [filterPageProduct.currentPage, filterPageProduct.pageSize]);
 
     function showModalAddNhomHang(id?: string) {
         if (id) {
@@ -303,18 +321,28 @@ export default function PageProduct({ handleClickActionRow }: any) {
     }
 
     const handleChangePage = (event: any, value: number) => {
-        console.log('FilterPageProduct ', filterPageProduct);
-        setFilterPageProduct((itemOlds: any) => {
-            return {
-                ...itemOlds,
-                currentPage: value
-            };
+        setFilterPageProduct({
+            ...filterPageProduct,
+            currentPage: value
         });
-        GetListHangHoa();
     };
+    const changeNumberOfpage = (sizePage: number) => {
+        setFilterPageProduct({
+            ...filterPageProduct,
+            pageSize: sizePage
+        });
+    };
+
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
-            console.log('Enter key pressed');
+            if (filterPageProduct.currentPage !== 1) {
+                setFilterPageProduct({
+                    ...filterPageProduct,
+                    currentPage: 1
+                });
+            } else {
+                GetListHangHoa();
+            }
         }
     };
 
@@ -325,7 +353,7 @@ export default function PageProduct({ handleClickActionRow }: any) {
     const [isHover, setIsHover] = useState(false);
 
     const doActionRow = (action: number) => {
-        handleClickActionRow(action, idQuyDoi);
+        showModalAddProduct(action, idQuyDoi);
     };
 
     const hoverRow = (event: any, idQuyDoi: string, index: number) => {
@@ -356,7 +384,7 @@ export default function PageProduct({ handleClickActionRow }: any) {
                 trigger={triggerModalProduct}
                 handleSave={saveProduct}></ModalHangHoa>
 
-            <Grid container rowSpacing={1} style={{ paddingTop: '10px' }}>
+            <Grid container rowSpacing={1} style={{ paddingTop: '10px', paddingLeft: '10px' }}>
                 <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
                     <Typography variant="h5">Danh mục dịch vụ</Typography>
                 </Grid>
@@ -562,8 +590,10 @@ export default function PageProduct({ handleClickActionRow }: any) {
                                 </Table>
                             </TableContainer>
                         </Grid>
-                        <Grid container rowSpacing={2} columnSpacing={2}>
-                            <Grid item xs={4} md={4} lg={4} sm={4}></Grid>
+                        <Grid container rowSpacing={2} columnSpacing={2} sx={{ paddingTop: 2 }}>
+                            <Grid item xs={4} md={4} lg={4} sm={4}>
+                                <OptionPage changeNumberOfpage={changeNumberOfpage} />
+                            </Grid>
                             <Grid item xs={8} md={8} lg={8} sm={8} style={{ paddingRight: '16px' }}>
                                 <Stack direction="row" spacing={2} style={{ float: 'right' }}>
                                     <LabelDisplayedRows
@@ -573,11 +603,12 @@ export default function PageProduct({ handleClickActionRow }: any) {
                                     />
                                     <Pagination
                                         shape="rounded"
-                                        color="primary"
+                                        // color="primary"
                                         count={pageDataProduct.totalPage}
                                         page={filterPageProduct.currentPage}
                                         defaultPage={filterPageProduct.currentPage}
                                         style={{
+                                            color: '#7C3367',
                                             display:
                                                 pageDataProduct.totalPage > 1 ? 'block' : 'none'
                                         }}

@@ -68,8 +68,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 giaBan: Utils.formatNumber(event.target.value)
             };
         });
-        const xx = Utils.formatNumber(product.giaBan ?? '');
-        console.log(xx, product.giaBan);
     };
 
     const CheckSave = () => {
