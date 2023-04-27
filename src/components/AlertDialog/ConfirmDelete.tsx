@@ -1,5 +1,4 @@
 import { Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
-import { Modal } from 'antd';
 import CloseIcon from '@mui/icons-material/Close';
 
 const ConfirmDelete = ({ isShow, onOk, onCancel }: any) => {

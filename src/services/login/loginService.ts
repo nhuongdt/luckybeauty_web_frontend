@@ -44,13 +44,16 @@ class LoginService {
                 }
             });
             if (apiResult.data.success === true) {
-                Cookies.set('accessToken', apiResult.data.result['accessToken']);
+                Cookies.set('accessToken', apiResult.data.result['accessToken'], {
+                    expires: 1 / 48
+                });
                 Cookies.set('encryptedAccessToken', apiResult.data.result['encryptedAccessToken']);
                 Cookies.set('expireInSeconds', apiResult.data.result['expireInSeconds'], {
-                    expires: 100
+                    expires: 1 / 48
                 });
                 Cookies.set('userId', apiResult.data.result['userId']);
                 Cookies.set('isLogin', 'true');
+                const check = Cookies.get('accessToken');
             }
             result = apiResult.data.success;
         }

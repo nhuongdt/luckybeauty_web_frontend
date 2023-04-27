@@ -61,6 +61,17 @@ export const appRouters: AppRouteProps = {
                     component: LoadableComponent(() => import('../../pages/register')),
                     isLayout: true,
                     showInMenu: false
+                },
+                {
+                    path: '/exception',
+                    permission: '',
+                    title: 'exception',
+                    icon: null,
+                    name: 'exception',
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/Exception'))
                 }
             ]
         },
@@ -178,18 +189,7 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(() => import('../../pages/tenant'))
                         }
                     ],
-                    component: LoadableComponent(() => import('../../pages/dich-vu'))
-                },
-                {
-                    path: '/exception?:type',
-                    permission: '',
-                    title: 'exception',
-                    icon: null,
-                    name: 'exception',
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/Exception'))
+                    component: null
                 }
             ]
         }

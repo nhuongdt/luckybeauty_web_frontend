@@ -14,14 +14,12 @@ class UserService {
     }
 
     public async update(updateUserInput: UpdateUserInput) {
-        const result = await http.put('api/services/app/User/Update', updateUserInput);
+        const result = await http.post('api/services/app/User/Update', updateUserInput);
         return result.data.result;
     }
 
-    public async delete(entityDto: EntityDto) {
-        const result = await http.delete('api/services/app/User/Delete', {
-            params: entityDto
-        });
+    public async delete(entityDto: number) {
+        const result = await http.delete(`api/services/app/User/Delete?id=${entityDto}`);
         return result.data;
     }
 
@@ -35,10 +33,8 @@ class UserService {
         return result.data;
     }
 
-    public async get(entityDto: EntityDto): Promise<CreateOrUpdateUserInput> {
-        const result = await http.get('api/services/app/User/Get', {
-            params: entityDto
-        });
+    public async get(entityDto: number): Promise<CreateOrUpdateUserInput> {
+        const result = await http.get(`api/services/app/User/Get?Id=${entityDto}`);
         return result.data.result;
     }
 

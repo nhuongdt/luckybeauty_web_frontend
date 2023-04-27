@@ -43,7 +43,7 @@
     border-radius: 6px;
 }
 .active-menu-item-title {
-    color: #7c3367;
+    color: #7C3367;
     height: 40px;
     align-items: center;
     justify-content: space-between;
@@ -57,5 +57,10 @@
     height: 40px;
     justify-content: space-between;
     background: #ffffff;
+    color: #999699;
     border-radius: 6px;
 }
+.side-menu {
+    /* min-height: calc(100vh - 120px); Đặt chiều cao tối thiểu cho SiderMenu */
+    /* overflow-y: auto; Hiển thị thanh cuộn khi nội dung vượt quá kích thước của SiderMenu */
+} 

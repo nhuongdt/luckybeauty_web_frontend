@@ -80,6 +80,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     };
 
     async function saveProduct() {
+        console.log('ok');
         setWasClickSave(true);
         if (wasClickSave) {
             return;

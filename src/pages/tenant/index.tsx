@@ -1,17 +1,21 @@
 import React, { Component, FormEventHandler } from 'react';
-import { inject, observer } from 'mobx-react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
 import CreateTenantInput from '../../services/tenant/dto/createTenantInput';
-import { Button, FormInstance, Space } from 'antd';
+import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import AppComponentBase from '../../components/AppComponentBase';
 import { EntityDto } from '../../services/dto/entityDto';
 import tenantService from '../../services/tenant/tenantService';
-import { Pagination, Stack } from '@mui/material';
 import '../../custom.css';
-import { EditOutlined } from '@ant-design/icons';
-import { DeleteOutline } from '@mui/icons-material';
+import {
+    DeleteOutlined,
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
 import Stores from '../../stores/storeIdentifier';
-import CreateOrEditTenant from './create-or-edit-tenant';
+import CreateOrEditTenant from './components/create-or-edit-tenant';
 import TenantModel from '../../models/Tenants/TenantModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -65,12 +69,12 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         });
     }
 
-    handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    handlePageChange: PaginationProps['onChange'] = (page) => {
         const { maxResultCount } = this.state;
         this.setState({
-            currentPage: value,
-            skipCount: value,
-            startIndex: (value - 1 <= 0 ? 0 : value - 1) * maxResultCount
+            currentPage: page,
+            skipCount: page,
+            startIndex: (page - 1 <= 0 ? 0 : page - 1) * maxResultCount
         });
         this.getAll();
     };
@@ -145,67 +149,71 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
 
     render(): React.ReactNode {
         return (
-            <div className="container">
+            <div className="container-fluid bg-white">
                 <div className="page-header">
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        spacing={2}>
-                        <div>
-                            <div className="pt-2">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Tenant
-                                        </li>
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Quản lý tenant
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+                    <Row align={'middle'} justify={'space-between'}>
+                        <Col span={12}>
                             <div>
-                                <h3>Tenant</h3>
-                            </div>
-                        </div>
-                        <div>
-                            <Stack
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
-                                spacing={1}>
-                                <div className="search w-100">
-                                    <i className="fa-thin fa-magnifying-glass"></i>
-                                    <input
-                                        type="text"
-                                        onChange={this.handleSearch}
-                                        className="input-search"
-                                        placeholder="Tìm kiếm ..."
-                                    />
+                                <div className="pt-2">
+                                    <nav aria-label="breadcrumb">
+                                        <ol className="breadcrumb">
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Tenant
+                                            </li>
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Thông tin tenant
+                                            </li>
+                                        </ol>
+                                    </nav>
                                 </div>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="flex-endspace-between"
-                                    alignItems="center"
-                                    spacing={1}>
-                                    <Button className="btn-import">
-                                        <i className="fa fa-home"></i> Nhập
+                                <div>
+                                    <h3>Danh sách tenant</h3>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Space align="center" size="middle">
+                                    <div className="search w-100">
+                                        <Input
+                                            allowClear
+                                            onChange={this.handleSearch}
+                                            size="large"
+                                            prefix={<SearchOutlined />}
+                                            placeholder="Tìm kiếm..."
+                                        />
+                                    </div>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            className="btn-import"
+                                            size="large"
+                                            icon={<DownloadOutlined />}>
+                                            Nhập
+                                        </Button>
+                                        <Button
+                                            className="btn-export"
+                                            size="large"
+                                            icon={<UploadOutlined />}>
+                                            Xuất
+                                        </Button>
+                                    </Space>
+                                    <Button
+                                        icon={<PlusOutlined />}
+                                        size="large"
+                                        className="btn btn-add-item"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen(0);
+                                        }}>
+                                        Thêm tenant
                                     </Button>
-                                    <Button className="btn-export">
-                                        <i className="fa fa-home"></i> Xuất
-                                    </Button>
-                                </Stack>
-                                <Button
-                                    className="btn btn-add-item"
-                                    onClick={() => {
-                                        this.createOrUpdateModalOpen(0);
-                                    }}>
-                                    Thêm tenant
-                                </Button>
-                            </Stack>
-                        </div>
-                    </Stack>
+                                </Space>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
                 <div className="page-content pt-2">
                     <table className="h-100 w-100 table table-border-0 table">
@@ -251,7 +259,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                                 />
                                                 <Button
                                                     danger
-                                                    icon={<DeleteOutline />}
+                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             tenantId: item.id
@@ -281,15 +289,18 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Stack spacing={1.5} className="align-items-center">
+                                    <Space
+                                        size="middle"
+                                        align="center"
+                                        className="align-items-center">
                                         <Pagination
-                                            count={this.state.totalPage}
-                                            defaultPage={this.state.currentPage}
+                                            total={this.state.totalCount}
+                                            pageSize={this.state.maxResultCount}
+                                            defaultCurrent={this.state.currentPage}
+                                            current={this.state.currentPage}
                                             onChange={this.handlePageChange}
-                                            color="secondary"
-                                            shape="rounded"
                                         />
-                                    </Stack>
+                                    </Space>
                                 </div>
                             </div>
                         </div>

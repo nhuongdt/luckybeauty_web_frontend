@@ -1,16 +1,21 @@
 import React, { FormEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Button, FormInstance, Space } from 'antd';
-import { EntityDto } from '../../services/dto/entityDto';
+import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import roleService from '../../services/role/roleService';
-import { Pagination, Stack } from '@mui/material';
-import { EditOutlined } from '@ant-design/icons';
+import {
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
 import { DeleteOutline } from '@mui/icons-material';
 import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
 import '../../custom.css';
-import CreateOrEditRole from './create-or-edit-role';
+import CreateOrEditRole from './components/create-or-edit-role';
 import { GetAllPermissionsOutput } from '../../services/role/dto/getAllPermissionsOutput';
 import RoleEditModel from '../../models/Roles/roleEditModel';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -27,6 +32,7 @@ export interface IRoleState {
     currentPage: number;
     totalPage: number;
     startIndex: number;
+    isShowConfirmDelete: boolean;
 }
 class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
     formRef = React.createRef<FormInstance>();
@@ -52,7 +58,8 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         } as RoleEditModel,
         currentPage: 1,
         totalPage: 0,
-        startIndex: 1
+        startIndex: 1,
+        isShowConfirmDelete: false
     };
 
     async componentDidMount() {
@@ -74,7 +81,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         });
     }
 
-    handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    handlePageChange: PaginationProps['onChange'] = (value) => {
         const { maxResultCount } = this.state;
         this.setState({
             currentPage: value,
@@ -92,13 +99,13 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
 
     async createOrUpdateModalOpen(id: number) {
         if (id === 0) {
+            this.formRef.current?.resetFields();
             const allPermission = await roleService.getAllPermissions();
             this.setState({
                 allPermissions: allPermission
             });
         } else {
             const roleForEdit = await roleService.getRoleForEdit(id);
-
             const allPermission = await roleService.getAllPermissions();
             this.setState({
                 allPermissions: allPermission,
@@ -122,83 +129,102 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
     }
 
     handleCreate = () => {
-        const form = this.formRef.current;
-        form!.validateFields().then(async (values: any) => {
+        this.formRef.current?.validateFields().then(async (values: any) => {
             if (this.state.roleId === 0) {
                 await roleService.create(values);
             } else {
-                await roleService.update({ id: this.state.roleId, ...values });
+                await roleService.update({
+                    id: this.state.roleId,
+                    ...values
+                });
             }
 
             await this.getAll();
             this.setState({ modalVisible: false });
-            form!.resetFields();
+            this.formRef.current?.resetFields();
         });
     };
-
+    onShowDelete = () => {
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete
+        });
+    };
+    onOkDelete = () => {
+        this.delete(this.state.roleId);
+        this.getAll();
+        this.onShowDelete();
+    };
     handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
         const filter = event.target.value;
         this.setState({ filter: filter }, async () => this.getAll());
     };
     render() {
         return (
-            <div className="container">
+            <div className="container-fluid bg-white">
                 <div className="page-header">
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        spacing={2}>
-                        <div>
-                            <div className="pt-2">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Vai trò
-                                        </li>
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Quản lý vai trò
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+                    <Row align={'middle'} justify={'space-between'}>
+                        <Col span={12}>
                             <div>
-                                <h3>Vai trò</h3>
-                            </div>
-                        </div>
-                        <div>
-                            <Stack
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
-                                spacing={1}>
-                                <div className="search w-100">
-                                    <i className="fa-thin fa-magnifying-glass"></i>
-                                    <input
-                                        type="text"
-                                        //onChange={()=>{this.handleSearch()}}
-                                        className="input-search"
-                                        placeholder="Tìm kiếm ..."
-                                    />
+                                <div className="pt-2">
+                                    <nav aria-label="breadcrumb">
+                                        <ol className="breadcrumb">
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Vai trò
+                                            </li>
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Thông tin vai trò
+                                            </li>
+                                        </ol>
+                                    </nav>
                                 </div>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="flex-endspace-between"
-                                    alignItems="center"
-                                    spacing={1}>
-                                    <Button className="btn-import">
-                                        <i className="fa fa-home"></i> Nhập
+                                <div>
+                                    <h3>Danh sách vai trò</h3>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Space align="center" size="middle">
+                                    <div className="search w-100">
+                                        <Input
+                                            allowClear
+                                            onChange={this.handleSearch}
+                                            size="large"
+                                            prefix={<SearchOutlined />}
+                                            placeholder="Tìm kiếm..."
+                                        />
+                                    </div>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            className="btn-import"
+                                            size="large"
+                                            icon={<DownloadOutlined />}>
+                                            Nhập
+                                        </Button>
+                                        <Button
+                                            className="btn-export"
+                                            size="large"
+                                            icon={<UploadOutlined />}>
+                                            Xuất
+                                        </Button>
+                                    </Space>
+                                    <Button
+                                        icon={<PlusOutlined />}
+                                        size="large"
+                                        className="btn btn-add-item"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen(0);
+                                        }}>
+                                        Thêm vai trò
                                     </Button>
-                                    <Button className="btn-export">
-                                        <i className="fa fa-home"></i> Xuất
-                                    </Button>
-                                </Stack>
-                                <Button className="btn btn-add-item" onClick={this.Modal}>
-                                    Thêm vai trò
-                                </Button>
-                            </Stack>
-                        </div>
-                    </Stack>
+                                </Space>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
                 <div className="page-content pt-2">
                     <table className="h-100 w-100 table table-border-0 table">
@@ -251,7 +277,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                                         this.setState({
                                                             roleId: item.id
                                                         });
-                                                        // this.onCancelDelete()
+                                                        this.onShowDelete();
                                                     }}
                                                 />
                                             </Space>
@@ -276,15 +302,18 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Stack spacing={1.5} className="align-items-center">
+                                    <Space
+                                        size="middle"
+                                        align="center"
+                                        className="align-items-center">
                                         <Pagination
-                                            count={this.state.totalPage}
-                                            defaultPage={this.state.currentPage}
+                                            total={this.state.totalCount}
+                                            pageSize={this.state.maxResultCount}
+                                            defaultCurrent={this.state.currentPage}
+                                            current={this.state.currentPage}
                                             onChange={this.handlePageChange}
-                                            color="secondary"
-                                            shape="rounded"
                                         />
-                                    </Stack>
+                                    </Space>
                                 </div>
                             </div>
                         </div>
@@ -302,6 +331,10 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                     permissions={this.state.allPermissions}
                     formRef={this.formRef}
                 />
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.onShowDelete}></ConfirmDelete>
             </div>
         );
     }

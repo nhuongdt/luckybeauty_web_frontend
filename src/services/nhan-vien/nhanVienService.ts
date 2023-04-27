@@ -17,7 +17,7 @@ class NhanVienService {
         input: PagedFilterAndSortedRequest
     ): Promise<PagedResultDto<NhanSuItemDto>> {
         const result = await http.post(
-            `api/services/app/NhanSu/Search?keyWord=${keyword !== '' ? keyword : ''}`,
+            `api/services/app/NhanSu/Search?keyWord=${keyword.toString()}`,
             input,
             {
                 headers: {

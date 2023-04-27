@@ -1,17 +1,25 @@
-import React from 'react';
+import React, { FormEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Button, FormInstance, Space } from 'antd';
-import { EntityDto } from '../../services/dto/entityDto';
+import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import userService from '../../services/user/userService';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { GetUserOutput } from '../../services/user/dto/getUserOutput';
-import { EditOutlined } from '@ant-design/icons';
-import { DeleteOutline } from '@mui/icons-material';
-import { Pagination, Stack } from '@mui/material';
+import {
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined,
+    DeleteOutlined
+} from '@ant-design/icons';
 import '../../custom.css';
 import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
 import { AnyNaptrRecord, AnyNsRecord } from 'dns';
-import CreateOrEditUser from './create-or-edit-user';
+import CreateOrEditUser from './components/create-or-edit-user';
+import { CreateOrUpdateUserInput } from '../../services/user/dto/createOrUpdateUserInput';
+import SuggestService from '../../services/suggests/SuggestService';
+import { GetRoles } from '../../services/user/dto/getRolesOuput';
+import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IUserProps {}
 
@@ -26,6 +34,10 @@ export interface IUserState {
     currentPage: number;
     totalPage: number;
     startIndex: number;
+    userEdit: CreateOrUpdateUserInput;
+    isShowConfirmDelete: boolean;
+    roles: GetRoles[];
+    suggestNhanSu: SuggestNhanSuDto[];
 }
 class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     formRef = React.createRef<FormInstance>();
@@ -40,7 +52,20 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         totalCount: 0,
         currentPage: 1,
         totalPage: 0,
-        startIndex: 1
+        startIndex: 1,
+        userEdit: {
+            userName: '',
+            name: '',
+            surname: '',
+            emailAddress: '',
+            isActive: false,
+            roleNames: [],
+            password: '',
+            id: 0
+        } as CreateOrUpdateUserInput,
+        isShowConfirmDelete: false,
+        roles: [] as GetRoles[],
+        suggestNhanSu: [] as SuggestNhanSuDto[]
     };
 
     async componentDidMount() {
@@ -61,7 +86,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
     }
 
-    handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    handlePageChange: PaginationProps['onChange'] = (value) => {
         const { maxResultCount } = this.state;
         this.setState({
             currentPage: value,
@@ -78,109 +103,145 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     };
 
     async createOrUpdateModalOpen(entityDto: number) {
-        // if (entityDto.id === 0) {
-        //   await this.props.userStore.createUser()
-        //   await this.props.userStore.getRoles()
-        // } else {
-        //   await this.props.userStore.get(entityDto)
-        //   await this.props.userStore.getRoles()
-        // }
+        if (entityDto === 0) {
+            this.formRef.current?.resetFields();
+            const suggestNhanSu = await SuggestService.SuggestNhanSu();
+            const roles = await userService.getRoles();
+            this.setState({
+                roles: roles,
+                suggestNhanSu: suggestNhanSu,
+                userEdit: {
+                    userName: '',
+                    name: '',
+                    surname: '',
+                    emailAddress: '',
+                    isActive: false,
+                    roleNames: [],
+                    password: '',
+                    id: 0
+                }
+            });
+        } else {
+            const user = await userService.get(entityDto);
+            const roles = await userService.getRoles();
+            this.setState({
+                userEdit: user,
+                roles: roles
+            });
+            setTimeout(() => {
+                this.formRef.current?.setFieldsValue({ ...this.state.userEdit });
+            }, 100);
+        }
 
         this.setState({ userId: entityDto });
         this.Modal();
-
-        setTimeout(() => {
-            // this.formRef.current?.setFieldsValue({ ...this.props.userStore.editUser })
-        }, 100);
     }
 
-    delete(input: EntityDto) {
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const self = this;
+    delete(input: number) {
+        userService.delete(input);
     }
 
     handleCreate = () => {
         const form = this.formRef.current;
 
         form!.validateFields().then(async (values: any) => {
-            // if (this.state.userId === 0) {
-            //   await this.props.userStore.create(values)
-            // } else {
-            //   await this.props.userStore.update({ ...values, id: this.state.userId })
-            // }
+            if (this.state.userId === 0) {
+                await userService.create(values);
+            } else {
+                await userService.update({
+                    ...values,
+                    id: this.state.userId,
+                    fullName: values.name + ' ' + values.surname,
+                    lastLoginTime: new Date()
+                });
+            }
 
             await this.getAll();
             this.setState({ modalVisible: false });
             form!.resetFields();
         });
     };
-
-    handleSearch = (value: string) => {
-        this.setState({ filter: value }, async () => this.getAll());
+    onShowDelete = () => {
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete
+        });
+    };
+    onOkDelete = () => {
+        this.delete(this.state.userId);
+        this.getAll();
+        this.onShowDelete();
+    };
+    handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+        const filter = event.target.value;
+        this.setState({ filter: filter }, async () => this.getAll());
     };
     render(): React.ReactNode {
         return (
-            <div className="container">
+            <div className="container-fluid bg-white">
                 <div className="page-header">
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        spacing={2}>
-                        <div>
-                            <div className="pt-2">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Tài khoản
-                                        </li>
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Quản lý người dùng
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+                    <Row align={'middle'} justify={'space-between'}>
+                        <Col span={12}>
                             <div>
-                                <h3>Tài khoản</h3>
-                            </div>
-                        </div>
-                        <div>
-                            <Stack
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
-                                spacing={1}>
-                                <div className="search w-100">
-                                    <i className="fa-thin fa-magnifying-glass"></i>
-                                    <input
-                                        type="text"
-                                        //onChange={()=>{this.handleSearch()}}
-                                        className="input-search"
-                                        placeholder="Tìm kiếm ..."
-                                    />
+                                <div className="pt-2">
+                                    <nav aria-label="breadcrumb">
+                                        <ol className="breadcrumb">
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Người dùng
+                                            </li>
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Thông tin người dùng
+                                            </li>
+                                        </ol>
+                                    </nav>
                                 </div>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="flex-endspace-between"
-                                    alignItems="center"
-                                    spacing={1}>
-                                    <Button className="btn-import">
-                                        <i className="fa fa-home"></i> Nhập
+                                <div>
+                                    <h3>Danh sách người dùng</h3>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Space align="center" size="middle">
+                                    <div className="search w-100">
+                                        <Input
+                                            allowClear
+                                            onChange={this.handleSearch}
+                                            size="large"
+                                            prefix={<SearchOutlined />}
+                                            placeholder="Tìm kiếm..."
+                                        />
+                                    </div>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            className="btn-import"
+                                            size="large"
+                                            icon={<DownloadOutlined />}>
+                                            Nhập
+                                        </Button>
+                                        <Button
+                                            className="btn-export"
+                                            size="large"
+                                            icon={<UploadOutlined />}>
+                                            Xuất
+                                        </Button>
+                                    </Space>
+                                    <Button
+                                        icon={<PlusOutlined />}
+                                        size="large"
+                                        className="btn btn-add-item"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen(0);
+                                        }}>
+                                        Thêm vai trò
                                     </Button>
-                                    <Button className="btn-export">
-                                        <i className="fa fa-home"></i> Xuất
-                                    </Button>
-                                </Stack>
-                                <Button
-                                    className="btn btn-add-item"
-                                    onClick={() => {
-                                        this.createOrUpdateModalOpen(0);
-                                    }}>
-                                    Thêm người dùng
-                                </Button>
-                            </Stack>
-                        </div>
-                    </Stack>
+                                </Space>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
                 <div className="page-content pt-2">
                     <table className="h-100 w-100 table table-border-0 table">
@@ -212,9 +273,13 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                         <td className="text-td-table">{item['userName']}</td>
                                         <td className="text-td-table">{item.fullName}</td>
                                         <td className="text-td-table">
-                                            {item.roleNames.map((role: any) => {
-                                                return <span>{role}</span>;
-                                            })}
+                                            {item.roleNames.length > 1
+                                                ? item.roleNames.map((role: any) => {
+                                                      return <span>{role};</span>;
+                                                  })
+                                                : item.roleNames.map((role: any) => {
+                                                      return <span>{role} </span>;
+                                                  })}
                                         </td>
                                         <td className="text-td-table">{item.emailAddress}</td>
                                         <td className="text-td-table">
@@ -226,20 +291,20 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                                     type="primary"
                                                     icon={<EditOutlined />}
                                                     onClick={() => {
-                                                        // this.setState({
-                                                        //   idNhanSu: item.id,
-                                                        // });
-                                                        // this.onOpenDialog();
+                                                        this.setState({
+                                                            userId: item.id
+                                                        });
+                                                        this.createOrUpdateModalOpen(item.id);
                                                     }}
                                                 />
                                                 <Button
                                                     danger
-                                                    icon={<DeleteOutline />}
+                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
-                                                        // this.setState({
-                                                        //   idNhanSu: item.id,
-                                                        // });
-                                                        // this.onCancelDelete()
+                                                        this.setState({
+                                                            userId: item.id
+                                                        });
+                                                        this.onShowDelete();
                                                     }}
                                                 />
                                             </Space>
@@ -264,15 +329,18 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Stack spacing={1.5} className="align-items-center">
+                                    <Space
+                                        size="middle"
+                                        align="center"
+                                        className="align-items-center">
                                         <Pagination
-                                            count={this.state.totalPage}
-                                            defaultPage={this.state.currentPage}
+                                            total={this.state.totalCount}
+                                            pageSize={this.state.maxResultCount}
+                                            defaultCurrent={this.state.currentPage}
+                                            current={this.state.currentPage}
                                             onChange={this.handlePageChange}
-                                            color="secondary"
-                                            shape="rounded"
                                         />
-                                    </Stack>
+                                    </Space>
                                 </div>
                             </div>
                         </div>
@@ -282,11 +350,15 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         modalType={
                             this.state.userId === 0 ? 'Thêm mới tài khoản' : 'Cập nhật tài khoản'
                         }
+                        formRef={this.formRef}
                         onCancel={() =>
                             this.setState({
                                 modalVisible: false
                             })
                         }
+                        roles={this.state.roles}
+                        suggestNhanSu={this.state.suggestNhanSu}
+                        userId={this.state.userId}
                         onOk={this.handleCreate}
                     />
                 </div>

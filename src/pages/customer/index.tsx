@@ -1,12 +1,8 @@
 import React, { Component, FormEventHandler, useState } from 'react';
-import nhanVienService from '../../services/nhan-vien/nhanVienService';
-import { Guid } from 'guid-typescript';
-import { Pagination, Stack } from '@mui/material';
-import CreateOrEditCustomerDialog from './create-or-edit-customer-modal';
+import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
-import { DeleteSharp, SyncOutlined } from '@mui/icons-material';
-import { Button, Space } from 'antd';
+import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import SuggestService from '../../services/suggests/SuggestService';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import { SuggestNguonKhachDto } from '../../services/suggests/dto/SuggestNguonKhachDto';
@@ -16,7 +12,25 @@ import '../../custom.css';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddIcon from '@mui/icons-material/Add';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import {
+    DeleteOutlined,
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
+const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
+    if (type === 'prev') {
+        return <a>Previous</a>;
+    }
+    if (type === 'next') {
+        return <a>Next</a>;
+    }
+    return originalElement;
+};
 class CustomerScreen extends Component {
+    formRef = React.createRef<FormInstance>();
     state = {
         IdKhachHang: '',
         modalVisible: false,
@@ -65,35 +79,69 @@ class CustomerScreen extends Component {
     }
     async delete(id: string) {
         await khachHangService.delete(id);
-        this.getData();
+        this.setState({ IdKhachHang: '' });
     }
     handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
         const filter = event.target.value;
         this.setState({ filter }, async () => this.getListKhachHang());
     };
 
-    handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    handlePageChange: PaginationProps['onChange'] = (page) => {
         const { maxResultCount } = this.state;
         this.setState({
-            currentPage: value,
-            skipCount: value,
-            startIndex: (value - 1 <= 0 ? 0 : value - 1) * maxResultCount
+            currentPage: page,
+            skipCount: page,
+            startIndex: (page - 1 <= 0 ? 0 : page - 1) * maxResultCount
         });
         this.getData();
     };
 
-    onOpenDialog = () => {
-        this.getData();
+    Modal = () => {
         this.setState({
-            modalVisible: true
+            modalVisible: !this.state.modalVisible
         });
     };
-    onCloseDialog = () => {
-        this.setState({
-            modalVisible: false
-        });
-        this.getData();
-    };
+
+    async createOrUpdateModalOpen(entityDto: string) {
+        if (entityDto === '') {
+            this.formRef.current?.resetFields();
+            this.setState({
+                createOrEditKhachHang: {
+                    id: '',
+                    maKhachHang: '',
+                    tenKhachHang: '',
+                    soDienThoai: '',
+                    diaChi: '',
+                    gioiTinh: true,
+                    email: '',
+                    moTa: '',
+                    trangThai: 0,
+                    tongTichDiem: 0,
+                    maSoThue: '',
+                    avatar: '',
+                    ngaySinh: '',
+                    kieuNgaySinh: 0,
+                    idLoaiKhach: 0,
+                    idNhomKhach: '',
+                    idNguonKhach: '',
+                    idTinhThanh: '',
+                    idQuanHuyen: ''
+                }
+            });
+        } else {
+            const customer = await khachHangService.getKhachHang(entityDto);
+            this.setState({
+                createOrEditKhachHang: customer
+            });
+            setTimeout(() => {
+                this.formRef.current?.setFieldsValue({ ...this.state.createOrEditKhachHang });
+            }, 100);
+        }
+
+        this.setState({ IdKhachHang: entityDto });
+        this.Modal();
+    }
+
     onCancelDelete = () => {
         this.setState({
             isShowConfirmDelete: !this.state.isShowConfirmDelete
@@ -115,75 +163,90 @@ class CustomerScreen extends Component {
         });
     };
 
-    handelSubmit = () => {
-        console.log(this.state.createOrEditKhachHang);
-        if (this.state.IdKhachHang === '') {
-            khachHangService.create(this.state.createOrEditKhachHang);
-        } else {
-            khachHangService.update(this.state.createOrEditKhachHang);
-        }
-        this.onCloseDialog();
+    handleSubmit = async () => {
+        this.formRef.current?.validateFields().then(async (values: any) => {
+            if (this.state.IdKhachHang === '') {
+                await khachHangService.create(values);
+            } else {
+                await khachHangService.update({
+                    id: this.state.IdKhachHang,
+                    ...values
+                });
+            }
+
+            await this.getData();
+            this.setState({ modalVisible: false });
+            this.formRef.current?.resetFields();
+        });
     };
 
     public render() {
         return (
-            <div className="container bg-white">
+            <div className="container-fluid bg-white">
                 <div className="page-header">
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        spacing={2}>
-                        <div>
-                            <div className="pt-2">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Khách hàng
-                                        </li>
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Quản lý khách hàng
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+                    <Row align={'middle'} justify={'space-between'}>
+                        <Col span={12}>
                             <div>
-                                <h3>Danh sách khách hàng</h3>
-                            </div>
-                        </div>
-                        <div>
-                            <Stack
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
-                                spacing={1}>
-                                <div className="search w-100">
-                                    <i className="fa-thin fa-magnifying-glass"></i>
-                                    <input
-                                        type="text"
-                                        onChange={this.handleSearch}
-                                        className="input-search"
-                                        placeholder="Tìm kiếm ..."
-                                    />
+                                <div className="pt-2">
+                                    <nav aria-label="breadcrumb">
+                                        <ol className="breadcrumb">
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Khách hàng
+                                            </li>
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Quản lý khách hàng
+                                            </li>
+                                        </ol>
+                                    </nav>
                                 </div>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="flex-endspace-between"
-                                    alignItems="center"
-                                    spacing={1}>
-                                    <Button className="btn-import">
-                                        <i className="fa fa-home"></i> Nhập
+                                <div>
+                                    <h3>Danh sách khách hàng</h3>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Space align="center" size="middle">
+                                    <div className="search w-100">
+                                        <Input
+                                            allowClear
+                                            onChange={this.handleSearch}
+                                            size="large"
+                                            prefix={<SearchOutlined />}
+                                            placeholder="Tìm kiếm..."
+                                        />
+                                    </div>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            className="btn-import"
+                                            size="large"
+                                            icon={<DownloadOutlined />}>
+                                            Nhập
+                                        </Button>
+                                        <Button
+                                            className="btn-export"
+                                            size="large"
+                                            icon={<UploadOutlined />}>
+                                            Xuất
+                                        </Button>
+                                    </Space>
+                                    <Button
+                                        icon={<PlusOutlined />}
+                                        size="large"
+                                        className="btn btn-add-item"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen('');
+                                        }}>
+                                        Thêm khách hàng
                                     </Button>
-                                    <Button className="btn-export">
-                                        <i className="fa fa-home"></i> Xuất
-                                    </Button>
-                                </Stack>
-                                <Button className="btn btn-add-item" onClick={this.onOpenDialog}>
-                                    Thêm khách hàng
-                                </Button>
-                            </Stack>
-                        </div>
-                    </Stack>
+                                </Space>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
                 <div className="page-content pt-2">
                     <table className="h-100 w-100 table table-border-0 table">
@@ -213,9 +276,7 @@ class CustomerScreen extends Component {
                                         <td className="text-td-table">
                                             {this.state.startIndex + (index + 1)}
                                         </td>
-                                        <td className="text-td-table">
-                                            {item.tenKhachHang.toString()}
-                                        </td>
+                                        <td className="text-td-table">{item.tenKhachHang}</td>
                                         <td className="text-td-table">{item.soDienThoai}</td>
                                         <td className="text-td-table">{item.tenNhomKhach}</td>
                                         <td className="text-td-table">{item.nhanVienPhuTrach}</td>
@@ -231,17 +292,19 @@ class CustomerScreen extends Component {
                                             <Space wrap direction="horizontal">
                                                 <Button
                                                     type="primary"
-                                                    icon={<SyncOutlined />}
+                                                    icon={<EditOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             IdKhachHang: item.id.toString()
                                                         });
-                                                        this.onOpenDialog();
+                                                        this.createOrUpdateModalOpen(
+                                                            item.id.toString()
+                                                        );
                                                     }}
                                                 />
                                                 <Button
                                                     danger
-                                                    icon={<DeleteSharp />}
+                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             IdKhachHang: item.id.toString()
@@ -261,9 +324,9 @@ class CustomerScreen extends Component {
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
                             <div className="row">
-                                <div className="col-5 align-items-center">
+                                <div className="col-5 text-center">
                                     <label
-                                        className="pagination-view-record align-items-center"
+                                        className="pagination-view-record text-center"
                                         style={{ float: 'right' }}>
                                         Hiển thị{' '}
                                         {this.state.currentPage * this.state.maxResultCount - 9}-
@@ -272,29 +335,39 @@ class CustomerScreen extends Component {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Stack spacing={1.5} className="align-items-center">
+                                    <Space
+                                        size="middle"
+                                        align="center"
+                                        className="align-items-center">
                                         <Pagination
-                                            count={this.state.totalPage}
-                                            defaultPage={this.state.currentPage}
+                                            total={this.state.totalCount}
+                                            pageSize={this.state.maxResultCount}
+                                            defaultCurrent={this.state.currentPage}
+                                            current={this.state.currentPage}
                                             onChange={this.handlePageChange}
-                                            color="secondary"
-                                            shape="rounded"
                                         />
-                                    </Stack>
+                                    </Space>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <CreateOrEditCustomerDialog
-                    modalVisible={this.state.modalVisible}
-                    onCloseDialog={this.onCloseDialog}
-                    id={this.state.IdKhachHang}
-                    createOrEditKhachHang={this.state.createOrEditKhachHang}
+                    visible={this.state.modalVisible}
+                    formRef={this.formRef}
+                    onCancel={() => {
+                        this.setState({
+                            modalVisible: false
+                        });
+                    }}
                     suggestNguonKhach={this.state.suggestNguonKhach}
                     suggestNhomKhach={this.state.suggestNhomKhach}
-                    handleChange={this.handleChange}
-                    handleSubmit={this.handelSubmit}></CreateOrEditCustomerDialog>
+                    onOk={this.handleSubmit}
+                    modalType={
+                        this.state.IdKhachHang === ''
+                            ? 'Thêm mới khách hàng'
+                            : 'Cập nhật thông tin khách hàng'
+                    }></CreateOrEditCustomerDialog>
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}

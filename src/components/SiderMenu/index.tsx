@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Sider from 'antd/es/layout/Sider';
 import { appRouters } from '../routers/index';
 import './sider_menu.css';
 import {
     Avatar,
+    Box,
     Divider,
+    Drawer,
     ListItemButton,
     ListItemIcon,
     ListItemText,
@@ -19,6 +20,7 @@ import SiderSubMenuItem from './SiderSubMenuItem';
 import Cookies from 'js-cookie';
 import LogoutIcon from '@mui/icons-material/Logout';
 import http from '../../services/httpService';
+import { Grid } from '@mui/material';
 interface Props {
     collapsed: boolean;
     toggle: () => void;
@@ -56,54 +58,91 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
             .catch((error) => console.log(error));
     }, []);
     return (
-        <Sider
-            collapsed={collapsed}
-            onCollapse={toggle}
-            width={256}
-            style={{ height: '100vh' }}
-            theme="light"
-            className="side-menu">
-            <Toolbar style={{ textAlign: 'center', marginTop: 15, marginBottom: 10 }}>
-                <Avatar
-                    alt="Lucky Beauty"
-                    src="../../images/user.png"
-                    sx={{ width: 28, height: 28 }}
-                />
-                {collapsed ? null : (
-                    <span className="p-2">
-                        <Typography variant="h6" noWrap component="span">
-                            Lucky Beauty
-                        </Typography>
-                    </span>
-                )}
-            </Toolbar>
-            <Divider variant="fullWidth" light={false} />
-            {mainAppRoutes.map((menuItem) => {
-                if (menuItem.children.length > 0) {
-                    return SiderSubMenuItem(menuItem, lstPermission, collapsed);
-                } else {
-                    return SiderMenuItem(menuItem, lstPermission, collapsed);
+        <Drawer
+            variant="permanent"
+            sx={{
+                width: 256,
+                flexShrink: 0,
+                '& .MuiDrawer-paper': {
+                    width: 256,
+                    boxSizing: 'border-box',
+                    borderRight: '0px',
+                    backgroundColor: '#FFFFFF',
+                    color: '#FFFFFF'
                 }
-            })}
-            <ListItemButton key={'logout'} component={Link} to="/login" className="active-menu-bg">
-                {/* <Link to={menuItem.path}> </Link> */}
-                <Stack
+            }}>
+            <div style={{ minHeight: 0, height: 'calc(100% - 120px)', overflowY: 'auto' }}>
+                {' '}
+                <Grid
+                    container
+                    direction="column"
+                    justifyContent="space-between"
                     alignItems="center"
-                    className={collapsed ? 'menu-item' : ''}
-                    direction="row"
-                    spacing={1}
-                    style={{ width: '100%' }}>
-                    <ListItemIcon className="menu-item-icon">
-                        <LogoutIcon />
-                    </ListItemIcon>
-                    {collapsed ? null : (
-                        <ListItemText
-                            primary="Đăng xuất"
-                            className="menu-item-title"></ListItemText>
-                    )}
-                </Stack>
-            </ListItemButton>
-        </Sider>
+                    style={{ height: 'calc(100% - 120px)', justifyContent: 'flex-start' }}>
+                    <Grid item>
+                        <Toolbar
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                marginTop: 15,
+                                marginBottom: 10
+                            }}>
+                            <img src="../../images/Lucky_beauty.jpg" />
+                            {collapsed ? null : (
+                                <span className="p-2">
+                                    <Typography
+                                        variant="h6"
+                                        noWrap
+                                        component="div"
+                                        style={{
+                                            color: '#1F0D1A',
+                                            fontSize: 18,
+                                            fontWeight: 700,
+                                            fontFamily: 'Roboto',
+                                            height: 28
+                                        }}>
+                                        Lucky Beauty
+                                    </Typography>
+                                </span>
+                            )}
+                        </Toolbar>
+                        <Divider />
+                        {mainAppRoutes.map((menuItem) => {
+                            if (menuItem.children.length > 0) {
+                                return SiderSubMenuItem(menuItem, lstPermission, collapsed);
+                            } else {
+                                return SiderMenuItem(menuItem, lstPermission, collapsed);
+                            }
+                        })}
+                    </Grid>
+                </Grid>
+            </div>
+
+            <hr />
+            <Box mt="auto">
+                <ListItemButton
+                    key={'logout'}
+                    component={Link}
+                    to="/login"
+                    className="active-menu-bg">
+                    <Stack
+                        alignItems="center"
+                        className={collapsed ? 'menu-item' : ''}
+                        direction="row"
+                        spacing={1}
+                        style={{ width: '100%' }}>
+                        <ListItemIcon className="menu-item-icon">
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        {collapsed ? null : (
+                            <ListItemText
+                                primary="Đăng xuất"
+                                className="menu-item-title"></ListItemText>
+                        )}
+                    </Stack>
+                </ListItemButton>
+            </Box>
+        </Drawer>
     );
 };
 export default AppSiderMenu;

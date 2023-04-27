@@ -25,12 +25,28 @@ const CreateOrEditTenant = ({
     return (
         <Modal
             visible={visible}
-            onCancel={onCancel}
             title={modalType}
-            okText="Ok"
-            cancelText="Đóng"
-            width={648}
-            onOk={onOk}>
+            okText="Hủy"
+            cancelButtonProps={{
+                style: {
+                    backgroundColor: '#FFFFFF',
+                    color: '#965C85',
+                    border: '1px solid #965C85',
+                    borderRadius: 4
+                }
+            }}
+            cancelText="Hủy"
+            okButtonProps={{
+                style: {
+                    backgroundColor: '#B085A4',
+                    color: '#FFFAFF',
+                    border: '1px solid #965C85',
+                    borderRadius: 4
+                }
+            }}
+            onCancel={onCancel}
+            onOk={onOk}
+            width={648}>
             <Form layout="vertical" className="mt-5" ref={formRef}>
                 <Form.Item rules={rules.tenancyName} name={'tenancyName'} label={'Tenant Name'}>
                     {/* <Text strong>Tenant Name</Text> */}
