@@ -12,17 +12,17 @@ import {
     Box,
     TextField,
     Autocomplete,
-    Card,
     Link
 } from '@mui/material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
-
+import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
+import ProductService from '../../services/product/ProductService';
+import Utils from '../../utils/utils';
 import '../../App.css';
 import './style.css';
-import Utils from '../../utils/utils';
-import { CreateOrEditProduct, GetDetailProduct } from '../../services/product/service';
-import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
+import AppConsts from '../../lib/appconst';
+
 // const customTheme = createMuiTheme({
 //   overrides: {
 //     MuiInput: {
@@ -41,14 +41,28 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [product, setProduct] = useState(new ModelHangHoaDto());
     const [wasClickSave, setWasClickSave] = useState(false);
 
+    const [errTenHangHoa, setErrTenHangHoa] = useState(false);
+    const [errMaHangHoa, setErrMaHangHoa] = useState(false);
+
+    const [nhomChosed, setNhomChosed] = useState<ModelNhomHangHoa>(
+        new ModelNhomHangHoa({ id: '' })
+    );
     const showModal = async (id: string) => {
         if (id) {
-            const obj = await GetDetailProduct(id);
+            const obj = await ProductService.GetDetailProduct(id);
             setProduct(obj);
+
+            // find nhomhang
+            const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);
+            if (nhom.length > 0) {
+                setNhomChosed(nhom[0]);
+            } else {
+                setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+            }
         } else {
             setProduct(new ModelHangHoaDto());
         }
-        console.log('product ', product.soPhutThucHien);
+        console.log('ModalHangHoa');
     };
 
     useEffect(() => {
@@ -58,6 +72,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         }
         setIsNew(trigger.isNew);
         setWasClickSave(false);
+        setErrMaHangHoa(false);
+        setErrTenHangHoa(false);
     }, [trigger]);
 
     const editGiaBan = (event: any) => {
@@ -69,9 +85,20 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         });
     };
 
-    const CheckSave = () => {
+    const CheckSave = async () => {
         if (Utils.checkNull(product.tenHangHoa ?? '')) {
+            setErrTenHangHoa(true);
             return false;
+        }
+        if (!Utils.checkNull(product.maHangHoa ?? '')) {
+            const exists = await ProductService.CheckExistsMaHangHoa(
+                product.maHangHoa ?? '',
+                product.idDonViQuyDoi ?? AppConsts.guidEmpty
+            );
+            if (exists) {
+                setErrMaHangHoa(true);
+                return false;
+            }
         }
         return true;
     };
@@ -82,7 +109,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (wasClickSave) {
             return;
         }
-        const check = CheckSave();
+        const check = await CheckSave();
         if (!check) {
             return;
         }
@@ -102,7 +129,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             }
         ];
 
-        const data = await CreateOrEditProduct(objNew);
+        const data = await ProductService.CreateOrEditProduct(objNew);
         objNew.id = data.id;
         objNew.donViQuiDois = [...data.donViQuiDois];
         handleSave(objNew);
@@ -129,11 +156,16 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     size="small"
                                     placeholder="Mã tự động"
                                     value={product.maHangHoa}
-                                    onChange={(event) =>
+                                    error={errMaHangHoa && wasClickSave}
+                                    helperText={
+                                        errMaHangHoa && wasClickSave ? 'Mã dịch vụ đã tồn tại' : ''
+                                    }
+                                    onChange={(event) => {
                                         setProduct((itemOlds) => {
                                             return { ...itemOlds, maHangHoa: event.target.value };
-                                        })
-                                    }
+                                        });
+                                        setWasClickSave(false);
+                                    }}
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
@@ -146,18 +178,20 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     size="small"
                                     fullWidth
                                     required
-                                    error={wasClickSave && Utils.checkNull(product.tenHangHoa)}
+                                    error={wasClickSave && errTenHangHoa}
                                     helperText={
-                                        wasClickSave && Utils.checkNull(product.tenHangHoa)
+                                        wasClickSave && errTenHangHoa
                                             ? 'Vui lòng nhập tên hàng hóa'
                                             : ''
                                     }
                                     value={product.tenHangHoa}
-                                    onChange={(event) =>
+                                    onChange={(event) => {
                                         setProduct((itemOlds) => {
                                             return { ...itemOlds, tenHangHoa: event.target.value };
-                                        })
-                                    }
+                                        });
+                                        setErrTenHangHoa(false);
+                                        setWasClickSave(false);
+                                    }}
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
@@ -169,8 +203,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     size="small"
                                     fullWidth
                                     disablePortal
-                                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                                    inputValue={product.tenNhomHang}
+                                    // value={nhomChosed}
+                                    // isOptionEqualToValue={(option, value) => option.id === value.id}
                                     options={dataNhomHang.filter(
                                         (x: ModelNhomHangHoa) => x.id !== null && x.id !== ''
                                     )}

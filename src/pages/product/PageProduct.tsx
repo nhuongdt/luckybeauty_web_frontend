@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ReactNode } from 'react';
-
+import { useState, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -39,19 +38,6 @@ import AddIcon from '@mui/icons-material/Add';
 import MenuIcon from '@mui/icons-material/Menu';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-
-import { useState, useEffect, useRef } from 'react';
-import ProductService from '../../services/product/ProductService';
-import GroupProductService from '../../services/product/GroupProductService';
-import {
-    ModelNhomHangHoa,
-    ModelHangHoaDto,
-    PagedProductSearchDto
-} from '../../services/product/dto';
-import { PropModal } from '../../utils/PropParentToChild';
-import { ModalNhomHangHoa } from './ModalGroupProduct';
-import { ModalHangHoa } from './ModalProduct';
-import { array, object } from 'prop-types';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import InfoIcon from '@mui/icons-material/Info';
@@ -59,12 +45,24 @@ import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { isJSDocNullableType } from 'typescript';
-import Utils from '../../utils/utils';
-import { ListGroup } from 'react-bootstrap';
-import { PagedResultDto } from '../../services/dto/pagedResultDto';
+// prop for send data from parent to child
+import { PropModal } from '../../utils/PropParentToChild';
+
+/* custom component */
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import MessageAlert from '../../components/AlertDialog/MessageAlert';
+import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
+import { ModalNhomHangHoa } from './ModalGroupProduct';
+import { ModalHangHoa } from './ModalProduct';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
+import ProductService from '../../services/product/ProductService';
+import GroupProductService from '../../services/product/GroupProductService';
+import {
+    ModelNhomHangHoa,
+    ModelHangHoaDto,
+    PagedProductSearchDto
+} from '../../services/product/dto';
+import Utils from '../../utils/utils'; // func common
 
 const themeListItemText = createTheme({
     components: {
@@ -197,9 +195,6 @@ export const OptionPage = ({ changeNumberOfpage }: any) => {
 };
 
 export default function PageProduct() {
-    const [showModalNhomHang, setShowModalNhomHang] = useState(false);
-    const [idNhomHangHoa, setIdNhomHangHoa] = useState(false);
-    const [isNewNhomHang, setIsNewNhomHang] = useState(false);
     const [inforDeleteProduct, setInforDeleteProduct] = useState({
         show: false,
         title: '',
@@ -207,25 +202,23 @@ export default function PageProduct() {
     });
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
-    const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
-        totalCount: 0,
-        totalPage: 0,
-        items: []
-    });
-
-    /* state in row table */
-    const [showAction, setShowAction] = useState({ index: 0, value: false });
-    const [showListAction, setshowListAction] = useState(true);
-    const [isHover, setIsHover] = useState(false);
-    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
-
     const [triggerModalProduct, setTriggerModalProduct] = useState({
         showModal: false,
         isNew: false,
         idQuiDoi: ''
     });
-    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal());
+    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
+
+    const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
+    const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
+
+    const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
+        totalCount: 0,
+        totalPage: 0,
+        items: []
+    });
 
     const [filterPageProduct, setFilterPageProduct] = useState<PagedProductSearchDto>({
         idNhomHangHoas: '',
@@ -235,6 +228,13 @@ export default function PageProduct() {
         columnSort: '',
         typeSort: ''
     });
+
+    /* state in row table */
+    const [showAction, setShowAction] = useState({ index: 0, value: false });
+    const [showListAction, setshowListAction] = useState(true);
+    const [isHover, setIsHover] = useState(false);
+    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
+    /* end state in row table */
 
     const GetListHangHoa = async () => {
         const list = await ProductService.Get_DMHangHoa(filterPageProduct);
@@ -258,8 +258,26 @@ export default function PageProduct() {
         setLstProductGroup(lstAll);
     };
 
-    useEffect(() => {
+    const GetTreeNhomHangHoa = async () => {
+        const list = await GroupProductService.GetTreeNhomHangHoa();
+        const lstAll = [...list.items];
+        const obj = new ModelNhomHangHoa({
+            id: '',
+            maNhomHang: '',
+            tenNhomHang: 'Tất cả',
+            color: '#7C3367'
+        });
+        lstAll.unshift(obj);
+        setTreeNhomHangHoa(lstAll);
+    };
+
+    const PageLoad = () => {
         GetListNhomHangHoa();
+        GetTreeNhomHangHoa();
+    };
+
+    useEffect(() => {
+        PageLoad();
     }, []);
 
     useEffect(() => {
@@ -282,12 +300,27 @@ export default function PageProduct() {
         });
     }
 
+    const editNhomHangHoa = (isEdit: any, item: ModelNhomHangHoa) => {
+        if (isEdit) {
+            setTriggerModalNhomHang({
+                isShow: true,
+                isNew: Utils.checkNull(item.id),
+                id: item.id,
+                item: item
+            });
+        } else {
+            setFilterPageProduct({ ...filterPageProduct, idNhomHangHoas: item.id });
+        }
+    };
+
     function saveNhomHang(objNew: ModelNhomHangHoa) {
-        setLstProductGroup((oldArr) => {
-            const copy = [...oldArr];
-            copy.splice(1, 0, objNew);
-            return copy;
-        });
+        GetTreeNhomHangHoa();
+        if (triggerModalNhomHang.isNew) {
+            setObjAlert({ show: true, type: 1, mes: 'Thêm nhóm dịch vụ thành công' });
+        } else {
+            setObjAlert({ show: true, type: 1, mes: 'Cập nhật nhóm dịch vụ thành công' });
+        }
+        hiddenAlert();
     }
 
     function saveProduct(objNew: ModelHangHoaDto) {
@@ -445,7 +478,10 @@ export default function PageProduct() {
                         </Grid>
                     </Grid>
                     <Divider sx={{ mr: 2, mf: 0, p: 0.5, borderColor: '#cccc' }} />
-                    <NhomHangHoas dataNhomHang={lstProductGroup} />
+                    <TreeViewGroupProduct
+                        dataNhomHang={treeNhomHangHoa}
+                        clickTreeItem={editNhomHangHoa}
+                    />
                 </Grid>
                 <Grid item xs={12} sm={9} md={9} lg={9}>
                     <Grid container>

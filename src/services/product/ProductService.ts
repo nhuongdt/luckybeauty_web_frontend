@@ -1,10 +1,25 @@
 import http from '../httpService';
 import { PagedResultDto } from '../dto/pagedResultDto';
-
-import { ModelHangHoaDto, ModelNhomHangHoa, PagedProductSearchDto } from './dto';
+import { ModelHangHoaDto, PagedProductSearchDto } from './dto';
+import Utils from '../../utils/utils';
 
 class ProductService {
-    GetDetailProduct = async (id: string): Promise<PagedResultDto<ModelHangHoaDto>> => {
+    CheckExistsMaHangHoa = async (maHangHoa: string, id?: string) => {
+        if (!Utils.checkNull(maHangHoa)) {
+            const data = await http
+                .get(
+                    `api/services/app/HangHoa/CheckExistsMaHangHoa?mahanghoa=${maHangHoa}&id=${id}`
+                )
+                .then((res) => {
+                    return res.data.result;
+                });
+            console.log('CheckExistsMaHangHoa ', data);
+            return data;
+        } else {
+            return false;
+        }
+    };
+    GetDetailProduct = async (id: string) => {
         const data = await http
             .get(`api/services/app/HangHoa/GetDetailProduct?idDonViQuyDoi=${id}`)
             .then((res) => {

@@ -50,7 +50,7 @@ export class ModelHangHoaDto {
 
 /* group product */
 export class ModelNhomHangHoa {
-    id: string = Utils.GuidEmpty;
+    id?: string | null = Utils.GuidEmpty;
     maNhomHang? = '';
     tenNhomHang? = '';
     tenNhomHang_KhongDau = '';
@@ -58,6 +58,7 @@ export class ModelNhomHangHoa {
     idParent: string | null = null;
     color = '';
     laNhomHangHoa = false;
+    children?: ModelNhomHangHoa[] = [];
 
     constructor({
         id = Utils.GuidEmpty,
@@ -76,5 +77,5 @@ export class ModelNhomHangHoa {
 
 /* search */
 export class PagedProductSearchDto extends ParamSearchDto {
-    idNhomHangHoas?: string = '';
+    idNhomHangHoas?: string | null = '';
 }

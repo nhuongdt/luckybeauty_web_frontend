@@ -117,3 +117,11 @@
     background-color: red;
     color: white;
 }
+
+.MuiTreeItem-content {
+    padding: 8px 8px;
+}
+
+.MuiTreeItem-content .MuiTreeItem-label {
+    padding-left: 8px;
+}

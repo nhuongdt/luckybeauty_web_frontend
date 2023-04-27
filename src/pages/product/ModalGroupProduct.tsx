@@ -3,31 +3,17 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Paper, { PaperProps } from '@mui/material/Paper';
-import { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
-import { Grid, Box, Autocomplete, InputAdornment } from '@mui/material';
-import { TextField, Typography } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import '../../App.css';
-import { DataGrid } from '@mui/x-data-grid';
-import { styled } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
+import { Grid, Box, Autocomplete, InputAdornment, TextField } from '@mui/material';
+import GroupProductService from '../../services/product/GroupProductService';
+import { ModelNhomHangHoa } from '../../services/product/dto';
+
 import Utils from '../../utils/utils';
 import AppConsts from '../../lib/appconst';
+import '../../App.css';
 
-import { func } from 'prop-types';
-import { useFetcher } from 'react-router-dom';
-import {
-    CreateOrEditProduct,
-    Get_DMHangHoa,
-    InsertNhomHangHoa
-} from '../../services/product/service';
-import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
-import { faListSquares } from '@fortawesome/free-solid-svg-icons';
-import { color } from '@mui/system';
-
-export const GridColor = ({ handleChoseColor, trigger }: any) => {
+export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
 
     const arrColor = [
@@ -93,12 +79,19 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [groupProduct, setGroupProduct] = useState<ModelNhomHangHoa>(
         new ModelNhomHangHoa({ id: AppConsts.guidEmpty, color: 'red' })
     );
+    const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
 
     const showModal = async (id: string) => {
         if (id) {
-            // const obj = await GetDetailProduct(id);
-            // setProduct(obj);
-            console.log(22);
+            setGroupProduct(trigger.item);
+
+            // find nhomhang
+            const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idParent);
+            if (nhom.length > 0) {
+                setNhomGoc(nhom[0]);
+            } else {
+                setNhomGoc(new ModelNhomHangHoa({ id: '' }));
+            }
         } else {
             setGroupProduct(new ModelNhomHangHoa({ color: 'red' }));
         }
@@ -125,17 +118,26 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         const objNew = { ...groupProduct };
         objNew.maNhomHang = Utils.getFirstLetter(objNew.tenNhomHang) ?? '';
         objNew.tenNhomHang_KhongDau = Utils.strToEnglish(objNew.tenNhomHang ?? '');
-        console.log('objNew ', objNew);
 
-        InsertNhomHangHoa(objNew).then((data) => {
-            setIsShow(false);
-            handleSave(data);
-        });
+        if (trigger.isNew) {
+            GroupProductService.InsertNhomHangHoa(objNew).then((data) => {
+                handleSave(data);
+            });
+        } else {
+            GroupProductService.UpdateNhomHangHoa(objNew).then((data) => {
+                handleSave(data);
+            });
+        }
+        setIsShow(false);
     };
 
     return (
         <div>
-            <Dialog open={isShow} aria-labelledby="draggable-dialog-title" fullWidth>
+            <Dialog
+                open={isShow}
+                onClose={() => setIsShow(false)}
+                aria-labelledby="draggable-dialog-title"
+                fullWidth>
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
                     {isNew ? 'Thêm' : 'Cập nhật'} nhóm dịch vụ
                 </DialogTitle>
@@ -171,6 +173,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 fullWidth
                                 disablePortal
                                 multiple={false}
+                                value={nhomGoc}
                                 onChange={(event: any, newValue: any) => {
                                     setGroupProduct({
                                         ...groupProduct,
@@ -219,7 +222,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 fullWidth
                                 multiline
                                 rows={2}
-                                value={groupProduct.moTa}
+                                value={groupProduct.moTa || ''}
                                 onChange={(event) =>
                                     setGroupProduct({
                                         ...groupProduct,

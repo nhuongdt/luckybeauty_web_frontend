@@ -19,9 +19,26 @@ class GroupProductService {
         console.log('GetDM_NhomHangHoa ', xx);
         return xx;
     };
+    GetTreeNhomHangHoa = async () => {
+        const xx = await http
+            .get(`api/services/app/NhomHangHoa/GetTreeNhomHangHoa`)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        console.log('GetTreeNhomHangHoa ', xx);
+        return xx;
+    };
     InsertNhomHangHoa = async (param: ModelNhomHangHoa) => {
         const xx = await http
             .post(`api/services/app/NhomHangHoa/CreateNhomHangHoa`, param)
+            .then((res) => {
+                return res.data.result;
+            });
+        return xx;
+    };
+    UpdateNhomHangHoa = async (param: ModelNhomHangHoa) => {
+        const xx = await http
+            .post(`api/services/app/NhomHangHoa/UpdateNhomHangHoa`, param)
             .then((res) => {
                 return res.data.result;
             });

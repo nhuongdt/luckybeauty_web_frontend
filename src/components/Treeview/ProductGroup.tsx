@@ -1,58 +1,81 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
-
-import { List, ListItem, IconButton, ListItemAvatar, ListItemText, Box } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { Typography, Box, TextField, InputAdornment, Stack } from '@mui/material';
+import TreeView from '@mui/lab/TreeView';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import AddIcon from '@mui/icons-material/Add';
+import TreeItem from '@mui/lab/TreeItem';
+import '../../App.css';
+import { ModelNhomHangHoa } from '../../services/product/dto';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-export default function TreeViewGroupProduct({ dataNhomHang }: any) {
-    const [isHovering, setIsHovering] = useState(false);
-    const handleMouseOver = () => {
-        setIsHovering(true);
+export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: any) {
+    const [rowHover, setRowHover] = React.useState<ModelNhomHangHoa>(
+        new ModelNhomHangHoa({ id: '' })
+    );
+    const [isHover, setIsHover] = React.useState(false);
+
+    const handleHover = (event: any, rowData: any, index: number) => {
+        switch (event.type) {
+            case 'mouseenter': // enter
+                setIsHover(true);
+                break;
+            case 'mouseleave': //leave
+                setIsHover(false);
+                break;
+        }
+        setRowHover(rowData);
     };
-
-    const handleMouseOut = () => {
-        setIsHovering(false);
+    const handleClickTreeItem = (isEdit = false) => {
+        clickTreeItem(isEdit, rowHover);
     };
-
     return (
-        <>
-            <List className="list-nhomhanghoa">
-                {dataNhomHang.map((value: any) => (
-                    <ListItem
-                        key={value.id}
-                        disableGutters
-                        secondaryAction={
-                            isHovering && (
-                                <IconButton aria-label="comment">
-                                    <AddIcon />
-                                </IconButton>
-                            )
-                        }>
-                        <ListItemAvatar style={{ minWidth: '40px' }}>
-                            <LocalOfferIcon />
-                        </ListItemAvatar>
-                        <ListItemText primary={`${value.tenNhomHang}`} />
-                        <Box></Box>
-                        <List>
-                            {value.children.map((child2: any) => (
-                                <ListItem
-                                    key={child2.id}
-                                    disableGutters
-                                    secondaryAction={
-                                        isHovering && (
-                                            <IconButton aria-label="comment">
-                                                <AddIcon />
-                                            </IconButton>
-                                        )
-                                    }>
-                                    <ListItemText primary={`${child2.tenNhomHang}`} />
-                                </ListItem>
-                            ))}
-                        </List>
-                    </ListItem>
-                ))}
-            </List>
-        </>
+        <TreeView
+            aria-label="file system navigator"
+            sx={{ height: 350, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}>
+            {dataNhomHang.map((item: any, index: any) => (
+                <TreeItem
+                    key={item.id}
+                    nodeId={item.id}
+                    label={
+                        <Stack direction="row">
+                            <Typography sx={{ width: 8 / 10 }}>{item.tenNhomHang}</Typography>
+                            {isHover && rowHover.id === item.id && (
+                                <OpenInNewIcon onClick={() => handleClickTreeItem(true)} />
+                            )}
+                        </Stack>
+                    }
+                    icon={<LocalOfferIcon />}
+                    onMouseLeave={(event) => {
+                        handleHover(event, item, index);
+                    }}
+                    onMouseEnter={(event) => {
+                        handleHover(event, item, index);
+                    }}
+                    onClick={() => handleClickTreeItem(false)}>
+                    {item.children.map((child: any, index2: any) => (
+                        <TreeItem
+                            key={child.id}
+                            nodeId={child.id}
+                            label={
+                                <Stack direction="row">
+                                    <Typography sx={{ width: 7.9 / 10 }}>
+                                        {child.tenNhomHang}
+                                    </Typography>
+                                    {isHover && rowHover.id === child.id && (
+                                        <OpenInNewIcon onClick={() => handleClickTreeItem(true)} />
+                                    )}
+                                </Stack>
+                            }
+                            onMouseLeave={(event) => {
+                                handleHover(event, child, index2);
+                            }}
+                            onMouseEnter={(event) => {
+                                handleHover(event, child, index2);
+                            }}></TreeItem>
+                    ))}
+                </TreeItem>
+            ))}
+        </TreeView>
     );
 }
