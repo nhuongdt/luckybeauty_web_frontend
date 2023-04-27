@@ -15,11 +15,11 @@ export class ModelHangHoaDto {
     txtTrangThaiHang?: string = 'Đang kinh doanh';
 
     idDonViQuyDoi?: string;
-    tenDonViTinh?: string;
-    maHangHoa?: string;
-    giaBan?: string | number;
-    tyLeChuyenDoi?: number;
-    laDonViTinhChuan?: number;
+    tenDonViTinh?: string = '';
+    maHangHoa?: string = '';
+    giaBan?: string | number = 0;
+    tyLeChuyenDoi?: number = 1;
+    laDonViTinhChuan?: number = 1;
     idHangHoa?: string;
 
     donViQuiDois:
@@ -59,16 +59,18 @@ export class ModelNhomHangHoa {
     color = '';
     laNhomHangHoa = false;
 
-    constructor(
-        id: string = Utils.GuidEmpty,
+    constructor({
+        id = Utils.GuidEmpty,
         maNhomHang = '',
         tenNhomHang = '',
-        laNhomHangHoa = false
-    ) {
+        laNhomHangHoa = false,
+        color = '#D2691E'
+    }) {
         this.id = id;
         this.maNhomHang = maNhomHang;
         this.tenNhomHang = tenNhomHang;
         this.laNhomHangHoa = laNhomHangHoa;
+        this.color = color;
     }
 }
 

@@ -31,5 +31,14 @@ class ProductService {
         console.log('CreateOrEdit', xx, input);
         return xx;
     };
+    DeleteProduct_byIDHangHoa = async (idHangHoa: string) => {
+        const xx = await http
+            .post(`api/services/app/HangHoa/Delete`, idHangHoa)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        console.log('DeleteProduct_byIDHangHoa', xx);
+        return xx;
+    };
 }
 export default new ProductService();

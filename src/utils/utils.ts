@@ -10,7 +10,11 @@ declare let abp: any;
 
 class Utils {
     GuidEmpty = '00000000-0000-0000-0000-000000000000';
-    pageOption = [10, 20, 30, 40, 50];
+    pageOption = [
+        { value: 5, text: '5/ trang' },
+        { value: 10, text: '10/ trang' },
+        { value: 20, text: '20/ trang' }
+    ];
     loadScript(url: string) {
         const script = document.createElement('script');
         script.type = 'text/javascript';

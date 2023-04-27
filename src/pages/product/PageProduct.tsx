@@ -48,6 +48,7 @@ import {
     ModelHangHoaDto,
     PagedProductSearchDto
 } from '../../services/product/dto';
+import { PropModal } from '../../utils/PropParentToChild';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { array, object } from 'prop-types';
@@ -62,12 +63,9 @@ import { isJSDocNullableType } from 'typescript';
 import Utils from '../../utils/utils';
 import { ListGroup } from 'react-bootstrap';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
-import { Get_DMHangHoa } from '../../services/product/service';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import MessageAlert from '../../components/AlertDialog/MessageAlert';
 
-interface Props {
-    children?: ReactNode;
-    // any props that come into the component
-}
 const themeListItemText = createTheme({
     components: {
         // Name of the component
@@ -75,7 +73,7 @@ const themeListItemText = createTheme({
             styleOverrides: {
                 // Name of the slot
                 root: {
-                    // Some CSS
+                    // text in listitem
                     '& span': {
                         fontSize: '12px',
                         color: 'blue'
@@ -136,9 +134,7 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
                             <InfoIcon fontSize="small" />
                         </IconButton>
                     }>
-                    <ThemeProvider theme={themeListItemText}>
-                        <ListItemText primary="Xem" />
-                    </ThemeProvider>
+                    <ListItemText primary="Xem" />
                 </ListItem>
                 <ListItem
                     onClick={(event) => handleClickAction(1)}
@@ -147,9 +143,7 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
                             <ModeEditOutlineIcon className="icon" />
                         </IconButton>
                     }>
-                    <ThemeProvider theme={themeListItemText}>
-                        <ListItemText primary="Sửa" />
-                    </ThemeProvider>
+                    <ListItemText primary="Sửa" />
                 </ListItem>
                 <ListItem
                     onClick={(event) => handleClickAction(2)}
@@ -158,9 +152,7 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
                             <DeleteOutlineIcon className="icon" />
                         </IconButton>
                     }>
-                    <ThemeProvider theme={themeListItemText}>
-                        <ListItemText primary="Xóa" />
-                    </ThemeProvider>
+                    <ListItemText primary="Xóa" />
                 </ListItem>
             </List>
         </Box>
@@ -180,13 +172,8 @@ export const LabelDisplayedRows = ({ currentPage, pageSize, totalCount }: any) =
 };
 
 export const OptionPage = ({ changeNumberOfpage }: any) => {
-    const [value, setValue] = useState(1);
-    const [text, setText] = useState('1');
-    const lst = [
-        { value: 1, text: '1/ trang' },
-        { value: 2, text: '2/ trang' },
-        { value: 3, text: '3/ trang' }
-    ];
+    const [value, setValue] = useState(Utils.pageOption[0].value);
+    const [text, setText] = useState(Utils.pageOption[0].text);
     const handleChange = (event: any, item: any) => {
         setValue(event.target.value);
         setText(item.props.children);
@@ -196,10 +183,11 @@ export const OptionPage = ({ changeNumberOfpage }: any) => {
         <>
             <Box sx={{ minWidth: 120 }}>
                 <FormControl variant="standard">
-                    {/* <InputLabel>{text}</InputLabel> */}
                     <Select value={value} onChange={handleChange}>
-                        {lst.map((item: any, index: number) => (
-                            <MenuItem value={item.value}>{item.text}</MenuItem>
+                        {Utils.pageOption.map((item: any, index: number) => (
+                            <MenuItem key={item.value} value={item.value}>
+                                {item.text}
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
@@ -212,6 +200,12 @@ export default function PageProduct() {
     const [showModalNhomHang, setShowModalNhomHang] = useState(false);
     const [idNhomHangHoa, setIdNhomHangHoa] = useState(false);
     const [isNewNhomHang, setIsNewNhomHang] = useState(false);
+    const [inforDeleteProduct, setInforDeleteProduct] = useState({
+        show: false,
+        title: '',
+        mes: ''
+    });
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
@@ -219,19 +213,25 @@ export default function PageProduct() {
         totalPage: 0,
         items: []
     });
-    // const [totalPage, setLstProduct] = useState<ModelHangHoaDto[]>([]);
+
+    /* state in row table */
+    const [showAction, setShowAction] = useState({ index: 0, value: false });
+    const [showListAction, setshowListAction] = useState(true);
+    const [isHover, setIsHover] = useState(false);
+    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
 
     const [triggerModalProduct, setTriggerModalProduct] = useState({
         showModal: false,
         isNew: false,
         idQuiDoi: ''
     });
+    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal());
 
     const [filterPageProduct, setFilterPageProduct] = useState<PagedProductSearchDto>({
         idNhomHangHoas: '',
         textSearch: '',
         currentPage: 1,
-        pageSize: 2,
+        pageSize: Utils.pageOption[0].value,
         columnSort: '',
         typeSort: ''
     });
@@ -248,7 +248,12 @@ export default function PageProduct() {
     const GetListNhomHangHoa = async () => {
         const list = await GroupProductService.GetDM_NhomHangHoa();
         const lstAll = [...list.items];
-        const obj = new ModelNhomHangHoa('', '', 'Tất cả');
+        const obj = new ModelNhomHangHoa({
+            id: '',
+            maNhomHang: '',
+            tenNhomHang: 'Tất cả',
+            color: '#7C3367'
+        });
         lstAll.unshift(obj);
         setLstProductGroup(lstAll);
     };
@@ -261,17 +266,15 @@ export default function PageProduct() {
         GetListHangHoa();
     }, [filterPageProduct.currentPage, filterPageProduct.pageSize]);
 
-    function showModalAddNhomHang(id?: string) {
-        if (id) {
-            setIsNewNhomHang(false);
-        } else {
-            setIsNewNhomHang(true);
-        }
-        setShowModalNhomHang(true);
+    function showModalAddNhomHang(id = '') {
+        setTriggerModalNhomHang({
+            isShow: true,
+            isNew: Utils.checkNull(id),
+            id: id
+        });
     }
 
     function showModalAddProduct(action?: number, id = '') {
-        // todo action
         setTriggerModalProduct({
             showModal: true,
             isNew: Utils.checkNull(id),
@@ -289,18 +292,6 @@ export default function PageProduct() {
 
     function saveProduct(objNew: ModelHangHoaDto) {
         if (triggerModalProduct.isNew) {
-            // setLstProduct((oldArr) => {
-            //     const copy = [...oldArr];
-            //     const newRow = { ...objNew };
-            //     const dvChuan = objNew.donViQuiDois.filter((x) => x.laDonViTinhChuan === 1);
-            //     newRow.idDonViQuyDoi = dvChuan[0].id;
-            //     newRow.maHangHoa = dvChuan[0].maHangHoa;
-            //     newRow.giaBan = dvChuan[0].giaBan;
-            //     newRow.tenDonViTinh = dvChuan[0].tenDonViTinh;
-
-            //     copy.unshift(newRow);
-            //     return copy;
-            // });
             setPageDataProduct((olds) => {
                 const copy = { ...olds };
                 const newRow = { ...objNew };
@@ -315,10 +306,19 @@ export default function PageProduct() {
                 copy.totalPage = Utils.getTotalPage(copy.totalCount, filterPageProduct.pageSize);
                 return copy;
             });
+            setObjAlert({ show: true, type: 1, mes: 'Thêm dịch vụ thành công' });
         } else {
             GetListHangHoa();
+            setObjAlert({ show: true, type: 1, mes: 'Sửa dịch vụ thành công' });
         }
+        hiddenAlert();
     }
+
+    const hiddenAlert = () => {
+        setTimeout(() => {
+            setObjAlert({ show: false, mes: '', type: 1 });
+        }, 3000);
+    };
 
     const handleChangePage = (event: any, value: number) => {
         setFilterPageProduct({
@@ -346,17 +346,30 @@ export default function PageProduct() {
         }
     };
 
-    /* state in table */
-    const [showAction, setShowAction] = useState({ index: 0, value: false });
-    const [showListAction, setshowListAction] = useState(true);
-    const [idQuyDoi, setIdQuyDoi] = useState('');
-    const [isHover, setIsHover] = useState(false);
-
     const doActionRow = (action: number) => {
-        showModalAddProduct(action, idQuyDoi);
+        if (action < 2) {
+            showModalAddProduct(action, rowHover?.idDonViQuyDoi);
+        } else {
+            setInforDeleteProduct({
+                show: true,
+                title: 'Xác nhận xóa',
+                mes: 'Bạn có chắc chắn muốn xóa dịch vụ có mã '.concat(
+                    rowHover?.maHangHoa ?? ' ',
+                    'không?'
+                )
+            });
+        }
     };
 
-    const hoverRow = (event: any, idQuyDoi: string, index: number) => {
+    const deleteProduct = async (idHangHoa: string) => {
+        if (!Utils.checkNull(idHangHoa)) {
+            await ProductService.DeleteProduct_byIDHangHoa(idHangHoa);
+            setObjAlert({ show: true, type: 1, mes: 'Xóa dịch vụ thành công' });
+            hiddenAlert();
+        }
+    };
+
+    const hoverRow = (event: any, rowData: any, index: number) => {
         switch (event.type) {
             case 'mouseenter': // enter
                 setShowAction({ index: index, value: true });
@@ -366,7 +379,7 @@ export default function PageProduct() {
                 break;
         }
         setshowListAction(false);
-        setIdQuyDoi(idQuyDoi);
+        setRowHover(rowData);
         setIsHover(event.type === 'mouseenter');
     };
 
@@ -374,15 +387,17 @@ export default function PageProduct() {
         <>
             <ModalNhomHangHoa
                 dataNhomHang={lstProductGroup}
-                show={showModalNhomHang}
-                isNew={isNewNhomHang}
-                id={idNhomHangHoa}
-                handleClose={() => setShowModalNhomHang(false)}
+                trigger={triggerModalNhomHang}
                 handleSave={saveNhomHang}></ModalNhomHangHoa>
             <ModalHangHoa
                 dataNhomHang={lstProductGroup}
                 trigger={triggerModalProduct}
                 handleSave={saveProduct}></ModalHangHoa>
+            <ConfirmDelete
+                isShow={inforDeleteProduct.show}
+                title={inforDeleteProduct.title}
+                mes={inforDeleteProduct.mes}
+                onOk={deleteProduct}></ConfirmDelete>
 
             <Grid container rowSpacing={1} style={{ paddingTop: '10px', paddingLeft: '10px' }}>
                 <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
@@ -527,14 +542,15 @@ export default function PageProduct() {
                                                 // sx={{ backgroundColor: isHover ? 'red' : 'none' }}
                                                 key={row.idDonViQuyDoi}
                                                 onMouseLeave={(event) => {
-                                                    hoverRow(event, row.idDonViQuyDoi, index);
+                                                    hoverRow(event, row, index);
                                                 }}
                                                 onMouseEnter={(event) => {
-                                                    hoverRow(event, row.idDonViQuyDoi, index);
+                                                    hoverRow(event, row, index);
                                                 }}
                                                 sx={{
                                                     backgroundColor:
-                                                        isHover && idQuyDoi == row.idDonViQuyDoi
+                                                        isHover &&
+                                                        rowHover?.idDonViQuyDoi == row.idDonViQuyDoi
                                                             ? '#cccc'
                                                             : 'none',
                                                     '&:last-child td, &:last-child th': {
@@ -565,7 +581,7 @@ export default function PageProduct() {
                                                         fontSize="small"
                                                         onClick={() => {
                                                             setshowListAction(true);
-                                                            setIdQuyDoi(row.idDonViQuyDoi);
+                                                            // setIdQuyDoi(row.idDonViQuyDoi);
                                                         }}
                                                         sx={{
                                                             display:
@@ -640,6 +656,11 @@ export default function PageProduct() {
                     </Grid>
                 </Grid>
             </Grid>
+            <MessageAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                hiddenAlert={() => setObjAlert({ ...objAlert, show: false })}></MessageAlert>
         </>
     );
 }

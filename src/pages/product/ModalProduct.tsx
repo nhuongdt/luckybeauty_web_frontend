@@ -23,7 +23,6 @@ import './style.css';
 import Utils from '../../utils/utils';
 import { CreateOrEditProduct, GetDetailProduct } from '../../services/product/service';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
-import utils from '../../utils/utils';
 // const customTheme = createMuiTheme({
 //   overrides: {
 //     MuiInput: {
@@ -49,7 +48,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         } else {
             setProduct(new ModelHangHoaDto());
         }
-        console.log('product ', product);
+        console.log('product ', product.soPhutThucHien);
     };
 
     useEffect(() => {
@@ -79,6 +78,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
 
     async function saveProduct() {
         setWasClickSave(true);
+
         if (wasClickSave) {
             return;
         }
@@ -87,6 +87,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             return;
         }
         const objNew = { ...product };
+        objNew.tenHangHoa_KhongDau = Utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
 
