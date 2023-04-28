@@ -48,7 +48,7 @@ class ProductService {
     };
     DeleteProduct_byIDHangHoa = async (idHangHoa: string) => {
         const xx = await http
-            .post(`api/services/app/HangHoa/Delete`, idHangHoa)
+            .post(`api/services/app/HangHoa/Delete?id=${idHangHoa}`)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });

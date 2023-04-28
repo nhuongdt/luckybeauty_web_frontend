@@ -46,7 +46,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 // prop for send data from parent to child
-import { PropModal } from '../../utils/PropParentToChild';
+import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
 
 /* custom component */
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -195,11 +195,9 @@ export const OptionPage = ({ changeNumberOfpage }: any) => {
 };
 
 export default function PageProduct() {
-    const [inforDeleteProduct, setInforDeleteProduct] = useState({
-        show: false,
-        title: '',
-        mes: ''
-    });
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [triggerModalProduct, setTriggerModalProduct] = useState({
@@ -383,22 +381,23 @@ export default function PageProduct() {
         if (action < 2) {
             showModalAddProduct(action, rowHover?.idDonViQuyDoi);
         } else {
-            setInforDeleteProduct({
-                show: true,
-                title: 'Xác nhận xóa',
-                mes: 'Bạn có chắc chắn muốn xóa dịch vụ có mã '.concat(
-                    rowHover?.maHangHoa ?? ' ',
-                    'không?'
-                )
-            });
+            setInforDeleteProduct(
+                new PropConfirmOKCancel({
+                    show: true,
+                    title: 'Xác nhận xóa',
+                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowHover?.maHangHoa ?? ' '} không?`
+                })
+            );
         }
     };
+    console.log('page');
 
-    const deleteProduct = async (idHangHoa: string) => {
-        if (!Utils.checkNull(idHangHoa)) {
-            await ProductService.DeleteProduct_byIDHangHoa(idHangHoa);
+    const deleteProduct = async () => {
+        if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
+            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
             setObjAlert({ show: true, type: 1, mes: 'Xóa dịch vụ thành công' });
             hiddenAlert();
+            setInforDeleteProduct({ ...inforDeleteProduct, show: false });
         }
     };
 
@@ -430,7 +429,10 @@ export default function PageProduct() {
                 isShow={inforDeleteProduct.show}
                 title={inforDeleteProduct.title}
                 mes={inforDeleteProduct.mes}
-                onOk={deleteProduct}></ConfirmDelete>
+                onOk={deleteProduct}
+                onCancel={() =>
+                    setInforDeleteProduct({ ...inforDeleteProduct, show: false })
+                }></ConfirmDelete>
 
             <Grid container rowSpacing={1} style={{ paddingTop: '10px', paddingLeft: '10px' }}>
                 <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
