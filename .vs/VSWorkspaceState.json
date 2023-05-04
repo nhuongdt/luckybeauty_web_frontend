@@ -1,10 +1,10 @@
 {
-    "ExpandedNodes": [
-        "",
-        "\\src",
-        "\\src\\pages",
-        "\\src\\pages\\customer",
-        "\\src\\pages\\dashboard"
-    ],
-    "PreviewInSolutionExplorer": false
+  "ExpandedNodes": [
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\layouts",
+    "\\src\\pages\\customer",
+    "\\src\\pages\\dashboard"
+  ],
+  "PreviewInSolutionExplorer": false
 }

@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-const ConfirmDelete = ({ isShow, onOk, onCancel }: any) => {
+const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) => {
     return (
         <Dialog
             open={isShow}
@@ -26,10 +26,10 @@ const ConfirmDelete = ({ isShow, onOk, onCancel }: any) => {
                     alignItems="center"
                     spacing={2}>
                     <Typography variant="h4" component="h6">
-                        Are you sure?
+                        {title != '' ? title : 'Thông báo xóa'}
                     </Typography>
                     <Typography variant="subtitle1" component="h2" className="text-center">
-                        Do you really want to delete these records? This process cannot be undone.
+                        {mes != '' ? mes : 'Bạn có chắc chắn muốn xóa bản ghi này không?'}
                     </Typography>
                     <Stack
                         mt={5}

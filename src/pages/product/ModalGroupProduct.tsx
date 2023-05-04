@@ -3,29 +3,39 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Paper, { PaperProps } from '@mui/material/Paper';
-import { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
-import { Grid, Box, Autocomplete, InputAdornment } from '@mui/material';
-import { TextField, Typography } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import '../../App.css';
-import { DataGrid } from '@mui/x-data-grid';
-import { styled } from '@mui/material/styles';
-import Utils from '../../utils/utils';
+import { useEffect, useState } from 'react';
+import { Grid, Box, Autocomplete, InputAdornment, TextField } from '@mui/material';
+import GroupProductService from '../../services/product/GroupProductService';
+import { ModelNhomHangHoa } from '../../services/product/dto';
 
-import { func } from 'prop-types';
-import { useFetcher } from 'react-router-dom';
-import {
-    CreateOrEditProduct,
-    Get_DMHangHoa,
-    InsertNhomHangHoa
-} from '../../services/product/service';
-import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
+import Utils from '../../utils/utils';
+import AppConsts from '../../lib/appconst';
+import '../../App.css';
 
 export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
+
+    const arrColor = [
+        '#D2691E',
+        '#DC143C',
+        '#00008B',
+        '#8B008B',
+        '#696969',
+        '#B22222',
+        '#2F4F4F',
+        '#00FF7F',
+        '#FFFF00',
+        '#B22222',
+        '#2F4F4F',
+        '#00FF7F',
+        '#FFFF00',
+        '#B22222',
+        '#2F4F4F',
+        '#00FF7F',
+        '#2F4F4F',
+        '#00FF7F'
+    ];
     function choseColor(color: string) {
         setItemColor(color);
         handleChoseColor(color);
@@ -43,117 +53,89 @@ export const GridColor = ({ handleChoseColor }: any) => {
                 }}
                 sx={{ ml: 0, p: 1.5, border: '1px solid grey' }}>
                 <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 6, sm: 6, md: 6 }}>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#D2691E')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#D2691E' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#DC143C')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#DC143C' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#00008B')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#00008B' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#8B008B')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#8B008B' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#696969')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#696969' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#B22222')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#B22222' }}></Box>
-                    </Grid>
-
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#2F4F4F')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#2F4F4F' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#00FF7F')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#00FF7F' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#FFFF00')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#FFFF00' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#B22222')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#8B008B' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#B22222')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#696969' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#B22222')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#B22222' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#B22222')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#D2691E' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1} onClick={() => choseColor('#B22222')}>
-                        <Box className="grid-color" sx={{ bgcolor: '#DC143C' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1}>
-                        <Box className="grid-color" sx={{ bgcolor: '#00008B' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1}>
-                        <Box className="grid-color" sx={{ bgcolor: '#8B008B' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1}>
-                        <Box className="grid-color" sx={{ bgcolor: '#696969' }}></Box>
-                    </Grid>
-                    <Grid item xs={1} sm={1} md={1}>
-                        <Box className="grid-color" sx={{ bgcolor: '#B22222' }}></Box>
-                    </Grid>
+                    {arrColor.map((item, index) => (
+                        <Grid
+                            key={index}
+                            item
+                            xs={1}
+                            sm={1}
+                            md={1}
+                            onClick={() => choseColor(item)}>
+                            <Box className="grid-color" sx={{ bgcolor: item }}></Box>
+                        </Grid>
+                    ))}
                 </Grid>
             </Box>
         </>
     );
 };
 
-export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, isNew, id }: any) {
-    const [objNhomHang, setObjNhomHang] = React.useState({
-        id: Utils.GuidEmpty,
-        maNhomHang: '',
-        tenNhomHang: '',
-        idParent: null,
-        laNhomHangHoa: '',
-        moTa: ''
-    });
-
-    const [maNhomHangHoa, setMaNhomHangHoa] = useState('');
-    const [tenNhomHangHoa, setTenNhomHangHoa] = useState('');
-    const [idParent, setIdParent] = useState<null | string>(null);
-    const [moTa, setMoTa] = useState('');
-    const [color, setColor] = useState('#D2691E');
+export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [colorToggle, setColorToggle] = useState(false);
 
-    // function hideModal() {
-    //   handleClose(false);
-    // }
+    const [isShow, setIsShow] = useState(false);
+    const [isNew, setIsNew] = useState(false);
+    const [wasClickSave, setWasClickSave] = useState(false);
+    const [groupProduct, setGroupProduct] = useState<ModelNhomHangHoa>(
+        new ModelNhomHangHoa({ id: AppConsts.guidEmpty, color: 'red' })
+    );
+    const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
+
+    const showModal = async (id: string) => {
+        if (id) {
+            setGroupProduct(trigger.item);
+
+            // find nhomhang
+            const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idParent);
+            if (nhom.length > 0) {
+                setNhomGoc(nhom[0]);
+            } else {
+                setNhomGoc(new ModelNhomHangHoa({ id: '' }));
+            }
+        } else {
+            setGroupProduct(new ModelNhomHangHoa({ color: 'red' }));
+        }
+    };
+
+    useEffect(() => {
+        if (trigger.isShow) {
+            setIsShow(true);
+            showModal(trigger.id);
+        }
+        setIsNew(trigger.isNew);
+        setWasClickSave(false);
+    }, [trigger]);
 
     function changeColor(colorNew: string) {
-        setColor(colorNew);
         setColorToggle(false);
+        setGroupProduct({ ...groupProduct, color: colorNew });
     }
 
     const saveNhomHangHoa = () => {
-        // setObjNhomHang((prev) => ({ ...prev, tenNhomHang: tenNhomHangHoa }));//?? not work?? why
-        const objNew = new ModelNhomHangHoa();
-        objNew.maNhomHang = Utils.getFirstLetter(tenNhomHangHoa) ?? '';
-        objNew.tenNhomHang = tenNhomHangHoa;
-        objNew.tenNhomHang_KhongDau = Utils.strToEnglish(tenNhomHangHoa);
-        objNew.moTa = moTa;
-        objNew.idParent = idParent;
-        objNew.color = color;
-        objNew.laNhomHangHoa = false;
-        console.log('objNew ', objNew);
+        if (wasClickSave) {
+            return;
+        }
+        const objNew = { ...groupProduct };
+        objNew.maNhomHang = Utils.getFirstLetter(objNew.tenNhomHang) ?? '';
+        objNew.tenNhomHang_KhongDau = Utils.strToEnglish(objNew.tenNhomHang ?? '');
 
-        InsertNhomHangHoa(objNew).then((data) => {
-            setObjNhomHang(data);
-            handleSave(data);
-            handleClose();
-        });
+        if (trigger.isNew) {
+            GroupProductService.InsertNhomHangHoa(objNew).then((data) => {
+                handleSave(data);
+            });
+        } else {
+            GroupProductService.UpdateNhomHangHoa(objNew).then((data) => {
+                handleSave(data);
+            });
+        }
+        setIsShow(false);
     };
 
     return (
         <div>
             <Dialog
-                open={show}
-                onClose={() => handleClose()}
+                open={isShow}
+                onClose={() => setIsShow(false)}
                 aria-labelledby="draggable-dialog-title"
                 fullWidth>
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
@@ -172,8 +154,13 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                                 size="small"
                                 fullWidth
                                 required
-                                value={tenNhomHangHoa}
-                                onChange={(event) => setTenNhomHangHoa(event.target.value)}
+                                value={groupProduct.tenNhomHang}
+                                onChange={(event) =>
+                                    setGroupProduct({
+                                        ...groupProduct,
+                                        tenNhomHang: event.target.value
+                                    })
+                                }
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
@@ -186,8 +173,12 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                                 fullWidth
                                 disablePortal
                                 multiple={false}
+                                value={nhomGoc}
                                 onChange={(event: any, newValue: any) => {
-                                    setIdParent(newValue);
+                                    setGroupProduct({
+                                        ...groupProduct,
+                                        idParent: newValue.id
+                                    });
                                 }}
                                 options={dataNhomHang.filter(
                                     (x: ModelNhomHangHoa) => x.id !== null && x.id !== ''
@@ -213,7 +204,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                                         <InputAdornment position="start">
                                             <Box
                                                 className="grid-color"
-                                                sx={{ bgcolor: color }}></Box>
+                                                sx={{ bgcolor: groupProduct.color }}></Box>
                                         </InputAdornment>
                                     )
                                 }}
@@ -231,8 +222,13 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                                 fullWidth
                                 multiline
                                 rows={2}
-                                value={moTa}
-                                onChange={(event) => setMoTa(event.target.value)}
+                                value={groupProduct.moTa || ''}
+                                onChange={(event) =>
+                                    setGroupProduct({
+                                        ...groupProduct,
+                                        moTa: event.target.value
+                                    })
+                                }
                             />
                         </Grid>
                     </Grid>
@@ -247,7 +243,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleClose, handleSave, show, 
                     <Button
                         variant="outlined"
                         sx={{ borderColor: '#7C3367' }}
-                        onClick={() => handleClose()}>
+                        onClick={() => setIsShow(false)}>
                         Hủy
                     </Button>
                 </DialogActions>

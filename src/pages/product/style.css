@@ -11,10 +11,20 @@
     background-color: #fffff0;
 }
 
-.list-icon-action .icon {
+.list-icon-action svg {
     font-size: 18px;
+    color: #1374ad;
 }
 
-.list-icon-action .MuiListItemTex {
-    font-size: 10px;
+.list-icon-action span {
+    font-size: 13px;
+    color: #1374ad;
+}
+
+
+/* not working */
+
+.list-icon-action ul li:eq(2) span,
+svg {
+    color: red;
 }

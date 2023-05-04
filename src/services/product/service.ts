@@ -1,6 +1,5 @@
-import { StringArraySupportOption } from 'prettier';
 import http from '../httpService';
-import { ModelHangHoaDto, ModelNhomHangHoa } from './dto';
+import { ModelHangHoaDto, ModelNhomHangHoa, PagedProductSearchDto } from './dto';
 
 export const GetDetailProduct = async (id: string) => {
     const data = await http
@@ -11,16 +10,7 @@ export const GetDetailProduct = async (id: string) => {
     console.log('GetDetailProduct ', data);
     return data;
 };
-export const Get_DMHangHoa = async (input: {
-    idNhomHangHoas: string | null;
-    paramSearch: {
-        textSearch: string;
-        currentPage: number;
-        pageSize: number;
-        columnSort: string;
-        typeSort: string;
-    };
-}) => {
+export const Get_DMHangHoa = async (input: PagedProductSearchDto) => {
     const xx = await http
         .post(`${process.env.REACT_APP_BASE_URL_LOCAL}HangHoa/GetDMHangHoa`, input)
         .then((res: { data: { result: any } }) => {

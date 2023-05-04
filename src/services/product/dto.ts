@@ -1,4 +1,5 @@
 import Utils from '../../utils/utils';
+import { ParamSearchDto } from '../dto/ParamSearchDto';
 
 export class ModelHangHoaDto {
     id?: string | null = Utils.GuidEmpty;
@@ -14,11 +15,11 @@ export class ModelHangHoaDto {
     txtTrangThaiHang?: string = 'Đang kinh doanh';
 
     idDonViQuyDoi?: string;
-    tenDonViTinh?: string;
-    maHangHoa?: string;
-    giaBan?: string | number;
-    tyLeChuyenDoi?: number;
-    laDonViTinhChuan?: number;
+    tenDonViTinh?: string = '';
+    maHangHoa?: string = '';
+    giaBan?: string | number = 0;
+    tyLeChuyenDoi?: number = 1;
+    laDonViTinhChuan?: number = 1;
     idHangHoa?: string;
 
     donViQuiDois:
@@ -49,7 +50,7 @@ export class ModelHangHoaDto {
 
 /* group product */
 export class ModelNhomHangHoa {
-    id: string = Utils.GuidEmpty;
+    id?: string | null = Utils.GuidEmpty;
     maNhomHang? = '';
     tenNhomHang? = '';
     tenNhomHang_KhongDau = '';
@@ -57,16 +58,24 @@ export class ModelNhomHangHoa {
     idParent: string | null = null;
     color = '';
     laNhomHangHoa = false;
+    children?: ModelNhomHangHoa[] = [];
 
-    constructor(
-        id: string = Utils.GuidEmpty,
+    constructor({
+        id = Utils.GuidEmpty,
         maNhomHang = '',
         tenNhomHang = '',
-        laNhomHangHoa = false
-    ) {
+        laNhomHangHoa = false,
+        color = '#D2691E'
+    }) {
         this.id = id;
         this.maNhomHang = maNhomHang;
         this.tenNhomHang = tenNhomHang;
         this.laNhomHangHoa = laNhomHangHoa;
+        this.color = color;
     }
+}
+
+/* search */
+export class PagedProductSearchDto extends ParamSearchDto {
+    idNhomHangHoas?: string | null = '';
 }
