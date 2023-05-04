@@ -86,6 +86,23 @@ const themeListItemText = createTheme({
     }
 });
 
+const themeInputSearch = createTheme({
+    components: {
+        // Name of the component
+        MuiInputBase: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    '& input': {
+                        paddingBottom: '7px',
+                        paddingTop: '7px'
+                    }
+                }
+            }
+        }
+    }
+});
+
 export function NhomHangHoas({ dataNhomHang }: any) {
     const [isHovering, setIsHovering] = useState(false);
     const handleMouseOver = () => {
@@ -493,30 +510,36 @@ export default function PageProduct() {
                             sm={6}
                             md={6}
                             lg={6}
-                            style={{ paddingLeft: '30px' }}
+                            style={{
+                                paddingLeft: '20px',
+                                borderTopLeftRadius: '6px',
+                                borderBottomLeftRadius: '6px'
+                            }}
                             className="page-title-search">
-                            <TextField
-                                size="small"
-                                sx={{ width: 7 / 10 }}
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon />
-                                        </InputAdornment>
-                                    )
-                                }}
-                                onChange={(event) =>
-                                    setFilterPageProduct((itemOlds: any) => {
-                                        return {
-                                            ...itemOlds,
-                                            textSearch: event.target.value
-                                        };
-                                    })
-                                }
-                                onKeyDown={(event) => {
-                                    handleKeyDownTextSearch(event);
-                                }}></TextField>
+                            <ThemeProvider theme={themeInputSearch}>
+                                <TextField
+                                    size="small"
+                                    sx={{ width: 7 / 10, paddingTop: '5px', paddingBottom: '5px' }}
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                    onChange={(event) =>
+                                        setFilterPageProduct((itemOlds: any) => {
+                                            return {
+                                                ...itemOlds,
+                                                textSearch: event.target.value
+                                            };
+                                        })
+                                    }
+                                    onKeyDown={(event) => {
+                                        handleKeyDownTextSearch(event);
+                                    }}></TextField>
+                            </ThemeProvider>
                         </Grid>
                         <Grid
                             item
@@ -529,7 +552,7 @@ export default function PageProduct() {
                             <Box
                                 display="flex"
                                 justifyContent="flex-end"
-                                style={{ paddingTop: '3px' }}>
+                                style={{ paddingTop: '7px' }}>
                                 <Button
                                     variant="outlined"
                                     style={{

@@ -11,6 +11,7 @@ import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import LockPersonIcon from '@mui/icons-material/LockPerson';
 import CottageIcon from '@mui/icons-material/Cottage';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 // ico
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
@@ -100,6 +101,42 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(() => import('../../pages/dashboard'))
+                },
+                {
+                    path: '/check-in',
+                    permission: '',
+                    title: 'Bán hàng',
+                    icon: <ReceiptIcon />,
+                    name: 'CheckIn',
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [
+                        {
+                            path: '/customer-checking',
+                            permission: 'Pages.Administration.Users',
+                            title: 'Khách checkin',
+                            name: 'customerChecking',
+                            icon: null,
+                            children: [],
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/check_in/customer_checking')
+                            )
+                        },
+                        {
+                            path: '/roles',
+                            permission: 'Pages.Administration.Roles',
+                            title: 'Hóa đơn',
+                            name: 'role',
+                            icon: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/role'))
+                        }
+                    ],
+                    component: LoadableComponent(() => import('../../pages/dich-vu'))
                 },
                 {
                     path: '/khach-hangs',
