@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import '../../App.css';
@@ -51,11 +52,12 @@ export default function CustomersChecking() {
                     </Stack>
                 </Grid>
             </Grid>
-            <Grid container>
+            <Grid container columnSpacing={2} sx={{ padding: '0px 16px' }}>
+                {/* start */}
                 <Grid item xs={4} sm={3} md={2} lg={2}>
-                    <Grid border={1} borderColor="red" container className="infor-cus">
-                        <Grid item xs={12} sm={12} md={9} lg={9}>
-                            <Stack direction="column" sx={{ padding: '10px' }}>
+                    <Grid container border={1} borderColor="red" className="infor-cus" padding={2}>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={10} lg={11}>
                                 <Stack direction="row" spacing={1}>
                                     <ThemeProvider theme={shortNameCus}>
                                         <Button variant="outlined">TM</Button>
@@ -69,26 +71,93 @@ export default function CustomersChecking() {
                                         </Typography>
                                     </Stack>
                                 </Stack>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={2} lg={1}>
+                                <MoreHorizIcon />
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
                                 <Stack direction="row" spacing={1} paddingTop={1}>
                                     <Typography className="cuspoint">Điểm tích lũy:</Typography>
                                     <Typography className="cusname">250</Typography>
                                 </Stack>
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={9} lg={9}>
                                 <Stack direction="row" spacing={1} paddingTop={1}>
                                     <Typography className="cuspoint">04/05/2023</Typography>
+                                    <Box>
+                                        <QueryBuilderIcon
+                                            style={{ fontSize: '14px', marginTop: '-5px' }}
+                                        />
+                                    </Box>
                                     <Typography className="cusname">9h00</Typography>
                                 </Stack>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={3} lg={3}>
-                            <Stack sx={{ paddingTop: '10px' }}>
-                                <MoreHorizIcon />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={3} lg={3} style={{ textAlign: 'right' }}>
                                 <Typography className="cusstatus" sx={{ color: '#a1a103' }}>
                                     Đang chờ
                                 </Typography>
-                            </Stack>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
+                {/* end */}
+
+                {/* start */}
+                <Grid item xs={4} sm={3} md={2} lg={2}>
+                    <Grid container border={1} borderColor="red" className="infor-cus" padding={2}>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={10} lg={11}>
+                                <Stack direction="row" spacing={1}>
+                                    <ThemeProvider theme={shortNameCus}>
+                                        <Button variant="outlined">TM</Button>
+                                    </ThemeProvider>
+                                    <Stack>
+                                        <Typography className="cusname">
+                                            Nguyễn Nguyên Quang
+                                        </Typography>
+                                        <Typography className="cusphone" sx={{ color: '#acaca5' }}>
+                                            0978555698
+                                        </Typography>
+                                    </Stack>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={2} lg={1}>
+                                <MoreHorizIcon />
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <Stack direction="row" spacing={1} paddingTop={1}>
+                                    <Typography className="cuspoint">Điểm tích lũy:</Typography>
+                                    <Typography className="cusname">250</Typography>
+                                </Stack>
+                            </Grid>
+                        </Grid>
+                        <Grid container>
+                            <Grid item xs={12} sm={12} md={9} lg={9}>
+                                <Stack direction="row" spacing={1} paddingTop={1}>
+                                    <Typography className="cuspoint">04/05/2023</Typography>
+                                    <Box>
+                                        <QueryBuilderIcon
+                                            style={{ fontSize: '14px', marginTop: '-5px' }}
+                                        />
+                                    </Box>
+                                    <Typography className="cusname">9h00</Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={3} lg={3} style={{ textAlign: 'right' }}>
+                                <Typography className="cusstatus" sx={{ color: '#a1a103' }}>
+                                    Đang chờ
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                {/* end */}
             </Grid>
         </>
     );
