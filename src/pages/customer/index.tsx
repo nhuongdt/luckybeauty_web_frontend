@@ -182,7 +182,7 @@ class CustomerScreen extends Component {
 
     public render() {
         return (
-            <div className="container-fluid bg-white">
+            <div className="container-fluid bg-white h-100">
                 <div className="page-header">
                     <Row align={'middle'} justify={'space-between'}>
                         <Col span={12}>

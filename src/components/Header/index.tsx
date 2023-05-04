@@ -1,19 +1,25 @@
-import { Box, Menu, MenuItem, Grid, IconButton, Badge } from '@mui/material';
+import { Avatar, Badge, Col, Dropdown, Layout, Menu, Row, Space, Typography } from 'antd';
+import avatar from '../../images/user.png';
+import {
+    MenuUnfoldOutlined,
+    MenuFoldOutlined,
+    LogoutOutlined,
+    HomeOutlined,
+    DownOutlined,
+    BellOutlined,
+    MessageOutlined
+} from '@ant-design/icons';
 import './header.css';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { AccountCircle, LogoutOutlined } from '@mui/icons-material';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import MoreIcon from '@mui/icons-material/MoreVert';
 const userDropdownMenu = (
-    <Menu open>
-        <MenuItem key="2">
+    <Menu>
+        <Menu.Item key="2">
             <Link to="/logout">
                 <LogoutOutlined />
                 <span> Logout </span>
             </Link>
-        </MenuItem>
+        </Menu.Item>
     </Menu>
 );
 interface HeaderProps {
@@ -21,52 +27,36 @@ interface HeaderProps {
     toggle: () => void;
 }
 const Header: React.FC<HeaderProps> = ({ collapsed, toggle }) => {
-    const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-        console.log('OK');
-    };
-
     return (
-        <Box className="header">
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item></Grid>
-                <Grid item>
-                    <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={4} color="error">
-                                <MailIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="show 17 new notifications"
-                            color="inherit">
-                            <Badge badgeContent={17} color="error">
-                                <NotificationsIcon />
-                            </Badge>
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit">
-                            <AccountCircle />
-                        </IconButton>
-                    </Box>
-                    <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                        <IconButton
-                            size="large"
-                            aria-label="show more"
-                            aria-haspopup="true"
-                            //onClick={handleMobileMenuOpen}
-                            color="inherit">
-                            <MoreIcon />
-                        </IconButton>
-                    </Box>
-                </Grid>
-            </Grid>
-        </Box>
+        <Layout.Header className="header">
+            {' '}
+            <Row className={'header-container'}>
+                <Col style={{ textAlign: 'left' }} span={12}></Col>
+                <Col style={{ textAlign: 'right' }} span={6} offset={6}>
+                    <Space>
+                        <Badge size="small" style={{ margin: '0px 8px 0px 8px' }}>
+                            <MessageOutlined style={{ fontSize: 20, margin: '0px 8px 0px 8px' }} />
+                        </Badge>
+                        <Badge size="small" style={{ margin: '0px 8px 0px 8px' }} count={3}>
+                            <BellOutlined style={{ fontSize: 20, margin: '0px 8px 0px 8px' }} />
+                        </Badge>
+                        <div style={{ marginLeft: '32px', marginRight: 8 }}>
+                            <div className="store-name">Nail Spa</div>
+                            <div className="branch-name">Hà nội</div>
+                        </div>
+                        <Dropdown overlay={userDropdownMenu} trigger={['click']}>
+                            <Avatar
+                                style={{ height: 36, width: 36 }}
+                                shape="circle"
+                                alt={'profile'}
+                                src={avatar}>
+                                <DownOutlined style={{ color: '#666466' }} />
+                            </Avatar>
+                        </Dropdown>
+                    </Space>
+                </Col>
+            </Row>
+        </Layout.Header>
     );
 };
 export default Header;

@@ -29,6 +29,7 @@ class LoginService {
     }
 
     async Login(loginModel: LoginModel): Promise<boolean> {
+        this.CheckTenant(loginModel.tenancyName);
         const requestBody = {
             userNameOrEmailAddress: loginModel.userNameOrEmailAddress,
             password: loginModel.password,
@@ -43,19 +44,23 @@ class LoginService {
                     'Content-Type': 'application/json'
                 }
             });
-            if (apiResult.data.success === true) {
-                Cookies.set('accessToken', apiResult.data.result['accessToken'], {
-                    expires: 1 / 48
-                });
-                Cookies.set('encryptedAccessToken', apiResult.data.result['encryptedAccessToken']);
-                Cookies.set('expireInSeconds', apiResult.data.result['expireInSeconds'], {
-                    expires: 1 / 48
-                });
-                Cookies.set('userId', apiResult.data.result['userId']);
-                Cookies.set('isLogin', 'true');
-                const check = Cookies.get('accessToken');
+            if (apiResult.status === 200) {
+                if (apiResult.data.success === true) {
+                    Cookies.set('accessToken', apiResult.data.result['accessToken'], {
+                        expires: 1 / 48
+                    });
+                    Cookies.set(
+                        'encryptedAccessToken',
+                        apiResult.data.result['encryptedAccessToken']
+                    );
+                    Cookies.set('expireInSeconds', apiResult.data.result['expireInSeconds'], {
+                        expires: 1 / 48
+                    });
+                    Cookies.set('userId', apiResult.data.result['userId']);
+                    Cookies.set('isLogin', 'true');
+                    result = apiResult.data.success;
+                }
             }
-            result = apiResult.data.success;
         }
         return result;
     }

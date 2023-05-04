@@ -5,8 +5,9 @@ import Footer from '../Footer';
 import AppSiderMenu from '../SiderMenu';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
-import { Box, Toolbar } from '@mui/material';
 import jwt_decode from 'jwt-decode';
+import { Layout } from 'antd';
+import { Content } from 'antd/es/layout/layout';
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
     if (accessToken) {
@@ -23,10 +24,10 @@ const MainAppLayout: React.FC = () => {
     const toggle = () => {
         onCollapse(!collapsed);
     };
-    const [open, setOpen] = React.useState(isAuthenticated);
+    const [open, setOpen] = React.useState(!isAuthenticated);
     const navigate = useNavigate();
     useEffect(() => {
-        setOpen(isAuthenticated);
+        setOpen(!isAuthenticated);
         console.log(open);
     }, [true]);
 
@@ -36,37 +37,16 @@ const MainAppLayout: React.FC = () => {
     };
     return (
         <>
-            <Box sx={{ display: 'flex' }}>
-                <Box
-                    component="nav"
-                    sx={{
-                        flexShrink: 0
-                    }}>
-                    <AppSiderMenu collapsed={collapsed} toggle={toggle} />
-                </Box>
-                <Box
-                    component="main"
-                    sx={{
-                        flexGrow: 1,
-                        width: `calc(100% - 256px )`,
-                        minHeight: '100%',
-                        backgroundColor: '#FFFFFF'
-                    }}>
-                    <Header collapsed={collapsed} toggle={toggle} />
-                    <LoginAlertDialog open={open} confirmLogin={confirm} />
-                    <Outlet />
-                </Box>
-            </Box>
-            {/* <Layout style={{ minHeight: '100vh' }}>
+            <Layout style={{ minHeight: '100vh' }}>
                 <AppSiderMenu collapsed={collapsed} toggle={toggle} />
-                <Layout>
+                <Layout style={{ height: '100%' }}>
                     <Header collapsed={collapsed} toggle={toggle} />
                     <Content>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Content>
                 </Layout>
-            </Layout> */}
+            </Layout>
         </>
     );
 };

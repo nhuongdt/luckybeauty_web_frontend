@@ -1,9 +1,10 @@
 import * as React from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 
 const Loading = () => (
     <div style={{ paddingTop: 100, textAlign: 'center' }}>
-        <CircularProgress />
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
     </div>
 );
 
