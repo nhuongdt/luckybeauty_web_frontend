@@ -11,8 +11,15 @@ export class PropModal {
     }
 }
 
-export class PropMesAlert {
+export class PropConfirmOKCancel {
+    show = false;
     title = '';
     mes = '';
     type = 1; // ok, 0.err
+    constructor({ show = false, title = '', mes = '', type = 0 }) {
+        this.show = show;
+        this.title = title;
+        this.mes = mes;
+        this.type = type;
+    }
 }
