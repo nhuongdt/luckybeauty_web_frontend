@@ -5,7 +5,7 @@ export interface CreateOrEditKhachHangDto {
     maKhachHang: string;
     tenKhachHang: string;
     soDienThoai: string;
-    diaChi: string;
+    diaChi?: string;
     gioiTinh: boolean;
     email?: string;
     moTa?: string;

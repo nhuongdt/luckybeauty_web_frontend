@@ -48,8 +48,8 @@
 
 .page-title-search {
     background-color: #e9dee6;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 .icon-size {
@@ -71,6 +71,19 @@
     padding: 7px;
 }
 
+.btnIcon {
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    border: 1px solid #cccc;
+    padding: 4px;
+}
+
+.btnIconText {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .MuiAutocomplete-root .MuiOutlinedInput-root {
     padding: 3px;
 }
@@ -82,11 +95,11 @@
 }
 
 .table-body tr td {
-    padding: 3px;
+    padding: 0px 5px;
 }
 
 .MuiButtonBase-root.btnSecond {
-    padding: 4px 14px;
+    padding: 3px 14px;
 }
 
 .MuiDialogActions-root.MuiDialogActions-spacing {
@@ -96,6 +109,19 @@
 .MuiTablePagination-selectLabel,
 .MuiTablePagination-displayedRows {
     margin-bottom: 0;
+}
+
+
+/* style main button*/
+
+.button-container {
+    background-color: #7c3367;
+    color: white;
+}
+
+.button-outline {
+    color: #7c3367;
+    border-color: #7c3367;
 }
 
 
@@ -124,4 +150,28 @@
 
 .MuiTreeItem-content .MuiTreeItem-label {
     padding-left: 8px;
+}
+
+.modal-lable {
+    font-size: 14px;
+}
+
+.infor-cus .cusname {
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.infor-cus .cusphone {
+    font-weight: 500;
+    font-size: 11px;
+    color: '#acaca5';
+}
+
+.infor-cus .cuspoint {
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.infor-cus .cusstatus {
+    font-size: 11px;
 }

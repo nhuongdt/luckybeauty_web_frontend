@@ -118,21 +118,24 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Bán hàng',
                     icon: <IoStorefrontOutline style={{ fontSize: 24 }} />,
-                    children: [],
+                    children: [
+                        {
+                            path: '/check-in',
+                            permission: 'Pages.Administration.Users',
+                            title: 'Khách checkin',
+                            name: 'customerChecking',
+                            icon: null,
+                            children: [],
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/check_in/customer_checking')
+                            )
+                        }
+                    ],
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(() => import('../../pages/dashboard'))
-                },
-                {
-                    path: '/dich-vus',
-                    permission: '',
-                    title: 'Dich vụ',
-                    icon: <BallotOutlined style={{ fontSize: 24 }} />,
-                    name: 'dichvu',
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/product/PageProduct'))
                 },
                 {
                     path: '/khach-hangs',
@@ -144,6 +147,17 @@ export const appRouters: AppRouteProps = {
                     isLayout: false,
                     children: [],
                     component: LoadableComponent(() => import('../../pages/customer'))
+                },
+                {
+                    path: '/dich-vus',
+                    permission: '',
+                    title: 'Dich vụ',
+                    icon: <BallotOutlined style={{ fontSize: 24 }} />,
+                    name: 'dichvu',
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/product/PageProduct'))
                 },
                 {
                     path: '/nhan-viens',

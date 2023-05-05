@@ -38,5 +38,9 @@ class KhachHangService {
         const result = await http.post(`api/services/app/KhachHang/Delete?id=${id}`);
         return result.data.result;
     }
+    jqAutoCustomer = async (input: PagedKhachHangResultRequestDto) => {
+        const result = await http.post(`api/services/app/KhachHang/JqAutoCustomer`, input);
+        return result.data.result;
+    };
 }
 export default new KhachHangService();
