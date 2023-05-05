@@ -106,3 +106,60 @@ border-radius: 4px;
 .page-body{
     height: calc(100% - 104px);
 }
+.ovver-view-item{
+    position: absolute;
+    left: 0%;
+    right: 0%;
+    top: 0%;
+    bottom: 0%;
+    background: #FFFFFF;
+    border-radius: 8px;
+}
+.ovver-view-item-icon{
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    left: 28px;
+    top: calc(50% - 56px/2);
+
+    /* Secondary/Warning */
+
+    background: #FFC700;
+    border-radius: 18px;
+}
+.ovver-view-item-content{
+    position: absolute;
+    width: auto;
+    height: 56px;
+    left: 96px;
+    top: calc(50% - 56px/2);
+}
+.ovver-view-item-content .title-overview{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 20px;color: #666466;
+}
+.ovver-view-item-content .percen-increase-overview{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;color: #50CD89;
+}
+.ovver-view-item-content .percen-reduced-overview{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 12px;
+line-height: 16px;color: #F1416C;
+}
+.ovver-view-item-content .amount-overview{
+    font-family: 'Roboto';
+font-style: normal;
+font-weight: 700;
+font-size: 24px;
+line-height: 32px;
+color: #333233;
+}
