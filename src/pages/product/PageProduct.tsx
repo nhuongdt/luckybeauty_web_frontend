@@ -526,7 +526,7 @@ export default function PageProduct() {
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <SearchIcon />
+                                                <Search />
                                             </InputAdornment>
                                         )
                                     }}

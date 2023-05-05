@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -7,8 +5,11 @@ import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
+import { PropModal } from '../../utils/PropParentToChild';
 
 import '../../App.css';
+import { useState } from 'react';
 
 const shortNameCus = createTheme({
     components: {
@@ -19,9 +20,9 @@ const shortNameCus = createTheme({
                     borderRadius: '35px',
                     width: '37px',
                     height: '35px',
-                    borderColor: 'red',
-                    borderWidth: '1px',
-                    backgroundColor: 'yellow'
+                    border: 'none',
+                    backgroundColor: '#e4cdde',
+                    color: '#7C3367'
                 }
             }
         }
@@ -29,8 +30,15 @@ const shortNameCus = createTheme({
 });
 
 export default function CustomersChecking() {
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
+    const saveCheckInOK = (item: any) => {
+        console.log(2);
+    };
     return (
         <>
+            <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
             <Grid container padding={2}>
                 <Grid item xs={6} sm={4} md={4} lg={4}>
                     <Stack direction="row" spacing={1}>
@@ -46,7 +54,10 @@ export default function CustomersChecking() {
                             variant="contained"
                             className="btnIconText"
                             startIcon={<AddIcon />}
-                            sx={{ bgcolor: '#7c3367' }}>
+                            sx={{ bgcolor: '#7c3367' }}
+                            onClick={() => {
+                                setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true });
+                            }}>
                             Thêm khách
                         </Button>
                     </Stack>

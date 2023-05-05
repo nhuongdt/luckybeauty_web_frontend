@@ -2,4 +2,5 @@ import { PagedFilterAndSortedRequest } from '../../dto/pagedFilterAndSortedReque
 
 export interface PagedKhachHangResultRequestDto extends PagedFilterAndSortedRequest {
     keyword: string;
+    loaiDoiTuong?: number;
 }

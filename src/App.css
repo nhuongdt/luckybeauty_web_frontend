@@ -112,6 +112,19 @@
 }
 
 
+/* style main button*/
+
+.button-container {
+    background-color: #7c3367;
+    color: white;
+}
+
+.button-outline {
+    color: #7c3367;
+    border-color: #7c3367;
+}
+
+
 /* style text in button */
 
 .MuiButton-root {
@@ -137,6 +150,10 @@
 
 .MuiTreeItem-content .MuiTreeItem-label {
     padding-left: 8px;
+}
+
+.modal-lable {
+    font-size: 14px;
 }
 
 .infor-cus .cusname {
