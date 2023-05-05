@@ -89,3 +89,20 @@
 
     color: #666666;
 }
+.btn-more-horizontal{
+    box-sizing: border-box;
+    width: 40px;
+height: 40px;background: #FFFFFF;
+border: 1px solid #cfcbcf;
+border-radius: 4px;
+}
+
+.page-header{
+    height: 104px;
+    border-bottom: 1px solid #E6E1E6;
+    box-sizing: border-box;
+    background: #FFFFFF;
+}
+.page-body{
+    height: calc(100% - 104px);
+}

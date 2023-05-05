@@ -21,25 +21,30 @@ interface MenuItem {
     type?: 'group';
 }
 
-function convertMenuItemsToMenu(menuItems: any[]): MenuItem[] {
+function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): MenuItem[] {
     const menu: MenuItem[] = [];
     menuItems.forEach((item) => {
-        const menuItem: MenuItem = {
-            key: item.path,
-            label:
-                item.children.length > 0 ? (
-                    item.title
-                ) : (
-                    <Link to={item.path} title={item.title} style={{ textDecoration: 'none' }}>
-                        {item.title}
-                    </Link>
-                ),
-            icon: item.icon,
-            type: item.isLayout ? 'group' : undefined,
-            children: item.children.length > 0 ? convertMenuItemsToMenu(item.children) : undefined
-        };
-
-        menu.push(menuItem);
+        // Check if item has permission to be added to menu
+        if (listPermission.includes(item.permission) || item.permission === '') {
+            const menuItem: MenuItem = {
+                key: item.path,
+                label:
+                    item.children.length > 0 ? (
+                        item.title
+                    ) : (
+                        <Link to={item.path} title={item.title} style={{ textDecoration: 'none' }}>
+                            {item.title}
+                        </Link>
+                    ),
+                icon: item.icon,
+                type: item.isLayout ? 'group' : undefined,
+                children:
+                    item.children.length > 0
+                        ? convertMenuItemsToMenu(item.children, listPermission)
+                        : undefined
+            };
+            menu.push(menuItem);
+        }
     });
 
     return menu;
@@ -52,7 +57,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
         (item: { showInMenu: boolean }) => item.showInMenu === true
     );
     const location = useLocation();
-    const itemMenus = convertMenuItemsToMenu(mainAppRoutes);
+    const itemMenus = convertMenuItemsToMenu(mainAppRoutes, lstPermission);
     useEffect(() => {
         // Call API to get list of permissions here
         // Example:

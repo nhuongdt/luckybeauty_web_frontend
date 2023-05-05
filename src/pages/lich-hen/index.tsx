@@ -2,9 +2,10 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Row, Space } from 'antd';
 import { Component, ReactNode } from 'react';
 import { AiOutlineEllipsis } from 'react-icons/ai';
+import FullCalendar from '@fullcalendar/react'; // must go before plugins
+import dayGridPlugin from '@fullcalendar/daygrid';
 import '../../custom.css';
-import OverView from './components/ovver-view';
-class DashboardScreen extends Component {
+class LichHenScreen extends Component {
     render(): ReactNode {
         return (
             <div className="container-fluid h-100 bg-white" style={{ height: '100%' }}>
@@ -18,13 +19,13 @@ class DashboardScreen extends Component {
                                             <li
                                                 className="breadcrumb-item active"
                                                 aria-current="page">
-                                                Trang chủ
+                                                Lịch hẹn
                                             </li>
                                         </ol>
                                     </nav>
                                 </div>
                                 <div>
-                                    <h3>Tổng quan</h3>
+                                    <h3>Lịch hẹn</h3>
                                 </div>
                             </div>
                         </Col>
@@ -53,10 +54,14 @@ class DashboardScreen extends Component {
                     </Row>
                 </div>
                 <div className="page-body mt-2">
-                    <OverView />
+                    <FullCalendar
+                        height="auto"
+                        plugins={[dayGridPlugin]}
+                        initialView="dayGridMonth"
+                    />
                 </div>
             </div>
         );
     }
 }
-export default DashboardScreen;
+export default LichHenScreen;

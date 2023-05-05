@@ -3,13 +3,13 @@ import AppComponentBase from '../../components/AppComponentBase';
 import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import roleService from '../../services/role/roleService';
 import {
+    DeleteOutlined,
     DownloadOutlined,
     EditOutlined,
     PlusOutlined,
     SearchOutlined,
     UploadOutlined
 } from '@ant-design/icons';
-import { DeleteOutline } from '@mui/icons-material';
 import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
 import '../../custom.css';
 import CreateOrEditRole from './components/create-or-edit-role';
@@ -272,7 +272,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                                 />
                                                 <Button
                                                     danger
-                                                    icon={<DeleteOutline />}
+                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             roleId: item.id

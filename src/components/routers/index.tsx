@@ -1,17 +1,17 @@
 import MainAppLayout from '../layouts/MainAppLayout';
 import AnonymousLayout from '../layouts/AnonymousLayout';
 import renderRoutes from './generate-routes';
-import { lazy } from 'react';
-
-import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import BallotOutlinedIcon from '@mui/icons-material/BallotOutlined';
-import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import LockPersonIcon from '@mui/icons-material/LockPerson';
-import CottageIcon from '@mui/icons-material/Cottage';
-// ico
+// icon
+import { BallotOutlined, LockPerson } from '@mui/icons-material';
+import { IoCalendarOutline, IoStorefrontOutline } from 'react-icons/io5';
+import {
+    AiOutlineHome,
+    AiOutlineIdcard,
+    AiOutlineLineChart,
+    AiOutlineSetting
+} from 'react-icons/ai';
+import { BsPeople, BsPersonLock } from 'react-icons/bs';
+import { ReactComponent as HomeIcon } from '../../images/icons/Vector.svg';
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
 type RenderRouteProps = {
@@ -95,7 +95,7 @@ export const appRouters: AppRouteProps = {
                     name: 'dashboard',
                     permission: '',
                     title: 'Dashboard',
-                    icon: <CottageIcon style={{ fontSize: 24 }} />,
+                    icon: <AiOutlineHome style={{ fontSize: 24 }} />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
@@ -106,18 +106,40 @@ export const appRouters: AppRouteProps = {
                     name: 'lich hen',
                     permission: '',
                     title: 'Lịch hẹn',
-                    icon: <CalendarMonthOutlinedIcon style={{ fontSize: 24 }} />,
+                    icon: <IoCalendarOutline style={{ fontSize: 24 }} />,
+                    children: [],
+                    showInMenu: true,
+                    isLayout: false,
+                    component: LoadableComponent(() => import('../../pages/lich-hen'))
+                },
+                {
+                    path: '/ban-hangs',
+                    name: 'banhang',
+                    permission: '',
+                    title: 'Bán hàng',
+                    icon: <IoStorefrontOutline style={{ fontSize: 24 }} />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(() => import('../../pages/dashboard'))
                 },
                 {
+                    path: '/dich-vus',
+                    permission: '',
+                    title: 'Dich vụ',
+                    icon: <BallotOutlined style={{ fontSize: 24 }} />,
+                    name: 'dichvu',
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/product/PageProduct'))
+                },
+                {
                     path: '/khach-hangs',
                     permission: '',
                     title: 'Khách hàng',
                     name: 'khachhang',
-                    icon: <PermContactCalendarIcon style={{ fontSize: 24 }} />,
+                    icon: <AiOutlineIdcard style={{ fontSize: 24 }} />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
@@ -128,28 +150,28 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Nhân viên',
                     name: 'nhanvien',
-                    icon: <PeopleAltIcon style={{ fontSize: 24 }} />,
+                    icon: <BsPeople style={{ fontSize: 24 }} />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
                     component: LoadableComponent(() => import('../../pages/employee'))
                 },
                 {
-                    path: '/dich-vus',
+                    path: '/bao-cao',
                     permission: '',
-                    title: 'Dich vụ',
-                    icon: <BallotOutlinedIcon style={{ fontSize: 24 }} />,
-                    name: 'dichvu',
+                    title: 'Báo cáo',
+                    name: 'baocao',
+                    icon: <AiOutlineLineChart style={{ fontSize: 24 }} />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/product/PageProduct'))
+                    component: LoadableComponent(() => import('../../pages/employee'))
                 },
                 {
                     path: '',
                     permission: '',
                     title: 'Quản trị',
-                    icon: <LockPersonIcon style={{ fontSize: 24 }} />,
+                    icon: <BsPersonLock style={{ fontSize: 24 }} />,
                     name: 'QuanTri',
                     showInMenu: true,
                     isLayout: false,
@@ -190,6 +212,17 @@ export const appRouters: AppRouteProps = {
                         }
                     ],
                     component: null
+                },
+                {
+                    path: '/settings',
+                    permission: '',
+                    title: 'Cài đặt',
+                    name: 'caidat',
+                    icon: <AiOutlineSetting style={{ fontSize: 24 }} />,
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/employee'))
                 }
             ]
         }

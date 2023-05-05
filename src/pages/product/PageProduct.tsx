@@ -34,16 +34,6 @@ import {
     MenuItem,
     colors
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import MenuIcon from '@mui/icons-material/Menu';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import InfoIcon from '@mui/icons-material/Info';
-import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import SearchIcon from '@mui/icons-material/Search';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
@@ -63,6 +53,18 @@ import {
     PagedProductSearchDto
 } from '../../services/product/dto';
 import Utils from '../../utils/utils'; // func common
+import {
+    Add,
+    DeleteOutline,
+    FileDownload,
+    FileUpload,
+    Info,
+    LocalOffer,
+    Menu,
+    ModeEditOutline,
+    MoreHoriz,
+    Search
+} from '@mui/icons-material';
 
 const themeListItemText = createTheme({
     components: {
@@ -106,12 +108,12 @@ export function NhomHangHoas({ dataNhomHang }: any) {
                         secondaryAction={
                             isHovering && (
                                 <IconButton aria-label="comment">
-                                    <AddIcon />
+                                    <Add />
                                 </IconButton>
                             )
                         }>
                         <ListItemAvatar style={{ minWidth: '40px' }}>
-                            <LocalOfferIcon />
+                            <LocalOffer />
                         </ListItemAvatar>
                         <ListItemText primary={`${value.tenNhomHang}`} />
                     </ListItem>
@@ -129,7 +131,7 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
                     onClick={(event) => handleClickAction(0)}
                     secondaryAction={
                         <IconButton edge="end" aria-label="add">
-                            <InfoIcon fontSize="small" />
+                            <Info fontSize="small" />
                         </IconButton>
                     }>
                     <ListItemText primary="Xem" />
@@ -138,7 +140,7 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
                     onClick={(event) => handleClickAction(1)}
                     secondaryAction={
                         <IconButton edge="end" aria-label="edit">
-                            <ModeEditOutlineIcon className="icon" />
+                            <ModeEditOutline className="icon" />
                         </IconButton>
                     }>
                     <ListItemText primary="Sửa" />
@@ -147,7 +149,7 @@ export const ListAction = ({ showAction, handleClickAction }: any) => {
                     onClick={(event) => handleClickAction(2)}
                     secondaryAction={
                         <IconButton edge="end" aria-label="delete">
-                            <DeleteOutlineIcon className="icon" />
+                            <DeleteOutline className="icon" />
                         </IconButton>
                     }>
                     <ListItemText primary="Xóa" />
@@ -449,13 +451,13 @@ export default function PageProduct() {
                     style={{ height: 60 }}>
                     <Box display="flex" justifyContent="flex-end">
                         <Box component="span" className="btn-only-icon" sx={{ mr: 1 }}>
-                            <MenuIcon />
+                            <Menu />
                         </Box>
                         <Button
                             variant="contained"
                             color="error"
                             sx={{ bgcolor: '#7C3367' }}
-                            startIcon={<AddIcon />}
+                            startIcon={<Add />}
                             onClick={() => showModalAddProduct()}>
                             Thêm mới
                         </Button>
@@ -476,7 +478,7 @@ export default function PageProduct() {
                             sx={{ pr: 2 }}
                             display="flex"
                             justifyContent="flex-end">
-                            <AddIcon onClick={() => showModalAddNhomHang()} />
+                            <Add onClick={() => showModalAddNhomHang()} />
                         </Grid>
                     </Grid>
                     <Divider sx={{ mr: 2, mf: 0, p: 0.5, borderColor: '#cccc' }} />
@@ -502,7 +504,7 @@ export default function PageProduct() {
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <SearchIcon />
+                                            <Search />
                                         </InputAdornment>
                                     )
                                 }}
@@ -538,7 +540,7 @@ export default function PageProduct() {
                                         color: '#343a40'
                                     }}
                                     className="btnSecond"
-                                    startIcon={<FileUploadIcon />}>
+                                    startIcon={<FileUpload />}>
                                     Nhập
                                 </Button>
                                 <Button
@@ -549,7 +551,7 @@ export default function PageProduct() {
                                     }}
                                     color="error"
                                     className="btnSecond"
-                                    startIcon={<FileDownloadIcon />}>
+                                    startIcon={<FileDownload />}>
                                     Xuất
                                 </Button>
                             </Box>
@@ -615,7 +617,7 @@ export default function PageProduct() {
                                                     {row.txtTrangThaiHang}
                                                 </TableCell>
                                                 <TableCell sx={{ width: 1 / 25 }}>
-                                                    <MoreHorizIcon
+                                                    <MoreHoriz
                                                         fontSize="small"
                                                         onClick={() => {
                                                             setshowListAction(true);
