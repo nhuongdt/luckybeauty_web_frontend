@@ -34,6 +34,9 @@ const SiderSubMenuItem = (MenuItem: any, lstPermission: string[], isCollapse: bo
                         }
                         style={{ width: '100%' }}>
                         <ListItemIcon
+                            style={{
+                                color: location.pathname === MenuItem.path ? '#7C3367' : '#999699'
+                            }}
                             className={
                                 location.pathname === MenuItem.path
                                     ? 'active-menu-item-icon'

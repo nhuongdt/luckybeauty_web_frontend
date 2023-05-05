@@ -2,6 +2,8 @@ import { Guid } from 'guid-typescript';
 export default class NhanSuItemDto {
     id!: string;
     maNhanVien!: string;
+    ho!: string;
+    tenLot!: string;
     tenNhanVien!: string;
     diaChi!: string;
     soDienThoai!: string;

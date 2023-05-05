@@ -1,12 +1,26 @@
-import * as React from 'react';
-import { Layout } from 'antd';
+import { Container, Grid, Link, Typography } from '@mui/material';
 
 const Footer: React.FC = () => {
     return (
-        <Layout.Footer className={'footer'} style={{ textAlign: 'center' }}>
-            Asp.Net Boilerplate - React © 2018{' '}
-            <a href="https://github.com/ryoldash/module-zero-core-template">Github Page</a>
-        </Layout.Footer>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Grid container spacing={2} justifyContent="center">
+                <Grid item>
+                    <Typography variant="body2" color="text.secondary">
+                        © {new Date().getFullYear()} My Website
+                    </Typography>
+                </Grid>
+                <Grid item>
+                    <Link color="inherit" href="#">
+                        Privacy Policy
+                    </Link>
+                </Grid>
+                <Grid item>
+                    <Link color="inherit" href="#">
+                        Terms of Use
+                    </Link>
+                </Grid>
+            </Grid>
+        </Container>
     );
 };
 

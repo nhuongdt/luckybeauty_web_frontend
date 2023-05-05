@@ -6,6 +6,8 @@
     height: 40px;
     border: 1px solid #e6e1e6;
     border-radius: 4px;
+    display: flex;
+    color: #666466;
 }
 .btn-export {
     box-sizing: border-box;
@@ -14,7 +16,8 @@
     background: #ffffff;
     height: 40px;
     border: 1px solid #e6e1e6;
-    border-radius: 4px;
+    border-radius: 4px;display: flex;
+    color: #666466;
 }
 .btn-add-item {
     color: #fffaff;
@@ -22,7 +25,7 @@
     height: 40px;
     border-radius: 4px;
     justify-content: center;
-    align-items: center;
+    align-items: center;display: flex;color: #FFFAFF;
 }
 .input-search {
     box-sizing: border-box;
@@ -85,4 +88,21 @@
     /* identical to box height, or 143% */
 
     color: #666666;
+}
+.btn-more-horizontal{
+    box-sizing: border-box;
+    width: 40px;
+height: 40px;background: #FFFFFF;
+border: 1px solid #cfcbcf;
+border-radius: 4px;
+}
+
+.page-header{
+    height: 104px;
+    border-bottom: 1px solid #E6E1E6;
+    box-sizing: border-box;
+    background: #FFFFFF;
+}
+.page-body{
+    height: calc(100% - 104px);
 }

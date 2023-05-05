@@ -26,7 +26,9 @@
     border-radius: 14px;
     margin-bottom: 12px;
 }
-
+.ant-form-item-label>label.ant-form-item-required::before{
+    content: none !important;
+ }
 .login-label {
     align-content: center;
     text-align: center;
@@ -65,3 +67,10 @@
     line-height: 20px;
     color: #999699;
 }
+.login-form-forgot {
+    float: right;
+    text-decoration: none;
+  }
+.ant-col-rtl .login-form-forgot {
+    float: left;
+  }

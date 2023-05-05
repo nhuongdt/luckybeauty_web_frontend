@@ -7,7 +7,7 @@ import TreeItem from '@mui/lab/TreeItem';
 import '../../App.css';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+//import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: any) {
     const [rowHover, setRowHover] = React.useState<ModelNhomHangHoa>(
@@ -46,10 +46,10 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                         </Stack>
                     }
                     icon={<LocalOfferIcon />}
-                    onMouseLeave={(event) => {
+                    onMouseLeave={(event: any) => {
                         handleHover(event, item, index);
                     }}
-                    onMouseEnter={(event) => {
+                    onMouseEnter={(event: any) => {
                         handleHover(event, item, index);
                     }}
                     onClick={() => handleClickTreeItem(false)}>
@@ -67,10 +67,10 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                                     )}
                                 </Stack>
                             }
-                            onMouseLeave={(event) => {
+                            onMouseLeave={(event: any) => {
                                 handleHover(event, child, index2);
                             }}
-                            onMouseEnter={(event) => {
+                            onMouseEnter={(event: any) => {
                                 handleHover(event, child, index2);
                             }}></TreeItem>
                     ))}

@@ -1,21 +1,37 @@
 import React, { Component, FormEventHandler } from 'react';
 import './employee.css';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
-import { Guid } from 'guid-typescript';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
-import { Pagination, Stack } from '@mui/material';
-import CreateOrEditNhanVienDialog from './createOrEditNhanVienDialog';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
 import '../../custom.css';
-import { Button, Space, Modal } from 'antd';
+import {
+    Button,
+    Space,
+    Modal,
+    Input,
+    Pagination,
+    PaginationProps,
+    Row,
+    Col,
+    FormInstance
+} from 'antd';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import SuggestService from '../../services/suggests/SuggestService';
 import { json } from 'stream/consumers';
-import { DeleteOutline, EditOutlined } from '@mui/icons-material';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import {
+    CalendarOutlined,
+    DeleteOutlined,
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
 const { confirm } = Modal;
 class EmployeeScreen extends Component {
+    formRef = React.createRef<FormInstance>();
     state = {
         idNhanSu: '',
         modalVisible: false,
@@ -81,22 +97,73 @@ class EmployeeScreen extends Component {
     }
     handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
         const filter = event.target.value;
-        this.setState({ filter }, async () => this.getListNhanVien());
-        this.resetData();
+        this.setState({ filter: filter });
     };
 
-    handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    handlePageChange: PaginationProps['onChange'] = (page) => {
         const { maxResultCount } = this.state;
         this.setState({
-            currentPage: value,
-            skipCount: value * maxResultCount
+            currentPage: page,
+            skipCount: page * maxResultCount
         });
     };
-    handleSubmit = () => {
-        console.log(JSON.stringify(this.state.createOrEditNhanSu));
-        nhanVienService.createOrEdit(this.state.createOrEditNhanSu);
-        this.onCloseDialog();
-        this.resetData();
+    Modal = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible
+        });
+    };
+
+    async createOrUpdateModalOpen(entityDto: string) {
+        if (entityDto === '') {
+            this.formRef.current?.resetFields();
+            this.setState({
+                createOrEditNhanSu: {
+                    id: '',
+                    maNhanVien: '',
+                    ho: '',
+                    tenLot: '',
+                    tenNhanVien: '',
+                    diaChi: '',
+                    soDienThoai: '',
+                    cccd: '',
+                    ngaySinh: '',
+                    kieuNgaySinh: 0,
+                    gioiTinh: 0,
+                    ngayCap: '',
+                    noiCap: '',
+                    avatar: '',
+                    idChucVu: '',
+                    ghiChu: ''
+                }
+            });
+        } else {
+            const employee = await nhanVienService.getNhanSu(entityDto);
+            this.setState({
+                createOrEditNhanSu: employee
+            });
+            setTimeout(() => {
+                this.formRef.current?.setFieldsValue({ ...this.state.createOrEditNhanSu });
+            }, 100);
+        }
+
+        this.setState({ IdKhachHang: entityDto });
+        this.Modal();
+    }
+    handleSubmit = async () => {
+        this.formRef.current?.validateFields().then(async (values: any) => {
+            if (this.state.idNhanSu === '') {
+                await nhanVienService.createOrEdit(values);
+            } else {
+                await nhanVienService.createOrEdit({
+                    id: this.state.idNhanSu,
+                    ...values
+                });
+            }
+
+            await this.getData();
+            this.setState({ modalVisible: false });
+            this.formRef.current?.resetFields();
+        });
     };
     handleChange = (event: React.ChangeEvent<any>): void => {
         const { name, value } = event.target;
@@ -130,74 +197,80 @@ class EmployeeScreen extends Component {
 
     onOkDelete = () => {
         this.delete(this.state.idNhanSu);
-        this.getData();
         this.onCancelDelete();
     };
-
+    handleKeyDown = (event: any) => {
+        if (event.key === 'Enter') {
+            this.getListNhanVien();
+        }
+    };
     public render() {
         return (
-            <div className="container-fluid h-100 bg-light">
+            <div className="container-fluid h-100 bg-white">
                 <div className="page-header">
-                    <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        spacing={2}>
-                        <div>
-                            <div className="pt-2">
-                                <nav aria-label="breadcrumb">
-                                    <ol className="breadcrumb">
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Nhân viên
-                                        </li>
-                                        <li className="breadcrumb-item active" aria-current="page">
-                                            Quản lý nhân viên
-                                        </li>
-                                    </ol>
-                                </nav>
-                            </div>
+                    <Row align={'middle'} justify={'space-between'}>
+                        <Col span={12}>
                             <div>
-                                <h3>Nhân viên</h3>
-                            </div>
-                        </div>
-                        <div>
-                            <Stack
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
-                                spacing={1}>
-                                <div className="search w-100">
-                                    <i className="fa-thin fa-magnifying-glass"></i>
-                                    <input
-                                        type="text"
-                                        onChange={this.handleSearch}
-                                        className="input-search"
-                                        placeholder="Tìm kiếm ..."
-                                    />
+                                <div className="pt-2">
+                                    <nav aria-label="breadcrumb">
+                                        <ol className="breadcrumb">
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Nhân viên
+                                            </li>
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Quản lý nhân viên
+                                            </li>
+                                        </ol>
+                                    </nav>
                                 </div>
-                                <Stack
-                                    direction="row"
-                                    justifyContent="flex-endspace-between"
-                                    alignItems="center"
-                                    spacing={1}>
-                                    <Button className="btn-import">
-                                        <i className="fa fa-home"></i> Nhập
+                                <div>
+                                    <h3>Danh sách nhân viên</h3>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Space align="center" size="middle">
+                                    <div className="search w-100">
+                                        <Input
+                                            allowClear
+                                            onChange={this.handleSearch}
+                                            size="large"
+                                            prefix={<SearchOutlined />}
+                                            placeholder="Tìm kiếm..."
+                                        />
+                                    </div>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            className="btn-import"
+                                            size="large"
+                                            icon={<DownloadOutlined />}>
+                                            Nhập
+                                        </Button>
+                                        <Button
+                                            className="btn-export"
+                                            size="large"
+                                            icon={<UploadOutlined />}>
+                                            Xuất
+                                        </Button>
+                                    </Space>
+                                    <Button
+                                        icon={<PlusOutlined />}
+                                        size="large"
+                                        className="btn btn-add-item"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen('');
+                                        }}>
+                                        Thêm nhân viên
                                     </Button>
-                                    <Button className="btn-export">
-                                        <i className="fa fa-home"></i> Xuất
-                                    </Button>
-                                </Stack>
-                                <Button
-                                    className="btn btn-add-item"
-                                    onClick={() => {
-                                        this.resetData();
-                                        this.onOpenDialog();
-                                    }}>
-                                    Thêm nhân viên
-                                </Button>
-                            </Stack>
-                        </div>
-                    </Stack>
+                                </Space>
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
                 <div className="page-content pt-2">
                     <table className="h-100 w-100 table table-border-0 table">
@@ -229,16 +302,20 @@ class EmployeeScreen extends Component {
                                         <td className="text-td-table">{item.soDienThoai}</td>
                                         <td className="text-td-table">
                                             <></>
-                                            <CalendarMonthIcon fontSize="small" />{' '}
+                                            <CalendarOutlined />
                                             {new Date(item.ngaySinh).toLocaleDateString('en-GB')}
                                         </td>
                                         <td className="text-td-table">
-                                            {item.gioiTinh === 0 ? 'Nam' : 'Nữ'}
+                                            {item.gioiTinh === 0
+                                                ? 'Khác'
+                                                : item.gioiTinh === 1
+                                                ? 'Nam'
+                                                : 'Nữ'}
                                         </td>
                                         <td className="text-td-table">{item.diaChi}</td>
                                         <td className="text-td-table">{item.tenChucVu}</td>
                                         <td className="text-td-table">
-                                            <CalendarMonthIcon fontSize="small" />{' '}
+                                            <CalendarOutlined />
                                             {new Date(item.ngayVaoLam).toLocaleDateString('en-GB')}
                                         </td>
                                         <td className="text-td-table" style={{ width: '150px' }}>
@@ -250,12 +327,12 @@ class EmployeeScreen extends Component {
                                                         this.setState({
                                                             idNhanSu: item.id
                                                         });
-                                                        this.onOpenDialog();
+                                                        this.createOrUpdateModalOpen(item.id);
                                                     }}
                                                 />
                                                 <Button
                                                     danger
-                                                    icon={<DeleteOutline />}
+                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             idNhanSu: item.id
@@ -285,28 +362,31 @@ class EmployeeScreen extends Component {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Stack spacing={1.5} className="align-items-center">
+                                    <Space size={'middle'} className="align-items-center">
                                         <Pagination
-                                            count={this.state.totalPage}
-                                            defaultPage={this.state.currentPage}
+                                            total={this.state.totalNhanVien}
+                                            pageSize={this.state.maxResultCount}
+                                            defaultCurrent={this.state.currentPage}
+                                            current={this.state.currentPage}
                                             onChange={this.handlePageChange}
-                                            color="secondary"
-                                            shape="rounded"
                                         />
-                                    </Stack>
+                                    </Space>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <CreateOrEditNhanVienDialog
-                    modalVisible={this.state.modalVisible}
-                    onCloseDialog={this.onCloseDialog}
-                    handleSubmit={this.handleSubmit}
+                    visible={this.state.modalVisible}
+                    onCancel={this.onCloseDialog}
+                    onOk={this.handleSubmit}
+                    modalType={
+                        this.state.idNhanSu === ''
+                            ? 'Thêm mới nhân viên'
+                            : 'Cập nhật thông tin nhân viên'
+                    }
                     suggestChucVu={this.state.suggestChucVu}
-                    handleChange={this.handleChange}
-                    idNhanSu={this.state.idNhanSu}
-                    createOrEditNhanSu={this.state.createOrEditNhanSu}></CreateOrEditNhanVienDialog>
+                    formRef={this.formRef}></CreateOrEditNhanVienDialog>
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}

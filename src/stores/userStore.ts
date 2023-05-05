@@ -35,7 +35,7 @@ class UserStore {
     }
 
     async delete(entityDto: EntityDto) {
-        await userService.delete(entityDto);
+        await userService.delete(entityDto.id);
         this.users.items = this.users.items.filter((x: GetUserOutput) => x.id !== entityDto.id);
     }
 
@@ -45,7 +45,7 @@ class UserStore {
     }
 
     async get(entityDto: EntityDto) {
-        const result = await userService.get(entityDto);
+        const result = await userService.get(entityDto.id);
         this.editUser = result;
     }
 

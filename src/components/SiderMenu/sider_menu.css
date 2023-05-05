@@ -6,6 +6,7 @@
     text-align: center;
     justify-content: center;
 }
+
 .active-menu-item {
     color: #7c3367;
     height: 40px;
@@ -16,6 +17,7 @@
     border-radius: 6px;
     padding: 8px 13px 8px 12px;
 }
+
 .menu-item {
     align-items: center;
     padding: 8px 13px 8px 12px;
@@ -24,6 +26,7 @@
     background: #ffffff;
     border-radius: 6px;
 }
+
 .active-menu-item-icon {
     color: #7c3367;
     height: 40px;
@@ -34,6 +37,7 @@
     border-radius: 6px;
     padding: 8px 13px 8px 12px;
 }
+
 .menu-item-icon {
     align-items: center;
     padding: 8px 13px 8px 12px;
@@ -42,8 +46,9 @@
     background: #ffffff;
     border-radius: 6px;
 }
+
 .active-menu-item-title {
-    color: #7c3367;
+    color: #7C3367;
     height: 40px;
     align-items: center;
     justify-content: space-between;
@@ -51,11 +56,117 @@
     border-radius: 6px;
     padding: 8px 13px 8px 12px;
 }
+
 .menu-item-title {
     align-items: center;
     padding: 8px 13px 8px 12px;
     height: 40px;
     justify-content: space-between;
     background: #ffffff;
+    color: #999699;
     border-radius: 6px;
+}
+
+.side-menu {
+    min-height: calc(100vh - 170px);
+    /*Đặt chiều cao tối thiểu cho SiderMenu */
+    overflow-y: auto;
+    /*Hiển thị thanh cuộn khi nội dung vượt quá kích thước của SiderMenu*/
+}
+
+.ant-menu-item-selected {
+    background-color: #f2ebf0 !important;
+    color: #7C3367 !important;
+    font-size: 16px;
+}
+
+.ant-menu-item:hover {
+    background-color: #f2ebf0 !important;
+    color: #7C3367 !important;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.ant-menu-item {
+    align-items: center;
+    padding: 16px 12px 16px 12px;
+    height: 40px;
+    line-height: 24px;
+    color: #999699;
+    border-radius: 6px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.ant-menu {
+    padding: 16px 16px 16px 16px;
+}
+
+.ant-menu-submenu {
+    align-items: center;
+    border-radius: 6px;
+    color: #999699;
+    background-color: #ffffff;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.ant-menu-submenu-open {
+    color: #7C3367 !important;
+    font-size: 16px;
+}
+
+.ant-menu-submenu-selected {
+    color: #7C3367 !important;
+}
+
+.ant-menu-submenu:hover {
+    color: #7C3367 !important;
+    font-size: 16px;
+}
+
+.logout {
+    align-items: center;
+    color: #999699;
+    background-color: #ffffff;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    height: 99px;
+    display: flex;
+    justify-content: center;
+}
+
+.hr {
+    height: 1px;
+    background: #E6E1E6;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.toolbar {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toolbar .toolbar-title {
+    height: 28px;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 28px;
+    color: #1F0D1A;
 }

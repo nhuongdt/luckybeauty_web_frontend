@@ -1,7 +1,7 @@
 import React from 'react';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import './sider_menu.css';
 import abpClient from '../abp-custom';
 import { ListItemIcon, Stack } from '@mui/material';
@@ -24,6 +24,9 @@ const SiderMenuItem = (menuItem: any, lstPermission: string[], isCollapse: boole
                     }
                     style={{ width: '100%' }}>
                     <ListItemIcon
+                        style={{
+                            color: location.pathname === menuItem.path ? '#7C3367' : '#999699'
+                        }}
                         className={
                             location.pathname === menuItem.path
                                 ? 'active-menu-item-icon'
