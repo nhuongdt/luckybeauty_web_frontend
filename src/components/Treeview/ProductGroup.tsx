@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Typography, Box, TextField, InputAdornment, Stack } from '@mui/material';
+import { OpenInNew, LocalOffer } from '@mui/icons-material';
 import TreeView from '@mui/lab/TreeView';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import AddIcon from '@mui/icons-material/Add';
 import TreeItem from '@mui/lab/TreeItem';
 import '../../App.css';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 //import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: any) {
@@ -32,7 +30,7 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
     return (
         <TreeView
             aria-label="file system navigator"
-            sx={{ height: 350, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}>
+            sx={{ flexGrow: 1, minWidth: 200, overflowY: 'auto' }}>
             {dataNhomHang.map((item: any, index: any) => (
                 <TreeItem
                     key={item.id}
@@ -41,11 +39,11 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                         <Stack direction="row">
                             <Typography sx={{ width: 8 / 10 }}>{item.tenNhomHang}</Typography>
                             {isHover && rowHover.id === item.id && (
-                                <OpenInNewIcon onClick={() => handleClickTreeItem(true)} />
+                                <OpenInNew onClick={() => handleClickTreeItem(true)} />
                             )}
                         </Stack>
                     }
-                    icon={<LocalOfferIcon />}
+                    icon={<LocalOffer style={{ color: item.color }} />}
                     onMouseLeave={(event: any) => {
                         handleHover(event, item, index);
                     }}
@@ -63,7 +61,7 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                                         {child.tenNhomHang}
                                     </Typography>
                                     {isHover && rowHover.id === child.id && (
-                                        <OpenInNewIcon onClick={() => handleClickTreeItem(true)} />
+                                        <OpenInNew onClick={() => handleClickTreeItem(true)} />
                                     )}
                                 </Stack>
                             }
