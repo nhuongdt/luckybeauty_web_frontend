@@ -1,6 +1,6 @@
 import { Col, Row } from 'antd';
 import { Component, ReactNode } from 'react';
-import cake from '../../../images/cake.png';
+import cake from '../../../../images/cake.png';
 import { AiOutlineUser } from 'react-icons/ai';
 import { FaRegCalendarPlus, FaRegMoneyBillAlt } from 'react-icons/fa';
 class OverView extends Component {
@@ -111,8 +111,12 @@ class OverView extends Component {
                                     <div className="col text-center">
                                         <h4 className="amount-ovverview">150</h4>
                                     </div>
-                                    <div className="col percen-reduced-overview text-center">
-                                        -11%
+                                    <div className="col text-center">
+                                        <div
+                                            className="percen-reduced-overview text-center"
+                                            style={{ textAlign: 'center' }}>
+                                            <span className="text-center">-11%</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -142,7 +146,7 @@ class OverView extends Component {
                                 </div>
                             </div>
                             <div className="ovver-view-item-content text-center">
-                                <div className="title-overview">Tổng số khách hàng</div>
+                                <div className="title-overview">Tổng doanh thu</div>
                                 <div className="row text-center">
                                     <div className="col text-center">
                                         <h4 className="amount-ovverview">100000</h4>

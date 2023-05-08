@@ -1,7 +1,5 @@
 import { Route, Routes as ReactRoutes } from 'react-router-dom';
 import { appRouters } from './index';
-import ProtectedRoute from './ProtectedRoute';
-import Cookies from 'js-cookie';
 
 const renderRoutes = () => {
     return (

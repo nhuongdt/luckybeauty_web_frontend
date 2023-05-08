@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Row, Container, Image } from 'react-bootstrap';
-import { Form, Input, Checkbox } from 'antd';
+import { Form, Input, Checkbox, Avatar, Row, Col } from 'antd';
 import './login.css';
 import LoginModel from '../../models/Login/loginModel';
 import LoginService from '../../services/login/loginService';
 import Cookies from 'js-cookie';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import logo from '../../images/Lucky_beauty.jpg';
 const LoginScreen: React.FC = () => {
     const loginModel = new LoginModel();
@@ -59,16 +58,14 @@ const LoginScreen: React.FC = () => {
     }, []);
 
     return (
-        <Container className="d-flex align-items-center justify-content-center vh-100">
-            <Row className="align-items-center justify-content-center">
+        <div className="container-fluid d-flex align-items-center justify-content-center vh-100 mt-2 mb-2">
+            <Row className="align-items-center justify-content-center mt-2 h-100">
                 <Col>
                     <div
                         className="rounded border shadow "
                         style={{ width: '660px', padding: '12px 54px' }}>
-                        <Image
-                            width={'64px'}
-                            height={'64px'}
-                            style={{ margin: '24px 244px' }}
+                        <Avatar
+                            style={{ margin: '24px 244px', width: 64, height: 64 }}
                             src={logo}
                         />
                         <label
@@ -87,7 +84,7 @@ const LoginScreen: React.FC = () => {
                         <Form form={form} onFinish={handleLogin} layout="vertical">
                             <Form.Item
                                 name="tenant"
-                                label={<p className="login-label">ID cửa hàng</p>}>
+                                label={<span className="login-label">ID cửa hàng</span>}>
                                 <Input size="large" placeholder="Nhập tên cửa hàng" />
                             </Form.Item>
                             <Form.Item
@@ -171,7 +168,7 @@ const LoginScreen: React.FC = () => {
                     </div>
                 </Col>
             </Row>
-        </Container>
+        </div>
     );
 };
 

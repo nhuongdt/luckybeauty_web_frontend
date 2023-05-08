@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import MainAppLayout from '../layouts/MainAppLayout';
 import AnonymousLayout from '../layouts/AnonymousLayout';
 import renderRoutes from './generate-routes';
 // icon
-import { BallotOutlined, LockPerson } from '@mui/icons-material';
+import { BallotOutlined } from '@mui/icons-material';
 import { IoCalendarOutline, IoStorefrontOutline } from 'react-icons/io5';
 import {
     AiOutlineHome,
@@ -11,7 +12,6 @@ import {
     AiOutlineSetting
 } from 'react-icons/ai';
 import { BsPeople, BsPersonLock } from 'react-icons/bs';
-import { ReactComponent as HomeIcon } from '../../images/icons/Vector.svg';
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
 type RenderRouteProps = {

@@ -37,11 +37,11 @@ const MainAppLayout: React.FC = () => {
     };
     return (
         <>
-            <Layout style={{ minHeight: '100vh' }}>
+            <Layout>
                 <AppSiderMenu collapsed={collapsed} toggle={toggle} />
-                <Layout style={{ height: '100%' }}>
+                <Layout style={{ marginLeft: 240 }}>
                     <Header collapsed={collapsed} toggle={toggle} />
-                    <Content>
+                    <Content style={{ border: 'solid 0.1rem #e6e1e6' }}>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Content>
