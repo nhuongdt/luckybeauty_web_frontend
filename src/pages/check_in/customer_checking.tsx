@@ -1,14 +1,29 @@
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AddIcon from '@mui/icons-material/Add';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import QueryBuilderIcon from '@mui/icons-material/QueryBuilder';
+import { useNavigate } from 'react-router-dom';
+import {
+    Add,
+    Menu,
+    CalendarMonth,
+    MoreHoriz,
+    QueryBuilder,
+    ProductionQuantityLimits,
+    SkipNext,
+    SkipPrevious
+} from '@mui/icons-material';
+// import {
+//     AiOutlineHome,
+//     AiOutlineIdcard,
+//     AiOutlineLineChart,
+//     AiOutlineSetting
+// } from 'react-icons/ai';
+import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
 import { PropModal } from '../../utils/PropParentToChild';
 
 import '../../App.css';
+import '../ban_hang/style.css';
+
 import { useState } from 'react';
 
 const shortNameCus = createTheme({
@@ -30,30 +45,41 @@ const shortNameCus = createTheme({
 });
 
 export default function CustomersChecking() {
+    const history = useNavigate();
+    const [activeTabProduct, setActiveTabProduc] = useState(false);
+
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
     const saveCheckInOK = (item: any) => {
         console.log(2);
     };
+    const gotoPage = (type: number) => {
+        switch (type) {
+            case 1:
+                setActiveTabProduc(true);
+                history('/page-ban-hang');
+                break;
+        }
+    };
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
             <Grid container padding={2}>
                 <Grid item xs={6} sm={4} md={4} lg={4}>
-                    <Stack direction="row" spacing={1}>
-                        <MenuIcon className="btnIcon" />
-                        <CalendarMonthIcon className="btnIcon" />
+                    <Stack direction="row">
+                        <SkipPrevious className="btnToggleLeft" />
+                        <SkipNext className="btnToggleRight" onClick={(e) => gotoPage(1)} />
                     </Stack>
                 </Grid>
                 <Grid item xs={6} sm={8} md={8} lg={8} display="flex" justifyContent="flex-end">
                     <Stack direction="row" spacing={1}>
-                        <MenuIcon className="btnIcon" />
-                        <CalendarMonthIcon className="btnIcon" />
+                        <Menu className="btnIcon" />
+                        <CalendarMonth className="btnIcon" />
                         <Button
                             variant="contained"
                             className="btnIconText"
-                            startIcon={<AddIcon />}
+                            startIcon={<Add />}
                             sx={{ bgcolor: '#7c3367' }}
                             onClick={() => {
                                 setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true });
@@ -84,7 +110,7 @@ export default function CustomersChecking() {
                                 </Stack>
                             </Grid>
                             <Grid item xs={12} sm={12} md={2} lg={1}>
-                                <MoreHorizIcon />
+                                <MoreHoriz />
                             </Grid>
                         </Grid>
                         <Grid container>
@@ -100,7 +126,7 @@ export default function CustomersChecking() {
                                 <Stack direction="row" spacing={1} paddingTop={1}>
                                     <Typography className="cuspoint">04/05/2023</Typography>
                                     <Box>
-                                        <QueryBuilderIcon
+                                        <QueryBuilder
                                             style={{ fontSize: '14px', marginTop: '-5px' }}
                                         />
                                     </Box>
@@ -137,7 +163,7 @@ export default function CustomersChecking() {
                                 </Stack>
                             </Grid>
                             <Grid item xs={12} sm={12} md={2} lg={1}>
-                                <MoreHorizIcon />
+                                <MoreHoriz />
                             </Grid>
                         </Grid>
                         <Grid container>
@@ -153,7 +179,7 @@ export default function CustomersChecking() {
                                 <Stack direction="row" spacing={1} paddingTop={1}>
                                     <Typography className="cuspoint">04/05/2023</Typography>
                                     <Box>
-                                        <QueryBuilderIcon
+                                        <QueryBuilder
                                             style={{ fontSize: '14px', marginTop: '-5px' }}
                                         />
                                     </Box>

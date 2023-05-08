@@ -1,0 +1,58 @@
+.btnToggleLeft {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #cccc;
+    padding: 4px
+}
+
+.btnToggleRight {
+    width: 35px;
+    height: 35px;
+    border: 1px solid #cccc;
+    border-left: none !important;
+    padding: 4px
+}
+
+
+/*treeview nhom hanghoa*/
+
+.MuiTypography-body1 {
+    font-size: 13px;
+}
+
+.infor-cus .cusname {
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.infor-cus .cusphone {
+    font-weight: 500;
+    font-size: 11px;
+    color: '#acaca5';
+}
+
+.infor-cus .cuspoint {
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.infor-cus .cusstatus {
+    font-size: 11px;
+}
+
+.page-ban-hang .center .nhom-dich-vu {
+    font-weight: 500;
+    font-size: 15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.page-ban-hang .center .ten-dich-vu {
+    font-weight: 500;
+    font-size: 13px;
+    height: 45px;
+}
+
+.page-ban-hang .center .infor-dich-vu {
+    /* border: 1px solid red; */
+}

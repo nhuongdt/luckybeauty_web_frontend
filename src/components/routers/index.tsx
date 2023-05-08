@@ -131,6 +131,19 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/check_in/customer_checking')
                             )
+                        },
+                        {
+                            path: '/page-ban-hang',
+                            permission: 'Pages.Administration.Users',
+                            title: 'Thu ngân',
+                            name: 'thungan',
+                            icon: null,
+                            children: [],
+                            showInMenu: false,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/page_ban_hang')
+                            )
                         }
                     ],
                     showInMenu: true,
