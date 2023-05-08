@@ -11,7 +11,7 @@ import {
     SkipPrevious
 } from '@mui/icons-material';
 // import {
-//     AiOutlineHome,
+//     AiOutlineDelete,
 //     AiOutlineIdcard,
 //     AiOutlineLineChart,
 //     AiOutlineSetting

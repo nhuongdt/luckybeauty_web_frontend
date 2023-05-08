@@ -17,7 +17,7 @@
 /*treeview nhom hanghoa*/
 
 .MuiTypography-body1 {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .infor-cus .cusname {
@@ -31,7 +31,7 @@
     color: '#acaca5';
 }
 
-.infor-cus .cuspoint {
+.cuspoint {
     font-weight: 400;
     font-size: 12px;
 }
@@ -55,4 +55,15 @@
 
 .page-ban-hang .center .infor-dich-vu {
     /* border: 1px solid red; */
+}
+
+.page-ban-hang .nvthuchien {
+    border-radius: 4px;
+    background-color: antiquewhite;
+    padding: 2px 2px;
+}
+
+.page-ban-hang .tongtien {
+    float: right;
+    font-weight: 500;
 }
