@@ -192,7 +192,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/employee'))
+                    component: LoadableComponent(() => import('../../pages/dashboard'))
                 },
                 {
                     path: '',
@@ -249,7 +249,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/employee'))
+                    component: LoadableComponent(() => import('../../pages/settings'))
                 }
             ]
         }

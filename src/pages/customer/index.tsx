@@ -334,7 +334,7 @@ class CustomerScreen extends Component {
                                         {this.state.totalCount} mục
                                     </label>
                                 </div>
-                                <div style={{ float: 'right' }} className="col-7">
+                                <div style={{ float: 'right' }} className="col-7 text-center">
                                     <Space
                                         size="middle"
                                         align="center"

@@ -25,8 +25,8 @@
 .btn-add-item {
     color: #fffaff;
     background-color: #7c3367;
-    height: 40px;
-    border-radius: 4px;
+    height: 40px !important;
+    border-radius: 4px !important;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -107,7 +107,7 @@
     height: 40px;
     background: #FFFFFF;
     border: 1px solid #cfcbcf;
-    border-radius: 4px;
+    border-radius: 4px !important   ;
 }
 
 .page-header {

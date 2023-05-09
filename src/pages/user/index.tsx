@@ -139,6 +139,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
 
     delete(input: number) {
         userService.delete(input);
+        this.getAll();
     }
 
     handleCreate = () => {
@@ -168,7 +169,6 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     };
     onOkDelete = () => {
         this.delete(this.state.userId);
-        this.getAll();
         this.onShowDelete();
     };
     handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {

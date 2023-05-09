@@ -126,6 +126,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
 
     async delete(id: number) {
         await roleService.delete(id);
+        this.getAll();
     }
 
     handleCreate = () => {
@@ -151,7 +152,6 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
     };
     onOkDelete = () => {
         this.delete(this.state.roleId);
-        this.getAll();
         this.onShowDelete();
     };
     handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {

@@ -191,7 +191,8 @@ class EmployeeScreen extends Component {
 
     onCancelDelete = () => {
         this.setState({
-            isShowConfirmDelete: !this.state.isShowConfirmDelete
+            isShowConfirmDelete: !this.state.isShowConfirmDelete,
+            idNhanSu: ''
         });
     };
 

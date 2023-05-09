@@ -30,7 +30,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }) => {
     return (
         <Layout.Header
             className="header"
-            style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%' }}>
+            // style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%' }}>
+        >
             {' '}
             <Row className={'header-container'}>
                 <Col style={{ textAlign: 'left' }} span={12}></Col>

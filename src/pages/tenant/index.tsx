@@ -115,11 +115,11 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
     };
     onOkDelete = () => {
         this.delete(this.state.tenantId);
-        this.getAll();
         this.onShowDelete();
     };
     async delete(input: number) {
         await tenantService.delete(input);
+        this.getAll();
     }
 
     handleCreate = async () => {
