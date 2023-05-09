@@ -5,11 +5,11 @@ export interface KhachHangItemDto {
     maKhachHang: string;
     tenKhachHang: string;
     soDienThoai: string;
-    tenNhomKhach: string;
-    gioiTinh: string;
-    nhanVienPhuTrach: string;
-    tongChiTieu: number;
+    tenNhomKhach?: string;
+    gioiTinh?: string;
+    nhanVienPhuTrach?: string;
+    tongChiTieu?: number;
     cuocHenGanNhat: Date;
-    tenNguonKhach: string;
+    tenNguonKhach?: string;
     tongTichDiem: number;
 }

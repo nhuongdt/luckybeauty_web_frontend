@@ -7,9 +7,10 @@ import {
     InputAdornment,
     Stack,
     Button,
-    Container
+    Container,
+    Link
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
@@ -18,17 +19,15 @@ import { SkipNext, SkipPrevious, Search, DeleteOutline } from '@mui/icons-materi
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import ProductService from '../../services/product/ProductService';
 import GroupProductService from '../../services/product/GroupProductService';
-import {
-    ModelNhomHangHoa,
-    ModelHangHoaDto,
-    PagedProductSearchDto
-} from '../../services/product/dto';
+import { ModelNhomHangHoa } from '../../services/product/dto';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AiOutlineDelete } from 'react-icons/ai';
 import { Clear } from '@mui/icons-material';
+import HoaDonContext from './HoaDonContext';
+import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
+import HoaDonDto from '../../services/ban_hang/HoaDonDto';
 
 import './style.css';
-import { Link } from 'react-router-dom';
 
 const shortNameCus = createTheme({
     components: {
@@ -50,10 +49,20 @@ const shortNameCus = createTheme({
 
 export default function PageBanHang() {
     const history = useNavigate();
+    const cusChosing = React.useContext(HoaDonContext);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = React.useState<ModelNhomHangHoa[]>([]);
     const [nhomDichVu, setNhomDichVu] = React.useState<ModelNhomHangHoa[]>([]);
     const [nhomHangHoa, setNhomHangHoa] = React.useState<ModelNhomHangHoa[]>([]);
     const [activeTabProduct, setActiveTabProduc] = useState(false);
+    const [hoadon, setHoadon] = useState<PageHoaDonDto>(
+        new PageHoaDonDto({
+            // idKhachHang: cusChosing.id as null,
+            maKhachHang: cusChosing.maKhachHang,
+            tenKhachHang: cusChosing.tenKhachHang,
+            soDienThoai: cusChosing.soDienThoai,
+            tongTichDiem: cusChosing.tongTichDiem
+        })
+    );
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
@@ -92,6 +101,7 @@ export default function PageBanHang() {
 
     return (
         <>
+            {/* <HoaDonContext.Provider> */}
             <Grid container padding={2} className="page-ban-hang" columnSpacing={2}>
                 <Grid item xs={3} sm={3} lg={2} md={3}>
                     <Stack display="column" spacing={3}>
@@ -193,7 +203,9 @@ export default function PageBanHang() {
                                 <Button>TM</Button>
                             </ThemeProvider>
                             <Box sx={{ paddingLeft: '8px' }}>
-                                <Typography className="cusname">Nguyễn Nguyên Quang</Typography>
+                                <Typography className="cusname">
+                                    <Link href="#aaa">Nguyễn Nguyên Quang</Link>
+                                </Typography>
                                 <Typography className="cusphone" sx={{ color: '#acaca5' }}>
                                     0978555698
                                 </Typography>
@@ -214,12 +226,18 @@ export default function PageBanHang() {
                                                 justifyContent: 'flex-end'
                                             }}>
                                             <Typography
-                                                style={{ textAlign: 'center', fontWeight: 500 }}>
+                                                style={{
+                                                    textAlign: 'center',
+                                                    fontWeight: 500
+                                                }}>
                                                 1
                                             </Typography>
                                             <Typography
                                                 width={25}
-                                                style={{ textAlign: 'center', fontWeight: 500 }}>
+                                                style={{
+                                                    textAlign: 'center',
+                                                    fontWeight: 500
+                                                }}>
                                                 x
                                             </Typography>
                                             <Typography style={{ fontWeight: 500 }}>
@@ -273,47 +291,67 @@ export default function PageBanHang() {
 
                         <Stack
                             spacing={2}
-                            style={{ position: 'absolute', bottom: 16, right: 0 }}
+                            style={{ position: 'absolute', bottom: 32, right: 0 }}
                             width={28 / 100}>
-                            <Grid container sx={{ paddingRight: '16px' }}>
+                            <Grid container sx={{ paddingRight: '16px' }} rowSpacing={2}>
                                 <Grid item xs={12} sm={4} lg={4} md={4}>
                                     Tổng tiền hàng
                                 </Grid>
                                 <Grid item xs={12} sm={8} lg={8} md={8}>
                                     <Typography className="tongtien">1,200,000</Typography>
                                 </Grid>
-                            </Grid>
-                            <Grid container sx={{ paddingRight: '16px' }}>
                                 <Grid item xs={12} sm={4} lg={4} md={4}>
                                     Giảm giá
                                 </Grid>
                                 <Grid item xs={12} sm={8} lg={8} md={8}>
                                     <Typography className="tongtien">1,200,000</Typography>
                                 </Grid>
-                            </Grid>
-                            <Grid container sx={{ paddingRight: '16px' }}>
                                 <Grid item xs={12} sm={4} lg={4} md={4}>
                                     Tổng giảm giá
                                 </Grid>
                                 <Grid item xs={12} sm={8} lg={8} md={8}>
                                     <Typography className="tongtien">1,200,000</Typography>
                                 </Grid>
-                            </Grid>
-                            <Grid
-                                container
-                                sx={{ paddingRight: '16px' }}
-                                style={{ fontSize: '16px', fontWeight: 500 }}>
-                                <Grid item xs={12} sm={4} lg={4} md={4}>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={4}
+                                    lg={4}
+                                    md={4}
+                                    style={{ fontSize: '16px', fontWeight: 500 }}>
                                     Tổng thanh toán
                                 </Grid>
                                 <Grid item xs={12} sm={8} lg={8} md={8}>
-                                    <Typography style={{ float: 'right' }}>1,200,000</Typography>
+                                    <Typography
+                                        style={{
+                                            float: 'right',
+                                            fontSize: '16px',
+                                            fontWeight: 500
+                                        }}>
+                                        1,200,000
+                                    </Typography>
+                                </Grid>
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={12}
+                                    lg={12}
+                                    md={12}
+                                    style={{ paddingTop: '32px' }}>
+                                    <Button
+                                        variant="contained"
+                                        className="button-container"
+                                        fullWidth
+                                        sx={{ height: 45 }}>
+                                        Thanh toán
+                                    </Button>
                                 </Grid>
                             </Grid>
                         </Stack>
                     </Stack>
                 </Grid>
             </Grid>
+            {/* </HoaDonContext.Provider> */}
         </>
     );
 }

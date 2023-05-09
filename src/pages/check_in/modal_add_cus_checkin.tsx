@@ -14,6 +14,9 @@ import AutocompleteCustomer from '../../components/Autocomplete/Customer';
 
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import KhachHangService from '../../services/khach-hang/khachHangService';
+import CheckinService from '../../services/check_in/CheckinService';
+import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import Utils from '../../utils/utils'; // func common
 
 import '../../App.css';
@@ -21,7 +24,19 @@ import '../../App.css';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
-    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>();
+    const [errPhone, setErrPhone] = useState(false);
+
+    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({
+        id: '',
+        maKhachHang: '',
+        tenKhachHang: '',
+        idLoaiKhach: 1,
+        soDienThoai: '',
+        diaChi: '',
+        gioiTinh: false,
+        idNguonKhach: '',
+        idNhomKhach: ''
+    });
 
     useEffect(() => {
         if (trigger.isShow) {
@@ -54,27 +69,67 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 idNguonKhach: '',
                 idNhomKhach: ''
             });
+
             return;
         }
-        setNewCus({
-            ...newCus,
-            id: item.id.toString(),
-            maKhachHang: item.maKhachHang,
-            tenKhachHang: item.tenKhachHang,
-            idLoaiKhach: 1,
-            soDienThoai: '',
-            gioiTinh: false,
-            idNguonKhach: '',
-            idNhomKhach: ''
+        setNewCus((itemOlds: any) => {
+            return {
+                ...itemOlds,
+                id: item.id.toString(),
+                maKhachHang: item.maKhachHang,
+                tenKhachHang: item.tenKhachHang,
+                soDienThoai: item.soDienThoai,
+                tongTichDiem: item.tongTichDiem
+            };
         });
         setIsSave(false);
     };
 
-    const saveCheckIn = () => {
+    const checkSave = async () => {
+        if (Utils.checkNull(newCus?.tenKhachHang ?? '')) {
+            return false;
+        }
+        if (!Utils.checkNull(newCus?.soDienThoai ?? '')) {
+            const exists = await KhachHangService.checkExistSoDienThoai(
+                newCus?.soDienThoai ?? '',
+                newCus.id
+            );
+            if (exists) {
+                setErrPhone(true);
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const saveCheckIn = async () => {
         if (isSave) return;
         setIsSave(true);
+
+        const check = await checkSave();
+        if (!check) {
+            return;
+        }
+
+        if (Utils.checkNull(newCus?.id)) {
+            // insert customer
+            const khCheckIn = await KhachHangService.create(newCus);
+            setNewCus((itemOlds: any) => {
+                return {
+                    ...itemOlds,
+                    id: khCheckIn.id,
+                    maKhachHang: khCheckIn.maKhachHang,
+                    tenKhachHang: khCheckIn.tenKhachHang
+                };
+            });
+        }
+
+        // insert khachhag checkin
+        const objCheckIn: KHCheckInDto = new KHCheckInDto({ idKhachHang: newCus.id });
+        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+
         setIsShow(false);
-        handleSave(newCus);
+        handleSave(newCus, dataCheckIn.id);
     };
     return (
         <>
@@ -106,7 +161,13 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                             </Stack>
                             <Stack direction="column" paddingTop={2}>
                                 <Typography className="modal-lable">Số điện thoại</Typography>
-                                <TextField size="small" value={newCus?.soDienThoai}></TextField>
+                                <TextField
+                                    size="small"
+                                    value={newCus?.soDienThoai}
+                                    error={isSave && errPhone}
+                                    helperText={
+                                        isSave && errPhone ? 'Số điện thoại đã tồn tại' : ''
+                                    }></TextField>
                             </Stack>
                             <Stack
                                 direction="row"

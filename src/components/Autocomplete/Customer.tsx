@@ -25,10 +25,10 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
     ).current;
 
     React.useEffect(() => {
-        if (Utils.checkNull(paramSearch.keyword)) {
-            setListCustomer(listCustomer ? listCustomer : []);
-            return undefined;
-        }
+        // if (Utils.checkNull(paramSearch.keyword)) {
+        //     setListCustomer(listCustomer ? listCustomer : []);
+        //     return undefined;
+        // }
         debounceDropDown(paramSearch);
     }, [paramSearch.keyword]);
 
