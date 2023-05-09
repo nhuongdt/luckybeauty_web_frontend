@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import http from '../httpService';
 import { CreateOrEditKhachHangDto } from './dto/CreateOrEditKhachHangDto';
 import { KhachHangDto } from './dto/KhachHangDto';
+import Utils from '../../utils/utils';
 
 class KhachHangService {
     public async getAll(
@@ -21,6 +22,7 @@ class KhachHangService {
     }
     public async create(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
         const result = await http.post('api/services/app/KhachHang/CreateKhachHang', input);
+        console.log('createCus ', result);
         return result.data.result;
     }
     public async update(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
@@ -42,5 +44,14 @@ class KhachHangService {
         const result = await http.post(`api/services/app/KhachHang/JqAutoCustomer`, input);
         return result.data.result;
     };
+    async checkExistSoDienThoai(phone: string, id: string | null = null) {
+        if (Utils.checkNull(id)) {
+            id = null;
+        }
+        const result = await http.post(
+            `api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`
+        );
+        return result.data.result;
+    }
 }
 export default new KhachHangService();

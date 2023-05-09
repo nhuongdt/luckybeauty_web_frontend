@@ -1,30 +1,27 @@
 import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useState, useContext } from 'react';
+
 import {
     Add,
     Menu,
     CalendarMonth,
     MoreHoriz,
     QueryBuilder,
-    ProductionQuantityLimits,
     SkipNext,
     SkipPrevious
 } from '@mui/icons-material';
-// import {
-//     AiOutlineHome,
-//     AiOutlineIdcard,
-//     AiOutlineLineChart,
-//     AiOutlineSetting
-// } from 'react-icons/ai';
-import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
 import { PropModal } from '../../utils/PropParentToChild';
+import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import HoaDonContext from '../ban_hang/HoaDonContext';
 
 import '../../App.css';
 import '../ban_hang/style.css';
-
-import { useState } from 'react';
+import { Guid } from 'guid-typescript';
+import Utils from '../../utils/utils';
 
 const shortNameCus = createTheme({
     components: {
@@ -46,13 +43,41 @@ const shortNameCus = createTheme({
 
 export default function CustomersChecking() {
     const history = useNavigate();
+    const customerChecking = useContext(HoaDonContext);
+    // const [customer, setCustomer] = useContext(HoaDonContext);
+
     const [activeTabProduct, setActiveTabProduc] = useState(false);
+    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(
+        new PageKhachHangCheckInDto({ idKhachHang: null })
+    );
+    const [listCusChecking, setListCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
 
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
-    const saveCheckInOK = (item: any) => {
-        console.log(2);
+    const saveCheckInOK = (cusNew: KhachHangItemDto, idCheckin?: Guid) => {
+        const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+            // idKhachHang: cusNew.id!,
+            idCheckIn: idCheckin,
+            maKhachHang: cusNew.maKhachHang,
+            tenKhachHang: cusNew.tenKhachHang,
+            soDienThoai: cusNew.soDienThoai,
+            tongTichDiem: cusNew.tongTichDiem
+        });
+        setListCusChecking((arrOld: any) => {
+            return { ...arrOld, ...cusChecking };
+        });
+
+        // save cache checkin
+        const lcCheckIn = localStorage.getItem('lcCusCheckIn');
+        let arr = [];
+        if (!Utils.checkNull(lcCheckIn)) {
+            arr = JSON.parse(lcCheckIn ?? '');
+        }
+        // remove & add again
+        arr = arr.filter((x: any) => x.idCheckIn !== idCheckin);
+        arr.push(cusChecking);
+        localStorage.setItem('lcCusCheckIn', JSON.stringify(arr));
     };
     const gotoPage = (type: number) => {
         switch (type) {
@@ -61,6 +86,18 @@ export default function CustomersChecking() {
                 history('/page-ban-hang');
                 break;
         }
+    };
+    const handleClickCustomer = (item: any) => {
+        setCusChecking((old: any) => {
+            return {
+                ...old,
+                idKhachHang: item.id,
+                maKhachHang: item.maKhachHang,
+                tenKhachHang: item.tenKhachHang,
+                soDienThoai: item.soDienThoai,
+                tongTichDiem: item.tongTichDiem
+            };
+        });
     };
     return (
         <>
