@@ -1,24 +1,33 @@
 import http from '../httpService';
 import { KHCheckInDto } from './CheckinDto';
-import Utils from '../../utils/utils';
+import { PagedKhachHangResultRequestDto } from '../khach-hang/dto/PagedKhachHangResultRequestDto';
 
 class CheckinService {
     InsertCustomerCheckIn = async (input: KHCheckInDto) => {
         const xx = await http
-            .post(`api/services/app/HangHoa/InsertCustomerCheckIn`, input)
+            .post(`api/services/app/CheckIn/InsertCustomerCheckIn`, input)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        console.log('InsertCustomerCheckIn', xx);
+        return xx;
+    };
+    UpdatetCustomerCheckIn = async (input: KHCheckInDto) => {
+        const xx = await http
+            .post(`api/services/app/CheckIn/UpdatetCustomerCheckIn`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
         console.log('InsertCustomerCheckIn', xx, input);
         return xx;
     };
-    UpdatetCustomerCheckIn = async (input: KHCheckInDto) => {
+    GetListCustomerChecking = async (input: any) => {
         const xx = await http
-            .post(`api/services/app/HangHoa/UpdatetCustomerCheckIn`, input)
+            .post(`api/services/app/CheckIn/GetListCustomerChecking`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('InsertCustomerCheckIn', xx, input);
+        console.log('GetListCustomerChecking', xx, input);
         return xx;
     };
 }

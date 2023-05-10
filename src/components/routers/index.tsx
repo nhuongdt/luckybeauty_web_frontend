@@ -119,19 +119,19 @@ export const appRouters: AppRouteProps = {
                     title: 'Bán hàng',
                     icon: <IoStorefrontOutline style={{ fontSize: 24 }} />,
                     children: [
-                        {
-                            path: '/check-in',
-                            permission: 'Pages.Administration.Users',
-                            title: 'Khách checkin',
-                            name: 'customerChecking',
-                            icon: null,
-                            children: [],
-                            showInMenu: true,
-                            isLayout: false,
-                            component: LoadableComponent(
-                                () => import('../../pages/check_in/customer_checking')
-                            )
-                        },
+                        // {
+                        //     path: '/check-in',
+                        //     permission: 'Pages.Administration.Users',
+                        //     title: 'Khách checkin',
+                        //     name: 'customerChecking',
+                        //     icon: null,
+                        //     children: [],
+                        //     showInMenu: true,
+                        //     isLayout: false,
+                        //     component: LoadableComponent(
+                        //         () => import('../../pages/check_in/customer_checking')
+                        //     )
+                        // },
                         {
                             path: '/page-ban-hang',
                             permission: 'Pages.Administration.Users',
@@ -142,7 +142,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: false,
                             isLayout: false,
                             component: LoadableComponent(
-                                () => import('../../pages/ban_hang/page_ban_hang')
+                                () => import('../../pages/ban_hang/main_page_ban_hang')
                             )
                         }
                     ],

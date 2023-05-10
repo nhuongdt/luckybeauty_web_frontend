@@ -25,7 +25,6 @@ class GroupProductService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('GetTreeNhomHangHoa ', xx);
         return xx;
     };
     InsertNhomHangHoa = async (param: ModelNhomHangHoa) => {

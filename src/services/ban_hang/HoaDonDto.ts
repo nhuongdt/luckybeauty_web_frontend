@@ -2,7 +2,7 @@ import { Guid } from 'guid-typescript';
 
 export default class HoaDonDto {
     id = Guid.createEmpty();
-    idKhachHang? = null;
+    idKhachHang = null;
     idChiNhanh? = null;
     idNhanVien? = null;
     idLoaiChungTu = 1;

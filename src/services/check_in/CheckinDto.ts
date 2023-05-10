@@ -1,4 +1,5 @@
 import { Guid } from 'guid-typescript';
+import utils from '../../utils/utils';
 export class KHCheckInDto {
     idKhachHang = '';
     idChiNhanh = '';
@@ -12,34 +13,21 @@ export class KHCheckInDto {
 }
 
 export class PageKhachHangCheckInDto {
-    idKhachHang: Guid | null = null;
+    idKhachHang: string | null = null;
     idChiNhanh = null;
-    idCheckIn = Guid.createEmpty();
+    idCheckIn = Guid.EMPTY;
     maKhachHang = '';
     tenKhachHang = '';
     soDienThoai = '';
     tongTichDiem = 0;
-    dateTimeCheckIn: Date = new Date();
-    ghiChu = '';
-    txtTrangThaiCheckIn = '';
+    dateTimeCheckIn = new Date();
+    ghiChu? = '';
+    txtTrangThaiCheckIn? = '';
 
-    get dateCheckIn() {
-        return (
-            this.dateTimeCheckIn.getFullYear() +
-            '-' +
-            (this.dateTimeCheckIn.getMonth() + 1) +
-            '-' +
-            this.dateTimeCheckIn.getDate()
-        );
-    }
-    get timeCheckIn() {
-        // const tt = this.dateTimeCheckIn.toTimeString().split(' ')[0];
-        return this.dateTimeCheckIn.toLocaleTimeString();
-    }
     constructor({
-        idKhachHang = null,
+        idKhachHang = Guid.EMPTY,
         idChiNhanh = null,
-        idCheckIn = Guid.createEmpty(),
+        idCheckIn = Guid.EMPTY,
         dateTimeCheckIn = new Date(),
         maKhachHang = '',
         tenKhachHang = '',
@@ -58,5 +46,11 @@ export class PageKhachHangCheckInDto {
         this.dateTimeCheckIn = dateTimeCheckIn;
         this.ghiChu = ghiChu;
         this.txtTrangThaiCheckIn = txtTrangThaiCheckIn;
+    }
+    get dateCheckIn() {
+        return utils.formatDatetoDDMMYYY(new Date(this.dateTimeCheckIn));
+    }
+    get timeCheckIn() {
+        return utils.formatDatetime_AMPM(new Date(this.dateTimeCheckIn));
     }
 }

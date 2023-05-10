@@ -28,7 +28,7 @@ class ProductService {
         console.log('GetDetailProduct ', data);
         return data;
     };
-    Get_DMHangHoa = async (input: PagedProductSearchDto) => {
+    Get_DMHangHoa = async (input: any) => {
         const xx = await http
             .post(`api/services/app/HangHoa/GetDMHangHoa`, input)
             .then((res: { data: { result: any } }) => {
@@ -53,6 +53,15 @@ class ProductService {
                 return res.data.result;
             });
         console.log('DeleteProduct_byIDHangHoa', xx);
+        return xx;
+    };
+    GetDMHangHoa_groupByNhom = async (input: any) => {
+        const xx = await http
+            .post(`api/services/app/HangHoa/GetDMHangHoa_groupByNhom`, input)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        console.log('GetDMHangHoa_groupByNhom', xx);
         return xx;
     };
 }
