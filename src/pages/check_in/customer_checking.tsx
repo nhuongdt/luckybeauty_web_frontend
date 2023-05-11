@@ -71,9 +71,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
         console.log('cusChecking ', cusChecking);
-        const arr1 = [...listCusChecking];
-        arr1.push(cusChecking);
-        setListCusChecking(arr1);
+        setListCusChecking([...listCusChecking, cusChecking]);
 
         // // save cache checkin
         // const lcCheckIn = localStorage.getItem('lcCusCheckIn');

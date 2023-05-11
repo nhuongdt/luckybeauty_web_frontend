@@ -1,15 +1,15 @@
 import http from '../httpService';
-import { KHCheckInDto } from './CheckinDto';
+import { KHCheckInDto, PageKhachHangCheckInDto } from './CheckinDto';
 import { PagedKhachHangResultRequestDto } from '../khach-hang/dto/PagedKhachHangResultRequestDto';
 
 class CheckinService {
     InsertCustomerCheckIn = async (input: KHCheckInDto) => {
+        console.log('InsertCustomerCheckIn input=', input);
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCustomerCheckIn`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('InsertCustomerCheckIn', xx);
         return xx;
     };
     UpdatetCustomerCheckIn = async (input: KHCheckInDto) => {
@@ -18,16 +18,14 @@ class CheckinService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('InsertCustomerCheckIn', xx, input);
         return xx;
     };
-    GetListCustomerChecking = async (input: any) => {
+    GetListCustomerChecking = async (input: any): Promise<PageKhachHangCheckInDto[]> => {
         const xx = await http
             .post(`api/services/app/CheckIn/GetListCustomerChecking`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('GetListCustomerChecking', xx, input);
         return xx;
     };
 }

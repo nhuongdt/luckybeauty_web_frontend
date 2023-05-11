@@ -38,6 +38,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         idNguonKhach: '',
         idNhomKhach: ''
     });
+    //const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>();
 
     useEffect(() => {
         if (trigger.isShow) {

@@ -9,7 +9,8 @@ import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/Pa
 import Utils from '../../utils/utils'; // func common
 
 export default function AutocompleteCustomer({ handleChoseItem }: any) {
-    const [listCustomer, setListCustomer] = useState<KhachHangItemDto[]>([]);
+    // const [listCustomer, setListCustomer] = useState<KhachHangItemDto[]>([]);
+    const [listCustomer, setListCustomer] = useState([]);
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
         loaiDoiTuong: 1,
@@ -21,7 +22,7 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
         debounce(async (paramSearch: any) => {
             const data = await khachHangService.jqAutoCustomer(paramSearch);
             setListCustomer(data);
-        }, 1000)
+        }, 500)
     ).current;
 
     React.useEffect(() => {
@@ -35,6 +36,9 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
     const choseItem = (item: any) => {
         handleChoseItem(item);
     };
+    const handleInputChange = (newInputValue: any) => {
+        setParamSearch({ ...paramSearch, keyword: newInputValue });
+    };
 
     return (
         <>
@@ -46,15 +50,16 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
                 multiple={false}
                 onChange={(event: any, newValue: KhachHangItemDto | null) => choseItem(newValue)}
                 onInputChange={(event, newInputValue) => {
-                    setParamSearch({ ...paramSearch, keyword: newInputValue });
+                    handleInputChange(newInputValue);
                 }}
                 filterOptions={(x) => x}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={listCustomer}
                 getOptionLabel={(option: any) => (option.tenKhachHang ? option.tenKhachHang : '')}
                 renderInput={(params) => <TextField {...params} label="Tìm kiếm" />}
                 renderOption={(props, option) => {
                     return (
-                        <li {...props}>
+                        <li {...props} key={option.id}>
                             <Grid container alignItems="center">
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />

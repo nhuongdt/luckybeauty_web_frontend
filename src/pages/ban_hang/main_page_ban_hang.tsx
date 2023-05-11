@@ -15,6 +15,8 @@ export default function MainPageBanHang() {
     const [activeTabProduct, setActiveTabProduc] = useState(false);
     const [nhomDichVu, setNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
     const [nhomHangHoa, setNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
+    const [idNhomHang, setIdNhomHang] = useState('');
+
     const [cusChosing, setCusChosing] = useState<PageKhachHangCheckInDto>(
         new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
     );
@@ -32,8 +34,9 @@ export default function MainPageBanHang() {
     useEffect(() => {
         PageLoad();
     }, []);
-    const choseNhomDichVu = () => {
-        console.log(11);
+    const choseNhomDichVu = (isEdit: boolean, item: any) => {
+        console.log(item);
+        setIdNhomHang(item.id);
     };
     const choseCustomer = (cus: any) => {
         setCusChosing((old: any) => {
@@ -95,7 +98,9 @@ export default function MainPageBanHang() {
                     </Stack>
                 </Grid>
                 {!activeTabProduct && <CustomersChecking hanleChoseCustomer={choseCustomer} />}
-                {activeTabProduct && <PageBanHang customerChosed={cusChosing} />}
+                {activeTabProduct && (
+                    <PageBanHang customerChosed={cusChosing} idNhomHang={idNhomHang} />
+                )}
             </Grid>
         </>
     );

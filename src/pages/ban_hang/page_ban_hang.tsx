@@ -44,11 +44,11 @@ const shortNameCus = createTheme({
     }
 });
 
-export default function PageBanHang({ customerChosed }: any) {
+export default function PageBanHang({ customerChosed, idNhomHang }: any) {
     const history = useNavigate();
     const [hoadon, setHoadon] = useState<PageHoaDonDto>();
     const [listProduct, setListProduct] = useState([]);
-    console.log('customerChosed ', customerChosed);
+    console.log('customerChosed ', idNhomHang);
     // const [hoadon, setHoadon] = useState<PageHoaDonDto>(
     //     new PageHoaDonDto({
     //         idKhachHang: customerChosed.idKhachHang,
@@ -61,7 +61,7 @@ export default function PageBanHang({ customerChosed }: any) {
 
     const GetDMHangHoa_groupByNhom = async () => {
         const input = {
-            IdNhomHangHoas: '',
+            IdNhomHangHoas: idNhomHang,
             TextSearch: '',
             CurrentPage: 0,
             PageSize: 50
@@ -70,8 +70,12 @@ export default function PageBanHang({ customerChosed }: any) {
         setListProduct(data);
     };
 
-    const PageLoad = () => {
+    useEffect(() => {
         GetDMHangHoa_groupByNhom();
+    }, [idNhomHang]);
+
+    const PageLoad = () => {
+        // GetDMHangHoa_groupByNhom();
     };
 
     useEffect(() => {

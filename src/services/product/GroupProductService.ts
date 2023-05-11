@@ -1,5 +1,7 @@
 import http from '../httpService';
 import { ModelHangHoaDto, ModelNhomHangHoa, PagedProductSearchDto } from './dto';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
+
 class GroupProductService {
     GetNhomHangHoa_byID = async (id: string) => {
         const xx = await http
@@ -19,12 +21,13 @@ class GroupProductService {
         console.log('GetDM_NhomHangHoa ', xx);
         return xx;
     };
-    GetTreeNhomHangHoa = async () => {
+    GetTreeNhomHangHoa = async (): Promise<PagedResultDto<ModelNhomHangHoa>> => {
         const xx = await http
             .get(`api/services/app/NhomHangHoa/GetTreeNhomHangHoa`)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
+        console.log('GetTreeNhomHangHoa ', xx);
         return xx;
     };
     InsertNhomHangHoa = async (param: ModelNhomHangHoa) => {
