@@ -274,7 +274,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                     <div className="row">
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row">
+                            <div className="row align-items-center" style={{ height: '50px' }}>
                                 <div className="col-5 align-items-center">
                                     <label
                                         className="pagination-view-record align-items-center"

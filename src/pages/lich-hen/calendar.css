@@ -94,3 +94,6 @@
     font-style: normal;
     font-weight: 700;
 }
+.fc-timegrid-slot {
+    height: 72px !important;
+}

@@ -11,20 +11,62 @@ import {
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
+import bookingServices from '../../services/dat-lich/datLichService';
 import '../../custom.css';
 import '../lich-hen/calendar.css';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import CreateOrUpdateAppointment from './components/create-or-update-lich-hen';
+import { CreateOrEditBookingDto } from '../../services/dat-lich/dto/CreateOrEditBookingDto';
+import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
+import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
+import SuggestService from '../../services/suggests/SuggestService';
 class LichHenScreen extends Component {
     formRef = React.createRef<FormInstance>();
     calendarRef: RefObject<FullCalendar> = React.createRef();
     state = {
         initialView: 'timeGridWeek',
         viewDate: format(new Date(), 'EEEE, dd MMMM ,yyyy', { locale: vi }),
-        modalVisible: false
+        modalVisible: false,
+        events: [],
+        idBooking: '',
+        createOrEditBooking: {} as CreateOrEditBookingDto,
+        suggestNhanVien: [] as SuggestNhanSuDto[],
+        suggestKhachHang: [] as SuggestKhachHangDto[],
+        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
     };
+    async componentDidMount() {
+        this.getData();
+        const suggestNhanViens = await SuggestService.SuggestNhanSu();
+        const suggestKhachHangs = await SuggestService.SuggestKhachHang();
+        const suggestDichVus = await SuggestService.SuggestDonViQuiDoi();
+        this.setState({
+            suggestNhanVien: suggestNhanViens,
+            suggestDonViQuiDoi: suggestDichVus,
+            suggestKhachHang: suggestKhachHangs
+        });
+    }
+    async getData() {
+        const appointments = await bookingServices.getAllBooking();
+        const lstEvent: any[] = [];
+        console.log(appointments);
+        appointments.map((event) => {
+            lstEvent.push({
+                title: event.noiDung,
+                start: event.startTime,
+                end: event.endTime,
+                color: '#F1FAFF',
+                textColor: event.color !== '' && event.color != null ? event.color : '#009EF7',
+                borderColor: event.color !== '' && event.color != null ? event.color : '#009EF7'
+            });
+        });
+        this.setState({
+            events: lstEvent
+        });
+    }
     handleChangeViewCalendar = (value: { value: string; label: React.ReactNode }) => {
         const calendarApi = this.calendarRef.current?.getApi();
         calendarApi?.changeView(value.value);
@@ -65,6 +107,57 @@ class LichHenScreen extends Component {
                 });
             }
         }
+        this.getData();
+    };
+    Modal = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible
+        });
+    };
+
+    async createOrUpdateModalOpen(entityDto: string) {
+        if (entityDto === '') {
+            this.formRef.current?.resetFields();
+            this.setState({
+                createOrEditBooking: {
+                    id: '',
+                    startTime: '',
+                    startHours: '',
+                    trangThai: 1,
+                    ghiChu: '',
+                    idKhachHang: '',
+                    idNhanVien: '',
+                    idDonViQuiDoi: ''
+                }
+            });
+        } else {
+            // const booking = await nhanVienService.getNhanSu(entityDto);
+            // this.setState({
+            //     createOrEditNhanSu: employee
+            // });
+            // setTimeout(() => {
+            //     this.formRef.current?.setFieldsValue({ ...this.state.createOrEditNhanSu });
+            // }, 100);
+        }
+
+        this.setState({ idBooking: entityDto });
+        this.Modal();
+    }
+    handleSubmit = async () => {
+        this.formRef.current?.validateFields().then(async (values: any) => {
+            if (this.state.idBooking === '') {
+                await bookingServices.CreateBooking(values);
+            } else {
+                await bookingServices.CreateBooking({
+                    id: this.state.idBooking,
+                    ...values
+                });
+            }
+
+            await this.getData();
+            this.setState({ modalVisible: false });
+            this.formRef.current?.resetFields();
+        });
     };
     render(): ReactNode {
         return (
@@ -186,6 +279,10 @@ class LichHenScreen extends Component {
                                             {
                                                 value: 'timeGridDay',
                                                 label: 'Ngày'
+                                            },
+                                            {
+                                                value: 'listWeek',
+                                                lable: 'Danh sách'
                                             }
                                         ]}
                                     />
@@ -210,7 +307,7 @@ class LichHenScreen extends Component {
                         height={650}
                         firstDay={1}
                         headerToolbar={false}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
                         allDaySlot={false}
                         slotMinTime={'06:00:00'}
                         slotMaxTime={'23:00:00'}
@@ -221,48 +318,7 @@ class LichHenScreen extends Component {
                         selectMirror={true}
                         dayMaxEvents={true}
                         themeSystem="boostrap"
-                        events={[
-                            {
-                                title: 'event2',
-                                start: '2023-05-08 08:00:00',
-                                end: '2023-05-08 10:30:00',
-                                color: '#F1FAFF',
-                                textColor: '#009EF7',
-                                borderColor: '#009EF7'
-                            },
-                            {
-                                title: 'event3',
-                                start: '2023-05-07 12:00:00',
-                                end: '2023-05-07 14:30:00',
-                                color: '#F1FAFF',
-                                textColor: '#FFC700',
-                                borderColor: '#FFC700'
-                            },
-                            {
-                                title: 'event4',
-                                start: '2023-05-07 12:00:00',
-                                end: '2023-05-07 14:30:00',
-                                color: '#F1FAFF',
-                                textColor: '#F1416C',
-                                borderColor: '#F1416C'
-                            },
-                            {
-                                title: 'event4',
-                                start: '2023-05-07 10:00:00',
-                                end: '2023-05-07 12:30:00',
-                                color: '#F1FAFF',
-                                textColor: '#F1416C',
-                                borderColor: '#F1416C'
-                            },
-                            {
-                                title: 'event4',
-                                start: '2023-05-07 10:00:00',
-                                end: '2023-05-07 12:30:00',
-                                color: '#F1FAFF',
-                                textColor: '#F1416C',
-                                borderColor: '#F1416C'
-                            }
-                        ]}
+                        events={this.state.events}
                     />
                 </div>
                 <CreateOrUpdateAppointment
@@ -272,12 +328,11 @@ class LichHenScreen extends Component {
                             modalVisible: false
                         });
                     }}
-                    onOk={() => {
-                        this.setState({
-                            modalVisible: false
-                        });
-                    }}
+                    onOk={this.handleSubmit}
                     modalType="Thêm cuộc hẹn"
+                    suggestNhanVien={this.state.suggestNhanVien}
+                    suggestDichVu={this.state.suggestDonViQuiDoi}
+                    suggestKhachHang={this.state.suggestKhachHang}
                     formRef={this.formRef}
                 />
             </div>
