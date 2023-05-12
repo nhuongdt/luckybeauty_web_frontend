@@ -318,18 +318,19 @@ export default function PageProduct() {
     };
 
     function saveNhomHang(objNew: ModelNhomHangHoa) {
-        const newTree = [
-            // Items before the insertion point:
-            ...treeNhomHangHoa.slice(0, 1),
-            // New item:
-            objNew,
-            // Items after the insertion point:
-            ...treeNhomHangHoa.slice(1)
-        ];
-        setTreeNhomHangHoa(newTree);
         if (triggerModalNhomHang.isNew) {
+            const newTree = [
+                // Items before the insertion point:
+                ...treeNhomHangHoa.slice(0, 1),
+                // New item:
+                objNew,
+                // Items after the insertion point:
+                ...treeNhomHangHoa.slice(1)
+            ];
+            setTreeNhomHangHoa(newTree);
             setObjAlert({ show: true, type: 1, mes: 'Thêm nhóm dịch vụ thành công' });
         } else {
+            GetTreeNhomHangHoa();
             setObjAlert({ show: true, type: 1, mes: 'Cập nhật nhóm dịch vụ thành công' });
         }
         hiddenAlert();
@@ -476,7 +477,7 @@ export default function PageProduct() {
                     </Box>
                 </Grid>
 
-                <Grid item xs={0} sm={3} md={3} lg={2}>
+                <Grid item xs={0} sm={3} md={3} lg={3} xl={2}>
                     <Grid container>
                         <Grid item xs={8} sm={8} md={8} lg={8}>
                             <Typography variant="h6">Nhóm dịch vụ</Typography>
