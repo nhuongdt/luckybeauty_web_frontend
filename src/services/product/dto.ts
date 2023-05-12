@@ -53,7 +53,7 @@ export class ModelNhomHangHoa {
     id?: string | null = Utils.GuidEmpty;
     maNhomHang? = '';
     tenNhomHang? = '';
-    tenNhomHang_KhongDau = '';
+    //tenNhomHang_KhongDau = '';
     moTa? = '';
     idParent: string | null = null;
     color = '';
@@ -68,10 +68,16 @@ export class ModelNhomHangHoa {
         color = '#D2691E'
     }) {
         this.id = id;
-        this.maNhomHang = maNhomHang;
+        if (maNhomHang == '') this.maNhomHang = Utils.getFirstLetter(this.tenNhomHang) ?? '';
+        else this.maNhomHang = maNhomHang;
         this.tenNhomHang = tenNhomHang;
         this.laNhomHangHoa = laNhomHangHoa;
         this.color = color;
+        this.children = [];
+    }
+
+    get tenNhomHang_KhongDau() {
+        return Utils.strToEnglish(this.tenNhomHang ?? '');
     }
 }
 

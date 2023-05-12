@@ -20,6 +20,7 @@ import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/C
 import Utils from '../../utils/utils'; // func common
 
 import '../../App.css';
+import { Guid } from 'guid-typescript';
 
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const [isShow, setIsShow] = useState(false);
@@ -27,7 +28,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const [errPhone, setErrPhone] = useState(false);
 
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({
-        id: '',
+        id: Guid.EMPTY,
         maKhachHang: '',
         tenKhachHang: '',
         idLoaiKhach: 1,
@@ -37,12 +38,13 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         idNguonKhach: '',
         idNhomKhach: ''
     });
+    //const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>();
 
     useEffect(() => {
         if (trigger.isShow) {
             setIsShow(true);
             setNewCus({
-                id: '',
+                id: Guid.EMPTY,
                 maKhachHang: '',
                 tenKhachHang: '',
                 idLoaiKhach: 1,
@@ -59,7 +61,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const changeCustomer = (item: KhachHangItemDto) => {
         if (item === null || item === undefined) {
             setNewCus({
-                id: '',
+                id: Guid.EMPTY,
                 maKhachHang: '',
                 tenKhachHang: '',
                 idLoaiKhach: 1,
@@ -106,13 +108,12 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         if (isSave) return;
         setIsSave(true);
 
-        const check = await checkSave();
-        if (!check) {
-            return;
-        }
-
-        if (Utils.checkNull(newCus?.id)) {
+        if (Utils.checkNull(newCus?.id) || newCus.id === Guid.EMPTY) {
             // insert customer
+            const check = await checkSave();
+            if (!check) {
+                return;
+            }
             const khCheckIn = await KhachHangService.create(newCus);
             setNewCus((itemOlds: any) => {
                 return {
@@ -122,14 +123,40 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                     tenKhachHang: khCheckIn.tenKhachHang
                 };
             });
+            const objCheckIn: KHCheckInDto = new KHCheckInDto({
+                idKhachHang: khCheckIn.id.toString()
+            });
+            // insert checkin
+            const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+            const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+                idKhachHang: khCheckIn.id.toString(),
+                maKhachHang: khCheckIn.maKhachHang,
+                tenKhachHang: khCheckIn.tenKhachHang,
+                soDienThoai: khCheckIn.soDienThoai,
+                tongTichDiem: khCheckIn.tongTichDiem,
+                dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
+                txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
+            });
+            handleSave(objCheckInNew);
+        } else {
+            const objCheckIn: KHCheckInDto = new KHCheckInDto({
+                idKhachHang: newCus.id
+            });
+            // insert checkin
+            const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+            const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+                idKhachHang: newCus.id.toString(),
+                maKhachHang: newCus.maKhachHang,
+                tenKhachHang: newCus.tenKhachHang,
+                soDienThoai: newCus.soDienThoai,
+                tongTichDiem: newCus.tongTichDiem,
+                dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
+                txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
+            });
+            handleSave(objCheckInNew);
         }
 
-        // insert khachhag checkin
-        const objCheckIn: KHCheckInDto = new KHCheckInDto({ idKhachHang: newCus.id });
-        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
-
         setIsShow(false);
-        handleSave(newCus, dataCheckIn.id);
     };
     return (
         <>
@@ -167,7 +194,17 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                                     error={isSave && errPhone}
                                     helperText={
                                         isSave && errPhone ? 'Số điện thoại đã tồn tại' : ''
-                                    }></TextField>
+                                    }
+                                    onChange={(event) => {
+                                        setNewCus((itemOlds: any) => {
+                                            return {
+                                                ...itemOlds,
+                                                soDienThoai: event.target.value
+                                            };
+                                        });
+                                        setIsSave(false);
+                                        setErrPhone(false);
+                                    }}></TextField>
                             </Stack>
                             <Stack
                                 direction="row"

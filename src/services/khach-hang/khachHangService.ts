@@ -46,9 +46,9 @@ class KhachHangService {
     };
     async checkExistSoDienThoai(phone: string, id: string | null = null) {
         if (Utils.checkNull(id)) {
-            id = null;
+            id = Guid.EMPTY;
         }
-        const result = await http.post(
+        const result = await http.get(
             `api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`
         );
         return result.data.result;

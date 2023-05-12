@@ -61,6 +61,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             }
         } else {
             setProduct(new ModelHangHoaDto());
+            setNhomChosed(new ModelNhomHangHoa({ id: '' }));
         }
         console.log('ModalHangHoa');
     };
@@ -83,6 +84,16 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 giaBan: Utils.formatNumber(event.target.value)
             };
         });
+    };
+    const handleChangeNhom = (item: any) => {
+        setProduct((itemOlds) => {
+            return {
+                ...itemOlds,
+                idNhomHangHoa: item?.id ?? null,
+                tenNhomHang: item?.tenNhomHang
+            };
+        });
+        setNhomChosed(new ModelNhomHangHoa({ id: item.id, tenNhomHang: item.tenNhomHang }));
     };
 
     const CheckSave = async () => {
@@ -204,25 +215,13 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     size="small"
                                     fullWidth
                                     disablePortal
-                                    // value={nhomChosed}
-                                    // isOptionEqualToValue={(option, value) => option.id === value.id}
+                                    value={nhomChosed}
+                                    isOptionEqualToValue={(option, value) => option.id === value.id}
                                     options={dataNhomHang.filter(
-                                        (x: ModelNhomHangHoa) => x.id !== null && x.id !== ''
+                                        (x: any) => x.id !== null && x.id !== ''
                                     )}
-                                    onChange={(event, newValue) =>
-                                        setProduct((itemOlds) => {
-                                            return {
-                                                ...itemOlds,
-                                                idNhomHangHoa: newValue?.id ?? null
-                                            };
-                                        })
-                                    }
-                                    onInputChange={(event, newInputValue) => {
-                                        setProduct((itemOlds) => {
-                                            return { ...itemOlds, tenNhomHang: newInputValue };
-                                        });
-                                    }}
-                                    getOptionLabel={(option: ModelNhomHangHoa) =>
+                                    onChange={(event, newValue) => handleChangeNhom(newValue)}
+                                    getOptionLabel={(option: any) =>
                                         option.tenNhomHang ? option.tenNhomHang : ''
                                     }
                                     renderInput={(params) => (

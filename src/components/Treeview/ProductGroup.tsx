@@ -25,6 +25,7 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
         setRowHover(rowData);
     };
     const handleClickTreeItem = (isEdit = false) => {
+        console.log('click ', rowHover);
         clickTreeItem(isEdit, rowHover);
     };
     return (
@@ -55,6 +56,7 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                         <TreeItem
                             key={child.id}
                             nodeId={child.id}
+                            onClick={() => handleClickTreeItem(false)}
                             label={
                                 <Stack direction="row">
                                     <Typography sx={{ width: 7.9 / 10 }}>

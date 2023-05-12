@@ -4,6 +4,7 @@
 // import * as abpTypings from '../lib/abp'
 
 // import { L } from '../lib/abpUtility'
+import { concat } from 'lodash';
 import { flatRoutes } from '../components/routers/index';
 
 declare let abp: any;
@@ -172,6 +173,43 @@ class Utils {
     getTotalPage = (totalCount = 0, pageSize = 10) => {
         return Math.ceil(totalCount / pageSize);
     };
+    getDatefromDatetime = (date: Date) => {
+        const day = date.getDate();
+        if (day < 10) return '0' + day;
+        else return day + 1;
+    };
+    getMonthfromDatetime = (date: Date) => {
+        const month = date.getMonth();
+        if (month < 10) return '0' + (month + 1);
+        else return month + 1;
+    };
+    formatDatetoYYYYMMDD = (date: Date) => {
+        return concat(
+            date.getFullYear(),
+            '-',
+            this.getMonthfromDatetime(date),
+            '-' + date.getDate()
+        );
+    };
+    formatDatetoDDMMYYY = (date: Date) => {
+        return (
+            this.getDatefromDatetime(date) +
+            '/' +
+            this.getMonthfromDatetime(date) +
+            '/' +
+            date.getFullYear()
+        );
+    };
+    formatDatetime_AMPM(date: Date) {
+        let hours = date.getHours();
+        let minutes = date.getMinutes();
+        let ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        const sMinutes = minutes < 10 ? '0' + minutes : minutes;
+        let strTime = hours + ':' + sMinutes + ' ' + ampm;
+        return strTime;
+    }
 }
 
 export default new Utils();

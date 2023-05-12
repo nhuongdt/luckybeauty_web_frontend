@@ -77,9 +77,9 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [isNew, setIsNew] = useState(false);
     const [wasClickSave, setWasClickSave] = useState(false);
     const [groupProduct, setGroupProduct] = useState<ModelNhomHangHoa>(
-        new ModelNhomHangHoa({ id: AppConsts.guidEmpty, color: 'red' })
+        new ModelNhomHangHoa({ id: AppConsts.guidEmpty, color: 'red', tenNhomHang: '' })
     );
-    const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
+    const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({}));
 
     const showModal = async (id: string) => {
         if (id) {
@@ -90,11 +90,20 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             if (nhom.length > 0) {
                 setNhomGoc(nhom[0]);
             } else {
-                setNhomGoc(new ModelNhomHangHoa({ id: '' }));
+                setNhomGoc(new ModelNhomHangHoa({}));
             }
         } else {
             setGroupProduct(new ModelNhomHangHoa({ color: 'red' }));
+            setNhomGoc(new ModelNhomHangHoa({}));
         }
+    };
+
+    const handleChangeNhomGoc = (item: any) => {
+        setGroupProduct((old: any) => {
+            return { ...old, idParent: item.id };
+        });
+        setNhomGoc(new ModelNhomHangHoa({ id: item.id, tenNhomHang: item.tenNhomHang }));
+        // setNhomGoc({ id: '', tenNhomHang: '' });
     };
 
     useEffect(() => {
@@ -108,7 +117,9 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
 
     function changeColor(colorNew: string) {
         setColorToggle(false);
-        setGroupProduct({ ...groupProduct, color: colorNew });
+        setGroupProduct((olds: any) => {
+            return { ...olds, color: colorNew };
+        });
     }
 
     const saveNhomHangHoa = () => {
@@ -116,16 +127,15 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             return;
         }
         const objNew = { ...groupProduct };
-        objNew.maNhomHang = Utils.getFirstLetter(objNew.tenNhomHang) ?? '';
-        objNew.tenNhomHang_KhongDau = Utils.strToEnglish(objNew.tenNhomHang ?? '');
-
         if (trigger.isNew) {
-            GroupProductService.InsertNhomHangHoa(objNew).then((data) => {
-                handleSave(data);
+            GroupProductService.InsertNhomHangHoa(groupProduct).then((data) => {
+                objNew.id = data.id;
+                handleSave(objNew);
             });
         } else {
-            GroupProductService.UpdateNhomHangHoa(objNew).then((data) => {
-                handleSave(data);
+            GroupProductService.UpdateNhomHangHoa(groupProduct).then((data) => {
+                objNew.id = data.id;
+                handleSave(objNew);
             });
         }
         setIsShow(false);
@@ -156,9 +166,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 required
                                 value={groupProduct.tenNhomHang}
                                 onChange={(event) =>
-                                    setGroupProduct({
-                                        ...groupProduct,
-                                        tenNhomHang: event.target.value
+                                    setGroupProduct((olds: any) => {
+                                        return { ...olds, tenNhomHang: event.target.value };
                                     })
                                 }
                             />
@@ -175,15 +184,12 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 multiple={false}
                                 value={nhomGoc}
                                 onChange={(event: any, newValue: any) => {
-                                    setGroupProduct({
-                                        ...groupProduct,
-                                        idParent: newValue.id
-                                    });
+                                    handleChangeNhomGoc(newValue);
                                 }}
                                 options={dataNhomHang.filter(
-                                    (x: ModelNhomHangHoa) => x.id !== null && x.id !== ''
+                                    (x: any) => x.id !== null && x.id !== ''
                                 )}
-                                getOptionLabel={(option: ModelNhomHangHoa) =>
+                                getOptionLabel={(option: any) =>
                                     option.tenNhomHang ? option.tenNhomHang : ''
                                 }
                                 renderInput={(params) => (
@@ -224,9 +230,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 rows={2}
                                 value={groupProduct.moTa || ''}
                                 onChange={(event) =>
-                                    setGroupProduct({
-                                        ...groupProduct,
-                                        moTa: event.target.value
+                                    setGroupProduct((olds: any) => {
+                                        return { ...olds, moTa: event.target.value };
                                     })
                                 }
                             />

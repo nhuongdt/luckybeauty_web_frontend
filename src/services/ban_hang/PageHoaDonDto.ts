@@ -16,6 +16,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     // khachhang?: KhachHangItemDto; // object (test todo)
 
     constructor({
+        idKhachHang = null,
         maKhachHang = '',
         tenKhachHang = '',
         soDienThoai = '',
@@ -31,7 +32,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         //     tongTichDiem: 0
         // }
     }) {
-        super({ id: Guid.createEmpty(), idKhachHang: null });
+        super({ idKhachHang: idKhachHang });
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;

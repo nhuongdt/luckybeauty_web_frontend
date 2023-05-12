@@ -3,22 +3,16 @@ import { useState, useEffect } from 'react';
 import {
     Box,
     Button,
-    ButtonGroup,
     IconButton,
     Grid,
     List,
     ListItem,
-    ListItemIcon,
     ListItemAvatar,
-    ListItemButton,
-    ListItemSecondaryAction,
     ListItemText,
     TextField,
     Typography,
     Divider,
     Table,
-    TableFooter,
-    TablePagination,
     Pagination,
     TableBody,
     TableCell,
@@ -264,28 +258,17 @@ export default function PageProduct() {
 
     const GetListNhomHangHoa = async () => {
         const list = await GroupProductService.GetDM_NhomHangHoa();
-        const lstAll = [...list.items];
-        const obj = new ModelNhomHangHoa({
-            id: '',
-            maNhomHang: '',
-            tenNhomHang: 'Tất cả',
-            color: '#7C3367'
-        });
-        lstAll.unshift(obj);
-        setLstProductGroup(lstAll);
+        setLstProductGroup(list.items);
     };
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
-        const lstAll = [...list.items];
         const obj = new ModelNhomHangHoa({
             id: '',
-            maNhomHang: '',
             tenNhomHang: 'Tất cả',
             color: '#7C3367'
         });
-        lstAll.unshift(obj);
-        setTreeNhomHangHoa(lstAll);
+        setTreeNhomHangHoa([obj, ...list.items]);
     };
 
     const PageLoad = () => {
@@ -299,7 +282,11 @@ export default function PageProduct() {
 
     useEffect(() => {
         GetListHangHoa();
-    }, [filterPageProduct.currentPage, filterPageProduct.pageSize]);
+    }, [
+        filterPageProduct.currentPage,
+        filterPageProduct.pageSize,
+        filterPageProduct.idNhomHangHoas
+    ]);
 
     function showModalAddNhomHang(id = '') {
         setTriggerModalNhomHang({
@@ -331,10 +318,19 @@ export default function PageProduct() {
     };
 
     function saveNhomHang(objNew: ModelNhomHangHoa) {
-        GetTreeNhomHangHoa();
         if (triggerModalNhomHang.isNew) {
+            const newTree = [
+                // Items before the insertion point:
+                ...treeNhomHangHoa.slice(0, 1),
+                // New item:
+                objNew,
+                // Items after the insertion point:
+                ...treeNhomHangHoa.slice(1)
+            ];
+            setTreeNhomHangHoa(newTree);
             setObjAlert({ show: true, type: 1, mes: 'Thêm nhóm dịch vụ thành công' });
         } else {
+            GetTreeNhomHangHoa();
             setObjAlert({ show: true, type: 1, mes: 'Cập nhật nhóm dịch vụ thành công' });
         }
         hiddenAlert();
@@ -481,7 +477,7 @@ export default function PageProduct() {
                     </Box>
                 </Grid>
 
-                <Grid item xs={0} sm={3} md={3} lg={3}>
+                <Grid item xs={0} sm={3} md={3} lg={3} xl={2}>
                     <Grid container>
                         <Grid item xs={8} sm={8} md={8} lg={8}>
                             <Typography variant="h6">Nhóm dịch vụ</Typography>
@@ -504,7 +500,7 @@ export default function PageProduct() {
                         clickTreeItem={editNhomHangHoa}
                     />
                 </Grid>
-                <Grid item xs={12} sm={9} md={9} lg={9}>
+                <Grid item xs={12} sm={9} md={9} lg={10}>
                     <Grid container>
                         <Grid
                             item
@@ -669,16 +665,25 @@ export default function PageProduct() {
                                 </Table>
                             </TableContainer>
                         </Grid>
-                        <Grid container rowSpacing={2} columnSpacing={2} sx={{ paddingTop: 2 }}>
+                        <Grid
+                            container
+                            rowSpacing={2}
+                            columnSpacing={2}
+                            sx={{ paddingTop: 2 }}
+                            style={{
+                                display: pageDataProduct.totalCount > 1 ? 'flex' : 'none'
+                            }}>
                             <Grid item xs={4} md={4} lg={4} sm={4}>
-                                <OptionPage changeNumberOfpage={changeNumberOfpage} />
+                                <OptionPage
+                                    changeNumberOfpage={changeNumberOfpage}
+                                    totalRow={pageDataProduct.totalCount}
+                                />
                             </Grid>
                             <Grid item xs={8} md={8} lg={8} sm={8} style={{ paddingRight: '16px' }}>
                                 <Stack direction="row" spacing={2} style={{ float: 'right' }}>
                                     <LabelDisplayedRows
                                         currentPage={filterPageProduct.currentPage}
                                         pageSize={filterPageProduct.pageSize}
-                                        totalCount={pageDataProduct.totalCount}
                                     />
                                     <Pagination
                                         shape="rounded"
@@ -686,11 +691,6 @@ export default function PageProduct() {
                                         count={pageDataProduct.totalPage}
                                         page={filterPageProduct.currentPage}
                                         defaultPage={filterPageProduct.currentPage}
-                                        style={{
-                                            color: '#7C3367',
-                                            display:
-                                                pageDataProduct.totalPage > 1 ? 'block' : 'none'
-                                        }}
                                         onChange={handleChangePage}
                                     />
                                 </Stack>
