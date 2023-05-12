@@ -45,7 +45,7 @@ class KhachHangService {
         return result.data.result;
     };
     async checkExistSoDienThoai(phone: string, id: string | null = null) {
-        if (Utils.checkNull(id) || id === Guid.EMPTY) {
+        if (Utils.checkNull(id)) {
             id = Guid.EMPTY;
         }
         const result = await http.get(

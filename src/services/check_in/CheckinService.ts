@@ -4,7 +4,6 @@ import { PagedKhachHangResultRequestDto } from '../khach-hang/dto/PagedKhachHang
 
 class CheckinService {
     InsertCustomerCheckIn = async (input: KHCheckInDto) => {
-        console.log('InsertCustomerCheckIn input=', input);
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCustomerCheckIn`, input)
             .then((res: { data: { result: any } }) => {

@@ -9,7 +9,6 @@ class GroupProductService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('GetNhomHangHoa_byID ', xx);
         return xx;
     };
     GetDM_NhomHangHoa = async () => {
@@ -18,7 +17,6 @@ class GroupProductService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('GetDM_NhomHangHoa ', xx);
         return xx;
     };
     GetTreeNhomHangHoa = async (): Promise<PagedResultDto<ModelNhomHangHoa>> => {
@@ -27,7 +25,6 @@ class GroupProductService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('GetTreeNhomHangHoa ', xx);
         return xx;
     };
     InsertNhomHangHoa = async (param: ModelNhomHangHoa) => {
