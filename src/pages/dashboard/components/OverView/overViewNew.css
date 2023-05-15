@@ -1,0 +1,107 @@
+.overView {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 1.6666666666666667vw ;
+}
+.grid-item {
+    display: flex;
+    border-radius: 8px;
+    background: #fff5f8;
+    gap: 14px;
+    align-items: center;
+    padding: 19px 17px 15px 14px;
+}
+.grid-item .grid-item-icon img {
+    width: 86px;
+    height: 86px;
+}
+.grid-item:not(:first-child) {
+    padding: 32px 11px 32px 28px;
+    gap: 11px;
+    background: #fff;
+}
+.grid-item:not(:first-child) .grid-item-icon img {
+    width: 24px;
+    height: 24px;
+}
+.grid-item:not(:first-child) .grid-item-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.grid-item:nth-child(2) .grid-item-icon {
+    background: #009ef7;
+}
+.grid-item:nth-child(3) .grid-item-icon {
+    background: #ffc700;
+}
+.grid-item:nth-child(4) .grid-item-icon {
+    background: #50cd89;
+}
+.grid-item:not(:first-child) .grid-item-text{
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.grid-item:first-child .flex-bottom{
+    order: -1;
+    justify-content: center;
+   
+}
+.grid-item:first-child .grid-item-text{
+    display: flex;
+    flex-direction: column;
+    
+}
+.grid-item .grid-item-text h3 {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+.grid-item .number {
+    font-size: 32px;
+    color: #7c3367;
+    font-weight: 700;
+}
+.grid-item:not(:first-child) .number {
+    font-size: 24px;
+    color: #333233;
+}
+.grid-item:first-child h3 {
+    color: 
+#4C4B4C;
+}
+.grid-item:first-child .ratio {
+    display: none;
+}
+.grid-item:first-child {
+    align-items: end;
+}
+.grid-item:not(:first-child) .ratio{
+    display: flex;
+}
+.flex-bottom {
+    display: flex;
+    align-items:center ;
+ justify-content: space-between;
+   
+   
+
+}
+.flex-bottom .ratio{
+    border-radius: 12px;
+    padding: 6px 9px 6px 5.5px;
+    width: fit-content;
+  
+}
+.ratio > *{
+    position: static!important;
+}
+.grid-item-text h3 {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666466;
+}

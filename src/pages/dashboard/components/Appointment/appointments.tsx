@@ -1,6 +1,6 @@
 import { Card, Col, Divider, Row } from 'antd';
 import { Component, ReactNode } from 'react';
-import LineChart from '../Charts/lineChart';
+// import LineChart from '../Charts/lineChart';
 import '../../dashboardCss.css';
 import { AiOutlineClockCircle } from 'react-icons/ai';
 class Appointment extends Component {
@@ -90,9 +90,7 @@ class Appointment extends Component {
                             <Divider />
                         </Card>
                     </Col>
-                    <Col span={12}>
-                        <LineChart />
-                    </Col>
+                    <Col span={12}>{/* <LineChart /> */}</Col>
                 </Row>
             </div>
         );

@@ -85,7 +85,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Home',
                     icon: null,
-                    component: LoadableComponent(() => import('../../pages/dashboard')),
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew')),
                     children: [],
                     isLayout: true,
                     showInMenu: false
@@ -99,7 +99,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
                 },
                 {
                     path: '/lich-hens',

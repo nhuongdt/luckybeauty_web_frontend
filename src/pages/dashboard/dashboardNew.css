@@ -1,0 +1,74 @@
+.page-header-dashboard {
+    display: flex;
+    justify-content: space-between;
+    /* height: unset!important;
+    border: none!important; */
+    background-color: transparent!important;
+    padding:0 2.2222222222222223vw;
+    padding-top:1.6666666666666667vw ;
+}
+.page-body{
+    height: unset!important;
+padding:0 2.2222222222222223vw;
+padding-top:1.6666666666666667vw ;
+}
+.breadcrumb {
+    font-size: 14px;
+    color: 
+    #333233;
+    margin-bottom: 4px;
+}
+.overview-title{
+    font-size: 24px;
+    font-weight: 700;
+    color: 
+    #0C050A;
+}
+.btn-dots-add {
+    height: 40px;
+    width: 40px;
+    border: 1px solid #E6E1E6;
+    background: #fff;
+    border-radius: 4px;
+}
+.page-header_col-2{
+    display: flex;
+    gap: 8px;
+}
+.btn-add {
+    height: 40px;
+    width: 92px;
+    border-radius: 4px;
+    background: #7C3367;
+    color: #fff;
+    font-size: 14px ;
+    gap: 8px;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-add_icon {
+    position: relative;
+    display: inline-block;
+    bottom: 2px;
+}
+.page-body_row-2  {
+    gap: 1.6666666666666667vw;
+    display: flex;
+    margin-top: 1.6666666666666667vw;
+}
+.page-body_row-2 > div {
+    background: #fff;
+    border-radius: 8px;
+    width: 50%;
+}
+.page-body_row-2 h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: 
+    #4C4B4C;
+    font-family: Roboto;
+    padding-left: 1.6666666666666667vw;
+    padding-top: 1.6666666666666667vw;
+}
