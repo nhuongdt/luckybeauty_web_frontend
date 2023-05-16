@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { StrictMode, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes } from './components/routers';
@@ -8,7 +8,11 @@ const App = () => {
         console.log(Cookies.get('accessToken'));
     }, 1);
 
-    return <BrowserRouter>{Routes}</BrowserRouter>;
+    return (
+        <StrictMode>
+            <BrowserRouter>{Routes}</BrowserRouter>;
+        </StrictMode>
+    );
 };
 
 export default App;
