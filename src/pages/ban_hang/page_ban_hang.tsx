@@ -24,6 +24,8 @@ import { AiOutlineDelete } from 'react-icons/ai';
 import { Clear } from '@mui/icons-material';
 import HoaDonContext from './HoaDonContext';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+
 import Utils from '../../utils/utils';
 
 const shortNameCus = createTheme({
@@ -46,18 +48,9 @@ const shortNameCus = createTheme({
 
 export default function PageBanHang({ customerChosed, idNhomHang }: any) {
     const history = useNavigate();
-    const [hoadon, setHoadon] = useState<PageHoaDonDto>();
+    const [hoadon, setHoadon] = useState<PageHoaDonDto>(new PageHoaDonDto({ idKhachHang: null }));
     const [listProduct, setListProduct] = useState([]);
-    console.log('customerChosed ', idNhomHang);
-    // const [hoadon, setHoadon] = useState<PageHoaDonDto>(
-    //     new PageHoaDonDto({
-    //         idKhachHang: customerChosed.idKhachHang,
-    //         maKhachHang: customerChosed.maKhachHang,
-    //         tenKhachHang: customerChosed.tenKhachHang,
-    //         soDienThoai: customerChosed.soDienThoai,
-    //         tongTichDiem: customerChosed.tongTichDiem
-    //     })
-    // );
+    const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
 
     const GetDMHangHoa_groupByNhom = async () => {
         const input = {
@@ -94,28 +87,85 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                     tongTichDiem: customerChosed.tongTichDiem
                 };
             });
+            // setHoaDonChiTiet((arrOld: any) => {
+            //     return { ...arrOld, idHoaDon: hoadon.id };
+            // });
         }
     }, []);
 
-    const choseChiTiet = (item: any) => {
-        console.log('item', hoadon?.hoaDonChiTiet);
-        // push cthoadon
-        setHoadon((old: any) => {
-            return {
-                ...old,
-                hoaDonChiTiet: old.hoaDonChiTiet.map((ct: any, index: any) => {
-                    if (item.id === ct.id) {
-                        // remove & unshift
-                        const ctAfterDelete = old.hoaDonChiTiet.filter(
-                            (x: any) => x.id !== item.id
-                        );
-                        return [item, ...ctAfterDelete];
-                    } else {
-                        return old.hoaDonChiTiet;
-                    }
-                })
-            };
+    const choseChiTiet = (item: any, index: any) => {
+        console.log('item ', hoaDonChiTiet);
+        const newCT = new PageHoaDonChiTietDto({
+            idDonViQuyDoi: item.idDonViQuyDoi,
+            maHangHoa: item.maHangHoa,
+            tenHangHoa: item.tenHangHoa,
+            giaBan: item.giaBan,
+            thanhTien: item.giaBan,
+            idNhomHangHoa: item.idNhomHangHoa,
+            idHangHoa: item.id
         });
+
+        const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
+        console.log(21, checkCT);
+        console.log(22, hoaDonChiTiet);
+
+        if (checkCT.length === 0) {
+            setHoaDonChiTiet((olds: any) => {
+                return [newCT, ...olds];
+            });
+        } else {
+            checkCT[0].soLuong += 1;
+            // checkCT[0].thanhTien += 1;
+
+            // remove & unshift: keep infor old
+            const arrOld = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
+            setHoaDonChiTiet((olds: any) => {
+                return [checkCT[0], ...arrOld];
+            });
+        }
+
+        // tangsoluong, update thanhtien
+        // if (hoadon?.hoaDonChiTiet?.length === 0) {
+        //     setHoadon((old: any) => {
+        //         return { ...old, hoaDonChiTiet: [newCT, ...old.hoaDonChiTiet] };
+        //     });
+        // } else {
+        //     const check = (hoadon?.hoaDonChiTiet ?? []).map((ct: any, indexCT: any) => {
+        //         if (item.idDonViQuyDoi === ct.idDonViQuyDoi) {
+        //             return {
+        //                 ...ct,
+        //                 soLuong: ct.soLuong + 1,
+        //                 thanhTien: ct.giaBan * (ct.soLuong + 1)
+        //             };
+        //         } else {
+        //             return [];
+        //         }
+        //     });
+        //     console.log('check', check[0]);
+        //     if (check[0].length === 0) {
+        //         setHoadon((old: any) => {
+        //             return { ...old, hoaDonChiTiet: [newCT, ...old.hoaDonChiTiet] };
+        //         });
+        //     } else {
+        //         // remove & unshift: keep infor old
+        //         const arrOld = hoadon.hoaDonChiTiet?.filter(
+        //             (x) => x.idDonViQuyDoi !== item.idDonViQuyDoi
+        //         );
+        //         if (arrOld?.length === 0) {
+        //             setHoadon((old: any) => {
+        //                 return { ...old, hoaDonChiTiet: [check[0]] };
+        //             });
+        //         } else {
+        //             console.log('arrOld', arrOld);
+        //             setHoadon((old: any) => {
+        //                 return {
+        //                     ...old,
+        //                     hoaDonChiTiet: [check[0], ...[arrOld]]
+        //                 };
+        //             });
+        //         }
+        //     }
+        // }
     };
 
     return (
@@ -158,8 +208,8 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                     sm={3}
                                     md={3}
                                     lg={3}
-                                    onClick={(event: any) => {
-                                        choseChiTiet(item);
+                                    onClick={() => {
+                                        choseChiTiet(item, index);
                                     }}>
                                     <Stack display="column" padding={1} className="infor-dich-vu">
                                         <Typography className="ten-dich-vu">
@@ -191,8 +241,8 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                     </Stack>
 
                     {/* 1 chi tiet hoadon */}
-                    {hoadon?.hoaDonChiTiet?.map((ct: any, index) => (
-                        <Box>
+                    {hoaDonChiTiet?.map((ct: any, index) => (
+                        <Box key={index}>
                             <Stack sx={{ flexDirection: 'row' }}>
                                 <Grid container>
                                     <Grid item xs={12} sm={7} md={7} lg={7}>
@@ -209,7 +259,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                                     textAlign: 'center',
                                                     fontWeight: 500
                                                 }}>
-                                                1
+                                                {ct.soLuong}
                                             </Typography>
                                             <Typography
                                                 width={25}
@@ -267,7 +317,6 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                             </Stack>
                         </Box>
                     ))}
-
                     {/* end 1 chi tiet hoadon */}
 
                     <Stack

@@ -40,6 +40,6 @@ export default class PageHoaDonDto extends HoaDonDto {
         this.txtTrangThaiHD = txtTrangThaiHD;
         this.maNhanVien = maNhanVien;
         this.tenNhanVien = tenNhanVien;
-        // this.khachhang = khachhang;
+        this.hoaDonChiTiet = [];
     }
 }

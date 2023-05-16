@@ -1,10 +1,10 @@
 import { Guid } from 'guid-typescript';
 
 export default class HoaDonChiTietDto {
-    id = Guid.create();
-    idHoaDon = Guid.createEmpty();
+    id = Guid.create().toString();
+    idHoaDon = Guid.createEmpty().toString();
     idDonViQuyDoi? = null;
-    soLuong = 0;
+    soLuong = 1;
     donGiaTruocCK = 0;
     pTChietKhau? = 0;
     tienChietKhau? = 0;
@@ -36,10 +36,10 @@ export default class HoaDonChiTietDto {
     }
 
     constructor({
-        id = Guid.create(),
-        idHoaDon = Guid.createEmpty(),
+        id = Guid.create().toString(),
+        idHoaDon = Guid.createEmpty().toString(),
         idDonViQuyDoi = null,
-        soLuong = 0,
+        soLuong = 1,
         donGiaTruocCK = 0,
         pTChietKhau = 0,
         tienChietKhau = 0,

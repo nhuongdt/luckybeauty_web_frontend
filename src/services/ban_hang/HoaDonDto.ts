@@ -2,7 +2,7 @@ import { Guid } from 'guid-typescript';
 import PageHoaDonChiTietDto from './PageHoaDonChiTietDto';
 
 export default class HoaDonDto {
-    id = Guid.createEmpty();
+    id = Guid.create().toString();
     idKhachHang = null;
     idChiNhanh? = null;
     idNhanVien? = null;
@@ -19,7 +19,7 @@ export default class HoaDonDto {
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
     constructor({
-        id = Guid.createEmpty(),
+        id = Guid.create().toString(),
         idLoaiChungTu = 1,
         idKhachHang = null,
         idChiNhanh = null,
