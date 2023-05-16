@@ -21,25 +21,6 @@ const RegisterScreen: React.FC = () => {
             />
         );
     }
-    const { Option } = Select;
-    const [cityOptions, setCityOptions] = useState([]);
-    const [selectedCity, setSelectedCity] = useState('');
-    useEffect(() => {
-        fetchCityData();
-    }, []);
-
-    async function fetchCityData() {
-        try {
-            const response = await fetch('https://provinces.open-api.vn/api/'); // Thay thế URL API tại đây
-            const data = await response.json();
-            setCityOptions(data);
-        } catch (error) {
-            console.error('Error fetching city data:', error);
-        }
-    }
-    function handleChange(value: any) {
-        setSelectedCity(value);
-    }
 
     return (
         <div className="register-page">
@@ -101,20 +82,7 @@ const RegisterScreen: React.FC = () => {
                                 </Col>
                             </Row>
                             <Row gutter={16}>
-                                <Col span={12}>
-                                    <Form.Item
-                                        name="quanHuyen"
-                                        label={<span className="login-label">Quận / huyện</span>}>
-                                        <ApiVN />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
-                                        name="tinhThanh"
-                                        label={<span className="login-label">Tỉnh/Thành phố</span>}>
-                                        <Input size="large" placeholder="" />
-                                    </Form.Item>
-                                </Col>
+                                <ApiVN />
                             </Row>
                             <Form.Item
                                 style={{ display: 'none' }}

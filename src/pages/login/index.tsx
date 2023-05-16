@@ -6,6 +6,7 @@ import LoginService from '../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../images/Lucky_beauty.jpg';
+import { Link } from 'react-router-dom';
 const LoginScreen: React.FC = () => {
     const loginModel = new LoginModel();
     const [remember, setRemember] = useState(false);
@@ -127,9 +128,9 @@ const LoginScreen: React.FC = () => {
                             </p>
                             <p className="text-register">
                                 Bạn chưa có tài khoản?{' '}
-                                <a className="a quenMk" href="#">
+                                <Link className="a quenMk" to="/register">
                                     Đăng ký
-                                </a>
+                                </Link>
                             </p>
                         </Form>
                     </div>
