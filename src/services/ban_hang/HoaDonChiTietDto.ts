@@ -1,7 +1,7 @@
 import { Guid } from 'guid-typescript';
 
 export default class HoaDonChiTietDto {
-    id = Guid.createEmpty();
+    id = Guid.create();
     idHoaDon = Guid.createEmpty();
     idDonViQuyDoi? = null;
     soLuong = 0;
@@ -36,7 +36,7 @@ export default class HoaDonChiTietDto {
     }
 
     constructor({
-        id = Guid.createEmpty(),
+        id = Guid.create(),
         idHoaDon = Guid.createEmpty(),
         idDonViQuyDoi = null,
         soLuong = 0,

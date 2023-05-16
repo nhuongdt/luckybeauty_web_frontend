@@ -1,4 +1,5 @@
 import { Guid } from 'guid-typescript';
+import PageHoaDonChiTietDto from './PageHoaDonChiTietDto';
 
 export default class HoaDonDto {
     id = Guid.createEmpty();
@@ -14,6 +15,8 @@ export default class HoaDonDto {
     tongThanhToan = 0;
     ghiChuHD? = '';
     trangThai? = 3; // 0.Xóa, 1.Tạm lưu, 2.Đang xử lý, 3.Hoàn thành
+
+    hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
     constructor({
         id = Guid.createEmpty(),

@@ -97,6 +97,27 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         }
     }, []);
 
+    const choseChiTiet = (item: any) => {
+        console.log('item', hoadon?.hoaDonChiTiet);
+        // push cthoadon
+        setHoadon((old: any) => {
+            return {
+                ...old,
+                hoaDonChiTiet: old.hoaDonChiTiet.map((ct: any, index: any) => {
+                    if (item.id === ct.id) {
+                        // remove & unshift
+                        const ctAfterDelete = old.hoaDonChiTiet.filter(
+                            (x: any) => x.id !== item.id
+                        );
+                        return [item, ...ctAfterDelete];
+                    } else {
+                        return old.hoaDonChiTiet;
+                    }
+                })
+            };
+        });
+    };
+
     return (
         <>
             <Grid item xs={9} sm={5} lg={6} md={5} className="page-ban-hang">
@@ -130,7 +151,16 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                 <Typography className="nhom-dich-vu">{nhom.tenNhomHang}</Typography>
                             </Grid>
                             {nhom.hangHoas.map((item: any, index2: any) => (
-                                <Grid key={item.id} item xs={3} sm={3} md={3} lg={3}>
+                                <Grid
+                                    key={item.id}
+                                    item
+                                    xs={3}
+                                    sm={3}
+                                    md={3}
+                                    lg={3}
+                                    onClick={(event: any) => {
+                                        choseChiTiet(item);
+                                    }}>
                                     <Stack display="column" padding={1} className="infor-dich-vu">
                                         <Typography className="ten-dich-vu">
                                             {item.tenHangHoa}
@@ -161,78 +191,83 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                     </Stack>
 
                     {/* 1 chi tiet hoadon */}
-                    <Box>
-                        <Stack sx={{ flexDirection: 'row' }}>
-                            <Grid container>
-                                <Grid item xs={12} sm={7} md={7} lg={7}>
-                                    <Typography color="#7c3367">Combo cat uon</Typography>
-                                </Grid>
-                                <Grid item xs={12} sm={5} md={5} lg={5}>
-                                    <Stack
-                                        sx={{
-                                            flexDirection: 'row',
-                                            justifyContent: 'flex-end'
-                                        }}>
-                                        <Typography
-                                            style={{
-                                                textAlign: 'center',
-                                                fontWeight: 500
+                    {hoadon?.hoaDonChiTiet?.map((ct: any, index) => (
+                        <Box>
+                            <Stack sx={{ flexDirection: 'row' }}>
+                                <Grid container>
+                                    <Grid item xs={12} sm={7} md={7} lg={7}>
+                                        <Typography color="#7c3367">{ct.tenHangHoa}</Typography>
+                                    </Grid>
+                                    <Grid item xs={12} sm={5} md={5} lg={5}>
+                                        <Stack
+                                            sx={{
+                                                flexDirection: 'row',
+                                                justifyContent: 'flex-end'
                                             }}>
-                                            1
-                                        </Typography>
-                                        <Typography
-                                            width={25}
-                                            style={{
-                                                textAlign: 'center',
-                                                fontWeight: 500
-                                            }}>
-                                            x
-                                        </Typography>
-                                        <Typography style={{ fontWeight: 500 }}>
-                                            12,000,000
-                                        </Typography>
-                                        <Box width={35}>
-                                            <AiOutlineDelete
+                                            <Typography
                                                 style={{
-                                                    float: 'right',
-                                                    fontSize: '18px',
-                                                    color: '#b25656'
-                                                }}
-                                            />
-                                        </Box>
-                                    </Stack>
-                                </Grid>
-                            </Grid>
-                        </Stack>
-                        <Stack>
-                            <Grid container>
-                                <Grid item xs={4} sm={4} md={2} lg={2}>
-                                    <Typography
-                                        style={{
-                                            fontSize: '12px'
-                                        }}>
-                                        Nhân viên:
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={8} sm={8} md={10} lg={10}>
-                                    <Stack sx={{ flexDirection: 'row' }}>
-                                        {/* 1 nhan vien */}
-                                        <Stack sx={{ flexDirection: 'row' }} className="nvthuchien">
-                                            <Box className="cuspoint">Nguyễn Lê Hải Phong</Box>
-                                            <Box style={{ paddingLeft: '5px' }}>
-                                                <Clear
+                                                    textAlign: 'center',
+                                                    fontWeight: 500
+                                                }}>
+                                                1
+                                            </Typography>
+                                            <Typography
+                                                width={25}
+                                                style={{
+                                                    textAlign: 'center',
+                                                    fontWeight: 500
+                                                }}>
+                                                x
+                                            </Typography>
+                                            <Typography style={{ fontWeight: 500 }}>
+                                                {ct.giaBan}
+                                            </Typography>
+                                            <Box width={35}>
+                                                <AiOutlineDelete
                                                     style={{
-                                                        fontSize: '12px'
+                                                        float: 'right',
+                                                        fontSize: '18px',
+                                                        color: '#b25656'
                                                     }}
                                                 />
                                             </Box>
                                         </Stack>
-                                        {/* end 1 nhan vien */}
-                                    </Stack>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </Stack>
-                    </Box>
+                            </Stack>
+                            <Stack>
+                                <Grid container>
+                                    <Grid item xs={4} sm={4} md={2} lg={2}>
+                                        <Typography
+                                            style={{
+                                                fontSize: '12px'
+                                            }}>
+                                            Nhân viên:
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={8} sm={8} md={10} lg={10}>
+                                        <Stack sx={{ flexDirection: 'row' }}>
+                                            {/* 1 nhan vien */}
+                                            <Stack
+                                                sx={{ flexDirection: 'row' }}
+                                                className="nvthuchien">
+                                                <Box className="cuspoint">Nguyễn Lê Hải Phong</Box>
+                                                <Box style={{ paddingLeft: '5px' }}>
+                                                    <Clear
+                                                        style={{
+                                                            fontSize: '12px'
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Stack>
+                                            {/* end 1 nhan vien */}
+                                        </Stack>
+                                    </Grid>
+                                </Grid>
+                            </Stack>
+                        </Box>
+                    ))}
+
                     {/* end 1 chi tiet hoadon */}
 
                     <Stack

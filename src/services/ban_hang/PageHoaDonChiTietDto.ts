@@ -6,6 +6,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
     tenHangHoa = '';
     giaBan = 0;
     giaNhap? = 0;
+    thanhTien? = 0;
     idNhomHangHoa = null;
 
     constructor({
@@ -13,6 +14,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         tenHangHoa = '',
         giaBan = 0,
         giaNhap = 0,
+        thanhTien = 0,
         idNhomHangHoa = null
     }) {
         super({ id: Guid.createEmpty(), idDonViQuyDoi: null, soLuong: 0 });
@@ -20,6 +22,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         this.tenHangHoa = tenHangHoa;
         this.giaBan = giaBan;
         this.giaNhap = giaNhap;
+        this.thanhTien = thanhTien;
         this.idNhomHangHoa = idNhomHangHoa;
     }
 }
