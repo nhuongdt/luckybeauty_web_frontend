@@ -9,10 +9,10 @@ import {
     ResponsiveContainer
 } from 'recharts';
 import './lineChartNew.css';
-// Khai báo component React
+
 const LineChartNew: React.FC = () => {
     const data = [
-        { name: 'Thứ 2', 'Tháng này': 20, 'Tháng trước': 10 },
+        { name: 'Thứ 2', 'Tháng này': 20, 'Tháng trước': 0 },
         { name: 'Thứ 3', 'Tháng này': 28, 'Tháng trước': 23 },
         { name: 'Thứ 4', 'Tháng này': 31, 'Tháng trước': 22 },
         { name: 'Thứ 5', 'Tháng này': 34, 'Tháng trước': 21 },
@@ -23,8 +23,8 @@ const LineChartNew: React.FC = () => {
 
     const hideZeroFormatter = (value: any) => (value === 0 ? '' : value);
     const renderLineChart = (
-        <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={data} margin={{ top: 8, right: 0, bottom: 0, left: 0 }}>
+        <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={data} margin={{ top: 8, right: 35, bottom: 24, left: 0 }}>
                 <Line
                     type="monotone"
                     dataKey="Tháng này"

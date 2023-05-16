@@ -39,9 +39,7 @@ const LoginScreen: React.FC = () => {
                     ]);
                 }
             } else {
-                form.setFields([
-                    { name: 'tenant', errors: ['The specified tenant does not exist.'] }
-                ]);
+                form.setFields([{ name: 'tenant', errors: ['ID không chính xác'] }]);
             }
         } catch (error) {
             console.error('An error occurred during login:', error);
@@ -58,30 +56,22 @@ const LoginScreen: React.FC = () => {
     }, []);
 
     return (
-        <div className="container-fluid d-flex align-items-center justify-content-center vh-100 mt-2 mb-2">
+        <div className=" login-page">
+            <div className="logo-login">
+                <div className="logo-image">
+                    <img src={logo} alt="Lucky Beauty" />
+                </div>
+                <div className="logo-text">Lucky Beauty</div>
+            </div>
             <Row className="align-items-center justify-content-center mt-2 h-100">
                 <Col>
-                    <div
-                        className="rounded border shadow "
-                        style={{ width: '660px', padding: '12px 54px' }}>
-                        <Avatar
-                            style={{ margin: '24px 244px', width: 64, height: 64 }}
-                            src={logo}
-                        />
-                        <label
-                            className="login-label"
-                            style={{
-                                margin: '12px 128px',
-                                height: '42px',
-                                width: '295px',
-                                fontSize: '32px',
-                                lineHeight: '42px',
-                                textAlign: 'center',
-                                color: '#333233'
-                            }}>
-                            Đăng nhập
-                        </label>
-                        <Form form={form} onFinish={handleLogin} layout="vertical">
+                    <div className="login-page-inner ">
+                        <h1 className="login-label">Đăng nhập</h1>
+                        <Form
+                            form={form}
+                            onFinish={handleLogin}
+                            layout="vertical"
+                            className="login-form">
                             <Form.Item
                                 name="tenant"
                                 label={<span className="login-label">ID cửa hàng</span>}>
@@ -97,7 +87,7 @@ const LoginScreen: React.FC = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Nhập tài khoản'
+                                        message: 'Vui lòng nhập tài khoản'
                                     }
                                 ]}>
                                 <Input size="large" placeholder="Nhập email hoặc tài khoản" />
@@ -109,23 +99,22 @@ const LoginScreen: React.FC = () => {
                                         Mật khẩu <span style={{ color: 'red' }}>*</span>
                                     </span>
                                 }
-                                rules={[
-                                    { required: true, message: 'Please enter your password.' }
-                                ]}>
+                                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}>
                                 <Input.Password size="large" placeholder="Nhập mật khẩu" />
                             </Form.Item>
                             <Form.Item>
                                 <Checkbox
+                                    className="remember"
                                     value={remember}
                                     checked={remember}
                                     onChange={() => {
                                         setRemember(!remember);
                                     }}>
-                                    Ghi nhớ ?
+                                    Ghi nhớ
                                 </Checkbox>
 
                                 <a className="login-form-forgot" href="">
-                                    Quên mật khẩu
+                                    Quên mật khẩu ?
                                 </a>
                             </Form.Item>
                             <Row>
@@ -133,34 +122,12 @@ const LoginScreen: React.FC = () => {
                                     <span className="text-login">Đăng nhập</span>
                                 </button>
                             </Row>
-                            <label
-                                className="login-label"
-                                style={{
-                                    margin: '12px 128px',
-                                    height: '20px',
-                                    width: '295px',
-                                    fontSize: '14px',
-                                    lineHeight: '20px',
-                                    alignContent: 'center',
-                                    textAlign: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                Tổng đài hỗ trợ : 0247 303 9333 - 0936 363 069
-                            </label>
-                            <p
-                                className="login-label"
-                                style={{
-                                    margin: '12px 128px',
-                                    height: '20px',
-                                    width: '295px',
-                                    fontSize: '14px',
-                                    lineHeight: '20px',
-                                    alignContent: 'center',
-                                    textAlign: 'center',
-                                    alignItems: 'center'
-                                }}>
+                            <p className="text-support">
+                                Tổng đài hỗ trợ : <span>0247 303 9333 - 0936 363 069</span>
+                            </p>
+                            <p className="text-register">
                                 Bạn chưa có tài khoản?{' '}
-                                <a className="a" href="">
+                                <a className="a quenMk" href="#">
                                     Đăng ký
                                 </a>
                             </p>

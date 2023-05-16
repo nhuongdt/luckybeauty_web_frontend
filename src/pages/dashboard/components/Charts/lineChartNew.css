@@ -52,11 +52,12 @@ gap: 2.013888888888889vw;
 -webkit-box-align: center;
     -ms-flex-align: center;
         align-items: center;
+        padding-right: 1.6666666666666667vw;
 
 }
 .tooltip-text{
     font-size: 14px;
-    line-height: 1.3888888888888888vw;
+    
     color: #666466;
     padding-top: 0.20833333333333334vw;
 }
@@ -84,5 +85,5 @@ gap: 2.013888888888889vw;
 }
 .chart{
     position: relative;
-    padding-right:1.6666666666666667vw;
+   
 }

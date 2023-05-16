@@ -1,5 +1,5 @@
 
-.todo-container{
+.todo-lists{
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -29,9 +29,8 @@ padding-bottom: 0.2777777777777778vw;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
-    gap: 1.7361111111111112vw
-    ;
-    
+    gap: 1.7361111111111112vw ;
+align-items: center;    
 }
 .todo-item .times {
     gap: 0.3819444444444444vw;
@@ -69,7 +68,9 @@ padding: 4px 12px;
     font-size: 16px;
 }
 
-
+.todo-item .avatar{
+    margin: 0;
+}
 
 .avatar img{
     width: 50px;

@@ -4,11 +4,70 @@
     margin-bottom: 12px;
     margin-top: 12px;
 }
-.register-content {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    height: 90vh;
-}
+
 .ant-form-item-label>label.ant-form-item-required::before{
     content: none !important;
  }
+
+
+ .register-page h1 {
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: 700;
+    color: #3b4758;
+    margin-bottom: 0;
+    text-align:left ;
+}
+.register-page{
+   
+    padding-left: 41px;
+    background-image: url('../../images/bg-login.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    padding-bottom: 114px;
+    padding-top: 100px;
+}
+.logo-register {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap:8px;
+    -webkit-box-align:center ;
+        -ms-flex-align:center ;
+            align-items:center ;
+}
+
+.logo-register .logo-text{
+    font-size: 18px;
+    font-weight: 700;
+    color:#1F0D1A;
+    font-family: Roboto;
+}
+.register-col{
+    width: 480px;
+    padding: 40px 24px 48px 24px;
+    background-color: #fff;
+    box-shadow: 0px 4px 20px 0px #AAA9B81A;
+border-radius: 12px;
+}
+.btn-register {
+    background: #7C3367;
+    border: 0;
+    border-radius: 6px;
+}
+.text-login {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 500;
+}
+.passwords{
+    flex-direction: column;
+
+}
+.passwords > .w-100{
+    width: 100%;
+    flex: unset;
+    max-width: unset;
+}

@@ -28,3 +28,7 @@ text-align: right;
 color: #4C4B4C;
 
 }
+header button {
+    border: 0;
+    background:transparent;
+}

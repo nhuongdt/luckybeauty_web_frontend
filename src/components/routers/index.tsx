@@ -94,7 +94,7 @@ export const appRouters: AppRouteProps = {
                     path: '/',
                     name: 'dashboard',
                     permission: '',
-                    title: 'Dashboard',
+                    title: 'Trang chủ',
                     icon: <AiOutlineHome style={{ fontSize: 20 }} />,
                     children: [],
                     showInMenu: true,

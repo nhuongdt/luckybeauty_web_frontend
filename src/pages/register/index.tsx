@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
-import { Avatar, Col, Form, Input, Row } from 'antd';
+import { Avatar, Col, Form, Input, Row, Select } from 'antd';
 import logo from '../../images/Lucky_beauty.jpg';
+import ApiVN from './api_VN';
+
 const RegisterScreen: React.FC = () => {
     const [confirm, setConfirm] = useState(false);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,30 +21,38 @@ const RegisterScreen: React.FC = () => {
             />
         );
     }
+    const { Option } = Select;
+    const [cityOptions, setCityOptions] = useState([]);
+    const [selectedCity, setSelectedCity] = useState('');
+    useEffect(() => {
+        fetchCityData();
+    }, []);
+
+    async function fetchCityData() {
+        try {
+            const response = await fetch('https://provinces.open-api.vn/api/'); // Thay thế URL API tại đây
+            const data = await response.json();
+            setCityOptions(data);
+        } catch (error) {
+            console.error('Error fetching city data:', error);
+        }
+    }
+    function handleChange(value: any) {
+        setSelectedCity(value);
+    }
+
     return (
-        <div className="d-flex align-items-center justify-content-center vh-100">
-            <Row className="align-items-center justify-content-centerregister-content">
-                <Col>
-                    <div
-                        className="rounded border shadow "
-                        style={{ width: '660px', padding: ' 0px 54px' }}>
-                        <Avatar
-                            style={{ margin: '24px 244px', width: 64, height: 64 }}
-                            src={logo}
-                        />
-                        <label
-                            className="login-label"
-                            style={{
-                                margin: '12px 128px',
-                                height: '42px',
-                                width: '295px',
-                                fontSize: '32px',
-                                lineHeight: '42px',
-                                textAlign: 'center',
-                                color: '#333233'
-                            }}>
-                            Đăng ký
-                        </label>
+        <div className="register-page">
+            <div className="logo-register">
+                <div className="logo-image">
+                    <img src={logo} alt="Lucky Beauty" />
+                </div>
+                <div className="logo-text">Lucky Beauty</div>
+            </div>
+            <Row className="align-items-center justify-content-center register-content">
+                <Col className="register-col">
+                    <div className="register-inner">
+                        <h1>Đăng ký</h1>
                         <Form onFinish={handleSubmit} layout="vertical">
                             <Form.Item
                                 name="hoVaTen"
@@ -57,7 +67,7 @@ const RegisterScreen: React.FC = () => {
                                         message: 'Nhập họ và tên'
                                     }
                                 ]}>
-                                <Input size="large" placeholder="Nhập họ và tên" />
+                                <Input size="large" placeholder="Nhập họ và tên" required />
                             </Form.Item>
                             <Form.Item
                                 name="email"
@@ -69,10 +79,10 @@ const RegisterScreen: React.FC = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: 'Nhập họ và tên'
+                                        message: 'Email'
                                     }
                                 ]}>
-                                <Input size="large" placeholder="Nhập họ và tên" />
+                                <Input size="large" placeholder="Nhập địa chỉ email" required />
                             </Form.Item>
                             <Row gutter={8}>
                                 <Col span={12}>
@@ -95,7 +105,7 @@ const RegisterScreen: React.FC = () => {
                                     <Form.Item
                                         name="quanHuyen"
                                         label={<span className="login-label">Quận / huyện</span>}>
-                                        <Input size="large" placeholder="" />
+                                        <ApiVN />
                                     </Form.Item>
                                 </Col>
                                 <Col span={12}>
@@ -107,12 +117,13 @@ const RegisterScreen: React.FC = () => {
                                 </Col>
                             </Row>
                             <Form.Item
+                                style={{ display: 'none' }}
                                 name="linhVuc"
                                 label={<span className="login-label">Lĩnh vực quan tâm</span>}>
                                 <Input size="large" placeholder="Nhập họ và tên" />
                             </Form.Item>
-                            <Row gutter={16}>
-                                <Col span={12}>
+                            <Row gutter={16} className="passwords">
+                                <Col span={12} className="w-100">
                                     <Form.Item
                                         name="quanHuyen"
                                         label={
@@ -123,7 +134,7 @@ const RegisterScreen: React.FC = () => {
                                         <Input size="large" placeholder="" />
                                     </Form.Item>
                                 </Col>
-                                <Col span={12}>
+                                <Col span={12} className="w-100">
                                     <Form.Item
                                         name="tinhThanh"
                                         label={

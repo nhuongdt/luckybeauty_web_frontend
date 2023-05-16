@@ -12,6 +12,8 @@ import {
 import './header.css';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import MessageIcon from '../../images/message-question.svg';
+import NotificationIcon from '../../images/notification.svg';
 const userDropdownMenu = (
     <Menu>
         <Menu.Item key="2">
@@ -38,10 +40,14 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }) => {
                 <Col style={{ textAlign: 'right' }} span={6} offset={6}>
                     <Space>
                         <Badge size="small" style={{ margin: '0px 8px 0px 8px' }}>
-                            <MessageOutlined style={{ fontSize: 20, margin: '0px 8px 0px 8px' }} />
+                            <button>
+                                <img src={MessageIcon} alt="Message" />
+                            </button>
                         </Badge>
-                        <Badge size="small" style={{ margin: '0px 8px 0px 8px' }} count={3}>
-                            <BellOutlined style={{ fontSize: 20, margin: '0px 8px 0px 8px' }} />
+                        <Badge style={{ margin: '0px 8px 0px 8px' }} color="error">
+                            <button>
+                                <img src={NotificationIcon} alt="notification" />
+                            </button>
                         </Badge>
                         <div style={{ marginLeft: '32px', marginRight: 8 }}>
                             <div className="store-name">Nail Spa</div>
