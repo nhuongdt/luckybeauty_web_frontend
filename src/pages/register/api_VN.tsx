@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Select, Form } from 'antd';
+import { NativeSelect, FormControl, InputLabel, Box } from '@mui/material/';
 import axios from 'axios';
 
 interface Province {
@@ -13,71 +13,70 @@ interface District {
     code: number;
 }
 const ApiVN: React.FC = () => {
-    const { Option } = Select;
-
+    const [provinces, setProvinces] = useState<Province[]>([]);
+    const [selectedProvince, setSelectedProvince] = useState<string>('');
+    const [districts, setDistricts] = useState<District[]>([]);
+    const [selectedDistrict, setSelectedDistrict] = useState<string>('');
     useEffect(() => {
-        fetchProvinces();
+        axios
+            .get<Province[]>('https://provinces.open-api.vn/api/p/')
+            .then((response) => {
+                setProvinces(response.data);
+            })
+            .catch((error) => console.log(error));
     }, []);
 
-    async function fetchProvinces() {
-        try {
-            const datas = await axios.get('https://provinces.open-api.vn/api/p/');
-            setProvinces(datas.data);
-        } catch (error) {
-            console.error('Error fetching province data:', error);
+    useEffect(() => {
+        if (selectedProvince) {
+            axios
+                .get<District[]>(`https://provinces.open-api.vn/api/p/${selectedProvince}/?depth=2`)
+                .then((response) => {
+                    const districtList = response.data;
+                    setDistricts(districtList);
+                    console.log(districts);
+                })
+                .catch((error) => console.log(error));
+        } else {
+            setDistricts([]);
         }
-    }
-    async function fetchDistricts(provinceId: number) {
-        try {
-            const response = await axios.get(
-                `https://provinces.open-api.vn/api/p/${provinceId}?depth=2`
-            );
-            const districtList = response.data.districts;
-            setDistricts(districtList);
-        } catch (error) {
-            console.error('Error fetching district data:', error);
-        }
-    }
-    const [provinces, setProvinces] = useState<Province[]>([]);
-    const [selectedProvince, setSelectedProvince] = useState<any | undefined>(undefined);
-    const [districts, setDistricts] = useState<District[]>([]);
-    const [selectedDistrict, setSelectedDistrict] = useState<any | undefined>(undefined);
-    const [disabledd, setDisabledd] = useState(true);
-    function handleProvinceChange(value: any) {
-        setSelectedProvince(value);
-        setSelectedDistrict('Chọn');
-        fetchDistricts(value);
-        setDisabledd(false);
-    }
-    function handleDistrictChange(value: string) {
-        setSelectedDistrict(value);
-    }
+    }, [selectedProvince]);
+
     return (
         <div className="select-row">
-            <Form.Item label={<span className="login-label">Tỉnh/ Thành phố</span>}>
-                <Select placeholder="Chọn" value={selectedProvince} onChange={handleProvinceChange}>
-                    {provinces &&
-                        provinces.map((province) => (
-                            <Option key={province.code} value={province.code}>
-                                {province.name}
-                            </Option>
-                        ))}
-                </Select>
-            </Form.Item>
-            <Form.Item label={<span className="login-label">Quận/Huyện</span>}>
-                <Select
-                    placeholder="Chọn"
-                    value={selectedDistrict}
-                    disabled={disabledd}
-                    onChange={handleDistrictChange}>
-                    {Array.isArray(districts) &&
+            <FormControl>
+                <InputLabel htmlFor="province-native-select">Tỉnh/Thành phố</InputLabel>
+                <NativeSelect
+                    value={selectedProvince}
+                    onChange={(e) => setSelectedProvince(e.target.value)}
+                    inputProps={{
+                        name: 'province',
+                        id: 'province-native-select'
+                    }}>
+                    {provinces.map((province) => (
+                        <option key={province.code} value={province.code}>
+                            {province.name}
+                        </option>
+                    ))}
+                </NativeSelect>
+            </FormControl>
+
+            <FormControl>
+                <InputLabel htmlFor="district-native-select">Quận/Huyện</InputLabel>
+                <NativeSelect
+                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    inputProps={{
+                        name: 'district',
+                        id: 'district-native-select'
+                    }}
+                    disabled={!selectedProvince}>
+                    {districts.length > 4 &&
                         districts.map((district) => (
-                            <Option key={district.code} value={district.name}>
+                            <option key={district.code} value={district.code}>
                                 {district.name}
-                            </Option>
+                            </option>
                         ))}
-                </Select>
-            </Form.Item>
+                </NativeSelect>
+            </FormControl>
         </div>
     );
 };

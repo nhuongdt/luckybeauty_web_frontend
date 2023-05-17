@@ -24,22 +24,45 @@ const LoginScreen: React.FC = () => {
                             <Grid container>
                                 <Grid xs={12} className="form-item">
                                     <TextField
+                                        variant="outlined"
                                         name="tenant"
-                                        label={
-                                            <span className="login-label">ID đăng nhập</span>
-                                        }></TextField>
+                                        label={<span className="login-label">ID đăng nhập</span>}
+                                        type="text"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}></TextField>
                                 </Grid>
                                 <Grid xs={12} className="form-item">
                                     <TextField
+                                        variant="outlined"
                                         name="userNameOrEmail"
-                                        label={<span className="login-label">Tên đăng nhập</span>}>
+                                        label={<span className="login-label">Tên đăng nhập</span>}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}>
                                         <Input placeholder="Nhập email hoặc tài khoản" />
                                     </TextField>
                                 </Grid>
                                 <Grid xs={12} className="form-item">
                                     <TextField
                                         name="userNameOrEmail"
-                                        label={<span className="login-label">Mật khẩu</span>}>
+                                        variant="outlined"
+                                        label={<span className="login-label">Mật khẩu</span>}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}>
                                         <Input placeholder="Nhập email hoặc tài khoản" />
                                     </TextField>
                                 </Grid>

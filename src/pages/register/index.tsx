@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
-import { Col, Form, Input, Row, Checkbox, Progress } from 'antd';
+import { Input, Checkbox, Grid, TextField, FormControlLabel } from '@mui/material';
 import logo from '../../images/Lucky_beauty.jpg';
 import ApiVN from './api_VN';
 import { Link } from 'react-router-dom';
@@ -57,65 +57,59 @@ const RegisterScreen: React.FC = () => {
                 </div>
                 <div className="logo-text">Lucky Beauty</div>
             </div>
-            <Row className="align-items-center justify-content-center register-content">
-                <Col className="register-col">
+            <div className="align-items-center justify-content-center register-content">
+                <div className="register-col">
                     <div className="register-inner">
                         <h1>Đăng ký</h1>
-                        <Form
-                            onFinish={handleSubmit}
-                            layout="vertical"
-                            onValuesChange={handleValuesChange}
-                            name="registration">
-                            <Form.Item
-                                name="hoVaTen"
-                                label={
-                                    <span className="login-label">
-                                        Họ và tên <span style={{ color: 'red' }}>*</span>
-                                    </span>
-                                }
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập họ và tên'
-                                    },
-                                    {
-                                        pattern: /^[a-zA-Z\s]*$/,
-                                        message: 'Họ tên chỉ chứa chữ cái và dấu cách!'
-                                    }
-                                ]}>
-                                <Input size="large" placeholder="Nhập họ và tên" required />
-                            </Form.Item>
-                            <Form.Item
+                        <form onSubmit={handleSubmit} name="registration">
+                            <Grid container>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        fullWidth
+                                        name="hoVaTen"
+                                        label={<span>Họ và tên</span>}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}>
+                                        <Input placeholder="Nhập họ và tên" required />
+                                    </TextField>
+                                </Grid>
+                            </Grid>
+                            <TextField
+                                fullWidth
                                 name="email"
-                                label={
-                                    <span className="login-label">
-                                        Email <span style={{ color: 'red' }}>*</span>
-                                    </span>
-                                }
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Vui lòng nhập email'
-                                    },
-                                    { type: 'email', message: 'Email không hợp lệ!' }
-                                ]}>
-                                <Input
-                                    size="large"
-                                    type="email"
-                                    placeholder="Nhập địa chỉ email"
-                                    required
-                                />
-                            </Form.Item>
-                            <Row className="row-input">
-                                <Col span={12}>
-                                    <Form.Item
+                                label={<span>Email</span>}
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        '& fieldset': {
+                                            border: 'none'
+                                        }
+                                    }
+                                }}>
+                                <Input type="email" placeholder="Nhập địa chỉ email" required />
+                                <Input />
+                            </TextField>
+                            <div className="row-input">
+                                <div>
+                                    <TextField
                                         name="storeName"
-                                        label={<span className="login-label">Tên cửa hàng</span>}>
-                                        <Input size="large" placeholder="Nhập tên cửa hàng" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
+                                        label={<span className="login-label">Tên cửa hàng</span>}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}>
+                                        <Input placeholder="Nhập tên cửa hàng" />
+                                    </TextField>
+                                </div>
+                                <div>
+                                    <TextField
                                         name="soDienThoai"
                                         label={
                                             <span className="login-label">
@@ -123,48 +117,43 @@ const RegisterScreen: React.FC = () => {
                                                 <span style={{ color: 'red' }}>*</span>
                                             </span>
                                         }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập số điện thoại'
-                                            },
-                                            {
-                                                pattern: /^\d+$/,
-                                                message: 'Số điện thoại chỉ chứa chữ số'
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
                                             }
-                                        ]}>
-                                        <Input
-                                            size="large"
-                                            type="tel"
-                                            placeholder="Nhập số điện thoại"
-                                        />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
+                                        }}>
+                                        <Input type="tel" placeholder="Nhập số điện thoại" />
+                                    </TextField>
+                                </div>
+                            </div>
+                            <div>
                                 <ApiVN />
-                            </Row>
+                            </div>
 
-                            <Row className="passwords">
-                                <Col span={12} className="w-100">
-                                    <Form.Item
+                            <div className="passwords">
+                                <div className="w-100">
+                                    <TextField
+                                        fullWidth
                                         name="password"
                                         label={
                                             <span className="login-label">
                                                 Mật khẩu <span style={{ color: 'red' }}>*</span>
                                             </span>
                                         }
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng nhập mật khẩu'
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
                                             }
-                                        ]}>
-                                        <Input.Password size="large" placeholder="************" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12} className="w-100">
-                                    <Form.Item
+                                        }}>
+                                        <Input placeholder="************" />
+                                    </TextField>
+                                </div>
+                                <div className="w-100">
+                                    <TextField
                                         name="confirmPassword"
                                         label={
                                             <span className="login-label">
@@ -172,71 +161,43 @@ const RegisterScreen: React.FC = () => {
                                                 <span style={{ color: 'red' }}>*</span>
                                             </span>
                                         }
-                                        dependencies={['password']}
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: 'Vui lòng xác nhận mật khẩu!'
-                                            },
-                                            ({ getFieldValue }) => ({
-                                                validator(_, value) {
-                                                    if (
-                                                        !value ||
-                                                        getFieldValue('password') === value
-                                                    ) {
-                                                        return Promise.resolve();
-                                                    }
-                                                    return Promise.reject(
-                                                        'Mật khẩu xác nhận không khớp!'
-                                                    );
+                                        fullWidth
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
                                                 }
-                                            })
-                                        ]}>
-                                        <Input.Password size="large" placeholder="************" />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Progress percent={progress} />
-                            </Row>
-                            <Row>
-                                <Form.Item
-                                    className="dieu-khoans"
-                                    name="agreement"
-                                    valuePropName="checked"
-                                    wrapperCol={{ offset: 8, span: 16 }}
-                                    rules={[
-                                        {
-                                            validator: (_, value) =>
-                                                value
-                                                    ? Promise.resolve()
-                                                    : Promise.reject(
-                                                          'Bạn cần đồng ý với điều khoản và bảo mật!'
-                                                      )
-                                        }
-                                    ]}>
-                                    <Checkbox className="dieu-khoan-bao-mat">
+                                            }
+                                        }}>
+                                        <Input placeholder="************" />
+                                    </TextField>
+                                </div>
+                            </div>
+                            <div></div>
+                            <div>
+                                <FormControlLabel
+                                    control={<Checkbox defaultChecked />}
+                                    label={
                                         <p>
-                                            Tôi đồng ý với
-                                            <Link to="#"> điều khoản</Link> và
-                                            <Link to="#"> bảo mật</Link>
+                                            Tôi đồng ý với <Link to="#">Điều khoản</Link> và{' '}
+                                            <Link to="#">Bảo mật</Link>
                                         </p>
-                                    </Checkbox>
-                                </Form.Item>
-                            </Row>
+                                    }
+                                />
+                            </div>
                             <button
                                 type="submit"
                                 className="btn btn-primary btn-register"
                                 onClick={handleSubmit}>
                                 <span className="text-login">Đăng ký</span>
                             </button>
-                        </Form>
+                        </form>
                         <p className="has-login">
                             Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
                         </p>
                     </div>
-                </Col>
-            </Row>
+                </div>
+            </div>
         </div>
     );
 };
