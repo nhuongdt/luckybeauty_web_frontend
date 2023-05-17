@@ -63,6 +63,17 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false
                 },
                 {
+                    path: '/forgot-password',
+                    name: 'forgotPassword',
+                    permission: '',
+                    children: [],
+                    title: 'Forgot password',
+                    icon: null,
+                    component: LoadableComponent(() => import('../../pages/Forgot_password')),
+                    isLayout: true,
+                    showInMenu: false
+                },
+                {
                     path: '/exception?:type',
                     permission: '',
                     title: 'exception',

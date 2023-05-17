@@ -114,9 +114,9 @@ const LoginScreen: React.FC = () => {
                                     Ghi nhớ
                                 </Checkbox>
 
-                                <a className="login-form-forgot" href="">
+                                <Link className="login-form-forgot" to="/forgot-password">
                                     Quên mật khẩu ?
-                                </a>
+                                </Link>
                             </Form.Item>
                             <Row>
                                 <button type="submit" className="btn-login">

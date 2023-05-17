@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Select } from 'antd';
+import { Select, Form } from 'antd';
 import axios from 'axios';
 
 interface Province {
@@ -34,7 +34,6 @@ const ApiVN: React.FC = () => {
             );
             const districtList = response.data.districts;
             setDistricts(districtList);
-            console.log(districts);
         } catch (error) {
             console.error('Error fetching district data:', error);
         }
@@ -55,27 +54,30 @@ const ApiVN: React.FC = () => {
     }
     return (
         <div className="select-row">
-            <Select placeholder="Chọn" value={selectedProvince} onChange={handleProvinceChange}>
-                {provinces &&
-                    provinces.map((province) => (
-                        <Option key={province.code} value={province.code}>
-                            {province.name}
-                        </Option>
-                    ))}
-            </Select>
-
-            <Select
-                placeholder="Chọn"
-                value={selectedDistrict}
-                disabled={disabledd}
-                onChange={handleDistrictChange}>
-                {Array.isArray(districts) &&
-                    districts.map((district) => (
-                        <Option key={district.code} value={district.name}>
-                            {district.name}
-                        </Option>
-                    ))}
-            </Select>
+            <Form.Item label={<span className="login-label">Tỉnh/ Thành phố</span>}>
+                <Select placeholder="Chọn" value={selectedProvince} onChange={handleProvinceChange}>
+                    {provinces &&
+                        provinces.map((province) => (
+                            <Option key={province.code} value={province.code}>
+                                {province.name}
+                            </Option>
+                        ))}
+                </Select>
+            </Form.Item>
+            <Form.Item label={<span className="login-label">Quận/Huyện</span>}>
+                <Select
+                    placeholder="Chọn"
+                    value={selectedDistrict}
+                    disabled={disabledd}
+                    onChange={handleDistrictChange}>
+                    {Array.isArray(districts) &&
+                        districts.map((district) => (
+                            <Option key={district.code} value={district.name}>
+                                {district.name}
+                            </Option>
+                        ))}
+                </Select>
+            </Form.Item>
         </div>
     );
 };

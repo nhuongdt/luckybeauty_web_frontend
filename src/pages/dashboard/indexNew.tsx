@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
                                 <p>Doanh thu cửa hàng</p>
                             </div>
                             <div>
-                                <Box sx={{ minWidth: 120 }}>
+                                {/* <Box sx={{ minWidth: 120 }}>
                                     <FormControl fullWidth>
                                         <Select
                                             labelId="demo-simple-select-label"
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
                                             <MenuItem value="Tháng trước">Tháng trước</MenuItem>
                                         </Select>
                                     </FormControl>
-                                </Box>
+                                </Box> */}
                             </div>
                         </div>
                         <div className="page-body_row-3_col-1_row-2">
