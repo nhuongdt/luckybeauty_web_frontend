@@ -118,6 +118,8 @@
     display: -ms-flexbox;
     display: flex;
     gap: 6px;
+    font-size: 12px;
+    font-family: 'Roboto';
 }
 .flex-bottom {
     display: -webkit-box;
