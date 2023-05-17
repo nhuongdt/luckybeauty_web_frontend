@@ -25,6 +25,9 @@ import { Clear } from '@mui/icons-material';
 import HoaDonContext from './HoaDonContext';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+import HoaDonService from '../../services/ban_hang/HoaDonService';
+
+import { dbDexie } from '../../lib/dexie/dexieDB';
 
 import Utils from '../../utils/utils';
 
@@ -51,6 +54,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
     const [hoadon, setHoadon] = useState<PageHoaDonDto>(new PageHoaDonDto({ idKhachHang: null }));
     const [listProduct, setListProduct] = useState([]);
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+    const [clickSSave, setClickSave] = useState(false);
 
     const GetDMHangHoa_groupByNhom = async () => {
         const input = {
@@ -77,6 +81,8 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
 
     useEffect(() => {
         if (customerChosed) {
+            // check exist hoadon of customer (todo)
+
             setHoadon((old: any) => {
                 return {
                     ...old,
@@ -93,7 +99,37 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         }
     }, []);
 
-    const choseChiTiet = (item: any, index: any) => {
+    const updateCurrentInvoice = () => {
+        let tongTienHangChuaCK = 0,
+            tongChietKhau = 0,
+            tongTienHang = 0;
+        for (let i = 0; i < hoaDonChiTiet.length; i++) {
+            console.log('into');
+            const itFor = hoaDonChiTiet[i];
+            tongTienHangChuaCK += itFor.soLuong * itFor.donGiaTruocCK;
+            tongTienHang += itFor.thanhTien ?? 0;
+            tongChietKhau += itFor.tienChietKhau ?? 0;
+        }
+        setHoadon((old) => {
+            return {
+                ...old,
+                tongTienHangChuaChietKhau: tongTienHangChuaCK,
+                tongTienHang: tongTienHang,
+                tongChietKhauHangHoa: tongChietKhau,
+                tongThanhToan: tongTienHang
+            };
+        });
+    };
+
+    const deleteChiTietHoaDon = (item: any) => {
+        setHoaDonChiTiet(hoaDonChiTiet.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi));
+    };
+
+    useEffect(() => {
+        updateCurrentInvoice();
+    }, [hoaDonChiTiet]);
+
+    const choseChiTiet = async (item: any, index: any) => {
         console.log('item ', hoaDonChiTiet);
         const newCT = new PageHoaDonChiTietDto({
             idDonViQuyDoi: item.idDonViQuyDoi,
@@ -102,70 +138,46 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
             giaBan: item.giaBan,
             thanhTien: item.giaBan,
             idNhomHangHoa: item.idNhomHangHoa,
-            idHangHoa: item.id
+            idHangHoa: item.id,
+            soLuong: 1
         });
 
         const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
-        console.log(21, checkCT);
-        console.log(22, hoaDonChiTiet);
 
         if (checkCT.length === 0) {
             setHoaDonChiTiet((olds: any) => {
                 return [newCT, ...olds];
             });
+
+            // add to cache Dexie
+            try {
+                const newX = await dbDexie.hoaDonChiTiet.add(newCT);
+                console.log('newX', newX);
+            } catch (err) {
+                console.log('eer');
+            }
         } else {
             checkCT[0].soLuong += 1;
-            // checkCT[0].thanhTien += 1;
+            checkCT[0].thanhTien = checkCT[0].soLuong * checkCT[0].donGiaTruocCK;
 
-            // remove & unshift: keep infor old
+            // remove & unshift but keep infor old cthd
             const arrOld = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
             setHoaDonChiTiet((olds: any) => {
                 return [checkCT[0], ...arrOld];
             });
         }
 
-        // tangsoluong, update thanhtien
-        // if (hoadon?.hoaDonChiTiet?.length === 0) {
-        //     setHoadon((old: any) => {
-        //         return { ...old, hoaDonChiTiet: [newCT, ...old.hoaDonChiTiet] };
-        //     });
-        // } else {
-        //     const check = (hoadon?.hoaDonChiTiet ?? []).map((ct: any, indexCT: any) => {
-        //         if (item.idDonViQuyDoi === ct.idDonViQuyDoi) {
-        //             return {
-        //                 ...ct,
-        //                 soLuong: ct.soLuong + 1,
-        //                 thanhTien: ct.giaBan * (ct.soLuong + 1)
-        //             };
-        //         } else {
-        //             return [];
-        //         }
-        //     });
-        //     console.log('check', check[0]);
-        //     if (check[0].length === 0) {
-        //         setHoadon((old: any) => {
-        //             return { ...old, hoaDonChiTiet: [newCT, ...old.hoaDonChiTiet] };
-        //         });
-        //     } else {
-        //         // remove & unshift: keep infor old
-        //         const arrOld = hoadon.hoaDonChiTiet?.filter(
-        //             (x) => x.idDonViQuyDoi !== item.idDonViQuyDoi
-        //         );
-        //         if (arrOld?.length === 0) {
-        //             setHoadon((old: any) => {
-        //                 return { ...old, hoaDonChiTiet: [check[0]] };
-        //             });
-        //         } else {
-        //             console.log('arrOld', arrOld);
-        //             setHoadon((old: any) => {
-        //                 return {
-        //                     ...old,
-        //                     hoaDonChiTiet: [check[0], ...[arrOld]]
-        //                 };
-        //             });
-        //         }
-        //     }
-        // }
+        // updateCurrentInvoice();
+    };
+
+    const saveHoaDon = async () => {
+        setClickSave(true);
+        const myData = {
+            hoadon: hoadon,
+            hoadonChiTiet: hoaDonChiTiet
+        };
+        const data = await HoaDonService.CreateHoaDon2(myData);
+        console.log(data);
     };
 
     return (
@@ -270,7 +282,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                                 x
                                             </Typography>
                                             <Typography style={{ fontWeight: 500 }}>
-                                                {ct.giaBan}
+                                                {Utils.formatNumber(ct.giaBan)}
                                             </Typography>
                                             <Box width={35}>
                                                 <AiOutlineDelete
@@ -279,42 +291,49 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                                         fontSize: '18px',
                                                         color: '#b25656'
                                                     }}
+                                                    onClick={() => {
+                                                        deleteChiTietHoaDon(ct);
+                                                    }}
                                                 />
                                             </Box>
                                         </Stack>
                                     </Grid>
                                 </Grid>
                             </Stack>
-                            <Stack>
-                                <Grid container>
-                                    <Grid item xs={4} sm={4} md={2} lg={2}>
-                                        <Typography
-                                            style={{
-                                                fontSize: '12px'
-                                            }}>
-                                            Nhân viên:
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item xs={8} sm={8} md={10} lg={10}>
-                                        <Stack sx={{ flexDirection: 'row' }}>
-                                            {/* 1 nhan vien */}
-                                            <Stack
-                                                sx={{ flexDirection: 'row' }}
-                                                className="nvthuchien">
-                                                <Box className="cuspoint">Nguyễn Lê Hải Phong</Box>
-                                                <Box style={{ paddingLeft: '5px' }}>
-                                                    <Clear
-                                                        style={{
-                                                            fontSize: '12px'
-                                                        }}
-                                                    />
-                                                </Box>
+                            {ct.nhanVienThucHien.length > 0 && (
+                                <Stack>
+                                    <Grid container>
+                                        <Grid item xs={4} sm={4} md={2} lg={2}>
+                                            <Typography
+                                                style={{
+                                                    fontSize: '12px'
+                                                }}>
+                                                Nhân viên:
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={8} sm={8} md={10} lg={10}>
+                                            <Stack sx={{ flexDirection: 'row' }}>
+                                                {/* 1 nhan vien */}
+                                                <Stack
+                                                    sx={{ flexDirection: 'row' }}
+                                                    className="nvthuchien">
+                                                    <Box className="cuspoint">
+                                                        Nguyễn Lê Hải Phong
+                                                    </Box>
+                                                    <Box style={{ paddingLeft: '5px' }}>
+                                                        <Clear
+                                                            style={{
+                                                                fontSize: '12px'
+                                                            }}
+                                                        />
+                                                    </Box>
+                                                </Stack>
+                                                {/* end 1 nhan vien */}
                                             </Stack>
-                                            {/* end 1 nhan vien */}
-                                        </Stack>
+                                        </Grid>
                                     </Grid>
-                                </Grid>
-                            </Stack>
+                                </Stack>
+                            )}
                         </Box>
                     ))}
                     {/* end 1 chi tiet hoadon */}
@@ -328,19 +347,25 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                 Tổng tiền hàng
                             </Grid>
                             <Grid item xs={12} sm={8} lg={8} md={8}>
-                                <Typography className="tongtien">1,200,000</Typography>
+                                <Typography className="tongtien">
+                                    {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
+                                </Typography>
                             </Grid>
-                            <Grid item xs={12} sm={4} lg={4} md={4}>
-                                Giảm giá
+                            {/* <Grid item xs={12} sm={4} lg={4} md={4}>
+                                Chiết khấu
                             </Grid>
                             <Grid item xs={12} sm={8} lg={8} md={8}>
-                                <Typography className="tongtien">1,200,000</Typography>
-                            </Grid>
+                                <Typography className="tongtien">
+                                    {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
+                                </Typography>
+                            </Grid> */}
                             <Grid item xs={12} sm={4} lg={4} md={4}>
                                 Tổng giảm giá
                             </Grid>
                             <Grid item xs={12} sm={8} lg={8} md={8}>
-                                <Typography className="tongtien">1,200,000</Typography>
+                                <Typography className="tongtien">
+                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                </Typography>
                             </Grid>
                             <Grid
                                 item
@@ -358,7 +383,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                         fontSize: '16px',
                                         fontWeight: 500
                                     }}>
-                                    1,200,000
+                                    {Utils.formatNumber(hoadon.tongThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid
@@ -372,7 +397,8 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                     variant="contained"
                                     className="button-container"
                                     fullWidth
-                                    sx={{ height: 45 }}>
+                                    sx={{ height: 45 }}
+                                    onClick={saveHoaDon}>
                                     Thanh toán
                                 </Button>
                             </Grid>

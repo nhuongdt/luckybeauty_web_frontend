@@ -1,4 +1,5 @@
 import { Guid } from 'guid-typescript';
+import NhanVienThucHienDto from '../nhan_vien_thuc_hien/NhanVienThucHienDto';
 
 export default class HoaDonChiTietDto {
     id = Guid.create().toString();
@@ -12,6 +13,8 @@ export default class HoaDonChiTietDto {
     tienThue? = 0;
     ghiChu = '';
     trangThai? = 3; // 0.Xóa, 1.Tạm lưu, 2.Đang xử lý, 3.Hoàn thành
+
+    nhanVienThucHien?: NhanVienThucHienDto[];
 
     get thanhTienTruocCK() {
         return this.soLuong * this.donGiaTruocCK;
@@ -59,5 +62,6 @@ export default class HoaDonChiTietDto {
         this.tienThue = tienThue;
         this.ghiChu = ghiChu;
         this.trangThai = trangThai;
+        this.nhanVienThucHien = [];
     }
 }

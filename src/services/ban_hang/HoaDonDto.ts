@@ -11,10 +11,13 @@ export default class HoaDonDto {
     ngayLapHoaDon = new Date();
     tongTienHang = 0;
     pTGiamGiaHD? = 0;
-    tongGiamGiaHD? = 0;
+    tongGiamGiaHD = 0;
     tongThanhToan = 0;
     ghiChuHD? = '';
     trangThai? = 3; // 0.Xóa, 1.Tạm lưu, 2.Đang xử lý, 3.Hoàn thành
+
+    tongTienHangChuaChietKhau = 0;
+    tongChietKhauHangHoa = 0;
 
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
@@ -26,6 +29,8 @@ export default class HoaDonDto {
         idNhanVien = null,
         maHoaDon = '',
         ngayLapHoaDon = new Date(),
+        tongTienHangChuaChietKhau = 0,
+        tongChietKhauHangHoa = 0,
         tongTienHang = 0,
         pTGiamGiaHD = 0,
         tongGiamGiaHD = 0,
@@ -40,6 +45,8 @@ export default class HoaDonDto {
         this.idNhanVien = idNhanVien;
         this.maHoaDon = maHoaDon;
         this.ngayLapHoaDon = ngayLapHoaDon;
+        this.tongTienHangChuaChietKhau = tongTienHangChuaChietKhau;
+        this.tongChietKhauHangHoa = tongChietKhauHangHoa;
         this.tongTienHang = tongTienHang;
         this.pTGiamGiaHD = pTGiamGiaHD;
         this.tongGiamGiaHD = tongGiamGiaHD;

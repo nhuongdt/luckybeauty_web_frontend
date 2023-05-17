@@ -13,8 +13,6 @@ export default class PageHoaDonDto extends HoaDonDto {
 
     txtTrangThaiHD = 'Hoàn thành';
 
-    // khachhang?: KhachHangItemDto; // object (test todo)
-
     constructor({
         idKhachHang = null,
         maKhachHang = '',
@@ -24,13 +22,6 @@ export default class PageHoaDonDto extends HoaDonDto {
         txtTrangThaiHD = 'Hoàn thành',
         maNhanVien = '',
         tenNhanVien = ''
-        // khachhang = {
-        //     id: Guid.createEmpty(),
-        //     maKhachHang: '',
-        //     tenKhachHang: '',
-        //     soDienThoai: '',
-        //     tongTichDiem: 0
-        // }
     }) {
         super({ idKhachHang: idKhachHang });
         this.maKhachHang = maKhachHang;
