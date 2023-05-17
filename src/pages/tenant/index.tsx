@@ -1,9 +1,7 @@
-import React, { Component, FormEventHandler } from 'react';
+import React, { FormEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import CreateTenantInput from '../../services/tenant/dto/createTenantInput';
 import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import AppComponentBase from '../../components/AppComponentBase';
-import { EntityDto } from '../../services/dto/entityDto';
 import tenantService from '../../services/tenant/tenantService';
 import '../../custom.css';
 import {
@@ -14,7 +12,6 @@ import {
     SearchOutlined,
     UploadOutlined
 } from '@ant-design/icons';
-import Stores from '../../stores/storeIdentifier';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import TenantModel from '../../models/Tenants/TenantModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -118,11 +115,11 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
     };
     onOkDelete = () => {
         this.delete(this.state.tenantId);
-        this.getAll();
         this.onShowDelete();
     };
     async delete(input: number) {
         await tenantService.delete(input);
+        this.getAll();
     }
 
     handleCreate = async () => {
@@ -277,7 +274,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                     <div className="row">
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row">
+                            <div className="row align-items-center" style={{ height: '50px' }}>
                                 <div className="col-5 align-items-center">
                                     <label
                                         className="pagination-view-record align-items-center"

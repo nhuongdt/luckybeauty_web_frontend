@@ -1,9 +1,12 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, Row, Space } from 'antd';
+import { Button, Col, Progress, Row, Select, Space } from 'antd';
 import { Component, ReactNode } from 'react';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import '../../custom.css';
-import OverView from './components/ovver-view';
+import OverView from './components/OverView/ovver-view';
+import Appointment from './components/Appointment/appointments';
+import RevenueColumnChart from './components/Charts/colunmChart';
+import Statistical from './components/Statistical/statistical';
 class DashboardScreen extends Component {
     render(): ReactNode {
         return (
@@ -54,6 +57,8 @@ class DashboardScreen extends Component {
                 </div>
                 <div className="page-body mt-2">
                     <OverView />
+                    <Appointment />
+                    <Statistical />
                 </div>
             </div>
         );

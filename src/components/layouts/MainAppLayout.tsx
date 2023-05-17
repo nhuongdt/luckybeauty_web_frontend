@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Header from '../Header';
-import Footer from '../Footer';
 import AppSiderMenu from '../SiderMenu';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
-import jwt_decode from 'jwt-decode';
 import { Layout } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
-    if (accessToken) {
+    console.log(accessToken);
+    if (accessToken && !accessToken.includes('error')) {
         try {
             return true;
         } catch (error) {
@@ -29,7 +28,7 @@ const MainAppLayout: React.FC = () => {
     useEffect(() => {
         setOpen(!isAuthenticated);
         console.log(open);
-    }, [true]);
+    }, []);
 
     const confirm = () => {
         setOpen(false);
@@ -37,11 +36,11 @@ const MainAppLayout: React.FC = () => {
     };
     return (
         <>
-            <Layout style={{ minHeight: '100vh' }}>
+            <Layout>
                 <AppSiderMenu collapsed={collapsed} toggle={toggle} />
-                <Layout style={{ height: '100%' }}>
+                <Layout style={{ marginLeft: 240 }}>
                     <Header collapsed={collapsed} toggle={toggle} />
-                    <Content>
+                    <Content style={{ border: 'solid 0.1rem #e6e1e6' }}>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Content>

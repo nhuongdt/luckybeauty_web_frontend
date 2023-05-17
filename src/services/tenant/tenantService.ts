@@ -16,7 +16,7 @@ class TenantService {
     }
 
     public async delete(entityDto: number) {
-        const result = await http.delete(`api/services/app/Tenant/Delete?Id=${entityDto}`);
+        const result = await http.post(`api/services/app/Tenant/DeleteTenant?id=${entityDto}`);
         return result.data;
     }
 
@@ -35,7 +35,7 @@ class TenantService {
     }
 
     public async update(updateTenantInput: UpdateTenantInput): Promise<UpdateTenantOutput> {
-        const result = await http.put('api/services/app/Tenant/Update', updateTenantInput);
+        const result = await http.post('api/services/app/Tenant/UpdateTenant', updateTenantInput);
         return result.data.result;
     }
 }

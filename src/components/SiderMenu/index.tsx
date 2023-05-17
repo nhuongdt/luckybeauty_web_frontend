@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { appRouters } from '../routers/index';
 import './sider_menu.css';
-import { Avatar, Divider, Menu, Typography } from 'antd';
+import { Avatar, Menu, Typography } from 'antd';
 import { Link, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import http from '../../services/httpService';
 import Sider from 'antd/es/layout/Sider';
-import { Card } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import logo from '../../images/Lucky_beauty.jpg';
 interface Props {
@@ -49,7 +49,6 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
 
     return menu;
 }
-const { SubMenu } = Menu;
 const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
     const defaultPermission: string[] = [];
     const [lstPermission, setListPermission] = useState(defaultPermission);
@@ -81,7 +80,14 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
             collapsed={collapsed}
             onCollapse={toggle}
             width={240}
-            style={{ height: '100vh' }}
+            style={{
+                overflow: 'auto',
+                height: '100vh',
+                position: 'fixed',
+                left: 0,
+                top: 0,
+                bottom: 0
+            }}
             theme="light">
             <div className="side-menu">
                 <div className="toolbar">

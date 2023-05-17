@@ -9,3 +9,6 @@
     padding-bottom: 12px;
     height: 90vh;
 }
+.ant-form-item-label>label.ant-form-item-required::before{
+    content: none !important;
+ }

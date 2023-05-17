@@ -135,7 +135,7 @@ class CustomerScreen extends Component {
             });
             setTimeout(() => {
                 this.formRef.current?.setFieldsValue({ ...this.state.createOrEditKhachHang });
-            }, 100);
+            }, 1000);
         }
 
         this.setState({ IdKhachHang: entityDto });
@@ -323,7 +323,7 @@ class CustomerScreen extends Component {
                     <div className="row">
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row">
+                            <div className="row align-items-center" style={{ height: '50px' }}>
                                 <div className="col-5 text-center">
                                     <label
                                         className="pagination-view-record text-center"
@@ -334,7 +334,7 @@ class CustomerScreen extends Component {
                                         {this.state.totalCount} mục
                                     </label>
                                 </div>
-                                <div style={{ float: 'right' }} className="col-7">
+                                <div style={{ float: 'right' }} className="col-7 text-center">
                                     <Space
                                         size="middle"
                                         align="center"

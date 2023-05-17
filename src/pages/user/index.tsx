@@ -2,8 +2,6 @@ import React, { FormEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
 import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
 import userService from '../../services/user/userService';
-import { PagedResultDto } from '../../services/dto/pagedResultDto';
-import { GetUserOutput } from '../../services/user/dto/getUserOutput';
 import {
     DownloadOutlined,
     EditOutlined,
@@ -14,7 +12,6 @@ import {
 } from '@ant-design/icons';
 import '../../custom.css';
 import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
-import { AnyNaptrRecord, AnyNsRecord } from 'dns';
 import CreateOrEditUser from './components/create-or-edit-user';
 import { CreateOrUpdateUserInput } from '../../services/user/dto/createOrUpdateUserInput';
 import SuggestService from '../../services/suggests/SuggestService';
@@ -79,10 +76,12 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
             keyword: this.state.filter
         });
 
+        const suggestNhanSu = await SuggestService.SuggestNhanSu();
         this.setState({
             listUser: users.items,
             totalCount: users.totalCount,
-            totalPage: Math.ceil(users.totalCount / this.state.maxResultCount)
+            totalPage: Math.ceil(users.totalCount / this.state.maxResultCount),
+            suggestNhanSu: suggestNhanSu
         });
     }
 
@@ -105,11 +104,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     async createOrUpdateModalOpen(entityDto: number) {
         if (entityDto === 0) {
             this.formRef.current?.resetFields();
-            const suggestNhanSu = await SuggestService.SuggestNhanSu();
             const roles = await userService.getRoles();
             this.setState({
                 roles: roles,
-                suggestNhanSu: suggestNhanSu,
                 userEdit: {
                     userName: '',
                     name: '',
@@ -139,12 +136,13 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
 
     delete(input: number) {
         userService.delete(input);
+        this.getAll();
     }
 
     handleCreate = () => {
         const form = this.formRef.current;
 
-        form!.validateFields().then(async (values: any) => {
+        form?.validateFields().then(async (values) => {
             if (this.state.userId === 0) {
                 await userService.create(values);
             } else {
@@ -158,7 +156,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
 
             await this.getAll();
             this.setState({ modalVisible: false });
-            form!.resetFields();
+            form?.resetFields();
         });
     };
     onShowDelete = () => {
@@ -168,7 +166,6 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     };
     onOkDelete = () => {
         this.delete(this.state.userId);
-        this.getAll();
         this.onShowDelete();
     };
     handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
@@ -236,7 +233,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                         onClick={() => {
                                             this.createOrUpdateModalOpen(0);
                                         }}>
-                                        Thêm vai trò
+                                        Thêm người dùng
                                     </Button>
                                 </Space>
                             </div>
@@ -317,7 +314,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                     <div className="row">
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row">
+                            <div className="row align-items-center" style={{ height: '50px' }}>
                                 <div className="col-5 align-items-center">
                                     <label
                                         className="pagination-view-record align-items-center"

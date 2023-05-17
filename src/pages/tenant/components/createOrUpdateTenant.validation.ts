@@ -1,5 +1,3 @@
-import { AnyObject } from 'antd/es/table/Table';
-
 const rules = {
     tenancyName: [{ required: true, message: 'This FieldIs Required' }],
     name: [{ required: false, message: 'This Field Is Required' }],

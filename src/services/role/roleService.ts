@@ -27,12 +27,12 @@ class RoleService {
     }
 
     public async update(updateRoleInput: UpdateRoleInput): Promise<UpdateRoleOutput> {
-        const result = await http.put('api/services/app/Role/Update', updateRoleInput);
+        const result = await http.post('api/services/app/Role/UpdateRole', updateRoleInput);
         return result.data.result as UpdateRoleOutput;
     }
 
     public async delete(entityDto: number) {
-        const result = await http.delete(`api/services/app/Role/Delete?id=${entityDto}`);
+        const result = await http.post(`api/services/app/Role/DeleteRole`, { id: entityDto });
         return result.data;
     }
 
