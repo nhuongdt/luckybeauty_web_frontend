@@ -18,17 +18,15 @@
     line-height: 24px;
     color: #ffffff;
 }
-
+.login-page .MuiFormLabel-root {
+    font-size: 14px !important;
+}
 .login-page input {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     height: 44px;
     border: 0;
     border-radius: 6px;
-}
-
-.ant-form-item-label > label.ant-form-item-required::before {
-    content: none !important;
 }
 
 .login-label {
@@ -79,10 +77,6 @@
 .login-form-forgot {
     float: right;
     text-decoration: none;
-}
-
-.ant-col-rtl .login-form-forgot {
-    float: left;
 }
 
 .login-page {
@@ -186,16 +180,11 @@
     width: 100%;
 }
 
-.login-form .ant-input-affix-wrapper:hover {
-    border-width: 0;
-    border-inline-end-width: 0;
-    border-color: unset;
-}
-
 .btn-login {
     margin-top: 0;
     border-radius: 4px;
     margin-bottom: 28px;
+    margin-top: 34px;
 }
 
 .text-login {
@@ -242,4 +231,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+.bg-pw {
+    background: #f2f6fa;
+    border-radius: 6px;
 }

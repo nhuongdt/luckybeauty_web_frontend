@@ -1,13 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Input, Checkbox, Avatar, Box, TextField, FormControlLabel } from '@mui/material';
+import {
+    Grid,
+    Input,
+    Checkbox,
+    Avatar,
+    Box,
+    TextField,
+    FormControlLabel,
+    IconButton,
+    InputAdornment
+} from '@mui/material';
 import './login.css';
 import LoginModel from '../../models/Login/loginModel';
 import LoginService from '../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../images/Lucky_beauty.jpg';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
 import { Link } from 'react-router-dom';
 const LoginScreen: React.FC = () => {
+    const [showPassword, setShowPassword] = useState(false);
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
     return (
         <div className=" login-page">
             <div className="logo-login">
@@ -53,6 +69,7 @@ const LoginScreen: React.FC = () => {
                                 </Grid>
                                 <Grid xs={12} className="form-item">
                                     <TextField
+                                        className="bg-pw"
                                         name="userNameOrEmail"
                                         variant="outlined"
                                         label={<span className="login-label">Mật khẩu</span>}
@@ -62,6 +79,20 @@ const LoginScreen: React.FC = () => {
                                                     border: 'none'
                                                 }
                                             }
+                                        }}
+                                        type={showPassword ? 'text' : 'password'}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton onClick={handleShowPassword}>
+                                                        {showPassword ? (
+                                                            <VisibilityOff />
+                                                        ) : (
+                                                            <Visibility />
+                                                        )}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
                                         }}>
                                         <Input placeholder="Nhập email hoặc tài khoản" />
                                     </TextField>

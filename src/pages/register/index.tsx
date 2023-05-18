@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
-import passwordIcon from '../../images/showpassword.svg';
+
 import {
     Input,
     Checkbox,
