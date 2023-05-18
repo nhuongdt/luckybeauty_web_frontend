@@ -7,12 +7,13 @@ import {
     Checkbox,
     Grid,
     TextField,
-    FormControlLabel,
-    LinearProgress,
     IconButton,
-    InputAdornment
+    InputAdornment,
+    LinearProgress,
+    FormControlLabel,
+    Box
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 import logo from '../../images/Lucky_beauty.jpg';
@@ -34,7 +35,7 @@ const RegisterScreen: React.FC = () => {
     const handleSubmit = (event: any) => {
         event.preventDefault();
         setConfirm(true);
-        if (!confirm) {
+        if (confirm) {
             return (
                 <Navigate
                     to={{
@@ -45,19 +46,28 @@ const RegisterScreen: React.FC = () => {
         }
     };
     const [password, setPassword] = useState('');
+
     const [confirmPassword, setConfirmPassword] = useState('');
-    // const [passwordMatch, setPasswordMatch] = useState(true);
 
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
+        handleFieldChange();
     };
 
     const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(event.target.value);
+        handleFieldChange();
     };
 
     const passwordMatch = password === confirmPassword;
 
+    const [fieldsCompleted, setFieldsCompleted] = useState(0);
+    //tính progress bar
+    const handleFieldChange = () => {
+        setFieldsCompleted((prevCount) => prevCount + 1);
+    };
+
+    const progressPercent = (fieldsCompleted / 6) * 100;
     return (
         <div className="register-page">
             <div className="logo-register">
@@ -74,6 +84,7 @@ const RegisterScreen: React.FC = () => {
                             <Grid container sx={{ gap: '24px' }}>
                                 <Grid item xs={12}>
                                     <TextField
+                                        onChange={handleFieldChange}
                                         fullWidth
                                         name="hoVaTen"
                                         label={
@@ -95,6 +106,7 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
+                                        onChange={handleFieldChange}
                                         fullWidth
                                         name="email"
                                         label={
@@ -121,6 +133,7 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={6} className="w-5-0">
                                     <TextField
+                                        onChange={handleFieldChange}
                                         name="storeName w-100"
                                         label={<span className="login-label">Tên cửa hàng</span>}
                                         sx={{
@@ -136,6 +149,7 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={6} className="w-5-0">
                                     <TextField
+                                        onChange={handleFieldChange}
                                         name="soDienThoai"
                                         className="w-100"
                                         label={
@@ -242,7 +256,9 @@ const RegisterScreen: React.FC = () => {
                                     </TextField>
                                 </Grid>
                             </Grid>
-
+                            <Box sx={{ width: '100%' }}>
+                                <LinearProgress variant="determinate" value={progressPercent} />
+                            </Box>
                             <div>
                                 <FormControlLabel
                                     control={<Checkbox defaultChecked />}

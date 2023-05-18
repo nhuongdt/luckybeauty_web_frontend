@@ -53,7 +53,6 @@ const ApiVN: React.FC = () => {
                     variant="standard"
                     value={selectedProvince}
                     onChange={handleProvinceChange}
-                    defaultValue={null}
                     inputProps={{
                         name: 'province',
                         id: 'province-native-select'
@@ -79,7 +78,6 @@ const ApiVN: React.FC = () => {
                 <NativeSelect
                     value={selectedDistrict}
                     onChange={handleDistrictChange}
-                    defaultValue=""
                     inputProps={{
                         name: 'district',
                         id: 'district-native-select'
