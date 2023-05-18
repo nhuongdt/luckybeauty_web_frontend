@@ -57,9 +57,12 @@ const ApiVN: React.FC = () => {
     return (
         <div className="select-row">
             <FormControl>
-                <InputLabel htmlFor="province-native-select">Tỉnh/Thành phố</InputLabel>
+                <InputLabel htmlFor="province-native-select" className="login-label">
+                    Tỉnh/Thành phố
+                </InputLabel>
                 <Select
                     defaultValue=""
+                    className="login-label"
                     inputProps={{
                         name: 'province',
                         id: 'province-native-select'
@@ -78,7 +81,9 @@ const ApiVN: React.FC = () => {
             </FormControl>
 
             <FormControl>
-                <InputLabel htmlFor="district-native-select">Quận/Huyện</InputLabel>
+                <InputLabel htmlFor="district-native-select" className="login-label">
+                    Quận/Huyện
+                </InputLabel>
                 <Select
                     sx={{
                         '& .MuiOutlinedInput-notchedOutline': {

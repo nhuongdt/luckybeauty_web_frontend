@@ -96,7 +96,7 @@ const RegisterScreen: React.FC = () => {
                                         fullWidth
                                         name="hoVaTen"
                                         label={
-                                            <span>
+                                            <span className="login-label">
                                                 Họ và tên
                                                 <span style={{ color: 'red' }}>*</span>
                                             </span>
@@ -117,7 +117,7 @@ const RegisterScreen: React.FC = () => {
                                         fullWidth
                                         name="email"
                                         label={
-                                            <span>
+                                            <span className="login-label">
                                                 Email
                                                 <span style={{ color: 'red' }}>*</span>
                                             </span>
