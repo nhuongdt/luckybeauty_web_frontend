@@ -30,11 +30,11 @@ const RegisterScreen: React.FC = () => {
     const handleShowPassword2 = () => {
         setShowPassword2(!showPassword2);
     };
+
     const handleSubmit = (event: any) => {
         event.preventDefault();
         setConfirm(true);
-
-        if (confirm == true) {
+        if (!confirm) {
             return (
                 <Navigate
                     to={{
@@ -58,25 +58,6 @@ const RegisterScreen: React.FC = () => {
 
     const passwordMatch = password === confirmPassword;
 
-    const [progress, setProgress] = React.useState(0);
-    React.useEffect(() => {
-        const timer = setInterval(() => {
-            setProgress((oldProgress) => {
-                if (oldProgress === 100) {
-                    return 0;
-                }
-                const diff = Math.random() * 10;
-                return Math.min(oldProgress + diff, 100);
-            });
-        }, 500);
-
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
-    const toggleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
     return (
         <div className="register-page">
             <div className="logo-register">
@@ -266,7 +247,7 @@ const RegisterScreen: React.FC = () => {
                                 <FormControlLabel
                                     control={<Checkbox defaultChecked />}
                                     label={
-                                        <p>
+                                        <p className="dieu-khoan">
                                             Tôi đồng ý với <Link to="#">Điều khoản</Link> và{' '}
                                             <Link to="#">Bảo mật</Link>
                                         </p>
@@ -278,7 +259,7 @@ const RegisterScreen: React.FC = () => {
                                 type="submit"
                                 className="btn btn-primary btn-register"
                                 onClick={handleSubmit}>
-                                <span className="text-login">Đăng ký</span>
+                                <span className="text-login">Tạo tài khoản</span>
                             </button>
                         </form>
                         <p className="has-login">

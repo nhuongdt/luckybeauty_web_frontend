@@ -151,6 +151,7 @@ p {
 .register-page .MuiInputLabel-formControl {
     font-size: 14px;
     top: -5px;
+    font-weight: 500;
 }
 
 .register-page .MuiSelect-select {
@@ -167,4 +168,40 @@ p {
 .bg-pw {
     background: #f2f6fa;
     border-radius: 6px;
+}
+.select-location {
+    height: 40px;
+    background: #f2f6fa;
+    border-radius: 6px;
+}
+.register-page .MuiInputBase-root::before {
+    border-bottom: none !important;
+    display: none !important;
+}
+.register-page .MuiInputBase-root::after {
+    display: none !important;
+}
+/* .register-page .MuiSvgIcon-root {
+    top: -9px !important;
+} */
+.register-page .MuiFormControl-root {
+    width: 100%;
+}
+.register-page select {
+    height: 31px;
+    border-radius: 6px;
+    font-size: 14px;
+    padding-left: 10px;
+    color: #666466;
+}
+.register-page .MuiInputBase-root {
+    margin-top: 0;
+}
+.dieu-khoan a {
+    text-decoration: none;
+    color: #319dff;
+}
+.dieu-khoan {
+    font-size: 14px;
+    color: #666466;
 }

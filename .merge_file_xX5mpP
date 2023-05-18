@@ -1,71 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { NativeSelect, FormControl, InputLabel, Select } from '@mui/material/';
+import { NativeSelect, FormControl, InputLabel, Box } from '@mui/material/';
 import axios from 'axios';
 
 interface Province {
     codeName: string;
     code: number;
     name: string;
-    districts: District[];
 }
 interface District {
     codeName: string;
     name: string;
     code: number;
-    division_type: string;
-    province_code: number;
-    wards: [];
 }
 const ApiVN: React.FC = () => {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [selectedProvince, setSelectedProvince] = useState<string>('');
     const [districts, setDistricts] = useState<District[]>([]);
-    const [selectedDistrict, setSelectedDistrict] = useState<any>('');
+    const [selectedDistrict, setSelectedDistrict] = useState<string>('');
     useEffect(() => {
         axios
-            .get<Province[]>('https://provinces.open-api.vn/api/?depth=2')
+            .get<Province[]>('https://provinces.open-api.vn/api/p/')
             .then((response) => {
                 setProvinces(response.data);
             })
             .catch((error) => console.log(error));
     }, []);
 
-    const handleProvinceChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-        const provinceCode = e.target.value as string;
-        setSelectedProvince(provinceCode);
-        const selectedProvinceObj = provinces.find(
-            (province) => province.code.toString() === provinceCode
-        );
-        if (selectedProvinceObj) {
-            setDistricts(selectedProvinceObj.districts);
+    useEffect(() => {
+        if (selectedProvince) {
+            axios
+                .get<District[]>(`https://provinces.open-api.vn/api/p/${selectedProvince}/?depth=2`)
+                .then((response) => {
+                    const districtList = response.data;
+                    setDistricts(districtList);
+                    console.log(districts);
+                })
+                .catch((error) => console.log(error));
+        } else {
+            setDistricts([]);
         }
-    };
-
-    const handleDistrictChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-        setSelectedDistrict(e.target.value as string);
-    };
+    }, [selectedProvince]);
 
     return (
         <div className="select-row">
-            <FormControl className="select-location">
+            <FormControl>
                 <InputLabel htmlFor="province-native-select">Tỉnh/Thành phố</InputLabel>
                 <NativeSelect
-                    variant="standard"
                     value={selectedProvince}
-                    onChange={handleProvinceChange}
-                    defaultValue={null}
+                    onChange={(e) => setSelectedProvince(e.target.value)}
                     inputProps={{
                         name: 'province',
                         id: 'province-native-select'
-                    }}
-                    sx={{
-                        '& .MuiOutlinedInput-root': {
-                            '& fieldset': {
-                                border: 'none'
-                            }
-                        }
                     }}>
-                    <option></option>
                     {provinces.map((province) => (
                         <option key={province.code} value={province.code}>
                             {province.name}
@@ -74,18 +60,15 @@ const ApiVN: React.FC = () => {
                 </NativeSelect>
             </FormControl>
 
-            <FormControl className="select-location">
+            <FormControl>
                 <InputLabel htmlFor="district-native-select">Quận/Huyện</InputLabel>
                 <NativeSelect
-                    value={selectedDistrict}
-                    onChange={handleDistrictChange}
-                    defaultValue=""
+                    onChange={(e) => setSelectedDistrict(e.target.value)}
                     inputProps={{
                         name: 'district',
                         id: 'district-native-select'
                     }}
                     disabled={!selectedProvince}>
-                    <option></option>
                     {districts.length > 4 &&
                         districts.map((district) => (
                             <option key={district.code} value={district.code}>
