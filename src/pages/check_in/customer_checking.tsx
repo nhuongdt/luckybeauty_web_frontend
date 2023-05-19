@@ -14,6 +14,8 @@ import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';
 
+import { dbDexie } from '../../lib/dexie/dexieDB';
+
 const shortNameCus = createTheme({
     components: {
         MuiButton: {
@@ -58,7 +60,11 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         PageLoad();
     }, []);
 
-    const saveCheckInOK = (dataCheckIn: any) => {
+    useEffect(() => {
+        // add/put to Dexie
+    }, []);
+
+    const saveCheckInOK = async (dataCheckIn: any) => {
         console.log('saveCheckInOK ', dataCheckIn);
 
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
@@ -70,22 +76,26 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             tongTichDiem: dataCheckIn.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
-        console.log('cusChecking ', cusChecking);
         setListCusChecking([...listCusChecking, cusChecking]);
 
-        // // save cache checkin
-        // const lcCheckIn = localStorage.getItem('lcCusCheckIn');
-        // let arr = [];
-        // if (!Utils.checkNull(lcCheckIn)) {
-        //     arr = JSON.parse(lcCheckIn ?? '');
-        // }
-        // // remove & add again
-        // arr = arr.filter((x: any) => x.idCheckIn !== idCheckin);
-        // arr.push(cusChecking);
-        // localStorage.setItem('lcCusCheckIn', JSON.stringify(arr));
+        dbDexie.khachCheckIn.add(cusChecking);
+
+        // check exist dexie
+        const cus = await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(dataCheckIn.idKhachHang)
+            .toArray();
+        if (cus.length === 0) {
+            // remove & add again
+            await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
+            await dbDexie.khachCheckIn.add(dataCheckIn);
+        } else {
+            // add to dexie
+            await dbDexie.khachCheckIn.add(dataCheckIn);
+        }
     };
 
-    const handleClickCustomer = (item: any) => {
+    const handleClickCustomer = async (item: any) => {
         console.log('item.idKhachHang ', item.idKhachHang);
         setCusChecking((old: any) => {
             return {
@@ -98,6 +108,15 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             };
         });
         hanleChoseCustomer(item);
+
+        // add to dexie
+        const cus = await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(item.idKhachHang)
+            .toArray();
+        if (cus.length === 0) {
+            await dbDexie.khachCheckIn.add(item);
+        }
     };
     return (
         <>
