@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NativeSelect, FormControl, InputLabel, Box } from '@mui/material/';
+import { NativeSelect, FormControl, InputLabel, Select } from '@mui/material/';
 import axios from 'axios';
 
 interface Province {
@@ -20,7 +20,7 @@ const ApiVN: React.FC = () => {
     const [provinces, setProvinces] = useState<Province[]>([]);
     const [selectedProvince, setSelectedProvince] = useState<string>('');
     const [districts, setDistricts] = useState<District[]>([]);
-    const [selectedDistrict, setSelectedDistrict] = useState<string>('');
+    const [selectedDistrict, setSelectedDistrict] = useState<any>('');
     useEffect(() => {
         axios
             .get<Province[]>('https://provinces.open-api.vn/api/?depth=2')
@@ -47,15 +47,24 @@ const ApiVN: React.FC = () => {
 
     return (
         <div className="select-row">
-            <FormControl>
+            <FormControl className="select-location">
                 <InputLabel htmlFor="province-native-select">Tỉnh/Thành phố</InputLabel>
                 <NativeSelect
+                    variant="standard"
                     value={selectedProvince}
                     onChange={handleProvinceChange}
                     inputProps={{
                         name: 'province',
                         id: 'province-native-select'
+                    }}
+                    sx={{
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': {
+                                border: 'none'
+                            }
+                        }
                     }}>
+                    <option></option>
                     {provinces.map((province) => (
                         <option key={province.code} value={province.code}>
                             {province.name}
@@ -64,7 +73,7 @@ const ApiVN: React.FC = () => {
                 </NativeSelect>
             </FormControl>
 
-            <FormControl>
+            <FormControl className="select-location">
                 <InputLabel htmlFor="district-native-select">Quận/Huyện</InputLabel>
                 <NativeSelect
                     value={selectedDistrict}
@@ -74,6 +83,7 @@ const ApiVN: React.FC = () => {
                         id: 'district-native-select'
                     }}
                     disabled={!selectedProvince}>
+                    <option></option>
                     {districts.length > 4 &&
                         districts.map((district) => (
                             <option key={district.code} value={district.code}>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { appRouters } from '../routers/index';
 import './sider_menu.css';
 import { Avatar, Menu, Typography } from 'antd';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import http from '../../services/httpService';
 import Sider from 'antd/es/layout/Sider';
@@ -55,6 +55,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
     const mainAppRoutes = appRouters.mainRoutes[1].routes.filter(
         (item: { showInMenu: boolean }) => item.showInMenu === true
     );
+    const navigate = useNavigate();
     const location = useLocation();
     const itemMenus = convertMenuItemsToMenu(mainAppRoutes, lstPermission);
     useEffect(() => {
@@ -118,8 +119,14 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                         <Link to="/login"></Link>;
                     }}
                 />
-                <Link
-                    to={'/login'}
+                <a
+                    onClick={() => {
+                        console.log('ooo');
+                        Object.keys(Cookies.get()).forEach((cookieName) => {
+                            Cookies.remove(cookieName);
+                        });
+                        navigate('/');
+                    }}
                     style={{
                         textDecoration: 'none',
                         color: '#4C4B4C',
@@ -128,7 +135,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                         fontFamily: 'roboto'
                     }}>
                     Đăng xuất
-                </Link>
+                </a>
             </div>
         </Sider>
     );
