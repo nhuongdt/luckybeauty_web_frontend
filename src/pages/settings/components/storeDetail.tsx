@@ -1,122 +1,210 @@
 import { InboxOutlined, PlusOutlined } from '@ant-design/icons';
-import { Avatar, Button, Col, Form, Input, Row, Space, Typography, Upload } from 'antd';
-import { Component, ReactNode } from 'react';
+import { getDataGridUtilityClass } from '@mui/x-data-grid';
+import { Avatar, Col, Form, Input, Row, Space, Typography, Upload } from 'antd';
+import { ChangeEvent, Component, ReactNode } from 'react';
 import { AiOutlineCamera } from 'react-icons/ai';
+import { EditCuaHangDto } from '../../../services/cua_hang/Dto/EditCuaHangDto';
+import { Button, Grid, TextField } from '@mui/material';
+import cuaHangService from '../../../services/cua_hang/cuaHangService';
+import Cookies from 'js-cookie';
 const { Title } = Typography;
 const { Dragger } = Upload;
 class StoreDetail extends Component {
+    state = {
+        editCuaHang: {
+            id: '',
+            diaChi: '',
+            facebook: '',
+            ghiChu: '',
+            instagram: '',
+            logo: '',
+            maSoThue: '',
+            soDienThoai: '',
+            tenCongTy: '',
+            twitter: '',
+            website: ''
+        } as EditCuaHangDto
+    };
+    async getData() {
+        const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? '';
+        const cuaHang = await cuaHangService.getCongTyEdit(idChiNhanh);
+        console.log(cuaHang);
+        this.setState({
+            editCuaHang: cuaHang
+        });
+    }
+    async componentDidMount() {
+        await this.getData();
+        console.log(this.state.editCuaHang);
+    }
+    handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        this.setState({
+            editCuaHang: {
+                ...this.state.editCuaHang,
+                [name]: value
+            }
+        });
+    };
+    handSubmit = async () => {
+        await cuaHangService.Update(this.state.editCuaHang);
+    };
     render(): ReactNode {
+        const { editCuaHang } = this.state;
         return (
             <div className="container-fluid bg-white">
-                <div style={{ height: '70px' }}>
-                    <Row align={'middle'} justify={'space-between'}>
-                        <Col span={12}>
-                            <div>
-                                <div className="pt-2">
-                                    <div>
-                                        <h4>Chi tiết cửa hàng</h4>
+                <form>
+                    <div style={{ height: '70px' }}>
+                        <Grid container>
+                            <Grid item xs={6}>
+                                <div>
+                                    <div className="pt-2">
+                                        <div>
+                                            <h4>Chi tiết cửa hàng</h4>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </Col>
-                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <div>
-                                <Space align="center" size="middle">
-                                    <Button
-                                        size="large"
-                                        className="btn btn-add-item"
-                                        onClick={() => {
-                                            console.log('ok');
-                                        }}>
-                                        Cập nhật
-                                    </Button>
-                                </Space>
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
-                <div className="page-content pt-2">
-                    <Form layout="vertical">
-                        <Row gutter={16}>
-                            <Col span={7}>
-                                <Dragger height={233}>
-                                    <Title level={5}>Logo cửa hàng</Title>
-                                    <p className="ant-upload-drag-icon">
-                                        <Avatar
-                                            icon={<AiOutlineCamera size={50} />}
-                                            style={{ width: '100px', height: '100px' }}></Avatar>
-                                    </p>
-                                    <p className="ant-upload-hint">
-                                        Định dạng *.jpeg, *.jpg, *.png
-                                    </p>
-                                    <p className="ant-upload-hint">Kích thước tối thiểu 3M</p>
-                                </Dragger>
-                            </Col>
-                            <Col span={17}>
-                                <Title level={5}>Thông tin cửa hàng</Title>
-                                <Row gutter={8}>
-                                    <Col span={12}>
-                                        <Form.Item label="Tên cửa hàng" name={'storeName'}>
-                                            <Input size={'large'} placeholder="Nhập tên" />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item label="Địa chỉ" name={'address'}>
-                                            <Input size={'large'} placeholder="Nhập địa chỉ" />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                                <Row gutter={8}>
-                                    <Col span={12}>
-                                        <Form.Item label="Số điện thoại" name={'phoneNumber'}>
-                                            <Input
-                                                size={'large'}
+                            </Grid>
+                            <Grid item xs={6}>
+                                <div style={{ float: 'right' }}>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            className="btn btn-add-item"
+                                            onClick={this.handSubmit}>
+                                            Cập nhật
+                                        </Button>
+                                    </Space>
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </div>
+                    <div className="page-content pt-2">
+                        <form>
+                            <Grid container spacing={4}>
+                                <Grid item xs={4}>
+                                    <Dragger height={233}>
+                                        <Title level={5}>Logo cửa hàng</Title>
+                                        <p className="ant-upload-drag-icon">
+                                            <Avatar
+                                                icon={<AiOutlineCamera size={50} />}
+                                                style={{
+                                                    width: '100px',
+                                                    height: '100px'
+                                                }}></Avatar>
+                                        </p>
+                                        <p className="ant-upload-hint">
+                                            Định dạng *.jpeg, *.jpg, *.png
+                                        </p>
+                                        <p className="ant-upload-hint">Kích thước tối thiểu 3M</p>
+                                    </Dragger>
+                                </Grid>
+                                <Grid item xs={8}>
+                                    <Title level={5}>Thông tin cửa hàng</Title>
+                                    <Grid container spacing={1} className="mt-2">
+                                        <Grid item xs={6}>
+                                            <label>Tên công ty</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="tenCongTy"
+                                                placeholder="Nhập tên"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.tenCongTy}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <label>Địa chỉ</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="diaChi"
+                                                placeholder="Nhập địa chỉ"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.diaChi}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container spacing={1} className="mt-2">
+                                        <Grid item xs={6}>
+                                            <label>Số điện thoại</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="soDienThoai"
                                                 placeholder="Nhập số điện thoại"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.soDienThoai}
                                             />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item label="Mã số thuế" name={'maSoThue'}>
-                                            <Input size={'large'} placeholder="Nhập mã số thuế" />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                                <hr></hr>
-                                <Title level={5}>Liên kết trực tuyến</Title>
-                                <Row gutter={8}>
-                                    <Col span={12}>
-                                        <Form.Item label="Website" name={'website'}>
-                                            <Input size={'large'} placeholder="Nhập " />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item label="Facebook" name={'facebook'}>
-                                            <Input
-                                                size={'large'}
-                                                placeholder="Nhập Facebooking link"
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <label>Mã số thuế</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="maSoThue"
+                                                placeholder="Nhập mã số thuế"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.maSoThue}
                                             />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                                <Row gutter={8}>
-                                    <Col span={12}>
-                                        <Form.Item label="Instagram" name={'instagram'}>
-                                            <Input
-                                                size={'large'}
-                                                placeholder="Nhập Instatgram Url"
+                                        </Grid>
+                                    </Grid>
+                                    <hr></hr>
+                                    <Title level={5}>Liên kết trực tuyến</Title>
+                                    <Grid container spacing={1} className="mt-2">
+                                        <Grid item xs={6}>
+                                            <label>Website</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="website"
+                                                placeholder="Website"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.website}
                                             />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col span={12}>
-                                        <Form.Item label="Twitter" name={'twitter'}>
-                                            <Input size={'large'} placeholder="Nhập Twitter Url" />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                            </Col>
-                        </Row>
-                    </Form>
-                </div>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <label>Facebook</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="facebook"
+                                                placeholder="Facebook"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.facebook}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container spacing={1} className="mt-2">
+                                        <Grid item xs={6}>
+                                            <label>Instagram</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="instagram"
+                                                placeholder="Instagram"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.instagram}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <label>Twitter</label>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                name="twitter"
+                                                placeholder="twitter"
+                                                onChange={this.handleChange}
+                                                value={editCuaHang.twitter}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </form>
+                    </div>
+                </form>
             </div>
         );
     }

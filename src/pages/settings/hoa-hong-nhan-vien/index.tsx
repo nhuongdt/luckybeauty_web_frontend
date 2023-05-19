@@ -62,7 +62,7 @@ class HoaHongNhanVienScreen extends Component {
                                         <Checkbox />
                                     </TableCell>
                                     <TableCell className="text-td-table" align="center">
-                                        STT 
+                                        STT
                                     </TableCell>
                                     <TableCell className="text-td-table">Tên chi nhánh</TableCell>
                                     <TableCell className="text-td-table" align="left">

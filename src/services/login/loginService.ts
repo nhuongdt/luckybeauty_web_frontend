@@ -25,6 +25,7 @@ class LoginService {
             tenantId = 0;
         }
         Cookies.set('TenantId', tenantId);
+        console.log(tenantId);
         return result.data.result;
     }
 
@@ -40,7 +41,7 @@ class LoginService {
         if (tenantId?.toString() !== '0') {
             const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
                 headers: {
-                    'Abp.TenantId': tenantId === '1' ? '' : tenantId,
+                    'Abp.TenantId': tenantId === '1' ? '1' : tenantId,
                     'Content-Type': 'application/json'
                 }
             });
@@ -60,9 +61,19 @@ class LoginService {
                     Cookies.set('isLogin', 'true');
                     result = apiResult.data.success;
                 }
+                this.GetChiNhanhByUserId(apiResult.data.result['userId']);
             }
         }
         return result;
+    }
+    async GetChiNhanhByUserId(userId: number) {
+        const result = await http.get(`api/services/app/chinhanh/getbyuserid?userid=${userId}`, {
+            headers: {
+                Authorization: 'Bearer ' + Cookies.get('accessToken')
+            }
+        });
+        Cookies.set('IdChiNhanh', result.data.result[0]['id']);
+        return result.data.result;
     }
 }
 export default new LoginService();

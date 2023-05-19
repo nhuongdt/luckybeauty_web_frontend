@@ -105,6 +105,7 @@ const LoginScreen: React.FC = () => {
                                 <Grid xs={12} className="form-item">
                                     <span className="login-label">Mật khẩu</span>
                                     <TextField
+                                        className="bg-pw"
                                         onChange={(value) => {
                                             setPassword(value.target.value);
                                         }}
