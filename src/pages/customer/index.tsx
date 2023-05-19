@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import EventIcon from '@mui/icons-material/Event';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+
 import {
     Button,
     ButtonGroup,
@@ -23,7 +23,7 @@ import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
-import dateIcon from '../../images/calendar-5.svg';
+import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 const Customer: React.FC = () => {
     const breadcrumbs = [
         <Typography key="1" color="#999699" fontSize="14px">
@@ -42,7 +42,7 @@ const Customer: React.FC = () => {
             headerName: 'Tên khách hàng',
             width: 185,
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
                     <img
                         src={params.row.avatar}
                         alt="Avatar"
@@ -76,8 +76,8 @@ const Customer: React.FC = () => {
             field: 'recentAppointment',
             headerName: 'Cuộc hẹn gần đây',
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <EventIcon style={{ marginRight: 4 }} />
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                    <DateIcon style={{ marginRight: 4 }} />
                     {params.value}
                 </div>
             ),
@@ -88,7 +88,10 @@ const Customer: React.FC = () => {
             field: 'source',
             headerName: 'Nguồn',
 
-            width: 86
+            width: 86,
+            renderCell: (params) => (
+                <div className={params.field === 'source' ? 'last-column' : ''}>{params.value}</div>
+            )
         }
     ];
 
@@ -141,6 +144,7 @@ const Customer: React.FC = () => {
             gender: 'Nam',
             avatar: avatar
         },
+
         { id: 2, name: 'Lannister', phone: 'Cersei', age: 42, location: 'Hà Nội', avatar: avatar },
         { id: 3, name: 'Lannister', phone: 'Jaime', age: 45, location: 'Hà Nội', avatar: avatar },
         { id: 4, name: 'Stark', phone: 'Arya', age: 16, location: 'Hà Nội', avatar: avatar },
@@ -161,14 +165,15 @@ const Customer: React.FC = () => {
     const handleToggle = () => {
         setToggle(!toggle);
     };
+
     return (
         <Box
             className="customer-page"
             paddingLeft="2.2222222222222223vw"
             paddingRight="2.2222222222222223vw"
             paddingTop="1.5277777777777777vw">
-            <Grid container alignItems="center">
-                <Grid item xs={5}>
+            <Grid container alignItems="center" justifyContent="space-between">
+                <Grid item xs="auto">
                     <Breadcrumbs separator="›" aria-label="breadcrumb">
                         {breadcrumbs}
                     </Breadcrumbs>
@@ -182,7 +187,7 @@ const Customer: React.FC = () => {
                         Danh sách khách hàng
                     </Typography>
                 </Grid>
-                <Grid xs={7} item display="flex" gap="8px" justifyContent="end">
+                <Grid xs="auto" item display="flex" gap="8px" justifyContent="end">
                     <Box component="form" className="form-search">
                         <TextField
                             sx={{
@@ -308,8 +313,8 @@ const Customer: React.FC = () => {
                             <label htmlFor="gender">Giới tính</label>
                             <Select
                                 id="gender"
-                                placeholder="Lựa chọn"
                                 fullWidth
+                                defaultValue={0}
                                 sx={{
                                     height: '48px',
                                     backgroundColor: '#fff',
@@ -317,6 +322,7 @@ const Customer: React.FC = () => {
                                     borderRadius: '8px',
                                     borderColor: '#E6E1E6'
                                 }}>
+                                <MenuItem value={0}>Lựa chọn</MenuItem>
                                 <MenuItem value={1}>Nữ</MenuItem>
                                 <MenuItem value={2}>Nam</MenuItem>
                             </Select>
@@ -350,7 +356,8 @@ const Customer: React.FC = () => {
                         </Grid>
                         <Grid item xs={6}></Grid>
                         <Grid item xs={6}></Grid>
-                        <ButtonGroup sx={{ height: '32px' }}>
+                        <ButtonGroup
+                            sx={{ height: '32px', position: 'absolute', bottom: '0', right: '0' }}>
                             <Button
                                 variant="contained"
                                 sx={{
