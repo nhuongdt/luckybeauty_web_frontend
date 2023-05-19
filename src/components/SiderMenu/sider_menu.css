@@ -48,7 +48,7 @@
 }
 
 .active-menu-item-title {
-    color: #7C3367;
+    color: #7c3367;
     height: 40px;
     align-items: center;
     justify-content: space-between;
@@ -68,7 +68,7 @@
 }
 
 .side-menu {
-    height: calc(100% - 100px) ;
+    height: calc(100% - 100px);
     /*Đặt chiều cao tối thiểu cho SiderMenu */
     overflow-y: auto;
     /*Hiển thị thanh cuộn khi nội dung vượt quá kích thước của SiderMenu*/
@@ -76,13 +76,13 @@
 
 .ant-menu-item-selected {
     background-color: #f2ebf0 !important;
-    color: #7C3367 !important;
+    color: #7c3367 !important;
     font-size: 16px;
 }
 
 .ant-menu-item:hover {
     background-color: #f2ebf0 !important;
-    color: #7C3367 !important;
+    color: #7c3367 !important;
     font-size: 16px;
     line-height: 24px;
 }
@@ -118,16 +118,16 @@
 }
 
 .ant-menu-submenu-open {
-    color: #7C3367 !important;
+    color: #7c3367 !important;
     font-size: 16px;
 }
 
 .ant-menu-submenu-selected {
-    color: #7C3367 !important;
+    color: #7c3367 !important;
 }
 
 .ant-menu-submenu:hover {
-    color: #7C3367 !important;
+    color: #7c3367 !important;
     font-size: 16px;
 }
 
@@ -147,7 +147,7 @@
 
 .hr {
     height: 1px;
-    background: #E6E1E6;
+    background: #e6e1e6;
     width: 100%;
     justify-content: center;
     align-items: center;
@@ -168,5 +168,5 @@
     font-weight: 700;
     font-size: 18px;
     line-height: 28px;
-    color: #1F0D1A;
+    color: #1f0d1a;
 }
