@@ -2,39 +2,39 @@ import * as React from 'react';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 const Customer: React.FC = () => {
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 16 },
-        { field: 'name', headerName: 'Tên nhân viên', width: 171 },
+        { field: 'id', headerName: 'ID', width: 50 },
+        { field: 'name', headerName: 'Tên khách hàng', width: 185 },
         { field: 'phone', headerName: 'Số điện thoại', width: 114 },
+        {
+            field: 'group',
+            headerName: 'Nhóm khách',
+
+            width: 112
+        },
         { field: 'gender', headerName: 'Giới tính', width: 89 },
         {
-            field: 'age',
-            headerName: 'Ngày sinh',
-            type: 'number',
-            width: 112
+            field: 'staff',
+            headerName: 'Nhân viên phục vụ',
+
+            width: 185
         },
         {
-            field: 'location',
-            headerName: 'Địa chỉ',
+            field: 'total',
+            headerName: 'Tổng chi tiêu',
 
-            width: 171
+            width: 113
         },
         {
-            field: 'position',
-            headerName: 'Vị trí',
+            field: 'recentAppointment',
+            headerName: 'Cuộc hẹn gần đây',
 
-            width: 112
+            width: 128
         },
         {
-            field: 'join',
-            headerName: 'Ngày tham gia',
+            field: 'source',
+            headerName: 'Nguồn',
 
-            width: 112
-        },
-        {
-            field: 'State',
-            headerName: 'Trạng thái',
-
-            width: 116
+            width: 86
         }
     ];
 
@@ -42,12 +42,12 @@ const Customer: React.FC = () => {
         {
             id: 1,
             name: 'Võ Việt Hà',
-            phone: 'Jon',
-            age: 35,
-            location: 'Hà Nội',
-            position: 'Nhân viên',
-            join: '12/02/2022',
-            State: 'Đang làm việc',
+            phone: '0911290476',
+            group: 'Nhóm 1',
+            total: 'Hà Nội',
+            source: 'Trực tiếp',
+            staff: '12/02/2022',
+            recentAppointment: 'Đang làm việc',
             gender: 'Nam'
         },
         {
@@ -55,9 +55,9 @@ const Customer: React.FC = () => {
             name: 'Võ Việt Hà',
             phone: 'Jon',
             age: 35,
-            location: 'Hà Nội',
+            staff: 'Hà Nội',
             position: 'Nhân viên',
-            join: '12/02/2022',
+            recentAppointment: '12/02/2022',
             State: 'Đang làm việc',
             gender: 'Nam'
         },
@@ -78,7 +78,7 @@ const Customer: React.FC = () => {
             phone: 'Jon',
             age: 35,
             location: 'Hà Nội',
-            position: 'Nhân viên',
+            total: 'Nhân viên',
             join: '12/02/2022',
             State: 'Đang làm việc',
             gender: 'Nam'
