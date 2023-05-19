@@ -12,6 +12,7 @@ export default class HoaDonDto {
     tongTienHang = 0;
     pTGiamGiaHD? = 0;
     tongGiamGiaHD = 0;
+
     tongThanhToan = 0;
     ghiChuHD? = '';
     trangThai? = 3; // 0.Xóa, 1.Tạm lưu, 2.Đang xử lý, 3.Hoàn thành
@@ -19,6 +20,9 @@ export default class HoaDonDto {
     tongTienHangChuaChietKhau = 0;
     tongChietKhauHangHoa = 0;
 
+    ptThueHD? = 0;
+    tongTienThue? = 0;
+    tongTienHDSauVAT? = 0; // get
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
     constructor({
@@ -34,6 +38,8 @@ export default class HoaDonDto {
         tongTienHang = 0,
         pTGiamGiaHD = 0,
         tongGiamGiaHD = 0,
+        ptThueHD = 0,
+        tongTienThue = 0,
         tongThanhToan = 0,
         ghiChuHD = '',
         trangThai = 3
@@ -53,5 +59,15 @@ export default class HoaDonDto {
         this.tongThanhToan = tongThanhToan;
         this.ghiChuHD = ghiChuHD;
         this.trangThai = trangThai;
+        this.ptThueHD = ptThueHD;
+        this.tongTienThue = tongTienThue;
+
+        Object.defineProperties(this, {
+            tongTienHDSauVAT: {
+                get() {
+                    return this.tongTienHang + this.tongTienThue;
+                }
+            }
+        });
     }
 }

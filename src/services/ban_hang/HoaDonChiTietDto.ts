@@ -9,34 +9,18 @@ export default class HoaDonChiTietDto {
     donGiaTruocCK = 0;
     pTChietKhau? = 0;
     tienChietKhau? = 0;
+    thanhTienTruocCK? = 0;
     pTThue? = 0;
     tienThue? = 0;
     ghiChu = '';
     trangThai? = 3; // 0.Xóa, 1.Tạm lưu, 2.Đang xử lý, 3.Hoàn thành
 
-    nhanVienThucHien?: NhanVienThucHienDto[];
+    donGiaSauCK? = 0;
+    donGiaSauVAT? = 0;
+    thanhTienSauCK? = 0;
+    thanhTienSauVAT? = 0;
 
-    get thanhTienTruocCK() {
-        return this.soLuong * this.donGiaTruocCK;
-    }
-    get donGiaSauCK() {
-        if (this.pTChietKhau ?? 0 > 0) {
-            return this.donGiaTruocCK - (this.donGiaTruocCK * (this.pTChietKhau ?? 0)) / 100;
-        }
-        return this.donGiaTruocCK - (this.tienChietKhau ?? 0);
-    }
-    get thanhTienSauCK() {
-        return this.soLuong * this.donGiaSauCK;
-    }
-    get donGiaSauVAT() {
-        if (this.pTThue ?? 0 > 0) {
-            return this.donGiaSauCK + (this.donGiaSauCK * (this.pTThue ?? 0)) / 100;
-        }
-        return this.donGiaSauCK - (this.tienThue ?? 0);
-    }
-    get thanhTienSauVAT() {
-        return this.soLuong * this.donGiaSauVAT;
-    }
+    nhanVienThucHien?: NhanVienThucHienDto[];
 
     constructor({
         id = Guid.create().toString(),
@@ -63,5 +47,42 @@ export default class HoaDonChiTietDto {
         this.ghiChu = ghiChu;
         this.trangThai = trangThai;
         this.nhanVienThucHien = [];
+
+        Object.defineProperties(this, {
+            thanhTienTruocCK: {
+                get() {
+                    return this.soLuong * this.donGiaTruocCK;
+                }
+            },
+            donGiaSauCK: {
+                get() {
+                    if (this.pTChietKhau ?? 0 > 0) {
+                        return (
+                            this.donGiaTruocCK -
+                            (this.donGiaTruocCK * (this.pTChietKhau ?? 0)) / 100
+                        );
+                    }
+                    return this.donGiaTruocCK - (this.tienChietKhau ?? 0);
+                }
+            },
+            thanhTienSauCK: {
+                get() {
+                    return this.soLuong * this.donGiaSauCK;
+                }
+            },
+            donGiaSauVAT: {
+                get() {
+                    if (this.pTThue ?? 0 > 0) {
+                        return this.donGiaSauCK + (this.donGiaSauCK * (this.pTThue ?? 0)) / 100;
+                    }
+                    return this.donGiaSauCK - (this.tienThue ?? 0);
+                }
+            },
+            thanhTienSauVAT: {
+                get() {
+                    return this.soLuong * this.donGiaSauVAT;
+                }
+            }
+        });
     }
 }
