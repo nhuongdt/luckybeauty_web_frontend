@@ -60,10 +60,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         PageLoad();
     }, []);
 
-    useEffect(() => {
-        // add/put to Dexie
-    }, []);
-
     const saveCheckInOK = async (dataCheckIn: any) => {
         console.log('saveCheckInOK ', dataCheckIn);
 
@@ -96,7 +92,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     const handleClickCustomer = async (item: any) => {
-        console.log('item.idKhachHang ', item.idKhachHang);
         setCusChecking((old: any) => {
             return {
                 ...old,

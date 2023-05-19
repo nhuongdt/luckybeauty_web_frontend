@@ -10,6 +10,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
     idHangHoa? = null;
 
     constructor({
+        id = Guid.create().toString(),
         maHangHoa = '',
         tenHangHoa = '',
         giaBan = 0,
@@ -20,7 +21,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         soLuong = 1
     }) {
         super({
-            id: Guid.createEmpty().toString(),
+            id: id,
             idDonViQuyDoi: idDonViQuyDoi,
             soLuong: soLuong,
             donGiaTruocCK: giaBan

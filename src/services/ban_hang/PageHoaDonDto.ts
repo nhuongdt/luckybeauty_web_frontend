@@ -14,6 +14,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     txtTrangThaiHD = 'Hoàn thành';
 
     constructor({
+        id = Guid.create().toString(),
         idKhachHang = null,
         maKhachHang = '',
         tenKhachHang = '',
@@ -25,7 +26,12 @@ export default class PageHoaDonDto extends HoaDonDto {
         tongTienHang = 0,
         tongTienThue = 0
     }) {
-        super({ idKhachHang: idKhachHang, tongTienHang: tongTienHang, tongTienThue: tongTienThue });
+        super({
+            id: id,
+            idKhachHang: idKhachHang,
+            tongTienHang: tongTienHang,
+            tongTienThue: tongTienThue
+        });
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;

@@ -26,6 +26,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [errPhone, setErrPhone] = useState(false);
+    const [errCheckIn, setErrCheckIn] = useState(false);
 
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({
         id: Guid.EMPTY,
@@ -85,9 +86,10 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             };
         });
         setIsSave(false);
+        setErrCheckIn(false);
     };
 
-    const checkSave = async () => {
+    const checkSaveCus = async () => {
         if (Utils.checkNull(newCus?.tenKhachHang ?? '')) {
             return false;
         }
@@ -103,6 +105,19 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         }
         return true;
     };
+    const checkSaveCheckin = async (idCus: string) => {
+        if (Utils.checkNull(newCus?.tenKhachHang ?? '')) {
+            return false;
+        }
+        if (!Utils.checkNull(newCus?.soDienThoai ?? '')) {
+            const exists = await CheckinService.CheckExistCusCheckin(newCus.id);
+            if (exists) {
+                setErrCheckIn(true);
+                return false;
+            }
+        }
+        return true;
+    };
 
     const saveCheckIn = async () => {
         if (isSave) return;
@@ -110,7 +125,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
 
         if (Utils.checkNull(newCus?.id) || newCus.id === Guid.EMPTY) {
             // insert customer
-            const check = await checkSave();
+            const check = await checkSaveCus();
             if (!check) {
                 return;
             }
@@ -139,6 +154,10 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             });
             handleSave(objCheckInNew);
         } else {
+            const check = await checkSaveCheckin(newCus.id);
+            if (!check) {
+                return;
+            }
             const objCheckIn: KHCheckInDto = new KHCheckInDto({
                 idKhachHang: newCus.id
             });
@@ -229,6 +248,13 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         </Grid>
                         <Grid item xs={5} sm={5} md={5} lg={5}>
                             <AutocompleteCustomer handleChoseItem={changeCustomer} />
+                            {isSave && errCheckIn && (
+                                <Typography
+                                    className="modal-lable"
+                                    style={{ color: 'red', paddingTop: '4px' }}>
+                                    Khách hàng đã check-in
+                                </Typography>
+                            )}
                         </Grid>
                     </Grid>
                 </DialogContent>
