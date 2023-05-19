@@ -2,6 +2,8 @@ import { Col, Row, Space, Tabs, TabsProps } from 'antd';
 import { Component, ReactNode } from 'react';
 import CustomerScreen from '../customer';
 import StoreDetail from './components/storeDetail';
+import ChiNhanhScreen from './chi-nhanh';
+import HoaHongNhanVienScreen from './hoa-hong-nhan-vien';
 class SettingScreen extends Component {
     render(): ReactNode {
         return (
@@ -21,13 +23,13 @@ class SettingScreen extends Component {
                                             <li
                                                 className="breadcrumb-item active"
                                                 aria-current="page">
-                                                Chi tiết cửa hàng
+                                                Cài đặt cửa hàng
                                             </li>
                                         </ol>
                                     </nav>
                                 </div>
                                 <div>
-                                    <h3>Chi tiết cửa hàng</h3>
+                                    <h3>Cài đặt cửa hàng</h3>
                                 </div>
                             </div>
                         </Col>
@@ -41,7 +43,8 @@ class SettingScreen extends Component {
                         items={[
                             {
                                 label: 'Cài đặt cửa hàng',
-                                key: '1'
+                                key: '',
+                                disabled: true
                             },
                             {
                                 label: 'Chi tiết cửa hàng',
@@ -51,7 +54,7 @@ class SettingScreen extends Component {
                             {
                                 label: 'Quản lý chi nhánh',
                                 key: '2',
-                                children: `đây là chi tiết cửa hàng`
+                                children: <ChiNhanhScreen />
                             },
                             {
                                 label: 'Cài đặt booking',
@@ -61,7 +64,7 @@ class SettingScreen extends Component {
                             {
                                 label: 'Hoa hồng nhân viên',
                                 key: '4',
-                                children: `đây là chi tiết cửa hàng`
+                                children: <HoaHongNhanVienScreen />
                             },
                             {
                                 label: 'Phương thức thanh toán',

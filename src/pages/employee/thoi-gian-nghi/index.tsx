@@ -218,9 +218,9 @@ class EmployeeHoliday extends Component {
                 </div>
                 <div className="page-content pt-2">
                     <TableContainer component={Paper}>
-                        <Table aria-label="customized table">
+                        <Table aria-label="customized table" size="small">
                             <TableHead className="bg-table">
-                                <TableRow>
+                                <TableRow style={{ height: '48px' }}>
                                     <TableCell
                                         padding="checkbox"
                                         align="center"
@@ -276,7 +276,14 @@ class EmployeeHoliday extends Component {
                             <TableBody>
                                 {this.state.listHoliday.map((item, length) => {
                                     return (
-                                        <TableRow style={{ height: '48px' }}>
+                                        <TableRow
+                                            key={item.tenNgayLe}
+                                            sx={{
+                                                '&:last-child td, &:last-child th': {
+                                                    border: 0,
+                                                    height: '48px'
+                                                }
+                                            }}>
                                             <TableCell
                                                 style={{ height: '48px' }}
                                                 align="center"
