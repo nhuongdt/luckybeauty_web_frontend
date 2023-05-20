@@ -14,6 +14,7 @@ import {
     MenuItem,
     FormControl
 } from '@mui/material';
+import TextareaAutosize from '@mui/base/TextareaAutosize';
 import fileIcon from '../../images/file.svg';
 import closeIcon from '../../images/close-square.svg';
 import avatar from '../../images/avatar.png';
@@ -173,7 +174,7 @@ const Customer: React.FC = () => {
             paddingRight="2.2222222222222223vw"
             paddingTop="1.5277777777777777vw">
             <Grid container alignItems="center" justifyContent="space-between">
-                <Grid item xs="auto">
+                <Grid item xs={12} md="auto">
                     <Breadcrumbs separator="›" aria-label="breadcrumb">
                         {breadcrumbs}
                     </Breadcrumbs>
@@ -187,7 +188,7 @@ const Customer: React.FC = () => {
                         Danh sách khách hàng
                     </Typography>
                 </Grid>
-                <Grid xs="auto" item display="flex" gap="8px" justifyContent="end">
+                <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                     <Box component="form" className="form-search">
                         <TextField
                             sx={{
@@ -272,75 +273,84 @@ const Customer: React.FC = () => {
                 <div className="poppup-title">Thêm khách hàng mới</div>
                 <div className="poppup-des">Thông tin chi tiết</div>
                 <Box component="form" className="form-add">
-                    <Grid
-                        container
-                        className="form-container"
-                        sx={{ rowGap: '16px', columnGap: '8px' }}>
+                    <Grid container className="form-container" spacing={2}>
                         <Grid item xs={12}>
-                            <TextField fullWidth>
-                                {/* <label htmlFor="name">Họ và tên</label>
-                                <input type="text" id="name" placeholder="Nhập họ tên khách hàng" /> */}
-                            </TextField>
+                            <TextField
+                                size="small"
+                                placeholder="Họ và tên"
+                                fullWidth
+                                sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl fullWidth>
-                                <label htmlFor="phone">Số điện thoại</label>
-                                <input
-                                    type="tel"
-                                    name=""
-                                    id="phone"
-                                    placeholder="Nhập số điện thoại"
-                                />
-                            </FormControl>
+                            <TextField
+                                type="tel"
+                                size="small"
+                                placeholder="Số điện thoại"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl fullWidth>
-                                <label htmlFor="">Địa chỉ</label>
-                                <input
-                                    type="text"
-                                    id="location"
-                                    placeholder="Nhập địa chỉ của khách hàng"
-                                />
-                            </FormControl>
+                            <TextField
+                                type="text"
+                                size="small"
+                                placeholder="Nhập địa chỉ của khách hàng"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl fullWidth>
-                                <label htmlFor="cake">Ngày sinh</label>
-                                <input type="date" id="cake" />
-                            </FormControl>
+                            <TextField
+                                type="date"
+                                fullWidth
+                                placeholder="21/04/2004"
+                                sx={{ fontSize: '16px' }}
+                                size="small"></TextField>
                         </Grid>
                         <Grid item xs={6}>
-                            <label htmlFor="gender">Giới tính</label>
                             <Select
                                 id="gender"
                                 fullWidth
                                 defaultValue={0}
                                 sx={{
-                                    height: '48px',
+                                    height: '42px',
                                     backgroundColor: '#fff',
                                     padding: '0',
                                     borderRadius: '8px',
                                     borderColor: '#E6E1E6'
                                 }}>
-                                <MenuItem value={0}>Lựa chọn</MenuItem>
+                                <MenuItem value={0}>Giới tính</MenuItem>
                                 <MenuItem value={1}>Nữ</MenuItem>
                                 <MenuItem value={2}>Nam</MenuItem>
                             </Select>
                         </Grid>
                         <Grid item xs={12}>
-                            <FormControl fullWidth>
-                                <label htmlFor="note">Ghi chú</label>
-                                <textarea id="note" placeholder="Điền"></textarea>
-                            </FormControl>
+                            <TextareaAutosize
+                                placeholder="Ghi chú"
+                                maxRows={4}
+                                minRows={4}
+                                style={{
+                                    width: '100%',
+                                    borderColor: '#E6E1E6',
+                                    borderRadius: '8px',
+                                    padding: '16px'
+                                }}
+                            />
                         </Grid>
                     </Grid>
                     <Grid container sx={{ width: '350px' }} className=" box-1">
-                        <Grid item xs={12}>
-                            <div
-                                className="position-relative inner-box"
-                                style={{ textAlign: 'center' }}>
+                        <Grid item xs={12} className="position-relative">
+                            <div className=" inner-box" style={{ textAlign: 'center' }}>
                                 <img src={fileIcon} />
-                                <input type="file" id="input-file" />
+                                <TextField
+                                    type="file"
+                                    id="input-file"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '0',
+                                        width: '100%',
+                                        height: '100%'
+                                    }}
+                                />
                                 <div
                                     style={{
                                         display: 'flex',
