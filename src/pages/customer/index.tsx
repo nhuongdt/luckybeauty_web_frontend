@@ -277,7 +277,7 @@ const Customer: React.FC = () => {
                         className="form-container"
                         sx={{ rowGap: '16px', columnGap: '8px' }}>
                         <Grid item xs={12}>
-                            <FormControl required fullWidth>
+                            <FormControl fullWidth>
                                 <label htmlFor="name">Họ và tên</label>
                                 <input type="text" id="name" placeholder="Nhập họ tên khách hàng" />
                             </FormControl>

@@ -13,7 +13,7 @@ import '../../App.css';
 import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';
-
+import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 const shortNameCus = createTheme({
     components: {
         MuiButton: {
@@ -101,7 +101,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
-
+            <ModelNhanVienThucHien />
             <Grid item xs={9} sm={9} md={9} lg={10} display="flex" justifyContent="flex-end">
                 <Stack direction="row" spacing={1}>
                     <Menu className="btnIcon" />
