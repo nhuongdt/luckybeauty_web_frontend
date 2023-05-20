@@ -21,9 +21,11 @@ export default class PageHoaDonDto extends HoaDonDto {
         tongTichDiem = 0,
         txtTrangThaiHD = 'Hoàn thành',
         maNhanVien = '',
-        tenNhanVien = ''
+        tenNhanVien = '',
+        tongTienHang = 0,
+        tongTienThue = 0
     }) {
-        super({ idKhachHang: idKhachHang });
+        super({ idKhachHang: idKhachHang, tongTienHang: tongTienHang, tongTienThue: tongTienThue });
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;

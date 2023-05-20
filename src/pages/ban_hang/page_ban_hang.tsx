@@ -30,6 +30,7 @@ import HoaDonService from '../../services/ban_hang/HoaDonService';
 import { dbDexie } from '../../lib/dexie/dexieDB';
 
 import Utils from '../../utils/utils';
+import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
 
 const shortNameCus = createTheme({
     components: {
@@ -66,7 +67,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         const data = await ProductService.GetDMHangHoa_groupByNhom(input);
         setListProduct(data);
     };
-
+    console.log('hoadon ', hoadon);
     useEffect(() => {
         GetDMHangHoa_groupByNhom();
     }, [idNhomHang]);
@@ -97,17 +98,16 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
             //     return { ...arrOld, idHoaDon: hoadon.id };
             // });
         }
-    }, []);
+    }, [customerChosed]);
 
     const updateCurrentInvoice = () => {
         let tongTienHangChuaCK = 0,
             tongChietKhau = 0,
             tongTienHang = 0;
         for (let i = 0; i < hoaDonChiTiet.length; i++) {
-            console.log('into');
             const itFor = hoaDonChiTiet[i];
             tongTienHangChuaCK += itFor.soLuong * itFor.donGiaTruocCK;
-            tongTienHang += itFor.thanhTien ?? 0;
+            tongTienHang += itFor.thanhTienSauCK ?? 0;
             tongChietKhau += itFor.tienChietKhau ?? 0;
         }
         setHoadon((old) => {
@@ -127,23 +127,27 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
 
     useEffect(() => {
         updateCurrentInvoice();
+        setHoadon((old: any) => {
+            return {
+                ...old,
+                hoaDonChiTiet: hoaDonChiTiet
+            };
+        });
     }, [hoaDonChiTiet]);
 
     const choseChiTiet = async (item: any, index: any) => {
-        console.log('item ', hoaDonChiTiet);
         const newCT = new PageHoaDonChiTietDto({
             idDonViQuyDoi: item.idDonViQuyDoi,
             maHangHoa: item.maHangHoa,
             tenHangHoa: item.tenHangHoa,
             giaBan: item.giaBan,
-            thanhTien: item.giaBan,
             idNhomHangHoa: item.idNhomHangHoa,
             idHangHoa: item.id,
             soLuong: 1
         });
 
         const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
-
+        console.log('checkCT ', checkCT);
         if (checkCT.length === 0) {
             setHoaDonChiTiet((olds: any) => {
                 return [newCT, ...olds];
@@ -158,7 +162,6 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
             }
         } else {
             checkCT[0].soLuong += 1;
-            checkCT[0].thanhTien = checkCT[0].soLuong * checkCT[0].donGiaTruocCK;
 
             // remove & unshift but keep infor old cthd
             const arrOld = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
@@ -166,18 +169,15 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                 return [checkCT[0], ...arrOld];
             });
         }
-
-        // updateCurrentInvoice();
     };
 
     const saveHoaDon = async () => {
         setClickSave(true);
-        const myData = {
-            hoadon: hoadon,
-            hoadonChiTiet: hoaDonChiTiet
-        };
-        const data = await HoaDonService.CreateHoaDon2(myData);
-        console.log(data);
+        console.log('hoaDonChiTiet ', hoadon);
+
+        const data = await HoaDonService.CreateHoaDon(hoadon);
+        setHoaDonChiTiet([]);
+        setHoadon(new PageHoaDonDto({ idKhachHang: null }));
     };
 
     return (

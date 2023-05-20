@@ -134,7 +134,7 @@ export const appRouters: AppRouteProps = {
                         // },
                         {
                             path: '/page-ban-hang',
-                            permission: 'Pages.Administration.Users',
+                            permission: '',
                             title: 'Thu ngân',
                             name: 'thungan',
                             icon: null,

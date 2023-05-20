@@ -1,13 +1,17 @@
 import http from '../httpService';
+import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 class HoaDonService {
     CreateHoaDon = async (input: any) => {
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon', input);
-        console.log('CreateHoaDon ', result);
         return result.data.result;
     };
-    CreateHoaDon2 = async (input: any) => {
+    CreateHoaDon2 = async (input: {
+        hoadon: PageHoaDonDto;
+        hoadonChiTiet: PageHoaDonChiTietDto[];
+    }) => {
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon2', input);
-        console.log('CreateHoaDon ', result);
+
         return result.data.result;
     };
     UpdateHoaDon = async (input: any) => {

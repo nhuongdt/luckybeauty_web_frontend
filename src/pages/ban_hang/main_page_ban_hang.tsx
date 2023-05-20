@@ -35,14 +35,13 @@ export default function MainPageBanHang() {
         PageLoad();
     }, []);
     const choseNhomDichVu = (isEdit: boolean, item: any) => {
-        console.log(item);
         setIdNhomHang(item.id);
     };
     const choseCustomer = (cus: any) => {
         setCusChosing((old: any) => {
             return {
                 ...old,
-                idKhachHang: cus.id,
+                idKhachHang: cus.idKhachHang,
                 maKhachHang: cus.maKhachHang,
                 tenKhachHang: cus.tenKhachHang,
                 soDienThoai: cus.soDienThoai,

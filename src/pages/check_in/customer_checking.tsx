@@ -86,10 +86,11 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     const handleClickCustomer = (item: any) => {
+        console.log('item.idKhachHang ', item.idKhachHang);
         setCusChecking((old: any) => {
             return {
                 ...old,
-                idKhachHang: item.id,
+                idKhachHang: item.idKhachHang,
                 maKhachHang: item.maKhachHang,
                 tenKhachHang: item.tenKhachHang,
                 soDienThoai: item.soDienThoai,
