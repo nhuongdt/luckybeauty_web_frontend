@@ -42,7 +42,7 @@ const LoginScreen: React.FC = () => {
                                     <TextField
                                         variant="outlined"
                                         name="tenant"
-                                        label={<span className="login-label">ID đăng nhập</span>}
+                                        placeholder="ID đăng nhập"
                                         type="text"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
@@ -56,7 +56,7 @@ const LoginScreen: React.FC = () => {
                                     <TextField
                                         variant="outlined"
                                         name="userNameOrEmail"
-                                        label={<span className="login-label">Tên đăng nhập</span>}
+                                        placeholder="Tên đăng nhập"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
@@ -67,12 +67,15 @@ const LoginScreen: React.FC = () => {
                                         <Input placeholder="Nhập email hoặc tài khoản" />
                                     </TextField>
                                 </Grid>
-                                <Grid xs={12} className="form-item">
+                                <Grid
+                                    xs={12}
+                                    className="form-item"
+                                    style={{ background: '#f2f6fa' }}>
                                     <TextField
                                         className="bg-pw"
                                         name="userNameOrEmail"
                                         variant="outlined"
-                                        label={<span className="login-label">Mật khẩu</span>}
+                                        placeholder="Mật khẩu"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
