@@ -107,8 +107,9 @@ const modelNhanVienThucHien: React.FC<PoppupComponentProps> = ({ className, onCl
                     <Grid
                         className="person-item"
                         item
-                        xs={4}
+                        xs={6}
                         md={3}
+                        lg={3}
                         key={person.name.replace(/\s/g, '-')}>
                         <Box
                             sx={{
@@ -148,7 +149,8 @@ const modelNhanVienThucHien: React.FC<PoppupComponentProps> = ({ className, onCl
                     position: 'absolute',
                     bottom: '24px',
                     left: '50%',
-                    transform: 'translateX(-50%)'
+                    transform: 'translateX(-50%)',
+                    background: '#fff'
                 }}>
                 <Button
                     variant="contained"
