@@ -11,7 +11,7 @@ const DeleteExpiredCookie: React.FC = () => {
                 const cookieValue = cookies[cookie];
                 const expires = parseInt(cookieValue.split(';')[1]?.trim()?.split('=')[1]);
 
-                if (expires && expires < currentTime) {
+                if ((expires && expires < currentTime) || cookieValue == undefined) {
                     Cookies.remove(cookie); // Xóa cookie khi nó hết hạn
                 }
             }

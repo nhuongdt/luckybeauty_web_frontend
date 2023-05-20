@@ -1,173 +1,135 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Checkbox, Avatar, Row, Col } from 'antd';
+import {
+    Grid,
+    Input,
+    Checkbox,
+    Avatar,
+    Box,
+    TextField,
+    FormControlLabel,
+    IconButton,
+    InputAdornment
+} from '@mui/material';
 import './login.css';
 import LoginModel from '../../models/Login/loginModel';
 import LoginService from '../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../images/Lucky_beauty.jpg';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import Visibility from '@mui/icons-material/Visibility';
+import { Link } from 'react-router-dom';
 const LoginScreen: React.FC = () => {
-    const loginModel = new LoginModel();
-    const [remember, setRemember] = useState(false);
-    const [form] = Form.useForm();
-    const navigate = useNavigate();
-    const handleLogin = async (values: {
-        tenant: string;
-        userNameOrEmail: string;
-        password: string;
-        rememberMe: boolean;
-    }) => {
-        try {
-            const tenantName = values.tenant;
-            const tenantResult = await LoginService.CheckTenant(tenantName);
-            console.log(tenantResult);
-            if (tenantResult.tenantId !== null) {
-                loginModel.tenancyName = values.tenant;
-                loginModel.userNameOrEmailAddress = values.userNameOrEmail;
-                loginModel.password = values.password;
-                loginModel.rememberMe = values.rememberMe;
-                const loginResult = await LoginService.Login(loginModel);
-                if (loginResult) {
-                    navigate('/');
-                } else {
-                    form.setFields([
-                        {
-                            name: 'userNameOrEmail',
-                            errors: ['Tài khoản hoặc mật khẩu không chính xác!']
-                        },
-                        { name: 'password', errors: ['Tài khoản hoặc mật khẩu không chính xác!'] }
-                    ]);
-                }
-            } else {
-                form.setFields([
-                    { name: 'tenant', errors: ['The specified tenant does not exist.'] }
-                ]);
-            }
-        } catch (error) {
-            console.error('An error occurred during login:', error);
-            form.setFields([
-                { name: 'userNameOrEmail', errors: ['Tài khoản hoặc mật khẩu không chính xác!'] },
-                { name: 'password', errors: ['Tài khoản hoặc mật khẩu không chính xác!'] }
-            ]);
-        }
+    const [showPassword, setShowPassword] = useState(false);
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
     };
-    useEffect(() => {
-        Object.keys(Cookies.get()).forEach((cookieName) => {
-            Cookies.remove(cookieName);
-        });
-    }, []);
-
     return (
-        <div className="container-fluid d-flex align-items-center justify-content-center vh-100 mt-2 mb-2">
-            <Row className="align-items-center justify-content-center mt-2 h-100">
-                <Col>
-                    <div
-                        className="rounded border shadow "
-                        style={{ width: '660px', padding: '12px 54px' }}>
-                        <Avatar
-                            style={{ margin: '24px 244px', width: 64, height: 64 }}
-                            src={logo}
-                        />
-                        <label
-                            className="login-label"
-                            style={{
-                                margin: '12px 128px',
-                                height: '42px',
-                                width: '295px',
-                                fontSize: '32px',
-                                lineHeight: '42px',
-                                textAlign: 'center',
-                                color: '#333233'
-                            }}>
-                            Đăng nhập
-                        </label>
-                        <Form form={form} onFinish={handleLogin} layout="vertical">
-                            <Form.Item
-                                name="tenant"
-                                label={<span className="login-label">ID cửa hàng</span>}>
-                                <Input size="large" placeholder="Nhập tên cửa hàng" />
-                            </Form.Item>
-                            <Form.Item
-                                name="userNameOrEmail"
-                                label={
-                                    <span className="login-label">
-                                        Tên đăng nhập <span style={{ color: 'red' }}>*</span>
-                                    </span>
-                                }
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nhập tài khoản'
-                                    }
-                                ]}>
-                                <Input size="large" placeholder="Nhập email hoặc tài khoản" />
-                            </Form.Item>
-                            <Form.Item
-                                name="password"
-                                label={
-                                    <span className="login-label">
-                                        Mật khẩu <span style={{ color: 'red' }}>*</span>
-                                    </span>
-                                }
-                                rules={[
-                                    { required: true, message: 'Please enter your password.' }
-                                ]}>
-                                <Input.Password size="large" placeholder="Nhập mật khẩu" />
-                            </Form.Item>
-                            <Form.Item>
-                                <Checkbox
-                                    value={remember}
-                                    checked={remember}
-                                    onChange={() => {
-                                        setRemember(!remember);
-                                    }}>
-                                    Ghi nhớ ?
-                                </Checkbox>
+        <div className=" login-page">
+            <div className="logo-login">
+                <div className="logo-image">
+                    <img src={logo} alt="Lucky Beauty" />
+                </div>
+                <div className="logo-text">Lucky Beauty</div>
+            </div>
+            <Grid container className="align-items-center justify-content-center mt-2 h-100">
+                <Grid xs={12}>
+                    <div className="login-page-inner ">
+                        <h1 className="login-label">Đăng nhập</h1>
+                        <form className="login-form">
+                            <Grid container>
+                                <Grid xs={12} className="form-item">
+                                    <TextField
+                                        variant="outlined"
+                                        name="tenant"
+                                        label={<span className="login-label">ID đăng nhập</span>}
+                                        type="text"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}></TextField>
+                                </Grid>
+                                <Grid xs={12} className="form-item">
+                                    <TextField
+                                        variant="outlined"
+                                        name="userNameOrEmail"
+                                        label={<span className="login-label">Tên đăng nhập</span>}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}>
+                                        <Input placeholder="Nhập email hoặc tài khoản" />
+                                    </TextField>
+                                </Grid>
+                                <Grid xs={12} className="form-item">
+                                    <TextField
+                                        className="bg-pw"
+                                        name="userNameOrEmail"
+                                        variant="outlined"
+                                        label={<span className="login-label">Mật khẩu</span>}
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
+                                                }
+                                            }
+                                        }}
+                                        type={showPassword ? 'text' : 'password'}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton onClick={handleShowPassword}>
+                                                        {showPassword ? (
+                                                            <VisibilityOff />
+                                                        ) : (
+                                                            <Visibility />
+                                                        )}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}>
+                                        <Input placeholder="Nhập email hoặc tài khoản" />
+                                    </TextField>
+                                </Grid>
+                                <Grid xs={12} className="form-item_checkBox">
+                                    <FormControlLabel
+                                        control={<Checkbox defaultChecked />}
+                                        label="Ghi nhớ"
+                                    />
+                                    <Link className="login-form-forgot" to="/forgot-password">
+                                        Quên mật khẩu ?
+                                    </Link>
+                                </Grid>
 
-                                <a className="login-form-forgot" href="">
-                                    Quên mật khẩu
-                                </a>
-                            </Form.Item>
-                            <Row>
-                                <button type="submit" className="btn-login">
-                                    <span className="text-login">Đăng nhập</span>
-                                </button>
-                            </Row>
-                            <label
-                                className="login-label"
-                                style={{
-                                    margin: '12px 128px',
-                                    height: '20px',
-                                    width: '295px',
-                                    fontSize: '14px',
-                                    lineHeight: '20px',
-                                    alignContent: 'center',
-                                    textAlign: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                Tổng đài hỗ trợ : 0247 303 9333 - 0936 363 069
-                            </label>
-                            <p
-                                className="login-label"
-                                style={{
-                                    margin: '12px 128px',
-                                    height: '20px',
-                                    width: '295px',
-                                    fontSize: '14px',
-                                    lineHeight: '20px',
-                                    alignContent: 'center',
-                                    textAlign: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                Bạn chưa có tài khoản?{' '}
-                                <a className="a" href="">
-                                    Đăng ký
-                                </a>
-                            </p>
-                        </Form>
+                                <Grid xs={12}>
+                                    <button type="submit" className="btn-login">
+                                        <span className="text-login">Đăng nhập</span>
+                                    </button>
+                                </Grid>
+                                <Grid xs={12}>
+                                    <p className="text-support">
+                                        Tổng đài hỗ trợ : <span>0247 303 9333 - 0936 363 069</span>
+                                    </p>
+                                </Grid>
+                                <Grid xs={12}>
+                                    <p className="text-register">
+                                        Bạn chưa có tài khoản?{' '}
+                                        <Link className="a quenMk" to="/register">
+                                            Đăng ký
+                                        </Link>
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </form>
                     </div>
-                </Col>
-            </Row>
+                </Grid>
+            </Grid>
         </div>
     );
 };

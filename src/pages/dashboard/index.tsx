@@ -5,7 +5,7 @@ import { AiOutlineEllipsis } from 'react-icons/ai';
 import '../../custom.css';
 import OverView from './components/OverView/ovver-view';
 import Appointment from './components/Appointment/appointments';
-import RevenueColumnChart from './components/Charts/colunmChart';
+// import RevenueColumnChart from './components/Charts/colunmChart';
 import Statistical from './components/Statistical/statistical';
 class DashboardScreen extends Component {
     render(): ReactNode {

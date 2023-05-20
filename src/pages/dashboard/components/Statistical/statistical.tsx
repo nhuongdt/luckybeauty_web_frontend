@@ -1,6 +1,6 @@
 import { Button, Col, Progress, Row, Select } from 'antd';
 import { Component, ReactNode } from 'react';
-import RevenueColumnChart from '../Charts/colunmChart';
+// import RevenueColumnChart from '../Charts/colunmChart';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import HotServices from './hot_service';
 
@@ -49,7 +49,7 @@ class Statistical extends Component {
                             </div>
                         </div>
 
-                        <RevenueColumnChart />
+                        {/* <RevenueColumnChart /> */}
                     </div>
                 </Col>
                 <Col span={6}>

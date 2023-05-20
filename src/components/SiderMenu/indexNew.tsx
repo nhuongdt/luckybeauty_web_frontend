@@ -1,3 +1,4 @@
+import React from 'react';
 const MenuDashboard: React.FC = () => {
     return (
         <div className="dashboard-sideBar">

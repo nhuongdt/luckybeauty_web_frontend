@@ -63,6 +63,17 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false
                 },
                 {
+                    path: '/forgot-password',
+                    name: 'forgotPassword',
+                    permission: '',
+                    children: [],
+                    title: 'Forgot password',
+                    icon: null,
+                    component: LoadableComponent(() => import('../../pages/Forgot_password')),
+                    isLayout: true,
+                    showInMenu: false
+                },
+                {
                     path: '/exception?:type',
                     permission: '',
                     title: 'exception',
@@ -85,7 +96,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Home',
                     icon: null,
-                    component: LoadableComponent(() => import('../../pages/dashboard')),
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew')),
                     children: [],
                     isLayout: true,
                     showInMenu: false
@@ -94,12 +105,12 @@ export const appRouters: AppRouteProps = {
                     path: '/',
                     name: 'dashboard',
                     permission: '',
-                    title: 'Dashboard',
+                    title: 'Trang chủ',
                     icon: <AiOutlineHome style={{ fontSize: 20 }} />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
                 },
                 {
                     path: '/lich-hens',

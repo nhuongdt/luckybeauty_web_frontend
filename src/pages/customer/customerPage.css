@@ -3,14 +3,17 @@
     line-height: 20px;
     color: #666466;
 }
+
 .customer-page .MuiBreadcrumbs-li:not(:first-child) p {
     color: #333233;
 }
+
 .customer-page {
     padding-left: 2.2222222222222223vw;
     padding-right: 2.2222222222222223vw;
     padding-top: 1.5277777777777777vw;
 }
+
 .customer-page h1 {
     color: #0c050a;
     line-height: 32px;

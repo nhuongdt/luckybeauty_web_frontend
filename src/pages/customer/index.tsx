@@ -1,58 +1,100 @@
-import * as React from 'react';
-
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
-import './customerPage.css';
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import downtLoadIcon from '../../images/download.svg';
-import uploadIcon from '../../images/upload.svg';
-import addIcon from '../../images/add.svg';
-const Customer: React.FC = () => {
-    function handleClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
-        event.preventDefault();
-        console.info('You clicked a breadcrumb.');
+import React, { Component, FormEventHandler, useState } from 'react';
+import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import khachHangService from '../../services/khach-hang/khachHangService';
+import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import SuggestService from '../../services/suggests/SuggestService';
+import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
+import { SuggestNguonKhachDto } from '../../services/suggests/dto/SuggestNguonKhachDto';
+import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import '../employee/employee.css';
+import '../../custom.css';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AddIcon from '@mui/icons-material/Add';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import {
+    DeleteOutlined,
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
+const itemRender: PaginationProps['itemRender'] = (_, type, originalElement) => {
+    if (type === 'prev') {
+        return <a>Previous</a>;
     }
-    const breadcrumbs = [
-        <Typography key="1" color="inherit" onClick={handleClick}>
-            Khách hàng
-        </Typography>,
-        <Typography key="2" color="inherit" onClick={handleClick}>
-            Quản lý khách hàng
-        </Typography>
-    ];
+    if (type === 'next') {
+        return <a>Next</a>;
+    }
+    return originalElement;
+};
+class CustomerScreen extends Component {
+    formRef = React.createRef<FormInstance>();
+    state = {
+        IdKhachHang: '',
+        modalVisible: false,
+        maxResultCount: 10,
+        skipCount: 0,
+        tenantId: 0,
+        filter: '',
+        listKhachHang: [] as KhachHangItemDto[],
+        suggestNhomKhach: [] as SuggestNhomKhachDto[],
+        suggestNguonKhach: [] as SuggestNguonKhachDto[],
+        createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
+        totalCount: 0,
+        currentPage: 1,
+        totalPage: 1,
+        startIndex: 0,
+        isShowConfirmDelete: false
+    };
+    async componentDidMount() {
+        this.getData();
+    }
+    async getData() {
+        const nhomKhachs = await SuggestService.SuggestNhomKhach();
+        const nguonKhachs = await SuggestService.SuggestNguonKhach();
+        this.setState({
+            suggestNhomKhach: nhomKhachs,
+            suggestNguonKhach: nguonKhachs
+        });
+        if (this.state.IdKhachHang !== '') {
+            const khachHang = await khachHangService.getKhachHang(this.state.IdKhachHang);
+            console.log(khachHang);
+            this.setState({ createOrEditKhachHang: khachHang });
+        }
+        this.getListKhachHang();
+    }
+    async getListKhachHang() {
+        const data = await khachHangService.getAll({
+            keyword: this.state.filter,
+            maxResultCount: this.state.maxResultCount,
+            skipCount: this.state.skipCount
+        });
+        this.setState({
+            listKhachHang: data.items,
+            totalCount: data.totalCount,
+            totalPage: Math.ceil(data.totalCount / this.state.maxResultCount)
+        });
+    }
+    async delete(id: string) {
+        await khachHangService.delete(id);
+        this.setState({ IdKhachHang: '' });
+    }
+    handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+        const filter = event.target.value;
+        this.setState({ filter }, async () => this.getListKhachHang());
+    };
 
-    const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 50 },
-        { field: 'name', headerName: 'Tên khách hàng', width: 185 },
-        { field: 'phone', headerName: 'Số điện thoại', width: 114 },
-        {
-            field: 'group',
-            headerName: 'Nhóm khách',
-
-            width: 112
-        },
-        { field: 'gender', headerName: 'Giới tính', width: 89 },
-        {
-            field: 'staff',
-            headerName: 'Nhân viên phục vụ',
-
-            width: 185
-        },
-        {
-            field: 'total',
-            headerName: 'Tổng chi tiêu',
-
-            width: 113
-        },
-        {
-            field: 'recentAppointment',
-            headerName: 'Cuộc hẹn gần đây',
+    handlePageChange: PaginationProps['onChange'] = (page) => {
+        const { maxResultCount } = this.state;
+        this.setState({
+            currentPage: page,
+            skipCount: page,
+            startIndex: (page - 1 <= 0 ? 0 : page - 1) * maxResultCount
+        });
+        this.getData();
+    };
 
             width: 128
         },
@@ -60,104 +102,280 @@ const Customer: React.FC = () => {
             field: 'source',
             headerName: 'Nguồn',
 
-            width: 86
+    async createOrUpdateModalOpen(entityDto: string) {
+        if (entityDto === '') {
+            this.formRef.current?.resetFields();
+            this.setState({
+                createOrEditKhachHang: {
+                    id: '',
+                    maKhachHang: '',
+                    tenKhachHang: '',
+                    soDienThoai: '',
+                    diaChi: '',
+                    gioiTinh: true,
+                    email: '',
+                    moTa: '',
+                    trangThai: 0,
+                    tongTichDiem: 0,
+                    maSoThue: '',
+                    avatar: '',
+                    ngaySinh: '',
+                    kieuNgaySinh: 0,
+                    idLoaiKhach: 0,
+                    idNhomKhach: '',
+                    idNguonKhach: '',
+                    idTinhThanh: '',
+                    idQuanHuyen: ''
+                }
+            });
+        } else {
+            const customer = await khachHangService.getKhachHang(entityDto);
+            this.setState({
+                createOrEditKhachHang: customer
+            });
+            setTimeout(() => {
+                this.formRef.current?.setFieldsValue({ ...this.state.createOrEditKhachHang });
+            }, 1000);
         }
     ];
 
-    const rows = [
-        {
-            id: 1,
-            name: 'Võ Việt Hà',
-            phone: '0911290476',
-            group: 'Vip',
-            total: '3,232.000',
-            source: 'Trực tiếp',
-            staff: 'Đinh Tuấn Tài',
-            recentAppointment: '18/09/2022 ',
-            gender: 'Nam'
-        },
-        {
-            id: 1777,
-            name: 'Võ Việt Hà',
-            phone: 'Jon',
-            age: 35,
-            staff: 'Hà Nội',
-            position: 'Nhân viên',
-            recentAppointment: '12/02/2022',
-            State: 'Đang làm việc',
-            gender: 'Nam'
-        },
-        {
-            id: 10,
-            name: 'Võ Việt Hà',
-            phone: 'Jon',
-            age: 35,
-            location: 'Hà Nội',
-            position: 'Nhân viên',
-            join: '12/02/2022',
-            State: 'Đang làm việc',
-            gender: 'Nam'
-        },
-        {
-            id: 16,
-            name: 'Võ Việt Hà',
-            phone: 'Jon',
-            age: 35,
-            location: 'Hà Nội',
-            total: 'Nhân viên',
-            join: '12/02/2022',
-            State: 'Đang làm việc',
-            gender: 'Nam'
-        },
-        { id: 2, name: 'Lannister', phone: 'Cersei', age: 42, location: 'Hà Nội' },
-        { id: 3, name: 'Lannister', phone: 'Jaime', age: 45, location: 'Hà Nội' },
-        { id: 4, name: 'Stark', phone: 'Arya', age: 16, location: 'Hà Nội' },
-        { id: 5, name: 'Targaryen', phone: 'Daenerys', age: null, location: 'Hà Nội' },
-        { id: 6, name: 'Melisandre', phone: null, age: 150, location: 'Hà Nội' },
-        { id: 7, name: 'Clifford', phone: 'Ferrara', age: 44, location: 'Hà Nội' },
-        { id: 8, name: 'Frances', phone: 'Rossini', age: 36, location: 'Hà Nội' },
-        { id: 9, name: 'Roxie', phone: 'Harvey', age: 65, location: 'Hà Nội' }
-    ];
+        this.setState({ IdKhachHang: entityDto });
+        this.Modal();
+    }
 
-    return (
-        <div className="customer-page">
-            <Grid container className="customer-page_row-1">
-                <Grid item xs={5}>
-                    <Breadcrumbs
-                        separator={<NavigateNextIcon fontSize="small" />}
-                        aria-label="breadcrumb">
-                        {breadcrumbs}
-                    </Breadcrumbs>
-                    <h1>Danh sách khách hàng</h1>
-                </Grid>
-                <Grid item xs={7}>
-                    <ButtonGroup variant="contained">
-                        <Button variant="outlined" startIcon={<img src={downtLoadIcon} />}>
-                            Nhập
-                        </Button>
-                        <Button startIcon={<img src={uploadIcon} />} variant="outlined">
-                            Xuất
-                        </Button>
-                        <Button startIcon={<img src={addIcon} />} variant="contained">
-                            Thêm khách hàng
-                        </Button>
-                    </ButtonGroup>
-                </Grid>
-            </Grid>
-            <div className="customer-page_row-2" style={{ height: 582, width: '100%' }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 0, pageSize: 5 }
-                        }
+    onCancelDelete = () => {
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete
+        });
+    };
+
+    onOkDelete = () => {
+        this.delete(this.state.IdKhachHang);
+        this.getData();
+        this.onCancelDelete();
+    };
+    handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+        const { name, value } = event.target;
+        this.setState({
+            createOrEditKhachHang: {
+                ...this.state.createOrEditKhachHang,
+                [name]: value
+            }
+        });
+    };
+
+    handleSubmit = async () => {
+        this.formRef.current?.validateFields().then(async (values: any) => {
+            if (this.state.IdKhachHang === '') {
+                await khachHangService.create(values);
+            } else {
+                await khachHangService.update({
+                    id: this.state.IdKhachHang,
+                    ...values
+                });
+            }
+
+            await this.getData();
+            this.setState({ modalVisible: false });
+            this.formRef.current?.resetFields();
+        });
+    };
+
+    public render() {
+        return (
+            <div className="container-fluid bg-white h-100">
+                <div className="page-header">
+                    <Row align={'middle'} justify={'space-between'}>
+                        <Col span={12}>
+                            <div>
+                                <div className="pt-2">
+                                    <nav aria-label="breadcrumb">
+                                        <ol className="breadcrumb">
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Khách hàng
+                                            </li>
+                                            <li
+                                                className="breadcrumb-item active"
+                                                aria-current="page">
+                                                Quản lý khách hàng
+                                            </li>
+                                        </ol>
+                                    </nav>
+                                </div>
+                                <div>
+                                    <h3>Danh sách khách hàng</h3>
+                                </div>
+                            </div>
+                        </Col>
+                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Space align="center" size="middle">
+                                    <div className="search w-100">
+                                        <Input
+                                            allowClear
+                                            onChange={this.handleSearch}
+                                            size="large"
+                                            prefix={<SearchOutlined />}
+                                            placeholder="Tìm kiếm..."
+                                        />
+                                    </div>
+                                    <Space align="center" size="middle">
+                                        <Button
+                                            className="btn-import"
+                                            size="large"
+                                            icon={<DownloadOutlined />}>
+                                            Nhập
+                                        </Button>
+                                        <Button
+                                            className="btn-export"
+                                            size="large"
+                                            icon={<UploadOutlined />}>
+                                            Xuất
+                                        </Button>
+                                    </Space>
+                                    <Button
+                                        icon={<PlusOutlined />}
+                                        size="large"
+                                        className="btn btn-add-item"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen('');
+                                        }}>
+                                        Thêm khách hàng
+                                    </Button>
+                                </Space>
+                            </div>
+                        </Col>
+                    </Row>
+                </div>
+                <div className="page-content pt-2">
+                    <table className="h-100 w-100 table table-border-0 table">
+                        <thead className="bg-table w-100">
+                            <tr style={{ height: '48px' }}>
+                                <th className="text-center">
+                                    <input className="text-th-table text-center" type="checkbox" />
+                                </th>
+                                <th className="text-th-table">STT</th>
+                                <th className="text-th-table">Tên khách hàng</th>
+                                <th className="text-th-table">Số điện thoại</th>
+                                <th className="text-th-table">Nhóm khách</th>
+                                <th className="text-th-table">Nhân viên phục vụ</th>
+                                <th className="text-th-table">Tổng chi tiêu</th>
+                                <th className="text-th-table">Cuộc hẹn gần đây</th>
+                                <th className="text-th-table">Nguồn</th>
+                                <th className="text-th-table">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.state.listKhachHang.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td className="text-center">
+                                            <input type="checkbox" />
+                                        </td>
+                                        <td className="text-td-table">
+                                            {this.state.startIndex + (index + 1)}
+                                        </td>
+                                        <td className="text-td-table">{item.tenKhachHang}</td>
+                                        <td className="text-td-table">{item.soDienThoai}</td>
+                                        <td className="text-td-table">{item.tenNhomKhach}</td>
+                                        <td className="text-td-table">{item.nhanVienPhuTrach}</td>
+                                        <td className="text-td-table">{item.tongChiTieu}</td>
+                                        <td className="text-td-table">
+                                            <CalendarMonthIcon fontSize="small" />{' '}
+                                            {new Date(
+                                                item.cuocHenGanNhat.toString()
+                                            ).toLocaleDateString('en-GB')}
+                                        </td>
+                                        <td className="text-secondary">{item.tenNguonKhach}</td>
+                                        <td className="text-td-table" style={{ width: '150px' }}>
+                                            <Space wrap direction="horizontal">
+                                                <Button
+                                                    type="primary"
+                                                    icon={<EditOutlined />}
+                                                    onClick={() => {
+                                                        this.setState({
+                                                            IdKhachHang: item.id.toString()
+                                                        });
+                                                        this.createOrUpdateModalOpen(
+                                                            item.id.toString()
+                                                        );
+                                                    }}
+                                                />
+                                                <Button
+                                                    danger
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={() => {
+                                                        this.setState({
+                                                            IdKhachHang: item.id.toString()
+                                                        });
+                                                        this.onCancelDelete();
+                                                        // this.delete(item.id.toString());
+                                                    }}
+                                                />
+                                            </Space>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    <div className="row">
+                        <div className="col-6" style={{ float: 'left' }}></div>
+                        <div className="col-6" style={{ float: 'right' }}>
+                            <div className="row align-items-center" style={{ height: '50px' }}>
+                                <div className="col-5 text-center">
+                                    <label
+                                        className="pagination-view-record text-center"
+                                        style={{ float: 'right' }}>
+                                        Hiển thị{' '}
+                                        {this.state.currentPage * this.state.maxResultCount - 9}-
+                                        {this.state.currentPage * this.state.maxResultCount} của{' '}
+                                        {this.state.totalCount} mục
+                                    </label>
+                                </div>
+                                <div style={{ float: 'right' }} className="col-7 text-center">
+                                    <Space
+                                        size="middle"
+                                        align="center"
+                                        className="align-items-center">
+                                        <Pagination
+                                            total={this.state.totalCount}
+                                            pageSize={this.state.maxResultCount}
+                                            defaultCurrent={this.state.currentPage}
+                                            current={this.state.currentPage}
+                                            onChange={this.handlePageChange}
+                                        />
+                                    </Space>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <CreateOrEditCustomerDialog
+                    visible={this.state.modalVisible}
+                    formRef={this.formRef}
+                    onCancel={() => {
+                        this.setState({
+                            modalVisible: false
+                        });
                     }}
-                    pageSizeOptions={[5, 10]}
-                    checkboxSelection
-                />
+                    suggestNguonKhach={this.state.suggestNguonKhach}
+                    suggestNhomKhach={this.state.suggestNhomKhach}
+                    onOk={this.handleSubmit}
+                    modalType={
+                        this.state.IdKhachHang === ''
+                            ? 'Thêm mới khách hàng'
+                            : 'Cập nhật thông tin khách hàng'
+                    }></CreateOrEditCustomerDialog>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.onCancelDelete}></ConfirmDelete>
             </div>
-        </div>
-    );
-};
-export default Customer;
+        );
+    }
+}
+
+export default CustomerScreen;
