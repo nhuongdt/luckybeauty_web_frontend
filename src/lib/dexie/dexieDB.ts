@@ -11,9 +11,9 @@ export class SubClassDexie extends Dexie {
     constructor() {
         super('DBTest');
         this.version(1).stores({
-            hoaDon: 'id, idKhachHang',
-            hoaDonChiTiet: 'id, idHoaDon,idDonViQuyDoi,soLuong, thanhTien',
-            khachCheckIn: 'id, idKhachHang'
+            hoaDon: '&id, idKhachHang',
+            hoaDonChiTiet: '&id, idHoaDon,idDonViQuyDoi,soLuong, thanhTien',
+            khachCheckIn: '&id, idKhachHang'
         });
     }
 }

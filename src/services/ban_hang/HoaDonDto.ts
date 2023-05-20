@@ -1,5 +1,6 @@
 import { Guid } from 'guid-typescript';
 import PageHoaDonChiTietDto from './PageHoaDonChiTietDto';
+import moment from 'moment';
 
 export default class HoaDonDto {
     id = Guid.create().toString();
@@ -8,7 +9,7 @@ export default class HoaDonDto {
     idNhanVien? = null;
     idLoaiChungTu = 1;
     maHoaDon = '';
-    ngayLapHoaDon = new Date();
+    ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS');
     tongTienHang = 0;
     pTGiamGiaHD? = 0;
     tongGiamGiaHD = 0;
@@ -32,7 +33,7 @@ export default class HoaDonDto {
         idChiNhanh = null,
         idNhanVien = null,
         maHoaDon = '',
-        ngayLapHoaDon = new Date(),
+        ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
         tongTienHangChuaChietKhau = 0,
         tongChietKhauHangHoa = 0,
         tongTienHang = 0,

@@ -41,6 +41,7 @@ export default function MainPageBanHang() {
         setCusChosing((old: any) => {
             return {
                 ...old,
+                idCheckIn: cus.idCheckIn,
                 idKhachHang: cus.idKhachHang,
                 maKhachHang: cus.maKhachHang,
                 tenKhachHang: cus.tenKhachHang,

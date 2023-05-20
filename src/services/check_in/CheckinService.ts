@@ -40,6 +40,18 @@ class CheckinService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
+        console.log('GetListCustomerChecking', xx);
+        return xx;
+    };
+    UpdateTrangThaiCheckin = async (idCheckIn: string, trangThai = 1) => {
+        const xx = await http
+            .put(
+                `api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`
+            )
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        console.log('UpdateTrangThaiCheckin', xx);
         return xx;
     };
 }

@@ -27,12 +27,18 @@ import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import HoaDonService from '../../services/ban_hang/HoaDonService';
 
+import SoQuyServices from '../../services/so_quy/SoQuyServices';
+import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
+// import HoaDonService from '../../services/so_quy/QuyChiTietDto';
+
 import { dbDexie } from '../../lib/dexie/dexieDB';
 
 import Utils from '../../utils/utils';
 import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
+import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
+import CheckinService from '../../services/check_in/CheckinService';
 
 const shortNameCus = createTheme({
     components: {
@@ -153,7 +159,6 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                 hoaDonChiTiet: hoaDonChiTiet
             };
         });
-        console.log('hoadon ', hoadon);
         UpdateCacheHD(dataHD);
     };
 
@@ -212,6 +217,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
     };
 
     const RemoveCache = async () => {
+        console.log('RemoveCache ', hoadon.id, customerChosed.idCheckIn);
         // remove  hoadon
         await dbDexie.hoaDon
             .where('id')
@@ -223,21 +229,40 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
 
         // remove cache kh_checkin
         await dbDexie.khachCheckIn
-            .where('idKhachHang')
-            .equals(hoadon.idKhachHang ?? 1)
+            .where('id')
+            .equals(customerChosed.idCheckIn)
             .delete()
             .then(function (deleteCount) {
-                console.log('idKhachHangDelete ', hoadon.idKhachHang, deleteCount);
+                console.log('customerChosed.idCheckIn ', customerChosed.idCheckIn, deleteCount);
             });
     };
 
     const saveHoaDon = async () => {
         setClickSave(true);
 
-        const data = await HoaDonService.CreateHoaDon(hoadon);
+        const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
         setHoaDonChiTiet([]);
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
 
+        // checkout
+        const checkout = await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
+
+        // save soquy
+        const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+            idLoaiChungTu: 11,
+            ngayLapHoaDon: hoadon.ngayLapHoaDon,
+            tongTienThu: hoadon.tongThanhToan
+        });
+        quyHD.quyHoaDon_ChiTiet = [
+            new QuyChiTietDto({
+                idHoaDonLienQuan: hodaDonDB.id,
+                idKhachHang: hoadon.idKhachHang,
+                tienThu: hoadon.tongThanhToan
+            })
+        ];
+        console.log('quyHD', quyHD);
+        const soquyDB = await SoQuyServices.CreateQuyHoaDon(quyHD);
+        console.log('soquyDB', soquyDB);
         // remove  cache
         await RemoveCache();
 

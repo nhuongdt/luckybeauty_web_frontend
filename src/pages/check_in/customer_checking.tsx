@@ -96,6 +96,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         setCusChecking((old: any) => {
             return {
                 ...old,
+                idCheckIn: item.idCheckIn,
                 idKhachHang: item.idKhachHang,
                 maKhachHang: item.maKhachHang,
                 tenKhachHang: item.tenKhachHang,
@@ -103,6 +104,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 tongTichDiem: item.tongTichDiem
             };
         });
+        console.log('item', item);
         hanleChoseCustomer(item);
 
         // add to dexie
