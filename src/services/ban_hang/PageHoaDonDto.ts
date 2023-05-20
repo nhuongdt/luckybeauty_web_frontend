@@ -1,6 +1,7 @@
 import { Guid } from 'guid-typescript';
 import { KhachHangItemDto } from '../khach-hang/dto/KhachHangItemDto';
 import HoaDonDto from './HoaDonDto';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 
 export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
@@ -12,6 +13,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     tenNhanVien = '';
 
     txtTrangThaiHD = 'Hoàn thành';
+    hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
     constructor({
         id = Guid.create().toString(),
