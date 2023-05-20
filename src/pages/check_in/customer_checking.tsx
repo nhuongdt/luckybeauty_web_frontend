@@ -98,15 +98,20 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         });
         hanleChoseCustomer(item);
     };
+    const [show, setShow] = useState(false);
+    const handleToggle = () => {
+        setShow(!show);
+    };
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
-            <ModelNhanVienThucHien />
+            <ModelNhanVienThucHien className={show ? 'show' : ''} onClick={handleToggle} />
+            <div className={show ? 'show overlay' : 'overlay'} onClick={handleToggle}></div>
             <Grid item xs={9} sm={9} md={9} lg={10} display="flex" justifyContent="flex-end">
                 <Stack direction="row" spacing={1}>
                     <Menu className="btnIcon" />
                     <CalendarMonth className="btnIcon" />
-                    <Button
+                    {/* <Button
                         variant="contained"
                         className="btnIconText"
                         startIcon={<Add />}
@@ -114,6 +119,14 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                         onClick={() => {
                             setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true });
                         }}>
+                        Thêm khách
+                    </Button> */}
+                    <Button
+                        variant="contained"
+                        className="btnIconText"
+                        startIcon={<Add />}
+                        sx={{ bgcolor: '#7c3367' }}
+                        onClick={handleToggle}>
                         Thêm khách
                     </Button>
                 </Stack>
