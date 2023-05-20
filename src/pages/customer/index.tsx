@@ -334,9 +334,11 @@ const Customer: React.FC = () => {
                             </FormControl>
                         </Grid>
                     </Grid>
-                    <Grid container sx={{ width: '350px' }} className="position-relative box-1">
+                    <Grid container sx={{ width: '350px' }} className=" box-1">
                         <Grid item xs={12}>
-                            <div className=" inner-box" style={{ textAlign: 'center' }}>
+                            <div
+                                className="position-relative inner-box"
+                                style={{ textAlign: 'center' }}>
                                 <img src={fileIcon} />
                                 <input type="file" id="input-file" />
                                 <div
@@ -357,7 +359,12 @@ const Customer: React.FC = () => {
                         <Grid item xs={6}></Grid>
                         <Grid item xs={6}></Grid>
                         <ButtonGroup
-                            sx={{ height: '32px', position: 'absolute', bottom: '0', right: '0' }}>
+                            sx={{
+                                height: '32px',
+                                position: 'absolute',
+                                bottom: '24px',
+                                right: '50px'
+                            }}>
                             <Button
                                 variant="contained"
                                 sx={{
