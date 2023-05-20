@@ -53,7 +53,8 @@ const shortNameCus = createTheme({
 });
 
 export default function PageBanHang({ customerChosed, idNhomHang }: any) {
-    const history = useNavigate();
+    const navigate = useNavigate();
+
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({ idKhachHang: null, tenKhachHang: '' })
     );
@@ -85,7 +86,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         if (!utils.checkNull(idCus)) {
             const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
             if (data.length === 0) {
-                const dataHD = {
+                const dataHD: PageHoaDonDto = {
                     ...hoadon,
                     idKhachHang: customerChosed.idKhachHang,
                     maKhachHang: customerChosed.maKhachHang,
@@ -94,11 +95,13 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                     tongTichDiem: customerChosed.tongTichDiem
                 };
                 setHoaDon(dataHD);
-                dbDexie.hoaDon.add(dataHD);
+                if (hoadon.id !== dataHD.id) {
+                    // avoid warning when StrictMode (add twice)
+                    dbDexie.hoaDon.add(dataHD);
+                }
             } else {
                 // get hoadon + cthd
                 const hdctCache = data[0].hoaDonChiTiet ?? [];
-
                 setHoaDon(data[0]);
                 setHoaDonChiTiet(hdctCache);
             }
@@ -120,20 +123,23 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
     const updateCurrentInvoice = async () => {
         let tongTienHangChuaCK = 0,
             tongChietKhau = 0,
-            tongTienHang = 0;
+            tongTienHang = 0,
+            thanhtiensauVAT = 0;
 
         for (let i = 0; i < hoaDonChiTiet.length; i++) {
             const itFor = hoaDonChiTiet[i];
             tongTienHangChuaCK += itFor.soLuong * itFor.donGiaTruocCK;
             tongTienHang += itFor.thanhTienSauCK ?? 0;
             tongChietKhau += itFor.tienChietKhau ?? 0;
+            thanhtiensauVAT += itFor.thanhTienSauVAT ?? 0;
         }
         const dataHD = {
             ...hoadon,
             tongTienHangChuaChietKhau: tongTienHangChuaCK,
             tongTienHang: tongTienHang,
             tongChietKhauHangHoa: tongChietKhau,
-            tongThanhToan: tongTienHang,
+            tongTienHDSauVAT: thanhtiensauVAT,
+            tongThanhToan: thanhtiensauVAT,
             hoaDonChiTiet: hoaDonChiTiet
         };
         setHoaDon((old: any) => {
@@ -142,10 +148,12 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                 tongTienHangChuaChietKhau: tongTienHangChuaCK,
                 tongTienHang: tongTienHang,
                 tongChietKhauHangHoa: tongChietKhau,
-                tongThanhToan: tongTienHang,
+                tongTienHDSauVAT: thanhtiensauVAT,
+                tongThanhToan: thanhtiensauVAT,
                 hoaDonChiTiet: hoaDonChiTiet
             };
         });
+        console.log('hoadon ', hoadon);
         UpdateCacheHD(dataHD);
     };
 
@@ -160,6 +168,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                 .delete()
                 .then(function (deleteCount) {
                     if (deleteCount > 0) {
+                        console.log('dataHD ', dataHD);
                         dbDexie.hoaDon.add(dataHD);
                     }
                 });
@@ -202,12 +211,37 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         }
     };
 
+    const RemoveCache = async () => {
+        // remove  hoadon
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon.id)
+            .delete()
+            .then(function (deleteCount) {
+                console.log('hoadonDelete ', hoadon.id, deleteCount);
+            });
+
+        // remove cache kh_checkin
+        await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(hoadon.idKhachHang ?? 1)
+            .delete()
+            .then(function (deleteCount) {
+                console.log('idKhachHangDelete ', hoadon.idKhachHang, deleteCount);
+            });
+    };
+
     const saveHoaDon = async () => {
         setClickSave(true);
 
         const data = await HoaDonService.CreateHoaDon(hoadon);
         setHoaDonChiTiet([]);
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
+
+        // remove  cache
+        await RemoveCache();
+
+        // back to cuschecking (todo)
     };
 
     return (

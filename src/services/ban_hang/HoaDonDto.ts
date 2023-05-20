@@ -40,6 +40,7 @@ export default class HoaDonDto {
         tongGiamGiaHD = 0,
         ptThueHD = 0,
         tongTienThue = 0,
+        tongTienHDSauVAT = 0,
         tongThanhToan = 0,
         ghiChuHD = '',
         trangThai = 3
@@ -61,13 +62,6 @@ export default class HoaDonDto {
         this.trangThai = trangThai;
         this.ptThueHD = ptThueHD;
         this.tongTienThue = tongTienThue;
-
-        Object.defineProperties(this, {
-            tongTienHDSauVAT: {
-                get() {
-                    return this.tongTienHang + this.tongTienThue;
-                }
-            }
-        });
+        this.tongTienHDSauVAT = tongTienHDSauVAT;
     }
 }
