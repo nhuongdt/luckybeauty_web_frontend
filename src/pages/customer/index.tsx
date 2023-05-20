@@ -275,6 +275,9 @@ const Customer: React.FC = () => {
                 <Box component="form" className="form-add">
                     <Grid container className="form-container" spacing={2}>
                         <Grid item xs={12}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Họ và tên
+                            </Typography>
                             <TextField
                                 size="small"
                                 placeholder="Họ và tên"
@@ -282,6 +285,9 @@ const Customer: React.FC = () => {
                                 sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                         </Grid>
                         <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Số điện thoại
+                            </Typography>
                             <TextField
                                 type="tel"
                                 size="small"
@@ -290,6 +296,9 @@ const Customer: React.FC = () => {
                                 sx={{ fontSize: '16px' }}></TextField>
                         </Grid>
                         <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Địa chỉ
+                            </Typography>
                             <TextField
                                 type="text"
                                 size="small"
@@ -298,6 +307,9 @@ const Customer: React.FC = () => {
                                 sx={{ fontSize: '16px' }}></TextField>
                         </Grid>
                         <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ngày sinh
+                            </Typography>
                             <TextField
                                 type="date"
                                 fullWidth
@@ -306,6 +318,9 @@ const Customer: React.FC = () => {
                                 size="small"></TextField>
                         </Grid>
                         <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Giới tính
+                            </Typography>
                             <Select
                                 id="gender"
                                 fullWidth
@@ -314,17 +329,21 @@ const Customer: React.FC = () => {
                                     height: '42px',
                                     backgroundColor: '#fff',
                                     padding: '0',
+                                    fontSize: '16px',
                                     borderRadius: '8px',
                                     borderColor: '#E6E1E6'
                                 }}>
-                                <MenuItem value={0}>Giới tính</MenuItem>
+                                <MenuItem value={0}>Lựa chọn</MenuItem>
                                 <MenuItem value={1}>Nữ</MenuItem>
                                 <MenuItem value={2}>Nam</MenuItem>
                             </Select>
                         </Grid>
                         <Grid item xs={12}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ghi chú
+                            </Typography>
                             <TextareaAutosize
-                                placeholder="Ghi chú"
+                                placeholder="Điền"
                                 maxRows={4}
                                 minRows={4}
                                 style={{
