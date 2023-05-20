@@ -1,22 +1,217 @@
-.customer-page .MuiBreadcrumbs-li p {
-    font-size: 14px;
-    line-height: 20px;
-    color: #666466;
+.rounded-4px button {
+    border-radius: 4px !important;
 }
 
-.customer-page .MuiBreadcrumbs-li:not(:first-child) p {
+.search-field input {
+    padding: 8px 16px !important;
+    color: #b2afb2;
+}
+
+.resize-height button {
+    height: 40px;
+    padding: 10px 16px;
+}
+
+.resize-height {
+    height: fit-content;
+    box-shadow: unset;
+}
+
+.bg-main {
+    background-color: #7c3367;
+}
+
+.bg-main:hover {
+    background-color: #7c3367;
+}
+
+.border-color {
+    border-color: #e6e1e6 !important;
+}
+
+.customer-page .form-search {
+    height: fit-content;
+}
+
+.customer-page .MuiDataGrid-columnHeaders {
+    background-color: #f2ebf0;
+}
+
+.customer-page .MuiDataGrid-columnHeaderTitle {
+    font-size: 12px;
+    color: #666466;
+    font-weight: 400;
+}
+
+.customer-page .MuiDataGrid-cellContent {
+    font-size: 12px;
     color: #333233;
 }
 
-.customer-page {
-    padding-left: 2.2222222222222223vw;
-    padding-right: 2.2222222222222223vw;
-    padding-top: 1.5277777777777777vw;
+.customer-page .MuiCheckbox-root svg {
+    fill: rgba(0, 0, 0, 0.2);
 }
 
-.customer-page h1 {
-    color: #0c050a;
-    line-height: 32px;
+.poppup-add input {
+    height: 48px;
+    border-radius: 8px;
+    padding: 12px 16px;
+    border: 1px solid #e6e1e6;
+    color: #b2afb2;
+    outline: none;
+}
+
+.form-container {
+    display: grid;
+    grid-template-areas: 'a1 a1' 'a2 a3' 'a4 a5' 'a6 a6';
+}
+
+.form-container>div {
+    flex-basis: unset;
+    max-width: 100%;
+    width: 100%;
+}
+
+.form-container>div:first-child {
+    grid-area: a1;
+}
+
+.form-container>div:nth-child(2) {
+    grid-area: a2;
+}
+
+.form-container>div:nth-child(3) {
+    grid-area: a3;
+}
+
+.form-container>div:nth-child(4) {
+    grid-area: a4;
+}
+
+.form-container>div:nth-child(5) {
+    grid-area: a5;
+}
+
+.form-container>div:nth-child(6) {
+    grid-area: a6;
+}
+
+#note {
+    height: 100px;
+    border-radius: 8px;
+    color: #cdc9cd;
+    padding: 16px;
+    border-color: #e6e1e6;
+    outline: none;
+}
+
+.form-container label {
+    color: #4c4b4c;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+#input-file[type='file'] {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.form-add {
+    display: flex;
+    gap: 2.7777777777777777vw;
+}
+
+.box-1>div:first-child {
+    border-radius: 8px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(0deg, #fffaff, #fffaff), linear-gradient(0deg, #e5d6e1, #e5d6e1);
+    border: 1px solid #e5d6e1;
+}
+
+.inner-box {
+    width: fit-content;
+}
+
+.poppup-add {
+    position: fixed;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    left: 50%;
+    background: #ffffff;
+    padding: 28px 24px;
+    width: 1024px;
+    opacity: 0;
+    pointer-events: none;
+    border-radius: 12px;
+    transition: 0.4s;
+    z-index: 5;
+}
+
+.poppup-add.show {
+    pointer-events: all;
+    opacity: 1;
+}
+
+.customer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    height: 100vh;
+    opacity: 0;
+    transition: 0.4s;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.customer-overlay.show {
+    pointer-events: all;
+    opacity: 1;
+}
+
+.poppup-title {
     font-size: 24px;
+    line-height: 32px;
+    color: #4c4b4c;
     font-weight: 700;
+}
+
+.poppup-des {
+    color: #999699;
+    font-weight: 700;
+    font-size: 16px;
+    margin-top: 24px;
+    margin-bottom: 16px;
+}
+
+.poppup-add ::placeholder {
+    opacity: 0.6;
+}
+
+.last-column {
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #F1FAFF;
+    color: #009EF7;
+    font-size: 12px;
+}
+
+.MuiTablePagination-displayedRows,
+.MuiTablePagination-selectLabel {
+    margin-bottom: 0;
 }
