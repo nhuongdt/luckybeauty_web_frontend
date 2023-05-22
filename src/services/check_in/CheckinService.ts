@@ -1,8 +1,23 @@
 import http from '../httpService';
 import { KHCheckInDto, PageKhachHangCheckInDto } from './CheckinDto';
 import { PagedKhachHangResultRequestDto } from '../khach-hang/dto/PagedKhachHangResultRequestDto';
+import { Guid } from 'guid-typescript';
+import utils from '../../utils/utils';
 
 class CheckinService {
+    CheckExistCusCheckin = async (idCus: string, idCheckIn?: string) => {
+        if (utils.checkNull(idCheckIn)) {
+            idCheckIn = Guid.EMPTY;
+        }
+        const xx = await http
+            .post(
+                `api/services/app/CheckIn/CheckExistCusCheckin?idCus=${idCus}&idCheckIn=${idCheckIn}`
+            )
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        return xx;
+    };
     InsertCustomerCheckIn = async (input: KHCheckInDto) => {
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCustomerCheckIn`, input)
@@ -25,6 +40,18 @@ class CheckinService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
+        console.log('GetListCustomerChecking', xx);
+        return xx;
+    };
+    UpdateTrangThaiCheckin = async (idCheckIn: string, trangThai = 1) => {
+        const xx = await http
+            .put(
+                `api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`
+            )
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        console.log('UpdateTrangThaiCheckin', xx);
         return xx;
     };
 }

@@ -71,7 +71,7 @@ const LoginScreen: React.FC = () => {
                                         }}
                                         variant="outlined"
                                         name="tenant"
-                                        // label={<span className="login-label">ID đăng nhập</span>}
+                                        placeholder="ID đăng nhập"
                                         type="text"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
@@ -96,13 +96,24 @@ const LoginScreen: React.FC = () => {
                                                     '& fieldset': {
                                                         border: '1px'
                                                     }
+                                    <TextField
+                                        variant="outlined"
+                                        name="userNameOrEmail"
+                                        placeholder="Tên đăng nhập"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border: 'none'
                                                 }
                                             }}>
                                             <Input placeholder="Nhập email hoặc tài khoản" />
                                         </TextField>
                                     </div>
                                 </Grid>
-                                <Grid xs={12} className="form-item">
+                                <Grid
+                                    xs={12}
+                                    className="form-item"
+                                    style={{ background: '#f2f6fa' }}>
                                     <span className="login-label">Mật khẩu</span>
                                     <TextField
                                         className="bg-pw"
@@ -111,7 +122,7 @@ const LoginScreen: React.FC = () => {
                                         }}
                                         name="password"
                                         variant="outlined"
-                                        // label={<span className="login-label">Mật khẩu</span>}
+                                        placeholder="Mật khẩu"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {

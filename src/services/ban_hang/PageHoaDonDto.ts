@@ -1,6 +1,7 @@
 import { Guid } from 'guid-typescript';
 import { KhachHangItemDto } from '../khach-hang/dto/KhachHangItemDto';
 import HoaDonDto from './HoaDonDto';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 
 export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
@@ -12,10 +13,10 @@ export default class PageHoaDonDto extends HoaDonDto {
     tenNhanVien = '';
 
     txtTrangThaiHD = 'Hoàn thành';
-
-    // khachhang?: KhachHangItemDto; // object (test todo)
+    hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
     constructor({
+        id = Guid.create().toString(),
         idKhachHang = null,
         maKhachHang = '',
         tenKhachHang = '',
@@ -23,16 +24,16 @@ export default class PageHoaDonDto extends HoaDonDto {
         tongTichDiem = 0,
         txtTrangThaiHD = 'Hoàn thành',
         maNhanVien = '',
-        tenNhanVien = ''
-        // khachhang = {
-        //     id: Guid.createEmpty(),
-        //     maKhachHang: '',
-        //     tenKhachHang: '',
-        //     soDienThoai: '',
-        //     tongTichDiem: 0
-        // }
+        tenNhanVien = '',
+        tongTienHang = 0,
+        tongTienThue = 0
     }) {
-        super({ idKhachHang: idKhachHang });
+        super({
+            id: id,
+            idKhachHang: idKhachHang,
+            tongTienHang: tongTienHang,
+            tongTienThue: tongTienThue
+        });
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;
@@ -40,6 +41,6 @@ export default class PageHoaDonDto extends HoaDonDto {
         this.txtTrangThaiHD = txtTrangThaiHD;
         this.maNhanVien = maNhanVien;
         this.tenNhanVien = tenNhanVien;
-        // this.khachhang = khachhang;
+        this.hoaDonChiTiet = [];
     }
 }

@@ -13,6 +13,9 @@ import '../../App.css';
 import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';
+import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
+
+import { dbDexie } from '../../lib/dexie/dexieDB';
 
 const shortNameCus = createTheme({
     components: {
@@ -58,7 +61,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         PageLoad();
     }, []);
 
-    const saveCheckInOK = (dataCheckIn: any) => {
+    const saveCheckInOK = async (dataCheckIn: any) => {
         console.log('saveCheckInOK ', dataCheckIn);
 
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
@@ -70,43 +73,63 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             tongTichDiem: dataCheckIn.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
-        console.log('cusChecking ', cusChecking);
         setListCusChecking([...listCusChecking, cusChecking]);
 
-        // // save cache checkin
-        // const lcCheckIn = localStorage.getItem('lcCusCheckIn');
-        // let arr = [];
-        // if (!Utils.checkNull(lcCheckIn)) {
-        //     arr = JSON.parse(lcCheckIn ?? '');
-        // }
-        // // remove & add again
-        // arr = arr.filter((x: any) => x.idCheckIn !== idCheckin);
-        // arr.push(cusChecking);
-        // localStorage.setItem('lcCusCheckIn', JSON.stringify(arr));
+        dbDexie.khachCheckIn.add(cusChecking);
+
+        // check exist dexie
+        const cus = await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(dataCheckIn.idKhachHang)
+            .toArray();
+        if (cus.length === 0) {
+            // remove & add again
+            await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
+            await dbDexie.khachCheckIn.add(dataCheckIn);
+        } else {
+            // add to dexie
+            await dbDexie.khachCheckIn.add(dataCheckIn);
+        }
     };
 
-    const handleClickCustomer = (item: any) => {
+    const handleClickCustomer = async (item: any) => {
         setCusChecking((old: any) => {
             return {
                 ...old,
-                idKhachHang: item.id,
+                idCheckIn: item.idCheckIn,
+                idKhachHang: item.idKhachHang,
                 maKhachHang: item.maKhachHang,
                 tenKhachHang: item.tenKhachHang,
                 soDienThoai: item.soDienThoai,
                 tongTichDiem: item.tongTichDiem
             };
         });
+        console.log('item', item);
         hanleChoseCustomer(item);
+
+        // add to dexie
+        const cus = await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(item.idKhachHang)
+            .toArray();
+        if (cus.length === 0) {
+            await dbDexie.khachCheckIn.add(item);
+        }
+    };
+    const [show, setShow] = useState(false);
+    const handleToggle = () => {
+        setShow(!show);
     };
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
-
+            <ModelNhanVienThucHien className={show ? 'show' : ''} onClick={handleToggle} />
+            <div className={show ? 'show overlay' : 'overlay'} onClick={handleToggle}></div>
             <Grid item xs={9} sm={9} md={9} lg={10} display="flex" justifyContent="flex-end">
                 <Stack direction="row" spacing={1}>
                     <Menu className="btnIcon" />
                     <CalendarMonth className="btnIcon" />
-                    <Button
+                    {/* <Button
                         variant="contained"
                         className="btnIconText"
                         startIcon={<Add />}
@@ -114,6 +137,14 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                         onClick={() => {
                             setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true });
                         }}>
+                        Thêm khách
+                    </Button> */}
+                    <Button
+                        variant="contained"
+                        className="btnIconText"
+                        startIcon={<Add />}
+                        sx={{ bgcolor: '#7c3367' }}
+                        onClick={handleToggle}>
                         Thêm khách
                     </Button>
                 </Stack>
