@@ -302,6 +302,7 @@ const CheckInNew: React.FC = () => {
                         Lưu
                     </Button>
                     <Button
+                        onClick={handleToggle}
                         variant="outlined"
                         sx={{
                             borderColor: '#965C85!important',

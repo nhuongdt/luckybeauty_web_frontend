@@ -3,7 +3,7 @@ import { Grid, Box, Stack, Typography, ButtonGroup, Button } from '@mui/material
 import { SkipNext, SkipPrevious } from '@mui/icons-material';
 import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
 import CustomersChecking from '../check_in/customer_checking';
-import PageBanHang from './page_ban_hang';
+import PageBanHang from './PageBanHangNew';
 
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
@@ -70,7 +70,7 @@ export default function MainPageBanHang() {
                                 className="btnToggleRight"
                                 onClick={() => setActiveTabProduc(true)}
                             /> */}
-                            <ButtonGroup size="small">
+                            <ButtonGroup size="small" sx={{ paddingLeft: '16px' }}>
                                 <Button
                                     sx={{
                                         textTransform: 'unset',
