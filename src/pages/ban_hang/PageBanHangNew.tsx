@@ -260,7 +260,7 @@ const PageBanHang: React.FC = () => {
                 marginTop="21px"
                 paddingLeft="2.2222222222222223vw"
                 paddingBottom="24px">
-                <Grid item lg={3}>
+                <Grid item md={3}>
                     <Box
                         sx={{
                             backgroundColor: '#fff',
@@ -332,7 +332,7 @@ const PageBanHang: React.FC = () => {
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item lg={5}>
+                <Grid item md={5}>
                     <Box display="flex" flexDirection="column">
                         <TextField
                             fullWidth
@@ -383,7 +383,7 @@ const PageBanHang: React.FC = () => {
 
                                     <Grid container spacing={1.5}>
                                         {Service.categorys.map((category) => (
-                                            <Grid item lg={4}>
+                                            <Grid item md={4}>
                                                 <Box
                                                     height="104px"
                                                     padding="8px 12px 9px 12px"
