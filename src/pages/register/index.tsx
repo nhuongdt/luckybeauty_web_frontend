@@ -256,9 +256,9 @@ const RegisterScreen: React.FC = () => {
                                     </TextField>
                                 </Grid>
                             </Grid>
-                            <Box sx={{ width: '100%' }}>
+                            {/* <Box sx={{ width: '100%' }}>
                                 <LinearProgress variant="determinate" value={progressPercent} />
-                            </Box>
+                            </Box> */}
                             <div>
                                 <FormControlLabel
                                     control={<Checkbox defaultChecked />}
