@@ -3,7 +3,8 @@ import { Grid, Box, Stack, Typography, ButtonGroup, Button } from '@mui/material
 import { SkipNext, SkipPrevious } from '@mui/icons-material';
 import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
 import CustomersChecking from '../check_in/customer_checking';
-import PageBanHang from './page_ban_hang';
+// import PageBanHang from './page_ban_hang';
+import PageBanHang from './PageBanHangNew';
 
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
@@ -124,9 +125,7 @@ export default function MainPageBanHang() {
                     <PageBanHang customerChosed={cusChosing} idNhomHang={idNhomHang} />
                 )} */}
                 {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
-                {activeTab === 2 && (
-                    <PageBanHang customerChosed={cusChosing} idNhomHang={idNhomHang} />
-                )}
+                {activeTab === 2 && <PageBanHang />}
             </Grid>
         </>
     );
