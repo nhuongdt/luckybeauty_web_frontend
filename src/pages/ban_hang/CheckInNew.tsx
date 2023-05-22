@@ -48,6 +48,7 @@ const shortNameCus = createTheme({
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const history = useNavigate();
+    const [txtSearch, setTextSeach] = useState('');
 
     const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(
         new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
@@ -156,6 +157,9 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     </InputAdornment>
                                 )
                             }}
+                            onChange={(event) => {
+                                setTextSeach(event.target.value);
+                            }}
                         />
                     </Grid>
                     <Grid item xs={12} lg={5} sm={5} md={8}>
@@ -191,7 +195,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 </Grid>
             </Grid>
 
-            <Grid container padding={2} columnSpacing={2} rowSpacing={2}>
+            <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
                 {listCusChecking.map((item: any, index: any) => (
                     <Grid
                         item
@@ -236,13 +240,14 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 <Typography color="#666466" fontSize="14px">
                                     {item.dateCheckIn}
                                 </Typography>
-                                <Typography color="#666466" fontSize="14px" marginLeft="13px">
-                                    {/* <img src={clockIcon} style={{ marginRight: '5px' }} /> */}
-                                    {/* <Box>
-                                            <QueryBuilder
-                                                style={{ fontSize: '14px', marginTop: '-5px' }}
-                                            />
-                                        </Box> */}
+                                <Typography color="#666466" marginLeft="13px">
+                                    <QueryBuilder
+                                        style={{
+                                            fontSize: '12px',
+                                            marginTop: '-5px',
+                                            marginRight: '5px'
+                                        }}
+                                    />
                                     {item.timeCheckIn}
                                 </Typography>
                                 <Typography
@@ -256,7 +261,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                         color: '#FFC700',
                                         marginLeft: 'auto'
                                     }}>
-                                    Dang cho
+                                    {item.txtTrangThaiCheckIn}
                                 </Typography>
                             </Box>
                         </div>

@@ -50,6 +50,7 @@ export default function MainPageBanHang() {
             };
         });
         setActiveTabProduc(true);
+        setActiveTab(2);
     };
 
     const [activeTab, setActiveTab] = useState(1);
@@ -59,49 +60,37 @@ export default function MainPageBanHang() {
     return (
         <>
             <Grid container padding={2} columnSpacing={2} rowSpacing={2}>
-                <Grid item xs={3} sm={3} md={3} lg={12}>
-                    <Stack display="column" spacing={3}>
-                        <Stack direction="row">
-                            {/* <SkipPrevious
-                                className="btnToggleLeft"
-                                onClick={() => setActiveTabProduc(false)}
-                            />
-                            <SkipNext
-                                className="btnToggleRight"
-                                onClick={() => setActiveTabProduc(true)}
-                            /> */}
-                            <ButtonGroup size="small">
-                                <Button
-                                    sx={{
-                                        textTransform: 'unset',
-                                        fontWeight: '400',
-                                        color: activeTab == 1 ? '#fff' : '#999699',
-                                        backgroundColor:
-                                            activeTab == 1 ? '#7C3367!important' : '#F2EBF0',
-                                        border: 'unset!important'
-                                    }}
-                                    onClick={() => handleTab(1)}
-                                    className={activeTab === 1 ? 'active' : ''}
-                                    variant={activeTab === 1 ? 'contained' : 'outlined'}>
-                                    Checkin
-                                </Button>
-                                <Button
-                                    sx={{
-                                        textTransform: 'unset',
-                                        fontWeight: '400',
-                                        color: activeTab == 2 ? '#fff' : '#999699',
-                                        border: 'unset!important',
-                                        backgroundColor:
-                                            activeTab == 2 ? '#7C3367!important' : '#F2EBF0'
-                                    }}
-                                    onClick={() => handleTab(2)}
-                                    className={activeTab === 2 ? 'active' : ''}
-                                    variant={activeTab === 2 ? 'contained' : 'outlined'}>
-                                    Thanh toán
-                                </Button>
-                            </ButtonGroup>
-                        </Stack>
-                        {/* {activeTabProduct && (
+                <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+                    <ButtonGroup>
+                        <Button
+                            sx={{
+                                textTransform: 'unset',
+
+                                color: activeTab == 1 ? '#fff' : '#999699',
+                                backgroundColor: activeTab == 1 ? '#7C3367!important' : '#F2EBF0',
+                                border: 'unset!important'
+                            }}
+                            onClick={() => handleTab(1)}
+                            className={activeTab === 1 ? 'active' : ''}
+                            variant={activeTab === 1 ? 'contained' : 'outlined'}>
+                            Checkin
+                        </Button>
+                        <Button
+                            sx={{
+                                textTransform: 'unset',
+
+                                color: activeTab == 2 ? '#fff' : '#999699',
+                                border: 'unset!important',
+                                backgroundColor: activeTab == 2 ? '#7C3367!important' : '#F2EBF0'
+                            }}
+                            onClick={() => handleTab(2)}
+                            className={activeTab === 2 ? 'active' : ''}
+                            variant={activeTab === 2 ? 'contained' : 'outlined'}>
+                            Thanh toán
+                        </Button>
+                    </ButtonGroup>
+
+                    {/* {activeTabProduct && (
                             <>
                                 <Box>
                                     <Typography
@@ -129,14 +118,15 @@ export default function MainPageBanHang() {
                                 </Box>
                             </>
                         )} */}
-                    </Stack>
                 </Grid>
                 {/* {!activeTabProduct && <CustomersChecking hanleChoseCustomer={choseCustomer} />}
                 {activeTabProduct && (
                     <PageBanHang customerChosed={cusChosing} idNhomHang={idNhomHang} />
                 )} */}
-                {activeTab === 1 && <CheckInNew />}
-                {activeTab === 2 && <PageBanHang />}
+                {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
+                {activeTab === 2 && (
+                    <PageBanHang customerChosed={cusChosing} idNhomHang={idNhomHang} />
+                )}
             </Grid>
         </>
     );
