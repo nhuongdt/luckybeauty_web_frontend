@@ -298,7 +298,7 @@ const RegisterScreen: React.FC = () => {
                             </button>
                         </form>
                         <p className="has-login">
-                            Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+                            Bạn đã có tài khoản? <Link to="/">Đăng nhập</Link>
                         </p>
                     </div>
                 </div>
