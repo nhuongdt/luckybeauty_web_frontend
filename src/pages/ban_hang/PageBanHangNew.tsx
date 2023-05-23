@@ -14,6 +14,8 @@ import {
     ListItemText,
     InputAdornment
 } from '@mui/material';
+import binIcon from '../../images/trash.svg';
+import closeIcon from '../../images/closeSmall.svg';
 import arrowIcon from '../../images/arrow_back.svg';
 import serviceIcon1 from '../../images/tocIcon.svg';
 import serviceIcon2 from '../../images/hoachatIcon.svg';
@@ -483,7 +485,13 @@ const PageBanHang = ({ customerChosed }: any) => {
                             flexDirection: 'column',
                             justifyContent: 'space-between'
                         }}>
-                        <Box sx={{ backgroundColor: '#fff', radius: '8px' }}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#fff',
+                                radius: '8px',
+                                borderBottom: '1px solid #F2F2F2',
+                                paddingBottom: '24px'
+                            }}>
                             <Box display="flex" gap="8px" alignItems="start">
                                 <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
                                 <Box>
@@ -504,7 +512,66 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 </Button>
                             </Box>
                         </Box>
-                        <Box display="flex" flexDirection="column" gap="32px">
+                        <Box
+                            marginBottom="auto"
+                            padding="24px 16px"
+                            borderRadius="8px"
+                            border="1px solid #F2F2F2"
+                            marginTop="24px">
+                            <Box display="flex" justifyContent="space-between" alignItems="center">
+                                <Box>
+                                    <Typography
+                                        variant="body1"
+                                        fontSize="16px"
+                                        color="#7C3367"
+                                        fontWeight="400"
+                                        lineHeight="24px">
+                                        Combo cắt uốn
+                                    </Typography>
+                                </Box>
+                                <Box display="flex" alignItems="center">
+                                    <Typography
+                                        color="#000"
+                                        variant="body1"
+                                        fontSize="16px"
+                                        fontWeight="400">
+                                        <span>1</span>x<span>200.000</span>
+                                    </Typography>
+                                    <IconButton sx={{ marginLeft: '16px' }}>
+                                        <img src={binIcon} alt="bin" />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+                            <Box display="flex" alignItems="center">
+                                <Typography
+                                    variant="body2"
+                                    fontSize="12px"
+                                    color="#666466"
+                                    lineHeight="16px">
+                                    Nhân viên :
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize="14px"
+                                    lineHeight="16px"
+                                    color="#4C4B4C"
+                                    display="flex"
+                                    alignItems="center"
+                                    sx={{
+                                        backgroundColor: '#F2EBF0',
+                                        padding: '4px 8px',
+                                        gap: '10px',
+                                        borderRadius: '100px'
+                                    }}>
+                                    <span>Tài Đinh</span>
+                                    <span>
+                                        <img src={closeIcon} alt="close" />
+                                    </span>
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        <Box display="flex" flexDirection="column" gap="32px" marginTop="24px">
                             <Box display="flex" justifyContent="space-between">
                                 <Typography variant="h6" fontSize="14px" color="#3B4758">
                                     Tổng tiền hàng
