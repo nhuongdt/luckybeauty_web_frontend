@@ -1,173 +1,211 @@
-import * as React from 'react';
 import {
     Box,
-    Grid,
-    Typography,
-    Avatar,
-    ButtonGroup,
     Button,
+    Grid,
+    Stack,
+    InputAdornment,
     TextField,
-    IconButton
+    Typography,
+    IconButton,
+    ButtonGroup,
+    Avatar
 } from '@mui/material';
-import clockIcon from '../../images/clock.svg';
-import avatar from '../../images/avatar.png';
-import dotIcon from '../../images/dotssIcon.svg';
-import calendar from '../../images/calendar-5.svg';
-import addIcon from '../../images/add.svg';
-import searchIcon from '../../images/search-normal.svg';
-import closeIcon from '../../images/close-square.svg';
+import { useNavigate } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react';
 
-const CheckInNew: React.FC = () => {
-    const Clients = [
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
-        },
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
-        },
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
-        },
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
-        },
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
-        },
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
-        },
-        {
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            point: 250,
-            date: '12/04/2023',
-            hour: '9h00',
-            state: 'Đang chờ'
+import { Add, Menu, CalendarMonth, MoreHoriz, QueryBuilder, Search } from '@mui/icons-material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import ModalAddCustomerCheckIn from '../check_in/modal_add_cus_checkin';
+import { PropModal } from '../../utils/PropParentToChild';
+import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+
+import '../../App.css';
+import { Guid } from 'guid-typescript';
+import Utils from '../../utils/utils';
+import CheckinService from '../../services/check_in/CheckinService';
+import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
+
+import { dbDexie } from '../../lib/dexie/dexieDB';
+
+const shortNameCus = createTheme({
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    minWidth: 'unset',
+                    borderRadius: '35px',
+                    width: '37px',
+                    height: '35px',
+                    border: 'none',
+                    backgroundColor: '#e4cdde',
+                    color: '#7C3367'
+                }
+            }
         }
-    ];
-    const [active, setActive] = React.useState(false);
+    }
+});
+
+export default function CustomersChecking({ hanleChoseCustomer }: any) {
+    const history = useNavigate();
+    const [txtSearch, setTextSeach] = useState('');
+
+    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(
+        new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
+    );
+    const [listCusChecking, setListCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
+
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
+
+    const GetListCustomerChecking = async () => {
+        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
+        const list = await CheckinService.GetListCustomerChecking(input);
+        setListCusChecking(list);
+    };
+
+    const PageLoad = () => {
+        GetListCustomerChecking();
+    };
+
+    useEffect(() => {
+        PageLoad();
+    }, []);
+
+    const saveCheckInOK = async (dataCheckIn: any) => {
+        console.log('saveCheckInOK ', dataCheckIn);
+
+        const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+            idKhachHang: dataCheckIn.id,
+            idCheckIn: dataCheckIn.idCheckIn,
+            maKhachHang: dataCheckIn.maKhachHang,
+            tenKhachHang: dataCheckIn.tenKhachHang,
+            soDienThoai: dataCheckIn.soDienThoai,
+            tongTichDiem: dataCheckIn.tongTichDiem,
+            dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
+        });
+        setListCusChecking([...listCusChecking, cusChecking]);
+
+        dbDexie.khachCheckIn.add(cusChecking);
+
+        // check exist dexie
+        const cus = await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(dataCheckIn.idKhachHang)
+            .toArray();
+        if (cus.length === 0) {
+            // remove & add again
+            await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
+            await dbDexie.khachCheckIn.add(dataCheckIn);
+        } else {
+            // add to dexie
+            await dbDexie.khachCheckIn.add(dataCheckIn);
+        }
+    };
+
+    const handleClickCustomer = async (item: any) => {
+        setCusChecking((old: any) => {
+            return {
+                ...old,
+                idCheckIn: item.idCheckIn,
+                idKhachHang: item.idKhachHang,
+                maKhachHang: item.maKhachHang,
+                tenKhachHang: item.tenKhachHang,
+                soDienThoai: item.soDienThoai,
+                tongTichDiem: item.tongTichDiem
+            };
+        });
+        console.log('item', item);
+        hanleChoseCustomer(item);
+
+        // add to dexie
+        const cus = await dbDexie.khachCheckIn
+            .where('idKhachHang')
+            .equals(item.idKhachHang)
+            .toArray();
+        if (cus.length === 0) {
+            await dbDexie.khachCheckIn.add(item);
+        }
+    };
+    const [show, setShow] = useState(false);
     const handleToggle = () => {
-        setActive(!active);
+        setShow(!show);
     };
     return (
-        <Box width="100%" marginTop="-34px">
-            <Box display="flex" justifyContent="end" paddingRight="24px">
-                <Box component="form" className="form-search" marginRight="auto" marginLeft="200px">
-                    <TextField
-                        sx={{
-                            backgroundColor: '#FFFAFF',
-                            borderColor: '#CDC9CD!important',
-                            borderWidth: '1px!important'
-                        }}
-                        size="small"
-                        className="search-field"
-                        variant="outlined"
-                        type="search"
-                        placeholder="Tìm kiếm"
-                        InputProps={{
-                            startAdornment: (
-                                <IconButton type="submit">
-                                    <img src={searchIcon} />
-                                </IconButton>
-                            )
-                        }}
-                    />
-                </Box>
-                <ButtonGroup sx={{ gap: '8px' }}>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                            height: '40px',
-                            padding: '10px',
-                            borderColor: '#E6E1E6!important',
-                            borderRadius: '4px!important',
-                            borderRightWidth: '1px!important'
+        <>
+            <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            <Grid item xs={12} sm={6} md={8} lg={9} xl={9}>
+                <Grid container display="flex" justifyContent="end">
+                    <Grid item xs={12} lg={7} sm={7} md={4}>
+                        <TextField
+                            sx={{
+                                backgroundColor: '#FFFAFF',
+                                borderColor: '#CDC9CD!important',
+                                borderWidth: '1px!important'
+                            }}
+                            size="small"
+                            className="search-field"
+                            variant="outlined"
+                            type="search"
+                            placeholder="Tìm kiếm"
+                            fullWidth
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search />
+                                    </InputAdornment>
+                                )
+                            }}
+                            onChange={(event) => {
+                                setTextSeach(event.target.value);
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} lg={5} sm={5} md={8}>
+                        <Stack spacing={1} direction="row" display="flex" justifyContent="end">
+                            <Menu className="btnIcon" />
+                            <CalendarMonth className="btnIcon" />
+                            <Button
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    borderColor: '#7C3367!important',
+                                    color: '#4C4B4C'
+                                }}>
+                                Dịch vụ
+                            </Button>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                sx={{
+                                    backgroundColor: '#7C3367!important'
+                                }}
+                                startIcon={<Add />}
+                                onClick={() =>
+                                    setTriggerAddCheckIn({
+                                        ...triggerAddCheckIn,
+                                        isShow: true
+                                    })
+                                }>
+                                Thêm khách
+                            </Button>
+                        </Stack>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
+                {listCusChecking.map((item: any, index: any) => (
+                    <Grid
+                        item
+                        lg={3}
+                        sm={4}
+                        xs={6}
+                        key={index}
+                        onClick={() => {
+                            handleClickCustomer(item);
                         }}>
-                        <img src={dotIcon} alt="dot" />
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                            borderColor: '#E6E1E6!important',
-                            borderWidth: '1px!important',
-                            borderRadius: '4px!important'
-                        }}>
-                        <img src={calendar} alt="calendar" />
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        size="small"
-                        sx={{
-                            borderColor: '#7C3367!important',
-                            color: '#4C4B4C',
-                            fontSize: '14px',
-                            fontWeight: '400',
-                            textTransform: 'unset',
-                            borderRadius: '4px!important',
-                            borderWidth: '1px!important'
-                        }}>
-                        Dịch vụ
-                    </Button>
-                    <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                            backgroundColor: '#7C3367!important',
-                            border: 'none',
-                            textTransform: 'unset',
-                            fontSize: '14px',
-                            fontWeight: '400',
-                            borderRadius: '4px!important'
-                        }}
-                        onClick={handleToggle}>
-                        <img src={addIcon} style={{ marginRight: '10px' }} />
-                        Thêm khách
-                    </Button>
-                </ButtonGroup>
-            </Box>
-            <Grid container spacing={3} width="100%" margin="0" paddingRight="24px">
-                {Clients.map((Client) => (
-                    <Grid item lg={3} sm={4} xs={6}>
                         <div
                             style={{
                                 boxShadow: '0px 7px 20px 0px #28293D14',
@@ -177,16 +215,16 @@ const CheckInNew: React.FC = () => {
                             }}>
                             <Box display="flex" gap="8px">
                                 <Avatar
-                                    src={Client.avatar}
-                                    alt={Client.name}
+                                    // src={Client.avatar}
+                                    // alt={item.tenKhachHang}
                                     sx={{ width: 40, height: 40 }}
                                 />
                                 <div>
                                     <Typography color="#333233" variant="subtitle1">
-                                        {Client.name}
+                                        {item.tenKhachHang}
                                     </Typography>
                                     <Typography color="#999699" fontSize="12px">
-                                        {Client.phone}
+                                        {item.soDienThoai}
                                     </Typography>
                                 </div>
                             </Box>
@@ -195,16 +233,22 @@ const CheckInNew: React.FC = () => {
                                     Điểm tích lũy:
                                 </Typography>
                                 <Typography fontSize="14px" color="#4C4B4C" fontWeight="700">
-                                    {Client.point}
+                                    {item.tongTichDiem}
                                 </Typography>
                             </Box>
                             <Box display="flex" marginTop="16px">
                                 <Typography color="#666466" fontSize="14px">
-                                    {Client.date}
+                                    {item.dateCheckIn}
                                 </Typography>
-                                <Typography color="#666466" fontSize="14px" marginLeft="13px">
-                                    <img src={clockIcon} style={{ marginRight: '5px' }} />
-                                    {Client.hour}
+                                <Typography color="#666466" marginLeft="13px">
+                                    <QueryBuilder
+                                        style={{
+                                            fontSize: '12px',
+                                            marginTop: '-5px',
+                                            marginRight: '5px'
+                                        }}
+                                    />
+                                    {item.timeCheckIn}
                                 </Typography>
                                 <Typography
                                     variant="caption"
@@ -217,112 +261,13 @@ const CheckInNew: React.FC = () => {
                                         color: '#FFC700',
                                         marginLeft: 'auto'
                                     }}>
-                                    {Client.state}
+                                    {item.txtTrangThaiCheckIn}
                                 </Typography>
                             </Box>
                         </div>
                     </Grid>
                 ))}
             </Grid>
-            {/* poppup */}
-            <Box
-                padding="28px 24px"
-                component="form"
-                className={active ? 'poppup-add_checkin active' : 'poppup-add_checkin'}
-                display="flex"
-                flexDirection="column">
-                <Typography fontWeight="700" variant="h5">
-                    Thêm khách hàng checkout
-                </Typography>
-                <Grid container marginTop="28px" spacing={3}>
-                    <Grid item xs={7}>
-                        <Typography fontSize="14px" color="#666466">
-                            Họ và tên
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            type="text"
-                            placeholder="Đinh Tuấn Tài"
-                            size="small"
-                            sx={{
-                                fontSize: '16px',
-                                color: '#4C4B4C',
-                                backgroundColor: '#fff',
-                                maxWidth: '600px'
-                            }}
-                        />
-                        <Typography fontSize="14px" color="#666466" marginTop="24px">
-                            Số điện thoại
-                        </Typography>
-                        <TextField
-                            fullWidth
-                            type="text"
-                            placeholder="0911290476"
-                            size="small"
-                            sx={{
-                                fontSize: '16px',
-                                color: '#4C4B4C',
-                                backgroundColor: '#fff',
-                                maxWidth: '600px'
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={5} display="flex" justifyContent="end">
-                        <TextField
-                            fullWidth
-                            sx={{
-                                backgroundColor: '#fff',
-                                borderColor: '#CDC9CD!important',
-                                borderWidth: '1px!important',
-                                maxWidth: '400px'
-                            }}
-                            size="small"
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            InputProps={{
-                                startAdornment: (
-                                    <IconButton type="submit">
-                                        <img src={searchIcon} />
-                                    </IconButton>
-                                )
-                            }}
-                        />
-                    </Grid>
-                </Grid>
-                <ButtonGroup sx={{ gap: '8px', margin: '44px auto 0 auto' }}>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            borderRadius: '4px!important',
-                            textTransform: 'unset',
-                            fontSize: '12px'
-                        }}>
-                        Lưu
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            borderColor: '#965C85!important',
-                            borderRadius: '4px!important',
-                            textTransform: 'unset',
-                            fontSize: '12px',
-                            color: '#965C85'
-                        }}>
-                        Huỷ
-                    </Button>
-                </ButtonGroup>
-                <IconButton
-                    onClick={handleToggle}
-                    sx={{ position: 'absolute', right: '31px', top: '35px' }}>
-                    <img src={closeIcon} />
-                </IconButton>
-            </Box>
-            <div
-                onClick={handleToggle}
-                className={active ? 'overlay-checkin active' : 'overlay-checkin'}></div>
-        </Box>
+        </>
     );
-};
-export default CheckInNew;
+}

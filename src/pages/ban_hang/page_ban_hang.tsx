@@ -29,7 +29,7 @@ import HoaDonService from '../../services/ban_hang/HoaDonService';
 
 import SoQuyServices from '../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
-// import HoaDonService from '../../services/so_quy/QuyChiTietDto';
+import MauInServices from '../../services/mau_in/MauInServices';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
 
@@ -265,6 +265,26 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         console.log('soquyDB', soquyDB);
         // remove  cache
         await RemoveCache();
+
+        const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
+        const newIframe = document.createElement('iframe');
+        newIframe.height = '0';
+        newIframe.src = 'about:blank';
+        document.body.appendChild(newIframe);
+        newIframe.innerHTML = content;
+        newIframe.src = 'javascript:window["contents"]';
+        newIframe.focus();
+        newIframe.onload = function () {
+            setTimeout(function () {
+                window.print();
+            }, 1000);
+        };
+        //const pri = document.getElementById('ifmcontentstoprint')?.innerHTML;
+        // pri.document.open();
+        // pri.document.write(content.innerHTML);
+        // pri.document.close();
+        // pri.focus();
+        // pri.print();
 
         // back to cuschecking (todo)
     };
