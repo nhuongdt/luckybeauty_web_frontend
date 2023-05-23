@@ -47,6 +47,9 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
                                 Thông tin chi tiết
                             </Title>
                             <Row gutter={4}>
+                                <Form.Item name={'idChiNhanh'} hidden>
+                                    <Input size="large" />
+                                </Form.Item>
                                 <Col span={12}>
                                     <Form.Item
                                         label="Họ nhân viên"

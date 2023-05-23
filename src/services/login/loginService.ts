@@ -14,18 +14,24 @@ const http = axios.create({
 });
 class LoginService {
     public async CheckTenant(tenantName: string) {
+        let tenancy = tenantName;
         if (tenantName == null || tenantName === '') {
-            tenantName = 'default';
+            tenancy = 'default';
         }
         const result = await http.post('api/services/app/Account/IsTenantAvailable', {
-            tenancyName: tenantName
+            tenancyName: tenancy
         });
         let tenantId = result.data.result['tenantId'];
         if (tenantId == null) {
             tenantId = 0;
         }
-        Cookies.set('TenantId', tenantId);
-        console.log(tenantId);
+
+        if (tenantName == null || tenantName == '') {
+            Cookies.set('TenantId', 'null');
+        } else {
+            Cookies.set('TenantId', tenantId);
+        }
+        console.log(Cookies.get('TenantId'));
         return result.data.result;
     }
 
@@ -41,21 +47,21 @@ class LoginService {
         if (tenantId?.toString() !== '0') {
             const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
                 headers: {
-                    'Abp.TenantId': tenantId === '1' ? '1' : tenantId,
+                    'Abp.TenantId': tenantId,
                     'Content-Type': 'application/json'
                 }
             });
             if (apiResult.status === 200) {
                 if (apiResult.data.success === true) {
                     Cookies.set('accessToken', apiResult.data.result['accessToken'], {
-                        expires: 1 / 48
+                        expires: 1
                     });
                     Cookies.set(
                         'encryptedAccessToken',
                         apiResult.data.result['encryptedAccessToken']
                     );
                     Cookies.set('expireInSeconds', apiResult.data.result['expireInSeconds'], {
-                        expires: 1 / 48
+                        expires: 1
                     });
                     Cookies.set('userId', apiResult.data.result['userId']);
                     Cookies.set('isLogin', 'true');
@@ -72,7 +78,7 @@ class LoginService {
                 Authorization: 'Bearer ' + Cookies.get('accessToken')
             }
         });
-        Cookies.set('IdChiNhanh', result.data.result[0]['id']);
+        Cookies.set('IdChiNhanh', result.data.result[0]['id'], { expires: 1 });
         return result.data.result;
     }
 }

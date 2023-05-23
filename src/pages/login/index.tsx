@@ -96,18 +96,8 @@ const LoginScreen: React.FC = () => {
                                                     '& fieldset': {
                                                         border: '1px'
                                                     }
-                                    <TextField
-                                        variant="outlined"
-                                        name="userNameOrEmail"
-                                        placeholder="Tên đăng nhập"
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                '& fieldset': {
-                                                    border: 'none'
                                                 }
-                                            }}>
-                                            <Input placeholder="Nhập email hoặc tài khoản" />
-                                        </TextField>
+                                            }}></TextField>
                                     </div>
                                 </Grid>
                                 <Grid

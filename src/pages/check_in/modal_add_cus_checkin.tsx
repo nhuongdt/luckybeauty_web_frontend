@@ -129,7 +129,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             if (!check) {
                 return;
             }
-            const khCheckIn = await KhachHangService.create(newCus);
+            const khCheckIn = await KhachHangService.createOrEdit(newCus);
             setNewCus((itemOlds: any) => {
                 return {
                     ...itemOlds,
