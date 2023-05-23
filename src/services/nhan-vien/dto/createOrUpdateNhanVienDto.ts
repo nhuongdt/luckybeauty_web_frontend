@@ -1,4 +1,3 @@
-import { Guid } from 'guid-typescript';
 export interface CreateOrUpdateNhanSuDto {
     id: string;
     maNhanVien: string;
@@ -15,5 +14,6 @@ export interface CreateOrUpdateNhanSuDto {
     noiCap?: string;
     avatar?: string;
     idChucVu: string;
+    idChiNhanh?: string;
     ghiChu?: string;
 }

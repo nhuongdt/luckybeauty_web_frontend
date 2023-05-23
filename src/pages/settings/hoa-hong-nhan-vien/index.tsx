@@ -16,14 +16,13 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 
-class ChiNhanhScreen extends Component {
+class HoaHongNhanVienScreen extends Component {
     state = {
         idChiNhanh: '',
         listChiNhanh: [] as ChiNhanhDto[]
     };
-    async componentDidMount() {
+    componentDidMount(): void {
         this.InitData();
-        console.log(this.state.listChiNhanh);
     }
     async InitData() {
         const lstChiNhanh = await chiNhanhService.GetAll({
@@ -32,7 +31,7 @@ class ChiNhanhScreen extends Component {
             skipCount: 0
         });
         this.setState({
-            listChiNhanh: lstChiNhanh.items
+            listChiNhanh: lstChiNhanh
         });
     }
     render(): ReactNode {
@@ -66,29 +65,20 @@ class ChiNhanhScreen extends Component {
                                         STT
                                     </TableCell>
                                     <TableCell className="text-td-table">Tên chi nhánh</TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        align="left"
-                                        style={{ width: '300px' }}>
-                                        Địa chỉ
+                                    <TableCell className="text-td-table" align="left">
+                                        Tên dịch vụ
                                     </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        align="left"
-                                        style={{ width: '150px' }}>
-                                        Số điện thoại
+                                    <TableCell className="text-td-table" align="left">
+                                        Nhóm dịch vụ
                                     </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        align="center"
-                                        style={{ width: '150px' }}>
-                                        Ngày áp dụng
+                                    <TableCell className="text-td-table" align="center">
+                                        Hoa hồng thực hiện
                                     </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        style={{ width: '150px' }}
-                                        align="center">
-                                        Ngày hết hạn
+                                    <TableCell className="text-td-table" align="center">
+                                        Hoa hồng theo yêu cầu
+                                    </TableCell>
+                                    <TableCell className="text-td-table" align="center">
+                                        Hoa hồng tư vấn
                                     </TableCell>
                                     <TableCell style={{ width: '50px' }} align="center">
                                         #
@@ -148,6 +138,14 @@ class ChiNhanhScreen extends Component {
                                                 ).toLocaleDateString('vi-VN')}
                                             </TableCell>
                                             <TableCell
+                                                style={{ height: '48px' }}
+                                                align="center"
+                                                className="text-th-table">
+                                                {new Date(
+                                                    item.ngayHetHan.toString()
+                                                ).toLocaleDateString('vi-VN')}
+                                            </TableCell>
+                                            <TableCell
                                                 style={{ height: '48px', width: '50px' }}
                                                 align="right">
                                                 <IconButton>
@@ -165,4 +163,4 @@ class ChiNhanhScreen extends Component {
         );
     }
 }
-export default ChiNhanhScreen;
+export default HoaHongNhanVienScreen;

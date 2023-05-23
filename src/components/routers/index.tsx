@@ -41,7 +41,7 @@ export const appRouters: AppRouteProps = {
             name: 'AnonymousLayout',
             routes: [
                 {
-                    path: '/login',
+                    path: '/',
                     name: 'login',
                     permission: '',
                     children: [],
@@ -91,7 +91,7 @@ export const appRouters: AppRouteProps = {
             name: 'MainAppLayout',
             routes: [
                 {
-                    path: '/',
+                    path: '/home',
                     name: 'home',
                     permission: '',
                     title: 'Home',
@@ -102,7 +102,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false
                 },
                 {
-                    path: '/',
+                    path: '/home',
                     name: 'dashboard',
                     permission: '',
                     title: 'Trang chủ',
@@ -130,19 +130,19 @@ export const appRouters: AppRouteProps = {
                     title: 'Bán hàng',
                     icon: <IoStorefrontOutline style={{ fontSize: 20 }} />,
                     children: [
-                        // {
-                        //     path: '/check-in',
-                        //     permission: 'Pages.Administration.Users',
-                        //     title: 'Khách checkin',
-                        //     name: 'customerChecking',
-                        //     icon: null,
-                        //     children: [],
-                        //     showInMenu: true,
-                        //     isLayout: false,
-                        //     component: LoadableComponent(
-                        //         () => import('../../pages/check_in/customer_checking')
-                        //     )
-                        // },
+                        {
+                            path: '/check-in',
+                            permission: 'Pages.Administration.Users',
+                            title: 'Khách checkin',
+                            name: 'customerChecking',
+                            icon: null,
+                            children: [],
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/check_in/customer_checking')
+                            )
+                        },
                         {
                             path: '/page-ban-hang',
                             permission: '',
@@ -228,7 +228,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
                 },
                 {
                     path: 'admin',

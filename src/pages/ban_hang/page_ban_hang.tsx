@@ -171,7 +171,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                 .where('id')
                 .equals(id)
                 .delete()
-                .then(function (deleteCount) {
+                .then(function (deleteCount: any) {
                     if (deleteCount > 0) {
                         console.log('dataHD ', dataHD);
                         dbDexie.hoaDon.add(dataHD);
@@ -223,7 +223,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
             .where('id')
             .equals(hoadon.id)
             .delete()
-            .then(function (deleteCount) {
+            .then(function (deleteCount: any) {
                 console.log('hoadonDelete ', hoadon.id, deleteCount);
             });
 
@@ -232,7 +232,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
             .where('id')
             .equals(customerChosed.idCheckIn)
             .delete()
-            .then(function (deleteCount) {
+            .then(function (deleteCount: any) {
                 console.log('customerChosed.idCheckIn ', customerChosed.idCheckIn, deleteCount);
             });
     };

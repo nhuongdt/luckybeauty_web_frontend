@@ -268,7 +268,7 @@ const PageBanHang: React.FC = () => {
                             boxShadow: ' 0px 20px 100px 0px #0000000D',
                             padding: '16px 24px',
                             height: '100%',
-                            maxHeight: '72.9492vh',
+                            maxHeight: '62.5vh',
                             overflowY: 'auto'
                         }}>
                         <Box>
@@ -367,7 +367,7 @@ const PageBanHang: React.FC = () => {
                             sx={{
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
-                                maxHeight: '67.0898vh',
+                                maxHeight: '56.0898vh',
                                 overflowY: 'auto'
                             }}>
                             {Services.map((Service) => (

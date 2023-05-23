@@ -29,11 +29,14 @@ import {
     SearchOutlined,
     UploadOutlined
 } from '@ant-design/icons';
+import sessionService from '../../services/session/sessionService';
+import Cookies from 'js-cookie';
 const { confirm } = Modal;
 class EmployeeScreen extends Component {
     formRef = React.createRef<FormInstance>();
     state = {
         idNhanSu: '',
+        idChiNhanh: '',
         modalVisible: false,
         maxResultCount: 10,
         skipCount: 0,
@@ -48,6 +51,9 @@ class EmployeeScreen extends Component {
         isShowConfirmDelete: false
     };
     async componentDidMount() {
+        const idChiNhanh = Cookies.get('IdChiNhanh');
+        console.log(idChiNhanh);
+        this.setState({ idChiNhanh: idChiNhanh });
         this.getData();
     }
     resetData() {
@@ -114,6 +120,7 @@ class EmployeeScreen extends Component {
     };
 
     async createOrUpdateModalOpen(entityDto: string) {
+        console.log(this.state.idChiNhanh);
         if (entityDto === '') {
             this.formRef.current?.resetFields();
             this.setState({
@@ -133,6 +140,7 @@ class EmployeeScreen extends Component {
                     noiCap: '',
                     avatar: '',
                     idChucVu: '',
+                    idChiNhanh: this.state.idChiNhanh,
                     ghiChu: ''
                 }
             });
@@ -141,11 +149,10 @@ class EmployeeScreen extends Component {
             this.setState({
                 createOrEditNhanSu: employee
             });
-            setTimeout(() => {
-                this.formRef.current?.setFieldsValue({ ...this.state.createOrEditNhanSu });
-            }, 100);
         }
-
+        setTimeout(() => {
+            this.formRef.current?.setFieldsValue({ ...this.state.createOrEditNhanSu });
+        }, 1000);
         this.setState({ IdKhachHang: entityDto });
         this.Modal();
     }

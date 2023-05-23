@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
 
@@ -21,8 +21,8 @@ import ApiVN from './api_VN';
 import { Link } from 'react-router-dom';
 
 const RegisterScreen: React.FC = () => {
+    const [progress, setProgress] = useState(0);
     const [confirm, setConfirm] = useState(false);
-
     const [showPassword, setShowPassword] = useState(false);
     const handleShowPassword = () => {
         setShowPassword(!showPassword);
@@ -46,28 +46,29 @@ const RegisterScreen: React.FC = () => {
         }
     };
     const [password, setPassword] = useState('');
-
     const [confirmPassword, setConfirmPassword] = useState('');
-
-    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setPassword(event.target.value);
-        handleFieldChange();
-    };
-
-    const handleConfirmPasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setConfirmPassword(event.target.value);
-        handleFieldChange();
-    };
+    const [customerName, setCustomerName] = useState('');
+    const [email, setEmail] = useState('');
+    const [store, setStore] = useState('');
+    const [phone, setPhone] = useState('');
 
     const passwordMatch = password === confirmPassword;
-
-    const [fieldsCompleted, setFieldsCompleted] = useState(0);
     //tính progress bar
-    const handleFieldChange = () => {
-        setFieldsCompleted((prevCount) => prevCount + 1);
+    const calculateProgress = () => {
+        // Calculate the progress based on the filled fields
+        const filledFields = [customerName, email, store, phone, password]; // Add more fields as needed
+        const filledCount = filledFields.filter((field) => field !== '').length;
+        const newProgress = (filledCount / 6) * 100;
+        setProgress(newProgress);
+        if (password === confirmPassword) {
+            const passwordPercen = (1 / 6) * 100;
+            const prorgessConfirm = newProgress + passwordPercen;
+            setProgress(prorgessConfirm);
+        }
     };
-
-    const progressPercent = (fieldsCompleted / 6) * 100;
+    useEffect(() => {
+        calculateProgress();
+    }, []);
     return (
         <div className="register-page">
             <div className="logo-register">
@@ -84,7 +85,10 @@ const RegisterScreen: React.FC = () => {
                             <Grid container sx={{ gap: '24px' }}>
                                 <Grid item xs={12}>
                                     <TextField
-                                        onChange={handleFieldChange}
+                                        onChange={(e) => {
+                                            setCustomerName(e.target.value);
+                                            calculateProgress();
+                                        }}
                                         fullWidth
                                         name="hoVaTen"
                                         label={
@@ -106,7 +110,10 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={12}>
                                     <TextField
-                                        onChange={handleFieldChange}
+                                        onChange={(e) => {
+                                            setEmail(e.target.value);
+                                            calculateProgress();
+                                        }}
                                         fullWidth
                                         name="email"
                                         label={
@@ -133,7 +140,10 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={6} className="w-5-0">
                                     <TextField
-                                        onChange={handleFieldChange}
+                                        onChange={(e) => {
+                                            setStore(e.target.value);
+                                            calculateProgress();
+                                        }}
                                         name="storeName w-100"
                                         label={<span className="login-label">Tên cửa hàng</span>}
                                         sx={{
@@ -149,7 +159,10 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                                 <Grid item xs={6} className="w-5-0">
                                     <TextField
-                                        onChange={handleFieldChange}
+                                        onChange={(e) => {
+                                            setPhone(e.target.value);
+                                            calculateProgress();
+                                        }}
                                         name="soDienThoai"
                                         className="w-100"
                                         label={
@@ -177,7 +190,10 @@ const RegisterScreen: React.FC = () => {
                                 <Grid item xs={12} className="passwords">
                                     <TextField
                                         className="bg-pw"
-                                        onChange={handlePasswordChange}
+                                        onChange={(e) => {
+                                            setPassword(e.target.value);
+                                            calculateProgress();
+                                        }}
                                         value={password}
                                         fullWidth
                                         name="password"
@@ -213,7 +229,10 @@ const RegisterScreen: React.FC = () => {
                                 <Grid item xs={12}>
                                     <TextField
                                         className="bg-pw"
-                                        onChange={handleConfirmPasswordChange}
+                                        onChange={(e) => {
+                                            setConfirmPassword(e.target.value);
+                                            calculateProgress();
+                                        }}
                                         value={confirmPassword}
                                         error={!passwordMatch}
                                         helperText={
@@ -257,7 +276,7 @@ const RegisterScreen: React.FC = () => {
                                 </Grid>
                             </Grid>
                             {/* <Box sx={{ width: '100%' }}>
-                                <LinearProgress variant="determinate" value={progressPercent} />
+                                <LinearProgress variant="determinate" value={progress} />
                             </Box> */}
                             <div>
                                 <FormControlLabel

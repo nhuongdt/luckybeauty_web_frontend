@@ -12,21 +12,11 @@ class KhachHangService {
     public async getAll(
         input: PagedKhachHangResultRequestDto
     ): Promise<PagedResultDto<KhachHangItemDto>> {
-        const result = await http.post(`api/services/app/KhachHang/Search`, input, {
-            headers: {
-                Accept: 'text-plain',
-                'X-XSRF-TOKEN': Cookies.get('encryptedAccessToken')
-            }
-        });
+        const result = await http.post(`api/services/app/KhachHang/Search`, input);
         return result.data.result;
     }
-    public async create(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
-        const result = await http.post('api/services/app/KhachHang/CreateKhachHang', input);
-        console.log('createCus ', result);
-        return result.data.result;
-    }
-    public async update(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
-        const result = await http.post('api/services/app/KhachHang/EditKhachHang', input);
+    public async createOrEdit(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
+        const result = await http.post('api/services/app/KhachHang/CreateOrEdit', input);
         return result.data.result;
     }
     public async getDetail(id: Guid) {
