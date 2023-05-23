@@ -43,7 +43,7 @@ const Customer: React.FC = () => {
             headerName: 'Tên khách hàng',
             width: 185,
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
                     <img
                         src={params.row.avatar}
                         alt="Avatar"
@@ -77,7 +77,7 @@ const Customer: React.FC = () => {
             field: 'recentAppointment',
             headerName: 'Cuộc hẹn gần đây',
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     {params.value}
                 </div>
@@ -102,7 +102,7 @@ const Customer: React.FC = () => {
             name: 'Võ Việt Hà',
             phone: '0911290476',
             group: 'Nhóm 1',
-            total: 'Hà Nội',
+            total: 200000,
             source: 'Trực tiếp',
             staff: '12/02/2022',
             recentAppointment: 'Đang làm việc',
@@ -185,7 +185,7 @@ const Customer: React.FC = () => {
                         fontWeight="700"
                         lineHeight="32px"
                         marginTop="4px">
-                        Danh sách khách hàng
+                        Danh sách nhân viên
                     </Typography>
                 </Grid>
                 <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
