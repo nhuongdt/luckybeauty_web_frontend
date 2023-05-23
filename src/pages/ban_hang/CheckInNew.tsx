@@ -27,6 +27,7 @@ import CheckinService from '../../services/check_in/CheckinService';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
+import MauInServices from '../../services/mau_in/MauInServices';
 
 const shortNameCus = createTheme({
     components: {
@@ -105,6 +106,26 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     const handleClickCustomer = async (item: any) => {
+        // const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
+        // const newIframe = document.createElement('iframe');
+        // newIframe.height = '0';
+        // newIframe.src = 'about:blank';
+        // document.body.appendChild(newIframe);
+        // // newIframe.innerHTML = content;
+        // newIframe.src = 'javascript:window["contents"]';
+        // newIframe.focus();
+        // // newIframe.onload = function () {
+        // //     setTimeout(function () {
+        // //         window.print();
+        // //     }, 1000);
+        // // };
+        // const pri = newIframe.contentWindow;
+        // pri?.document.open();
+        // pri?.document.write(content);
+        // pri?.document.close();
+        // // pri.focus();
+        // pri?.print();
+        // return;
         setCusChecking((old: any) => {
             return {
                 ...old,
