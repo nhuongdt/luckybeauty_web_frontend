@@ -11,7 +11,8 @@ import {
     ListItem,
     Avatar,
     ListItemIcon,
-    ListItemText
+    ListItemText,
+    InputAdornment
 } from '@mui/material';
 import arrowIcon from '../../images/arrow_back.svg';
 import serviceIcon1 from '../../images/tocIcon.svg';
@@ -24,234 +25,281 @@ import productIcon3 from '../../images/duongtoc.svg';
 import avatar from '../../images/avatar.png';
 import searchIcon from '../../images/search-normal.svg';
 import dotIcon from '../../images/dotssIcon.svg';
-const PageBanHang: React.FC = () => {
-    const Services = [
-        {
-            name: 'Chăm sóc tóc',
-            icon: serviceIcon1,
-            outline: '#009EF7',
+import { LocalOffer, Search } from '@mui/icons-material';
 
-            categorys: [
-                {
-                    name: 'Cắt tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Gội đầu massage',
-                    price: 500000
-                },
-                {
-                    name: 'Hấp dầu',
-                    price: 500000
-                },
-                {
-                    name: 'Hấp phục hồi',
-                    price: 500000
-                },
-                {
-                    name: 'Hấp phục hồi chuyên sâu',
-                    price: 500000
-                }
-            ]
-        },
-        {
-            name: 'Hóa chất tóc',
-            icon: serviceIcon2,
-            outline: '#FFC700',
+import { useState, useEffect, useReducer } from 'react';
+import { useAsyncValue, useNavigate } from 'react-router-dom';
 
-            categorys: [
-                {
-                    name: 'Uốn/ duỗi/ ép',
-                    price: 500000
-                },
-                {
-                    name: 'Nhuộm',
-                    price: 500000
-                },
-                {
-                    name: 'Dập phồng',
-                    price: 500000
-                },
-                {
-                    name: 'Nâng tone tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Chấm chân tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Bọc màu',
-                    price: 500000
-                }
-            ]
-        },
-        {
-            name: 'Dịch vụ khác',
-            icon: serviceIcon3,
-            outline: '#F1416C',
+import ProductService from '../../services/product/ProductService';
+import GroupProductService from '../../services/product/GroupProductService';
 
-            categorys: [
-                {
-                    name: 'Nối tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Gẩy light',
-                    price: 500000
-                },
-                {
-                    name: 'Uốn mái',
-                    price: 500000
-                },
-                {
-                    name: 'Nâng tone tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Chấm chân tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Bọc màu',
-                    price: 500000
-                }
-            ]
-        },
-        {
-            name: 'Combo',
-            icon: serviceIcon4,
-            outline: '#50CD89',
+import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+import HoaDonService from '../../services/ban_hang/HoaDonService';
 
-            categorys: [
-                {
-                    name: 'Nối tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Gẩy light',
-                    price: 500000
-                },
-                {
-                    name: 'Uốn mái',
-                    price: 500000
-                },
-                {
-                    name: 'Nâng tone tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Chấm chân tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Bọc màu',
-                    price: 500000
-                }
-            ]
-        }
-    ];
-    const products = [
-        {
-            name: 'Dầu gội, dầu xả',
-            icon: productIcon1,
-            outline: '#FFB1C7',
+import SoQuyServices from '../../services/so_quy/SoQuyServices';
+import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
+import MauInServices from '../../services/mau_in/MauInServices';
 
-            categorys: [
-                {
-                    name: 'Nối tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Gẩy light',
-                    price: 500000
-                },
-                {
-                    name: 'Uốn mái',
-                    price: 500000
-                },
-                {
-                    name: 'Nâng tone tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Chấm chân tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Bọc màu',
-                    price: 500000
-                }
-            ]
-        },
-        {
-            name: 'Đặc trị',
-            icon: productIcon2,
-            outline: '#022ABA',
+import { dbDexie } from '../../lib/dexie/dexieDB';
 
-            categorys: [
-                {
-                    name: 'Nối tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Gẩy light',
-                    price: 500000
-                },
-                {
-                    name: 'Uốn mái',
-                    price: 500000
-                },
-                {
-                    name: 'Nâng tone tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Chấm chân tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Bọc màu',
-                    price: 500000
-                }
-            ]
-        },
-        {
-            name: 'Dưỡng tóc',
-            icon: productIcon3,
-            outline: '#E613EB',
+import Utils from '../../utils/utils';
+import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
+import { Guid } from 'guid-typescript';
+import utils from '../../utils/utils';
+import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
+import CheckinService from '../../services/check_in/CheckinService';
+import { ModelNhomHangHoa } from '../../services/product/dto';
 
-            categorys: [
-                {
-                    name: 'Nối tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Gẩy light',
-                    price: 500000
-                },
-                {
-                    name: 'Uốn mái',
-                    price: 500000
-                },
-                {
-                    name: 'Nâng tone tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Chấm chân tóc',
-                    price: 500000
-                },
-                {
-                    name: 'Bọc màu',
-                    price: 500000
-                }
-            ]
-        }
-    ];
+const PageBanHang = ({ customerChosed }: any) => {
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     };
+    const [nhomDichVu, setNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
+    const [nhomHangHoa, setNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
+    const [listProduct, setListProduct] = useState([]);
+
+    const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
+        new PageHoaDonDto({ idKhachHang: null, tenKhachHang: '' })
+    );
+    const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+    const [clickSSave, setClickSave] = useState(false);
+    const [idNhomHang, setIdNhomHang] = useState('');
+
+    const GetTreeNhomHangHoa = async () => {
+        const list = await GroupProductService.GetTreeNhomHangHoa();
+        const lstAll = [...list.items];
+
+        setNhomDichVu(lstAll.filter((x) => !x.laNhomHangHoa));
+        setNhomHangHoa(lstAll.filter((x) => x.laNhomHangHoa));
+    };
+
+    const GetDMHangHoa_groupByNhom = async () => {
+        const input = {
+            IdNhomHangHoas: idNhomHang,
+            TextSearch: '',
+            CurrentPage: 0,
+            PageSize: 50
+        };
+        const data = await ProductService.GetDMHangHoa_groupByNhom(input);
+        setListProduct(data);
+    };
+
+    const PageLoad = () => {
+        GetTreeNhomHangHoa();
+    };
+    useEffect(() => {
+        PageLoad();
+    }, []);
+
+    useEffect(() => {
+        GetDMHangHoa_groupByNhom();
+    }, [idNhomHang]);
+
+    useEffect(() => {
+        FirstLoad_getSetDataFromCache();
+    }, [customerChosed]);
+
+    const choseNhomDichVu = (item: any) => {
+        setIdNhomHang(item.id);
+    };
+
+    const FirstLoad_getSetDataFromCache = async () => {
+        const idCus = customerChosed.idKhachHang;
+        if (!utils.checkNull(idCus)) {
+            const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
+            if (data.length === 0) {
+                const dataHD: PageHoaDonDto = {
+                    ...hoadon,
+                    idKhachHang: customerChosed.idKhachHang,
+                    maKhachHang: customerChosed.maKhachHang,
+                    tenKhachHang: customerChosed.tenKhachHang,
+                    soDienThoai: customerChosed.soDienThoai,
+                    tongTichDiem: customerChosed.tongTichDiem
+                };
+                setHoaDon(dataHD);
+                if (hoadon.id !== dataHD.id) {
+                    // avoid warning when StrictMode (add twice)
+                    dbDexie.hoaDon.add(dataHD);
+                }
+            } else {
+                // get hoadon + cthd
+                const hdctCache = data[0].hoaDonChiTiet ?? [];
+                setHoaDon(data[0]);
+                setHoaDonChiTiet(hdctCache);
+            }
+        } else {
+            // asisgn hoadon
+            setHoaDon((old) => {
+                return {
+                    ...old,
+                    idKhachHang: customerChosed.idKhachHang,
+                    maKhachHang: customerChosed.maKhachHang,
+                    tenKhachHang: customerChosed.tenKhachHang,
+                    soDienThoai: customerChosed.soDienThoai,
+                    tongTichDiem: customerChosed.tongTichDiem
+                };
+            });
+        }
+    };
+
+    const updateCurrentInvoice = async () => {
+        let tongTienHangChuaCK = 0,
+            tongChietKhau = 0,
+            tongTienHang = 0,
+            thanhtiensauVAT = 0;
+
+        for (let i = 0; i < hoaDonChiTiet.length; i++) {
+            const itFor = hoaDonChiTiet[i];
+            tongTienHangChuaCK += itFor.soLuong * itFor.donGiaTruocCK;
+            tongTienHang += itFor.thanhTienSauCK ?? 0;
+            tongChietKhau += itFor.tienChietKhau ?? 0;
+            thanhtiensauVAT += itFor.thanhTienSauVAT ?? 0;
+        }
+        const dataHD = {
+            ...hoadon,
+            tongTienHangChuaChietKhau: tongTienHangChuaCK,
+            tongTienHang: tongTienHang,
+            tongChietKhauHangHoa: tongChietKhau,
+            tongTienHDSauVAT: thanhtiensauVAT,
+            tongThanhToan: thanhtiensauVAT,
+            hoaDonChiTiet: hoaDonChiTiet
+        };
+        setHoaDon((old: any) => {
+            return {
+                ...old,
+                tongTienHangChuaChietKhau: tongTienHangChuaCK,
+                tongTienHang: tongTienHang,
+                tongChietKhauHangHoa: tongChietKhau,
+                tongTienHDSauVAT: thanhtiensauVAT,
+                tongThanhToan: thanhtiensauVAT,
+                hoaDonChiTiet: hoaDonChiTiet
+            };
+        });
+        UpdateCacheHD(dataHD);
+    };
+
+    const UpdateCacheHD = async (dataHD: any) => {
+        const id = dataHD.id ?? Guid.create().toString();
+        const data = await dbDexie.hoaDon.where('id').equals(id).toArray();
+
+        if (data.length > 0) {
+            await dbDexie.hoaDon
+                .where('id')
+                .equals(id)
+                .delete()
+                .then(function (deleteCount: any) {
+                    if (deleteCount > 0) {
+                        console.log('dataHD ', dataHD);
+                        dbDexie.hoaDon.add(dataHD);
+                    }
+                });
+        }
+    };
+
+    useEffect(() => {
+        updateCurrentInvoice();
+    }, [hoaDonChiTiet]);
+
+    const deleteChiTietHoaDon = (item: any) => {
+        setHoaDonChiTiet(hoaDonChiTiet.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi));
+    };
+
+    const choseChiTiet = async (item: any, index: any) => {
+        const newCT = new PageHoaDonChiTietDto({
+            idDonViQuyDoi: item.idDonViQuyDoi,
+            maHangHoa: item.maHangHoa,
+            tenHangHoa: item.tenHangHoa,
+            giaBan: item.giaBan,
+            idNhomHangHoa: item.idNhomHangHoa,
+            idHangHoa: item.id,
+            soLuong: 1
+        });
+
+        const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
+        if (checkCT.length === 0) {
+            setHoaDonChiTiet((olds: any) => {
+                return [newCT, ...olds];
+            });
+        } else {
+            newCT.soLuong = checkCT[0].soLuong + 1;
+            newCT.nhanVienThucHien = checkCT[0].nhanVienThucHien;
+
+            // remove & unshift but keep infor old cthd
+            const arrOld = hoaDonChiTiet?.filter((x) => x.idDonViQuyDoi !== item.idDonViQuyDoi);
+            setHoaDonChiTiet((olds: any) => {
+                return [newCT, ...arrOld];
+            });
+        }
+    };
+
+    const RemoveCache = async () => {
+        console.log('RemoveCache ', hoadon.id, customerChosed.idCheckIn);
+        // remove  hoadon
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon.id)
+            .delete()
+            .then(function (deleteCount: any) {
+                console.log('hoadonDelete ', hoadon.id, deleteCount);
+            });
+
+        // remove cache kh_checkin
+        await dbDexie.khachCheckIn
+            .where('id')
+            .equals(customerChosed.idCheckIn)
+            .delete()
+            .then(function (deleteCount: any) {
+                console.log('customerChosed.idCheckIn ', customerChosed.idCheckIn, deleteCount);
+            });
+    };
+
+    const saveHoaDon = async () => {
+        setClickSave(true);
+
+        const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
+        setHoaDonChiTiet([]);
+        setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
+
+        // checkout
+        const checkout = await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
+
+        // save soquy
+        const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+            idLoaiChungTu: 11,
+            ngayLapHoaDon: hoadon.ngayLapHoaDon,
+            tongTienThu: hoadon.tongThanhToan
+        });
+        quyHD.quyHoaDon_ChiTiet = [
+            new QuyChiTietDto({
+                idHoaDonLienQuan: hodaDonDB.id,
+                idKhachHang: hoadon.idKhachHang,
+                tienThu: hoadon.tongThanhToan
+            })
+        ];
+        console.log('quyHD', quyHD);
+        const soquyDB = await SoQuyServices.CreateQuyHoaDon(quyHD);
+        console.log('soquyDB', soquyDB);
+        // remove  cache
+        await RemoveCache();
+
+        const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
+        const newIframe = document.createElement('iframe');
+        newIframe.height = '0';
+        newIframe.src = 'about:blank';
+        document.body.appendChild(newIframe);
+        newIframe.src = 'javascript:window["contents"]';
+        newIframe.focus();
+        const pri = newIframe.contentWindow;
+        pri?.document.open();
+        pri?.document.write(content);
+        pri?.document.close();
+        // pri.focus();
+        pri?.print();
+
+        // back to cuschecking (todo)
+    };
+
     return (
         <>
             <Grid
@@ -280,22 +328,23 @@ const PageBanHang: React.FC = () => {
                                 Nhóm dịch vụ
                             </Typography>
                             <List>
-                                {Services.map((Service) => (
+                                {nhomDichVu.map((nhomDV, index) => (
                                     <ListItem
+                                        key={index}
+                                        onClick={() => choseNhomDichVu(nhomDV)}
                                         sx={{
                                             gap: '6px',
                                             padding: '10px',
                                             borderWidth: '1px',
                                             borderStyle: 'solid',
-                                            borderColor: Service.outline,
+                                            borderColor: nhomDV.color,
                                             borderRadius: '8px',
                                             marginTop: '12px'
-                                        }}
-                                        key={Service.name.replace(/\s/g, '')}>
+                                        }}>
                                         <ListItemIcon sx={{ minWidth: '0' }}>
-                                            <img src={Service.icon} alt={Service.name} />
+                                            <LocalOffer style={{ color: nhomDV.color }} />
                                         </ListItemIcon>
-                                        <ListItemText>{Service.name}</ListItemText>
+                                        <ListItemText>{nhomDV.tenNhomHang}</ListItemText>
                                     </ListItem>
                                 ))}
                             </List>
@@ -310,22 +359,23 @@ const PageBanHang: React.FC = () => {
                                 Sản phẩm
                             </Typography>
                             <List>
-                                {products.map((product) => (
+                                {nhomHangHoa.map((nhomHH, index) => (
                                     <ListItem
+                                        key={index}
                                         sx={{
                                             gap: '6px',
                                             padding: '10px',
                                             borderWidth: '1px',
                                             borderStyle: 'solid',
-                                            borderColor: product.outline,
+                                            borderColor: nhomHH.color,
                                             borderRadius: '8px',
                                             marginTop: '12px'
                                         }}
-                                        key={product.name.replace(/\s/g, '')}>
+                                        onClick={() => choseNhomDichVu(nhomHH)}>
                                         <ListItemIcon sx={{ minWidth: '0' }}>
-                                            <img src={product.icon} alt={product.name} />
+                                            <LocalOffer style={{ color: nhomHH.color }} />
                                         </ListItemIcon>
-                                        <ListItemText>{product.name}</ListItemText>
+                                        <ListItemText>{nhomHH.tenNhomHang}</ListItemText>
                                     </ListItem>
                                 ))}
                             </List>
@@ -352,9 +402,9 @@ const PageBanHang: React.FC = () => {
                             placeholder="Tìm kiếm"
                             InputProps={{
                                 startAdornment: (
-                                    <IconButton type="submit">
-                                        <img src={searchIcon} />
-                                    </IconButton>
+                                    <InputAdornment position="start">
+                                        <Search />
+                                    </InputAdornment>
                                 )
                             }}
                         />
@@ -370,20 +420,20 @@ const PageBanHang: React.FC = () => {
                                 maxHeight: '56.0898vh',
                                 overflowY: 'auto'
                             }}>
-                            {Services.map((Service) => (
-                                <Box key={Service.name.replace(/\s/g, '')}>
+                            {listProduct.map((nhom: any, index: any) => (
+                                <Box key={index}>
                                     <Typography
                                         variant="h4"
                                         fontSize="16px"
                                         color="#000"
                                         fontWeight="700"
                                         marginBottom="16px">
-                                        {Service.name}
+                                        {nhom.tenNhomHang}
                                     </Typography>
 
                                     <Grid container spacing={1.5}>
-                                        {Service.categorys.map((category) => (
-                                            <Grid item md={4}>
+                                        {nhom.hangHoas.map((item: any, index2: any) => (
+                                            <Grid item md={4} key={item.id}>
                                                 <Box
                                                     height="104px"
                                                     padding="8px 12px 9px 12px"
@@ -392,63 +442,23 @@ const PageBanHang: React.FC = () => {
                                                     justifyContent="space-between"
                                                     borderRadius="4px"
                                                     style={{
-                                                        backgroundColor: Service.outline + '1a'
+                                                        backgroundColor: nhom.color + '1a'
+                                                    }}
+                                                    onClick={() => {
+                                                        choseChiTiet(item, index);
                                                     }}>
                                                     <Typography
                                                         variant="h5"
                                                         fontSize="14px"
                                                         fontWeight="700"
                                                         color="#333233">
-                                                        {category.name}
+                                                        {item.tenHangHoa}
                                                     </Typography>
                                                     <Typography
                                                         variant="body1"
                                                         fontSize="14px"
                                                         color="#333233">
-                                                        {formatCurrency(category.price)}
-                                                    </Typography>
-                                                </Box>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </Box>
-                            ))}
-                            {products.map((product) => (
-                                <Box key={product.name.replace(/\s/g, '')}>
-                                    <Typography
-                                        variant="h4"
-                                        fontSize="16px"
-                                        color="#000"
-                                        fontWeight="700"
-                                        marginBottom="16px">
-                                        {product.name}
-                                    </Typography>
-
-                                    <Grid container spacing={1.5}>
-                                        {product.categorys.map((category) => (
-                                            <Grid item lg={4}>
-                                                <Box
-                                                    height="104px"
-                                                    padding="8px 12px 9px 12px"
-                                                    display="flex"
-                                                    flexDirection="column"
-                                                    justifyContent="space-between"
-                                                    borderRadius="4px"
-                                                    style={{
-                                                        backgroundColor: product.outline + '1a'
-                                                    }}>
-                                                    <Typography
-                                                        variant="h5"
-                                                        fontSize="14px"
-                                                        fontWeight="700"
-                                                        color="#333233">
-                                                        {category.name}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body1"
-                                                        fontSize="14px"
-                                                        color="#333233">
-                                                        {formatCurrency(category.price)}
+                                                        {utils.formatNumber(item.giaBan)}
                                                     </Typography>
                                                 </Box>
                                             </Grid>
@@ -478,10 +488,10 @@ const PageBanHang: React.FC = () => {
                                 <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
                                 <Box>
                                     <Typography variant="body2" fontSize="14px" color="#666466">
-                                        Đinh Tuấn Tài
+                                        {hoadon?.tenKhachHang}
                                     </Typography>
                                     <Typography variant="body2" fontSize="12px" color="#999699">
-                                        0911290476
+                                        {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
                                 <Button sx={{ marginLeft: 'auto' }}>
@@ -500,7 +510,7 @@ const PageBanHang: React.FC = () => {
                                     Tổng tiền hàng
                                 </Typography>
                                 <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    700.000 đ
+                                    {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
                                 </Typography>
                             </Box>
                             <Box display="flex" justifyContent="space-between">
@@ -508,7 +518,7 @@ const PageBanHang: React.FC = () => {
                                     Giảm giá
                                 </Typography>
                                 <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    700.000 đ
+                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
                                 </Typography>
                             </Box>
                             <Box display="flex" justifyContent="space-between">
@@ -516,7 +526,7 @@ const PageBanHang: React.FC = () => {
                                     Tổng giảm giá
                                 </Typography>
                                 <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    700.000 đ
+                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
                                 </Typography>
                             </Box>
                             <Box display="flex" justifyContent="space-between">
@@ -532,7 +542,7 @@ const PageBanHang: React.FC = () => {
                                     fontWeight="700"
                                     fontSize="16px"
                                     color="#3B4758">
-                                    2.100.000 đ
+                                    {Utils.formatNumber(hoadon.tongThanhToan)}
                                 </Typography>
                             </Box>
                         </Box>
