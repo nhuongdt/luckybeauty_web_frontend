@@ -202,7 +202,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             sx={{
                                 position: 'absolute',
                                 top: '16px',
-                                right: '16px',
+                                right: '8px',
                                 minWidth: 'unset',
                                 borderRadius: '50%!important'
                             }}>
