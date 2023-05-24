@@ -13,7 +13,7 @@ export class SubClassDexie extends Dexie {
         this.version(1).stores({
             hoaDon: '&id, idKhachHang',
             hoaDonChiTiet: '&id, idHoaDon,idDonViQuyDoi,soLuong, thanhTien',
-            khachCheckIn: '&id, idKhachHang'
+            khachCheckIn: '&idCheckIn, idKhachHang'
         });
     }
 }

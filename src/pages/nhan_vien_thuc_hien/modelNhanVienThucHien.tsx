@@ -25,19 +25,16 @@ import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
 
 const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
+    const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [lstNhanVienChosed, setLstNhanVienChosed] = useState<NhanSuItemDto[]>([]);
 
-    const [isShow, setIsShow] = useState(false);
-    const [isSave, setIsSave] = useState(false);
-
     useEffect(() => {
         if (triggerModal.isShow) {
             setIsShow(true);
         }
-        setIsSave(false);
     }, [triggerModal]);
 
     const GetListNhanVien = async () => {
@@ -95,6 +92,7 @@ const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     };
 
     const onSave = () => {
+        setIsShow(false);
         handleSave();
     };
 

@@ -2,6 +2,7 @@ import { Guid } from 'guid-typescript';
 import { KhachHangItemDto } from '../khach-hang/dto/KhachHangItemDto';
 import HoaDonDto from './HoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+import moment from 'moment';
 
 export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
@@ -25,12 +26,16 @@ export default class PageHoaDonDto extends HoaDonDto {
         txtTrangThaiHD = 'Hoàn thành',
         maNhanVien = '',
         tenNhanVien = '',
+        maHoaDon = '',
+        ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
         tongTienHang = 0,
         tongTienThue = 0
     }) {
         super({
             id: id,
             idKhachHang: idKhachHang,
+            maHoaDon: maHoaDon,
+            ngayLapHoaDon: ngayLapHoaDon,
             tongTienHang: tongTienHang,
             tongTienThue: tongTienThue
         });

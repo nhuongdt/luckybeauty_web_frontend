@@ -1,3 +1,8 @@
+import HoaDonChiTietDto from '../services/ban_hang/HoaDonChiTietDto';
+import PageHoaDonChiTietDto from '../services/ban_hang/PageHoaDonChiTietDto';
+import PageHoaDonDto from '../services/ban_hang/PageHoaDonDto';
+import { KhachHangDto } from '../services/khach-hang/dto/KhachHangDto';
+
 export class PropModal {
     isShow = false;
     isNew = false;
@@ -21,5 +26,22 @@ export class PropConfirmOKCancel {
         this.title = title;
         this.mes = mes;
         this.type = type;
+    }
+}
+
+export class PropToChildMauIn {
+    contentHtml = '';
+    hoadon?: PageHoaDonDto;
+    hoadonChiTiet?: PageHoaDonChiTietDto[];
+    khachhang?: KhachHangDto;
+
+    constructor({
+        contentHtml = '',
+        hoadon = new PageHoaDonDto({ idKhachHang: null }),
+        hoadonChiTiet = [new PageHoaDonChiTietDto({ soLuong: 1 })]
+    }) {
+        this.contentHtml = contentHtml;
+        this.hoadon = hoadon;
+        this.hoadonChiTiet = hoadonChiTiet;
     }
 }

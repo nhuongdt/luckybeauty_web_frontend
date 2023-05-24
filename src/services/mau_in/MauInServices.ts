@@ -7,7 +7,6 @@ class MauInServices {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('GetFileMauIn', xx);
         return xx;
     };
 }

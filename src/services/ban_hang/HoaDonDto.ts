@@ -10,6 +10,7 @@ export default class HoaDonDto {
     idLoaiChungTu = 1;
     maHoaDon = '';
     ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS');
+
     tongTienHang = 0;
     pTGiamGiaHD? = 0;
     tongGiamGiaHD = 0;
