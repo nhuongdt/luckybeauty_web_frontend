@@ -1,6 +1,5 @@
 export interface CreateOrEditChiNhanhDto {
     id: string;
-    tenantId: number;
     idCongTy: string;
     maChiNhanh: string;
     tenChiNhanh: string;

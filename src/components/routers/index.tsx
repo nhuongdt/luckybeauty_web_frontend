@@ -41,6 +41,17 @@ export const appRouters: AppRouteProps = {
             name: 'AnonymousLayout',
             routes: [
                 {
+                    path: '/login',
+                    name: 'login',
+                    permission: '',
+                    children: [],
+                    title: 'Login',
+                    icon: '',
+                    component: LoadableComponent(() => import('../../pages/login')),
+                    isLayout: true,
+                    showInMenu: false
+                },
+                {
                     path: '/',
                     name: 'login',
                     permission: '',

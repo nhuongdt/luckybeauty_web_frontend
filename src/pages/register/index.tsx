@@ -19,6 +19,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import logo from '../../images/Lucky_beauty.jpg';
 import ApiVN from './api_VN';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const RegisterScreen: React.FC = () => {
     const [progress, setProgress] = useState(0);
@@ -298,7 +299,16 @@ const RegisterScreen: React.FC = () => {
                             </button>
                         </form>
                         <p className="has-login">
-                            Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+                            Bạn đã có tài khoản?{' '}
+                            <Link
+                                onClick={() => {
+                                    Object.keys(Cookies.get()).forEach((cookieName) => {
+                                        Cookies.remove(cookieName);
+                                    });
+                                }}
+                                to="/login">
+                                Đăng nhập
+                            </Link>
                         </p>
                     </div>
                 </div>

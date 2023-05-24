@@ -121,7 +121,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                 />
                 <a
                     onClick={() => {
-                        console.log('ooo');
                         Object.keys(Cookies.get()).forEach((cookieName) => {
                             Cookies.remove(cookieName);
                         });

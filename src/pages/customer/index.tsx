@@ -12,7 +12,8 @@ import {
     IconButton,
     Select,
     MenuItem,
-    FormControl
+    FormControl,
+    TablePagination
 } from '@mui/material';
 import TextareaAutosize from '@mui/base/TextareaAutosize';
 import fileIcon from '../../images/file.svg';
@@ -27,6 +28,8 @@ import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import { pageLoadTime } from '../../lib/abp';
+import fileDowloadService from '../../services/file-dowload.service';
 class Customer extends React.Component {
     state = {
         rowTable: [],
@@ -35,21 +38,27 @@ class Customer extends React.Component {
         rowPerPage: 10,
         pageSkipCount: 0,
         skipCount: 0,
+        curentPage: 0,
         keyword: '',
+        totalItems: 0,
         createOrEditKhachHang: {} as CreateOrEditKhachHangDto
     };
     componentDidMount(): void {
         this.getData();
     }
+
     async getData() {
+        console.log(this.state.skipCount);
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
             skipCount: this.state.skipCount,
             loaiDoiTuong: 0
         });
+
         this.setState({
-            rowTable: khachHangs.items
+            rowTable: khachHangs.items,
+            totalItems: khachHangs.totalCount
         });
     }
     async handleSubmit() {
@@ -59,6 +68,7 @@ class Customer extends React.Component {
             rowPerPage: 10,
             pageSkipCount: 0,
             skipCount: 0,
+            curentPage: 0,
             keyword: '',
             createOrEditKhachHang: {} as CreateOrEditKhachHangDto
         });
@@ -87,8 +97,6 @@ class Customer extends React.Component {
                 createOrEditKhachHang: createOrEdit
             });
         }
-
-        console.log(id);
         this.handleToggle();
     }
     async delete(id: string) {
@@ -99,17 +107,26 @@ class Customer extends React.Component {
             toggle: !this.state.toggle
         });
     };
-    handlePageSizeChange = (pageSize: any) => {
-        this.setState({ rowPerPage: pageSize, skipCount: 0 });
-        this.getData();
+    exportToExcel = async () => {
+        const result = await khachHangService.exportDanhSach({
+            keyword: this.state.keyword,
+            maxResultCount: this.state.rowPerPage,
+            skipCount: this.state.skipCount,
+            loaiDoiTuong: 0
+        });
+        fileDowloadService.downloadTempFile(result);
     };
-    handlePageChange = (page: any) => {
-        const { rowPerPage } = this.state;
-        const skipCount = page;
-        this.setState({ skipCount });
-        // Fetch new data based on the updated page
-        // You may need to make an API call here to retrieve the updated data
-        this.getData();
+    handlePageChange = async (event: any, newPage: number) => {
+        const skip = newPage + 1;
+        await this.setState({ skipCount: skip, curentPage: newPage });
+        await this.getData();
+    };
+
+    // Handler for rows per page changes
+    handleRowsPerPageChange = async (event: any) => {
+        await this.setState({ rowPerPage: parseInt(event.target.value, 10) });
+        await this.setState({ curentPage: 0, skipCount: 1 }); // Reset page to the first one when changing rows per page
+        await this.getData();
     };
     breadcrumbs = [
         <Typography key="1" color="#999699" fontSize="14px">
@@ -199,7 +216,7 @@ class Customer extends React.Component {
                         </Typography>
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Box component="form" className="form-search">
+                        <Box className="form-search">
                             <TextField
                                 sx={{
                                     backgroundColor: '#FFFAFF',
@@ -207,11 +224,19 @@ class Customer extends React.Component {
                                 }}
                                 className="search-field"
                                 variant="outlined"
-                                type="search"
+                                type="text"
+                                onChange={(e) => {
+                                    this.setState({ keyword: e.target.value });
+                                }}
                                 placeholder="Tìm kiếm"
                                 InputProps={{
                                     startAdornment: (
-                                        <IconButton type="submit">
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => {
+                                                this.setState({ skipCount: 0 });
+                                                this.getData();
+                                            }}>
                                             <img src={SearchIcon} />
                                         </IconButton>
                                     )
@@ -236,6 +261,9 @@ class Customer extends React.Component {
                             <Button
                                 className="border-color"
                                 variant="outlined"
+                                onClick={() => {
+                                    this.exportToExcel();
+                                }}
                                 startIcon={<img src={UploadIcon} />}
                                 sx={{
                                     textTransform: 'capitalize',
@@ -269,16 +297,27 @@ class Customer extends React.Component {
                     <DataGrid
                         rows={this.state.rowTable}
                         columns={this.columns}
+                        hideFooterPagination
+                        hideFooter
                         initialState={{
                             pagination: {
                                 paginationModel: {
-                                    page: this.state.skipCount,
+                                    page: this.state.curentPage,
                                     pageSize: this.state.rowPerPage
                                 }
                             }
                         }}
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
+                    />
+                    <TablePagination
+                        rowsPerPageOptions={[10, 25, 50]}
+                        component="div"
+                        count={this.state.totalItems}
+                        rowsPerPage={this.state.rowPerPage}
+                        page={this.state.curentPage}
+                        onPageChange={this.handlePageChange}
+                        onRowsPerPageChange={this.handleRowsPerPageChange}
                     />
                 </div>
                 <div

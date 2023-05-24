@@ -46,7 +46,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
                             <Title level={4} className="mt-3">
                                 Thông tin chi tiết
                             </Title>
-                            <Row gutter={4}>
+                            <Row gutter={8}>
                                 <Form.Item name={'idChiNhanh'} hidden>
                                     <Input size="large" />
                                 </Form.Item>
@@ -68,7 +68,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
                                 </Col>
                             </Row>
 
-                            <Row gutter={4}>
+                            <Row gutter={8}>
                                 <Col span={12}>
                                     <Form.Item
                                         label="Số điện thoại"
@@ -83,13 +83,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
                                     </Form.Item>
                                 </Col>
                             </Row>
-                            <Row gutter={4}>
+                            <Row gutter={8}>
                                 <Col span={12}>
-                                    <Col span={12}>
-                                        <Form.Item label="Địa chỉ" name={'diaChi'}>
-                                            <Input size="large" />
-                                        </Form.Item>
-                                    </Col>
+                                    <Form.Item label="Địa chỉ" name={'diaChi'}>
+                                        <Input size="large" />
+                                    </Form.Item>
                                 </Col>
                                 <Col span={12}>
                                     <Form.Item label="Giới tính" name={'gioiTinh'}>
@@ -101,7 +99,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
                                     </Form.Item>
                                 </Col>
                             </Row>
-                            <Form.Item label="Nguồn khách" name={'idChucVu'}>
+                            <Form.Item label="Chức vụ" name={'idChucVu'}>
                                 <Select size="large" defaultValue={'Chọn chức vụ'}>
                                     {suggestChucVu.map((item) => {
                                         return (
