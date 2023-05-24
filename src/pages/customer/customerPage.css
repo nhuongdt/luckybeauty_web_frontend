@@ -152,7 +152,7 @@
     left: 50%;
     background: #ffffff;
     padding: 28px 24px;
-    padding-bottom: 90px;
+    padding-bottom: 5vw;
     width: calc(100vw - 48px);
     max-width: 1024px;
     opacity: 0;
