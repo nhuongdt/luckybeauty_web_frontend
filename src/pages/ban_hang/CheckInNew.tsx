@@ -19,7 +19,7 @@ import ModalAddCustomerCheckIn from '../check_in/modal_add_cus_checkin';
 import { PropModal } from '../../utils/PropParentToChild';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
-
+import CloseIcon from '@mui/icons-material/Close';
 import '../../App.css';
 import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
@@ -197,21 +197,26 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
             <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
                 {listCusChecking.map((item: any, index: any) => (
-                    <Grid
-                        item
-                        lg={3}
-                        sm={4}
-                        xs={6}
-                        key={index}
-                        onClick={() => {
-                            handleClickCustomer(item);
-                        }}>
+                    <Grid item lg={3} sm={4} xs={6} key={index} sx={{ position: 'relative' }}>
+                        <Button
+                            sx={{
+                                position: 'absolute',
+                                top: '16px',
+                                right: '16px',
+                                minWidth: 'unset',
+                                borderRadius: '50%!important'
+                            }}>
+                            <CloseIcon sx={{ color: '#333233' }} />
+                        </Button>
                         <div
                             style={{
                                 boxShadow: '0px 7px 20px 0px #28293D14',
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
                                 padding: '24px'
+                            }}
+                            onClick={() => {
+                                handleClickCustomer(item);
                             }}>
                             <Box display="flex" gap="8px">
                                 <Avatar
