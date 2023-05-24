@@ -215,7 +215,7 @@ export const appRouters: AppRouteProps = {
                             isLayout: false,
                             children: [],
                             component: LoadableComponent(
-                                () => import('../../pages/employee/thoi-gian-nghi')
+                                () => import('../../pages/employee/thoi-gian-nghi/indexNew')
                             )
                         }
                     ],
