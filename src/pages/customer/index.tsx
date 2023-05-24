@@ -57,7 +57,6 @@ class Customer extends React.Component {
     }
 
     async getData() {
-        console.log(this.state.skipCount);
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
@@ -150,8 +149,9 @@ class Customer extends React.Component {
         this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
     };
 
-    handleCloseMenu = () => {
-        this.setState({ anchorEl: null, selectedRowId: null });
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: null });
+        await this.getData();
     };
 
     handleView = () => {
@@ -161,11 +161,13 @@ class Customer extends React.Component {
 
     handleEdit = () => {
         // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
         this.handleCloseMenu();
     };
 
     handleDelete = () => {
         // Handle Delete action
+        this.delete(this.state.selectedRowId ?? '');
         this.handleCloseMenu();
     };
     handleOpen = () => {
@@ -180,7 +182,7 @@ class Customer extends React.Component {
         { field: 'id', headerName: 'ID', width: 50 },
 
         {
-            field: 'name',
+            field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
             width: 185,
             renderCell: (params) => (
@@ -194,45 +196,42 @@ class Customer extends React.Component {
                 </div>
             )
         },
-        { field: 'phone', headerName: 'Số điện thoại', width: 114 },
+        { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
         {
-            field: 'group',
+            field: 'tenNhomKhach',
             headerName: 'Nhóm khách',
-
             width: 112
         },
-        { field: 'gender', headerName: 'Giới tính', width: 89 },
+        { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
         {
-            field: 'staff',
+            field: 'nhanVienPhuTrach',
             headerName: 'Nhân viên phục vụ',
-
             width: 185
         },
         {
-            field: 'total',
+            field: 'tongChiTieu',
             headerName: 'Tổng chi tiêu',
-
             width: 113
         },
         {
-            field: 'recentAppointment',
+            field: 'cuocHenGanNhat',
             headerName: 'Cuộc hẹn gần đây',
             renderCell: (params) => (
                 <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
                     <DateIcon style={{ marginRight: 4 }} />
-                    {params.value}
+                    {new Date(params.value).toLocaleDateString('en-GB')}
                 </div>
             ),
-
             width: 128
         },
         {
-            field: 'source',
+            field: 'tenNguonKhach',
             headerName: 'Nguồn',
-
             width: 86,
             renderCell: (params) => (
-                <div className={params.field === 'source' ? 'last-column' : ''}>{params.value}</div>
+                <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
+                    {params.value}
+                </div>
             )
         },
         {
@@ -273,147 +272,63 @@ class Customer extends React.Component {
                             fontWeight="700"
                             lineHeight="32px"
                             marginTop="4px">
-                            Danh sách nhân viên
+                            Danh sách khách hàng
                         </Typography>
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box component="form" className="form-search">
                             <TextField
-                                size="small"
-                                placeholder="Họ và tên"
-                                fullWidth
-                                sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography color="#4C4B4C" variant="subtitle2">
-                                Số điện thoại
-                            </Typography>
-                            <TextField
-                                type="tel"
-                                size="small"
-                                placeholder="Số điện thoại"
-                                fullWidth
-                                sx={{ fontSize: '16px' }}></TextField>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography color="#4C4B4C" variant="subtitle2">
-                                Địa chỉ
-                            </Typography>
-                            <TextField
-                                type="text"
-                                size="small"
-                                placeholder="Nhập địa chỉ của khách hàng"
-                                fullWidth
-                                sx={{ fontSize: '16px' }}></TextField>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography color="#4C4B4C" variant="subtitle2">
-                                Ngày sinh
-                            </Typography>
-                            <TextField
-                                type="date"
-                                fullWidth
-                                placeholder="21/04/2004"
-                                sx={{ fontSize: '16px' }}
-                                size="small"></TextField>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography color="#4C4B4C" variant="subtitle2">
-                                Giới tính
-                            </Typography>
-                            <Select
-                                id="gender"
-                                fullWidth
-                                defaultValue={0}
                                 sx={{
-                                    height: '42px',
-                                    backgroundColor: '#fff',
-                                    padding: '0',
-                                    fontSize: '16px',
-                                    borderRadius: '8px',
-                                    borderColor: '#E6E1E6'
-                                }}>
-                                <MenuItem value={0}>Lựa chọn</MenuItem>
-                                <MenuItem value={1}>Nữ</MenuItem>
-                                <MenuItem value={2}>Nam</MenuItem>
-                            </Select>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography color="#4C4B4C" variant="subtitle2">
-                                Ghi chú
-                            </Typography>
-                            <TextareaAutosize
-                                placeholder="Điền"
-                                maxRows={4}
-                                minRows={4}
-                                style={{
-                                    width: '100%',
-                                    borderColor: '#E6E1E6',
-                                    borderRadius: '8px',
-                                    padding: '16px'
+                                    backgroundColor: '#FFFAFF',
+                                    borderColor: '#CDC9CD'
+                                }}
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                onChange={(e) => {
+                                    this.setState({ keyword: e.target.value });
+                                }}
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => {
+                                                this.getData();
+                                            }}>
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
                                 }}
                             />
-                        </Grid>
-                    </Grid>
-                    <Grid container sx={{ width: '350px' }} className=" box-1">
-                        <Grid item xs={12} className="position-relative">
-                            <div className=" inner-box" style={{ textAlign: 'center' }}>
-                                <img src={fileIcon} />
-                                <TextField
-                                    type="file"
-                                    id="input-file"
-                                    sx={{
-                                        position: 'absolute',
-                                        top: '0',
-                                        left: '0',
-                                        width: '100%',
-                                        height: '100%'
-                                    }}
-                                />
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        marginTop: '34px',
-                                        justifyContent: 'center'
-                                    }}>
-                                    <img src={fileSmallIcon} />
-                                    <div>Tải ảnh lên</div>
-                                </div>
-                                <div style={{ color: '#999699', marginTop: '13px' }}>
-                                    File định dạng{' '}
-                                    <span style={{ color: '#333233' }}>jpeg, png</span>{' '}
-                                </div>
-                            </div>
-                        </Grid>
-                        <Grid item xs={6}></Grid>
-                        <Grid item xs={6}></Grid>
+                        </Box>
                         <ButtonGroup
-                            sx={{
-                                height: '32px',
-                                position: 'absolute',
-                                bottom: '24px',
-                                right: '50px'
-                            }}>
+                            variant="contained"
+                            sx={{ gap: '8px' }}
+                            className="rounded-4px resize-height">
                             <Button
-                                variant="contained"
+                                className="border-color"
+                                variant="outlined"
+                                startIcon={<img src={DownloadIcon} />}
                                 sx={{
-                                    fontSize: '14px',
-                                    textTransform: 'unset',
-                                    color: '#fff',
-                                    backgroundColor: '#B085A4',
-                                    border: 'none'
+                                    textTransform: 'capitalize',
+                                    fontWeight: '400',
+                                    color: '#666466'
                                 }}>
-                                Lưu
+                                Nhập
                             </Button>
                             <Button
+                                className="border-color"
                                 variant="outlined"
+                                startIcon={<img src={UploadIcon} />}
                                 sx={{
-                                    fontSize: '14px',
-                                    textTransform: 'unset',
-                                    color: '#965C85',
-                                    borderColor: '#965C85'
+                                    textTransform: 'capitalize',
+                                    fontWeight: '400',
+                                    color: '#666466',
+                                    padding: '10px 16px',
+                                    borderColor: '#E6E1E6'
                                 }}>
-                                Hủy
+                                Xuất
                             </Button>
                             <Button
                                 className="bg-main"
