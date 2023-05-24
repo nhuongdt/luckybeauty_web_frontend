@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 import {
@@ -12,6 +13,7 @@ import {
     IconButton,
     Select,
     MenuItem,
+    Menu,
     FormControl
 } from '@mui/material';
 import TextareaAutosize from '@mui/base/TextareaAutosize';
@@ -25,6 +27,10 @@ import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import InfoIcon from '@mui/icons-material/Info';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 const Customer: React.FC = () => {
     const breadcrumbs = [
         <Typography key="1" color="#999699" fontSize="14px">
@@ -34,6 +40,42 @@ const Customer: React.FC = () => {
             Quản lý khách hàng
         </Typography>
     ];
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedRowId, setSelectedRowId] = useState(null);
+
+    const handleOpenMenu = (event: any, rowId: any) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedRowId(rowId);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+        setSelectedRowId(null);
+    };
+
+    const handleView = () => {
+        // Handle View action
+        handleCloseMenu();
+    };
+
+    const handleEdit = () => {
+        // Handle Edit action
+        handleCloseMenu();
+    };
+
+    const handleDelete = () => {
+        // Handle Delete action
+        handleCloseMenu();
+    };
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 50 },
@@ -92,6 +134,22 @@ const Customer: React.FC = () => {
             width: 86,
             renderCell: (params) => (
                 <div className={params.field === 'source' ? 'last-column' : ''}>{params.value}</div>
+            )
+        },
+        {
+            field: 'actions',
+            headerName: '',
+            width: 48,
+            disableColumnMenu: true,
+
+            renderCell: (params) => (
+                <IconButton
+                    aria-label="Actions"
+                    aria-controls={`actions-menu-${params.row.id}`}
+                    aria-haspopup="true"
+                    onClick={(event) => handleOpenMenu(event, params.row.id)}>
+                    <MoreHorizIcon />
+                </IconButton>
             )
         }
     ];
@@ -265,6 +323,53 @@ const Customer: React.FC = () => {
                     pageSizeOptions={[5, 10]}
                     checkboxSelection
                 />
+                <Menu
+                    id={`actions-menu-${selectedRowId}`}
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleCloseMenu}
+                    sx={{ minWidth: '120px' }}>
+                    <MenuItem onClick={handleView}>
+                        <Typography
+                            color="#009EF7"
+                            fontSize="12px"
+                            variant="button"
+                            textTransform="unset"
+                            width="64px"
+                            fontWeight="400"
+                            marginRight="8px">
+                            View
+                        </Typography>
+                        <InfoIcon sx={{ color: '#009EF7' }} />
+                    </MenuItem>
+                    <MenuItem onClick={handleEdit}>
+                        <Typography
+                            color="#009EF7"
+                            fontSize="12px"
+                            variant="button"
+                            textTransform="unset"
+                            width="64px"
+                            fontWeight="400"
+                            marginRight="8px">
+                            Edit
+                        </Typography>
+                        <EditIcon sx={{ color: '#009EF7' }} />
+                    </MenuItem>
+                    <MenuItem onClick={handleDelete}>
+                        <Typography
+                            color="#F1416C"
+                            fontSize="12px"
+                            variant="button"
+                            textTransform="unset"
+                            width="64px"
+                            fontWeight="400"
+                            marginRight="8px">
+                            Delete
+                        </Typography>
+                        <DeleteForeverIcon sx={{ color: '#F1416C' }} />
+                    </MenuItem>
+                </Menu>
             </div>
             <div
                 className={toggle ? 'show customer-overlay' : 'customer-overlay'}
