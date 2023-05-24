@@ -76,7 +76,6 @@ const LoginScreen: React.FC = () => {
                                         onChange={(value) => {
                                             setTenant(value.target.value);
                                         }}
-                                        // label={<span className="login-label">ID đăng nhập</span>}
                                         error={errorTenant}
                                         helperText={
                                             errorTenant
@@ -90,7 +89,7 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: 'none'
+                                                    border: '1px solid red!important'
                                                 }
                                             }
                                         }}></TextField>
@@ -115,7 +114,7 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: 'none'
+                                                    border: '1px'
                                                 }
                                             }
                                         }}></TextField>
@@ -143,7 +142,7 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: 'none'
+                                                    border: '1px solid red!important'
                                                 }
                                             }
                                         }}

@@ -271,20 +271,14 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
         newIframe.height = '0';
         newIframe.src = 'about:blank';
         document.body.appendChild(newIframe);
-        newIframe.innerHTML = content;
         newIframe.src = 'javascript:window["contents"]';
         newIframe.focus();
-        newIframe.onload = function () {
-            setTimeout(function () {
-                window.print();
-            }, 1000);
-        };
-        //const pri = document.getElementById('ifmcontentstoprint')?.innerHTML;
-        // pri.document.open();
-        // pri.document.write(content.innerHTML);
-        // pri.document.close();
+        const pri = newIframe.contentWindow;
+        pri?.document.open();
+        pri?.document.write(content);
+        pri?.document.close();
         // pri.focus();
-        // pri.print();
+        pri?.print();
 
         // back to cuschecking (todo)
     };
