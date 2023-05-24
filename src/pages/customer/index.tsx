@@ -321,6 +321,7 @@ const Customer: React.FC = () => {
                         }
                     }}
                     pageSizeOptions={[5, 10]}
+                    checkboxSelection
                 />
                 <Menu
                     id={`actions-menu-${selectedRowId}`}
