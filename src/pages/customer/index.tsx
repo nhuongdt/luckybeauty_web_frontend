@@ -180,7 +180,7 @@ class Customer extends React.Component {
         { field: 'id', headerName: 'ID', width: 50 },
 
         {
-            field: 'tenKhachHang',
+            field: 'name',
             headerName: 'Tên khách hàng',
             width: 185,
             renderCell: (params) => (
@@ -194,42 +194,45 @@ class Customer extends React.Component {
                 </div>
             )
         },
-        { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
+        { field: 'phone', headerName: 'Số điện thoại', width: 114 },
         {
-            field: 'tenNhomKhach',
+            field: 'group',
             headerName: 'Nhóm khách',
+
             width: 112
         },
-        { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
+        { field: 'gender', headerName: 'Giới tính', width: 89 },
         {
-            field: 'nhanVienPhuTrach',
+            field: 'staff',
             headerName: 'Nhân viên phục vụ',
+
             width: 185
         },
         {
-            field: 'tongChiTieu',
+            field: 'total',
             headerName: 'Tổng chi tiêu',
+
             width: 113
         },
         {
-            field: 'cuocHenGanNhat',
+            field: 'recentAppointment',
             headerName: 'Cuộc hẹn gần đây',
             renderCell: (params) => (
                 <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
                     <DateIcon style={{ marginRight: 4 }} />
-                    {new Date(params.value).toLocaleDateString('en-GB')}
+                    {params.value}
                 </div>
             ),
+
             width: 128
         },
         {
-            field: 'tenNguonKhach',
+            field: 'source',
             headerName: 'Nguồn',
+
             width: 86,
             renderCell: (params) => (
-                <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
-                    {params.value}
-                </div>
+                <div className={params.field === 'source' ? 'last-column' : ''}>{params.value}</div>
             )
         },
         {
@@ -276,50 +279,141 @@ class Customer extends React.Component {
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box component="form" className="form-search">
                             <TextField
+                                size="small"
+                                placeholder="Họ và tên"
+                                fullWidth
+                                sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Số điện thoại
+                            </Typography>
+                            <TextField
+                                type="tel"
+                                size="small"
+                                placeholder="Số điện thoại"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Địa chỉ
+                            </Typography>
+                            <TextField
+                                type="text"
+                                size="small"
+                                placeholder="Nhập địa chỉ của khách hàng"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ngày sinh
+                            </Typography>
+                            <TextField
+                                type="date"
+                                fullWidth
+                                placeholder="21/04/2004"
+                                sx={{ fontSize: '16px' }}
+                                size="small"></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Giới tính
+                            </Typography>
+                            <Select
+                                id="gender"
+                                fullWidth
+                                defaultValue={0}
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
-                                    borderColor: '#CDC9CD'
-                                }}
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="submit">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
-                        <ButtonGroup
-                            variant="contained"
-                            sx={{ gap: '8px' }}
-                            className="rounded-4px resize-height">
-                            <Button
-                                className="border-color"
-                                variant="outlined"
-                                startIcon={<img src={DownloadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466'
-                                }}>
-                                Nhập
-                            </Button>
-                            <Button
-                                className="border-color"
-                                variant="outlined"
-                                startIcon={<img src={UploadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    padding: '10px 16px',
+                                    height: '42px',
+                                    backgroundColor: '#fff',
+                                    padding: '0',
+                                    fontSize: '16px',
+                                    borderRadius: '8px',
                                     borderColor: '#E6E1E6'
                                 }}>
-                                Xuất
+                                <MenuItem value={0}>Lựa chọn</MenuItem>
+                                <MenuItem value={1}>Nữ</MenuItem>
+                                <MenuItem value={2}>Nam</MenuItem>
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ghi chú
+                            </Typography>
+                            <TextareaAutosize
+                                placeholder="Điền"
+                                maxRows={4}
+                                minRows={4}
+                                style={{
+                                    width: '100%',
+                                    borderColor: '#E6E1E6',
+                                    borderRadius: '8px',
+                                    padding: '16px'
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container sx={{ width: '350px' }} className=" box-1">
+                        <Grid item xs={12} className="position-relative">
+                            <div className=" inner-box" style={{ textAlign: 'center' }}>
+                                <img src={fileIcon} />
+                                <TextField
+                                    type="file"
+                                    id="input-file"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '0',
+                                        width: '100%',
+                                        height: '100%'
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        marginTop: '34px',
+                                        justifyContent: 'center'
+                                    }}>
+                                    <img src={fileSmallIcon} />
+                                    <div>Tải ảnh lên</div>
+                                </div>
+                                <div style={{ color: '#999699', marginTop: '13px' }}>
+                                    File định dạng{' '}
+                                    <span style={{ color: '#333233' }}>jpeg, png</span>{' '}
+                                </div>
+                            </div>
+                        </Grid>
+                        <Grid item xs={6}></Grid>
+                        <Grid item xs={6}></Grid>
+                        <ButtonGroup
+                            sx={{
+                                height: '32px',
+                                position: 'absolute',
+                                bottom: '24px',
+                                right: '50px'
+                            }}>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#fff',
+                                    backgroundColor: '#B085A4',
+                                    border: 'none'
+                                }}>
+                                Lưu
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#965C85',
+                                    borderColor: '#965C85'
+                                }}>
+                                Hủy
                             </Button>
                             <Button
                                 className="bg-main"

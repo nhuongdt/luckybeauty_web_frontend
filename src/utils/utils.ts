@@ -11,6 +11,7 @@ declare let abp: any;
 
 class Utils {
     GuidEmpty = '00000000-0000-0000-0000-000000000000';
+    mangso = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
     pageOption = [
         { value: 5, text: '5/ trang' },
         { value: 10, text: '10/ trang' },
@@ -150,7 +151,7 @@ class Utils {
             }
         }
     };
-    formatNumber = (number: string | number) => {
+    formatNumber = (number: string | number | undefined) => {
         if (number === undefined || number === null) {
             return 0;
         } else {
@@ -209,6 +210,87 @@ class Utils {
         const sMinutes = minutes < 10 ? '0' + minutes : minutes;
         let strTime = hours + ':' + sMinutes + ' ' + ampm;
         return strTime;
+    }
+    ReplaceAllProp(obj: any) {
+        // todo
+        let retStr = '';
+        for (let x in obj) {
+            retStr = retStr.replace(new RegExp(x, 'g'), obj[x]);
+        }
+        return retStr;
+    }
+    DocHangChuc(so: any, daydu: any) {
+        let chuoi = '';
+        const chuc = Math.floor(so / 10);
+        const donvi = so % 10;
+        if (chuc > 1) {
+            chuoi = ' ' + this.mangso[chuc] + ' mươi';
+            if (donvi === 1) {
+                chuoi += ' mốt';
+            }
+        } else if (chuc === 1) {
+            chuoi = ' mười';
+            if (donvi === 1) {
+                chuoi += ' một';
+            }
+        } else if (daydu && donvi > 0) {
+            chuoi = ' lẻ';
+        }
+        if (donvi === 5 && chuc >= 1) {
+            chuoi += ' lăm';
+        } else if (donvi > 1 || (donvi === 1 && chuc === 0)) {
+            chuoi += ' ' + this.mangso[donvi];
+        }
+        return chuoi;
+    }
+    DocHangTram(so: any, daydu: any) {
+        let chuoi = '';
+        const tram = Math.floor(so / 100);
+        so = so % 100;
+        if (daydu || tram > 0) {
+            chuoi = ' ' + this.mangso[tram] + ' trăm';
+            chuoi += this.DocHangChuc(so, true);
+        } else {
+            chuoi = this.DocHangChuc(so, false);
+        }
+        return chuoi;
+    }
+    DocHangTrieu(so: any, daydu: any) {
+        let chuoi = '';
+        const trieu = Math.floor(so / 1000000);
+        so = so % 1000000;
+        if (trieu > 0) {
+            chuoi = this.DocHangTram(trieu, daydu) + ' triệu';
+            daydu = true;
+        }
+        const nghin = Math.floor(so / 1000);
+        so = so % 1000;
+        if (nghin > 0) {
+            chuoi += this.DocHangTram(nghin, daydu) + ' nghìn';
+            daydu = true;
+        }
+        if (so > 0) {
+            chuoi += this.DocHangTram(so, daydu);
+        }
+        return chuoi;
+    }
+    DocSo(so: any) {
+        if (so === 0) return this.mangso[0];
+        let chuoi = '',
+            hauto = '';
+        do {
+            const ty = so % 1000000000;
+            so = Math.floor(so / 1000000000);
+            if (so > 0) {
+                chuoi = this.DocHangTrieu(ty, true) + hauto + chuoi;
+            } else {
+                chuoi = this.DocHangTrieu(ty, false) + hauto + chuoi;
+            }
+            hauto = ' tỷ';
+        } while (so > 0);
+        return (
+            chuoi.trim().substr(0, 1).toUpperCase() + chuoi.substr(2) + ' đồng'
+        ); /*; chuoi + ' đồng';*/
     }
 }
 

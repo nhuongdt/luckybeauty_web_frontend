@@ -14,23 +14,16 @@ import {
     ListItemText,
     InputAdornment
 } from '@mui/material';
-import binIcon from '../../images/trash.svg';
 import closeIcon from '../../images/closeSmall.svg';
 import arrowIcon from '../../images/arrow_back.svg';
-import serviceIcon1 from '../../images/tocIcon.svg';
-import serviceIcon2 from '../../images/hoachatIcon.svg';
-import serviceIcon3 from '../../images/other.svg';
-import serviceIcon4 from '../../images/combo.svg';
-import productIcon1 from '../../images/goixa.svg';
-import productIcon2 from '../../images/dactri.svg';
-import productIcon3 from '../../images/duongtoc.svg';
 import avatar from '../../images/avatar.png';
-import searchIcon from '../../images/search-normal.svg';
 import dotIcon from '../../images/dotssIcon.svg';
 import { LocalOffer, Search } from '@mui/icons-material';
+import { AiOutlineDelete } from 'react-icons/ai';
 
 import { useState, useEffect, useReducer } from 'react';
-import { useAsyncValue, useNavigate } from 'react-router-dom';
+
+import { InHoaDon } from '../../components/Print/InHoaDon';
 
 import ProductService from '../../services/product/ProductService';
 import GroupProductService from '../../services/product/GroupProductService';
@@ -52,6 +45,7 @@ import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
+import { PropToChildMauIn } from '../../utils/PropParentToChild';
 
 const PageBanHang = ({ customerChosed }: any) => {
     const formatCurrency = (value: number) => {
@@ -67,6 +61,13 @@ const PageBanHang = ({ customerChosed }: any) => {
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
     const [clickSSave, setClickSave] = useState(false);
     const [idNhomHang, setIdNhomHang] = useState('');
+
+    const [contentPrint, setContentPrint] = useState('');
+    const componentRef = React.useRef(null);
+
+    const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
+        new PropToChildMauIn({ contentHtml: '' })
+    );
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
@@ -108,6 +109,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     const FirstLoad_getSetDataFromCache = async () => {
         const idCus = customerChosed.idKhachHang;
+
         if (!utils.checkNull(idCus)) {
             const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
             if (data.length === 0) {
@@ -120,10 +122,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                     tongTichDiem: customerChosed.tongTichDiem
                 };
                 setHoaDon(dataHD);
-                if (hoadon.id !== dataHD.id) {
-                    // avoid warning when StrictMode (add twice)
-                    dbDexie.hoaDon.add(dataHD);
-                }
+                dbDexie.hoaDon.add(dataHD);
             } else {
                 // get hoadon + cthd
                 const hdctCache = data[0].hoaDonChiTiet ?? [];
@@ -192,7 +191,6 @@ const PageBanHang = ({ customerChosed }: any) => {
                 .delete()
                 .then(function (deleteCount: any) {
                     if (deleteCount > 0) {
-                        console.log('dataHD ', dataHD);
                         dbDexie.hoaDon.add(dataHD);
                     }
                 });
@@ -236,32 +234,14 @@ const PageBanHang = ({ customerChosed }: any) => {
     };
 
     const RemoveCache = async () => {
-        console.log('RemoveCache ', hoadon.id, customerChosed.idCheckIn);
-        // remove  hoadon
-        await dbDexie.hoaDon
-            .where('id')
-            .equals(hoadon.id)
-            .delete()
-            .then(function (deleteCount: any) {
-                console.log('hoadonDelete ', hoadon.id, deleteCount);
-            });
-
-        // remove cache kh_checkin
-        await dbDexie.khachCheckIn
-            .where('id')
-            .equals(customerChosed.idCheckIn)
-            .delete()
-            .then(function (deleteCount: any) {
-                console.log('customerChosed.idCheckIn ', customerChosed.idCheckIn, deleteCount);
-            });
+        await dbDexie.hoaDon.where('id').equals(hoadon.id).delete();
+        await dbDexie.khachCheckIn.where('idCheckIn').equals(customerChosed.idCheckIn).delete();
     };
 
     const saveHoaDon = async () => {
         setClickSave(true);
 
         const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
-        setHoaDonChiTiet([]);
-        setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
 
         // checkout
         const checkout = await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
@@ -279,31 +259,37 @@ const PageBanHang = ({ customerChosed }: any) => {
                 tienThu: hoadon.tongThanhToan
             })
         ];
-        console.log('quyHD', quyHD);
         const soquyDB = await SoQuyServices.CreateQuyHoaDon(quyHD);
         console.log('soquyDB', soquyDB);
-        // remove  cache
-        await RemoveCache();
 
         const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
-        const newIframe = document.createElement('iframe');
-        newIframe.height = '0';
-        newIframe.src = 'about:blank';
-        document.body.appendChild(newIframe);
-        newIframe.src = 'javascript:window["contents"]';
-        newIframe.focus();
-        const pri = newIframe.contentWindow;
-        pri?.document.open();
-        pri?.document.write(content);
-        pri?.document.close();
-        // pri.focus();
-        pri?.print();
+        setContentPrint(content);
 
+        // print
+        const hdPrint = { ...hoadon };
+        hdPrint.maHoaDon = hodaDonDB.maHoaDon;
+
+        setPropMauIn((old: any) => {
+            return {
+                ...old,
+                contentHtml: content,
+                hoadon: hdPrint,
+                khachhang: { ...customerChosed },
+                hoadonChiTiet: [...hoaDonChiTiet]
+            };
+        });
+
+        // reset after save
+        setHoaDonChiTiet([]);
+        setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
         // back to cuschecking (todo)
+        // remove  cache
+        await RemoveCache();
     };
 
     return (
         <>
+            {contentPrint !== '' && <InHoaDon props={propMauIn} />}
             <Grid
                 container
                 spacing={3}
@@ -512,64 +498,79 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 </Button>
                             </Box>
                         </Box>
-                        <Box
-                            marginBottom="auto"
-                            padding="24px 16px"
-                            borderRadius="8px"
-                            border="1px solid #F2F2F2"
-                            marginTop="24px">
-                            <Box display="flex" justifyContent="space-between" alignItems="center">
-                                <Box>
-                                    <Typography
-                                        variant="body1"
-                                        fontSize="16px"
-                                        color="#7C3367"
-                                        fontWeight="400"
-                                        lineHeight="24px">
-                                        Combo cắt uốn
-                                    </Typography>
-                                </Box>
-                                <Box display="flex" alignItems="center">
-                                    <Typography
-                                        color="#000"
-                                        variant="body1"
-                                        fontSize="16px"
-                                        fontWeight="400">
-                                        <span>1</span>x<span>200.000</span>
-                                    </Typography>
-                                    <IconButton sx={{ marginLeft: '16px' }}>
-                                        <img src={binIcon} alt="bin" />
-                                    </IconButton>
-                                </Box>
-                            </Box>
-                            <Box display="flex" alignItems="center">
-                                <Typography
-                                    variant="body2"
-                                    fontSize="12px"
-                                    color="#666466"
-                                    lineHeight="16px">
-                                    Nhân viên :
-                                </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    lineHeight="16px"
-                                    color="#4C4B4C"
+                        {/* 1 row chi tiet */}
+                        {hoaDonChiTiet?.map((ct: any, index) => (
+                            <Box
+                                marginBottom="auto"
+                                padding="24px 16px"
+                                borderRadius="8px"
+                                border="1px solid #F2F2F2"
+                                marginTop="24px"
+                                key={index}>
+                                <Box
                                     display="flex"
-                                    alignItems="center"
-                                    sx={{
-                                        backgroundColor: '#F2EBF0',
-                                        padding: '4px 8px',
-                                        gap: '10px',
-                                        borderRadius: '100px'
-                                    }}>
-                                    <span>Tài Đinh</span>
-                                    <span>
-                                        <img src={closeIcon} alt="close" />
-                                    </span>
-                                </Typography>
+                                    justifyContent="space-between"
+                                    alignItems="center">
+                                    <Box>
+                                        <Typography
+                                            variant="body1"
+                                            fontSize="16px"
+                                            color="#7C3367"
+                                            fontWeight="400"
+                                            lineHeight="24px">
+                                            {ct.tenHangHoa}
+                                        </Typography>
+                                    </Box>
+                                    <Box display="flex" alignItems="center">
+                                        <Typography
+                                            color="#000"
+                                            variant="body1"
+                                            fontSize="16px"
+                                            fontWeight="400">
+                                            <span> {ct.soLuong}</span>x
+                                            <span> {Utils.formatNumber(ct.giaBan)}</span>
+                                        </Typography>
+                                        <Box sx={{ marginLeft: '16px' }}>
+                                            <AiOutlineDelete
+                                                onClick={() => {
+                                                    deleteChiTietHoaDon(ct);
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </Box>
+                                {/* nhan vien thcu hien */}
+                                {ct.nhanVienThucHien.length > 0 && (
+                                    <Box display="flex" alignItems="center">
+                                        <Typography
+                                            variant="body2"
+                                            fontSize="12px"
+                                            color="#666466"
+                                            lineHeight="16px">
+                                            Nhân viên :
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            fontSize="14px"
+                                            lineHeight="16px"
+                                            color="#4C4B4C"
+                                            display="flex"
+                                            alignItems="center"
+                                            sx={{
+                                                backgroundColor: '#F2EBF0',
+                                                padding: '4px 8px',
+                                                gap: '10px',
+                                                borderRadius: '100px'
+                                            }}>
+                                            <span>Tài Đinh</span>
+                                            <span>
+                                                <img src={closeIcon} alt="close" />
+                                            </span>
+                                        </Typography>
+                                    </Box>
+                                )}
                             </Box>
-                        </Box>
+                        ))}
 
                         <Box display="flex" flexDirection="column" gap="32px" marginTop="24px">
                             <Box display="flex" justifyContent="space-between">
@@ -651,7 +652,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                         textTransform: 'unset!important',
                         backgroundColor: '#7C3367!important',
                         width: 'calc(33.33333% - 75px)'
-                    }}>
+                    }}
+                    onClick={saveHoaDon}>
                     Thanh Toán
                 </Button>
             </Box>

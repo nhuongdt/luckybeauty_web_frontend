@@ -144,6 +144,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             // insert checkin
             const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
             const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+                idCheckIn: dataCheckIn.id,
                 idKhachHang: khCheckIn.id.toString(),
                 maKhachHang: khCheckIn.maKhachHang,
                 tenKhachHang: khCheckIn.tenKhachHang,
@@ -164,7 +165,8 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             // insert checkin
             const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
             const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-                idKhachHang: newCus.id.toString(),
+                idCheckIn: dataCheckIn.id,
+                idKhachHang: objCheckIn.idKhachHang,
                 maKhachHang: newCus.maKhachHang,
                 tenKhachHang: newCus.tenKhachHang,
                 soDienThoai: newCus.soDienThoai,

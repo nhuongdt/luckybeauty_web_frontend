@@ -78,7 +78,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         console.log('saveCheckInOK ', dataCheckIn);
 
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-            idKhachHang: dataCheckIn.id,
+            idKhachHang: dataCheckIn.idKhachHang,
             idCheckIn: dataCheckIn.idCheckIn,
             maKhachHang: dataCheckIn.maKhachHang,
             tenKhachHang: dataCheckIn.tenKhachHang,
@@ -91,41 +91,23 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         dbDexie.khachCheckIn.add(cusChecking);
 
         // check exist dexie
-        const cus = await dbDexie.khachCheckIn
-            .where('idKhachHang')
-            .equals(dataCheckIn.idKhachHang)
-            .toArray();
-        if (cus.length === 0) {
-            // remove & add again
-            await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
-            await dbDexie.khachCheckIn.add(dataCheckIn);
-        } else {
-            // add to dexie
-            await dbDexie.khachCheckIn.add(dataCheckIn);
+        if (dataCheckIn.idKhachHang !== Guid.EMPTY) {
+            const cus = await dbDexie.khachCheckIn
+                .where('idCheckIn')
+                .equals(dataCheckIn.idCheckIn)
+                .toArray();
+            if (cus.length === 0) {
+                // remove & add again
+                await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
+                await dbDexie.khachCheckIn.add(dataCheckIn);
+            } else {
+                // add to dexie
+                await dbDexie.khachCheckIn.add(dataCheckIn);
+            }
         }
     };
 
     const handleClickCustomer = async (item: any) => {
-        // const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
-        // const newIframe = document.createElement('iframe');
-        // newIframe.height = '0';
-        // newIframe.src = 'about:blank';
-        // document.body.appendChild(newIframe);
-        // // newIframe.innerHTML = content;
-        // newIframe.src = 'javascript:window["contents"]';
-        // newIframe.focus();
-        // // newIframe.onload = function () {
-        // //     setTimeout(function () {
-        // //         window.print();
-        // //     }, 1000);
-        // // };
-        // const pri = newIframe.contentWindow;
-        // pri?.document.open();
-        // pri?.document.write(content);
-        // pri?.document.close();
-        // // pri.focus();
-        // pri?.print();
-        // return;
         setCusChecking((old: any) => {
             return {
                 ...old,
@@ -141,10 +123,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         hanleChoseCustomer(item);
 
         // add to dexie
-        const cus = await dbDexie.khachCheckIn
-            .where('idKhachHang')
-            .equals(item.idKhachHang)
-            .toArray();
+        const cus = await dbDexie.khachCheckIn.where('idCheckIn').equals(item.idCheckIn).toArray();
         if (cus.length === 0) {
             await dbDexie.khachCheckIn.add(item);
         }

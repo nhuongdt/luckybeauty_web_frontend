@@ -20,6 +20,9 @@ import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { set } from 'lodash';
 const LoginScreen: React.FC = () => {
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
     const navigate = useNavigate();
     const loginModel = new LoginModel();
     const [isLogin, setIsLogin] = useState(false);
@@ -28,11 +31,9 @@ const LoginScreen: React.FC = () => {
     const [password, setPassword] = useState('');
     const [remember, setRemember] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
-    const [errorInput, setErrorInput] = useState(false);
+    const [errorUser, setErrorUser] = useState('');
+    const [errorPassword, setErrorPassword] = useState('');
     const [errorTenant, setErrorTenant] = useState(false);
-    const handleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
     useEffect(() => {
         const accessToken = Cookies.get('accessToken');
         setIsLogin(!!accessToken);
@@ -48,12 +49,25 @@ const LoginScreen: React.FC = () => {
         const checkTenant = await LoginService.CheckTenant(loginModel.tenancyName);
         if (checkTenant.state !== 1) {
             setErrorTenant(true);
-            setErrorInput(false);
+            setErrorUser('');
+            setErrorPassword('');
         } else {
             setErrorTenant(false);
-            const login = await LoginService.Login(loginModel);
-            setErrorInput(!login);
-            setIsLogin(login);
+            if (userName != null && userName != '' && password != '' && password != null) {
+                const login = await LoginService.Login(loginModel);
+                setErrorUser(login ? '' : 'Tài khoản hoặc mật khẩu không đúng');
+                setErrorPassword(login ? '' : 'Tài khoản hoặc mật khẩu không đúng');
+                setIsLogin(login);
+            } else {
+                if (userName == null || userName == '') {
+                    setErrorUser('Tài khoản không được để trống');
+                    setErrorPassword('');
+                }
+                if (password == null || password == '') {
+                    setErrorPassword('Mật khẩu không được để trống');
+                    setErrorUser('');
+                }
+            }
         }
     };
     return (
@@ -89,7 +103,7 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: '1px solid red!important'
+                                                    border: 'none!important'
                                                 }
                                             }
                                         }}></TextField>
@@ -101,12 +115,8 @@ const LoginScreen: React.FC = () => {
                                             setUserName(value.target.value);
                                         }}
                                         // label={<span className="login-label">Tên đăng nhập</span>}
-                                        error={errorInput}
-                                        helperText={
-                                            errorInput
-                                                ? 'Tài khoản hoặc mật khẩu không chính xác.'
-                                                : ''
-                                        }
+                                        error={errorUser == '' ? false : true}
+                                        helperText={errorUser}
                                         variant="outlined"
                                         name="userNameOrEmail"
                                         placeholder="Nhập email hoặc tên tài khoản"
@@ -114,7 +124,10 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: '1px'
+                                                    border:
+                                                        errorUser == ''
+                                                            ? 'none!important'
+                                                            : '1px solid red!important'
                                                 }
                                             }
                                         }}></TextField>
@@ -130,19 +143,18 @@ const LoginScreen: React.FC = () => {
                                             setPassword(value.target.value);
                                         }}
                                         // label={<span className="login-label">Mật khẩu</span>}
-                                        error={errorInput}
-                                        helperText={
-                                            errorInput
-                                                ? 'Tài khoản hoặc mật khẩu không chính xác.'
-                                                : ''
-                                        }
+                                        error={errorPassword == '' ? false : true}
+                                        helperText={errorPassword}
                                         name="password"
                                         variant="outlined"
                                         placeholder="Nhập mật khẩu"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: '1px solid red!important'
+                                                    border:
+                                                        errorPassword == ''
+                                                            ? 'none!important'
+                                                            : '1px solid red!important'
                                                 }
                                             }
                                         }}
@@ -159,9 +171,7 @@ const LoginScreen: React.FC = () => {
                                                     </IconButton>
                                                 </InputAdornment>
                                             )
-                                        }}>
-                                        <Input placeholder="Nhập mật khẩu" />
-                                    </TextField>
+                                        }}></TextField>
                                 </Grid>
                                 <Grid xs={12} className="form-item_checkBox">
                                     <FormControlLabel
