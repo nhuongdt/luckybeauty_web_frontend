@@ -480,7 +480,9 @@ export default function PageProduct() {
                 <Grid item xs={0} sm={3} md={3} lg={3} xl={2}>
                     <Grid container>
                         <Grid item xs={8} sm={8} md={8} lg={8}>
-                            <Typography variant="h6">Nhóm dịch vụ</Typography>
+                            <Typography variant="h6" color="#0C050A" fontSize="24px">
+                                Nhóm dịch vụ
+                            </Typography>
                         </Grid>
                         <Grid
                             item

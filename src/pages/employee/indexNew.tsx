@@ -513,6 +513,60 @@ const Employee: React.FC = () => {
                     </Grid>
 
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
+                        <Box component="form" className="form-search">
+                            <TextField
+                                sx={{
+                                    backgroundColor: '#FFFAFF',
+                                    borderColor: '#CDC9CD'
+                                }}
+                                size="small"
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton type="submit">
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
+                                }}
+                            />
+                        </Box>
+
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<img src={DownloadIcon} />}
+                            sx={{
+                                borderColor: '#E6E1E6!important',
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+
+                                height: '40px',
+                                borderRadius: '4px!important'
+                            }}>
+                            Nhập
+                        </Button>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<img src={UploadIcon} />}
+                            sx={{
+                                borderColor: '#E6E1E6!important',
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+                                height: '40px',
+                                borderRadius: '4px!important'
+                            }}>
+                            Xuất
+                        </Button>
                         <ButtonGroup
                             variant="contained"
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
@@ -534,72 +588,8 @@ const Employee: React.FC = () => {
                         </ButtonGroup>
                     </Grid>
                 </Grid>
-                <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    padding="8px 24px"
-                    sx={{ backgroundColor: '#F2EBF0', borderRadius: '8px', marginTop: '30px' }}>
-                    <Box component="form" className="form-search">
-                        <TextField
-                            sx={{
-                                backgroundColor: '#FFFAFF',
-                                borderColor: '#CDC9CD'
-                            }}
-                            size="small"
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            InputProps={{
-                                startAdornment: (
-                                    <IconButton type="submit">
-                                        <img src={SearchIcon} />
-                                    </IconButton>
-                                )
-                            }}
-                        />
-                    </Box>
-                    <Box>
-                        <Button
-                            sx={{
-                                minWidth: 'unset',
-                                padding: '8px',
-                                backgroundColor: '#fff!important',
-                                marginRight: '8px'
-                            }}>
-                            <FilterAltIcon sx={{ color: '#666466' }} />
-                        </Button>
-                        <Button
-                            size="small"
-                            startIcon={<img src={DownloadIcon} />}
-                            sx={{
-                                backgroundColor: '#fff!important',
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                color: '#666466',
-                                padding: '10px 16px',
-                                marginRight: '8px',
-                                borderRadius: '4px!important'
-                            }}>
-                            Nhập
-                        </Button>
-                        <Button
-                            size="small"
-                            startIcon={<img src={UploadIcon} />}
-                            sx={{
-                                backgroundColor: '#fff!important',
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                color: '#666466',
-                                padding: '10px 16px',
 
-                                borderRadius: '4px!important'
-                            }}>
-                            Xuất
-                        </Button>
-                    </Box>
-                </Box>
-                <Box minHeight="576px" marginTop="24px">
+                <Box sx={{ height: '576px' }} marginTop="24px">
                     <DataGrid
                         rows={rows}
                         columns={columns}

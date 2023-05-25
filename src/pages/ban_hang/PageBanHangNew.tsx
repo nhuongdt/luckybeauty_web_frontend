@@ -21,7 +21,8 @@ import dotIcon from '../../images/dotssIcon.svg';
 import { LocalOffer, Search } from '@mui/icons-material';
 import { AiOutlineDelete } from 'react-icons/ai';
 
-import { useState, useEffect, useReducer } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { debounce } from '@mui/material/utils';
 
 import { InHoaDon } from '../../components/Print/InHoaDon';
 
@@ -45,12 +46,14 @@ import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-import { PropToChildMauIn } from '../../utils/PropParentToChild';
+import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
+import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 
 const PageBanHang = ({ customerChosed }: any) => {
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     };
+    const [txtSearch, setTxtSearch] = useState('');
     const [nhomDichVu, setNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
     const [nhomHangHoa, setNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState([]);
@@ -63,10 +66,13 @@ const PageBanHang = ({ customerChosed }: any) => {
     const [idNhomHang, setIdNhomHang] = useState('');
 
     const [contentPrint, setContentPrint] = useState('');
-    const componentRef = React.useRef(null);
 
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
+    );
+
+    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
+        new PropModal({ isShow: false })
     );
 
     const GetTreeNhomHangHoa = async () => {
@@ -77,16 +83,22 @@ const PageBanHang = ({ customerChosed }: any) => {
         setNhomHangHoa(lstAll.filter((x) => x.laNhomHangHoa));
     };
 
-    const GetDMHangHoa_groupByNhom = async () => {
+    const debounceDropDown = useRef(
+        debounce(async (input: any) => {
+            const data = await ProductService.GetDMHangHoa_groupByNhom(input);
+            setListProduct(data);
+        }, 500)
+    ).current;
+
+    React.useEffect(() => {
         const input = {
             IdNhomHangHoas: idNhomHang,
-            TextSearch: '',
+            TextSearch: txtSearch,
             CurrentPage: 0,
             PageSize: 50
         };
-        const data = await ProductService.GetDMHangHoa_groupByNhom(input);
-        setListProduct(data);
-    };
+        debounceDropDown(input);
+    }, [txtSearch, idNhomHang]);
 
     const PageLoad = () => {
         GetTreeNhomHangHoa();
@@ -94,10 +106,6 @@ const PageBanHang = ({ customerChosed }: any) => {
     useEffect(() => {
         PageLoad();
     }, []);
-
-    useEffect(() => {
-        GetDMHangHoa_groupByNhom();
-    }, [idNhomHang]);
 
     useEffect(() => {
         FirstLoad_getSetDataFromCache();
@@ -177,6 +185,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                 hoaDonChiTiet: hoaDonChiTiet
             };
         });
+        console.log('hdct', hoaDonChiTiet);
         UpdateCacheHD(dataHD);
     };
 
@@ -233,6 +242,23 @@ const PageBanHang = ({ customerChosed }: any) => {
         }
     };
 
+    const showPopNhanVienThucHien = (item: HoaDonChiTietDto) => {
+        setPropNVThucHien((old) => {
+            return { ...old, isShow: true, item: item };
+        });
+    };
+
+    const AgreeNVThucHien = (lstNVChosed: any) => {
+        // update cthd + save to cache
+        hoaDonChiTiet.map((x) => {
+            if (propNVThucHien.item.id === x.id) {
+                return { ...x, nhanVienThucHien: lstNVChosed };
+            } else {
+                return x;
+            }
+        });
+    };
+
     const RemoveCache = async () => {
         await dbDexie.hoaDon.where('id').equals(hoadon.id).delete();
         await dbDexie.khachCheckIn.where('idCheckIn').equals(customerChosed.idCheckIn).delete();
@@ -243,8 +269,12 @@ const PageBanHang = ({ customerChosed }: any) => {
 
         const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
 
-        // checkout
+        // checkout + insert tbl checkin_hoadon
         const checkout = await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
+        await CheckinService.InsertCheckInHoaDon({
+            idCheckIn: customerChosed.idCheckIn,
+            idHoaDon: hodaDonDB.id
+        });
 
         // save soquy
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
@@ -262,10 +292,10 @@ const PageBanHang = ({ customerChosed }: any) => {
         const soquyDB = await SoQuyServices.CreateQuyHoaDon(quyHD);
         console.log('soquyDB', soquyDB);
 
+        // print
         const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
         setContentPrint(content);
 
-        // print
         const hdPrint = { ...hoadon };
         hdPrint.maHoaDon = hodaDonDB.maHoaDon;
 
@@ -290,6 +320,7 @@ const PageBanHang = ({ customerChosed }: any) => {
     return (
         <>
             {contentPrint !== '' && <InHoaDon props={propMauIn} />}
+            <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <Grid
                 container
                 spacing={3}
@@ -388,6 +419,10 @@ const PageBanHang = ({ customerChosed }: any) => {
                             variant="outlined"
                             type="search"
                             placeholder="Tìm kiếm"
+                            value={txtSearch}
+                            onChange={(event) => {
+                                setTxtSearch(event.target.value);
+                            }}
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
@@ -512,7 +547,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     display="flex"
                                     justifyContent="space-between"
                                     alignItems="center">
-                                    <Box>
+                                    <Box onClick={() => showPopNhanVienThucHien(ct)}>
                                         <Typography
                                             variant="body1"
                                             fontSize="16px"
@@ -541,8 +576,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     </Box>
                                 </Box>
                                 {/* nhan vien thcu hien */}
-                                {ct.nhanVienThucHien.length > 0 && (
-                                    <Box display="flex" alignItems="center">
+                                {ct.nhanVienThucHien.map((nv: any, index3: any) => (
+                                    <Box display="flex" alignItems="center" key={index3}>
                                         <Typography
                                             variant="body2"
                                             fontSize="12px"
@@ -563,13 +598,13 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 gap: '10px',
                                                 borderRadius: '100px'
                                             }}>
-                                            <span>Tài Đinh</span>
+                                            <span>{nv.tenNhanVien}</span>
                                             <span>
                                                 <img src={closeIcon} alt="close" />
                                             </span>
                                         </Typography>
                                     </Box>
-                                )}
+                                ))}
                             </Box>
                         ))}
 

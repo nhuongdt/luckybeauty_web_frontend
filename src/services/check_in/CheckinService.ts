@@ -53,5 +53,15 @@ class CheckinService {
         console.log('UpdateTrangThaiCheckin', xx);
         return xx;
     };
+
+    InsertCheckInHoaDon = async (input: any) => {
+        // used to khachhang checkout --> insert (idCheckin + idHoadon)
+        const xx = await http
+            .post(`api/services/app/CheckIn/InsertCheckInHoaDon`, input)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        return xx;
+    };
 }
 export default new CheckinService();
