@@ -598,7 +598,7 @@ const Employee: React.FC = () => {
                         </Button>
                     </Box>
                 </Box>
-                <Box height="576px" marginTop="24px">
+                <Box minHeight="576px" marginTop="24px">
                     <DataGrid
                         rows={rows}
                         columns={columns}
