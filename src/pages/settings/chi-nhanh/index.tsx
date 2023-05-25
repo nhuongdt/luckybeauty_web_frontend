@@ -15,15 +15,20 @@ import { Component, ReactNode } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
+import { CreateOrEditChiNhanhDto } from '../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
+import Cookies from 'js-cookie';
+import AppConsts from '../../../lib/appconst';
 
 class ChiNhanhScreen extends Component {
     state = {
         idChiNhanh: '',
+        isShowModal: false,
+        createOrEditChiNhanhDto: {} as CreateOrEditChiNhanhDto,
         listChiNhanh: [] as ChiNhanhDto[]
     };
     async componentDidMount() {
         this.InitData();
-        console.log(this.state.listChiNhanh);
     }
     async InitData() {
         const lstChiNhanh = await chiNhanhService.GetAll({
@@ -35,12 +40,62 @@ class ChiNhanhScreen extends Component {
             listChiNhanh: lstChiNhanh.items
         });
     }
+    handleSubmit = async () => {
+        await chiNhanhService.CreateOrEdit(this.state.createOrEditChiNhanhDto);
+    };
+    Modal = () => {
+        this.setState({ isShowModal: !this.state.isShowModal });
+    };
+    createOrEditShowModal = async (idChiNhanh: string) => {
+        if (idChiNhanh === '') {
+            const idCuaHang = Cookies.get('IdCuaHang')?.toString() ?? '';
+            this.setState({
+                idChiNhanh: '',
+                createOrEditChiNhanhDto: {
+                    id: AppConsts.guidEmpty,
+                    idCongTy: idCuaHang,
+                    maChiNhanh: '',
+                    tenChiNhanh: '',
+                    soDienThoai: '',
+                    diaChi: '',
+                    maSoThue: '',
+                    logo: '',
+                    ghiChu: '',
+                    ngayHetHan: new Date(),
+                    ngayApDung: new Date(),
+                    trangThai: 0
+                }
+            });
+        } else {
+            const createOrEdit = await chiNhanhService.GetForEdit(idChiNhanh);
+            this.setState({
+                idChiNhanh: idChiNhanh,
+                createOrEditChiNhanhDto: createOrEdit
+            });
+        }
+        this.Modal();
+    };
+    onCloseModal = () => {
+        this.setState({ isShowModal: false });
+    };
+    handleChange = (event: any) => {
+        const { name, value } = event.target;
+        this.setState({
+            createOrEditChiNhanhDto: {
+                ...this.state.createOrEditChiNhanhDto,
+                [name]: value
+            }
+        });
+    };
     render(): ReactNode {
         return (
             <div>
                 <div className="row mt-2 mb-4">
                     <div className="col offset-6">
                         <Button
+                            onClick={() => {
+                                this.createOrEditShowModal('');
+                            }}
                             style={{ float: 'right', background: '#7C3367', height: '40px' }}
                             startIcon={<AddOutlinedIcon />}>
                             <span style={{ color: '#FFFAFF', fontSize: 14 }}>Thêm mới</span>
@@ -161,6 +216,14 @@ class ChiNhanhScreen extends Component {
                         </Table>
                     </TableContainer>
                 </div>
+                <CreateOrEditChiNhanhModal
+                    title={this.state.idChiNhanh == '' ? 'Thêm mới' : 'Cập nhật'}
+                    formRef={this.state.createOrEditChiNhanhDto}
+                    isShow={this.state.isShowModal}
+                    onCLose={this.onCloseModal}
+                    onSave={this.handleSubmit}
+                    onChange={this.handleChange}
+                />
             </div>
         );
     }

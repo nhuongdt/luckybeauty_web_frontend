@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie';
 import http from '../httpService';
 import { CreateCuaHangDto } from './Dto/CreateCuaHangDto';
 import { CuaHangDto } from './Dto/CuaHangDto';
@@ -20,6 +21,7 @@ class CuaHangService {
         const result = await http.get(
             `api/services/app/CuaHang/GetCongTyForEdit?idChiNhanh=${idChiNhanh}`
         );
+        Cookies.set('IdCuaHang', result.data.result['id'], { expires: 1 });
         return result.data.result;
     }
 }

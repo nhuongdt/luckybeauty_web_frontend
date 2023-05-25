@@ -458,11 +458,12 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {nhom.hangHoas.map((item: any, index2: any) => (
                                             <Grid item md={4} key={item.id}>
                                                 <Box
-                                                    height="104px"
+                                                    minHeight="104px"
                                                     padding="8px 12px 9px 12px"
                                                     display="flex"
                                                     flexDirection="column"
                                                     justifyContent="space-between"
+                                                    gap="16px"
                                                     borderRadius="4px"
                                                     style={{
                                                         backgroundColor: nhom.color + '1a'

@@ -10,6 +10,7 @@ import {
     ButtonGroup,
     Avatar
 } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, useEffect } from 'react';
 import utils from '../../utils/utils';
@@ -20,7 +21,7 @@ import ModalAddCustomerCheckIn from '../check_in/modal_add_cus_checkin';
 import { PropModal } from '../../utils/PropParentToChild';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
-
+import CloseIcon from '@mui/icons-material/Close';
 import '../../App.css';
 import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
@@ -162,6 +163,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const handleToggle = () => {
         setShow(!show);
     };
+    const MaxPc1490 = useMediaQuery('(max-width: 1490px)');
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
@@ -227,21 +229,27 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
             <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
                 {listCusChecking.map((item: any, index: any) => (
-                    <Grid
-                        item
-                        lg={3}
-                        sm={4}
-                        xs={6}
-                        key={index}
-                        onClick={() => {
-                            handleClickCustomer(item);
-                        }}>
+                    <Grid item lg={3} sm={4} xs={6} key={index} sx={{ position: 'relative' }}>
+                        <Button
+                            sx={{
+                                position: 'absolute',
+                                top: '16px',
+                                right: '8px',
+                                minWidth: 'unset',
+                                borderRadius: '50%!important'
+                            }}>
+                            <CloseIcon sx={{ color: '#333233' }} />
+                        </Button>
                         <div
                             style={{
                                 boxShadow: '0px 7px 20px 0px #28293D14',
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
-                                padding: '24px'
+                                padding: '24px',
+                                height: '100%'
+                            }}
+                            onClick={() => {
+                                handleClickCustomer(item);
                             }}>
                             <Box display="flex" gap="8px">
                                 <Avatar
@@ -250,7 +258,10 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     sx={{ width: 40, height: 40 }}
                                 />
                                 <div>
-                                    <Typography color="#333233" variant="subtitle1">
+                                    <Typography
+                                        color="#333233"
+                                        variant="subtitle1"
+                                        title={item.tenKhachHang}>
                                         {item.tenKhachHang}
                                     </Typography>
                                     <Typography color="#999699" fontSize="12px">
@@ -266,33 +277,42 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     {item.tongTichDiem}
                                 </Typography>
                             </Box>
-                            <Box display="flex" marginTop="16px">
+                            <Box
+                                display="flex"
+                                marginTop="16px"
+                                flexDirection={MaxPc1490 ? 'column' : 'row'}>
                                 <Typography color="#666466" fontSize="14px">
                                     {item.dateCheckIn}
                                 </Typography>
-                                <Typography color="#666466" marginLeft="13px">
-                                    <QueryBuilder
-                                        style={{
-                                            fontSize: '12px',
-                                            marginTop: '-5px',
-                                            marginRight: '5px'
-                                        }}
-                                    />
-                                    {item.timeCheckIn}
-                                </Typography>
-                                <Typography
-                                    variant="caption"
-                                    lineHeight="16px"
-                                    className="state"
-                                    sx={{
-                                        padding: '4px 12px ',
-                                        borderRadius: '8px',
-                                        backgroundColor: '#FFF8DD',
-                                        color: '#FFC700',
-                                        marginLeft: 'auto'
-                                    }}>
-                                    {item.txtTrangThaiCheckIn}
-                                </Typography>
+                                <Box
+                                    display="flex"
+                                    marginTop={MaxPc1490 ? '16px' : '0'}
+                                    marginLeft={MaxPc1490 ? '0' : '13px'}
+                                    flexGrow="1">
+                                    <Typography color="#666466">
+                                        <QueryBuilder
+                                            style={{
+                                                fontSize: '12px',
+                                                marginTop: '-5px',
+                                                marginRight: '5px'
+                                            }}
+                                        />
+                                        {item.timeCheckIn}
+                                    </Typography>
+                                    <Typography
+                                        variant="caption"
+                                        lineHeight="16px"
+                                        className="state"
+                                        sx={{
+                                            padding: '4px 12px ',
+                                            borderRadius: '8px',
+                                            backgroundColor: '#FFF8DD',
+                                            color: '#FFC700',
+                                            marginLeft: 'auto'
+                                        }}>
+                                        {item.txtTrangThaiCheckIn}
+                                    </Typography>
+                                </Box>
                             </Box>
                         </div>
                     </Grid>

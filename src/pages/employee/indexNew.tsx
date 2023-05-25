@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import MessageAlert from '../../components/AlertDialog/MessageAlert';
 import {
     Grid,
     Box,
@@ -9,7 +10,9 @@ import {
     InputAdornment,
     Select,
     MenuItem,
+    Menu,
     Stack,
+    Pagination,
     Button,
     Container,
     Link,
@@ -20,6 +23,11 @@ import {
     Breadcrumbs,
     Dialog
 } from '@mui/material';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import InfoIcon from '@mui/icons-material/Info';
+
 import './employee.css';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import fileSmallIcon from '../../images/fi_upload-cloud.svg';
@@ -30,6 +38,7 @@ import SearchIcon from '../../images/search-normal.svg';
 import closeIcon from '../../images/close-square.svg';
 import avatar from '../../images/avatar.png';
 import fileIcon from '../../images/file.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 const Employee: React.FC = () => {
     const breadcrumbs = [
@@ -40,6 +49,35 @@ const Employee: React.FC = () => {
             Danh mục dịch vụ
         </Typography>
     ];
+
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedRowId, setSelectedRowId] = useState(null);
+
+    const handleOpenMenu = (event: any, rowId: any) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedRowId(rowId);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+        setSelectedRowId(null);
+    };
+
+    const handleView = () => {
+        // Handle View action
+        handleCloseMenu();
+    };
+
+    const handleEdit = () => {
+        // Handle Edit action
+        handleCloseMenu();
+    };
+
+    const handleDelete = () => {
+        // Handle Delete action
+        handleCloseMenu();
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'id',
@@ -141,6 +179,22 @@ const Employee: React.FC = () => {
                     {params.value}
                 </Typography>
             )
+        },
+        {
+            field: 'actions',
+            headerName: '',
+            width: 48,
+            disableColumnMenu: true,
+
+            renderCell: (params) => (
+                <IconButton
+                    aria-label="Actions"
+                    aria-controls={`actions-menu-${params.row.id}`}
+                    aria-haspopup="true"
+                    onClick={(event) => handleOpenMenu(event, params.row.id)}>
+                    <MoreHorizIcon />
+                </IconButton>
+            )
         }
     ];
     const rows = [
@@ -150,7 +204,7 @@ const Employee: React.FC = () => {
             phone: '0911290476',
             age: '21/01/2004',
             gender: 'Nam',
-            location: 'Hà Nội',
+            location: 'Thanh Xuân ,Hà Nội',
             position: 'Kỹ thuật',
             participationDate: '10/5/2023',
             state: 'Đang làm việc',
@@ -158,22 +212,55 @@ const Employee: React.FC = () => {
         },
         {
             id: 1,
-            name: 'Tài Đinh',
+            name: 'Tài Đinhh',
             phone: '0911290476',
             age: '21/01/2004',
             gender: 'Nam',
-            location: 'Hà Nội',
+            location: 'Thanh Xuân ,Hà Nội',
             position: 'Kỹ thuật',
             participationDate: '10/5/2023',
             state: 'Đang làm việc'
         },
         {
             id: 7,
-            name: 'Tài Đinh',
+            name: 'Tài Đinhhhh',
             phone: '0911290476',
             age: '21/01/2004',
             gender: 'Nam',
-            location: 'Hà Nội',
+            location: 'Thanh Xuân ,Hà Nội',
+            position: 'Kỹ thuật',
+            participationDate: '10/5/2023',
+            state: 'Đang làm việc'
+        },
+        {
+            id: 70,
+            name: 'Tài Đinhhhh',
+            phone: '0911290476',
+            age: '21/01/2004',
+            gender: 'Nam',
+            location: 'Thanh Xuân ,Hà Nội',
+            position: 'Kỹ thuật',
+            participationDate: '10/5/2023',
+            state: 'Đang làm việc'
+        },
+        {
+            id: 79,
+            name: 'Tài Đinhhhh',
+            phone: '0911290476',
+            age: '21/01/2004',
+            gender: 'Nam',
+            location: 'Thanh Xuân ,Hà Nội',
+            position: 'Kỹ thuật',
+            participationDate: '10/5/2023',
+            state: 'Đang làm việc'
+        },
+        {
+            id: 77,
+            name: 'Tài Đinhhhh',
+            phone: '0911290476',
+            age: '21/01/2004',
+            gender: 'Nam',
+            location: 'Thanh Xuân ,Hà Nội',
             position: 'Kỹ thuật',
             participationDate: '10/5/2023',
             state: 'Đang làm việc'
@@ -205,6 +292,7 @@ const Employee: React.FC = () => {
                     variant="h3"
                     fontSize="24px"
                     color="#333233"
+                    fontWeight="700"
                     paddingLeft="24px"
                     marginTop="28px">
                     Thêm nhân viên
@@ -230,6 +318,7 @@ const Employee: React.FC = () => {
                         spacing={3}
                         width="70%"
                         paddingRight="12px"
+                        paddingBottom="5vw"
                         marginTop="0"
                         marginLeft="0">
                         <Grid item xs={12}>
@@ -424,57 +513,9 @@ const Employee: React.FC = () => {
                     </Grid>
 
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Box component="form" className="form-search">
-                            <TextField
-                                sx={{
-                                    backgroundColor: '#FFFAFF',
-                                    borderColor: '#CDC9CD'
-                                }}
-                                size="small"
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="submit">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
                         <ButtonGroup
                             variant="contained"
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<img src={DownloadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    borderRadius: '4px!important',
-                                    borderColor: '#E6E1E6!important'
-                                }}>
-                                Nhập
-                            </Button>
-                            <Button
-                                size="small"
-                                variant="outlined"
-                                startIcon={<img src={UploadIcon} />}
-                                sx={{
-                                    borderColor: '#E6E1E6!important',
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    padding: '10px 16px',
-
-                                    borderRadius: '4px!important'
-                                }}>
-                                Xuất
-                            </Button>
                             <Button
                                 size="small"
                                 onClick={handleOpen}
@@ -493,7 +534,72 @@ const Employee: React.FC = () => {
                         </ButtonGroup>
                     </Grid>
                 </Grid>
-                <Box height="582px" marginTop="24px">
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    padding="8px 24px"
+                    sx={{ backgroundColor: '#F2EBF0', borderRadius: '8px', marginTop: '30px' }}>
+                    <Box component="form" className="form-search">
+                        <TextField
+                            sx={{
+                                backgroundColor: '#FFFAFF',
+                                borderColor: '#CDC9CD'
+                            }}
+                            size="small"
+                            className="search-field"
+                            variant="outlined"
+                            type="search"
+                            placeholder="Tìm kiếm"
+                            InputProps={{
+                                startAdornment: (
+                                    <IconButton type="submit">
+                                        <img src={SearchIcon} />
+                                    </IconButton>
+                                )
+                            }}
+                        />
+                    </Box>
+                    <Box>
+                        <Button
+                            sx={{
+                                minWidth: 'unset',
+                                padding: '8px',
+                                backgroundColor: '#fff!important',
+                                marginRight: '8px'
+                            }}>
+                            <FilterAltIcon sx={{ color: '#666466' }} />
+                        </Button>
+                        <Button
+                            size="small"
+                            startIcon={<img src={DownloadIcon} />}
+                            sx={{
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+                                marginRight: '8px',
+                                borderRadius: '4px!important'
+                            }}>
+                            Nhập
+                        </Button>
+                        <Button
+                            size="small"
+                            startIcon={<img src={UploadIcon} />}
+                            sx={{
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+
+                                borderRadius: '4px!important'
+                            }}>
+                            Xuất
+                        </Button>
+                    </Box>
+                </Box>
+                <Box minHeight="576px" marginTop="24px">
                     <DataGrid
                         rows={rows}
                         columns={columns}
@@ -505,6 +611,53 @@ const Employee: React.FC = () => {
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
                     />
+                    <Menu
+                        id={`actions-menu-${selectedRowId}`}
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleCloseMenu}
+                        sx={{ minWidth: '120px' }}>
+                        <MenuItem onClick={handleView}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                View
+                            </Typography>
+                            <InfoIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={handleEdit}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Edit
+                            </Typography>
+                            <EditIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={handleDelete}>
+                            <Typography
+                                color="#F1416C"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Delete
+                            </Typography>
+                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
+                        </MenuItem>
+                    </Menu>
                 </Box>
             </Box>
         </>

@@ -41,6 +41,17 @@ export const appRouters: AppRouteProps = {
             name: 'AnonymousLayout',
             routes: [
                 {
+                    path: '/login',
+                    name: 'login',
+                    permission: '',
+                    children: [],
+                    title: 'Login',
+                    icon: '',
+                    component: LoadableComponent(() => import('../../pages/login')),
+                    isLayout: true,
+                    showInMenu: false
+                },
+                {
                     path: '/',
                     name: 'login',
                     permission: '',
@@ -131,19 +142,6 @@ export const appRouters: AppRouteProps = {
                     icon: <IoStorefrontOutline style={{ fontSize: 20 }} />,
                     children: [
                         {
-                            path: '/check-in',
-                            permission: 'Pages.Administration.Users',
-                            title: 'Khách checkin',
-                            name: 'customerChecking',
-                            icon: null,
-                            children: [],
-                            showInMenu: true,
-                            isLayout: false,
-                            component: LoadableComponent(
-                                () => import('../../pages/check_in/customer_checking')
-                            )
-                        },
-                        {
                             path: '/page-ban-hang',
                             permission: '',
                             title: 'Thu ngân',
@@ -201,9 +199,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/employee/indexNew')
-                            )
+                            component: LoadableComponent(() => import('../../pages/employee'))
                         },
                         {
                             path: '/nghi-le-nhan-viens',
@@ -219,7 +215,7 @@ export const appRouters: AppRouteProps = {
                             )
                         }
                     ],
-                    component: LoadableComponent(() => import('../../pages/employee'))
+                    component: null
                 },
                 {
                     path: '/bao-cao',

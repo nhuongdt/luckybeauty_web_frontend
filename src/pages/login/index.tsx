@@ -18,21 +18,22 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../images/Lucky_beauty.jpg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { set } from 'lodash';
 const LoginScreen: React.FC = () => {
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
     const navigate = useNavigate();
     const loginModel = new LoginModel();
     const [isLogin, setIsLogin] = useState(false);
     const [tenant, setTenant] = useState('');
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(false);
+    const [remember, setRemember] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
-    const handleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-    const changeTenant = async (tenantName: string) => {
-        await LoginService.CheckTenant(tenantName);
-    };
+    const [errorUser, setErrorUser] = useState('');
+    const [errorPassword, setErrorPassword] = useState('');
+    const [errorTenant, setErrorTenant] = useState(false);
     useEffect(() => {
         const accessToken = Cookies.get('accessToken');
         setIsLogin(!!accessToken);
@@ -45,9 +46,29 @@ const LoginScreen: React.FC = () => {
         loginModel.userNameOrEmailAddress = userName;
         loginModel.password = password;
         loginModel.rememberMe = remember;
-        await changeTenant(loginModel.tenancyName);
-        const login = await LoginService.Login(loginModel);
-        setIsLogin(login);
+        const checkTenant = await LoginService.CheckTenant(loginModel.tenancyName);
+        if (checkTenant.state !== 1) {
+            setErrorTenant(true);
+            setErrorUser('');
+            setErrorPassword('');
+        } else {
+            setErrorTenant(false);
+            if (userName != null && userName != '' && password != '' && password != null) {
+                const login = await LoginService.Login(loginModel);
+                setErrorUser(login ? '' : 'Tài khoản hoặc mật khẩu không đúng');
+                setErrorPassword(login ? '' : 'Tài khoản hoặc mật khẩu không đúng');
+                setIsLogin(login);
+            } else {
+                if (userName == null || userName == '') {
+                    setErrorUser('Tài khoản không được để trống');
+                    setErrorPassword('');
+                }
+                if (password == null || password == '') {
+                    setErrorPassword('Mật khẩu không được để trống');
+                    setErrorUser('');
+                }
+            }
+        }
     };
     return (
         <div className=" login-page">
@@ -63,12 +84,18 @@ const LoginScreen: React.FC = () => {
                         <h1 className="login-label">Đăng nhập</h1>
                         <form className="login-form">
                             <Grid container>
+                                <span className="login-label">ID đăng nhập</span>
                                 <Grid xs={12} className="form-item">
-                                    <span className="login-label">ID đăng nhập</span>
                                     <TextField
                                         onChange={(value) => {
                                             setTenant(value.target.value);
                                         }}
+                                        error={errorTenant}
+                                        helperText={
+                                            errorTenant
+                                                ? 'Id cửa hàng không tồn tại hoặc hết hạn.'
+                                                : ''
+                                        }
                                         variant="outlined"
                                         name="tenant"
                                         placeholder="ID đăng nhập"
@@ -76,47 +103,58 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: '1px'
+                                                    border: 'none!important'
                                                 }
                                             }
                                         }}></TextField>
                                 </Grid>
+                                <span className="login-label">Tên đăng nhập</span>
                                 <Grid xs={12} className="form-item">
-                                    <div>
-                                        <span className="login-label">Tên đăng nhập</span>
-                                        <TextField
-                                            onChange={(value) => {
-                                                setUserName(value.target.value);
-                                            }}
-                                            variant="outlined"
-                                            name="userNameOrEmail"
-                                            type="text"
-                                            sx={{
-                                                '& .MuiOutlinedInput-root': {
-                                                    '& fieldset': {
-                                                        border: '1px'
-                                                    }
+                                    <TextField
+                                        onChange={(value) => {
+                                            setUserName(value.target.value);
+                                        }}
+                                        // label={<span className="login-label">Tên đăng nhập</span>}
+                                        error={errorUser == '' ? false : true}
+                                        helperText={errorUser}
+                                        variant="outlined"
+                                        name="userNameOrEmail"
+                                        placeholder="Nhập email hoặc tên tài khoản"
+                                        type="text"
+                                        sx={{
+                                            '& .MuiOutlinedInput-root': {
+                                                '& fieldset': {
+                                                    border:
+                                                        errorUser == ''
+                                                            ? 'none!important'
+                                                            : '1px solid red!important'
                                                 }
-                                            }}></TextField>
-                                    </div>
+                                            }
+                                        }}></TextField>
                                 </Grid>
+                                <span className="login-label">Mật khẩu</span>
                                 <Grid
                                     xs={12}
                                     className="form-item"
                                     style={{ background: '#f2f6fa' }}>
-                                    <span className="login-label">Mật khẩu</span>
                                     <TextField
                                         className="bg-pw"
                                         onChange={(value) => {
                                             setPassword(value.target.value);
                                         }}
+                                        // label={<span className="login-label">Mật khẩu</span>}
+                                        error={errorPassword == '' ? false : true}
+                                        helperText={errorPassword}
                                         name="password"
                                         variant="outlined"
-                                        placeholder="Mật khẩu"
+                                        placeholder="Nhập mật khẩu"
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: '1px'
+                                                    border:
+                                                        errorPassword == ''
+                                                            ? 'none!important'
+                                                            : '1px solid red!important'
                                                 }
                                             }
                                         }}
@@ -137,10 +175,14 @@ const LoginScreen: React.FC = () => {
                                 </Grid>
                                 <Grid xs={12} className="form-item_checkBox">
                                     <FormControlLabel
-                                        onClick={() => {
-                                            setRemember(!remember);
-                                        }}
-                                        control={<Checkbox defaultChecked />}
+                                        control={
+                                            <Checkbox
+                                                defaultChecked={remember}
+                                                onClick={() => {
+                                                    setRemember(!remember);
+                                                }}
+                                            />
+                                        }
                                         label="Ghi nhớ"
                                     />
                                     <Link className="login-form-forgot" to="/forgot-password">

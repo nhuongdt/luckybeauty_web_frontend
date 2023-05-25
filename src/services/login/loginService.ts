@@ -13,7 +13,7 @@ const http = axios.create({
     }
 });
 class LoginService {
-    public async CheckTenant(tenantName: string) {
+    public async CheckTenant(tenantName: string, isRemember?: boolean) {
         let tenancy = tenantName;
         if (tenantName == null || tenantName === '') {
             tenancy = 'default';
@@ -27,58 +27,76 @@ class LoginService {
         }
 
         if (tenantName == null || tenantName == '') {
-            Cookies.set('TenantId', 'null');
+            Cookies.set('TenantId', 'null', {
+                expires: isRemember === true ? 1 : undefined
+            });
         } else {
-            Cookies.set('TenantId', tenantId);
+            Cookies.set('TenantId', tenantId, {
+                expires: isRemember === true ? 1 : undefined
+            });
         }
-        console.log(Cookies.get('TenantId'));
         return result.data.result;
     }
 
     async Login(loginModel: LoginModel): Promise<boolean> {
-        this.CheckTenant(loginModel.tenancyName);
-        const requestBody = {
-            userNameOrEmailAddress: loginModel.userNameOrEmailAddress,
-            password: loginModel.password,
-            rememberClient: loginModel.rememberMe
-        };
-        let result = false;
-        const tenantId = Cookies.get('TenantId');
-        if (tenantId?.toString() !== '0') {
-            const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
-                headers: {
-                    'Abp.TenantId': tenantId,
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (apiResult.status === 200) {
-                if (apiResult.data.success === true) {
-                    Cookies.set('accessToken', apiResult.data.result['accessToken'], {
-                        expires: 1
-                    });
-                    Cookies.set(
-                        'encryptedAccessToken',
-                        apiResult.data.result['encryptedAccessToken']
+        try {
+            this.CheckTenant(loginModel.tenancyName, loginModel.rememberMe);
+            const requestBody = {
+                userNameOrEmailAddress: loginModel.userNameOrEmailAddress,
+                password: loginModel.password,
+                rememberClient: loginModel.rememberMe
+            };
+            console.log(loginModel);
+            let result = false;
+            const tenantId = Cookies.get('TenantId');
+            if (tenantId?.toString() !== '0') {
+                const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
+                    headers: {
+                        'Abp.TenantId': tenantId,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (apiResult.status === 200) {
+                    if (apiResult.data.success === true) {
+                        result = apiResult.data.success;
+                        Cookies.set('accessToken', apiResult.data.result['accessToken'], {
+                            expires: loginModel.rememberMe ? 1 : undefined
+                        });
+                        Cookies.set(
+                            'encryptedAccessToken',
+                            apiResult.data.result['encryptedAccessToken'],
+                            { expires: loginModel.rememberMe ? 1 : undefined }
+                        );
+                        Cookies.set('userId', apiResult.data.result['userId'], {
+                            expires: loginModel.rememberMe ? 1 : undefined
+                        });
+                        Cookies.set('isLogin', 'true', {
+                            expires: loginModel.rememberMe ? 1 : undefined
+                        });
+                    }
+                    this.GetChiNhanhByUserId(
+                        apiResult.data.result['userId'],
+                        loginModel.rememberMe
                     );
-                    Cookies.set('expireInSeconds', apiResult.data.result['expireInSeconds'], {
-                        expires: 1
-                    });
-                    Cookies.set('userId', apiResult.data.result['userId']);
-                    Cookies.set('isLogin', 'true');
-                    result = apiResult.data.success;
                 }
-                this.GetChiNhanhByUserId(apiResult.data.result['userId']);
             }
+            return result;
+        } catch (error) {
+            // Handle the error here
+            console.error('An error occurred during login:', error);
+            return false;
         }
-        return result;
     }
-    async GetChiNhanhByUserId(userId: number) {
+
+    async GetChiNhanhByUserId(userId: number, isRemember: boolean) {
         const result = await http.get(`api/services/app/chinhanh/getbyuserid?userid=${userId}`, {
             headers: {
                 Authorization: 'Bearer ' + Cookies.get('accessToken')
             }
         });
-        Cookies.set('IdChiNhanh', result.data.result[0]['id'], { expires: 1 });
+        Cookies.set('IdChiNhanh', result.data.result[0]['id'], {
+            expires: isRemember === true ? 1 : undefined
+        });
         return result.data.result;
     }
 }
