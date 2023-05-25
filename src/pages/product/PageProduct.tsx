@@ -453,6 +453,7 @@ export default function PageProduct() {
                 <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
                     <Typography variant="h5">Danh mục dịch vụ</Typography>
                 </Grid>
+
                 <Grid
                     item
                     xs={12}
@@ -463,6 +464,58 @@ export default function PageProduct() {
                     rowSpacing={2}
                     style={{ height: 60 }}>
                     <Box display="flex" justifyContent="flex-end">
+                        <Box display="flex" justifyContent="flex-end" style={{ paddingTop: '7px' }}>
+                            <ThemeProvider theme={themeInputSearch}>
+                                <TextField
+                                    size="small"
+                                    sx={{ width: 7 / 10, paddingTop: '5px', paddingBottom: '5px' }}
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Search />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                    onChange={(event) =>
+                                        setFilterPageProduct((itemOlds: any) => {
+                                            return {
+                                                ...itemOlds,
+                                                textSearch: event.target.value
+                                            };
+                                        })
+                                    }
+                                    onKeyDown={(event) => {
+                                        handleKeyDownTextSearch(event);
+                                    }}></TextField>
+                            </ThemeProvider>
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                    marginRight: 8,
+                                    borderColor: '#6c757d',
+                                    color: '#343a40',
+                                    height: 'unset'
+                                }}
+                                className="btnSecond"
+                                startIcon={<FileUpload />}>
+                                Nhập
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="outlined"
+                                sx={{
+                                    borderColor: '#6c757d',
+                                    color: '#343a40',
+                                    height: 'unset'
+                                }}
+                                color="error"
+                                className="btnSecond"
+                                startIcon={<FileDownload />}>
+                                Xuất
+                            </Button>
+                        </Box>
                         <Box component="span" className="btn-only-icon" sx={{ mr: 1 }}>
                             <Menu />
                         </Box>
