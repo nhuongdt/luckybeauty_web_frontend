@@ -141,19 +141,6 @@ export const appRouters: AppRouteProps = {
                     title: 'Bán hàng',
                     icon: <IoStorefrontOutline style={{ fontSize: 20 }} />,
                     children: [
-                        // {
-                        //     path: '/check-in',
-                        //     permission: 'Pages.Administration.Users',
-                        //     title: 'Khách checkin',
-                        //     name: 'customerChecking',
-                        //     icon: null,
-                        //     children: [],
-                        //     showInMenu: true,
-                        //     isLayout: false,
-                        //     component: LoadableComponent(
-                        //         () => import('../../pages/check_in/customer_checking')
-                        //     )
-                        // },
                         {
                             path: '/page-ban-hang',
                             permission: '',
@@ -212,9 +199,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/employee/indexNew')
-                            )
+                            component: LoadableComponent(() => import('../../pages/employee'))
                         },
                         {
                             path: '/nghi-le-nhan-viens',

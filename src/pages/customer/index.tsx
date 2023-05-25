@@ -104,7 +104,6 @@ class Customer extends React.Component {
                 idKhachHang: id,
                 createOrEditKhachHang: createOrEdit
             });
-            console.log(createOrEdit);
         }
         this.handleToggle();
     }
@@ -137,14 +136,6 @@ class Customer extends React.Component {
         await this.setState({ curentPage: 0, skipCount: 1 }); // Reset page to the first one when changing rows per page
         await this.getData();
     };
-    breadcrumbs = [
-        <Typography key="1" color="#999699" fontSize="14px">
-            Khách hàng
-        </Typography>,
-        <Typography key="2" color="#333233" fontSize="14px">
-            Quản lý khách hàng
-        </Typography>
-    ];
 
     handleOpenMenu = (event: any, rowId: any) => {
         this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
@@ -171,90 +162,91 @@ class Customer extends React.Component {
         this.delete(this.state.selectedRowId ?? '');
         this.handleCloseMenu();
     };
-    handleOpen = () => {
-        this.setState({ moreOpen: true });
-    };
 
-    handleClose = () => {
-        this.setState({ moreOpen: false });
-    };
-
-    columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 50 },
-
-        {
-            field: 'tenKhachHang',
-            headerName: 'Tên khách hàng',
-            width: 185,
-            renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
-                    <img
-                        src={params.row.avatar}
-                        alt="Avatar"
-                        style={{ width: 24, height: 24, marginRight: 8 }}
-                    />
-                    {params.value}
-                </div>
-            )
-        },
-        { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
-        {
-            field: 'tenNhomKhach',
-            headerName: 'Nhóm khách',
-            width: 112
-        },
-        { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
-        {
-            field: 'nhanVienPhuTrach',
-            headerName: 'Nhân viên phục vụ',
-            width: 185
-        },
-        {
-            field: 'tongChiTieu',
-            headerName: 'Tổng chi tiêu',
-            width: 113
-        },
-        {
-            field: 'cuocHenGanNhat',
-            headerName: 'Cuộc hẹn gần đây',
-            renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
-                    <DateIcon style={{ marginRight: 4 }} />
-                    {new Date(params.value).toLocaleDateString('en-GB')}
-                </div>
-            ),
-            width: 128
-        },
-        {
-            field: 'tenNguonKhach',
-            headerName: 'Nguồn',
-            width: 86,
-            renderCell: (params) => (
-                <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
-                    {params.value}
-                </div>
-            )
-        },
-        {
-            field: 'actions',
-            headerName: '',
-            width: 48,
-            disableColumnMenu: true,
-
-            renderCell: (params) => (
-                <IconButton
-                    aria-label="Actions"
-                    aria-controls={`actions-menu-${params.row.id}`}
-                    aria-haspopup="true"
-                    onClick={(event) => {
-                        this.handleOpenMenu(event, params.row.id);
-                    }}>
-                    <MoreHorizIcon />
-                </IconButton>
-            )
-        }
-    ];
     render(): React.ReactNode {
+        const columns: GridColDef[] = [
+            { field: 'id', headerName: 'ID', width: 50 },
+
+            {
+                field: 'tenKhachHang',
+                headerName: 'Tên khách hàng',
+                width: 185,
+                renderCell: (params) => (
+                    <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                        <img
+                            src={params.row.avatar}
+                            alt="Avatar"
+                            style={{ width: 24, height: 24, marginRight: 8 }}
+                        />
+                        {params.value}
+                    </div>
+                )
+            },
+            { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
+            {
+                field: 'tenNhomKhach',
+                headerName: 'Nhóm khách',
+                width: 112
+            },
+            { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
+            {
+                field: 'nhanVienPhuTrach',
+                headerName: 'Nhân viên phục vụ',
+                width: 185
+            },
+            {
+                field: 'tongChiTieu',
+                headerName: 'Tổng chi tiêu',
+                width: 113
+            },
+            {
+                field: 'cuocHenGanNhat',
+                headerName: 'Cuộc hẹn gần đây',
+                renderCell: (params) => (
+                    <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                        <DateIcon style={{ marginRight: 4 }} />
+                        {new Date(params.value).toLocaleDateString('en-GB')}
+                    </div>
+                ),
+                width: 128
+            },
+            {
+                field: 'tenNguonKhach',
+                headerName: 'Nguồn',
+                width: 86,
+                renderCell: (params) => (
+                    <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
+                        {params.value}
+                    </div>
+                )
+            },
+            {
+                field: 'actions',
+                headerName: '',
+                width: 48,
+                disableColumnMenu: true,
+
+                renderCell: (params) => (
+                    <IconButton
+                        aria-label="Actions"
+                        aria-controls={`actions-menu-${params.row.id}`}
+                        aria-haspopup="true"
+                        onClick={(event) => {
+                            this.handleOpenMenu(event, params.row.id);
+                        }}>
+                        <MoreHorizIcon />
+                    </IconButton>
+                )
+            }
+        ];
+        const breadcrumbs = [
+            <Typography key="1" color="#999699" fontSize="14px">
+                Khách hàng
+            </Typography>,
+            <Typography key="2" color="#333233" fontSize="14px">
+                Quản lý khách hàng
+            </Typography>
+        ];
         return (
             <Box
                 className="customer-page"
@@ -264,7 +256,7 @@ class Customer extends React.Component {
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto">
                         <Breadcrumbs separator="›" aria-label="breadcrumb">
-                            {this.breadcrumbs}
+                            {breadcrumbs}
                         </Breadcrumbs>
                         <Typography
                             color="#0C050A"
@@ -351,7 +343,7 @@ class Customer extends React.Component {
                     style={{ height: 582, width: '100%', marginTop: '24px' }}>
                     <DataGrid
                         rows={this.state.rowTable}
-                        columns={this.columns}
+                        columns={columns}
                         hideFooterPagination
                         hideFooter
                         initialState={{

@@ -1,158 +1,280 @@
-import { Card, Col, Form, FormInstance, Input, Modal, Row, Select, Typography } from 'antd';
-import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
-import { CloudUploadOutlined, FileImageOutlined } from '@ant-design/icons';
-import employeeRules from './createOrEditNhanVien.validate';
 import { Component, ReactNode } from 'react';
+import { CreateOrUpdateNhanSuDto } from '../../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    Dialog,
+    Grid,
+    MenuItem,
+    Select,
+    TextField,
+    TextareaAutosize,
+    Typography
+} from '@mui/material';
+import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
+import closeIcon from '../../../images/close-square.svg';
+import fileIcon from '../../../images/file.svg';
+import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
-    modalType: string;
+    title: string;
     onOk: () => void;
-    formRef: React.RefObject<FormInstance>;
+    onChange: (e: any) => void;
+    formRef: CreateOrUpdateNhanSuDto;
     suggestChucVu: SuggestChucVuDto[];
 }
-const { Text, Title } = Typography;
 class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
     render(): ReactNode {
-        const { visible, onCancel, modalType, onOk, formRef, suggestChucVu } = this.props;
+        const { visible, onCancel, title, onOk, formRef, suggestChucVu, onChange } = this.props;
         return (
-            <Modal
-                visible={visible}
-                title={<Title level={3}>{modalType}</Title>}
-                okText="Lưu"
-                cancelButtonProps={{
-                    style: {
-                        backgroundColor: '#FFFFFF',
-                        color: '#965C85',
-                        border: '1px solid #965C85',
-                        borderRadius: 4
-                    }
-                }}
-                cancelText="Hủy"
-                okButtonProps={{
-                    style: {
-                        backgroundColor: '#B085A4',
-                        color: '#FFFAFF',
-                        border: '1px solid #965C85',
-                        borderRadius: 4
-                    }
-                }}
-                onCancel={onCancel}
-                onOk={onOk}
-                width={1038}>
-                <Form layout="vertical" ref={formRef}>
-                    <Row gutter={16}>
-                        <Col span={16}>
-                            <Title level={4} className="mt-3">
-                                Thông tin chi tiết
-                            </Title>
-                            <Row gutter={8}>
-                                <Form.Item name={'idChiNhanh'} hidden>
-                                    <Input size="large" />
-                                </Form.Item>
-                                <Col span={12}>
-                                    <Form.Item
-                                        label="Họ nhân viên"
-                                        name={'ho'}
-                                        rules={employeeRules.hoNhanVien}>
-                                        <Input size="large" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item
-                                        label="Tên nhân viên"
-                                        name={'tenLot'}
-                                        rules={employeeRules.tenNhanVien}>
-                                        <Input size="large" />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
+            <Dialog
+                open={visible}
+                onClose={onCancel}
+                className="poppup-them-nhan-vien"
+                sx={{
+                    borderRadius: '12px',
 
-                            <Row gutter={8}>
-                                <Col span={12}>
-                                    <Form.Item
-                                        label="Số điện thoại"
-                                        name={'soDienThoai'}
-                                        rules={employeeRules.soDienThoai}>
-                                        <Input size="large" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item label="Ngày sinh" name={'ngaySinh'}>
-                                        <Input size="large" type="date" />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={8}>
-                                <Col span={12}>
-                                    <Form.Item label="Địa chỉ" name={'diaChi'}>
-                                        <Input size="large" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item label="Giới tính" name={'gioiTinh'}>
-                                        <Select size="large" defaultValue={'Chọn giới tính'}>
-                                            <Select.Option value={1}>Nam</Select.Option>
-                                            <Select.Option value={2}>Nữ</Select.Option>
-                                            <Select.Option value={0}>Khác</Select.Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Form.Item label="Chức vụ" name={'idChucVu'}>
-                                <Select size="large" defaultValue={'Chọn chức vụ'}>
-                                    {suggestChucVu.map((item) => {
-                                        return (
-                                            <Select.Option value={item.idChucVu}>
-                                                {item.tenChucVu}
-                                            </Select.Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item label="Ghi chú" name={'moTa'}>
-                                <Input.TextArea size="large" rows={4} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Row>
-                                <Card
-                                    style={{
-                                        border: '1px solid #E5D6E1',
-                                        padding: 3,
-                                        marginLeft: 3,
-                                        marginRight: 1,
-                                        marginTop: 5,
-                                        width: 350,
-                                        height: 250
+                    width: '100%',
+                    padding: '28px 24px'
+                }}>
+                <Typography
+                    variant="h3"
+                    fontSize="24px"
+                    color="#333233"
+                    fontWeight="700"
+                    paddingLeft="24px"
+                    marginTop="28px">
+                    {title}
+                </Typography>
+
+                <Typography
+                    color="#999699"
+                    fontSize="16px"
+                    fontWeight="700"
+                    variant="h3"
+                    paddingLeft="24px"
+                    marginTop="28px">
+                    Thông tin chi tiết
+                </Typography>
+                <Box
+                    component="form"
+                    display="flex"
+                    justifyContent="space-between"
+                    paddingRight="24px">
+                    <Grid
+                        container
+                        className="form-container"
+                        spacing={3}
+                        width="70%"
+                        paddingRight="12px"
+                        paddingBottom="5vw"
+                        marginTop="0"
+                        marginLeft="0">
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Họ nhân viên
+                            </Typography>
+                            <TextField
+                                size="small"
+                                name="ho"
+                                value={formRef.ho}
+                                placeholder="Họ nhân viên"
+                                onChange={onChange}
+                                fullWidth
+                                sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Tên nhân viên
+                            </Typography>
+                            <TextField
+                                size="small"
+                                name="tenLot"
+                                value={formRef.tenLot}
+                                placeholder="Tên nhân viên"
+                                onChange={onChange}
+                                fullWidth
+                                sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Số điện thoại
+                            </Typography>
+                            <TextField
+                                type="tel"
+                                name="soDienThoai"
+                                value={formRef.soDienThoai}
+                                size="small"
+                                onChange={onChange}
+                                placeholder="Số điện thoại"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Địa chỉ
+                            </Typography>
+                            <TextField
+                                type="text"
+                                size="small"
+                                name="diaChi"
+                                value={formRef.diaChi}
+                                onChange={onChange}
+                                placeholder="Nhập địa chỉ của nhân viên"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ngày sinh
+                            </Typography>
+                            <TextField
+                                type="date"
+                                fullWidth
+                                name="ngaySinh"
+                                value={formRef.ngaySinh}
+                                onChange={onChange}
+                                placeholder="21/04/2004"
+                                sx={{ fontSize: '16px' }}
+                                size="small"></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Giới tính
+                            </Typography>
+                            <Select
+                                id="gender"
+                                fullWidth
+                                name="gioiTinh"
+                                value={formRef.gioiTinh}
+                                onChange={onChange}
+                                defaultValue={0}
+                                sx={{
+                                    height: '42px',
+                                    backgroundColor: '#fff',
+                                    padding: '0',
+                                    fontSize: '16px',
+                                    borderRadius: '8px',
+                                    borderColor: '#E6E1E6'
+                                }}>
+                                <MenuItem value={0}>Lựa chọn</MenuItem>
+                                <MenuItem value={2}>Nữ</MenuItem>
+                                <MenuItem value={1}>Nam</MenuItem>
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ghi chú
+                            </Typography>
+                            <TextareaAutosize
+                                placeholder="Điền"
+                                name="ghiChu"
+                                value={formRef.ghiChu?.toString()}
+                                maxRows={4}
+                                minRows={4}
+                                style={{
+                                    width: '100%',
+                                    borderColor: '#E6E1E6',
+                                    borderRadius: '8px',
+                                    padding: '16px'
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container width="30%" paddingLeft="12px">
+                        <Grid item xs={12}>
+                            <Box
+                                height="250px"
+                                position="relative"
+                                paddingTop="5.0403vh"
+                                style={{ textAlign: 'center', borderColor: '#FFFAFF' }}>
+                                <img src={fileIcon} />
+                                <TextField
+                                    type="file"
+                                    id="input-file"
+                                    name="avatar"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '0',
+                                        width: '100%',
+                                        border: 'none!important',
+                                        height: '100%'
                                     }}
-                                    className="text-center">
-                                    <div style={{ paddingTop: 45 }}>
-                                        <FileImageOutlined
-                                            height={46}
-                                            width={46}
-                                            style={{ color: '#7C3367' }}
-                                            className="icon-size text-center"
-                                            twoToneColor="#7C3367"
-                                        />
-                                    </div>
-                                    <div
-                                        style={{ paddingTop: 40, paddingBottom: 10 }}
-                                        className="text-center">
-                                        <CloudUploadOutlined
-                                            style={{ paddingRight: '5px', color: '#7C3367' }}
-                                        />
-                                        <span style={{ color: '#7C3367' }}>Tải ảnh lên</span>
-                                    </div>
-                                    <Text>
-                                        File định dạng <Text strong>jpeg, png</Text>
-                                    </Text>
-                                </Card>
-                            </Row>
-                        </Col>
-                    </Row>
-                </Form>
-            </Modal>
+                                    InputProps={{
+                                        style: {
+                                            position: 'absolute',
+                                            height: '100%',
+                                            width: '100%',
+                                            top: '0',
+                                            left: '0'
+                                        }
+                                    }}
+                                />
+                                <Box
+                                    style={{
+                                        display: 'flex',
+                                        marginTop: '34px',
+                                        justifyContent: 'center'
+                                    }}>
+                                    <img src={fileSmallIcon} />
+                                    <Typography>Tải ảnh lên</Typography>
+                                </Box>
+                                <Box style={{ color: '#999699', marginTop: '13px' }}>
+                                    File định dạng{' '}
+                                    <Typography style={{ color: '#333233' }}>jpeg, png</Typography>{' '}
+                                </Box>
+                            </Box>
+                        </Grid>
+
+                        <ButtonGroup
+                            sx={{
+                                height: '32px',
+                                position: 'absolute',
+                                bottom: '24px',
+                                right: '50px'
+                            }}>
+                            <Button
+                                onClick={onOk}
+                                variant="contained"
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#fff',
+                                    backgroundColor: '#B085A4',
+                                    border: 'none'
+                                }}>
+                                Lưu
+                            </Button>
+                            <Button
+                                onClick={onCancel}
+                                variant="outlined"
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#965C85',
+                                    borderColor: '#965C85'
+                                }}>
+                                Hủy
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                </Box>
+                <Button
+                    onClick={onCancel}
+                    sx={{
+                        position: 'absolute',
+                        top: '32px',
+                        right: '28px',
+                        padding: '0',
+                        maxWidth: '24px',
+                        minWidth: '0'
+                    }}>
+                    <img src={closeIcon} />
+                </Button>
+            </Dialog>
         );
     }
 }
