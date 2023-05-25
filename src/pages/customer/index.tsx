@@ -262,6 +262,7 @@ const Customer: React.FC = () => {
                             paginationModel: { page: 0, pageSize: 5 }
                         }
                     }}
+                    pagination
                     pageSizeOptions={[5, 10]}
                     checkboxSelection
                 />
