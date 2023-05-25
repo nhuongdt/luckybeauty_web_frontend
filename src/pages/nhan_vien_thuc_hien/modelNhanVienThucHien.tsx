@@ -24,7 +24,7 @@ import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
 
-const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
+const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
@@ -34,13 +34,18 @@ const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     useEffect(() => {
         if (triggerModal.isShow) {
             setIsShow(true);
+            console.log('itemCTHD', triggerModal.item);
         }
     }, [triggerModal]);
 
     const GetListNhanVien = async () => {
         const data = await NhanVienService.search(txtSearch, { skipCount: 0, maxResultCount: 100 });
-        setAllNhanVien(data.items);
-        setLstNhanVien(data.items);
+        const arrNV = [...data.items];
+        arrNV.map((x: any) => {
+            x['isChosed'] = false;
+        });
+        setAllNhanVien([...arrNV]);
+        setLstNhanVien([...arrNV]);
     };
 
     React.useEffect(() => {
@@ -76,24 +81,38 @@ const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
         SearchNhanVienClient();
     }, [txtSearch]);
 
-    const ChoseNhanVien = (item: any) => {
+    const ChoseNhanVien = (item: NhanSuItemDto) => {
         // check exists
         const nvEX = lstNhanVienChosed.filter((x) => x.id === item.id);
         if (nvEX.length > 0) {
-            console.log('has');
+            setLstNhanVienChosed(lstNhanVienChosed.filter((x) => x.id !== item.id));
         } else {
-            setLstNhanVienChosed((lstOld) => {
-                return {
-                    item,
-                    ...lstOld
-                };
-            });
+            setLstNhanVienChosed([item, ...lstNhanVienChosed]);
         }
     };
 
+    const UpdateStatus = () => {
+        const arrNV = lstNhanVienChosed.map((x) => {
+            return x.id;
+        });
+        setLstNhanVien(
+            lstNhanVien.map((x) => {
+                if (arrNV.includes(x.id)) {
+                    return { ...x, isChosed: true };
+                } else {
+                    return { ...x, isChosed: false };
+                }
+            })
+        );
+    };
+
+    useEffect(() => {
+        UpdateStatus();
+    }, [lstNhanVienChosed]);
+
     const onSave = () => {
         setIsShow(false);
-        handleSave();
+        handleSave(lstNhanVienChosed);
     };
 
     return (
@@ -146,7 +165,8 @@ const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                     gap: '8px',
                                     padding: ' 24px 24px 20px 24px',
                                     borderRadius: '8px',
-                                    cursor: 'pointer'
+                                    cursor: 'pointer',
+                                    backgroundColor: person.isChosed ? 'red' : ''
                                 }}
                                 border="1px solid #CDC9CD">
                                 <div className="person-avatar">
@@ -201,4 +221,4 @@ const modelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
         </>
     );
 };
-export default modelNhanVienThucHien;
+export default ModelNhanVienThucHien;

@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, useEffect } from 'react';
+import utils from '../../utils/utils';
 
 import { Add, Menu, CalendarMonth, MoreHoriz, QueryBuilder, Search } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -55,6 +56,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
     );
     const [listCusChecking, setListCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
+    const [allCusChecking, setAllCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
 
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
         new PropModal({ isShow: false })
@@ -64,6 +66,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
         const list = await CheckinService.GetListCustomerChecking(input);
         setListCusChecking(list);
+        setAllCusChecking([...list]);
     };
 
     const PageLoad = () => {
@@ -73,6 +76,35 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     useEffect(() => {
         PageLoad();
     }, []);
+
+    const SearhCusChecking = () => {
+        if (!utils.checkNull(txtSearch)) {
+            const txt = txtSearch.trim().toLowerCase();
+            const txtUnsign = utils.strToEnglish(txt);
+            const data = allCusChecking.filter(
+                (x) =>
+                    (x.maKhachHang !== null &&
+                        x.maKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenKhachHang !== null &&
+                        x.tenKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.soDienThoai !== null &&
+                        x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.maKhachHang !== null &&
+                        utils.strToEnglish(x.maKhachHang).indexOf(txtUnsign) > -1) ||
+                    (x.tenKhachHang !== null &&
+                        utils.strToEnglish(x.tenKhachHang).indexOf(txtUnsign) > -1) ||
+                    (x.soDienThoai !== null &&
+                        utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
+            );
+            setListCusChecking(data);
+        } else {
+            setListCusChecking([...allCusChecking]);
+        }
+    };
+
+    useEffect(() => {
+        SearhCusChecking();
+    }, [txtSearch]);
 
     const saveCheckInOK = async (dataCheckIn: any) => {
         console.log('saveCheckInOK ', dataCheckIn);
@@ -88,8 +120,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         });
         setListCusChecking([...listCusChecking, cusChecking]);
 
-        dbDexie.khachCheckIn.add(cusChecking);
-
         // check exist dexie
         if (dataCheckIn.idKhachHang !== Guid.EMPTY) {
             const cus = await dbDexie.khachCheckIn
@@ -98,11 +128,11 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 .toArray();
             if (cus.length === 0) {
                 // remove & add again
-                await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
-                await dbDexie.khachCheckIn.add(dataCheckIn);
+                await dbDexie.khachCheckIn.delete(dataCheckIn.idCheckIn);
+                await dbDexie.khachCheckIn.add(cusChecking);
             } else {
                 // add to dexie
-                await dbDexie.khachCheckIn.add(dataCheckIn);
+                await dbDexie.khachCheckIn.add(cusChecking);
             }
         }
     };
