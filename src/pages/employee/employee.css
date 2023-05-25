@@ -67,3 +67,7 @@
 .poppup-them-nhan-vien .MuiCheckbox-root svg {
     fill: rgba(0, 0, 0, 0.2);
 }
+.list-nhan-vien .MuiTablePagination-selectLabel,
+.list-nhan-vien .MuiTablePagination-displayedRows {
+    margin-bottom: 0 !important;
+}
