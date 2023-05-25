@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -15,14 +16,10 @@ import {
     MenuItem,
     Menu,
     FormControl,
-    TablePagination
+    TablePagination,
+    Avatar
 } from '@mui/material';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
-import fileIcon from '../../images/file.svg';
-import closeIcon from '../../images/close-square.svg';
-import avatar from '../../images/avatar.png';
 import './customerPage.css';
-import fileSmallIcon from '../../images/fi_upload-cloud.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
@@ -34,8 +31,9 @@ import InfoIcon from '@mui/icons-material/Info';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
-import { pageLoadTime } from '../../lib/abp';
 import fileDowloadService from '../../services/file-dowload.service';
+import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 class CustomerScreen extends React.Component {
     state = {
         rowTable: [],
@@ -47,6 +45,7 @@ class CustomerScreen extends React.Component {
         curentPage: 0,
         keyword: '',
         totalItems: 0,
+        isShowConfirmDelete: false,
         moreOpen: false,
         anchorEl: null,
         selectedRowId: null,
@@ -156,13 +155,18 @@ class CustomerScreen extends React.Component {
         this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
         this.handleCloseMenu();
     };
-
-    handleDelete = () => {
-        // Handle Delete action
+    onOkDelete = () => {
         this.delete(this.state.selectedRowId ?? '');
+        this.showConfirmDelete();
         this.handleCloseMenu();
     };
-
+    showConfirmDelete = () => {
+        // Handle Delete action
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete,
+            idNhanSu: ''
+        });
+    };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
             { field: 'id', headerName: 'ID', width: 50 },
@@ -173,7 +177,7 @@ class CustomerScreen extends React.Component {
                 width: 185,
                 renderCell: (params) => (
                     <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
-                        <img
+                        <Avatar
                             src={params.row.avatar}
                             alt="Avatar"
                             style={{ width: 24, height: 24, marginRight: 8 }}
@@ -390,7 +394,7 @@ class CustomerScreen extends React.Component {
                             </Typography>
                             <EditIcon sx={{ color: '#009EF7' }} />
                         </MenuItem>
-                        <MenuItem onClick={this.handleDelete}>
+                        <MenuItem onClick={this.showConfirmDelete}>
                             <Typography
                                 color="#F1416C"
                                 fontSize="12px"
@@ -417,204 +421,24 @@ class CustomerScreen extends React.Component {
                 <div
                     className={this.state.toggle ? 'show customer-overlay' : 'customer-overlay'}
                     onClick={this.handleToggle}></div>
-                <div className={this.state.toggle ? 'show poppup-add' : 'poppup-add'}>
-                    <div className="poppup-title">Thêm khách hàng mới</div>
-                    <div className="poppup-des">Thông tin chi tiết</div>
-                    <Box component="form" className="form-add">
-                        <Grid container className="form-container" spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    size="small"
-                                    name="id"
-                                    value={this.state.createOrEditKhachHang.id}
-                                    fullWidth
-                                    hidden></TextField>
-                                <Typography color="#4C4B4C" variant="subtitle2">
-                                    Họ và tên
-                                </Typography>
-                                <TextField
-                                    size="small"
-                                    placeholder="Họ và tên"
-                                    name="tenKhachHang"
-                                    value={this.state.createOrEditKhachHang.tenKhachHang}
-                                    onChange={this.handleChange}
-                                    fullWidth
-                                    sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography color="#4C4B4C" variant="subtitle2">
-                                    Số điện thoại
-                                </Typography>
-                                <TextField
-                                    type="tel"
-                                    size="small"
-                                    name="soDienThoai"
-                                    value={this.state.createOrEditKhachHang.soDienThoai}
-                                    onChange={this.handleChange}
-                                    placeholder="Số điện thoại"
-                                    fullWidth
-                                    sx={{ fontSize: '16px' }}></TextField>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography color="#4C4B4C" variant="subtitle2">
-                                    Địa chỉ
-                                </Typography>
-                                <TextField
-                                    type="text"
-                                    size="small"
-                                    placeholder="Nhập địa chỉ của khách hàng"
-                                    name="diaChi"
-                                    value={this.state.createOrEditKhachHang.diaChi}
-                                    onChange={this.handleChange}
-                                    fullWidth
-                                    sx={{ fontSize: '16px' }}></TextField>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography color="#4C4B4C" variant="subtitle2">
-                                    Ngày sinh
-                                </Typography>
-                                <TextField
-                                    type="date"
-                                    fullWidth
-                                    placeholder="21/04/2004"
-                                    name="ngaySinh"
-                                    value={
-                                        this.state.createOrEditKhachHang.ngaySinh != null
-                                            ? this.state.createOrEditKhachHang.ngaySinh
-                                                  ?.toString()
-                                                  .substring(0, 10)
-                                            : ''
-                                    }
-                                    onChange={this.handleChange}
-                                    sx={{ fontSize: '16px' }}
-                                    size="small"
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Typography color="#4C4B4C" variant="subtitle2">
-                                    Giới tính
-                                </Typography>
-                                <Select
-                                    id="gender"
-                                    fullWidth
-                                    value={
-                                        this.state.createOrEditKhachHang.gioiTinh ? 'true' : 'false'
-                                    }
-                                    name="gioiTinh"
-                                    onChange={this.handleChange}
-                                    sx={{
-                                        height: '42px',
-                                        backgroundColor: '#fff',
-                                        padding: '0',
-                                        fontSize: '16px',
-                                        borderRadius: '8px',
-                                        borderColor: '#E6E1E6'
-                                    }}>
-                                    <MenuItem value="">Lựa chọn</MenuItem>
-                                    <MenuItem value="false">Nữ</MenuItem>
-                                    <MenuItem value="true">Nam</MenuItem>
-                                </Select>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Typography color="#4C4B4C" variant="subtitle2">
-                                    Ghi chú
-                                </Typography>
-                                <TextareaAutosize
-                                    placeholder="Điền"
-                                    name="moTa"
-                                    value={this.state.createOrEditKhachHang.moTa}
-                                    maxRows={4}
-                                    minRows={4}
-                                    style={{
-                                        width: '100%',
-                                        borderColor: '#E6E1E6',
-                                        borderRadius: '8px',
-                                        padding: '16px'
-                                    }}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container sx={{ width: '350px' }} className=" box-1">
-                            <Grid item xs={12} className="position-relative">
-                                <div className=" inner-box" style={{ textAlign: 'center' }}>
-                                    <img src={fileIcon} />
-                                    <TextField
-                                        type="file"
-                                        name="avatar"
-                                        value={this.state.createOrEditKhachHang.avatar}
-                                        id="input-file"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: '0',
-                                            left: '0',
-                                            width: '100%',
-                                            height: '100%'
-                                        }}
-                                    />
-                                    <div
-                                        style={{
-                                            display: 'flex',
-                                            marginTop: '34px',
-                                            justifyContent: 'center'
-                                        }}>
-                                        <img src={fileSmallIcon} />
-                                        <div>Tải ảnh lên</div>
-                                    </div>
-                                    <div style={{ color: '#999699', marginTop: '13px' }}>
-                                        File định dạng{' '}
-                                        <span style={{ color: '#333233' }}>jpeg, png</span>{' '}
-                                    </div>
-                                </div>
-                            </Grid>
-                            <Grid item xs={6}></Grid>
-                            <Grid item xs={6}></Grid>
-                            <ButtonGroup
-                                sx={{
-                                    height: '32px',
-                                    position: 'absolute',
-                                    bottom: '24px',
-                                    right: '50px'
-                                }}>
-                                <Button
-                                    variant="contained"
-                                    sx={{
-                                        fontSize: '14px',
-                                        textTransform: 'unset',
-                                        color: '#fff',
-                                        backgroundColor: '#B085A4',
-                                        border: 'none'
-                                    }}
-                                    onClick={() => {
-                                        this.handleSubmit();
-                                    }}>
-                                    Lưu
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    sx={{
-                                        fontSize: '14px',
-                                        textTransform: 'unset',
-                                        color: '#965C85',
-                                        borderColor: '#965C85'
-                                    }}>
-                                    Hủy
-                                </Button>
-                            </ButtonGroup>
-                        </Grid>
-                    </Box>
-                    <Button
-                        onClick={this.handleToggle}
-                        sx={{
-                            position: 'absolute',
-                            top: '32px',
-                            right: '28px',
-                            padding: '0',
-                            maxWidth: '24px',
-                            minWidth: '0'
-                        }}>
-                        <img src={closeIcon} />
-                    </Button>
-                </div>
+                <CreateOrEditCustomerDialog
+                    formRef={this.state.createOrEditKhachHang}
+                    onCancel={this.handleToggle}
+                    onOk={() => {
+                        this.handleSubmit();
+                    }}
+                    title={
+                        this.state.idkhachHang == ''
+                            ? 'Thêm mới khách hàng'
+                            : 'Cập nhật thông tin khách hàng'
+                    }
+                    onChange={this.handleChange}
+                    visible={this.state.toggle}
+                />
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.showConfirmDelete}></ConfirmDelete>
             </Box>
         );
     }

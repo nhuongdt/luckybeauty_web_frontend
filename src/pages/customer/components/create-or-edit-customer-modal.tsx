@@ -1,174 +1,227 @@
-import {
-    Card,
-    Col,
-    Form,
-    FormInstance,
-    Grid,
-    Input,
-    Modal,
-    Row,
-    Select,
-    Space,
-    Typography
-} from 'antd';
-import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
-import { SuggestNguonKhachDto } from '../../../services/suggests/dto/SuggestNguonKhachDto';
-import { CloudUploadOutlined, FileImageOutlined } from '@ant-design/icons';
-import khachHangRules from './create-or-edit-customer.validate';
 import { Component, ReactNode } from 'react';
-export interface ICreateOrEditUserProps {
+import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    Grid,
+    MenuItem,
+    Select,
+    TextField,
+    TextareaAutosize,
+    Typography
+} from '@mui/material';
+
+import fileIcon from '../../../images/file.svg';
+import closeIcon from '../../../images/close-square.svg';
+import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
+import React from 'react';
+export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
-    modalType: string;
+    title: string;
     onOk: () => void;
-    formRef: React.RefObject<FormInstance>;
-    suggestNguonKhach: SuggestNguonKhachDto[];
-    suggestNhomKhach: SuggestNhomKhachDto[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onChange: (event: any) => void;
+    formRef: CreateOrEditKhachHangDto;
 }
-const { Text, Title } = Typography;
-class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
+class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     render(): ReactNode {
-        const { visible, onCancel, modalType, onOk, formRef, suggestNguonKhach, suggestNhomKhach } =
-            this.props;
+        const { visible, onCancel, title, onOk, formRef, onChange } = this.props;
         return (
-            <Modal
-                visible={visible}
-                title={<Title level={3}>{modalType}</Title>}
-                okText="Lưu"
-                cancelButtonProps={{
-                    style: {
-                        backgroundColor: '#FFFFFF',
-                        color: '#965C85',
-                        border: '1px solid #965C85',
-                        borderRadius: 4
-                    }
-                }}
-                cancelText="Hủy"
-                okButtonProps={{
-                    style: {
-                        backgroundColor: '#B085A4',
-                        color: '#FFFAFF',
-                        border: '1px solid #965C85',
-                        borderRadius: 4
-                    }
-                }}
-                onCancel={onCancel}
-                onOk={onOk}
-                width={1038}>
-                <Form layout="vertical" ref={formRef}>
-                    <Row gutter={16}>
-                        <Col span={16}>
-                            <Title level={4} className="mt-3">
-                                Thông tin chi tiết
-                            </Title>
-                            <Form.Item
-                                label="Họ và tên"
-                                name={'tenKhachHang'}
-                                rules={khachHangRules.tenKhachHang}>
-                                <Input size="large" />
-                            </Form.Item>
-                            <Row gutter={4}>
-                                <Col span={12}>
-                                    <Form.Item
-                                        label="Số điện thoại"
-                                        name={'soDienThoai'}
-                                        rules={khachHangRules.soDienThoai}>
-                                        <Input size="large" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item label="Địa chỉ" name={'diaChi'}>
-                                        <Input size="large" />
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={4}>
-                                <Col span={12}>
-                                    <Form.Item label="Ngày sinh" name={'ngaySinh'}>
-                                        <Input size="large" type="date" />
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item label="Giới tính" name={'gioiTinh'}>
-                                        <Select size="large" defaultValue={'Chọn giới tính'}>
-                                            <Select.Option value={1}>Nam</Select.Option>
-                                            <Select.Option value={2}>Nữ</Select.Option>
-                                            <Select.Option value={0}>Khác</Select.Option>
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Row gutter={4}>
-                                <Col span={12}>
-                                    <Form.Item label="Nguồn khách" name={'idNguonKhach'}>
-                                        <Select size="large" defaultValue={'Chọn nguồn khách'}>
-                                            {suggestNguonKhach.map((item) => {
-                                                return (
-                                                    <Select.Option value={item.id}>
-                                                        {item.tenNguonKhach}
-                                                    </Select.Option>
-                                                );
-                                            })}
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                                <Col span={12}>
-                                    <Form.Item label="Nhóm khách" name={'idNhomKhach'}>
-                                        <Select size="large" defaultValue={'Chọn nhóm khách'}>
-                                            {suggestNhomKhach.map((item) => {
-                                                return (
-                                                    <Select.Option value={item.id}>
-                                                        {item.tenNhomKhach}
-                                                    </Select.Option>
-                                                );
-                                            })}
-                                        </Select>
-                                    </Form.Item>
-                                </Col>
-                            </Row>
-                            <Form.Item label="Ghi chú" name={'moTa'}>
-                                <Input.TextArea size="large" rows={4} />
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Row>
-                                <Card
-                                    style={{
-                                        border: '1px solid #E5D6E1',
-                                        padding: 3,
-                                        marginLeft: 3,
-                                        marginRight: 1,
-                                        marginTop: 5,
-                                        width: 350,
-                                        height: 250
+            <div className={visible ? 'show poppup-add' : 'poppup-add'}>
+                <div className="poppup-title">{title}</div>
+                <div className="poppup-des">Thông tin chi tiết</div>
+                <Box component="form" className="form-add">
+                    <Grid container className="form-container" spacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                size="small"
+                                name="id"
+                                value={formRef.id}
+                                fullWidth
+                                hidden></TextField>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Họ và tên
+                            </Typography>
+                            <TextField
+                                size="small"
+                                placeholder="Họ và tên"
+                                name="tenKhachHang"
+                                value={formRef.tenKhachHang}
+                                onChange={onChange}
+                                fullWidth
+                                sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Số điện thoại
+                            </Typography>
+                            <TextField
+                                type="tel"
+                                size="small"
+                                name="soDienThoai"
+                                value={formRef.soDienThoai}
+                                onChange={onChange}
+                                placeholder="Số điện thoại"
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Địa chỉ
+                            </Typography>
+                            <TextField
+                                type="text"
+                                size="small"
+                                placeholder="Nhập địa chỉ của khách hàng"
+                                name="diaChi"
+                                value={formRef.diaChi}
+                                onChange={onChange}
+                                fullWidth
+                                sx={{ fontSize: '16px' }}></TextField>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ngày sinh
+                            </Typography>
+                            <TextField
+                                type="date"
+                                fullWidth
+                                placeholder="21/04/2004"
+                                name="ngaySinh"
+                                value={
+                                    formRef.ngaySinh != null
+                                        ? formRef.ngaySinh?.toString().substring(0, 10)
+                                        : ''
+                                }
+                                onChange={onChange}
+                                sx={{ fontSize: '16px' }}
+                                size="small"
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Giới tính
+                            </Typography>
+                            <Select
+                                id="gender"
+                                fullWidth
+                                value={formRef.gioiTinh ? 'true' : 'false'}
+                                name="gioiTinh"
+                                onChange={onChange}
+                                sx={{
+                                    height: '42px',
+                                    backgroundColor: '#fff',
+                                    padding: '0',
+                                    fontSize: '16px',
+                                    borderRadius: '8px',
+                                    borderColor: '#E6E1E6'
+                                }}>
+                                <MenuItem value="">Lựa chọn</MenuItem>
+                                <MenuItem value="false">Nữ</MenuItem>
+                                <MenuItem value="true">Nam</MenuItem>
+                            </Select>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography color="#4C4B4C" variant="subtitle2">
+                                Ghi chú
+                            </Typography>
+                            <TextareaAutosize
+                                placeholder="Điền"
+                                name="moTa"
+                                value={formRef.moTa}
+                                maxRows={4}
+                                minRows={4}
+                                style={{
+                                    width: '100%',
+                                    borderColor: '#E6E1E6',
+                                    borderRadius: '8px',
+                                    padding: '16px'
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid container sx={{ width: '350px' }} className=" box-1">
+                        <Grid item xs={12} className="position-relative">
+                            <div className=" inner-box" style={{ textAlign: 'center' }}>
+                                <img src={fileIcon} />
+                                <TextField
+                                    type="file"
+                                    name="avatar"
+                                    value={formRef.avatar}
+                                    id="input-file"
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '0',
+                                        width: '100%',
+                                        height: '100%'
                                     }}
-                                    className="text-center">
-                                    <div style={{ paddingTop: 45 }}>
-                                        <FileImageOutlined
-                                            height={46}
-                                            width={46}
-                                            style={{ color: '#7C3367' }}
-                                            className="icon-size text-center"
-                                            twoToneColor="#7C3367"
-                                        />
-                                    </div>
-                                    <div
-                                        style={{ paddingTop: 40, paddingBottom: 10 }}
-                                        className="text-center">
-                                        <CloudUploadOutlined
-                                            style={{ paddingRight: '5px', color: '#7C3367' }}
-                                        />
-                                        <span style={{ color: '#7C3367' }}>Tải ảnh lên</span>
-                                    </div>
-                                    <Text>
-                                        File định dạng <Text strong>jpeg, png</Text>
-                                    </Text>
-                                </Card>
-                            </Row>
-                        </Col>
-                    </Row>
-                </Form>
-            </Modal>
+                                />
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        marginTop: '34px',
+                                        justifyContent: 'center'
+                                    }}>
+                                    <img src={fileSmallIcon} />
+                                    <div>Tải ảnh lên</div>
+                                </div>
+                                <div style={{ color: '#999699', marginTop: '13px' }}>
+                                    File định dạng{' '}
+                                    <span style={{ color: '#333233' }}>jpeg, png</span>{' '}
+                                </div>
+                            </div>
+                        </Grid>
+                        <Grid item xs={6}></Grid>
+                        <Grid item xs={6}></Grid>
+                        <ButtonGroup
+                            sx={{
+                                height: '32px',
+                                position: 'absolute',
+                                bottom: '24px',
+                                right: '50px'
+                            }}>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#fff',
+                                    backgroundColor: '#B085A4',
+                                    border: 'none'
+                                }}
+                                onClick={onOk}>
+                                Lưu
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                onClick={onCancel}
+                                sx={{
+                                    fontSize: '14px',
+                                    textTransform: 'unset',
+                                    color: '#965C85',
+                                    borderColor: '#965C85'
+                                }}>
+                                Hủy
+                            </Button>
+                        </ButtonGroup>
+                    </Grid>
+                </Box>
+                <Button
+                    onClick={onCancel}
+                    sx={{
+                        position: 'absolute',
+                        top: '32px',
+                        right: '28px',
+                        padding: '0',
+                        maxWidth: '24px',
+                        minWidth: '0'
+                    }}>
+                    <img src={closeIcon} />
+                </Button>
+            </div>
         );
     }
 }

@@ -23,7 +23,7 @@ class CreateOrEditTenant extends Component<ICreateOrEditTenantProps> {
             <Modal
                 visible={visible}
                 title={modalType}
-                okText="Hủy"
+                okText="Lưu"
                 cancelButtonProps={{
                     style: {
                         backgroundColor: '#FFFFFF',

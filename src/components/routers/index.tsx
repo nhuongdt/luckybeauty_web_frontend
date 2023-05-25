@@ -168,7 +168,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/customer'))
+                    component: LoadableComponent(() => import('../../pages/customer/indexNew'))
                 },
                 {
                     path: '/dich-vus',
@@ -230,7 +230,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: 'admin',
-                    permission: '',
+                    permission: 'Pages.Administration',
                     title: 'Quản trị',
                     icon: <BsPersonLock style={{ fontSize: 20 }} />,
                     name: 'QuanTri',
@@ -276,7 +276,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: '/settings',
-                    permission: '',
+                    permission: 'Pages.CongTy',
                     title: 'Cài đặt',
                     name: 'caidat',
                     icon: <AiOutlineSetting style={{ fontSize: 20 }} />,
