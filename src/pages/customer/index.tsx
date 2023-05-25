@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-
+import { format, isValid } from 'date-fns';
 import {
     Button,
     ButtonGroup,
@@ -104,6 +104,7 @@ class Customer extends React.Component {
                 idKhachHang: id,
                 createOrEditKhachHang: createOrEdit
             });
+            console.log(createOrEdit);
         }
         this.handleToggle();
     }
@@ -485,7 +486,13 @@ class Customer extends React.Component {
                                     fullWidth
                                     placeholder="21/04/2004"
                                     name="ngaySinh"
-                                    value={this.state.createOrEditKhachHang.ngaySinh || ''}
+                                    value={
+                                        this.state.createOrEditKhachHang.ngaySinh != null
+                                            ? this.state.createOrEditKhachHang.ngaySinh
+                                                  ?.toString()
+                                                  .substring(0, 10)
+                                            : ''
+                                    }
                                     onChange={this.handleChange}
                                     sx={{ fontSize: '16px' }}
                                     size="small"
@@ -498,7 +505,9 @@ class Customer extends React.Component {
                                 <Select
                                     id="gender"
                                     fullWidth
-                                    value={this.state.createOrEditKhachHang.gioiTinh || ''}
+                                    value={
+                                        this.state.createOrEditKhachHang.gioiTinh ? 'true' : 'false'
+                                    }
                                     name="gioiTinh"
                                     onChange={this.handleChange}
                                     sx={{
