@@ -4,6 +4,7 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import './thoiGianNghi.css';
 import MuiPagination from '@mui/material/Pagination';
 import { TablePaginationProps } from '@mui/material/TablePagination';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import {
     Grid,
     Box,
@@ -34,6 +35,7 @@ import DownloadIcon from '../../../images/download.svg';
 import UploadIcon from '../../../images/upload.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 const EmployeeHoliday: React.FC = () => {
     const breadcrumbs = [
         <Typography key="1" color="#999699" fontSize="14px">
@@ -134,6 +136,7 @@ const EmployeeHoliday: React.FC = () => {
             )
         }
     ];
+
     const rows = [
         {
             id: 1,
@@ -171,7 +174,14 @@ const EmployeeHoliday: React.FC = () => {
             dateTotal: '2 ngày'
         }
     ];
+    const [open, setOpen] = React.useState(false);
 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
+    };
     return (
         <>
             <Box padding="22px 32px" className="thoi-gian-nghi-page">
@@ -217,6 +227,7 @@ const EmployeeHoliday: React.FC = () => {
                             variant="outlined"
                             startIcon={<img src={DownloadIcon} />}
                             sx={{
+                                backgroundColor: '#fff',
                                 textTransform: 'capitalize',
                                 fontWeight: '400',
                                 color: '#666466',
@@ -230,6 +241,7 @@ const EmployeeHoliday: React.FC = () => {
                             variant="outlined"
                             startIcon={<img src={UploadIcon} />}
                             sx={{
+                                backgroundColor: '#fff',
                                 textTransform: 'capitalize',
                                 fontWeight: '400',
                                 color: '#666466',
@@ -240,6 +252,7 @@ const EmployeeHoliday: React.FC = () => {
                             Xuất
                         </Button>
                         <Button
+                            onClick={handleOpen}
                             size="small"
                             variant="contained"
                             startIcon={<img src={AddIcon} />}
@@ -315,6 +328,140 @@ const EmployeeHoliday: React.FC = () => {
                     </Menu>
                 </Box>
             </Box>
+            <Dialog
+                className="poppup-them-ngay-nghi"
+                open={open}
+                onClose={handleClose}
+                sx={{
+                    borderRadius: '12px',
+                    maxWidth: 'unset!important',
+                    margin: 'unset!important'
+                }}>
+                <Box padding="28px 24px" position="relative" width="100vw" maxWidth="648px">
+                    <Typography
+                        variant="h3"
+                        fontSize="24px"
+                        lineHeight="32px"
+                        color="#4C4B4C"
+                        fontWeight="700">
+                        Ngày nghỉ mới
+                    </Typography>
+                    <Button
+                        onClick={handleClose}
+                        sx={{
+                            position: 'absolute',
+                            top: '30px',
+                            right: '30px',
+                            minWidth: 'unset!important'
+                        }}>
+                        <CloseIcon />
+                    </Button>
+                    <Box component="form">
+                        <Grid container spacing={2} mt={3}>
+                            <Grid item xs={12}>
+                                <Typography
+                                    variant="h5"
+                                    fontSize="14px"
+                                    fontWeight="500"
+                                    color="#4C4B4C">
+                                    Tên ngày nghỉ
+                                </Typography>
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    type="text"
+                                    sx={{ borderColor: '#E6E1E6!important', mt: '8px' }}
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="14px"
+                                        fontWeight="500"
+                                        color="#4C4B4C">
+                                        Ngày bắt đầu
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="date"
+                                        InputProps={{
+                                            endAdornment: null,
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <CalendarMonthIcon />
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                        sx={{
+                                            '& input::-webkit-calendar-picker-indicator': {
+                                                display: 'none'
+                                            },
+                                            borderColor: '#E6E1E6!important',
+                                            mt: '8px'
+                                        }}
+                                    />
+                                </Box>
+                            </Grid>
+                            <Grid item xs={12} md={6}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="14px"
+                                        fontWeight="500"
+                                        color="#4C4B4C">
+                                        Ngày kết thúc
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        type="date"
+                                        InputProps={{
+                                            endAdornment: null,
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <CalendarMonthIcon />
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                        sx={{
+                                            '& input::-webkit-calendar-picker-indicator': {
+                                                display: 'none'
+                                            },
+                                            borderColor: '#E6E1E6!important',
+                                            mt: '8px'
+                                        }}
+                                    />
+                                </Box>
+                            </Grid>
+                        </Grid>
+                        <Box display="flex" mt={3} justifyContent="end" gap="8px">
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    textTransform: 'unset!important',
+                                    backgroundColor: '#7C3367!important',
+                                    fontWeight: '400'
+                                }}>
+                                Lưu
+                            </Button>
+                            <Button
+                                onClick={handleClose}
+                                variant="outlined"
+                                sx={{
+                                    textTransform: 'unset!important',
+
+                                    borderColor: '#965C85!important',
+                                    color: '#965C85!important',
+                                    fontWeight: '400'
+                                }}>
+                                Huỷ
+                            </Button>
+                        </Box>
+                    </Box>
+                </Box>
+            </Dialog>
         </>
     );
 };
