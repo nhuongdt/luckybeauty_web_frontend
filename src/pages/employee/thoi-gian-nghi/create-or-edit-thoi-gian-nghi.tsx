@@ -16,6 +16,7 @@ import { Formik, Form, Field } from 'formik';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { format } from 'date-fns';
+import AppConsts from '../../../lib/appconst';
 
 interface CreateOrEditProps {
     visible: boolean;
@@ -30,17 +31,13 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
         const { visible, onOk, onCancel, title, createOrEditDto } = this.props;
 
         const initialValues = {
-            id:
-                createOrEditDto.id === ''
-                    ? '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-                    : createOrEditDto.id,
+            id: createOrEditDto.id === '' ? AppConsts.guidEmpty : createOrEditDto.id,
             tenNgayLe: createOrEditDto.tenNgayLe,
             tuNgay: createOrEditDto.tuNgay,
             denNgay: createOrEditDto.denNgay
         };
 
         const handleSubmit = async (values: CreateOrEditNgayNghiLeDto) => {
-            console.log(values);
             await ngayNghiLeService.createOrEdit(values);
             onCancel();
         };

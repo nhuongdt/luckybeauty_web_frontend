@@ -1,30 +1,35 @@
 import { Component, ReactNode } from 'react';
 import { useFormik } from 'formik';
-import { Button, Col, FormInstance, Input, Row, Space } from 'antd';
 import { format } from 'date-fns';
-import { DownloadOutlined, PlusOutlined, SearchOutlined, UploadOutlined } from '@ant-design/icons';
-import '../../../custom.css';
+import '../../employee/employee.css';
 import React from 'react';
 import { NgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/NgayNghiLeDto';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
 import {
-    Checkbox,
+    Box,
+    Breadcrumbs,
+    Button,
+    Grid,
     IconButton,
     Menu,
     MenuItem,
-    Pagination,
-    Paper,
-    Stack,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
+    TextField,
+    Typography
 } from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import InfoIcon from '@mui/icons-material/Info';
+import AddIcon from '../../../images/add.svg';
+import SearchIcon from '../../../images/search-normal.svg';
+import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
+import DownloadIcon from '../../../images/download.svg';
+import UploadIcon from '../../../images/upload.svg';
+import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -32,6 +37,9 @@ class EmployeeHoliday extends Component {
         maxResultCount: 10,
         skipCount: 0,
         filter: '',
+        moreOpen: false,
+        anchorEl: null,
+        selectedRowId: null,
         listHoliday: [] as NgayNghiLeDto[],
         createOrEditNgayNghiLe: {
             id: '',
@@ -45,8 +53,7 @@ class EmployeeHoliday extends Component {
         startIndex: 0,
         isShowConfirmDelete: false,
         sortColumn: null,
-        sortDirection: 'asc',
-        anchorEl: null
+        sortDirection: 'asc'
     };
     async componentDidMount() {
         this.getData();
@@ -65,7 +72,7 @@ class EmployeeHoliday extends Component {
             maxResultCount: this.state.maxResultCount,
             skipCount: this.state.skipCount
         });
-        this.setState({
+        await this.setState({
             listHoliday: data.items,
             totalCount: data.totalCount,
             totalPage: Math.ceil(data.totalCount / this.state.maxResultCount)
@@ -141,256 +148,288 @@ class EmployeeHoliday extends Component {
             sortDirection: newSortDirection
         });
     };
-    handleMenuOpen = (event: any) => {
-        this.setState({ anchorEl: event.currentTarget });
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
     };
 
-    handleMenuClose = () => {
-        this.setState({ anchorEl: null, IdHoliday: '' });
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: null });
+        await this.getListHoliday();
+    };
+
+    handleView = () => {
+        // Handle View action
+        this.handleCloseMenu();
+    };
+    delete = async (id: string) => {
+        await ngayNghiLeService.delete(id);
+    };
+    onOkDelete = async () => {
+        await this.delete(this.state.selectedRowId ?? '');
+        this.showConfirmDelete();
+        await this.handleCloseMenu();
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
+        this.handleCloseMenu();
+    };
+
+    showConfirmDelete = () => {
+        // Handle Delete action
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete,
+            IdHoliday: ''
+        });
     };
     render() {
+        const breadcrumbs = [
+            <Typography key="1" color="#999699" fontSize="14px">
+                Dịch vụ
+            </Typography>,
+            <Typography key="2" color="#333233" fontSize="14px">
+                Danh mục dịch vụ
+            </Typography>
+        ];
+        const columns: GridColDef[] = [
+            {
+                field: 'tenNgayLe',
+                headerName: 'Tên ngày lễ',
+                width: 200
+            },
+            {
+                field: 'tuNgay',
+                headerName: 'Ngày bắt đầu',
+                width: 200,
+                renderCell: (params) => (
+                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                        <DateIcon style={{ marginRight: 4 }} />
+                        <Typography
+                            fontSize="14px"
+                            fontWeight="400"
+                            variant="h6"
+                            color="#333233"
+                            lineHeight="16px">
+                            {new Date(params.value).toLocaleDateString('en-GB')}
+                        </Typography>
+                    </Box>
+                )
+            },
+            {
+                field: 'denNgay',
+                headerName: 'Ngày kết thúc',
+                width: 200,
+                renderCell: (params) => (
+                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                        <DateIcon style={{ marginRight: 4 }} />
+                        <Typography
+                            fontSize="14px"
+                            fontWeight="400"
+                            variant="h6"
+                            color="#333233"
+                            lineHeight="16px">
+                            {new Date(params.value).toLocaleDateString('en-GB')}
+                        </Typography>
+                    </Box>
+                )
+            },
+            {
+                field: 'tongSoNgay',
+                headerName: 'Tổng số ngày',
+                width: 150,
+                renderCell: (params) => (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            alignContent: 'center',
+                            textAlign: 'center'
+                        }}>
+                        <Typography
+                            fontSize="14px"
+                            fontWeight="400"
+                            variant="h6"
+                            color="#333233"
+                            lineHeight="16px">
+                            {params.value}
+                        </Typography>
+                    </Box>
+                )
+            },
+            {
+                field: 'actions',
+                headerName: '',
+                width: 48,
+                disableColumnMenu: true,
+
+                renderCell: (params) => (
+                    <IconButton
+                        aria-label="Actions"
+                        aria-controls={`actions-menu-${params.row.id}`}
+                        aria-haspopup="true"
+                        onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
+                        <MoreHorizIcon />
+                    </IconButton>
+                )
+            }
+        ];
         return (
-            <div className="container-fluid h-100 bg-white" style={{ height: '100%' }}>
-                <div className="page-header">
-                    <Row align={'middle'} justify={'space-between'}>
-                        <Col span={12}>
-                            <div>
-                                <div className="pt-2">
-                                    <nav aria-label="breadcrumb">
-                                        <ol className="breadcrumb">
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Nhân viên
-                                            </li>
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Thời gian nghỉ
-                                            </li>
-                                        </ol>
-                                    </nav>
-                                </div>
-                                <div>
-                                    <h3>Quản lý thời gian nghỉ</h3>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <div>
-                                <Space align="center" size="middle">
-                                    <div className="search w-100">
-                                        <Input
-                                            allowClear
-                                            onChange={this.handleSearch}
-                                            size="large"
-                                            prefix={<SearchOutlined />}
-                                            placeholder="Tìm kiếm..."
-                                        />
-                                    </div>
-                                    <Space align="center" size="middle">
-                                        <Button
-                                            className="btn-import"
-                                            size="large"
-                                            icon={<DownloadOutlined />}>
-                                            Nhập
-                                        </Button>
-                                        <Button
-                                            className="btn-export"
-                                            size="large"
-                                            icon={<UploadOutlined />}>
-                                            Xuất
-                                        </Button>
-                                    </Space>
-                                    <Button
-                                        icon={<PlusOutlined />}
-                                        size="large"
-                                        className="btn btn-add-item"
-                                        onClick={() => {
-                                            this.createOrUpdateModalOpen('');
-                                        }}>
-                                        Thêm ngày lễ mới
-                                    </Button>
-                                </Space>
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
-                <div className="page-content pt-2">
-                    <TableContainer component={Paper}>
-                        <Table aria-label="customized table" size="small">
-                            <TableHead className="bg-table">
-                                <TableRow style={{ height: '48px' }}>
-                                    <TableCell
-                                        padding="checkbox"
-                                        align="center"
-                                        className="text-td-table">
-                                        <Checkbox />
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        STT
-                                    </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        onClick={() => this.handleSort('tenNgayLe')}>
-                                        Tên ngày lễ
-                                        {this.state.sortColumn === 'tenNgayLe' && (
-                                            <span style={{ marginLeft: 3 }}>
-                                                {this.state.sortDirection === 'asc' ? ' ▲' : ' ▼'}
-                                            </span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        align="left"
-                                        onClick={() => this.handleSort('tuNgay')}>
-                                        Ngày bắt đầu
-                                        {this.state.sortColumn === 'tuNgay' && (
-                                            <span style={{ marginLeft: 3 }}>
-                                                {this.state.sortDirection === 'asc' ? ' ▲' : ' ▼'}
-                                            </span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        align="left"
-                                        onClick={() => this.handleSort('denNgay')}>
-                                        Ngày kết thúc
-                                    </TableCell>
-                                    <TableCell
-                                        className="text-td-table"
-                                        align="center"
-                                        onClick={() => this.handleSort('tongSoNgay')}>
-                                        Tổng số ngày
-                                        {this.state.sortColumn === 'tongSoNgay' && (
-                                            <span style={{ marginLeft: 3 }}>
-                                                {this.state.sortDirection === 'asc' ? ' ▲' : ' ▼'}
-                                            </span>
-                                        )}
-                                    </TableCell>
-                                    <TableCell style={{ width: '50px' }} align="center">
-                                        #
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {this.state.listHoliday.map((item, length) => {
-                                    return (
-                                        <TableRow
-                                            key={item.tenNgayLe}
-                                            sx={{
-                                                '&:last-child td, &:last-child th': {
-                                                    border: 0,
-                                                    height: '48px'
-                                                }
-                                            }}>
-                                            <TableCell
-                                                style={{ height: '48px' }}
-                                                align="center"
-                                                padding="checkbox"
-                                                className="text-th-table">
-                                                <Checkbox />
-                                            </TableCell>
-                                            <TableCell
-                                                style={{ height: '48px' }}
-                                                component="th"
-                                                scope="row"
-                                                align="center"
-                                                className="text-th-table">
-                                                {length + 1}
-                                            </TableCell>
-                                            <TableCell
-                                                style={{ height: '48px' }}
-                                                className="text-th-table">
-                                                {item.tenNgayLe}
-                                            </TableCell>
-                                            <TableCell
-                                                style={{ height: '48px' }}
-                                                align="left"
-                                                className="text-th-table">
-                                                {new Date(
-                                                    item.tuNgay.toString()
-                                                ).toLocaleDateString('vi-VN')}
-                                            </TableCell>
-                                            <TableCell
-                                                style={{ height: '48px' }}
-                                                align="left"
-                                                className="text-th-table">
-                                                {new Date(
-                                                    item.denNgay.toString()
-                                                ).toLocaleDateString('vi-VN')}
-                                            </TableCell>
-                                            <TableCell
-                                                style={{ height: '48px' }}
-                                                align="center"
-                                                className="text-th-table">
-                                                {item.tongSoNgay} ngày
-                                            </TableCell>
-                                            <TableCell
-                                                style={{ height: '48px', width: '50px' }}
-                                                align="right">
-                                                <IconButton onClick={this.handleMenuOpen}>
-                                                    <BsThreeDotsVertical />
-                                                </IconButton>
-                                                <Menu
-                                                    anchorEl={this.state.anchorEl}
-                                                    open={Boolean(this.state.anchorEl)}
-                                                    onClose={this.handleMenuClose}>
-                                                    <MenuItem
-                                                        onClick={() => {
-                                                            this.createOrUpdateModalOpen(item.id);
-                                                        }}>
-                                                        Edit
-                                                    </MenuItem>
-                                                </Menu>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                    <div className="row">
-                        <div className="col-6" style={{ float: 'left' }}></div>
-                        <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div className="col-5 align-items-center">
-                                    <label
-                                        className="pagination-view-record align-items-center"
-                                        style={{ float: 'right' }}>
-                                        Hiển thị{' '}
-                                        {this.state.currentPage * this.state.maxResultCount - 9}-
-                                        {this.state.currentPage * this.state.maxResultCount} của{' '}
-                                        {this.state.totalCount} mục
-                                    </label>
-                                </div>
-                                <div style={{ float: 'right' }} className="col-7">
-                                    <Stack spacing={1.5} className="align-items-center">
-                                        <Pagination
-                                            count={this.state.totalPage}
-                                            defaultPage={this.state.currentPage}
-                                            onChange={this.handlePageChange}
-                                            color="secondary"
-                                            shape="rounded"
-                                        />
-                                    </Stack>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <Box padding="22px 32px" className="thoi-gian-nghi-page">
+                <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid item xs={12} md="auto">
+                        <Breadcrumbs separator="›" aria-label="breadcrumb">
+                            {breadcrumbs}
+                        </Breadcrumbs>
+                        <Typography
+                            color="#0C050A"
+                            variant="h1"
+                            fontSize="24px"
+                            fontWeight="700"
+                            lineHeight="32px"
+                            marginTop="4px">
+                            Quản lý thời gian nghỉ
+                        </Typography>
+                    </Grid>
+                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
+                        <Box component="form" className="form-search">
+                            <TextField
+                                size="small"
+                                sx={{
+                                    backgroundColor: '#FFFAFF',
+                                    borderColor: '#CDC9CD!important'
+                                }}
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton type="submit">
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
+                                }}
+                            />
+                        </Box>
+
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<img src={DownloadIcon} />}
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                height: '40px',
+                                borderColor: '#E6E1E6!important'
+                            }}>
+                            Nhập
+                        </Button>
+                        <Button
+                            size="small"
+                            variant="outlined"
+                            startIcon={<img src={UploadIcon} />}
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+                                borderColor: '#E6E1E6!important',
+                                height: '40px'
+                            }}>
+                            Xuất
+                        </Button>
+                        <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() => {
+                                this.createOrUpdateModalOpen('');
+                            }}
+                            startIcon={<img src={AddIcon} />}
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                minWidth: '173px',
+                                height: '40px',
+                                backgroundColor: '#7C3367!important'
+                            }}>
+                            Thêm ngày nghỉ
+                        </Button>
+                    </Grid>
+                </Grid>
+                <Box height="60vh" marginTop="24px">
+                    <DataGrid
+                        rows={this.state.listHoliday}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 5 }
+                            }
+                        }}
+                        pageSizeOptions={[5, 10]}
+                        checkboxSelection
+                    />
+                    <Menu
+                        id={`actions-menu-${this.state.selectedRowId}`}
+                        anchorEl={this.state.anchorEl}
+                        keepMounted
+                        open={Boolean(this.state.anchorEl)}
+                        onClose={this.handleCloseMenu}
+                        sx={{ minWidth: '120px' }}>
+                        <MenuItem onClick={this.handleView}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                View
+                            </Typography>
+                            <InfoIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={this.handleEdit}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Edit
+                            </Typography>
+                            <EditIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={this.showConfirmDelete}>
+                            <Typography
+                                color="#F1416C"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Delete
+                            </Typography>
+                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
+                        </MenuItem>
+                    </Menu>
+                </Box>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditThoiGianNghi
                     visible={this.state.modalVisible}
                     title="Thêm mới"
-                    onOk={() => {
-                        console.log('ok');
-                        this.getListHoliday();
-                    }}
+                    onOk={this.handleSubmit}
                     onCancel={() => {
                         this.Modal();
                     }}
                     createOrEditDto={this.state.createOrEditNgayNghiLe}></CreateOrEditThoiGianNghi>
-            </div>
+            </Box>
         );
     }
 }

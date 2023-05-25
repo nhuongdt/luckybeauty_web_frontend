@@ -36,7 +36,7 @@ import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import { pageLoadTime } from '../../lib/abp';
 import fileDowloadService from '../../services/file-dowload.service';
-class Customer extends React.Component {
+class CustomerScreen extends React.Component {
     state = {
         rowTable: [],
         toggle: false,
@@ -619,4 +619,4 @@ class Customer extends React.Component {
         );
     }
 }
-export default Customer;
+export default CustomerScreen;

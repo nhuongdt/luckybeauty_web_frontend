@@ -16,6 +16,7 @@ import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import closeIcon from '../../../images/close-square.svg';
 import fileIcon from '../../../images/file.svg';
 import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
+import '../employee.css';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;

@@ -211,11 +211,11 @@ export const appRouters: AppRouteProps = {
                             isLayout: false,
                             children: [],
                             component: LoadableComponent(
-                                () => import('../../pages/employee/thoi-gian-nghi/indexNew')
+                                () => import('../../pages/employee/thoi-gian-nghi')
                             )
                         }
                     ],
-                    component: LoadableComponent(() => import('../../pages/employee'))
+                    component: null
                 },
                 {
                     path: '/bao-cao',

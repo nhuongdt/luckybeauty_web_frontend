@@ -397,7 +397,9 @@ class EmployeeScreen extends Component {
                                 backgroundColor: '#FFFAFF',
                                 borderColor: '#CDC9CD'
                             }}
-                            onChange={this.handleChange}
+                            onChange={(e) => {
+                                this.setState({ filter: e.target.value });
+                            }}
                             size="small"
                             className="search-field"
                             variant="outlined"
