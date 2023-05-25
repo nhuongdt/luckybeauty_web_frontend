@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import './thoiGianNghi.css';
+import MuiPagination from '@mui/material/Pagination';
+import { TablePaginationProps } from '@mui/material/TablePagination';
 import {
     Grid,
     Box,
@@ -169,6 +171,7 @@ const EmployeeHoliday: React.FC = () => {
             dateTotal: '2 ngày'
         }
     ];
+
     return (
         <>
             <Box padding="22px 32px" className="thoi-gian-nghi-page">
