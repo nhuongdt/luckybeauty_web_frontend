@@ -257,7 +257,8 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 <Box
                                     display="flex"
                                     marginTop={MaxPc1490 ? '16px' : '0'}
-                                    marginLeft={MaxPc1490 ? '0' : '13px'}>
+                                    marginLeft={MaxPc1490 ? '0' : '13px'}
+                                    flexGrow="1">
                                     <Typography color="#666466">
                                         <QueryBuilder
                                             style={{
