@@ -1,6 +1,6 @@
 import AppConsts from '../lib/appconst';
 import axios from 'axios';
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 import { FileDto } from './dto/FileDto';
 
 class FileDownloadService {
