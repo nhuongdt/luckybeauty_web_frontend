@@ -181,7 +181,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/product/PageProduct'))
+                    component: LoadableComponent(() => import('../../pages/product/pageProductNew'))
                 },
                 {
                     path: 'employee',
