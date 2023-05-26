@@ -26,7 +26,7 @@ export interface ICreateOrEditUserProps {
     formRef: CreateOrUpdateNhanSuDto;
     suggestChucVu: SuggestChucVuDto[];
 }
-class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
+class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef, suggestChucVu, onChange } = this.props;
         return (
@@ -135,7 +135,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
                                 type="date"
                                 fullWidth
                                 name="ngaySinh"
-                                value={formRef.ngaySinh}
+                                value={formRef.ngaySinh?.substring(0, 10)}
                                 onChange={onChange}
                                 placeholder="21/04/2004"
                                 sx={{ fontSize: '16px' }}
@@ -279,4 +279,4 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditUserProps> {
         );
     }
 }
-export default CreateOrEditCustomerDialog;
+export default CreateOrEditEmployeeDialog;
