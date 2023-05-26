@@ -48,6 +48,7 @@ import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
+import ModalEditChiTietGioHang from './modal_edit_chitiet';
 
 const PageBanHang = ({ customerChosed }: any) => {
     const formatCurrency = (value: number) => {
@@ -80,6 +81,10 @@ const PageBanHang = ({ customerChosed }: any) => {
         new PropModal({ isShow: false })
     );
 
+    const [triggerModalEditGioHang, setTriggerModalEditGioHang] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
+
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
         const lstAll = [...list.items];
@@ -91,7 +96,6 @@ const PageBanHang = ({ customerChosed }: any) => {
     const debounceDropDown = useRef(
         debounce(async (input: any) => {
             const data = await ProductService.GetDMHangHoa_groupByNhom(input);
-            console.log('data', data);
             setListProduct(data);
         }, 500)
     ).current;
@@ -106,7 +110,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         };
 
         debounceDropDown(input);
-    }, [txtSearch, idNhomHang]);
+    }, [txtSearch, idNhomHang, idLoaiHangHoa]);
 
     const PageLoad = () => {
         GetTreeNhomHangHoa();
@@ -126,6 +130,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     const choseLoaiHang = (type: number) => {
         setTxtSearch('');
+        setIdNhomHang('');
         setIdLoaiHangHoa(type);
     };
     // end filter
@@ -336,6 +341,19 @@ const PageBanHang = ({ customerChosed }: any) => {
         );
     };
 
+    // modal chitiet giohang
+    const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
+        setTriggerModalEditGioHang((old) => {
+            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
+        });
+    };
+    const AgreeGioHang = (ctUpdate: any) => {
+        // update cthd + save to cache
+        console.log('ctUpdate ', ctUpdate);
+    };
+
+    // end modal chi tiet
+
     const RemoveCache = async () => {
         await dbDexie.hoaDon
             .where('id')
@@ -415,6 +433,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         <>
             {contentPrint !== '' && <InHoaDon props={propMauIn} />}
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
+            <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
             <Grid
                 container
                 spacing={3}
@@ -658,7 +677,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             color="#000"
                                             variant="body1"
                                             fontSize="16px"
-                                            fontWeight="400">
+                                            fontWeight="400"
+                                            onClick={() => showPopChiTietGioHang(ct)}>
                                             <span> {ct.soLuong}</span>x
                                             <span> {Utils.formatNumber(ct.giaBan)}</span>
                                         </Typography>
