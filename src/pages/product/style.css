@@ -21,10 +21,18 @@
     color: #1374ad;
 }
 
-
 /* not working */
 
 .list-icon-action ul li:eq(2) span,
 svg {
     color: red;
+}
+
+.dich-vu-page .MuiTablePagination-selectLabel,
+.dich-vu-page .MuiTablePagination-displayedRows {
+    margin-bottom: 0 !important;
+}
+.dich-vu-page .MuiDataGrid-columnHeadersInner,
+.dich-vu-page .MuiDataGrid-columnHeaders {
+    background-color: #f2ebf0;
 }

@@ -450,7 +450,7 @@ export default function PageProduct() {
                 }></ConfirmDelete>
 
             <Grid container rowSpacing={1} style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-                <Grid item xs={12} sm={6} md={8} lg={8} sx={{ height: 60 }} rowSpacing={2}>
+                <Grid item xs={12} sm={6} md={8} lg={4} sx={{ height: 60 }} rowSpacing={2}>
                     <Typography variant="h5">Danh mục dịch vụ</Typography>
                 </Grid>
 
@@ -459,7 +459,7 @@ export default function PageProduct() {
                     xs={12}
                     sm={6}
                     md={4}
-                    lg={4}
+                    lg={8}
                     pr={2}
                     rowSpacing={2}
                     style={{ height: 60 }}>

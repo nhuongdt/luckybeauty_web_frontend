@@ -48,7 +48,7 @@ const MainAppLayout: React.FC = () => {
                         transition: '.4s'
                     }}>
                     <Header collapsed={collapsed} toggle={toggle} onClick={toggle} />
-                    <Box style={{ border: 'solid 0.1rem #e6e1e6' }}>
+                    <Box style={{ border: 'solid 0.1rem #e6e1e6', backgroundColor: '#EEECEC' }}>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Box>
