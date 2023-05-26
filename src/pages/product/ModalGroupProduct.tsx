@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { Grid, Box, Autocomplete, InputAdornment, TextField } from '@mui/material';
 import GroupProductService from '../../services/product/GroupProductService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-
+import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import Utils from '../../utils/utils';
 import AppConsts from '../../lib/appconst';
 import '../../App.css';
@@ -148,9 +148,21 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 onClose={() => setIsShow(false)}
                 aria-labelledby="draggable-dialog-title"
                 fullWidth>
-                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                <DialogTitle
+                    sx={{
+                        cursor: 'move',
+                        fontSize: '24px!important',
+                        color: '#333233',
+                        fontWeight: '700!important'
+                    }}
+                    id="draggable-dialog-title">
                     {isNew ? 'Thêm' : 'Cập nhật'} nhóm dịch vụ
                 </DialogTitle>
+                <Button
+                    sx={{ minWidth: 'unset', position: 'absolute', top: '30px', right: '30px' }}
+                    onClick={() => setIsShow(false)}>
+                    <CloseIcon />
+                </Button>
                 <DialogContent>
                     <Grid container>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
@@ -241,13 +253,13 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 <DialogActions>
                     <Button
                         variant="contained"
-                        sx={{ bgcolor: '#7C3367' }}
+                        sx={{ bgcolor: '#7C3367!important' }}
                         onClick={saveNhomHangHoa}>
                         Lưu
                     </Button>
                     <Button
                         variant="outlined"
-                        sx={{ borderColor: '#7C3367' }}
+                        sx={{ borderColor: '#7C3367!important', color: '#965C85' }}
                         onClick={() => setIsShow(false)}>
                         Hủy
                     </Button>
