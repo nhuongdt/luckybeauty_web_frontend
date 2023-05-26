@@ -41,9 +41,10 @@ export default class HoaDonChiTietDto {
         this.soLuong = soLuong;
         this.donGiaTruocCK = donGiaTruocCK;
         this.pTChietKhau = pTChietKhau;
-        this.tienChietKhau = tienChietKhau;
+        this.tienChietKhau = pTChietKhau > 0 ? (donGiaTruocCK * pTChietKhau) / 100 : tienChietKhau;
         this.pTThue = pTThue;
-        this.tienThue = tienThue;
+        this.tienThue =
+            pTThue > 0 ? ((donGiaTruocCK - this.tienChietKhau) * pTThue) / 100 : tienThue;
         this.ghiChu = ghiChu;
         this.trangThai = trangThai;
         this.nhanVienThucHien = [];

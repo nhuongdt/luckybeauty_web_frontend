@@ -23,20 +23,33 @@ import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
+import { dbDexie } from '../../lib/dexie/dexieDB';
+import NhanVienThucHienDto from '../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
+import HoaHongDichVuServices from '../../services/nhan_vien_thuc_hien/HoaHongDichVuServices';
 
 const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
-    const [lstNhanVienChosed, setLstNhanVienChosed] = useState<NhanSuItemDto[]>([]);
+    const [lstNVThucHien, setLstNhanVienChosed] = useState<NhanVienThucHienDto[]>([]);
 
     useEffect(() => {
         if (triggerModal.isShow) {
             setIsShow(true);
-            console.log('itemCTHD', triggerModal.item);
+            if (triggerModal.isNew) {
+                // get from cthd cache
+                setLstNhanVienChosed([...triggerModal.item.nhanVienThucHien]);
+            } else {
+                // get from db
+                GetListNVThucHien_DichVu();
+            }
         }
     }, [triggerModal]);
+
+    const GetListNVThucHien_DichVu = () => {
+        console.log(33);
+    };
 
     const GetListNhanVien = async () => {
         const data = await NhanVienService.search(txtSearch, { skipCount: 0, maxResultCount: 100 });
@@ -81,19 +94,43 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
         SearchNhanVienClient();
     }, [txtSearch]);
 
-    const ChoseNhanVien = (item: NhanSuItemDto) => {
+    const ChoseNhanVien = async (item: NhanSuItemDto) => {
+        const hoahongDV = await HoaHongDichVuServices.GetHoaHongNV_theoDichVu(
+            item.id,
+            triggerModal.item.idDonViQuyDoi
+        );
+        console.log('hoahongDV', hoahongDV);
+
+        const newNV = new NhanVienThucHienDto({
+            idNhanVien: item.id,
+            maNhanVien: item.maNhanVien,
+            tenNhanVien: item.tenNhanVien,
+            soDienThoai: item.soDienThoai,
+            gioiTinh: item.gioiTinh,
+            avatar: item.avatar
+        });
+        if (hoahongDV.length > 0) {
+            newNV.ptChietKhau = hoahongDV[0].giaTri;
+            newNV.chietKhauMacDinh = hoahongDV[0].giaTri;
+            if (newNV.ptChietKhau > 0) {
+                newNV.tienChietKhau = (newNV.ptChietKhau * triggerModal.item.thanhTienSauCK) / 100;
+            } else {
+                newNV.tienChietKhau = hoahongDV[0].giaTri * triggerModal.item.soLuong;
+            }
+        }
         // check exists
-        const nvEX = lstNhanVienChosed.filter((x) => x.id === item.id);
+        const nvEX = lstNVThucHien.filter((x) => x.idNhanVien === newNV.idNhanVien);
         if (nvEX.length > 0) {
-            setLstNhanVienChosed(lstNhanVienChosed.filter((x) => x.id !== item.id));
+            // remove if chose again
+            setLstNhanVienChosed(lstNVThucHien.filter((x) => x.idNhanVien !== newNV.idNhanVien));
         } else {
-            setLstNhanVienChosed([item, ...lstNhanVienChosed]);
+            setLstNhanVienChosed([newNV, ...lstNVThucHien]);
         }
     };
 
     const UpdateStatus = () => {
-        const arrNV = lstNhanVienChosed.map((x) => {
-            return x.id;
+        const arrNV = lstNVThucHien.map((x) => {
+            return x.idNhanVien;
         });
         setLstNhanVien(
             lstNhanVien.map((x) => {
@@ -108,11 +145,11 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
 
     useEffect(() => {
         UpdateStatus();
-    }, [lstNhanVienChosed]);
+    }, [lstNVThucHien]);
 
     const onSave = () => {
         setIsShow(false);
-        handleSave(lstNhanVienChosed);
+        handleSave(lstNVThucHien);
     };
 
     return (
@@ -166,7 +203,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                     padding: ' 24px 24px 20px 24px',
                                     borderRadius: '8px',
                                     cursor: 'pointer',
-                                    backgroundColor: person.isChosed ? 'red' : ''
+                                    backgroundColor: person.isChosed ? '#ccc' : ''
                                 }}
                                 border="1px solid #CDC9CD">
                                 <div className="person-avatar">
