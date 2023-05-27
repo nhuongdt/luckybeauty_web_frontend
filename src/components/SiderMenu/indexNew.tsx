@@ -90,11 +90,12 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
 
     return (
         <Box
-            style={{
+            sx={{
                 overflow: 'auto',
                 height: '100vh',
                 position: 'fixed',
-                left: 0,
+                transition: '.4s',
+                left: collapsed ? '-240px' : '0',
                 top: 0,
                 bottom: 0,
                 width: '240px'
@@ -130,7 +131,19 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                             <ListItemIcon
                                 onClick={
                                     itemMenu.children ? () => handleDropdown(index) : undefined
-                                }>
+                                }
+                                sx={{
+                                    '& svg': {
+                                        filter:
+                                            location.pathname === itemMenu.key ||
+                                            itemMenu.children?.some(
+                                                (dropdownItem) =>
+                                                    location.pathname === dropdownItem.key
+                                            )
+                                                ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
+                                                : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
+                                    }
+                                }}>
                                 {itemMenu.icon}
                             </ListItemIcon>
                             <ListItemText
