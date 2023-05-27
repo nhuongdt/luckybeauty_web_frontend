@@ -23,17 +23,19 @@ import { observer } from 'mobx-react';
 import AppConsts from '../../../../lib/appconst';
 import CreateOrEditChietKhauDichVuModal from './components/create-or-edit-hoa-hong';
 import { CreateOrEditChietKhauDichVuDto } from '../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
-import { height } from '@mui/system';
+import { SuggestDonViQuiDoiDto } from '../../../../services/suggests/dto/SuggestDonViQuiDoi';
+import Cookies from 'js-cookie';
 class ChietKhauDichVuScreen extends Component {
     state = {
         visited: false,
-        idChiNhanh: '',
+        idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
         idNhanVien: AppConsts.guidEmpty,
         keyword: '',
         skipCount: 0,
         maxResultCount: 10,
         createOrEditDto: {} as CreateOrEditChietKhauDichVuDto,
-        suggestNhanSu: [] as SuggestNhanSuDto[]
+        suggestNhanSu: [] as SuggestNhanSuDto[],
+        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
     };
     componentDidMount(): void {
         this.InitData();
@@ -44,6 +46,9 @@ class ChietKhauDichVuScreen extends Component {
         if (suggestNhanVien.length > 0) {
             await this.setState({ idNhanVien: suggestNhanVien[0].id });
         }
+        const suggestDonViQuiDoi = await SuggestService.SuggestDonViQuiDoi();
+        console.log(suggestDonViQuiDoi);
+        await this.setState({ suggestDonViQuiDoi: suggestDonViQuiDoi });
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
     }
     getDataAccordingByNhanVien = async (idNhanVien: any) => {
@@ -56,9 +61,31 @@ class ChietKhauDichVuScreen extends Component {
             idNhanVien
         );
     };
+    handleChange = (event: any): void => {
+        const { name, value } = event.target;
+        this.setState({
+            createOrEditDto: {
+                ...this.state.createOrEditDto,
+                idNhanVien: this.state.idNhanVien,
+                idChiNhanh: this.state.idChiNhanh,
+                [name]: value
+            }
+        });
+    };
+    handleSubmit = async () => {
+        await chietKhauDichVuStore.createOrEdit(this.state.createOrEditDto);
+        await this.getDataAccordingByNhanVien(this.state.idNhanVien);
+        console.log(this.state.createOrEditDto);
+        this.onModal();
+    };
+    onModal = () => {
+        this.setState({ visited: !this.state.visited });
+    };
+    onCloseModal = () => {
+        this.setState({ visited: false });
+    };
     render(): ReactNode {
-        const { listChietKhauDichVu, createOrEditDto, getAccordingByNhanVien } =
-            chietKhauDichVuStore;
+        const { listChietKhauDichVu } = chietKhauDichVuStore;
         return (
             <div>
                 <div className="row mt-2 mb-4">
@@ -70,12 +97,13 @@ class ChietKhauDichVuScreen extends Component {
                     <div className="col-4 pl-2">
                         <FormControl size="small">
                             <Select
-                                value={
+                                defaultValue={
                                     this.state.suggestNhanSu.length > 1
                                         ? this.state.suggestNhanSu[0].id
                                         : AppConsts.guidEmpty
                                 }
-                                defaultValue={AppConsts.guidEmpty}
+                                style={{ height: 32 }}
+                                value={this.state.idNhanVien}
                                 onChange={async (e) => {
                                     await this.setState({ idNhanVien: e.target.value });
                                     await this.getDataAccordingByNhanVien(e.target.value);
@@ -87,21 +115,32 @@ class ChietKhauDichVuScreen extends Component {
                         </FormControl>
                     </div>
                     <div className="col-4"></div>
-                    <div className="col-4 d-flex align-content-center">
+                    <div className="col-4">
                         <Button
                             onClick={() => {
                                 this.setState({ visited: true });
                             }}
-                            style={{ float: 'right', background: '#7C3367', height: '32px' }}
-                            startIcon={<AddOutlinedIcon />}>
-                            <span style={{ color: '#FFFAFF', fontSize: 14 }}>Thêm mới</span>
+                            size="small"
+                            style={{ float: 'right', background: '#7C3367', height: 32 }}
+                            startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}>
+                            <span
+                                style={{
+                                    color: '#FFFAFF',
+                                    fontSize: 14,
+                                    fontWeight: 400,
+                                    fontStyle: 'normal',
+                                    fontFamily: 'roboto',
+                                    textAlign: 'center'
+                                }}>
+                                Thêm mới
+                            </span>
                         </Button>
                     </div>
                 </div>
                 <div>
                     <TableContainer component={Paper}>
                         <Table aria-label="customized table" size="small">
-                            <TableHead className="bg-table">
+                            <TableHead>
                                 <TableRow style={{ height: '48px' }}>
                                     <TableCell
                                         padding="checkbox"
@@ -207,12 +246,10 @@ class ChietKhauDichVuScreen extends Component {
                 </div>
                 <CreateOrEditChietKhauDichVuModal
                     formRef={this.state.createOrEditDto}
-                    onClose={() => {
-                        this.setState({ visited: false });
-                    }}
-                    onSave={() => {
-                        this.setState({ visited: false });
-                    }}
+                    onClose={this.onCloseModal}
+                    onSave={this.handleSubmit}
+                    onChange={this.handleChange}
+                    suggestDonViQuiDoi={this.state.suggestDonViQuiDoi}
                     visited={this.state.visited}
                     title="Thêm mới"
                 />

@@ -71,7 +71,7 @@ class StoreDetail extends Component {
                                         <Button
                                             variant="contained"
                                             size="small"
-                                            className="btn btn-add-item"
+                                            sx={{ color: '#FFFAFF', background: '#7C3367' }}
                                             onClick={this.handSubmit}>
                                             Cập nhật
                                         </Button>

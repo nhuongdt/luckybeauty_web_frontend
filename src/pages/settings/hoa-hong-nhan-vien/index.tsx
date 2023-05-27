@@ -2,6 +2,7 @@ import { Component, ReactNode } from 'react';
 import ChietKhauDichVuScreen from '../hoa-hong-nhan-vien/chiet-khau-dich-vu/index';
 import { Box, Button, ButtonGroup, Grid } from '@mui/material';
 import { stubTrue } from 'lodash';
+import ChietKhauHoaDonScreen from './chiet-khau-hoa-don/components';
 class CaiDatHoaHongScreen extends Component {
     state = {
         isChietKhauHoaDon: true
@@ -27,12 +28,13 @@ class CaiDatHoaHongScreen extends Component {
                                         sx={{
                                             fontSize: '14px',
                                             textTransform: 'unset',
+                                            borderRadius: '8px 0px 0px 8px',
                                             color: this.state.isChietKhauHoaDon
-                                                ? '#666466'
-                                                : '#fff',
+                                                ? '#FFF'
+                                                : '#666466',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? '#FFFFFF'
-                                                : '#B085A4',
+                                                ? '#B085A4'
+                                                : '#FFFFFF',
                                             border: 'none'
                                         }}
                                         onClick={() => {
@@ -47,12 +49,13 @@ class CaiDatHoaHongScreen extends Component {
                                         sx={{
                                             fontSize: '14px',
                                             textTransform: 'unset',
+                                            borderRadius: '0px 8px 8px 0px',
                                             color: this.state.isChietKhauHoaDon
-                                                ? '#FFF'
-                                                : '#666466',
+                                                ? '#666466'
+                                                : '#fff',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? '#B085A4'
-                                                : '#FFFFFF',
+                                                ? '#FFFFFF'
+                                                : '#B085A4',
                                             border: 'none'
                                         }}
                                         onClick={() => {
@@ -66,7 +69,7 @@ class CaiDatHoaHongScreen extends Component {
                         {this.state.isChietKhauHoaDon ? (
                             <ChietKhauDichVuScreen></ChietKhauDichVuScreen>
                         ) : (
-                            <div>Chiết khấu hóa đơn</div>
+                            <ChietKhauHoaDonScreen></ChietKhauHoaDonScreen>
                         )}
                     </Box>
                 </div>
