@@ -195,12 +195,13 @@ class EmployeeHoliday extends Component {
             {
                 field: 'tenNgayLe',
                 headerName: 'Tên ngày lễ',
-                width: 200
+                flex: 1
             },
             {
                 field: 'tuNgay',
                 headerName: 'Ngày bắt đầu',
-                width: 200,
+                // width: 200,
+                flex: 1,
                 renderCell: (params) => (
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
@@ -218,7 +219,8 @@ class EmployeeHoliday extends Component {
             {
                 field: 'denNgay',
                 headerName: 'Ngày kết thúc',
-                width: 200,
+                // width: 200,
+                flex: 1,
                 renderCell: (params) => (
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
@@ -236,7 +238,8 @@ class EmployeeHoliday extends Component {
             {
                 field: 'tongSoNgay',
                 headerName: 'Tổng số ngày',
-                width: 150,
+                // width: 150,
+                flex: 1,
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -259,7 +262,8 @@ class EmployeeHoliday extends Component {
             {
                 field: 'actions',
                 headerName: '',
-                width: 48,
+                // width: 48,
+                flex: 0.3,
                 disableColumnMenu: true,
 
                 renderCell: (params) => (
@@ -321,6 +325,7 @@ class EmployeeHoliday extends Component {
                                 fontWeight: '400',
                                 color: '#666466',
                                 height: '40px',
+                                backgroundColor: '#fff',
                                 borderColor: '#E6E1E6!important'
                             }}>
                             Nhập
@@ -333,6 +338,7 @@ class EmployeeHoliday extends Component {
                                 textTransform: 'capitalize',
                                 fontWeight: '400',
                                 color: '#666466',
+                                backgroundColor: '#fff',
                                 padding: '10px 16px',
                                 borderColor: '#E6E1E6!important',
                                 height: '40px'

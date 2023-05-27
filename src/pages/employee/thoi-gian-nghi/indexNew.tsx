@@ -76,12 +76,14 @@ const EmployeeHoliday: React.FC = () => {
         {
             field: 'name',
             headerName: 'Tên ngày lễ',
-            width: 200
+            // width: 200
+            flex: 1
         },
         {
             field: 'startDate',
             headerName: 'Ngày bắt đầu',
-            width: 200,
+            // width: 200,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -99,7 +101,8 @@ const EmployeeHoliday: React.FC = () => {
         {
             field: 'endDate',
             headerName: 'Ngày kết thúc',
-            width: 200,
+            // width: 200,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -117,12 +120,14 @@ const EmployeeHoliday: React.FC = () => {
         {
             field: 'dateTotal',
             headerName: 'Tổng số ngày',
-            width: 150
+            // width: 150
+            flex: 1
         },
         {
             field: 'actions',
             headerName: '',
-            width: 48,
+            // width: 48,
+            flex: 0.2,
             disableColumnMenu: true,
 
             renderCell: (params) => (
