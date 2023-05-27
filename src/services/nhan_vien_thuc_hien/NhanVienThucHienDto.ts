@@ -1,4 +1,5 @@
-export default class NhanVienThucHienDto {
+import NhanSuDto from '../nhan-vien/dto/nhanSuDto';
+export default class NhanVienThucHienDto extends NhanSuDto {
     idHoaDon?: string | null = null;
     idHoaDonChiTiet?: string | null = null;
     idNhanVien? = '';
@@ -8,6 +9,7 @@ export default class NhanVienThucHienDto {
     chiaDeuChietKhau = false;
     tinhHoaHongTruocCK = false;
     loaiChietKhau = 1; // nvThucHien
+    chietKhauMacDinh? = 0;
     constructor({
         idHoaDon = null,
         idHoaDonChiTiet = null,
@@ -17,8 +19,15 @@ export default class NhanVienThucHienDto {
         heSo = 1,
         chiaDeuChietKhau = false,
         tinhHoaHongTruocCK = false,
-        loaiChietKhau = 1
+        loaiChietKhau = 1,
+        chietKhauMacDinh = 0,
+        maNhanVien = '',
+        tenNhanVien = '',
+        soDienThoai = '',
+        gioiTinh = 1,
+        avatar = ''
     }) {
+        super();
         this.idHoaDon = idHoaDon;
         this.idHoaDonChiTiet = idHoaDonChiTiet;
         this.idNhanVien = idNhanVien;
@@ -28,5 +37,11 @@ export default class NhanVienThucHienDto {
         this.chiaDeuChietKhau = chiaDeuChietKhau;
         this.tinhHoaHongTruocCK = tinhHoaHongTruocCK;
         this.loaiChietKhau = loaiChietKhau;
+        this.chietKhauMacDinh = chietKhauMacDinh;
+        this.maNhanVien = maNhanVien;
+        this.tenNhanVien = tenNhanVien;
+        this.soDienThoai = soDienThoai;
+        this.gioiTinh = gioiTinh;
+        this.avatar = avatar;
     }
 }

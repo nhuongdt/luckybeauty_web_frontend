@@ -185,8 +185,18 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 <DialogTitle>Thêm khách hàng checkin</DialogTitle>
                 <DialogContent>
                     <Grid container columnSpacing={6}>
-                        <Grid item xs={7} sm={7} md={7} lg={7}>
-                            <Stack direction="column">
+                        <Grid item xs={12} sm={5} md={5} lg={5}>
+                            <AutocompleteCustomer handleChoseItem={changeCustomer} />
+                            {isSave && errCheckIn && (
+                                <Typography
+                                    className="modal-lable"
+                                    style={{ color: 'red', paddingTop: '4px' }}>
+                                    Khách hàng đã check-in
+                                </Typography>
+                            )}
+                        </Grid>
+                        <Grid item xs={12} sm={7} md={7} lg={7}>
+                            <Stack direction="column" paddingTop={2}>
                                 <Typography className="modal-lable">Họ và tên</Typography>
                                 <TextField
                                     size="small"
@@ -233,30 +243,20 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                                 paddingTop={2}
                                 justifyContent="flex-end">
                                 <Button
-                                    variant="contained"
-                                    className="button-container"
-                                    sx={{ width: '70px' }}
-                                    onClick={saveCheckIn}>
-                                    Lưu
-                                </Button>
-                                <Button
                                     variant="outlined"
                                     className="button-outline"
                                     sx={{ width: '70px' }}
                                     onClick={() => setIsShow(false)}>
                                     Hủy
                                 </Button>
+                                <Button
+                                    variant="contained"
+                                    className="button-container"
+                                    sx={{ width: '70px' }}
+                                    onClick={saveCheckIn}>
+                                    Lưu
+                                </Button>
                             </Stack>
-                        </Grid>
-                        <Grid item xs={5} sm={5} md={5} lg={5}>
-                            <AutocompleteCustomer handleChoseItem={changeCustomer} />
-                            {isSave && errCheckIn && (
-                                <Typography
-                                    className="modal-lable"
-                                    style={{ color: 'red', paddingTop: '4px' }}>
-                                    Khách hàng đã check-in
-                                </Typography>
-                            )}
                         </Grid>
                     </Grid>
                 </DialogContent>

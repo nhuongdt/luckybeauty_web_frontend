@@ -48,6 +48,7 @@ import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
+import ModalEditChiTietGioHang from './modal_edit_chitiet';
 
 const PageBanHang = ({ customerChosed }: any) => {
     const formatCurrency = (value: number) => {
@@ -64,14 +65,23 @@ const PageBanHang = ({ customerChosed }: any) => {
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
     const [clickSSave, setClickSave] = useState(false);
     const [idNhomHang, setIdNhomHang] = useState('');
+    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
+
+    // used to check update infor cthd
+    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
+        new PageHoaDonChiTietDto({ id: '' })
+    );
 
     const [contentPrint, setContentPrint] = useState('');
-
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
     );
 
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
+
+    const [triggerModalEditGioHang, setTriggerModalEditGioHang] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
 
@@ -94,11 +104,13 @@ const PageBanHang = ({ customerChosed }: any) => {
         const input = {
             IdNhomHangHoas: idNhomHang,
             TextSearch: txtSearch,
+            IdLoaiHangHoa: idLoaiHangHoa,
             CurrentPage: 0,
             PageSize: 50
         };
+
         debounceDropDown(input);
-    }, [txtSearch, idNhomHang]);
+    }, [txtSearch, idNhomHang, idLoaiHangHoa]);
 
     const PageLoad = () => {
         GetTreeNhomHangHoa();
@@ -111,10 +123,17 @@ const PageBanHang = ({ customerChosed }: any) => {
         FirstLoad_getSetDataFromCache();
     }, [customerChosed]);
 
+    // filter list product
     const choseNhomDichVu = (item: any) => {
         setIdNhomHang(item.id);
     };
 
+    const choseLoaiHang = (type: number) => {
+        setTxtSearch('');
+        setIdNhomHang('');
+        setIdLoaiHangHoa(type);
+    };
+    // end filter
     const FirstLoad_getSetDataFromCache = async () => {
         const idCus = customerChosed.idKhachHang;
 
@@ -155,6 +174,7 @@ const PageBanHang = ({ customerChosed }: any) => {
     const updateCurrentInvoice = async () => {
         let tongTienHangChuaCK = 0,
             tongChietKhau = 0,
+            tongThueChiTiet = 0,
             tongTienHang = 0,
             thanhtiensauVAT = 0;
 
@@ -162,14 +182,16 @@ const PageBanHang = ({ customerChosed }: any) => {
             const itFor = hoaDonChiTiet[i];
             tongTienHangChuaCK += itFor.soLuong * itFor.donGiaTruocCK;
             tongTienHang += itFor.thanhTienSauCK ?? 0;
-            tongChietKhau += itFor.tienChietKhau ?? 0;
+            tongChietKhau += (itFor.tienChietKhau ?? 0) * itFor.soLuong;
+            tongThueChiTiet += (itFor.tienThue ?? 0) * itFor.soLuong;
             thanhtiensauVAT += itFor.thanhTienSauVAT ?? 0;
         }
         const dataHD = {
             ...hoadon,
             tongTienHangChuaChietKhau: tongTienHangChuaCK,
-            tongTienHang: tongTienHang,
             tongChietKhauHangHoa: tongChietKhau,
+            tongTienHang: tongTienHang,
+            tongTienThue: tongThueChiTiet,
             tongTienHDSauVAT: thanhtiensauVAT,
             tongThanhToan: thanhtiensauVAT,
             hoaDonChiTiet: hoaDonChiTiet
@@ -185,7 +207,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                 hoaDonChiTiet: hoaDonChiTiet
             };
         });
-        console.log('hdct', hoaDonChiTiet);
+
         UpdateCacheHD(dataHD);
     };
 
@@ -224,6 +246,7 @@ const PageBanHang = ({ customerChosed }: any) => {
             idHangHoa: item.id,
             soLuong: 1
         });
+        console.log('newCT ', newCT);
 
         const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
         if (checkCT.length === 0) {
@@ -231,6 +254,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                 return [newCT, ...olds];
             });
         } else {
+            newCT.id = checkCT[0].id; // get ID old --> check update nvThucHien + chietkhau
             newCT.soLuong = checkCT[0].soLuong + 1;
             newCT.nhanVienThucHien = checkCT[0].nhanVienThucHien;
 
@@ -240,28 +264,116 @@ const PageBanHang = ({ customerChosed }: any) => {
                 return [newCT, ...arrOld];
             });
         }
+        setCTHDDoing(newCT);
+    };
+
+    // auto update cthd
+    useEffect(() => {
+        Update_HoaDonChiTiet();
+        UpdateHoaHongDichVu_forNVThucHien();
+    }, [cthdDoing]);
+
+    const UpdateHoaHongDichVu_forNVThucHien = () => {
+        // update for all nvth thuoc ctDoing
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((x) => {
+                if (x.id === cthdDoing.id) {
+                    return {
+                        ...x,
+                        nhanVienThucHien: x.nhanVienThucHien?.map((nv) => {
+                            if (nv.ptChietKhau > 0) {
+                                return {
+                                    ...nv,
+                                    tienChietKhau: (nv.ptChietKhau * (x.thanhTienSauCK ?? 0)) / 100
+                                };
+                            } else {
+                                return {
+                                    ...nv,
+                                    tienChietKhau: (nv.chietKhauMacDinh ?? 0) * x.soLuong
+                                };
+                            }
+                        })
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+    };
+
+    const Update_HoaDonChiTiet = () => {
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((x) => {
+                if (x.id === cthdDoing.id) {
+                    return {
+                        ...x,
+                        tienChietKhau:
+                            (x.pTChietKhau ?? 0) > 0
+                                ? (x.donGiaTruocCK * (x.pTChietKhau ?? 0)) / 100
+                                : x.tienChietKhau,
+                        tienThue:
+                            (x.pTThue ?? 0) > 0
+                                ? ((x.donGiaSauCK ?? 0) * (x.pTThue ?? 0)) / 100
+                                : x.tienThue
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
     };
 
     const showPopNhanVienThucHien = (item: HoaDonChiTietDto) => {
         setPropNVThucHien((old) => {
-            return { ...old, isShow: true, item: item };
+            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
         });
     };
-
     const AgreeNVThucHien = (lstNVChosed: any) => {
         // update cthd + save to cache
-        hoaDonChiTiet.map((x) => {
-            if (propNVThucHien.item.id === x.id) {
-                return { ...x, nhanVienThucHien: lstNVChosed };
-            } else {
-                return x;
-            }
-        });
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((x) => {
+                if (propNVThucHien.item.id === x.id) {
+                    return { ...x, nhanVienThucHien: lstNVChosed };
+                } else {
+                    return x;
+                }
+            })
+        );
     };
 
+    // modal chitiet giohang
+    const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
+        setTriggerModalEditGioHang((old) => {
+            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
+        });
+    };
+    const AgreeGioHang = (ctUpdate: any) => {
+        // update cthd + save to cache
+        console.log('ctUpdate ', ctUpdate);
+    };
+
+    // end modal chi tiet
+
     const RemoveCache = async () => {
-        await dbDexie.hoaDon.where('id').equals(hoadon.id).delete();
-        await dbDexie.khachCheckIn.where('idCheckIn').equals(customerChosed.idCheckIn).delete();
+        await dbDexie.hoaDon
+            .where('id')
+            .equals(hoadon.id)
+            .delete()
+            .then((deleteCount: any) =>
+                console.log('idhoadondelete ', hoadon.id, 'deletecount', deleteCount)
+            );
+        await dbDexie.khachCheckIn
+            .where('idCheckIn')
+            .equals(customerChosed.idCheckIn)
+            .delete()
+            .then((deleteCount: any) =>
+                console.log(
+                    'idcheckindelete ',
+                    customerChosed.idCheckIn,
+                    'deletecount',
+                    deleteCount
+                )
+            );
     };
 
     const saveHoaDon = async () => {
@@ -290,7 +402,7 @@ const PageBanHang = ({ customerChosed }: any) => {
             })
         ];
         const soquyDB = await SoQuyServices.CreateQuyHoaDon(quyHD);
-        console.log('soquyDB', soquyDB);
+        // console.log('soquyDB', soquyDB);
 
         // print
         const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
@@ -321,6 +433,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         <>
             {contentPrint !== '' && <InHoaDon props={propMauIn} />}
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
+            <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
             <Grid
                 container
                 spacing={3}
@@ -343,7 +456,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 variant="h3"
                                 fontSize="18px"
                                 color="#4C4B4C"
-                                fontWeight="700">
+                                fontWeight="700"
+                                onClick={() => choseLoaiHang(2)}>
                                 Nhóm dịch vụ
                             </Typography>
                             <List>
@@ -374,7 +488,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 fontSize="18px"
                                 color="#4C4B4C"
                                 fontWeight="700"
-                                marginTop="12px">
+                                marginTop="12px"
+                                onClick={() => choseLoaiHang(1)}>
                                 Sản phẩm
                             </Typography>
                             <List>
@@ -562,7 +677,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             color="#000"
                                             variant="body1"
                                             fontSize="16px"
-                                            fontWeight="400">
+                                            fontWeight="400"
+                                            onClick={() => showPopChiTietGioHang(ct)}>
                                             <span> {ct.soLuong}</span>x
                                             <span> {Utils.formatNumber(ct.giaBan)}</span>
                                         </Typography>
@@ -576,8 +692,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     </Box>
                                 </Box>
                                 {/* nhan vien thcu hien */}
-                                {ct.nhanVienThucHien.map((nv: any, index3: any) => (
-                                    <Box display="flex" alignItems="center" key={index3}>
+
+                                {ct.nhanVienThucHien.length > 0 && (
+                                    <Box display="flex" alignItems="center">
                                         <Typography
                                             variant="body2"
                                             fontSize="12px"
@@ -585,26 +702,29 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             lineHeight="16px">
                                             Nhân viên :
                                         </Typography>
-                                        <Typography
-                                            variant="body1"
-                                            fontSize="14px"
-                                            lineHeight="16px"
-                                            color="#4C4B4C"
-                                            display="flex"
-                                            alignItems="center"
-                                            sx={{
-                                                backgroundColor: '#F2EBF0',
-                                                padding: '4px 8px',
-                                                gap: '10px',
-                                                borderRadius: '100px'
-                                            }}>
-                                            <span>{nv.tenNhanVien}</span>
-                                            <span>
-                                                <img src={closeIcon} alt="close" />
-                                            </span>
-                                        </Typography>
+                                        {ct.nhanVienThucHien.map((nv: any, index3: any) => (
+                                            <Typography
+                                                variant="body1"
+                                                fontSize="14px"
+                                                lineHeight="16px"
+                                                color="#4C4B4C"
+                                                display="flex"
+                                                alignItems="center"
+                                                sx={{
+                                                    backgroundColor: '#F2EBF0',
+                                                    padding: '4px 8px',
+                                                    gap: '10px',
+                                                    borderRadius: '100px'
+                                                }}
+                                                key={index3}>
+                                                <span>{nv.tenNhanVien}</span>
+                                                <span>
+                                                    <img src={closeIcon} alt="close" />
+                                                </span>
+                                            </Typography>
+                                        ))}
                                     </Box>
-                                ))}
+                                )}
                             </Box>
                         ))}
 
