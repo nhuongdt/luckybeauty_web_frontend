@@ -101,11 +101,9 @@ export default function PageProductNew() {
     );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [triggerModalProduct, setTriggerModalProduct] = useState({
-        showModal: false,
-        isNew: false,
-        idQuiDoi: ''
-    });
+    const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
     const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
@@ -187,10 +185,13 @@ export default function PageProductNew() {
     }
 
     function showModalAddProduct(action?: number, id = '') {
-        setTriggerModalProduct({
-            showModal: true,
-            isNew: Utils.checkNull(id),
-            idQuiDoi: id
+        setTriggerModalProduct((old: any) => {
+            return {
+                ...old,
+                isShow: true,
+                isNew: Utils.checkNull(id),
+                id: id
+            };
         });
     }
 
@@ -204,6 +205,12 @@ export default function PageProductNew() {
             });
         } else {
             setFilterPageProduct({ ...filterPageProduct, idNhomHangHoas: item.id });
+            setTriggerModalProduct((old: any) => {
+                return {
+                    ...old,
+                    item: { ...old.item, idNhomHangHoa: item.id }
+                };
+            });
         }
     };
 

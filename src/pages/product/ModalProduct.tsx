@@ -60,16 +60,31 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 setNhomChosed(new ModelNhomHangHoa({ id: '' }));
             }
         } else {
-            setProduct(new ModelHangHoaDto());
-            setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+            if (trigger.item.idNhomHangHoa !== undefined) {
+                const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
+                if (nhom.length > 0) {
+                    setNhomChosed(nhom[0]);
+                    setProduct((old: any) => {
+                        return {
+                            ...old,
+                            idNhomHangHoa: nhom[0].id,
+                            tenNhomHang: nhom[0].tenNhomHang
+                        };
+                    });
+                } else {
+                    setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+                }
+            } else {
+                setProduct(new ModelHangHoaDto());
+                setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+            }
         }
-        console.log('ModalHangHoa');
     };
 
     useEffect(() => {
-        if (trigger.showModal) {
+        if (trigger.isShow) {
             setOpen(true);
-            showModal(trigger.idQuiDoi);
+            showModal(trigger.id);
         }
         setIsNew(trigger.isNew);
         setWasClickSave(false);
