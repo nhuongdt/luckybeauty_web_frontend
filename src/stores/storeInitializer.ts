@@ -12,7 +12,6 @@ export default function initializeStores() {
         tenantStore: new TenantStore(),
         userStore: new UserStore(),
         sessionStore: new SessionStore(),
-        accountStore: new AccountStore(),
-        nhanVienStore: new NhanVienStore()
+        accountStore: new AccountStore()
     };
 }

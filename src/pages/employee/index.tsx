@@ -9,7 +9,7 @@ import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import avatar from '../../images/avatar.png';
-import { Component } from 'react';
+import React from 'react';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
@@ -33,22 +33,22 @@ import {
 import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
 import AppConsts from '../../lib/appconst';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-class EmployeeScreen extends Component {
+import { observer } from 'mobx-react';
+import Stores from '../../stores/storeIdentifier';
+import NhanVienStore from '../../stores/nhanVienStore';
+class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
         idChiNhanh: '',
         modalVisible: false,
         maxResultCount: 10,
         skipCount: 0,
-        tenantId: 0,
         filter: '',
         moreOpen: false,
         anchorEl: null,
         selectedRowId: null,
-        listNhanVien: [] as NhanSuItemDto[],
         suggestChucVu: [] as SuggestChucVuDto[],
         createOrEditNhanSu: {} as CreateOrUpdateNhanSuDto,
-        totalNhanVien: 0,
         currentPage: 1,
         totalPage: 1,
         isShowConfirmDelete: false
@@ -57,7 +57,6 @@ class EmployeeScreen extends Component {
         const idChiNhanh = Cookies.get('IdChiNhanh');
         await this.setState({ idChiNhanh: idChiNhanh });
         await this.getData();
-        console.log(this.state.listNhanVien);
     }
     resetData() {
         this.setState({
@@ -78,30 +77,21 @@ class EmployeeScreen extends Component {
         this.setState({
             suggestChucVu: suggestChucVus
         });
-        if (this.state.idNhanSu !== '') {
-            const nhanSuDto = await nhanVienService.getNhanSu(this.state.idNhanSu);
-            this.setState({
-                createOrEditNhanSu: nhanSuDto
-            });
-        }
         await this.getListNhanVien();
     }
     async getListNhanVien() {
         const { filter, skipCount, maxResultCount } = this.state;
         const input = { skipCount, maxResultCount };
-        const data = await nhanVienService.search(filter, input);
+        await NhanVienStore.search(filter, input);
         await this.setState({
-            listNhanVien: data.items,
-            totalNhanVien: data.totalCount,
-            totalPage: Math.ceil(data.totalCount / maxResultCount)
+            totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount)
         });
     }
     async createOrEdit() {
         nhanVienService.createOrEdit(this.state.createOrEditNhanSu);
     }
     async delete(id: string) {
-        await nhanVienService.delete(id);
-        this.getListNhanVien();
+        NhanVienStore.delete(id);
         this.resetData();
     }
     Modal = () => {
@@ -110,41 +100,24 @@ class EmployeeScreen extends Component {
         });
     };
 
-    async createOrUpdateModalOpen(entityDto: string) {
+    async createOrUpdateModalOpen(id: string) {
         console.log(this.state.idChiNhanh);
-        if (entityDto === '') {
+        if (id === '') {
+            await NhanVienStore.createNhanVien(this.state.idChiNhanh);
             this.setState({
-                createOrEditNhanSu: {
-                    id: AppConsts.guidEmpty,
-                    maNhanVien: '',
-                    ho: '',
-                    tenLot: '',
-                    tenNhanVien: '',
-                    diaChi: '',
-                    soDienThoai: '',
-                    cccd: '',
-                    ngaySinh: '',
-                    kieuNgaySinh: 0,
-                    gioiTinh: 0,
-                    ngayCap: '',
-                    noiCap: '',
-                    avatar: '',
-                    idChucVu: '',
-                    idChiNhanh: this.state.idChiNhanh,
-                    ghiChu: ''
-                }
+                createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         } else {
-            const employee = await nhanVienService.getNhanSu(entityDto);
+            await NhanVienStore.getForEdit(id);
             this.setState({
-                createOrEditNhanSu: employee
+                createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         }
-        this.setState({ IdKhachHang: entityDto });
+        this.setState({ IdKhachHang: id });
         this.Modal();
     }
     handleSubmit = async () => {
-        await nhanVienService.createOrEdit(this.state.createOrEditNhanSu);
+        await NhanVienStore.createOrEdit(this.state.createOrEditNhanSu);
         await this.getData();
         this.setState({ modalVisible: false });
     };
@@ -156,20 +129,6 @@ class EmployeeScreen extends Component {
                 [name]: value
             }
         });
-    };
-
-    onOpenDialog = () => {
-        this.getData();
-        this.setState({
-            modalVisible: true
-        });
-    };
-    onCloseDialog = () => {
-        this.setState({
-            modalVisible: false
-        });
-        this.getData();
-        this.resetData();
     };
     onOkDelete = () => {
         this.delete(this.state.selectedRowId ?? '');
@@ -187,7 +146,7 @@ class EmployeeScreen extends Component {
 
     handleCloseMenu = async () => {
         await this.setState({ anchorEl: null, selectedRowId: null });
-        await this.getData();
+        //await this.getData();
     };
 
     handleView = () => {
@@ -339,7 +298,7 @@ class EmployeeScreen extends Component {
                 Danh mục dịch vụ
             </Typography>
         ];
-
+        const { listNhanVien } = NhanVienStore;
         return (
             <Box
                 className="list-nhan-vien"
@@ -456,7 +415,7 @@ class EmployeeScreen extends Component {
                 </Box>
                 <Box minHeight={'576px'} height={'576px'} marginTop="24px">
                     <DataGrid
-                        rows={this.state.listNhanVien}
+                        rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
                         initialState={{
                             pagination: {
@@ -520,7 +479,9 @@ class EmployeeScreen extends Component {
                     onCancel={this.handleDelete}></ConfirmDelete>
                 <CreateOrEditNhanVienDialog
                     visible={this.state.modalVisible}
-                    onCancel={this.onCloseDialog}
+                    onCancel={() => {
+                        this.setState({ modalVisible: false });
+                    }}
                     onOk={this.handleSubmit}
                     onChange={this.handleChange}
                     title={
@@ -535,4 +496,4 @@ class EmployeeScreen extends Component {
     }
 }
 
-export default EmployeeScreen;
+export default observer(EmployeeScreen);

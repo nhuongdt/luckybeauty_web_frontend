@@ -3,11 +3,19 @@ import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes } from './components/routers';
 import DeleteExpiredCookie from './components/DeleteCookie';
+import { SnackbarProvider } from 'notistack';
 const App = () => {
     return (
         <div>
             <StrictMode>
-                <BrowserRouter>{Routes}</BrowserRouter>
+                <BrowserRouter>
+                    {Routes}
+                    <SnackbarProvider
+                        maxSnack={3}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                        autoHideDuration={3000}
+                    />
+                </BrowserRouter>
                 <DeleteExpiredCookie />
             </StrictMode>
         </div>

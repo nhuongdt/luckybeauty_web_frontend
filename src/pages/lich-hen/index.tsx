@@ -24,6 +24,8 @@ import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
 import SuggestService from '../../services/suggests/SuggestService';
+import Cookies from 'js-cookie';
+import { enqueueSnackbar } from 'notistack';
 class LichHenScreen extends Component {
     formRef = React.createRef<FormInstance>();
     calendarRef: RefObject<FullCalendar> = React.createRef();
@@ -50,7 +52,8 @@ class LichHenScreen extends Component {
         });
     }
     async getData() {
-        const appointments = await bookingServices.getAllBooking();
+        const idChiNhanh = Cookies.get('IdChiNhanh');
+        const appointments = await bookingServices.getAllBooking({ idChiNhanh: idChiNhanh ?? '' });
         const lstEvent: any[] = [];
         console.log(appointments);
         appointments.map((event) => {
@@ -144,14 +147,39 @@ class LichHenScreen extends Component {
         this.Modal();
     }
     handleSubmit = async () => {
+        const idChiNhanh = Cookies.get('IdChiNhanh');
         this.formRef.current?.validateFields().then(async (values: any) => {
             if (this.state.idBooking === '') {
-                await bookingServices.CreateBooking(values);
+                const result = await bookingServices.CreateBooking({
+                    ...values,
+                    idChiNhanh: idChiNhanh
+                });
+                result
+                    ? enqueueSnackbar('Thêm mới lịch hẹn thàn công', { variant: 'success' })
+                    : enqueueSnackbar('Thêm mới lịch hẹn thất bại! vui lòng thử lại sau', {
+                          variant: 'error'
+                      });
             } else {
-                await bookingServices.CreateBooking({
+                const result = await bookingServices.CreateBooking({
                     id: this.state.idBooking,
+                    idChiNhanh: idChiNhanh,
                     ...values
                 });
+                result
+                    ? enqueueSnackbar('Cập nhật lịch hẹn thành công', {
+                          variant: 'success',
+                          anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                          }
+                      })
+                    : enqueueSnackbar('Cập nhật lịch hẹn thất bại! vui lòng thử lại sau', {
+                          variant: 'error',
+                          anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                          }
+                      });
             }
 
             await this.getData();

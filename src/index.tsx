@@ -3,8 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import initializeStores from './stores/storeInitializer';
+import { Provider } from 'mobx-react';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(<App />);
+const stores = initializeStores();
+root.render(
+    <Provider {...stores}>
+        <App />
+    </Provider>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

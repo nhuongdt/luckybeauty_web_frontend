@@ -126,8 +126,8 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 roles: roles
             });
             setTimeout(() => {
-                this.formRef.current?.setFieldsValue({ ...this.state.userEdit });
-            }, 100);
+                this.formRef.current?.setFieldsValue({ ...user });
+            }, 1000);
         }
 
         this.setState({ userId: entityDto });

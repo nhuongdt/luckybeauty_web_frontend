@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Header from '../Header';
-import AppSiderMenu from '../SiderMenu';
+import AppSiderMenu from '../SiderMenu/indexNew';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
 import { Layout } from 'antd';

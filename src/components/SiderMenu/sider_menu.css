@@ -181,3 +181,7 @@
 .ant-layout-sider {
     transition: 0.4s;
 }
+/* .nav-item.active svg {
+    filter: brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg)
+        brightness(92%) contrast(91%);
+} */
