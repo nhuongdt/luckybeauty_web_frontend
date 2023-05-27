@@ -1,9 +1,10 @@
 import { Col, Row, Space, Tabs, TabsProps } from 'antd';
 import { Component, ReactNode } from 'react';
 import CustomerScreen from '../customer';
-import StoreDetail from './components/storeDetail';
+import StoreDetail from './cua-hang';
 import ChiNhanhScreen from './chi-nhanh';
-import HoaHongNhanVienScreen from './hoa-hong-nhan-vien';
+import HoaHongNhanVienScreen from './hoa-hong-nhan-vien/chiet-khau-dich-vu';
+import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
 class SettingScreen extends Component {
     render(): ReactNode {
         return (
@@ -64,7 +65,7 @@ class SettingScreen extends Component {
                             {
                                 label: 'Hoa hồng nhân viên',
                                 key: '4',
-                                children: <HoaHongNhanVienScreen />
+                                children: <CaiDatHoaHongScreen />
                             },
                             {
                                 label: 'Phương thức thanh toán',

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { IsTenantAvaibleInput } from './dto/isTenantAvailableInput';
 import { RegisterInput } from './dto/registerInput';
 import IsTenantAvaibleOutput from './dto/isTenantAvailableOutput';

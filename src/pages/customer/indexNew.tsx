@@ -34,6 +34,7 @@ import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOr
 import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import abpCustom from '../../components/abp-custom';
 class CustomerScreen extends React.Component {
     state = {
         rowTable: [],
