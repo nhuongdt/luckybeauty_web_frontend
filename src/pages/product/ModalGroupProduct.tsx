@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
-import { Grid, Box, Autocomplete, InputAdornment, TextField } from '@mui/material';
+import { Grid, Box, Autocomplete, InputAdornment, TextField, Typography } from '@mui/material';
 import GroupProductService from '../../services/product/GroupProductService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
@@ -166,10 +166,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 <DialogContent>
                     <Grid container>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Box sx={{ height: 30 }}>
-                                <span>Tên nhóm dịch vụ</span>
-                                &nbsp;&nbsp;<span className="red">*</span>
-                            </Box>
+                            <Typography variant="body2">Tên nhóm dịch vụ</Typography>
 
                             <TextField
                                 variant="outlined"
@@ -185,9 +182,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Box sx={{ height: 30 }}>
-                                <span>Nhóm gốc</span>
-                            </Box>
+                            <Typography variant="body2">Nhóm gốc</Typography>
 
                             <Autocomplete
                                 size="small"
@@ -210,9 +205,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Box sx={{ height: 30 }}>
-                                <span>Màu sắc</span>
-                            </Box>
+                            <Typography variant="body2">Màu sắc</Typography>
                             <TextField
                                 size="small"
                                 onClick={() => setColorToggle(!colorToggle)}
@@ -231,9 +224,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             {colorToggle && <GridColor handleChoseColor={changeColor} />}
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Box sx={{ height: 30 }}>
-                                <span>Mô tả</span>
-                            </Box>
+                            <Typography variant="body2">Mô tả</Typography>
 
                             <TextField
                                 variant="outlined"

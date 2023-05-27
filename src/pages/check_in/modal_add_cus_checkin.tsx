@@ -189,7 +189,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                             <AutocompleteCustomer handleChoseItem={changeCustomer} />
                             {isSave && errCheckIn && (
                                 <Typography
-                                    className="modal-lable"
+                                    variant="body2"
                                     style={{ color: 'red', paddingTop: '4px' }}>
                                     Khách hàng đã check-in
                                 </Typography>
@@ -197,7 +197,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         </Grid>
                         <Grid item xs={12} sm={7} md={7} lg={7}>
                             <Stack direction="column" paddingTop={2}>
-                                <Typography className="modal-lable">Họ và tên</Typography>
+                                <Typography variant="body2">Họ và tên</Typography>
                                 <TextField
                                     size="small"
                                     value={newCus?.tenKhachHang}
@@ -218,7 +218,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                                     }}></TextField>
                             </Stack>
                             <Stack direction="column" paddingTop={2}>
-                                <Typography className="modal-lable">Số điện thoại</Typography>
+                                <Typography variant="body2">Số điện thoại</Typography>
                                 <TextField
                                     size="small"
                                     value={newCus?.soDienThoai}
