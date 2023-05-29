@@ -31,7 +31,7 @@ import {
     Dialog
 } from '@mui/material';
 import './header.css';
-import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
+// import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import MessageIcon from '../../images/message-question.svg';
@@ -65,7 +65,7 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                     <Button
                         sx={{ minWidth: 'unset!important', marginLeft: '32px' }}
                         onClick={toggle}>
-                        <ToggleIcon />
+                        {/* <ToggleIcon /> */}
                     </Button>
                 </Grid>
                 <Grid item sx={{ textAlign: 'right' }}>

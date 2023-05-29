@@ -60,16 +60,31 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 setNhomChosed(new ModelNhomHangHoa({ id: '' }));
             }
         } else {
-            setProduct(new ModelHangHoaDto());
-            setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+            if (trigger.item.idNhomHangHoa !== undefined) {
+                const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
+                if (nhom.length > 0) {
+                    setNhomChosed(nhom[0]);
+                    setProduct((old: any) => {
+                        return {
+                            ...old,
+                            idNhomHangHoa: nhom[0].id,
+                            tenNhomHang: nhom[0].tenNhomHang
+                        };
+                    });
+                } else {
+                    setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+                }
+            } else {
+                setProduct(new ModelHangHoaDto());
+                setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+            }
         }
-        console.log('ModalHangHoa');
     };
 
     useEffect(() => {
-        if (trigger.showModal) {
+        if (trigger.isShow) {
             setOpen(true);
-            showModal(trigger.idQuiDoi);
+            showModal(trigger.id);
         }
         setIsNew(trigger.isNew);
         setWasClickSave(false);
@@ -158,9 +173,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 <Typography>Thông tin chi tiết</Typography>
                             </Box>
                             <Grid item sx={{ pb: 2 }}>
-                                <Box sx={{ height: 30 }}>
-                                    <span>Mã dịch vụ</span>
-                                </Box>
+                                <Typography variant="body2">Mã dịch vụ</Typography>
                                 <TextField
                                     variant="outlined"
                                     fullWidth
@@ -181,10 +194,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <Box sx={{ height: 30 }}>
-                                    <span>Tên dịch vụ</span>
-                                    &nbsp;&nbsp;<span>*</span>
-                                </Box>
+                                <Typography variant="body2">Tên dịch vụ</Typography>
                                 <TextField
                                     variant="outlined"
                                     size="small"
@@ -207,10 +217,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <Box sx={{ height: 30 }}>
-                                    <span>Nhóm dịch vụ</span>
-                                </Box>
-
+                                <Typography variant="body2">Nhóm dịch vụ</Typography>
                                 <Autocomplete
                                     size="small"
                                     fullWidth
@@ -231,9 +238,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </Grid>
                             <Grid container sx={{ pb: 2 }}>
                                 <Grid item xs={12} sm={6} md={6} lg={6} sx={{ pr: 4 }}>
-                                    <Box sx={{ height: 30 }}>
-                                        <Typography>Giá</Typography>
-                                    </Box>
+                                    <Typography variant="body2">Giá</Typography>
                                     <TextField
                                         variant="outlined"
                                         size="small"
@@ -247,9 +252,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} lg={6} sx={{ PluginArray: 4 }}>
-                                    <Box sx={{ height: 30 }}>
-                                        <Typography>Số phút</Typography>
-                                    </Box>
+                                    <Typography variant="body2">Số phút</Typography>
+
                                     <TextField
                                         variant="outlined"
                                         size="small"
@@ -270,9 +274,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </Grid>
 
                             <Grid item sx={{ pb: 2 }}>
-                                <Box sx={{ height: 30 }}>
-                                    <span>Ghi chú</span>
-                                </Box>
+                                <Typography variant="body2">Ghi chú</Typography>
                                 <TextField
                                     variant="outlined"
                                     fullWidth
