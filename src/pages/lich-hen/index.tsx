@@ -1,6 +1,10 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Col, FormInstance, Row, Select, Space, Tooltip } from 'antd';
+import { Col, FormInstance, Row, Space, Tooltip } from 'antd';
+import { Box, Button, Grid, Typography, Select } from '@mui/material';
 import React, { Component, ReactNode, RefObject } from 'react';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import AddIcon from '../../images/add.svg';
 import {
     AiOutlineBars,
     AiOutlineCalendar,
@@ -8,6 +12,9 @@ import {
     AiOutlineLeft,
     AiOutlineRight
 } from 'react-icons/ai';
+import { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -26,6 +33,7 @@ import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQ
 import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
+import { padding } from '@mui/system';
 class LichHenScreen extends Component {
     formRef = React.createRef<FormInstance>();
     calendarRef: RefObject<FullCalendar> = React.createRef();
@@ -70,9 +78,14 @@ class LichHenScreen extends Component {
             events: lstEvent
         });
     }
-    handleChangeViewCalendar = (value: { value: string; label: React.ReactNode }) => {
+    // handleChangeViewCalendar = (value: { value: string; label: React.ReactNode }) => {
+    //     const calendarApi = this.calendarRef.current?.getApi();
+    //     calendarApi?.changeView(value.value);
+    // };
+    handleChangeViewCalendar = (event: SelectChangeEvent<string>) => {
+        const selectedValue = event.target.value;
         const calendarApi = this.calendarRef.current?.getApi();
-        calendarApi?.changeView(value.value);
+        calendarApi?.changeView(selectedValue);
     };
     changeHeaderToolbar = (value: string) => {
         const calendarApi = this.calendarRef.current?.getApi();
@@ -187,43 +200,52 @@ class LichHenScreen extends Component {
             this.formRef.current?.resetFields();
         });
     };
+
     render(): ReactNode {
+        const breadcrumbsLink = [
+            { text: 'Lịch hẹn ', color: '#999699' },
+            { text: 'Danh sách lịch hẹn', color: '#333233' }
+        ];
         return (
-            <div className="container-fluid h-100 bg-white" style={{ height: '100%' }}>
-                <div className="page-header">
-                    <Row align={'middle'} justify={'space-between'}>
-                        <Col span={12}>
+            <Box sx={{ height: '100%', padding: '0 2.2222222222222223vw' }}>
+                <Box sx={{ borderBottom: '1px solid #E6E1E6', paddingBottom: '24px' }}>
+                    <Grid container justifyContent="space-between" sx={{ paddingTop: '22px' }}>
+                        <Grid item xs={6}>
+                            <BreadcrumbsPageTitle listLink={breadcrumbsLink} />
+                            <Typography
+                                marginTop="4px"
+                                color="#0C050A"
+                                variant="h5"
+                                fontWeight="700">
+                                Lịch hẹn
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
-                                <div className="pt-2">
-                                    <nav aria-label="breadcrumb">
-                                        <ol className="breadcrumb">
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Lịch hẹn
-                                            </li>
-                                        </ol>
-                                    </nav>
-                                </div>
-                                <div>
-                                    <h3>Lịch hẹn</h3>
-                                </div>
-                            </div>
-                        </Col>
-                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <div>
-                                <Space align="center" size="small">
+                                <Box display="flex" justifyContent="center" alignItems="center">
                                     <Button
-                                        icon={<AiOutlineEllipsis size={24} />}
-                                        size="large"
-                                        className="btn btn-more-horizontal"
+                                        variant="outlined"
                                         onClick={() => {
                                             console.log('ok');
-                                        }}></Button>
+                                        }}
+                                        sx={{
+                                            borderColor: '#E6E1E6!important',
+                                            minWidth: '40px',
+                                            height: '40px',
+                                            width: '40px',
+                                            marginRight: '8px',
+                                            padding: '0'
+                                        }}>
+                                        <AiOutlineEllipsis color="#231F20" />
+                                    </Button>
                                     <Button
-                                        icon={<PlusOutlined />}
-                                        size="large"
-                                        className="btn btn-add-item"
+                                        variant="contained"
+                                        startIcon={<img src={AddIcon} />}
+                                        sx={{
+                                            textTransform: 'unset!important',
+                                            backgroundColor: '#7C3367!important',
+                                            height: '40px'
+                                        }}
                                         onClick={() => {
                                             this.setState({
                                                 modalVisible: !this.state.modalVisible
@@ -231,36 +253,53 @@ class LichHenScreen extends Component {
                                         }}>
                                         Thêm
                                     </Button>
-                                </Space>
+                                </Box>
                             </div>
-                        </Col>
-                    </Row>
-                </div>
-                <div className="page-body mt-2">
-                    <div className="align-content-around row" style={{ height: '54px' }}>
-                        <div className="col-3 text-center" style={{ height: '32px' }}>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box className="page-body " marginTop="16px">
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: '24px'
+                        }}>
+                        <Box>
                             <Select
-                                labelInValue
-                                defaultValue={{ value: 'all', label: 'Tất cả' }}
-                                style={{ width: 85, float: 'left' }}
-                                options={[
-                                    {
-                                        value: 'all',
-                                        label: 'Tất cả'
+                                defaultValue="all"
+                                sx={{
+                                    borderWidth: '0!important',
+                                    backgroundColor: '#fff',
+                                    width: 'auto',
+                                    fontSize: '14px',
+                                    padding: '8px 16px!important',
+                                    ' & .MuiSelect-select': {
+                                        padding: '0'
                                     }
-                                ]}
-                            />
-                        </div>
-                        <div className="col-6 text-center" style={{ height: '32px' }}>
-                            <Space size={'middle'}>
+                                }}>
+                                <MenuItem value="all">Tất cả</MenuItem>
+                            </Select>
+                        </Box>
+                        <Box>
+                            <Box display="flex" alignItems="center">
                                 <Button
-                                    icon={<AiOutlineLeft />}
+                                    sx={{
+                                        border: '1px solid #E6E1E6',
+                                        minWidth: '32px',
+                                        height: '32px',
+                                        marginRight: '16px',
+                                        backgroundColor: '#fff',
+                                        width: '32px'
+                                    }}
                                     onClick={() => {
                                         this.changeHeaderToolbar('prev');
-                                    }}
-                                />
+                                    }}>
+                                    <KeyboardArrowLeftIcon sx={{ color: '#666466' }} />
+                                </Button>
                                 <Button
-                                    className="btn-today"
+                                    sx={{ padding: '0', marginRight: '16px' }}
                                     onClick={() => {
                                         this.changeHeaderToolbar('today');
                                     }}>
@@ -268,87 +307,92 @@ class LichHenScreen extends Component {
                                 </Button>
                                 <div className="date-time-selected">{this.state.viewDate}</div>
                                 <Button
-                                    icon={<AiOutlineRight />}
+                                    sx={{
+                                        border: '1px solid #E6E1E6',
+                                        minWidth: '32px',
+                                        height: '32px',
+                                        marginLeft: '16px',
+                                        backgroundColor: '#fff',
+                                        width: '32px'
+                                    }}
                                     onClick={() => {
                                         this.changeHeaderToolbar('next');
-                                    }}
-                                />
-                            </Space>
-                        </div>
-                        <div className="col-3" style={{ height: '32px', paddingBottom: 40 }}>
-                            <div style={{ float: 'right' }}>
-                                <Space.Compact block>
+                                    }}>
+                                    <KeyboardArrowRightIcon sx={{ color: '#666466' }} />
+                                </Button>
+                            </Box>
+                        </Box>
+                        <Box>
+                            <div>
+                                <Box display="flex">
                                     <Tooltip title="Like">
-                                        <Button icon={<AiOutlineCalendar />} />
+                                        <Button sx={{ minWidth: 'unset' }}>
+                                            <AiOutlineCalendar color="#231F20" />
+                                        </Button>
                                     </Tooltip>
                                     <Tooltip title="Like">
-                                        <Button icon={<AiOutlineBars />} />
+                                        <Button sx={{ minWidth: 'unset' }}>
+                                            <AiOutlineBars color="#231F20" />
+                                        </Button>
                                     </Tooltip>
                                     <Select
-                                        labelInValue
-                                        defaultValue={{ value: 'timeGridWeek', label: 'Tuần' }}
+                                        defaultValue="timeGridDay"
                                         onChange={this.handleChangeViewCalendar}
-                                        style={{
-                                            width: 92,
-                                            paddingRight: 5,
-                                            paddingLeft: 5,
+                                        sx={{
+                                            width: 'auto',
+                                            fontSize: '14px',
+                                            padding: '8px 16px!important',
+                                            marginRight: '8px',
                                             float: 'left',
-                                            color: '#FFFAFF'
-                                        }}
-                                        options={[
-                                            {
-                                                value: 'dayGridMonth',
-                                                label: 'Tháng'
-                                            },
-                                            {
-                                                value: 'timeGridWeek',
-                                                label: 'Tuần'
-                                            },
-                                            {
-                                                value: 'timeGridDay',
-                                                label: 'Ngày'
-                                            },
-                                            {
-                                                value: 'listWeek',
-                                                lable: 'Danh sách'
+                                            color: '#4C4B4C',
+                                            '& .MuiSelect-select': {
+                                                padding: '0'
                                             }
-                                        ]}
-                                    />
+                                        }}>
+                                        <MenuItem value="dayGridMonth">Tháng</MenuItem>
+                                        <MenuItem value="timeGridWeek">Tuần</MenuItem>
+                                        <MenuItem value="timeGridDay">Ngày</MenuItem>
+                                        <MenuItem value="listWeek">Danh sách</MenuItem>
+                                    </Select>
                                     <Select
-                                        labelInValue
-                                        defaultValue={{ value: 'service', label: 'Dịch vụ' }}
-                                        style={{ width: 92, float: 'left' }}
-                                        options={[
-                                            {
-                                                value: 'service',
-                                                label: 'Dịch vụ'
+                                        defaultValue="service"
+                                        sx={{
+                                            width: 'auto',
+                                            fontSize: '14px',
+                                            padding: '8px 16px!important',
+                                            float: 'left',
+                                            '& .MuiSelect-select': {
+                                                padding: '0'
                                             }
-                                        ]}
-                                    />
-                                </Space.Compact>
+                                        }}>
+                                        <MenuItem value="service">Dịch vụ</MenuItem>
+                                    </Select>
+                                </Box>
                             </div>
-                        </div>
-                    </div>
-                    <FullCalendar
-                        ref={this.calendarRef}
-                        viewHeight={650}
-                        height={650}
-                        firstDay={1}
-                        headerToolbar={false}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
-                        allDaySlot={false}
-                        slotMinTime={'06:00:00'}
-                        slotMaxTime={'23:00:00'}
-                        locale={'vi'}
-                        initialView={this.state.initialView}
-                        editable={true}
-                        selectable={true}
-                        selectMirror={true}
-                        dayMaxEvents={true}
-                        themeSystem="boostrap"
-                        events={this.state.events}
-                    />
-                </div>
+                        </Box>
+                    </Box>
+                    <Box bgcolor="#fff">
+                        <FullCalendar
+                            ref={this.calendarRef}
+                            viewHeight={650}
+                            height={650}
+                            firstDay={1}
+                            headerToolbar={false}
+                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
+                            allDaySlot={false}
+                            slotMinTime={'06:00:00'}
+                            slotMaxTime={'23:00:00'}
+                            locale={'vi'}
+                            initialView={this.state.initialView}
+                            editable={true}
+                            selectable={true}
+                            selectMirror={true}
+                            dayMaxEvents={true}
+                            themeSystem="boostrap"
+                            events={this.state.events}
+                        />
+                    </Box>
+                </Box>
                 <CreateOrUpdateAppointment
                     visible={this.state.modalVisible}
                     onCancel={() => {
@@ -363,7 +407,7 @@ class LichHenScreen extends Component {
                     suggestKhachHang={this.state.suggestKhachHang}
                     formRef={this.formRef}
                 />
-            </div>
+            </Box>
         );
     }
 }

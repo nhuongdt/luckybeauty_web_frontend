@@ -132,7 +132,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/lich-hen'))
+                    component: LoadableComponent(() => import('../../pages/lich-hen/'))
                 },
                 {
                     path: '/ban-hangs',
