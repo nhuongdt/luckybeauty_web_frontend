@@ -416,7 +416,7 @@ class EmployeeScreen extends React.Component {
                     </Grid>
                 </Grid>
 
-                <Box minHeight={'576px'} height={'576px'} marginTop="24px">
+                <Box minHeight={'576px'} height={'576px'} marginTop="24px" bgcolor="#fff">
                     <DataGrid
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}

@@ -352,7 +352,12 @@ class CustomerScreen extends React.Component {
                 </Grid>
                 <div
                     className="customer-page_row-2"
-                    style={{ height: 582, width: '100%', marginTop: '24px' }}>
+                    style={{
+                        height: 582,
+                        width: '100%',
+                        marginTop: '24px',
+                        backgroundColor: '#fff'
+                    }}>
                     <DataGrid
                         rows={this.state.rowTable}
                         columns={columns}

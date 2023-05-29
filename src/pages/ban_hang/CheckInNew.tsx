@@ -261,6 +261,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     <Typography
                                         color="#333233"
                                         variant="subtitle1"
+                                        fontSize="14px"
                                         title={item.tenKhachHang}>
                                         {item.tenKhachHang}
                                     </Typography>

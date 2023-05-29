@@ -363,7 +363,7 @@ class EmployeeHoliday extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box height="60vh" marginTop="24px">
+                <Box height="60vh" marginTop="24px" bgcolor="#fff">
                     <DataGrid
                         rows={this.state.listHoliday}
                         columns={columns}

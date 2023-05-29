@@ -320,7 +320,7 @@ const Customer: React.FC = () => {
             </Grid>
             <div
                 className="customer-page_row-2"
-                style={{ height: 582, width: '100%', marginTop: '24px' }}>
+                style={{ height: 582, width: '100%', marginTop: '24px', backgroundColor: '#fff' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
