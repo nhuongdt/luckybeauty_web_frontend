@@ -95,7 +95,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                 height: '100vh',
                 position: 'fixed',
                 transition: '.4s',
-                left: collapsed ? '-240px' : '0',
+                left: collapsed ? '-100%' : '0',
                 top: 0,
                 bottom: 0,
                 width: '240px'

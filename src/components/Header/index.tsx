@@ -10,6 +10,9 @@ import {
     BellOutlined,
     MessageOutlined
 } from '@ant-design/icons';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import LogoutIcon from '@mui/icons-material/Logout';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {
     Grid,
     Box,
@@ -36,7 +39,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import MessageIcon from '../../images/message-question.svg';
 import NotificationIcon from '../../images/notification.svg';
-
+import { ReactComponent as ToggleIcon } from '../../images/toggleIcon.svg';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -63,13 +66,20 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
             <Grid container className={'header-container'} justifyContent="space-between">
                 <Grid item sx={{ textAlign: 'left', display: 'flex' }}>
                     <Button
-                        sx={{ minWidth: 'unset!important', marginLeft: '32px' }}
+                        sx={{
+                            minWidth: 'unset!important',
+                            marginLeft: '32px',
+                            '& svg': {
+                                transform: collapsed ? 'rotate(0deg)' : 'rotate(-180deg)',
+                                transition: '.4s'
+                            }
+                        }}
                         onClick={toggle}>
-                        {/* <ToggleIcon /> */}
+                        <ToggleIcon />
                     </Button>
                 </Grid>
                 <Grid item sx={{ textAlign: 'right' }}>
-                    <Box display="flex" sx={{ marginRight: '30px' }}>
+                    <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center' }}>
                         <Badge style={{ margin: '0px 8px 0px 8px' }}>
                             <Button
                                 sx={{
@@ -95,7 +105,6 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                             onClick={handleClick}>
                             <Avatar src={avatar} sx={{ height: 36, width: 36 }} alt={'profile'} />
                         </Button>
-                        <DownOutlined style={{ color: '#666466' }} />
 
                         <Menu
                             open={open}
@@ -107,11 +116,13 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                             }}>
                             <MenuItem onClick={handleClose}>
                                 <Link to="/logout">
-                                    <LogoutOutlined />
+                                    <LogoutIcon />
                                     <span> Logout </span>
                                 </Link>
                             </MenuItem>
                         </Menu>
+                        {!open && <ExpandMoreIcon />}
+                        {open && <ExpandLessIcon />}
                     </Box>
                 </Grid>
             </Grid>

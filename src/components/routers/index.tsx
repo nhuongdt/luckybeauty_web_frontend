@@ -168,7 +168,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/customer/index'))
+                    component: LoadableComponent(() => import('../../pages/customer/indexNew'))
                 },
                 {
                     path: '/dich-vus',
@@ -199,9 +199,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/employee/indexNew')
-                            )
+                            component: LoadableComponent(() => import('../../pages/employee/'))
                         },
                         {
                             path: '/nghi-le-nhan-viens',

@@ -50,7 +50,10 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                             {title}
                         </div>
                         <div className="col-4" style={{ float: 'right' }}>
-                            <BsX style={{ float: 'right', height: '24px' }} onClick={onCancel} />
+                            <BsX
+                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
+                                onClick={onCancel}
+                            />
                         </div>
                     </div>
                 </DialogTitle>

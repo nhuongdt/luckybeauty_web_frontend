@@ -127,10 +127,10 @@ const Customer: React.FC = () => {
             field: 'recentAppointment',
             headerName: 'Cuộc hẹn gần đây',
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
+                <Typography sx={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     {params.value}
-                </div>
+                </Typography>
             ),
             flex: 1
             // width: 128

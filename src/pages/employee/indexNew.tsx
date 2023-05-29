@@ -127,7 +127,7 @@ const Employee: React.FC = () => {
             field: 'age',
             headerName: 'Ngày sinh',
             // width: 95,
-            minWidth: 150,
+            minWidth: 120,
             flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
@@ -211,8 +211,8 @@ const Employee: React.FC = () => {
             field: 'actions',
             headerName: '',
             // width: 48,
-            minWidth: window.innerWidth < 1390 ? 48 : 0,
-            // flex: 0.3,
+            minWidth: 48,
+            flex: 0.3,
             disableColumnMenu: true,
 
             renderCell: (params) => (

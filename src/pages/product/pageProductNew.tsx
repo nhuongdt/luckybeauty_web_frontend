@@ -335,7 +335,8 @@ export default function PageProductNew() {
         {
             field: 'maHangHoa',
             headerName: 'Mã dịch vụ',
-            width: 100,
+            minWidth: 100,
+            flex: 1,
             renderCell: (params) => (
                 <Typography variant="body2" color="#333233">
                     {params.value}
@@ -345,7 +346,7 @@ export default function PageProductNew() {
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
-            width: 250,
+            minWidth: 250,
             renderCell: (params) => (
                 <Box display="flex">
                     <Typography variant="body2" color="#333233" title={params.value}>
@@ -357,12 +358,14 @@ export default function PageProductNew() {
         {
             field: 'tenNhomHang',
             headerName: 'Nhóm dịch vụ',
-            width: 176
+            minWidth: 176,
+            flex: 1
         },
         {
             field: 'giaBan',
             headerName: 'Giá bán',
-            width: 100,
+            minWidth: 100,
+            flex: 1,
             renderCell: (params) => (
                 <Box display="flex">
                     <Typography variant="body2" color="#333233">
@@ -374,12 +377,13 @@ export default function PageProductNew() {
         {
             field: 'soPhutThucHien',
             headerName: 'Thời gian',
-            width: 128,
+            minWidth: 128,
+            flex: 1,
             renderCell: (params) => (
                 <Box display="flex">
                     <ClockIcon />
                     <Typography variant="body2" color="#333233" marginLeft="9px">
-                        {params.value}
+                        {params.value} phút
                     </Typography>
                 </Box>
             )
@@ -387,7 +391,8 @@ export default function PageProductNew() {
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
-            width: 130,
+            minWidth: 130,
+            flex: 1,
             renderCell: (params) => (
                 <Typography
                     variant="body2"
@@ -404,7 +409,8 @@ export default function PageProductNew() {
         {
             field: 'actions',
             headerName: '#',
-            width: 60,
+            maxWidth: 60,
+            flex: 1,
             disableColumnMenu: true,
 
             renderCell: (params) => (
@@ -442,7 +448,11 @@ export default function PageProductNew() {
                 onCancel={() =>
                     setInforDeleteProduct({ ...inforDeleteProduct, show: false })
                 }></ConfirmDelete>
-            <Grid container className="dich-vu-page" padding={2} gap={4}>
+            <Grid
+                container
+                className="dich-vu-page"
+                padding="24px 2.2222222222222223vw 24px 2.2222222222222223vw"
+                gap={4}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto">
                         <BreadcrumbsPageTitle listLink={breadcrumbsLink} />
@@ -521,6 +531,7 @@ export default function PageProductNew() {
                                     className="button-container"
                                     sx={{
                                         height: '30px',
+                                        cursor: 'pointer',
                                         width: '30px',
                                         borderRadius: '4px',
                                         padding: '4px'

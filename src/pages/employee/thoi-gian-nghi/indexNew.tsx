@@ -355,6 +355,7 @@ const EmployeeHoliday: React.FC = () => {
                         onClick={handleClose}
                         sx={{
                             position: 'absolute',
+                            cursor: 'pointer',
                             top: '30px',
                             right: '30px',
                             minWidth: 'unset!important'

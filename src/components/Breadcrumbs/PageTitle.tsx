@@ -5,7 +5,7 @@ export default function BreadcrumbsPageTitle({ listLink }: any) {
         <>
             <Breadcrumbs separator="›" aria-label="breadcrumb">
                 {listLink.map((item: any, index: any) => (
-                    <Typography key={index} color={item.color} variant="body1">
+                    <Typography key={index} color={item.color} variant="body1" fontSize="14px">
                         {item.text}
                     </Typography>
                 ))}

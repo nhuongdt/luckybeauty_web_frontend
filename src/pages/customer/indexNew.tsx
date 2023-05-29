@@ -170,55 +170,61 @@ class CustomerScreen extends React.Component {
     };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
-            { field: 'id', headerName: 'ID', width: 50 },
+            { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
 
             {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
-                width: 185,
+                minWidth: 185,
+                flex: 1,
                 renderCell: (params) => (
-                    <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                    <Box style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
                         <Avatar
                             src={params.row.avatar}
                             alt="Avatar"
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         {params.value}
-                    </div>
+                    </Box>
                 )
             },
-            { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
+            { field: 'soDienThoai', headerName: 'Số điện thoại', minWidth: 114, flex: 1 },
             {
                 field: 'tenNhomKhach',
                 headerName: 'Nhóm khách',
-                width: 112
+                minWidth: 112,
+                flex: 1
             },
             { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
             {
                 field: 'nhanVienPhuTrach',
                 headerName: 'Nhân viên phục vụ',
-                width: 185
+                minWidth: 185,
+                flex: 1
             },
             {
                 field: 'tongChiTieu',
                 headerName: 'Tổng chi tiêu',
-                width: 113
+                minWidth: 113,
+                flex: 1
             },
             {
                 field: 'cuocHenGanNhat',
                 headerName: 'Cuộc hẹn gần đây',
                 renderCell: (params) => (
-                    <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         {new Date(params.value).toLocaleDateString('en-GB')}
-                    </div>
+                    </Box>
                 ),
-                width: 128
+                minWidth: 128,
+                flex: 1
             },
             {
                 field: 'tenNguonKhach',
                 headerName: 'Nguồn',
-                width: 86,
+                minWidth: 86,
+                flex: 1,
                 renderCell: (params) => (
                     <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
                         {params.value}
@@ -228,7 +234,8 @@ class CustomerScreen extends React.Component {
             {
                 field: 'actions',
                 headerName: '',
-                width: 48,
+                maxWidth: 48,
+                flex: 1,
                 disableColumnMenu: true,
 
                 renderCell: (params) => (
