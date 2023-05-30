@@ -261,7 +261,14 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                     mode="inline"></Menu> */}
             </div>
             <div className="hr"></div>
-            <div className="logout">
+            <Link
+                to={'/login'}
+                className="logout"
+                onClick={() => {
+                    Object.keys(Cookies.get()).forEach((cookieName) => {
+                        Cookies.remove(cookieName);
+                    });
+                }}>
                 <Avatar
                     src={outIcon}
                     sx={{
@@ -276,9 +283,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                             height: '15px'
                         }
                     }}
-                    onClick={() => {
-                        location.pathname = '/login';
-                    }}
                 />
                 <Link
                     to={'/login'}
@@ -291,7 +295,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                     }}>
                     Đăng xuất
                 </Link>
-            </div>
+            </Link>
         </Box>
     );
 };
