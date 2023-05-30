@@ -88,9 +88,6 @@ class ChietKhauDichVuScreen extends Component {
         const { listChietKhauDichVu } = chietKhauDichVuStore;
         return (
             <div>
-                <div className="row mt-2 mb-4">
-                    <div className="col offset-6"></div>
-                </div>
                 <div
                     style={{ height: '48px', background: '#F2EBF0' }}
                     className="row d-flex align-content-center">

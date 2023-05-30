@@ -12,7 +12,7 @@ class CaiDatHoaHongScreen extends Component {
             <>
                 <div>
                     <Box component={'div'}>
-                        <Grid container>
+                        <Grid container rowSpacing={2}>
                             <Grid item xs={12}>
                                 <ButtonGroup
                                     sx={{
@@ -65,12 +65,14 @@ class CaiDatHoaHongScreen extends Component {
                                     </Button>
                                 </ButtonGroup>
                             </Grid>
+                            <Grid item xs={12}>
+                                {this.state.isChietKhauHoaDon ? (
+                                    <ChietKhauDichVuScreen></ChietKhauDichVuScreen>
+                                ) : (
+                                    <ChietKhauHoaDonScreen></ChietKhauHoaDonScreen>
+                                )}
+                            </Grid>
                         </Grid>
-                        {this.state.isChietKhauHoaDon ? (
-                            <ChietKhauDichVuScreen></ChietKhauDichVuScreen>
-                        ) : (
-                            <ChietKhauHoaDonScreen></ChietKhauHoaDonScreen>
-                        )}
                     </Box>
                 </div>
             </>
