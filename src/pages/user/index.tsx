@@ -1,7 +1,13 @@
-import React, { FormEventHandler } from 'react';
+import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import { Box, Grid, TextField, Button, Typography } from '@mui/material';
 import userService from '../../services/user/userService';
+import SearchIcon from '@mui/icons-material/Search';
+import AddIcon from '../../images/add.svg';
+import DownloadIcon from '../../images/download.svg';
+import UploadIcon from '../../images/upload.svg';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
     DownloadOutlined,
     EditOutlined,
@@ -168,79 +174,133 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         this.delete(this.state.userId);
         this.onShowDelete();
     };
-    handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    //     const filter = event.target.value;
+    //     this.setState({ filter: filter }, async () => this.getAll());
+    // };
+    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
         const filter = event.target.value;
         this.setState({ filter: filter }, async () => this.getAll());
     };
     render(): React.ReactNode {
         return (
-            <div className="container-fluid bg-white">
-                <div className="page-header">
-                    <Row align={'middle'} justify={'space-between'}>
-                        <Col span={12}>
+            <Box
+                sx={{
+                    paddingTop: '22px',
+                    paddingRight: '2.2222222222222223vw',
+                    paddingLeft: '2.2222222222222223vw'
+                }}>
+                <Box>
+                    <Grid container justifyContent="space-between" alignItems="center">
+                        <Grid item>
                             <div>
-                                <div className="pt-2">
-                                    <nav aria-label="breadcrumb">
-                                        <ol className="breadcrumb">
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Người dùng
-                                            </li>
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Thông tin người dùng
-                                            </li>
-                                        </ol>
-                                    </nav>
+                                <div>
+                                    <Box display="flex" alignItems="center">
+                                        <Typography variant="body1" fontSize="14px" color="#999699">
+                                            Người dùng
+                                        </Typography>
+                                        <ArrowForwardIosIcon
+                                            fontSize="small"
+                                            sx={{
+                                                width: '12px',
+                                                height: '12px'
+                                            }}
+                                        />
+                                        <Typography variant="body1" fontSize="14px" color="#333233">
+                                            Thông tin người dùng
+                                        </Typography>
+                                    </Box>
                                 </div>
                                 <div>
-                                    <h3>Danh sách người dùng</h3>
+                                    <Typography
+                                        variant="h1"
+                                        fontWeight="700"
+                                        fontSize="24px"
+                                        sx={{ marginTop: '4px' }}>
+                                        Danh sách người dùng
+                                    </Typography>
                                 </div>
                             </div>
-                        </Col>
-                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        </Grid>
+                        <Grid item style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
-                                <Space align="center" size="middle">
-                                    <div className="search w-100">
-                                        <Input
-                                            allowClear
+                                <Box display="flex" alignItems="center">
+                                    <Box display="flex" gap="8px">
+                                        <TextField
                                             onChange={this.handleSearch}
-                                            size="large"
-                                            prefix={<SearchOutlined />}
+                                            size="small"
+                                            sx={{
+                                                borderColor: '#E6E1E6!important',
+                                                bgcolor: '#fff'
+                                            }}
                                             placeholder="Tìm kiếm..."
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <SearchIcon
+                                                        style={{
+                                                            marginRight: '8px',
+                                                            color: 'gray'
+                                                        }}
+                                                    />
+                                                )
+                                            }}
                                         />
-                                    </div>
-                                    <Space align="center" size="middle">
                                         <Button
-                                            className="btn-import"
-                                            size="large"
-                                            icon={<DownloadOutlined />}>
+                                            variant="outlined"
+                                            size="small"
+                                            startIcon={<img src={DownloadIcon} />}
+                                            sx={{
+                                                height: '40px',
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                fontWeight: '400',
+                                                borderColor: '#E6E1E6!important',
+                                                color: '#666466',
+                                                backgroundColor: '#fff!important'
+                                            }}>
                                             Nhập
                                         </Button>
                                         <Button
+                                            variant="outlined"
                                             className="btn-export"
-                                            size="large"
-                                            icon={<UploadOutlined />}>
+                                            size="small"
+                                            startIcon={<img src={UploadIcon} />}
+                                            sx={{
+                                                height: '40px',
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                fontWeight: '400',
+                                                borderColor: '#E6E1E6!important',
+                                                color: '#666466',
+                                                backgroundColor: '#fff!important'
+                                            }}>
                                             Xuất
                                         </Button>
-                                    </Space>
-                                    <Button
-                                        icon={<PlusOutlined />}
-                                        size="large"
-                                        className="btn btn-add-item"
-                                        onClick={() => {
-                                            this.createOrUpdateModalOpen(0);
-                                        }}>
-                                        Thêm người dùng
-                                    </Button>
-                                </Space>
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<img src={AddIcon} />}
+                                            size="small"
+                                            onClick={() => {
+                                                this.createOrUpdateModalOpen(0);
+                                            }}
+                                            sx={{
+                                                height: '40px',
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                fontWeight: '400',
+                                                backgroundColor: '#7C3367!important'
+                                            }}>
+                                            Thêm người dùng
+                                        </Button>
+                                    </Box>
+                                </Box>
                             </div>
-                        </Col>
-                    </Row>
-                </div>
-                <div className="page-content pt-2">
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box
+                    className="page-content"
+                    sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
                     <table className="h-100 w-100 table table-border-0 table">
                         <thead className="bg-table w-100">
                             <tr style={{ height: '48px' }}>
@@ -283,28 +343,22 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             {item.creationTime.toString()}
                                         </td>
                                         <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Space wrap direction="horizontal">
+                                            <Box display="flex" justifyContent="space-between">
                                                 <Button
-                                                    type="primary"
-                                                    icon={<EditOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             userId: item.id
                                                         });
                                                         this.createOrUpdateModalOpen(item.id);
-                                                    }}
-                                                />
+                                                    }}></Button>
                                                 <Button
-                                                    danger
-                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             userId: item.id
                                                         });
                                                         this.onShowDelete();
-                                                    }}
-                                                />
-                                            </Space>
+                                                    }}></Button>
+                                            </Box>
                                         </td>
                                     </tr>
                                 );
@@ -326,10 +380,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Space
-                                        size="middle"
-                                        align="center"
-                                        className="align-items-center">
+                                    <Box display="flex" className="align-items-center">
                                         <Pagination
                                             total={this.state.totalCount}
                                             pageSize={this.state.maxResultCount}
@@ -337,7 +388,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             current={this.state.currentPage}
                                             onChange={this.handlePageChange}
                                         />
-                                    </Space>
+                                    </Box>
                                 </div>
                             </div>
                         </div>
@@ -358,8 +409,8 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         userId={this.state.userId}
                         onOk={this.handleCreate}
                     />
-                </div>
-            </div>
+                </Box>
+            </Box>
         );
     }
 }

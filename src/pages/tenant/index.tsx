@@ -1,9 +1,17 @@
-import React, { FormEventHandler } from 'react';
+import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import { Box, Grid, Typography, TextField, Button } from '@mui/material';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import SearchIcon from '@mui/icons-material/Search';
 import '../../custom.css';
+import AddIcon from '../../images/add.svg';
+import DownloadIcon from '../../images/download.svg';
+import UploadIcon from '../../images/upload.svg';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {
     DeleteOutlined,
     DownloadOutlined,
@@ -139,80 +147,131 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         });
     };
 
-    handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    //     const filter = event.target.value;
+    //     this.setState({ filter: filter }, async () => this.getAll());
+    // };
+    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
         const filter = event.target.value;
         this.setState({ filter: filter }, async () => this.getAll());
     };
 
     render(): React.ReactNode {
         return (
-            <div className="container-fluid bg-white">
-                <div className="page-header">
-                    <Row align={'middle'} justify={'space-between'}>
-                        <Col span={12}>
+            <Box sx={{ padding: '24px 2.2222222222222223vw' }}>
+                <div>
+                    <Grid container justifyContent="space-between" alignItems="center">
+                        <Grid item>
                             <div>
-                                <div className="pt-2">
-                                    <nav aria-label="breadcrumb">
-                                        <ol className="breadcrumb">
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Tenant
-                                            </li>
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Thông tin tenant
-                                            </li>
-                                        </ol>
-                                    </nav>
+                                <div>
+                                    <Box display="flex" alignItems="center">
+                                        <Typography variant="body1" fontSize="14px" color="#999699">
+                                            Người dùng
+                                        </Typography>
+                                        <ArrowForwardIosIcon
+                                            fontSize="small"
+                                            sx={{
+                                                width: '12px',
+                                                height: '12px'
+                                            }}
+                                        />
+                                        <Typography
+                                            variant="body1"
+                                            fontSize="14px"
+                                            color="#333233"
+                                            sx={{ marginTop: '4px' }}>
+                                            Thông tin người dùng
+                                        </Typography>
+                                    </Box>
                                 </div>
                                 <div>
-                                    <h3>Danh sách tenant</h3>
+                                    <Typography
+                                        variant="h1"
+                                        fontWeight="700"
+                                        fontSize="24px"
+                                        sx={{ marginTop: '4px' }}>
+                                        Danh sách tenant
+                                    </Typography>
                                 </div>
                             </div>
-                        </Col>
-                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        </Grid>
+                        <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
-                                <Space align="center" size="middle">
-                                    <div className="search w-100">
-                                        <Input
-                                            allowClear
-                                            onChange={this.handleSearch}
-                                            size="large"
-                                            prefix={<SearchOutlined />}
-                                            placeholder="Tìm kiếm..."
-                                        />
-                                    </div>
-                                    <Space align="center" size="middle">
-                                        <Button
-                                            className="btn-import"
-                                            size="large"
-                                            icon={<DownloadOutlined />}>
-                                            Nhập
-                                        </Button>
-                                        <Button
-                                            className="btn-export"
-                                            size="large"
-                                            icon={<UploadOutlined />}>
-                                            Xuất
-                                        </Button>
-                                    </Space>
+                                <Box display="flex" alignItems="center" gap="8px">
+                                    <TextField
+                                        onChange={this.handleSearch}
+                                        size="small"
+                                        sx={{
+                                            borderColor: '#E6E1E6!important',
+                                            bgcolor: '#fff'
+                                        }}
+                                        placeholder="Tìm kiếm..."
+                                        InputProps={{
+                                            startAdornment: (
+                                                <SearchIcon
+                                                    style={{
+                                                        marginRight: '8px',
+                                                        color: 'gray'
+                                                    }}
+                                                />
+                                            )
+                                        }}
+                                    />
                                     <Button
-                                        icon={<PlusOutlined />}
-                                        size="large"
-                                        className="btn btn-add-item"
+                                        variant="outlined"
+                                        size="small"
+                                        startIcon={<img src={DownloadIcon} />}
+                                        sx={{
+                                            height: '40px',
+                                            fontSize: '14px',
+                                            textTransform: 'unset',
+                                            fontWeight: '400',
+                                            borderColor: '#E6E1E6!important',
+                                            color: '#666466',
+                                            backgroundColor: '#fff!important'
+                                        }}>
+                                        Nhập
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        size="small"
+                                        startIcon={<img src={UploadIcon} />}
+                                        sx={{
+                                            height: '40px',
+                                            fontSize: '14px',
+                                            textTransform: 'unset',
+                                            fontWeight: '400',
+                                            borderColor: '#E6E1E6!important',
+                                            color: '#666466',
+                                            backgroundColor: '#fff!important'
+                                        }}>
+                                        Xuất
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        startIcon={<img src={AddIcon} />}
+                                        size="small"
+                                        sx={{
+                                            height: '40px',
+                                            fontSize: '14px',
+                                            textTransform: 'unset',
+                                            fontWeight: '400',
+                                            backgroundColor: '#7C3367!important'
+                                        }}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen(0);
                                         }}>
                                         Thêm tenant
                                     </Button>
-                                </Space>
+                                </Box>
                             </div>
-                        </Col>
-                    </Row>
+                        </Grid>
+                    </Grid>
                 </div>
-                <div className="page-content pt-2">
+                <Box
+                    marginTop="24px"
+                    className="page-content "
+                    sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
                     <table className="h-100 w-100 table table-border-0 table">
                         <thead className="bg-table w-100">
                             <tr style={{ height: '48px' }}>
@@ -243,10 +302,10 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                             {item.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
                                         </td>
                                         <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Space wrap direction="horizontal">
+                                            <Box display="flex" justifyContent="start">
                                                 <Button
-                                                    type="primary"
-                                                    icon={<EditOutlined />}
+                                                    sx={{ minWidth: 'unset' }}
+                                                    startIcon={<EditIcon />}
                                                     onClick={() => {
                                                         this.setState({
                                                             tenantId: item.id
@@ -255,8 +314,10 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                                     }}
                                                 />
                                                 <Button
-                                                    danger
-                                                    icon={<DeleteOutlined />}
+                                                    sx={{ minWidth: 'unset' }}
+                                                    startIcon={
+                                                        <DeleteForeverIcon sx={{ color: 'red' }} />
+                                                    }
                                                     onClick={() => {
                                                         this.setState({
                                                             tenantId: item.id
@@ -264,7 +325,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                                         this.onShowDelete();
                                                     }}
                                                 />
-                                            </Space>
+                                            </Box>
                                         </td>
                                     </tr>
                                 );
@@ -286,10 +347,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Space
-                                        size="middle"
-                                        align="center"
-                                        className="align-items-center">
+                                    <Box className="align-items-center">
                                         <Pagination
                                             total={this.state.totalCount}
                                             pageSize={this.state.maxResultCount}
@@ -297,12 +355,12 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                             current={this.state.currentPage}
                                             onChange={this.handlePageChange}
                                         />
-                                    </Space>
+                                    </Box>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </Box>
                 <CreateOrEditTenant
                     formRef={this.formRef}
                     visible={this.state.modalVisible}
@@ -319,7 +377,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
                     onCancel={this.onShowDelete}></ConfirmDelete>
-            </div>
+            </Box>
         );
     }
 }
