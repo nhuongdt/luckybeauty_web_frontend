@@ -83,9 +83,12 @@ const Customer: React.FC = () => {
         {
             field: 'name',
             headerName: 'Tên khách hàng',
-            width: 185,
+            // width: 185,
+            flex: 1,
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
+                <div
+                    title={params.row.name}
+                    style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
                     <img
                         src={params.row.avatar}
                         alt="Avatar"
@@ -99,39 +102,44 @@ const Customer: React.FC = () => {
         {
             field: 'group',
             headerName: 'Nhóm khách',
-
-            width: 112
+            flex: 1
+            // width: 112
         },
-        { field: 'gender', headerName: 'Giới tính', width: 89 },
+        {
+            field: 'gender',
+            headerName: 'Giới tính',
+            //   width: 89
+            flex: 0.5
+        },
         {
             field: 'staff',
             headerName: 'Nhân viên phục vụ',
-
-            width: 185
+            flex: 1
+            // width: 185
         },
         {
             field: 'total',
             headerName: 'Tổng chi tiêu',
-
-            width: 113
+            flex: 1
+            // width: 113
         },
         {
             field: 'recentAppointment',
             headerName: 'Cuộc hẹn gần đây',
             renderCell: (params) => (
-                <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
+                <Typography sx={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     {params.value}
-                </div>
+                </Typography>
             ),
-
-            width: 128
+            flex: 1
+            // width: 128
         },
         {
             field: 'source',
             headerName: 'Nguồn',
-
-            width: 86,
+            flex: 0.7,
+            // width: 86,
             renderCell: (params) => (
                 <div className={params.field === 'source' ? 'last-column' : ''}>{params.value}</div>
             )
@@ -139,7 +147,8 @@ const Customer: React.FC = () => {
         {
             field: 'actions',
             headerName: '',
-            width: 48,
+            // width: 48,
+            flex: 0.3,
             disableColumnMenu: true,
 
             renderCell: (params) => (
@@ -311,7 +320,7 @@ const Customer: React.FC = () => {
             </Grid>
             <div
                 className="customer-page_row-2"
-                style={{ height: 582, width: '100%', marginTop: '24px' }}>
+                style={{ height: 582, width: '100%', marginTop: '24px', backgroundColor: '#fff' }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}

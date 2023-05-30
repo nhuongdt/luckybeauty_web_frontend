@@ -7,7 +7,7 @@
 }
 
 .fc-event-time {
-    font-family: 'Inter';
+    font-family: 'Roboto';
     font-style: normal;
     font-weight: 600;
     font-size: 14px !important;
@@ -45,8 +45,8 @@
     height: 64px;
     flex-direction: column;
     align-items: flex-start;
-    background: #FFFFFF;
-    box-shadow: inset -1px -1px 0px #E0E0E0;
+    background: #ffffff;
+    box-shadow: inset -1px -1px 0px #e0e0e0;
 }
 
 .fc-col-header-cell-cushion {
@@ -73,7 +73,7 @@
     font-weight: 400;
     display: flex;
     align-items: center;
-    color: #7C3367;
+    color: #7c3367;
 }
 
 .date-time-selected {
@@ -87,7 +87,7 @@
     align-items: center;
     color: #333233;
 }
-.fc-daygrid-day-number{
+.fc-daygrid-day-number {
     text-decoration: none;
     color: #999699;
     font-family: 'Roboto';

@@ -39,6 +39,7 @@ import closeIcon from '../../images/close-square.svg';
 import avatar from '../../images/avatar.png';
 import fileIcon from '../../images/file.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { width } from '@mui/system';
 
 const Employee: React.FC = () => {
     const breadcrumbs = [
@@ -82,12 +83,16 @@ const Employee: React.FC = () => {
         {
             field: 'id',
             headerName: 'ID',
-            width: 74
+
+            minWidth: 50,
+            flex: 0.4
         },
         {
             field: 'name',
             headerName: 'Tên nhân viên',
-            width: 171,
+            // width: 171,
+            minWidth: window.innerWidth < 1390 ? 171 : 0,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar
@@ -96,6 +101,7 @@ const Employee: React.FC = () => {
                         style={{ width: 24, height: 24, marginRight: 8 }}
                     />
                     <Typography
+                        title={params.value}
                         fontSize="14px"
                         fontWeight="400"
                         variant="h6"
@@ -109,12 +115,20 @@ const Employee: React.FC = () => {
         {
             field: 'phone',
             headerName: 'Số điện thoại',
-            width: 114
+            minWidth: window.innerWidth < 1390 ? 114 : 0,
+            flex: 1,
+            renderCell: (params) => (
+                <Typography variant="caption" fontSize="14px" title={params.value}>
+                    {params.value}
+                </Typography>
+            )
         },
         {
             field: 'age',
             headerName: 'Ngày sinh',
-            width: 112,
+            // width: 95,
+            minWidth: 120,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -132,22 +146,33 @@ const Employee: React.FC = () => {
         {
             field: 'gender',
             headerName: 'Giới tính',
-            width: 89
+            width: 66
         },
         {
             field: 'location',
             headerName: 'Địa chỉ',
-            width: 171
+            // width: 171
+            minWidth: window.innerWidth < 1390 ? 170 : 0,
+            flex: 1,
+            renderCell: (params) => (
+                <Typography variant="caption" fontSize="14px" title={params.value}>
+                    {params.value}
+                </Typography>
+            )
         },
         {
             field: 'position',
             headerName: 'Vị trí',
-            width: 113
+            // width: 113
+            minWidth: window.innerWidth < 1390 ? 113 : 0,
+            flex: 0.7
         },
         {
             field: 'participationDate',
             headerName: 'Ngày tham gia',
-            width: 128,
+            // width: 128,
+            minWidth: window.innerWidth < 1390 ? 128 : 0,
+            flex: 0.8,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -165,7 +190,9 @@ const Employee: React.FC = () => {
         {
             field: 'state',
             headerName: 'Trạng thái',
-            width: 116,
+            // width: 116,
+            minWidth: window.innerWidth < 1390 ? 116 : 0,
+            flex: 0.9,
             renderCell: (params) => (
                 <Typography
                     fontSize="14px"
@@ -183,7 +210,9 @@ const Employee: React.FC = () => {
         {
             field: 'actions',
             headerName: '',
-            width: 48,
+            // width: 48,
+            minWidth: 48,
+            flex: 0.3,
             disableColumnMenu: true,
 
             renderCell: (params) => (

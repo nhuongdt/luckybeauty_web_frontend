@@ -43,13 +43,11 @@
 }
 
 .customer-page .MuiDataGrid-columnHeaderTitle {
-    font-size: 12px;
-    color: #666466;
-    font-weight: 400;
+    font-size: 14px;
 }
 
 .customer-page .MuiDataGrid-cellContent {
-    font-size: 12px;
+    font-size: 14px;
     color: #333233;
 }
 
@@ -102,7 +100,7 @@
     gap: 2.7777777777777777vw;
 }
 
-.box-1>div:first-child {
+.box-1 > div:first-child {
     border-radius: 8px;
     height: 250px;
     display: -webkit-box;
@@ -114,8 +112,10 @@
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    background: -webkit-gradient(linear, left bottom, left top, from(#fffaff), to(#fffaff)), -webkit-gradient(linear, left bottom, left top, from(#e5d6e1), to(#e5d6e1));
-    background: -o-linear-gradient(bottom, #fffaff, #fffaff), -o-linear-gradient(bottom, #e5d6e1, #e5d6e1);
+    background: -webkit-gradient(linear, left bottom, left top, from(#fffaff), to(#fffaff)),
+        -webkit-gradient(linear, left bottom, left top, from(#e5d6e1), to(#e5d6e1));
+    background: -o-linear-gradient(bottom, #fffaff, #fffaff),
+        -o-linear-gradient(bottom, #e5d6e1, #e5d6e1);
     background: linear-gradient(0deg, #fffaff, #fffaff), linear-gradient(0deg, #e5d6e1, #e5d6e1);
     border: 1px solid #e5d6e1;
 }
@@ -126,7 +126,7 @@
     width: fit-content;
 }
 
-.inner-box>.MuiFormControl-root {
+.inner-box > .MuiFormControl-root {
     position: absolute;
     height: 100%;
     width: 100%;

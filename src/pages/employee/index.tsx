@@ -171,7 +171,8 @@ class EmployeeScreen extends React.Component {
         {
             field: 'tenNhanVien',
             headerName: 'Tên nhân viên',
-            width: 171,
+            minWidth: 171,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <Avatar
@@ -194,7 +195,8 @@ class EmployeeScreen extends React.Component {
         {
             field: 'ngaySinh',
             headerName: 'Ngày sinh',
-            width: 112,
+            minWidth: 112,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -212,7 +214,7 @@ class EmployeeScreen extends React.Component {
         {
             field: 'gioiTinh',
             headerName: 'Giới tính',
-            width: 89,
+            minWidth: 60,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography
@@ -229,17 +231,30 @@ class EmployeeScreen extends React.Component {
         {
             field: 'diaChi',
             headerName: 'Địa chỉ',
-            width: 171
+            minWidth: 130,
+            flex: 1
         },
         {
             field: 'tenChucVu',
             headerName: 'Vị trí',
-            width: 113
+            minWidth: 113,
+            flex: 1,
+            renderCell: (params) => (
+                <Typography
+                    fontSize="14px"
+                    fontWeight="400"
+                    variant="h6"
+                    color="#333233"
+                    lineHeight="16px">
+                    Kỹ thuật viên
+                </Typography>
+            )
         },
         {
             field: 'ngayVaoLam',
             headerName: 'Ngày tham gia',
-            width: 128,
+            minWidth: 120,
+            flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -257,7 +272,8 @@ class EmployeeScreen extends React.Component {
         {
             field: 'trangThai',
             headerName: 'Trạng thái',
-            width: 116,
+            minWidth: 116,
+            flex: 1,
             renderCell: (params) => (
                 <Typography
                     fontSize="14px"
@@ -276,6 +292,7 @@ class EmployeeScreen extends React.Component {
             field: 'actions',
             headerName: '',
             width: 48,
+            flex: 0.4,
             disableColumnMenu: true,
 
             renderCell: (params) => (
@@ -292,10 +309,10 @@ class EmployeeScreen extends React.Component {
     public render() {
         const breadcrumbs = [
             <Typography key="1" color="#999699" fontSize="14px">
-                Dịch vụ
+                Nhân viên
             </Typography>,
             <Typography key="2" color="#333233" fontSize="14px">
-                Danh mục dịch vụ
+                Danh mục nhân viên
             </Typography>
         ];
         const { listNhanVien } = NhanVienStore;
@@ -322,6 +339,59 @@ class EmployeeScreen extends React.Component {
                     </Grid>
 
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
+                        <Box component="form" className="form-search">
+                            <TextField
+                                sx={{
+                                    backgroundColor: '#FFFAFF',
+                                    borderColor: '#CDC9CD',
+                                    height: '40px'
+                                }}
+                                onChange={(e) => {
+                                    this.setState({ filter: e.target.value });
+                                }}
+                                size="small"
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton type="button" onClick={this.getListNhanVien}>
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
+                                }}
+                            />
+                        </Box>
+                        <Button
+                            size="small"
+                            startIcon={<img src={DownloadIcon} />}
+                            sx={{
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                height: '40px',
+                                padding: '10px 16px',
+                                marginRight: '8px',
+                                borderRadius: '4px!important'
+                            }}>
+                            Nhập
+                        </Button>
+                        <Button
+                            size="small"
+                            startIcon={<img src={UploadIcon} />}
+                            sx={{
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+                                height: '40px',
+                                borderRadius: '4px!important'
+                            }}>
+                            Xuất
+                        </Button>
                         <ButtonGroup
                             variant="contained"
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
@@ -345,75 +415,8 @@ class EmployeeScreen extends React.Component {
                         </ButtonGroup>
                     </Grid>
                 </Grid>
-                <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    padding="8px 24px"
-                    sx={{ backgroundColor: '#F2EBF0', borderRadius: '8px', marginTop: '30px' }}>
-                    <Box component="form" className="form-search">
-                        <TextField
-                            sx={{
-                                backgroundColor: '#FFFAFF',
-                                borderColor: '#CDC9CD'
-                            }}
-                            onChange={(e) => {
-                                this.setState({ filter: e.target.value });
-                            }}
-                            size="small"
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            InputProps={{
-                                startAdornment: (
-                                    <IconButton type="button" onClick={this.getListNhanVien}>
-                                        <img src={SearchIcon} />
-                                    </IconButton>
-                                )
-                            }}
-                        />
-                    </Box>
-                    <Box>
-                        <Button
-                            sx={{
-                                minWidth: 'unset',
-                                padding: '8px',
-                                backgroundColor: '#fff!important',
-                                marginRight: '8px'
-                            }}>
-                            <FilterAltIcon sx={{ color: '#666466' }} />
-                        </Button>
-                        <Button
-                            size="small"
-                            startIcon={<img src={DownloadIcon} />}
-                            sx={{
-                                backgroundColor: '#fff!important',
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                color: '#666466',
-                                padding: '10px 16px',
-                                marginRight: '8px',
-                                borderRadius: '4px!important'
-                            }}>
-                            Nhập
-                        </Button>
-                        <Button
-                            size="small"
-                            startIcon={<img src={UploadIcon} />}
-                            sx={{
-                                backgroundColor: '#fff!important',
-                                textTransform: 'capitalize',
-                                fontWeight: '400',
-                                color: '#666466',
-                                padding: '10px 16px',
 
-                                borderRadius: '4px!important'
-                            }}>
-                            Xuất
-                        </Button>
-                    </Box>
-                </Box>
-                <Box minHeight={'576px'} height={'576px'} marginTop="24px">
+                <Box minHeight={'576px'} height={'576px'} marginTop="24px" bgcolor="#fff">
                     <DataGrid
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
