@@ -258,7 +258,7 @@ class EmployeeHoliday extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {params.value}
+                            {params.value} ngày
                         </Typography>
                     </Box>
                 )
