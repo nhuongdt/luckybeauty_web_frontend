@@ -1,4 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
+
 import { Col, FormInstance, Row, Space, Tooltip } from 'antd';
 import { Box, Button, Grid, Typography, Select } from '@mui/material';
 import React, { Component, ReactNode, RefObject } from 'react';
@@ -86,7 +87,9 @@ class LichHenScreen extends Component {
         const selectedValue = event.target.value;
         const calendarApi = this.calendarRef.current?.getApi();
         calendarApi?.changeView(selectedValue);
+        // calendarApi?.updateSize();
     };
+
     changeHeaderToolbar = (value: string) => {
         const calendarApi = this.calendarRef.current?.getApi();
         if (calendarApi) {
@@ -206,6 +209,7 @@ class LichHenScreen extends Component {
             { text: 'Lịch hẹn ', color: '#999699' },
             { text: 'Danh sách lịch hẹn', color: '#333233' }
         ];
+
         return (
             <Box sx={{ height: '100%', padding: '0 2.2222222222222223vw' }}>
                 <Box sx={{ borderBottom: '1px solid #E6E1E6', paddingBottom: '24px' }}>
@@ -258,7 +262,7 @@ class LichHenScreen extends Component {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box className="page-body " marginTop="16px">
+                <Box marginTop="16px">
                     <Box
                         sx={{
                             display: 'flex',
@@ -371,7 +375,16 @@ class LichHenScreen extends Component {
                             </div>
                         </Box>
                     </Box>
-                    <Box bgcolor="#fff">
+                    <Box
+                        bgcolor="#fff"
+                        sx={{
+                            '& table': {
+                                width: '100%!important'
+                            },
+                            '& .fc-timegrid-body': {
+                                width: '100%!important'
+                            }
+                        }}>
                         <FullCalendar
                             ref={this.calendarRef}
                             viewHeight={650}

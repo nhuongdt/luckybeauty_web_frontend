@@ -14,6 +14,7 @@ import {
     Autocomplete,
     Link
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
@@ -22,6 +23,7 @@ import Utils from '../../utils/utils';
 import '../../App.css';
 import './style.css';
 import AppConsts from '../../lib/appconst';
+import { minWidth } from '@mui/system';
 
 // const customTheme = createMuiTheme({
 //   overrides: {
@@ -165,7 +167,15 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     return (
         <>
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
-                <DialogTitle> {isNew ? 'Thêm' : 'Cập nhật'} dịch vụ</DialogTitle>
+                <Button
+                    onClick={() => setOpen(false)}
+                    sx={{ minWidth: 'unset', position: 'absolute', top: '16px', right: '16px' }}>
+                    <CloseIcon sx={{ color: '#666466' }} />
+                </Button>
+                <DialogTitle fontSize="24px!important" color="#333233" fontWeight="700!important">
+                    {' '}
+                    {isNew ? 'Thêm' : 'Cập nhật'} dịch vụ
+                </DialogTitle>
                 <DialogContent>
                     <Grid container>
                         <Grid item xs={12} md={8} sm={8} lg={8}>

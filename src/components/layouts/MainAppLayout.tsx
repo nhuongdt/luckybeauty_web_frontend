@@ -24,7 +24,6 @@ const MainAppLayout: React.FC = () => {
     const [collapsed, onCollapse] = useState(true);
     const toggle = () => {
         onCollapse(!collapsed);
-        console.log('hihi');
     };
     const [open, setOpen] = React.useState(!isAuthenticated);
     const navigate = useNavigate();
