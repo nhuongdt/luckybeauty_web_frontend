@@ -357,6 +357,7 @@ class EmployeeHoliday extends Component {
                                 fontWeight: '400',
                                 minWidth: '173px',
                                 height: '40px',
+                                fontSize: '14px',
                                 backgroundColor: '#7C3367!important'
                             }}>
                             Thêm ngày nghỉ

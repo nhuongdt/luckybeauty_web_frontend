@@ -282,7 +282,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 display="flex"
                                 marginTop="16px"
                                 flexDirection={MaxPc1490 ? 'column' : 'row'}>
-                                <Typography color="#666466" fontSize="14px">
+                                <Typography variant="subtitle1" color="#666466" fontSize="14px">
                                     {item.dateCheckIn}
                                 </Typography>
                                 <Box
@@ -290,11 +290,15 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     marginTop={MaxPc1490 ? '16px' : '0'}
                                     marginLeft={MaxPc1490 ? '0' : '13px'}
                                     flexGrow="1">
-                                    <Typography color="#666466">
+                                    <Typography
+                                        color="#666466"
+                                        fontSize="14px"
+                                        display="flex"
+                                        alignItems="center">
                                         <QueryBuilder
                                             style={{
                                                 fontSize: '12px',
-                                                marginTop: '-5px',
+
                                                 marginRight: '5px'
                                             }}
                                         />

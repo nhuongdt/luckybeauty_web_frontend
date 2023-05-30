@@ -504,7 +504,11 @@ export default function PageProductNew() {
                             size="small"
                             variant="contained"
                             className="button-container"
-                            sx={{ minWidth: '143px' }}
+                            sx={{
+                                minWidth: '143px',
+                                backgroundColor: '#7c3367!important',
+                                fontSize: '14px'
+                            }}
                             startIcon={<Add />}
                             onClick={() => showModalAddProduct()}>
                             Thêm dịch vụ
