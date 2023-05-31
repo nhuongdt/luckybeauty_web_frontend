@@ -1,7 +1,7 @@
-import React, { FormEventHandler, ChangeEventHandler } from 'react';
+import React, { FormEventHandler, ChangeEventHandler, useState } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
-import { Box, Grid, TextField, Button, Typography } from '@mui/material';
+import { Col, FormInstance, Input, PaginationProps, Row, Space } from 'antd';
+import { Box, Grid, TextField, Button, Typography, Pagination } from '@mui/material';
 import userService from '../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
@@ -10,7 +10,7 @@ import UploadIcon from '../../images/upload.svg';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
+import CreateOrEditUserNew from './components/create-or-edit-userNew';
 import '../../custom.css';
 import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
 import CreateOrEditUser from './components/create-or-edit-user';
@@ -22,6 +22,7 @@ import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
 export interface IUserProps {}
 
 export interface IUserState {
+    showDialog: boolean;
     modalVisible: boolean;
     maxResultCount: number;
     skipCount: number;
@@ -37,10 +38,12 @@ export interface IUserState {
     roles: GetRoles[];
     suggestNhanSu: SuggestNhanSuDto[];
 }
+
 class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     formRef = React.createRef<FormInstance>();
 
     state = {
+        showDialog: false,
         modalVisible: false,
         maxResultCount: 10,
         skipCount: 0,
@@ -86,7 +89,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
     }
 
-    handlePageChange: PaginationProps['onChange'] = (value) => {
+    handlePageChange = (event: any, value: any) => {
         const { maxResultCount } = this.state;
         this.setState({
             currentPage: value,
@@ -177,13 +180,54 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         const filter = event.target.value;
         this.setState({ filter: filter }, async () => this.getAll());
     };
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            showDialog: false,
+            modalVisible: false,
+            maxResultCount: 10,
+            skipCount: 0,
+            userId: 0,
+            filter: '',
+            listUser: [] as GetAllUserOutput[],
+            totalCount: 0,
+            currentPage: 1,
+            totalPage: 0,
+            startIndex: 1,
+            userEdit: {
+                userName: '',
+                name: '',
+                surname: '',
+                emailAddress: '',
+                isActive: false,
+                roleNames: [],
+                password: '',
+                id: 0
+            } as CreateOrUpdateUserInput,
+            isShowConfirmDelete: false,
+            roles: [] as GetRoles[],
+            suggestNhanSu: [] as SuggestNhanSuDto[]
+        };
+    }
+
+    handleOpenDialog = () => {
+        this.setState({ showDialog: true });
+    };
+
+    handleCloseDialog = () => {
+        this.setState({ showDialog: false });
+    };
     render(): React.ReactNode {
+        const { showDialog } = this.state;
         return (
             <Box
                 sx={{
                     paddingTop: '22px',
                     paddingRight: '2.2222222222222223vw',
-                    paddingLeft: '2.2222222222222223vw'
+                    paddingLeft: '2.2222222222222223vw',
+                    '& td': {
+                        verticalAlign: 'middle'
+                    }
                 }}>
                 <Box>
                     <Grid container justifyContent="space-between" alignItems="center">
@@ -276,7 +320,8 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             startIcon={<img src={AddIcon} />}
                                             size="small"
                                             onClick={() => {
-                                                this.createOrUpdateModalOpen(0);
+                                                // this.createOrUpdateModalOpen(0);
+                                                this.handleOpenDialog();
                                             }}
                                             sx={{
                                                 height: '40px',
@@ -383,11 +428,21 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                 <div style={{ float: 'right' }} className="col-7">
                                     <Box display="flex" className="align-items-center">
                                         <Pagination
-                                            total={this.state.totalCount}
-                                            pageSize={this.state.maxResultCount}
-                                            defaultCurrent={this.state.currentPage}
-                                            current={this.state.currentPage}
+                                            count={Math.ceil(
+                                                this.state.totalCount / this.state.maxResultCount
+                                            )}
+                                            page={this.state.currentPage}
                                             onChange={this.handlePageChange}
+                                            sx={{
+                                                '& button': {
+                                                    borderRadius: '4px',
+                                                    lineHeight: '1'
+                                                },
+                                                '& .Mui-selected': {
+                                                    backgroundColor: '#7C3367!important',
+                                                    color: '#fff'
+                                                }
+                                            }}
                                         />
                                     </Box>
                                 </div>
@@ -410,6 +465,10 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         userId={this.state.userId}
                         onOk={this.handleCreate}
                     />
+
+                    {/* {showDialog && ( */}
+                    <CreateOrEditUserNew open={showDialog} onClose={this.handleCloseDialog} />
+                    {/* )} */}
                 </Box>
             </Box>
         );

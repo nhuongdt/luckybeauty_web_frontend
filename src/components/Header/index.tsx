@@ -1,5 +1,5 @@
 // import { Avatar, Badge, Col, Dropdown, Layout, Menu, Row, Space, Typography } from 'antd';
-
+import { useEffect, useState } from 'react';
 import avatar from '../../images/user.png';
 import {
     MenuUnfoldOutlined,
@@ -40,6 +40,8 @@ import { Link } from 'react-router-dom';
 import MessageIcon from '../../images/message-question.svg';
 import NotificationIcon from '../../images/notification.svg';
 import { ReactComponent as ToggleIcon } from '../../images/toggleIcon.svg';
+import http from '../../services/httpService';
+import Cookies from 'js-cookie';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -56,6 +58,27 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const defaultPermission: string[] = [];
+    const [lstPermission, setListPermission] = useState(defaultPermission);
+    useEffect(() => {
+        // Call API to get list of permissions here
+        // Example:
+        const userId = Cookies.get('userId');
+        const token = Cookies.get('accessToken');
+        const encryptedAccessToken = Cookies.get('encryptedAccessToken');
+        http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
+            headers: {
+                accept: 'text/plain',
+                Authorization: 'Bearer ' + token,
+                'X-XSRF-TOKEN': encryptedAccessToken
+            }
+        })
+            .then((response) => {
+                setListPermission(response.data.result['permissions']);
+            })
+            .catch((error) => console.log(error));
+    }, []);
+
     return (
         <Box
             display="flex"
@@ -115,7 +138,13 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                                 'aria-labelledby': 'btnAuthor'
                             }}>
                             <MenuItem onClick={handleClose}>
-                                <Link to="/logout">
+                                <Link
+                                    to="/login"
+                                    onClick={() => {
+                                        Object.keys(Cookies.get()).forEach((cookieName) => {
+                                            Cookies.remove(cookieName);
+                                        });
+                                    }}>
                                     <LogoutIcon />
                                     <span> Logout </span>
                                 </Link>
