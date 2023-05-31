@@ -7,6 +7,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {
     DownloadOutlined,
@@ -343,21 +345,27 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             {item.creationTime.toString()}
                                         </td>
                                         <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Box display="flex" justifyContent="space-between">
+                                            <Box display="flex" justifyContent="start">
                                                 <Button
                                                     onClick={() => {
                                                         this.setState({
                                                             userId: item.id
                                                         });
                                                         this.createOrUpdateModalOpen(item.id);
-                                                    }}></Button>
+                                                    }}
+                                                    sx={{ minWidth: 'unset' }}>
+                                                    <EditIcon />
+                                                </Button>
                                                 <Button
                                                     onClick={() => {
                                                         this.setState({
                                                             userId: item.id
                                                         });
                                                         this.onShowDelete();
-                                                    }}></Button>
+                                                    }}
+                                                    sx={{ minWidth: 'unset' }}>
+                                                    <DeleteForeverIcon sx={{ color: 'red' }} />
+                                                </Button>
                                             </Box>
                                         </td>
                                     </tr>
