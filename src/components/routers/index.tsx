@@ -269,7 +269,9 @@ export const appRouters: AppRouteProps = {
                             children: [],
 
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/tenant'))
+                            component: LoadableComponent(
+                                () => import('../../pages/tenant/indexNew')
+                            )
                         }
                     ],
                     component: null

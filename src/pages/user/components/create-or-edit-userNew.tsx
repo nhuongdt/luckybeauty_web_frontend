@@ -24,7 +24,6 @@ interface DialogComponentProps {
     open: boolean;
     onClose: () => void;
 }
-
 const CreateOrEditUserNew: React.FC<DialogComponentProps> = ({ open, onClose }) => {
     const [value, setValue] = React.useState('1');
 
