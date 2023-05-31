@@ -12,6 +12,7 @@ import {
     Button,
     FormControlLabel
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -241,6 +242,16 @@ const CreateOrEditUserNew: React.FC<DialogComponentProps> = ({ open, onClose }) 
                             </TabPanel>
                         </TabContext>
                     </Box>
+                    <Button
+                        onClick={onClose}
+                        sx={{
+                            minWidth: 'unset',
+                            position: 'absolute',
+                            right: '16px',
+                            top: '16px'
+                        }}>
+                        <CloseIcon sx={{ color: '#000' }} />
+                    </Button>
                 </Box>
             </Box>
         </Dialog>

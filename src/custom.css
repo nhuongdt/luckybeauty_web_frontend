@@ -84,7 +84,7 @@
     font-size: 14px;
     line-height: 16px;
     /* identical to box height, or 133% */
-
+    vertical-align: middle;
     /* Neutral/90 */
 
     color: #333233;

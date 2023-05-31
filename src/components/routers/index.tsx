@@ -257,7 +257,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(() => import('../../pages/role'))
+                            component: LoadableComponent(() => import('../../pages/role/indexNew'))
                         },
                         {
                             path: '/tenants',
