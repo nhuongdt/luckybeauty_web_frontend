@@ -1,7 +1,14 @@
-import React, { FormEventHandler } from 'react';
+import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Button, Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
+import { Button, Box, Typography, Grid, TextField } from '@mui/material';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import SearchIcon from '@mui/icons-material/Search';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import EditIcon from '@mui/icons-material/Edit';
 import roleService from '../../services/role/roleService';
+import AddIcon from '../../images/add.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import {
     DeleteOutlined,
     DownloadOutlined,
@@ -16,6 +23,7 @@ import CreateOrEditRole from './components/create-or-edit-role';
 import { GetAllPermissionsOutput } from '../../services/role/dto/getAllPermissionsOutput';
 import RoleEditModel from '../../models/Roles/roleEditModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -154,89 +162,135 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         this.delete(this.state.roleId);
         this.onShowDelete();
     };
-    handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    //     const filter = event.target.value;
+    //     this.setState({ filter: filter }, async () => this.getAll());
+    // };
+    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
         const filter = event.target.value;
         this.setState({ filter: filter }, async () => this.getAll());
     };
+
     render() {
         return (
-            <div className="container-fluid bg-white">
-                <div className="page-header">
-                    <Row align={'middle'} justify={'space-between'}>
-                        <Col span={12}>
+            <Box paddingLeft="2.2222222222222223vw" paddingRight="2.2222222222222223vw">
+                <Box>
+                    <Grid container justifyContent="space-between" paddingTop="22px">
+                        <Grid item>
                             <div>
-                                <div className="pt-2">
-                                    <nav aria-label="breadcrumb">
-                                        <ol className="breadcrumb">
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Vai trò
-                                            </li>
-                                            <li
-                                                className="breadcrumb-item active"
-                                                aria-current="page">
-                                                Thông tin vai trò
-                                            </li>
-                                        </ol>
-                                    </nav>
-                                </div>
+                                <Box display="flex" alignItems="center">
+                                    <Typography variant="body1" fontSize="14px" color="#999699">
+                                        Vai trò
+                                    </Typography>
+                                    <ArrowForwardIosIcon
+                                        fontSize="small"
+                                        sx={{
+                                            width: '12px',
+                                            height: '12px'
+                                        }}
+                                    />
+                                    <Typography variant="body1" fontSize="14px" color="#333233">
+                                        Thông tin vai trò
+                                    </Typography>
+                                </Box>
                                 <div>
-                                    <h3>Danh sách vai trò</h3>
+                                    <Typography
+                                        variant="h1"
+                                        fontSize="24px"
+                                        color="#0C050A"
+                                        fontWeight="700"
+                                        marginTop="4px">
+                                        Danh sách vai trò
+                                    </Typography>
                                 </div>
                             </div>
-                        </Col>
-                        <Col span={12} style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        </Grid>
+                        <Grid item style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
-                                <Space align="center" size="middle">
-                                    <div className="search w-100">
-                                        <Input
-                                            allowClear
+                                <Box>
+                                    <Box display="flex" alignItems="center" gap="8px">
+                                        <TextField
                                             onChange={this.handleSearch}
-                                            size="large"
-                                            prefix={<SearchOutlined />}
+                                            size="small"
+                                            sx={{
+                                                borderColor: '#E6E1E6!important',
+                                                bgcolor: '#fff'
+                                            }}
                                             placeholder="Tìm kiếm..."
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <SearchIcon
+                                                        style={{
+                                                            marginRight: '8px',
+                                                            color: 'gray'
+                                                        }}
+                                                    />
+                                                )
+                                            }}
                                         />
-                                    </div>
-                                    <Space align="center" size="middle">
                                         <Button
-                                            className="btn-import"
-                                            size="large"
-                                            icon={<DownloadOutlined />}>
+                                            variant="outlined"
+                                            size="small"
+                                            startIcon={<DownloadOutlined />}
+                                            sx={{
+                                                height: '40px',
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                fontWeight: '400',
+                                                borderColor: '#E6E1E6!important',
+                                                color: '#666466',
+                                                backgroundColor: '#fff!important'
+                                            }}>
                                             Nhập
                                         </Button>
                                         <Button
-                                            className="btn-export"
-                                            size="large"
-                                            icon={<UploadOutlined />}>
+                                            variant="outlined"
+                                            size="small"
+                                            startIcon={<UploadOutlined />}
+                                            sx={{
+                                                height: '40px',
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                fontWeight: '400',
+                                                borderColor: '#E6E1E6!important',
+                                                color: '#666466',
+                                                backgroundColor: '#fff!important'
+                                            }}>
                                             Xuất
                                         </Button>
-                                    </Space>
-                                    <Button
-                                        icon={<PlusOutlined />}
-                                        size="large"
-                                        className="btn btn-add-item"
-                                        onClick={() => {
-                                            this.createOrUpdateModalOpen(0);
-                                        }}>
-                                        Thêm vai trò
-                                    </Button>
-                                </Space>
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<img src={AddIcon} />}
+                                            size="small"
+                                            onClick={() => {
+                                                this.createOrUpdateModalOpen(0);
+                                            }}
+                                            sx={{
+                                                height: '40px',
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                fontWeight: '400',
+                                                backgroundColor: '#7C3367!important'
+                                            }}>
+                                            Thêm vai trò
+                                        </Button>
+                                    </Box>
+                                </Box>
                             </div>
-                        </Col>
-                    </Row>
-                </div>
-                <div className="page-content pt-2">
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box className="page-content" marginTop="24px" bgcolor="#fff" borderRadius="8px">
                     <table className="h-100 w-100 table table-border-0 table">
                         <thead className="bg-table w-100">
                             <tr style={{ height: '48px' }}>
                                 <th className="text-center">
                                     <input className="text-th-table text-center" type="checkbox" />
                                 </th>
-                                <th className="text-th-table text-center">STT</th>
-                                <th className="text-th-table">Tên vai trò</th>
-                                <th className="text-th-table">Mô tả</th>
-                                <th className="text-th-table">Hành động</th>
+                                <th className="text-th-table fw-bold text-center">STT</th>
+                                <th className="text-th-table fw-bold">Tên vai trò</th>
+                                <th className="text-th-table fw-bold">Mô tả</th>
+                                <th className="text-th-table fw-bold">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -259,28 +313,28 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                         <td className="text-td-table">{item.name}</td>
                                         <td className="text-td-table">{item.description}</td>
                                         <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Space wrap direction="horizontal">
+                                            <Box display="flex" justifyContent="start">
                                                 <Button
-                                                    type="primary"
-                                                    icon={<EditOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             roleId: item.id
                                                         });
                                                         this.createOrUpdateModalOpen(item.id);
                                                     }}
-                                                />
+                                                    sx={{ minWidth: 'unset' }}>
+                                                    <EditIcon />
+                                                </Button>
                                                 <Button
-                                                    danger
-                                                    icon={<DeleteOutlined />}
                                                     onClick={() => {
                                                         this.setState({
                                                             roleId: item.id
                                                         });
                                                         this.onShowDelete();
                                                     }}
-                                                />
-                                            </Space>
+                                                    sx={{ minWidth: 'unset' }}>
+                                                    <DeleteForeverIcon sx={{ color: 'red' }} />
+                                                </Button>
+                                            </Box>
                                         </td>
                                     </tr>
                                 );
@@ -302,10 +356,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Space
-                                        size="middle"
-                                        align="center"
-                                        className="align-items-center">
+                                    <Box className="align-items-center">
                                         <Pagination
                                             total={this.state.totalCount}
                                             pageSize={this.state.maxResultCount}
@@ -313,12 +364,12 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                             current={this.state.currentPage}
                                             onChange={this.handlePageChange}
                                         />
-                                    </Space>
+                                    </Box>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </Box>
                 <CreateOrEditRole
                     visible={this.state.modalVisible}
                     onCancel={() =>
@@ -335,7 +386,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
                     onCancel={this.onShowDelete}></ConfirmDelete>
-            </div>
+            </Box>
         );
     }
 }
