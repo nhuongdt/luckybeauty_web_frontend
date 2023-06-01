@@ -35,6 +35,7 @@ import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../components/abp-custom';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 class CustomerScreen extends React.Component {
     state = {
         rowTable: [],
@@ -188,16 +189,49 @@ class CustomerScreen extends React.Component {
                         />
                         {params.value}
                     </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             },
-            { field: 'soDienThoai', headerName: 'Số điện thoại', minWidth: 114, flex: 1 },
+            {
+                field: 'soDienThoai',
+                headerName: 'Số điện thoại',
+                minWidth: 114,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
             {
                 field: 'tenNhomKhach',
                 headerName: 'Nhóm khách',
                 minWidth: 112,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
-            { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
+            {
+                field: 'gioiTinh',
+                headerName: 'Giới tính',
+                width: 89,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
             {
                 field: 'nhanVienPhuTrach',
                 headerName: 'Nhân viên phục vụ',
@@ -253,6 +287,7 @@ class CustomerScreen extends React.Component {
                 )
             }
         ];
+
         const breadcrumbs = [
             <Typography key="1" color="#999699" fontSize="14px">
                 Khách hàng
@@ -383,6 +418,11 @@ class CustomerScreen extends React.Component {
                         }}
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            }
+                        }}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}
