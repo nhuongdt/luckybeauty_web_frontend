@@ -52,7 +52,7 @@ class StoreDetail extends Component {
     render(): ReactNode {
         const { editCuaHang } = this.state;
         return (
-            <div className="container-fluid bg-white">
+            <div className="bg-white">
                 <form>
                     <div style={{ height: '70px' }}>
                         <Grid container>
