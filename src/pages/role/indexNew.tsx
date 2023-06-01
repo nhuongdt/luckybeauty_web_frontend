@@ -1,67 +1,76 @@
 import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Box, Grid, TextField, Button, Typography, Pagination } from '@mui/material';
-import userService from '../../services/user/userService';
+import { Col, FormInstance, Input, PaginationProps, Row, Space } from 'antd';
+import CreateOrEditRoleNew from './components/create-or-edit-roleNew';
+import { Button, Box, Typography, Grid, TextField, Pagination } from '@mui/material';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '../../images/add.svg';
-import DownloadIcon from '../../images/download.svg';
-import UploadIcon from '../../images/upload.svg';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import EditIcon from '@mui/icons-material/Edit';
+import roleService from '../../services/role/roleService';
+import AddIcon from '../../images/add.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import {
+    DeleteOutlined,
+    DownloadOutlined,
+    EditOutlined,
+    PlusOutlined,
+    SearchOutlined,
+    UploadOutlined
+} from '@ant-design/icons';
+import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
 import '../../custom.css';
-import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
-import CreateOrEditUser from './components/create-or-edit-user';
-import { CreateOrUpdateUserInput } from '../../services/user/dto/createOrUpdateUserInput';
-import SuggestService from '../../services/suggests/SuggestService';
-import { GetRoles } from '../../services/user/dto/getRolesOuput';
-import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import CreateOrEditRole from './components/create-or-edit-role';
+import { GetAllPermissionsOutput } from '../../services/role/dto/getAllPermissionsOutput';
+import RoleEditModel from '../../models/Roles/roleEditModel';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface IUserProps {}
+export interface IRoleProps {}
 
-export interface IUserState {
+export interface IRoleState {
+    showDialog: boolean;
     modalVisible: boolean;
     maxResultCount: number;
     skipCount: number;
-    userId: number;
+    roleId: number;
     filter: string;
-    listUser: GetAllUserOutput[];
+    listRole: GetAllRoleOutput[];
     totalCount: number;
+    allPermissions: GetAllPermissionsOutput[];
+    roleEdit: RoleEditModel;
     currentPage: number;
     totalPage: number;
     startIndex: number;
-    userEdit: CreateOrUpdateUserInput;
     isShowConfirmDelete: boolean;
-    roles: GetRoles[];
-    suggestNhanSu: SuggestNhanSuDto[];
 }
-class UserScreen extends AppComponentBase<IUserProps, IUserState> {
+class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
+    formRef = React.createRef<FormInstance>();
+
     state = {
+        showDialog: false,
         modalVisible: false,
         maxResultCount: 10,
         skipCount: 0,
-        userId: 0,
+        roleId: 0,
         filter: '',
-        listUser: [] as GetAllUserOutput[],
+        listRole: [] as GetAllRoleOutput[],
         totalCount: 0,
+        allPermissions: [] as GetAllPermissionsOutput[],
+        roleEdit: {
+            grantedPermissionNames: [],
+            role: {
+                name: '',
+                displayName: '',
+                description: '',
+                id: 0
+            },
+            permissions: [{ name: '', displayName: '', description: '' }]
+        } as RoleEditModel,
         currentPage: 1,
         totalPage: 0,
         startIndex: 1,
-        userEdit: {
-            userName: '',
-            name: '',
-            surname: '',
-            emailAddress: '',
-            phoneNumber: '',
-            isActive: false,
-            roleNames: [],
-            password: '',
-            id: 0,
-            nhanSuId: ''
-        } as CreateOrUpdateUserInput,
-        isShowConfirmDelete: false,
-        roles: [] as GetRoles[],
-        suggestNhanSu: [] as SuggestNhanSuDto[]
+        isShowConfirmDelete: false
     };
 
     async componentDidMount() {
@@ -69,18 +78,17 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
     }
 
     async getAll() {
-        const users = await userService.getAll({
+        const roles = await roleService.getAll({
             maxResultCount: this.state.maxResultCount,
             skipCount: this.state.skipCount,
             keyword: this.state.filter
         });
-
-        const suggestNhanSu = await SuggestService.SuggestNhanSu();
+        const permissions = await roleService.getAllPermissions();
         this.setState({
-            listUser: users.items,
-            totalCount: users.totalCount,
-            totalPage: Math.ceil(users.totalCount / this.state.maxResultCount),
-            suggestNhanSu: suggestNhanSu
+            listRole: roles.items,
+            totalCount: roles.totalCount,
+            allPermissions: permissions,
+            totalPage: Math.ceil(roles.totalCount / this.state.maxResultCount)
         });
     }
 
@@ -100,45 +108,53 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
     };
 
-    async createOrUpdateModalOpen(entityDto: number) {
-        if (entityDto === 0) {
-            const roles = await userService.getRoles();
-            await this.setState({
-                roles: roles,
-                userEdit: {
-                    userName: '',
-                    name: '',
-                    surname: '',
-                    emailAddress: '',
-                    phoneNumber: '',
-                    isActive: false,
-                    roleNames: [],
-                    password: '',
-                    id: 0,
-                    nhanSuId: ''
-                }
+    async createOrUpdateModalOpen(id: number) {
+        if (id === 0) {
+            this.formRef.current?.resetFields();
+            const allPermission = await roleService.getAllPermissions();
+            this.setState({
+                allPermissions: allPermission
             });
         } else {
-            const user = await userService.get(entityDto);
-            const roles = await userService.getRoles();
-            await this.setState({
-                userEdit: user,
-                roles: roles
+            const roleForEdit = await roleService.getRoleForEdit(id);
+            const allPermission = await roleService.getAllPermissions();
+            this.setState({
+                allPermissions: allPermission,
+                roleId: id,
+                roleEdit: roleForEdit
             });
+            setTimeout(() => {
+                this.formRef.current?.setFieldsValue({
+                    ...roleForEdit.role,
+                    grantedPermissions: roleForEdit.grantedPermissionNames
+                });
+            }, 100);
         }
 
-        this.setState({ userId: entityDto });
+        this.setState({ roleId: id });
         this.Modal();
     }
 
-    delete(input: number) {
-        userService.delete(input);
+    async delete(id: number) {
+        await roleService.delete(id);
         this.getAll();
     }
 
     handleCreate = () => {
-        this.getAll();
-        this.Modal();
+        this.formRef.current?.validateFields().then(async (values: any) => {
+            if (this.state.roleId === 0) {
+                await roleService.create(values);
+            } else {
+                await roleService.update({
+                    id: this.state.roleId,
+                    ...values
+                });
+            }
+
+            await this.getAll();
+            this.setState({ modalVisible: false });
+            this.formRef.current?.resetFields();
+        });
     };
     onShowDelete = () => {
         this.setState({
@@ -146,66 +162,93 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
     };
     onOkDelete = () => {
-        this.delete(this.state.userId);
+        this.delete(this.state.roleId);
         this.onShowDelete();
     };
-    handleSearchChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (
-        event: any
-    ) => {
+    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
+    //     const filter = event.target.value;
+    //     this.setState({ filter: filter }, async () => this.getAll());
+    // };
+    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
         const filter = event.target.value;
-        this.setState({ filter: filter });
+        this.setState({ filter: filter }, async () => this.getAll());
     };
-    render(): React.ReactNode {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            showDialog: false,
+            modalVisible: false,
+            maxResultCount: 10,
+            skipCount: 0,
+            roleId: 0,
+            filter: '',
+            listRole: [] as GetAllRoleOutput[],
+            totalCount: 0,
+            allPermissions: [] as GetAllPermissionsOutput[],
+            roleEdit: {
+                grantedPermissionNames: [],
+                role: {
+                    name: '',
+                    displayName: '',
+                    description: '',
+                    id: 0
+                },
+                permissions: [{ name: '', displayName: '', description: '' }]
+            } as RoleEditModel,
+            currentPage: 1,
+            totalPage: 0,
+            startIndex: 1,
+            isShowConfirmDelete: false
+        };
+    }
+    handleOpenDialog = () => {
+        this.setState({ showDialog: true });
+    };
+
+    handleCloseDialog = () => {
+        this.setState({ showDialog: false });
+    };
+    render() {
+        const { showDialog } = this.state;
         return (
-            <Box
-                sx={{
-                    paddingTop: '22px',
-                    paddingRight: '2.2222222222222223vw',
-                    paddingLeft: '2.2222222222222223vw'
-                }}>
+            <Box paddingLeft="2.2222222222222223vw" paddingRight="2.2222222222222223vw">
                 <Box>
-                    <Grid container justifyContent="space-between" alignItems="center">
+                    <Grid container justifyContent="space-between" paddingTop="22px">
                         <Grid item>
                             <div>
-                                <div>
-                                    <Box display="flex" alignItems="center">
-                                        <Typography variant="body1" fontSize="14px" color="#999699">
-                                            Người dùng
-                                        </Typography>
-                                        <ArrowForwardIosIcon
-                                            fontSize="small"
-                                            sx={{
-                                                width: '12px',
-                                                height: '12px'
-                                            }}
-                                        />
-                                        <Typography variant="body1" fontSize="14px" color="#333233">
-                                            Thông tin người dùng
-                                        </Typography>
-                                    </Box>
-                                </div>
+                                <Box display="flex" alignItems="center">
+                                    <Typography variant="body1" fontSize="14px" color="#999699">
+                                        Vai trò
+                                    </Typography>
+                                    <ArrowForwardIosIcon
+                                        fontSize="small"
+                                        sx={{
+                                            width: '12px',
+                                            height: '12px'
+                                        }}
+                                    />
+                                    <Typography variant="body1" fontSize="14px" color="#333233">
+                                        Thông tin vai trò
+                                    </Typography>
+                                </Box>
                                 <div>
                                     <Typography
                                         variant="h1"
-                                        fontWeight="700"
                                         fontSize="24px"
-                                        sx={{ marginTop: '4px' }}>
-                                        Danh sách người dùng
+                                        color="#0C050A"
+                                        fontWeight="700"
+                                        marginTop="4px">
+                                        Danh sách vai trò
                                     </Typography>
                                 </div>
                             </div>
                         </Grid>
                         <Grid item style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
-                                <Box display="flex" alignItems="center">
-                                    <Box display="flex" gap="8px">
+                                <Box>
+                                    <Box display="flex" alignItems="center" gap="8px">
                                         <TextField
-                                            onKeyDown={(e) => {
-                                                if (e.key == 'Enter') {
-                                                    this.getAll();
-                                                }
-                                            }}
-                                            onChange={this.handleSearchChange}
+                                            onChange={this.handleSearch}
                                             size="small"
                                             sx={{
                                                 borderColor: '#E6E1E6!important',
@@ -215,9 +258,6 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             InputProps={{
                                                 startAdornment: (
                                                     <SearchIcon
-                                                        onClick={() => {
-                                                            this.getAll();
-                                                        }}
                                                         style={{
                                                             marginRight: '8px',
                                                             color: 'gray'
@@ -229,7 +269,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                         <Button
                                             variant="outlined"
                                             size="small"
-                                            startIcon={<img src={DownloadIcon} />}
+                                            startIcon={<DownloadOutlined />}
                                             sx={{
                                                 height: '40px',
                                                 fontSize: '14px',
@@ -243,9 +283,8 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                         </Button>
                                         <Button
                                             variant="outlined"
-                                            className="btn-export"
                                             size="small"
-                                            startIcon={<img src={UploadIcon} />}
+                                            startIcon={<UploadOutlined />}
                                             sx={{
                                                 height: '40px',
                                                 fontSize: '14px',
@@ -262,7 +301,8 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             startIcon={<img src={AddIcon} />}
                                             size="small"
                                             onClick={() => {
-                                                this.createOrUpdateModalOpen(0);
+                                                // this.createOrUpdateModalOpen(0);
+                                                this.handleOpenDialog();
                                             }}
                                             sx={{
                                                 height: '40px',
@@ -271,7 +311,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                                 fontWeight: '400',
                                                 backgroundColor: '#7C3367!important'
                                             }}>
-                                            Thêm người dùng
+                                            Thêm vai trò
                                         </Button>
                                     </Box>
                                 </Box>
@@ -279,62 +319,44 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box
-                    className="page-content"
-                    sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
+                <Box className="page-content" marginTop="24px" bgcolor="#fff" borderRadius="8px">
                     <table className="h-100 w-100 table table-border-0 table">
                         <thead className="bg-table w-100">
                             <tr style={{ height: '48px' }}>
                                 <th className="text-center">
                                     <input className="text-th-table text-center" type="checkbox" />
                                 </th>
-                                <th className="text-th-table">STT</th>
-                                <th className="text-th-table">Tên truy cập</th>
-                                <th className="text-th-table">Họ và tên</th>
-                                <th className="text-th-table">Vai trò</th>
-                                <th className="text-th-table">Địa chỉ email</th>
-                                <th className="text-th-table">Thời gian tạo</th>
-                                <th className="text-th-table">Hành động</th>
+                                <th className="text-th-table fw-bold text-center">STT</th>
+                                <th className="text-th-table fw-bold">Tên vai trò</th>
+                                <th className="text-th-table fw-bold">Mô tả</th>
+                                <th className="text-th-table fw-bold">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.listUser.map((item, index) => {
+                            {this.state.listRole.map((item, index) => {
                                 return (
                                     <tr>
-                                        <td className="text-td-table text-center">
+                                        <td
+                                            className="text-td-table text-center"
+                                            style={{ width: '50px' }}>
                                             <input
                                                 className="text-th-table text-center"
                                                 type="checkbox"
                                             />
                                         </td>
-                                        <td className="text-td-table">{index + 1}</td>
-                                        <td className="text-td-table" title={item['userName']}>
-                                            {item['userName']}
+                                        <td
+                                            className="text-td-table text-center"
+                                            style={{ width: '100px' }}>
+                                            {index + 1}
                                         </td>
-                                        <td className="text-td-table" title={item.fullName}>
-                                            {item.fullName}
-                                        </td>
-                                        <td className="text-td-table">
-                                            {item.roleNames.length > 1
-                                                ? item.roleNames.map((role: any) => {
-                                                      return <span>{role};</span>;
-                                                  })
-                                                : item.roleNames.map((role: any) => {
-                                                      return <span>{role} </span>;
-                                                  })}
-                                        </td>
-                                        <td className="text-td-table" title={item.emailAddress}>
-                                            {item.emailAddress}
-                                        </td>
-                                        <td className="text-td-table">
-                                            {item.creationTime.toString()}
-                                        </td>
+                                        <td className="text-td-table">{item.name}</td>
+                                        <td className="text-td-table">{item.description}</td>
                                         <td className="text-td-table" style={{ width: '150px' }}>
                                             <Box display="flex" justifyContent="start">
                                                 <Button
                                                     onClick={() => {
                                                         this.setState({
-                                                            userId: item.id
+                                                            roleId: item.id
                                                         });
                                                         this.createOrUpdateModalOpen(item.id);
                                                     }}
@@ -344,7 +366,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                                 <Button
                                                     onClick={() => {
                                                         this.setState({
-                                                            userId: item.id
+                                                            roleId: item.id
                                                         });
                                                         this.onShowDelete();
                                                     }}
@@ -373,7 +395,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                     </label>
                                 </div>
                                 <div style={{ float: 'right' }} className="col-7">
-                                    <Box display="flex" className="align-items-center">
+                                    <Box className="align-items-center">
                                         <Pagination
                                             count={Math.ceil(
                                                 this.state.totalCount / this.state.maxResultCount
@@ -396,26 +418,27 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                             </div>
                         </div>
                     </div>
-                    <CreateOrEditUser
-                        visible={this.state.modalVisible}
-                        modalType={
-                            this.state.userId === 0 ? 'Thêm mới tài khoản' : 'Cập nhật tài khoản'
-                        }
-                        formRef={this.state.userEdit}
-                        onCancel={() =>
-                            this.setState({
-                                modalVisible: false
-                            })
-                        }
-                        roles={this.state.roles}
-                        suggestNhanSu={this.state.suggestNhanSu}
-                        userId={this.state.userId}
-                        onOk={this.handleCreate}
-                    />
                 </Box>
+                {/* <CreateOrEditRole
+                    visible={this.state.modalVisible}
+                    onCancel={() =>
+                        this.setState({
+                            modalVisible: false
+                        })
+                    }
+                    modalType={this.state.roleId === 0 ? 'Thêm mới quyền' : 'Cập nhật quyền'}
+                    onOk={this.handleCreate}
+                    permissions={this.state.allPermissions}
+                    formRef={this.formRef}
+                /> */}
+                <CreateOrEditRoleNew open={showDialog} onClose={this.handleCloseDialog} />
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.onShowDelete}></ConfirmDelete>
             </Box>
         );
     }
 }
 
-export default UserScreen;
+export default RoleScreen;
