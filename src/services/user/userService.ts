@@ -14,7 +14,7 @@ class UserService {
     }
 
     public async update(updateUserInput: UpdateUserInput) {
-        const result = await http.post('api/services/app/User/Update', updateUserInput);
+        const result = await http.post('api/services/app/User/UpdateUser', updateUserInput);
         return result.data.result;
     }
 

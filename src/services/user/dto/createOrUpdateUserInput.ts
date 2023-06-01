@@ -3,8 +3,10 @@ export interface CreateOrUpdateUserInput {
     name: string;
     surname: string;
     emailAddress: string;
+    phoneNumber: string;
     isActive: boolean;
     roleNames: string[];
     password: string;
     id: number;
+    nhanSuId: string;
 }

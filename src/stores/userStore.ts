@@ -55,9 +55,11 @@ class UserStore {
             name: '',
             surname: '',
             emailAddress: '',
+            phoneNumber: '',
             isActive: false,
             roleNames: [],
             password: '',
+            nhanSuId: '',
             id: 0
         };
         this.roles = [];

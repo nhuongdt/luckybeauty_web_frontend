@@ -299,12 +299,20 @@ class EmployeeHoliday extends Component {
                         </Typography>
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Box component="form" className="form-search">
+                        <Box className="form-search">
                             <TextField
                                 size="small"
                                 sx={{
                                     backgroundColor: '#FFFAFF',
                                     borderColor: '#CDC9CD!important'
+                                }}
+                                onChange={(e) => {
+                                    this.setState({ filter: e.target.value });
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key == 'Enter') {
+                                        this.getListHoliday();
+                                    }
                                 }}
                                 className="search-field"
                                 variant="outlined"
@@ -312,7 +320,11 @@ class EmployeeHoliday extends Component {
                                 placeholder="Tìm kiếm"
                                 InputProps={{
                                     startAdornment: (
-                                        <IconButton type="submit">
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => {
+                                                this.getListHoliday();
+                                            }}>
                                             <img src={SearchIcon} />
                                         </IconButton>
                                     )

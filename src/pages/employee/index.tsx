@@ -349,13 +349,22 @@ class EmployeeScreen extends React.Component {
                                 onChange={(e) => {
                                     this.setState({ filter: e.target.value });
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key == 'Enter') {
+                                        this.getListNhanVien();
+                                    }
+                                }}
                                 size="small"
                                 className="search-field"
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
                                     startAdornment: (
-                                        <IconButton type="button" onClick={this.getListNhanVien}>
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => {
+                                                this.getListNhanVien();
+                                            }}>
                                             <img src={SearchIcon} />
                                         </IconButton>
                                     )
