@@ -30,6 +30,7 @@ import UploadIcon from '../../../images/upload.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import AppConsts from '../../../lib/appconst';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -42,7 +43,7 @@ class EmployeeHoliday extends Component {
         selectedRowId: null,
         listHoliday: [] as NgayNghiLeDto[],
         createOrEditNgayNghiLe: {
-            id: '',
+            id: AppConsts.guidEmpty,
             tenNgayLe: '',
             tuNgay: new Date(),
             denNgay: new Date()
@@ -85,11 +86,14 @@ class EmployeeHoliday extends Component {
             skipCount: value
         });
     };
-    handleSubmit = () => {
-        console.log('submit');
-    };
-    handleClick = () => {
-        console.log('ok');
+    handleChange = (event: any): void => {
+        const { name, value } = event.target;
+        this.setState({
+            createOrEditNhanSu: {
+                ...this.state.createOrEditNgayNghiLe,
+                [name]: value
+            }
+        });
     };
     handleSearch = () => {
         console.log('ok');
@@ -112,7 +116,7 @@ class EmployeeHoliday extends Component {
         } else {
             this.setState({
                 createOrEditNgayNghiLe: {
-                    id: '',
+                    id: AppConsts.guidEmpty,
                     tenNgayLe: '',
                     tuNgay: new Date(),
                     denNgay: new Date()
@@ -254,7 +258,7 @@ class EmployeeHoliday extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {params.value}
+                            {params.value} ngày
                         </Typography>
                     </Box>
                 )
@@ -295,12 +299,20 @@ class EmployeeHoliday extends Component {
                         </Typography>
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Box component="form" className="form-search">
+                        <Box className="form-search">
                             <TextField
                                 size="small"
                                 sx={{
                                     backgroundColor: '#FFFAFF',
                                     borderColor: '#CDC9CD!important'
+                                }}
+                                onChange={(e) => {
+                                    this.setState({ filter: e.target.value });
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key == 'Enter') {
+                                        this.getListHoliday();
+                                    }
                                 }}
                                 className="search-field"
                                 variant="outlined"
@@ -308,7 +320,11 @@ class EmployeeHoliday extends Component {
                                 placeholder="Tìm kiếm"
                                 InputProps={{
                                     startAdornment: (
-                                        <IconButton type="submit">
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => {
+                                                this.getListHoliday();
+                                            }}>
                                             <img src={SearchIcon} />
                                         </IconButton>
                                     )
@@ -430,8 +446,7 @@ class EmployeeHoliday extends Component {
                     onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditThoiGianNghi
                     visible={this.state.modalVisible}
-                    title="Thêm mới"
-                    onOk={this.handleSubmit}
+                    title={this.state.IdHoliday == '' ? 'Thêm mới' : 'Cập nhật'}
                     onCancel={() => {
                         this.Modal();
                     }}

@@ -20,7 +20,6 @@ import AppConsts from '../../../lib/appconst';
 
 interface CreateOrEditProps {
     visible: boolean;
-    onOk: () => void;
     onCancel: () => void;
     title: React.ReactNode;
     createOrEditDto: CreateOrEditNgayNghiLeDto;
@@ -28,10 +27,10 @@ interface CreateOrEditProps {
 
 class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
     render(): React.ReactNode {
-        const { visible, onOk, onCancel, title, createOrEditDto } = this.props;
+        const { visible, onCancel, title, createOrEditDto } = this.props;
 
         const initialValues = {
-            id: createOrEditDto.id === '' ? AppConsts.guidEmpty : createOrEditDto.id,
+            id: createOrEditDto.id,
             tenNgayLe: createOrEditDto.tenNgayLe,
             tuNgay: createOrEditDto.tuNgay,
             denNgay: createOrEditDto.denNgay

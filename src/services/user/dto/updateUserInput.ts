@@ -3,10 +3,9 @@ export interface UpdateUserInput {
     name: string;
     surname: string;
     emailAddress: string;
+    phoneNumber: string;
     isActive: boolean;
-    fullName: string;
-    lastLoginTime: Date;
-    creationTime: Date;
     roleNames: string[];
     id: number;
+    nhanSuId: string;
 }

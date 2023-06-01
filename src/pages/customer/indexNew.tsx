@@ -283,7 +283,7 @@ class CustomerScreen extends React.Component {
                         </Typography>
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Box component="form" className="form-search">
+                        <Box className="form-search">
                             <TextField
                                 sx={{
                                     backgroundColor: '#FFFAFF',
@@ -294,6 +294,11 @@ class CustomerScreen extends React.Component {
                                 type="search"
                                 onChange={(e) => {
                                     this.setState({ keyword: e.target.value });
+                                }}
+                                onKeyDown={(event) => {
+                                    if (event.key === 'Enter') {
+                                        this.getData();
+                                    }
                                 }}
                                 placeholder="Tìm kiếm"
                                 InputProps={{
@@ -327,6 +332,9 @@ class CustomerScreen extends React.Component {
                             <Button
                                 className="border-color"
                                 variant="outlined"
+                                onClick={() => {
+                                    this.exportToExcel();
+                                }}
                                 startIcon={<img src={UploadIcon} />}
                                 sx={{
                                     textTransform: 'capitalize',

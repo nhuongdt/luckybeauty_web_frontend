@@ -340,7 +340,7 @@ class EmployeeScreen extends React.Component {
                     </Grid>
 
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <Box component="form" className="form-search">
+                        <Box className="form-search">
                             <TextField
                                 sx={{
                                     backgroundColor: '#FFFAFF',
@@ -350,14 +350,22 @@ class EmployeeScreen extends React.Component {
                                 onChange={(e) => {
                                     this.setState({ filter: e.target.value });
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key == 'Enter') {
+                                        this.getListNhanVien();
+                                    }
+                                }}
                                 size="small"
                                 className="search-field"
                                 variant="outlined"
-                                type="search"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
                                     startAdornment: (
-                                        <IconButton type="button" onClick={this.getListNhanVien}>
+                                        <IconButton
+                                            type="button"
+                                            onClick={() => {
+                                                this.getListNhanVien();
+                                            }}>
                                             <img src={SearchIcon} />
                                         </IconButton>
                                     )

@@ -1,7 +1,6 @@
 import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
-import { Box, Grid, TextField, Button, Typography } from '@mui/material';
+import { Box, Grid, TextField, Button, Typography, Pagination } from '@mui/material';
 import userService from '../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
@@ -10,7 +9,6 @@ import UploadIcon from '../../images/upload.svg';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
 import '../../custom.css';
 import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
 import CreateOrEditUser from './components/create-or-edit-user';
@@ -18,6 +16,7 @@ import { CreateOrUpdateUserInput } from '../../services/user/dto/createOrUpdateU
 import SuggestService from '../../services/suggests/SuggestService';
 import { GetRoles } from '../../services/user/dto/getRolesOuput';
 import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IUserProps {}
 
@@ -38,8 +37,6 @@ export interface IUserState {
     suggestNhanSu: SuggestNhanSuDto[];
 }
 class UserScreen extends AppComponentBase<IUserProps, IUserState> {
-    formRef = React.createRef<FormInstance>();
-
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -56,10 +53,12 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
             name: '',
             surname: '',
             emailAddress: '',
+            phoneNumber: '',
             isActive: false,
             roleNames: [],
             password: '',
-            id: 0
+            id: 0,
+            nhanSuId: ''
         } as CreateOrUpdateUserInput,
         isShowConfirmDelete: false,
         roles: [] as GetRoles[],
@@ -86,7 +85,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
     }
 
-    handlePageChange: PaginationProps['onChange'] = (value) => {
+    handlePageChange = (event: any, value: any) => {
         const { maxResultCount } = this.state;
         this.setState({
             currentPage: value,
@@ -104,61 +103,43 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
 
     async createOrUpdateModalOpen(entityDto: number) {
         if (entityDto === 0) {
-            this.formRef.current?.resetFields();
             const roles = await userService.getRoles();
-            this.setState({
+            await this.setState({
                 roles: roles,
                 userEdit: {
                     userName: '',
                     name: '',
                     surname: '',
                     emailAddress: '',
+                    phoneNumber: '',
                     isActive: false,
                     roleNames: [],
                     password: '',
-                    id: 0
+                    id: 0,
+                    nhanSuId: ''
                 }
             });
         } else {
             const user = await userService.get(entityDto);
             const roles = await userService.getRoles();
-            this.setState({
+            await this.setState({
                 userEdit: user,
                 roles: roles
             });
-            setTimeout(() => {
-                this.formRef.current?.setFieldsValue({ ...user });
-            }, 1000);
         }
 
         this.setState({ userId: entityDto });
         this.Modal();
     }
 
-    delete(input: number) {
-        userService.delete(input);
-        this.getAll();
+    async delete(input: number) {
+        await userService.delete(input);
+        await this.getAll();
     }
 
     handleCreate = () => {
-        const form = this.formRef.current;
-
-        form?.validateFields().then(async (values) => {
-            if (this.state.userId === 0) {
-                await userService.create(values);
-            } else {
-                await userService.update({
-                    ...values,
-                    id: this.state.userId,
-                    fullName: values.name + ' ' + values.surname,
-                    lastLoginTime: new Date()
-                });
-            }
-
-            await this.getAll();
-            this.setState({ modalVisible: false });
-            form?.resetFields();
-        });
+        this.getAll();
+        this.Modal();
     };
     onShowDelete = () => {
         this.setState({
@@ -169,13 +150,11 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         this.delete(this.state.userId);
         this.onShowDelete();
     };
-    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
-    //     const filter = event.target.value;
-    //     this.setState({ filter: filter }, async () => this.getAll());
-    // };
-    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
+    handleSearchChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (
+        event: any
+    ) => {
         const filter = event.target.value;
-        this.setState({ filter: filter }, async () => this.getAll());
+        this.setState({ filter: filter });
     };
     render(): React.ReactNode {
         return (
@@ -222,7 +201,12 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                 <Box display="flex" alignItems="center">
                                     <Box display="flex" gap="8px">
                                         <TextField
-                                            onChange={this.handleSearch}
+                                            onKeyDown={(e) => {
+                                                if (e.key == 'Enter') {
+                                                    this.getAll();
+                                                }
+                                            }}
+                                            onChange={this.handleSearchChange}
                                             size="small"
                                             sx={{
                                                 borderColor: '#E6E1E6!important',
@@ -232,6 +216,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             InputProps={{
                                                 startAdornment: (
                                                     <SearchIcon
+                                                        onClick={() => {
+                                                            this.getAll();
+                                                        }}
                                                         style={{
                                                             marginRight: '8px',
                                                             color: 'gray'
@@ -322,8 +309,12 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             />
                                         </td>
                                         <td className="text-td-table">{index + 1}</td>
-                                        <td className="text-td-table">{item['userName']}</td>
-                                        <td className="text-td-table">{item.fullName}</td>
+                                        <td className="text-td-table" title={item['userName']}>
+                                            {item['userName']}
+                                        </td>
+                                        <td className="text-td-table" title={item.fullName}>
+                                            {item.fullName}
+                                        </td>
                                         <td className="text-td-table">
                                             {item.roleNames.length > 1
                                                 ? item.roleNames.map((role: any) => {
@@ -333,7 +324,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                                       return <span>{role} </span>;
                                                   })}
                                         </td>
-                                        <td className="text-td-table">{item.emailAddress}</td>
+                                        <td className="text-td-table" title={item.emailAddress}>
+                                            {item.emailAddress}
+                                        </td>
                                         <td className="text-td-table">
                                             {item.creationTime.toString()}
                                         </td>
@@ -383,11 +376,21 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                 <div style={{ float: 'right' }} className="col-7">
                                     <Box display="flex" className="align-items-center">
                                         <Pagination
-                                            total={this.state.totalCount}
-                                            pageSize={this.state.maxResultCount}
-                                            defaultCurrent={this.state.currentPage}
-                                            current={this.state.currentPage}
+                                            count={Math.ceil(
+                                                this.state.totalCount / this.state.maxResultCount
+                                            )}
+                                            page={this.state.currentPage}
                                             onChange={this.handlePageChange}
+                                            sx={{
+                                                '& button': {
+                                                    borderRadius: '4px',
+                                                    lineHeight: '1'
+                                                },
+                                                '& .Mui-selected': {
+                                                    backgroundColor: '#7C3367!important',
+                                                    color: '#fff'
+                                                }
+                                            }}
                                         />
                                     </Box>
                                 </div>
@@ -399,7 +402,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         modalType={
                             this.state.userId === 0 ? 'Thêm mới tài khoản' : 'Cập nhật tài khoản'
                         }
-                        formRef={this.formRef}
+                        formRef={this.state.userEdit}
                         onCancel={() =>
                             this.setState({
                                 modalVisible: false
@@ -410,6 +413,10 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         userId={this.state.userId}
                         onOk={this.handleCreate}
                     />
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDelete}></ConfirmDelete>
                 </Box>
             </Box>
         );

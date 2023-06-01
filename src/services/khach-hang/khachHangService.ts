@@ -7,7 +7,7 @@ import http from '../httpService';
 import { CreateOrEditKhachHangDto } from './dto/CreateOrEditKhachHangDto';
 import { KhachHangDto } from './dto/KhachHangDto';
 import Utils from '../../utils/utils';
-import { FileDto } from '../dto/FileDto';
+import { FileDto, IFileDto } from '../dto/FileDto';
 
 class KhachHangService {
     public async getAll(
@@ -31,9 +31,9 @@ class KhachHangService {
         const result = await http.post(`api/services/app/KhachHang/Delete?id=${id}`);
         return result.data.result;
     }
-    public async exportDanhSach(input: PagedKhachHangResultRequestDto): Promise<FileDto> {
-        const result = await http.post(`api/services/app/KhachHang/ExportDanhSach`, input);
-        return result.data.result;
+    public async exportDanhSach(input: PagedKhachHangResultRequestDto): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/KhachHang/ExportDanhSach`, input);
+        return response.data.result;
     }
     jqAutoCustomer = async (input: PagedKhachHangResultRequestDto) => {
         const result = await http.post(`api/services/app/KhachHang/JqAutoCustomer`, input);
