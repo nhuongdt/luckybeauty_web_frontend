@@ -16,6 +16,7 @@ import { CreateOrUpdateUserInput } from '../../services/user/dto/createOrUpdateU
 import SuggestService from '../../services/suggests/SuggestService';
 import { GetRoles } from '../../services/user/dto/getRolesOuput';
 import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IUserProps {}
 
@@ -131,9 +132,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         this.Modal();
     }
 
-    delete(input: number) {
-        userService.delete(input);
-        this.getAll();
+    async delete(input: number) {
+        await userService.delete(input);
+        await this.getAll();
     }
 
     handleCreate = () => {
@@ -412,6 +413,10 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         userId={this.state.userId}
                         onOk={this.handleCreate}
                     />
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDelete}></ConfirmDelete>
                 </Box>
             </Box>
         );

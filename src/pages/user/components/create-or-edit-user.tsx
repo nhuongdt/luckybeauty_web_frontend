@@ -74,8 +74,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     roleNames: values.roleNames
                 });
             }
-
-            console.log(values);
             onOk();
         } catch (error) {
             console.error(error);
@@ -296,9 +294,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {errors.phoneNumber &&
-                                                        touched.phoneNumber &&
-                                                        errors.phoneNumber}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <label
@@ -376,6 +371,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         name="isActive"
                                                         value={values.isActive}
                                                         onChange={handleChange}
+                                                        checked={values.isActive}
                                                         control={<Checkbox />}
                                                         label="Kích hoạt"
                                                     />
@@ -430,7 +426,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                         <Button
                                             variant="contained"
                                             size="small"
-                                            type="submit"
+                                            type="button"
+                                            onClick={() => {
+                                                this.handleSubmit(values);
+                                            }}
                                             sx={{ backgroundColor: '#7C3367!important' }}>
                                             Lưu
                                         </Button>
