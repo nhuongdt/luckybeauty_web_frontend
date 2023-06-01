@@ -185,7 +185,8 @@ class EmployeeScreen extends React.Component {
                         fontWeight="400"
                         variant="h6"
                         color="#333233"
-                        lineHeight="16px">
+                        lineHeight="16px"
+                        title={params.value}>
                         {params.value}
                     </Typography>
                 </Box>

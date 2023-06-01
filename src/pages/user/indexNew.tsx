@@ -367,8 +367,12 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                             />
                                         </td>
                                         <td className="text-td-table">{index + 1}</td>
-                                        <td className="text-td-table">{item['userName']}</td>
-                                        <td className="text-td-table">{item.fullName}</td>
+                                        <td className="text-td-table" title={item['userName']}>
+                                            {item['userName']}
+                                        </td>
+                                        <td className="text-td-table" title={item.fullName}>
+                                            {item.fullName}
+                                        </td>
                                         <td className="text-td-table">
                                             {item.roleNames.length > 1
                                                 ? item.roleNames.map((role: any) => {
@@ -378,7 +382,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                                       return <span>{role} </span>;
                                                   })}
                                         </td>
-                                        <td className="text-td-table">{item.emailAddress}</td>
+                                        <td className="text-td-table" title={item.emailAddress}>
+                                            {item.emailAddress}
+                                        </td>
                                         <td className="text-td-table">
                                             {item.creationTime.toString()}
                                         </td>

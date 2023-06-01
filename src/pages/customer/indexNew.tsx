@@ -178,7 +178,9 @@ class CustomerScreen extends React.Component {
                 minWidth: 185,
                 flex: 1,
                 renderCell: (params) => (
-                    <Box style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}>
+                    <Box
+                        style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}
+                        title={params.value}>
                         <Avatar
                             src={params.row.avatar}
                             alt="Avatar"
