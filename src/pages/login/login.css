@@ -236,3 +236,13 @@
     background: #f2f6fa;
     border-radius: 6px;
 }
+
+@media (max-width: 576px) {
+    .login-page {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+    .logo-login {
+        padding-left: 24px;
+    }
+}
