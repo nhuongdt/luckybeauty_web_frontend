@@ -1,6 +1,7 @@
 import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Box, Grid, TextField, Button, Typography, Pagination } from '@mui/material';
+import { Box, Grid, TextField, Button, Typography, Pagination, IconButton } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import userService from '../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
@@ -17,6 +18,9 @@ import SuggestService from '../../services/suggests/SuggestService';
 import { GetRoles } from '../../services/user/dto/getRolesOuput';
 import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { TextTranslate } from '../../components/TableLanguage';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IUserProps {}
 
@@ -37,6 +41,8 @@ export interface IUserState {
     suggestNhanSu: SuggestNhanSuDto[];
 }
 class UserScreen extends AppComponentBase<IUserProps, IUserState> {
+    rows;
+    columns;
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -62,7 +68,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         } as CreateOrUpdateUserInput,
         isShowConfirmDelete: false,
         roles: [] as GetRoles[],
-        suggestNhanSu: [] as SuggestNhanSuDto[]
+        suggestNhanSu: [] as SuggestNhanSuDto[],
+        anchorEl: null,
+        selectedRowId: null
     };
 
     async componentDidMount() {
@@ -156,6 +164,123 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         const filter = event.target.value;
         this.setState({ filter: filter });
     };
+
+    constructor(props: any) {
+        super(props);
+        this.columns = [
+            {
+                field: 'id',
+                headerName: 'ID',
+                minWidth: 50,
+                flex: 1,
+                renderCell: (params: any) => (
+                    <Typography variant="caption" fontSize="14px" title={params.value}>
+                        {params.value}
+                    </Typography>
+                ),
+                renderHeader: (params: any) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'nameLogin',
+                headerName: 'Tên đăng nhập',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'name',
+                headerName: 'Họ và tên',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'role',
+                headerName: 'Vai trò',
+                minWidth: 100,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'email',
+                headerName: 'Địa chỉ email',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'creationTime',
+                headerName: 'Thời gian tạo',
+                minWidth: 150,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'action',
+                headerName: 'Hành động',
+                maxWidth: 40,
+                flex: 1,
+                disableColumnMenu: true,
+                renderCell: (params: any) => (
+                    <IconButton
+                        aria-label="Actions"
+                        aria-controls={`actions-menu-${params.row.id}`}
+                        aria-haspopup="true">
+                        <MoreHorizIcon />
+                    </IconButton>
+                ),
+                renderHeader: (params: any) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            }
+        ];
+
+        this.rows = [
+            {
+                id: 1,
+                nameLogin: 'admin',
+                name: 'John Doe',
+                role: 'siêu nhân màu vàng ',
+                creationTime: '	2023-05-23T14:56:31.5545361',
+                email: 'john.doe@example.com'
+            },
+            { id: 2, name: 'Jane Smith', age: 32, email: 'jane.smith@example.com' }
+            // Add more rows as needed
+        ];
+    }
     render(): React.ReactNode {
         return (
             <Box
@@ -283,8 +408,10 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 <Box
                     className="page-content"
                     sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
-                    <Box sx={{ overflowX: 'auto' }}>
-                        <table className="h-100 w-100 table table-border-0 table">
+                    <Box sx={{ height: '500px' }}>
+                        <table
+                            className="h-100 w-100 table table-border-0 table"
+                            style={{ display: 'none' }}>
                             <thead className="bg-table w-100">
                                 <tr style={{ height: '48px' }}>
                                     <th className="text-center">
@@ -375,6 +502,29 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                 })}
                             </tbody>
                         </table>
+                        <DataGrid
+                            columns={this.columns}
+                            rows={this.rows}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { page: 0, pageSize: 5 }
+                                }
+                            }}
+                            pageSizeOptions={[5, 10]}
+                            checkboxSelection
+                            sx={{
+                                '& .MuiDataGrid-iconButtonContainer': {
+                                    display: 'none'
+                                },
+                                '& .MuiDataGrid-columnHeaders': {
+                                    backgroundColor: '#F2EBF0'
+                                },
+                                '& p': {
+                                    mb: 0
+                                }
+                            }}
+                            localeText={TextTranslate}
+                        />
                     </Box>
                     <div className="row">
                         <div className="col-6" style={{ float: 'left' }}></div>

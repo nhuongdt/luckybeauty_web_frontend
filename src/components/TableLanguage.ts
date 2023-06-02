@@ -19,7 +19,13 @@ export const TextTranslate = {
     filterOperatorIsEmpty: 'Rỗng',
     filterOperatorIsNotEmpty: 'Không trống',
     filterOperatorIsAnyOf: 'Là bất kỳ trong',
+    toolbarPaginationLabelRowsPerPage: 'Số hàng mỗi trang:',
     filterPanelColumns: 'Cột',
     filterPanelInputLabel: 'Giá trị',
-    filterPanelInputPlaceholder: 'Nhập giá trị để tìm kiếm'
+    filterPanelInputPlaceholder: 'Nhập giá trị để tìm kiếm',
+    // Rows selected footer text
+    footerRowSelected: (count: number) =>
+        count !== 1
+            ? `${count.toLocaleString()} Hàng được chọn`
+            : `${count.toLocaleString()} Hàng được chọn `
 };

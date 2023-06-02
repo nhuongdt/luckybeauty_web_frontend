@@ -339,7 +339,6 @@ class EmployeeScreen extends React.Component {
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
-
             renderCell: (params) => (
                 <IconButton
                     aria-label="Actions"
