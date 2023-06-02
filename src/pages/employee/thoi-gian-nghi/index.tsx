@@ -31,6 +31,7 @@ import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import AppConsts from '../../../lib/appconst';
+import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -199,7 +200,13 @@ class EmployeeHoliday extends Component {
             {
                 field: 'tenNgayLe',
                 headerName: 'Tên ngày lễ',
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'tuNgay',
@@ -217,6 +224,12 @@ class EmployeeHoliday extends Component {
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
@@ -236,6 +249,12 @@ class EmployeeHoliday extends Component {
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
@@ -260,6 +279,12 @@ class EmployeeHoliday extends Component {
                             lineHeight="16px">
                             {params.value} ngày
                         </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
@@ -391,6 +416,14 @@ class EmployeeHoliday extends Component {
                         }}
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeadersInner': {
+                                backgroundColor: '#F2EBF0'
+                            }
+                        }}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}

@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useState } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
+
 import { format, isValid } from 'date-fns';
 import {
     Button,
@@ -236,13 +237,25 @@ class CustomerScreen extends React.Component {
                 field: 'nhanVienPhuTrach',
                 headerName: 'Nhân viên phục vụ',
                 minWidth: 185,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'tongChiTieu',
                 headerName: 'Tổng chi tiêu',
                 minWidth: 113,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'cuocHenGanNhat',
@@ -254,7 +267,13 @@ class CustomerScreen extends React.Component {
                     </Box>
                 ),
                 minWidth: 128,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'tenNguonKhach',
@@ -265,6 +284,12 @@ class CustomerScreen extends React.Component {
                     <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
                         {params.value}
                     </div>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             },
             {
@@ -284,6 +309,12 @@ class CustomerScreen extends React.Component {
                         }}>
                         <MoreHorizIcon />
                     </IconButton>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             }
         ];
