@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useState } from 'react';
-import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
-
+import { DataGrid, GridColDef, useGridApiRef, GridLocaleText } from '@mui/x-data-grid';
+import { TextTranslate } from '../../components/TableLanguage';
 import { format, isValid } from 'date-fns';
 import {
     Button,
@@ -37,6 +37,7 @@ import CreateOrEditCustomerDialog from './components/create-or-edit-customer-mod
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../components/abp-custom';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+
 class CustomerScreen extends React.Component {
     state = {
         rowTable: [],
@@ -294,24 +295,26 @@ class CustomerScreen extends React.Component {
             },
             {
                 field: 'actions',
-                headerName: '',
+                headerName: 'Hành động',
                 maxWidth: 48,
                 flex: 1,
                 disableColumnMenu: true,
 
                 renderCell: (params) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true"
-                        onClick={(event) => {
-                            this.handleOpenMenu(event, params.row.id);
-                        }}>
-                        <MoreHorizIcon />
-                    </IconButton>
+                    <Box>
+                        <IconButton
+                            aria-label="Actions"
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box sx={{ display: 'none' }}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
@@ -454,6 +457,7 @@ class CustomerScreen extends React.Component {
                                 display: 'none'
                             }
                         }}
+                        localeText={TextTranslate}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}

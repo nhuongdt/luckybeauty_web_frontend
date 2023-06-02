@@ -43,7 +43,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
-
+import { TextTranslate } from '../../components/TableLanguage';
 /* custom component */
 
 import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
@@ -445,7 +445,7 @@ export default function PageProductNew() {
         },
         {
             field: 'actions',
-            headerName: '#',
+            headerName: 'Hành động',
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
@@ -460,7 +460,7 @@ export default function PageProductNew() {
                 </IconButton>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box sx={{ display: 'none' }}>
                     {params.colDef.headerName}
                     <IconSorting className="custom-icon" />{' '}
                 </Box>
@@ -607,6 +607,7 @@ export default function PageProductNew() {
                                         display: 'none'
                                     }
                                 }}
+                                localeText={TextTranslate}
                             />
                             <ActionViewEditDelete
                                 elmHTML={anchorEl}

@@ -32,6 +32,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import AppConsts from '../../../lib/appconst';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
+import { TextTranslate } from '../../../components/TableLanguage';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -290,7 +291,7 @@ class EmployeeHoliday extends Component {
             },
             {
                 field: 'actions',
-                headerName: '',
+                headerName: 'Hành động',
                 // width: 48,
                 flex: 0.3,
                 disableColumnMenu: true,
@@ -303,6 +304,12 @@ class EmployeeHoliday extends Component {
                         onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
                         <MoreHorizIcon />
                     </IconButton>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             }
         ];
@@ -424,6 +431,7 @@ class EmployeeHoliday extends Component {
                                 backgroundColor: '#F2EBF0'
                             }
                         }}
+                        localeText={TextTranslate}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}

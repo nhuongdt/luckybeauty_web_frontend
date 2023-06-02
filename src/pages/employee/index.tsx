@@ -37,6 +37,7 @@ import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { observer } from 'mobx-react';
 import Stores from '../../stores/storeIdentifier';
 import NhanVienStore from '../../stores/nhanVienStore';
+import { TextTranslate } from '../../components/TableLanguage';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
@@ -334,7 +335,7 @@ class EmployeeScreen extends React.Component {
         },
         {
             field: 'actions',
-            headerName: '',
+            headerName: 'Hành động',
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
@@ -347,6 +348,12 @@ class EmployeeScreen extends React.Component {
                     onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
                     <MoreHorizIcon />
                 </IconButton>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ display: 'none' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         }
     ];
@@ -484,6 +491,7 @@ class EmployeeScreen extends React.Component {
                                 display: 'none'
                             }
                         }}
+                        localeText={TextTranslate}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}
