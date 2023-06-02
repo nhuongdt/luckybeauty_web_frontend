@@ -1,25 +1,15 @@
-const rules = {
-    tenancyName: [{ required: true, message: 'This FieldIs Required' }],
-    name: [{ required: false, message: 'This Field Is Required' }],
-    adminEmailAddress: [
-        { required: true, message: 'This Field Is Required' },
-        {
-            type: 'email',
-            message: 'The input is not valid E-mail!'
-        }
-    ],
-    password: [{ required: true, message: 'This Field Is Required' }],
-    confirmPassword: [
-        { required: true, message: 'This Field Is Required' }
-        // ({ getFieldValue }:AnyObject) => ({
-        //   validator(_: any, value: any) {
-        //     if (!value || getFieldValue('password') === value) {
-        //       return Promise.resolve();
-        //     }
-        //     return Promise.reject(new Error('Passwords do not match'));
-        //   },
-        // }),
-    ]
-};
+import * as Yup from 'yup';
+
+const rules = Yup.object().shape({
+    tenancyName: Yup.string().required('Id cửa hàng không được để trống'),
+    name: Yup.string(),
+    adminEmailAddress: Yup.string()
+        .email('Email không đúng dịnh dạng')
+        .required('Email không được để trống')
+    // password: Yup.string().required('This Field Is Required'),
+    // confirmPassword: Yup.string()
+    //     .oneOf([Yup.ref('password'), ''], 'Passwords do not match')
+    //     .required('This Field Is Required')
+});
 
 export default rules;

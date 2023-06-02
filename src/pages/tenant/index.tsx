@@ -1,7 +1,6 @@
 import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
-import { Box, Grid, Typography, TextField, Button } from '@mui/material';
+import { Box, Grid, Typography, TextField, Button, Pagination } from '@mui/material';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -12,17 +11,9 @@ import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import {
-    DeleteOutlined,
-    DownloadOutlined,
-    EditOutlined,
-    PlusOutlined,
-    SearchOutlined,
-    UploadOutlined
-} from '@ant-design/icons';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
-import TenantModel from '../../models/Tenants/TenantModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import CreateTenantInput from '../../services/tenant/dto/createTenantInput';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -37,11 +28,10 @@ export interface ITenantState {
     currentPage: number;
     totalPage: number;
     startIndex: number;
-    createOrEditTenant: TenantModel;
+    createOrEditTenant: CreateTenantInput;
     isShowConfirmDelete: boolean;
 }
 class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
-    formRef = React.createRef<FormInstance>();
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -53,7 +43,13 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         currentPage: 1,
         totalPage: 0,
         startIndex: 1,
-        createOrEditTenant: { id: 0, isActive: true, name: '', tenancyName: '' } as TenantModel,
+        createOrEditTenant: {
+            isActive: true,
+            name: '',
+            adminEmailAddress: '',
+            connectionString: '',
+            tenancyName: ''
+        } as CreateTenantInput,
         isShowConfirmDelete: false
     };
 
@@ -74,12 +70,12 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         });
     }
 
-    handlePageChange: PaginationProps['onChange'] = (page) => {
+    handlePageChange = (event: any, value: any) => {
         const { maxResultCount } = this.state;
         this.setState({
-            currentPage: page,
-            skipCount: page,
-            startIndex: (page - 1 <= 0 ? 0 : page - 1) * maxResultCount
+            currentPage: value,
+            skipCount: value,
+            startIndex: (value - 1 <= 0 ? 0 : value - 1) * maxResultCount
         });
         this.getAll();
     };
@@ -92,24 +88,25 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
 
     createOrUpdateModalOpen = async (entityDto: number) => {
         if (entityDto === 0) {
-            this.formRef.current?.resetFields();
-            this.setState({
-                createOrEditTenant: { id: 0, isActive: true, name: '', tenancyName: '' }
+            await this.setState({
+                createOrEditTenant: {
+                    isActive: true,
+                    name: '',
+                    adminEmailAddress: '',
+                    connectionString: '',
+                    tenancyName: ''
+                }
             });
         } else {
             const createOrEdit = await tenantService.get(entityDto);
-            this.setState({
+            await this.setState({
                 createOrEditTenant: {
-                    id: entityDto,
                     isActive: createOrEdit.isActive,
                     name: createOrEdit.name,
-                    tenancyName: createOrEdit.tenancyName
+                    tenancyName: createOrEdit.tenancyName,
+                    adminEmailAddress: '',
+                    connectionString: ''
                 }
-            });
-            setTimeout(() => {
-                this.formRef.current?.setFieldsValue({
-                    ...createOrEdit
-                });
             });
         }
 
@@ -130,21 +127,9 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         this.getAll();
     }
 
-    handleCreate = async () => {
-        this.formRef.current?.validateFields().then(async (values: any) => {
-            if (this.state.tenantId === 0) {
-                await tenantService.create(values);
-            } else {
-                await tenantService.update({
-                    id: this.state.tenantId,
-                    ...values
-                });
-            }
-
-            await this.getAll();
-            this.setState({ modalVisible: false });
-            this.formRef.current?.resetFields();
-        });
+    handleCreate = () => {
+        this.getAll();
+        this.Modal();
     };
 
     // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
@@ -349,11 +334,21 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                                 <div style={{ float: 'right' }} className="col-7">
                                     <Box className="align-items-center">
                                         <Pagination
-                                            total={this.state.totalCount}
-                                            pageSize={this.state.maxResultCount}
-                                            defaultCurrent={this.state.currentPage}
-                                            current={this.state.currentPage}
+                                            count={Math.ceil(
+                                                this.state.totalCount / this.state.maxResultCount
+                                            )}
+                                            page={this.state.currentPage}
                                             onChange={this.handlePageChange}
+                                            sx={{
+                                                '& button': {
+                                                    borderRadius: '4px',
+                                                    lineHeight: '1'
+                                                },
+                                                '& .Mui-selected': {
+                                                    backgroundColor: '#7C3367!important',
+                                                    color: '#fff'
+                                                }
+                                            }}
                                         />
                                     </Box>
                                 </div>
@@ -362,15 +357,16 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                     </div>
                 </Box>
                 <CreateOrEditTenant
-                    formRef={this.formRef}
+                    formRef={this.state.createOrEditTenant}
                     visible={this.state.modalVisible}
                     modalType={this.state.tenantId === 0 ? 'Thêm mới tenant' : 'Cập nhật tenant'}
                     tenantId={this.state.tenantId}
-                    onCancel={() =>
+                    onCancel={async () => {
                         this.setState({
                             modalVisible: false
-                        })
-                    }
+                        });
+                        await this.getAll();
+                    }}
                     onOk={this.handleCreate}
                 />
                 <ConfirmDelete

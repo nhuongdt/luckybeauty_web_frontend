@@ -1,29 +1,22 @@
-import React, { FormEventHandler, ChangeEventHandler } from 'react';
+import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Col, FormInstance, Input, Pagination, PaginationProps, Row, Space } from 'antd';
-import { Button, Box, Typography, Grid, TextField } from '@mui/material';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { Button, Box, Typography, Grid, TextField, Pagination } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import roleService from '../../services/role/roleService';
 import AddIcon from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import {
-    DeleteOutlined,
-    DownloadOutlined,
-    EditOutlined,
-    PlusOutlined,
-    SearchOutlined,
-    UploadOutlined
-} from '@ant-design/icons';
 import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
 import '../../custom.css';
-import CreateOrEditRole from './components/create-or-edit-role';
 import { GetAllPermissionsOutput } from '../../services/role/dto/getAllPermissionsOutput';
 import RoleEditModel from '../../models/Roles/roleEditModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { DownloadOutlined, UploadOutlined } from '@mui/icons-material';
+import CreateOrEditRoleModal from './components/create-or-edit-role';
+import { PermissionTree } from '../../services/role/dto/permissionTree';
+import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -35,16 +28,14 @@ export interface IRoleState {
     filter: string;
     listRole: GetAllRoleOutput[];
     totalCount: number;
-    allPermissions: GetAllPermissionsOutput[];
-    roleEdit: RoleEditModel;
+    permissionTree: PermissionTree[];
+    roleEdit: CreateOrEditRoleDto;
     currentPage: number;
     totalPage: number;
     startIndex: number;
     isShowConfirmDelete: boolean;
 }
 class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
-    formRef = React.createRef<FormInstance>();
-
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -53,17 +44,14 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         filter: '',
         listRole: [] as GetAllRoleOutput[],
         totalCount: 0,
-        allPermissions: [] as GetAllPermissionsOutput[],
+        permissionTree: [] as PermissionTree[],
         roleEdit: {
+            description: '',
+            displayName: '',
+            name: '',
             grantedPermissionNames: [],
-            role: {
-                name: '',
-                displayName: '',
-                description: '',
-                id: 0
-            },
-            permissions: [{ name: '', displayName: '', description: '' }]
-        } as RoleEditModel,
+            id: 0
+        } as CreateOrEditRoleDto,
         currentPage: 1,
         totalPage: 0,
         startIndex: 1,
@@ -80,16 +68,16 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
             skipCount: this.state.skipCount,
             keyword: this.state.filter
         });
-        const permissions = await roleService.getAllPermissions();
+        const permissionTree = await roleService.getAllPermissionTree();
         this.setState({
             listRole: roles.items,
             totalCount: roles.totalCount,
-            allPermissions: permissions,
+            permissionTree: permissionTree,
             totalPage: Math.ceil(roles.totalCount / this.state.maxResultCount)
         });
     }
 
-    handlePageChange: PaginationProps['onChange'] = (value) => {
+    handlePageChange = (event: any, value: any) => {
         const { maxResultCount } = this.state;
         this.setState({
             currentPage: value,
@@ -107,25 +95,18 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
 
     async createOrUpdateModalOpen(id: number) {
         if (id === 0) {
-            this.formRef.current?.resetFields();
-            const allPermission = await roleService.getAllPermissions();
-            this.setState({
-                allPermissions: allPermission
+            const allPermission = await roleService.getAllPermissionTree();
+            await this.setState({
+                permissionTree: allPermission
             });
         } else {
             const roleForEdit = await roleService.getRoleForEdit(id);
-            const allPermission = await roleService.getAllPermissions();
-            this.setState({
-                allPermissions: allPermission,
+            const allPermission = await roleService.getAllPermissionTree();
+            await this.setState({
+                permissionTree: allPermission,
                 roleId: id,
                 roleEdit: roleForEdit
             });
-            setTimeout(() => {
-                this.formRef.current?.setFieldsValue({
-                    ...roleForEdit.role,
-                    grantedPermissions: roleForEdit.grantedPermissionNames
-                });
-            }, 100);
         }
 
         this.setState({ roleId: id });
@@ -138,20 +119,8 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
     }
 
     handleCreate = () => {
-        this.formRef.current?.validateFields().then(async (values: any) => {
-            if (this.state.roleId === 0) {
-                await roleService.create(values);
-            } else {
-                await roleService.update({
-                    id: this.state.roleId,
-                    ...values
-                });
-            }
-
-            await this.getAll();
-            this.setState({ modalVisible: false });
-            this.formRef.current?.resetFields();
-        });
+        this.getAll();
+        this.setState({ modalVisible: false });
     };
     onShowDelete = () => {
         this.setState({
@@ -358,11 +327,19 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                 <div style={{ float: 'right' }} className="col-7">
                                     <Box className="align-items-center">
                                         <Pagination
-                                            total={this.state.totalCount}
-                                            pageSize={this.state.maxResultCount}
-                                            defaultCurrent={this.state.currentPage}
-                                            current={this.state.currentPage}
+                                            count={this.state.totalPage}
+                                            page={this.state.currentPage}
                                             onChange={this.handlePageChange}
+                                            sx={{
+                                                '& button': {
+                                                    borderRadius: '4px',
+                                                    lineHeight: '1'
+                                                },
+                                                '& .Mui-selected': {
+                                                    backgroundColor: '#7C3367!important',
+                                                    color: '#fff'
+                                                }
+                                            }}
                                         />
                                     </Box>
                                 </div>
@@ -370,7 +347,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                         </div>
                     </div>
                 </Box>
-                <CreateOrEditRole
+                <CreateOrEditRoleModal
                     visible={this.state.modalVisible}
                     onCancel={() =>
                         this.setState({
@@ -379,8 +356,8 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                     }
                     modalType={this.state.roleId === 0 ? 'Thêm mới quyền' : 'Cập nhật quyền'}
                     onOk={this.handleCreate}
-                    permissions={this.state.allPermissions}
-                    formRef={this.formRef}
+                    permissionTree={this.state.permissionTree}
+                    formRef={this.state.roleEdit}
                 />
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}

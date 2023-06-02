@@ -227,7 +227,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {errors.name && touched.name && errors.name}
+                                                    {touched.name && errors.name && (
+                                                        <div>{errors.name}</div>
+                                                    )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <label style={{ fontSize: '14px' }}>
@@ -248,9 +250,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {errors.surname &&
-                                                        touched.surname &&
-                                                        errors.surname}
+                                                    {touched.surname && errors.surname && (
+                                                        <div>{errors.surname}</div>
+                                                    )}
                                                 </FormGroup>
                                             </Grid>
                                             <Grid
@@ -278,9 +280,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {errors.emailAddress &&
-                                                        touched.emailAddress &&
-                                                        errors.emailAddress}
+                                                    {touched.emailAddress &&
+                                                        errors.emailAddress && (
+                                                            <div>{errors.emailAddress}</div>
+                                                        )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <label style={{ fontSize: '14px' }}>
@@ -294,6 +297,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
+                                                    {touched.phoneNumber && errors.phoneNumber && (
+                                                        <div>{errors.phoneNumber}</div>
+                                                    )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <label
@@ -316,9 +322,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {errors.userName &&
-                                                        touched.userName &&
-                                                        errors.userName}
+                                                    {touched.userName && errors.userName && (
+                                                        <div>{errors.userName}</div>
+                                                    )}
                                                 </FormGroup>
                                                 {userId === 0 ? (
                                                     <>
@@ -341,9 +347,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 fullWidth
                                                                 size="small"
                                                             />
-                                                            {errors.password &&
-                                                                touched.password &&
-                                                                errors.password}
+                                                            {touched.password &&
+                                                                errors.password && (
+                                                                    <div>{errors.password}</div>
+                                                                )}
                                                         </FormGroup>
                                                         <FormGroup>
                                                             <label

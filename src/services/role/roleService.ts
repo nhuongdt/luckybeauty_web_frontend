@@ -1,34 +1,24 @@
-import { CreateRoleInput } from './dto/createRoleInput';
-import { CreateRoleOutput } from './dto/createRoleOutput';
-import { EntityDto } from '../dto/entityDto';
 import { GetAllRoleOutput } from './dto/getAllRoleOutput';
 import { GetRoleAsyncInput } from './dto/getRolesAsyncInput';
 import GetRoleAsyncOutput from './dto/getRoleAsyncOutput';
 import { GetRoleForEditOutput } from './dto/getRoleForEditOutput';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import { PagedRoleResultRequestDto } from './dto/PagedRoleResultRequestDto';
-import { UpdateRoleInput } from './dto/updateRoleInput';
-import { UpdateRoleOutput } from './dto/updateRoleOutput';
 import http from '../httpService';
+import { PermissionTree } from './dto/permissionTree';
+import { CreateOrEditRoleDto } from './dto/createOrEditRoleDto';
+import { RoleDto } from './dto/roleDto';
 
 class RoleService {
-    public async create(
-        createRoleInput: CreateRoleInput
-    ): Promise<PagedResultDto<CreateRoleOutput>> {
-        const result = await http.post('api/services/app/Role/Create', createRoleInput);
+    public async createOrEdit(input: CreateOrEditRoleDto): Promise<RoleDto> {
+        const result = await http.post('api/services/app/Role/CreateOrUpdateRole', input);
         return result.data.result;
     }
-
     public async getRolesAsync(getRoleAsyncInput: GetRoleAsyncInput): Promise<GetRoleAsyncOutput> {
         const result = await http.get('api/services/app/Role/GetRolesAsync', {
             params: getRoleAsyncInput
         });
         return result.data.result;
-    }
-
-    public async update(updateRoleInput: UpdateRoleInput): Promise<UpdateRoleOutput> {
-        const result = await http.post('api/services/app/Role/UpdateRole', updateRoleInput);
-        return result.data.result as UpdateRoleOutput;
     }
 
     public async delete(entityDto: number) {
@@ -40,8 +30,12 @@ class RoleService {
         const result = await http.get('api/services/app/Role/GetAllPermissions');
         return result.data.result.items;
     }
+    public async getAllPermissionTree(): Promise<PermissionTree[]> {
+        const result = await http.get('api/services/app/Permission/GetAllPermissions');
+        return result.data.result.items;
+    }
 
-    public async getRoleForEdit(id: number): Promise<GetRoleForEditOutput> {
+    public async getRoleForEdit(id: number): Promise<CreateOrEditRoleDto> {
         const result = await http.get(`api/services/app/Role/GetRoleForEdit?Id=${id}`);
         return result.data.result;
     }

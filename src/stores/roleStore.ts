@@ -10,6 +10,7 @@ import type { PagedRoleResultRequestDto } from '../services/role/dto/PagedRoleRe
 import RoleEditModel from '../models/Roles/roleEditModel';
 import type { UpdateRoleInput } from '../services/role/dto/updateRoleInput';
 import roleService from '../services/role/roleService';
+import { CreateOrEditRoleDto } from '../services/role/dto/createOrEditRoleDto';
 
 class RoleStore {
     roles!: PagedResultDto<GetAllRoleOutput>;
@@ -21,8 +22,8 @@ class RoleStore {
     constructor() {
         makeAutoObservable(this);
     }
-    async create(createRoleInput: CreateRoleInput) {
-        await roleService.create(createRoleInput);
+    async createOrEdit(createOrEditInput: CreateOrEditRoleDto) {
+        await roleService.createOrEdit(createOrEditInput);
     }
 
     async createRole() {
@@ -41,15 +42,6 @@ class RoleStore {
         await roleService.getRolesAsync(getRoleAsyncInput);
     }
 
-    async update(updateRoleInput: UpdateRoleInput) {
-        await roleService.update(updateRoleInput);
-        this.roles.items
-            .filter((x: GetAllRoleOutput) => x.id === updateRoleInput.id)
-            .map((x: GetAllRoleOutput) => {
-                return (x = updateRoleInput);
-            });
-    }
-
     async delete(entityDto: EntityDto) {
         await roleService.delete(entityDto.id);
         this.roles.items = this.roles.items.filter((x: GetAllRoleOutput) => x.id !== entityDto.id);
@@ -58,13 +50,6 @@ class RoleStore {
     async getAllPermissions() {
         const result = await roleService.getAllPermissions();
         this.allPermissions = result;
-    }
-
-    async getRoleForEdit(entityDto: number) {
-        const result = await roleService.getRoleForEdit(entityDto);
-        this.roleEdit.grantedPermissionNames = result.grantedPermissionNames;
-        this.roleEdit.permissions = result.permissions;
-        this.roleEdit.role = result.role;
     }
 
     async get(entityDto: EntityDto) {
