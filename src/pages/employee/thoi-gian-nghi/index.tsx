@@ -31,6 +31,8 @@ import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import AppConsts from '../../../lib/appconst';
+import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
+import { TextTranslate } from '../../../components/TableLanguage';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -199,7 +201,13 @@ class EmployeeHoliday extends Component {
             {
                 field: 'tenNgayLe',
                 headerName: 'Tên ngày lễ',
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'tuNgay',
@@ -217,6 +225,12 @@ class EmployeeHoliday extends Component {
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
@@ -236,6 +250,12 @@ class EmployeeHoliday extends Component {
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
@@ -261,11 +281,17 @@ class EmployeeHoliday extends Component {
                             {params.value} ngày
                         </Typography>
                     </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             },
             {
                 field: 'actions',
-                headerName: '',
+                headerName: 'Hành động',
                 // width: 48,
                 flex: 0.3,
                 disableColumnMenu: true,
@@ -278,6 +304,12 @@ class EmployeeHoliday extends Component {
                         onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
                         <MoreHorizIcon />
                     </IconButton>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             }
         ];
@@ -391,6 +423,15 @@ class EmployeeHoliday extends Component {
                         }}
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeadersInner': {
+                                backgroundColor: '#F2EBF0'
+                            }
+                        }}
+                        localeText={TextTranslate}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}

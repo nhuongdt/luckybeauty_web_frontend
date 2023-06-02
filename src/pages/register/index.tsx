@@ -139,7 +139,7 @@ const RegisterScreen: React.FC = () => {
                                         <Input />
                                     </TextField>
                                 </Grid>
-                                <Grid item xs={6} className="w-5-0">
+                                <Grid item xs={12} sm={6} className="w-5-0">
                                     <TextField
                                         onChange={(e) => {
                                             setStore(e.target.value);
@@ -158,7 +158,7 @@ const RegisterScreen: React.FC = () => {
                                         <Input placeholder="Nhập tên cửa hàng" />
                                     </TextField>
                                 </Grid>
-                                <Grid item xs={6} className="w-5-0">
+                                <Grid item xs={12} sm={6} className="w-5-0">
                                     <TextField
                                         onChange={(e) => {
                                             setPhone(e.target.value);

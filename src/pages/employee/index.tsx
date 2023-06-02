@@ -16,6 +16,7 @@ import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUp
 import Cookies from 'js-cookie';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import SuggestService from '../../services/suggests/SuggestService';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Avatar,
@@ -36,6 +37,7 @@ import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { observer } from 'mobx-react';
 import Stores from '../../stores/storeIdentifier';
 import NhanVienStore from '../../stores/nhanVienStore';
+import { TextTranslate } from '../../components/TableLanguage';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
@@ -190,6 +192,12 @@ class EmployeeScreen extends React.Component {
                         {params.value}
                     </Typography>
                 </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
@@ -210,6 +218,12 @@ class EmployeeScreen extends React.Component {
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Typography>
                 </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
@@ -227,13 +241,25 @@ class EmployeeScreen extends React.Component {
                         {params.value == 1 ? 'Nam' : 'Nữ'}
                     </Typography>
                 </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
             field: 'diaChi',
             headerName: 'Địa chỉ',
             minWidth: 130,
-            flex: 1
+            flex: 1,
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
+            )
         },
         {
             field: 'tenChucVu',
@@ -249,6 +275,12 @@ class EmployeeScreen extends React.Component {
                     lineHeight="16px">
                     Kỹ thuật viên
                 </Typography>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
@@ -267,6 +299,12 @@ class EmployeeScreen extends React.Component {
                         lineHeight="16px">
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Typography>
+                </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             )
         },
@@ -287,11 +325,17 @@ class EmployeeScreen extends React.Component {
                     sx={{ backgroundColor: '#F1FAFF' }}>
                     Hoạt động
                 </Typography>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
             field: 'actions',
-            headerName: '',
+            headerName: 'Hành động',
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
@@ -304,6 +348,12 @@ class EmployeeScreen extends React.Component {
                     onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
                     <MoreHorizIcon />
                 </IconButton>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ display: 'none' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         }
     ];
@@ -436,6 +486,12 @@ class EmployeeScreen extends React.Component {
                         }}
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            }
+                        }}
+                        localeText={TextTranslate}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}

@@ -22,6 +22,7 @@ import {
     Pagination
 } from '@mui/material';
 import './style.css';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import avatar from '../../images/avatar.png';
 import EditIcon from '@mui/icons-material/Edit';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
@@ -42,7 +43,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
-
+import { TextTranslate } from '../../components/TableLanguage';
 /* custom component */
 
 import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
@@ -341,6 +342,12 @@ export default function PageProductNew() {
                 <Typography variant="body2" color="#333233">
                     {params.value}
                 </Typography>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
@@ -353,13 +360,25 @@ export default function PageProductNew() {
                         {params.value}
                     </Typography>
                 </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
             field: 'tenNhomHang',
             headerName: 'Nhóm dịch vụ',
             minWidth: 176,
-            flex: 1
+            flex: 1,
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
+            )
         },
         {
             field: 'giaBan',
@@ -371,6 +390,12 @@ export default function PageProductNew() {
                     <Typography variant="body2" color="#333233">
                         {Utils.formatNumber(params.value)}
                     </Typography>
+                </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             )
         },
@@ -385,6 +410,12 @@ export default function PageProductNew() {
                     <Typography variant="body2" color="#333233" marginLeft="9px">
                         {params.value} phút
                     </Typography>
+                </Box>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             )
         },
@@ -404,11 +435,17 @@ export default function PageProductNew() {
                     }}>
                     {params.value}
                 </Typography>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         },
         {
             field: 'actions',
-            headerName: '#',
+            headerName: 'Hành động',
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
@@ -421,6 +458,12 @@ export default function PageProductNew() {
                     onClick={(event) => showMenuAction(event, params.row)}>
                     <MoreHoriz />
                 </IconButton>
+            ),
+            renderHeader: (params) => (
+                <Box sx={{ display: 'none' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
             )
         }
     ];
@@ -558,7 +601,13 @@ export default function PageProductNew() {
                                 columns={columns}
                                 hideFooter
                                 checkboxSelection
-                                sx={{ border: 'none!important' }}
+                                sx={{
+                                    border: 'none!important',
+                                    '& .MuiDataGrid-iconButtonContainer': {
+                                        display: 'none'
+                                    }
+                                }}
+                                localeText={TextTranslate}
                             />
                             <ActionViewEditDelete
                                 elmHTML={anchorEl}

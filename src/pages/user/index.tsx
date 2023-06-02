@@ -283,82 +283,99 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 <Box
                     className="page-content"
                     sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
-                    <table className="h-100 w-100 table table-border-0 table">
-                        <thead className="bg-table w-100">
-                            <tr style={{ height: '48px' }}>
-                                <th className="text-center">
-                                    <input className="text-th-table text-center" type="checkbox" />
-                                </th>
-                                <th className="text-th-table">STT</th>
-                                <th className="text-th-table">Tên truy cập</th>
-                                <th className="text-th-table">Họ và tên</th>
-                                <th className="text-th-table">Vai trò</th>
-                                <th className="text-th-table">Địa chỉ email</th>
-                                <th className="text-th-table">Thời gian tạo</th>
-                                <th className="text-th-table">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.listUser.map((item, index) => {
-                                return (
-                                    <tr>
-                                        <td className="text-td-table text-center">
-                                            <input
-                                                className="text-th-table text-center"
-                                                type="checkbox"
-                                            />
-                                        </td>
-                                        <td className="text-td-table">{index + 1}</td>
-                                        <td className="text-td-table" title={item['userName']}>
-                                            {item['userName']}
-                                        </td>
-                                        <td className="text-td-table" title={item.fullName}>
-                                            {item.fullName}
-                                        </td>
-                                        <td className="text-td-table">
-                                            {item.roleNames.length > 1
-                                                ? item.roleNames.map((role: any) => {
-                                                      return <span>{role};</span>;
-                                                  })
-                                                : item.roleNames.map((role: any) => {
-                                                      return <span>{role} </span>;
-                                                  })}
-                                        </td>
-                                        <td className="text-td-table" title={item.emailAddress}>
-                                            {item.emailAddress}
-                                        </td>
-                                        <td className="text-td-table">
-                                            {item.creationTime.toString()}
-                                        </td>
-                                        <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Box display="flex" justifyContent="start">
-                                                <Button
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            userId: item.id
-                                                        });
-                                                        this.createOrUpdateModalOpen(item.id);
-                                                    }}
-                                                    sx={{ minWidth: 'unset' }}>
-                                                    <EditIcon />
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            userId: item.id
-                                                        });
-                                                        this.onShowDelete();
-                                                    }}
-                                                    sx={{ minWidth: 'unset' }}>
-                                                    <DeleteForeverIcon sx={{ color: 'red' }} />
-                                                </Button>
-                                            </Box>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
+                    <Box sx={{ overflowX: 'auto' }}>
+                        <table className="h-100 w-100 table table-border-0 table">
+                            <thead className="bg-table w-100">
+                                <tr style={{ height: '48px' }}>
+                                    <th className="text-center">
+                                        <input
+                                            className="text-th-table text-center"
+                                            type="checkbox"
+                                        />
+                                    </th>
+                                    <th className="text-th-table">STT</th>
+                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
+                                        Tên truy cập
+                                    </th>
+                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
+                                        Họ và tên
+                                    </th>
+                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
+                                        Vai trò
+                                    </th>
+                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
+                                        Địa chỉ email
+                                    </th>
+                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
+                                        Thời gian tạo
+                                    </th>
+                                    <th className="text-th-table">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.listUser.map((item, index) => {
+                                    return (
+                                        <tr>
+                                            <td className="text-td-table text-center">
+                                                <input
+                                                    className="text-th-table text-center"
+                                                    type="checkbox"
+                                                />
+                                            </td>
+                                            <td className="text-td-table">{index + 1}</td>
+                                            <td className="text-td-table" title={item['userName']}>
+                                                {item['userName']}
+                                            </td>
+                                            <td className="text-td-table" title={item.fullName}>
+                                                {item.fullName}
+                                            </td>
+                                            <td className="text-td-table">
+                                                {item.roleNames.length > 1
+                                                    ? item.roleNames.map((role: any) => {
+                                                          return <span>{role};</span>;
+                                                      })
+                                                    : item.roleNames.map((role: any) => {
+                                                          return <span>{role} </span>;
+                                                      })}
+                                            </td>
+                                            <td className="text-td-table" title={item.emailAddress}>
+                                                {item.emailAddress}
+                                            </td>
+                                            <td className="text-td-table">
+                                                {item.creationTime.toString()}
+                                            </td>
+                                            <td
+                                                className="text-td-table"
+                                                style={{ width: '150px' }}>
+                                                <Box display="flex" justifyContent="start">
+                                                    <Button
+                                                        onClick={() => {
+                                                            this.setState({
+                                                                userId: item.id
+                                                            });
+                                                            this.createOrUpdateModalOpen(item.id);
+                                                        }}
+                                                        sx={{ minWidth: 'unset' }}>
+                                                        <EditIcon />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => {
+                                                            this.setState({
+                                                                userId: item.id
+                                                            });
+                                                            this.onShowDelete();
+                                                        }}
+                                                        sx={{ minWidth: 'unset' }}>
+                                                        <DeleteForeverIcon sx={{ color: 'red' }} />
+                                                    </Button>
+                                                </Box>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </Box>
                     <div className="row">
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>

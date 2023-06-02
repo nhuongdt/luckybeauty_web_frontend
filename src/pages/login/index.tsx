@@ -133,12 +133,8 @@ const LoginScreen: React.FC = () => {
                                         }}></TextField>
                                 </Grid>
                                 <span className="login-label">Mật khẩu</span>
-                                <Grid
-                                    xs={12}
-                                    className="form-item"
-                                    style={{ background: '#f2f6fa' }}>
+                                <Grid xs={12} className="form-item">
                                     <TextField
-                                        className="bg-pw"
                                         onChange={(value) => {
                                             setPassword(value.target.value);
                                         }}
@@ -156,6 +152,9 @@ const LoginScreen: React.FC = () => {
                                                             ? 'none!important'
                                                             : '1px solid red!important'
                                                 }
+                                            },
+                                            '& .MuiInputBase-root ': {
+                                                background: '#f2f6fa'
                                             }
                                         }}
                                         type={showPassword ? 'text' : 'password'}

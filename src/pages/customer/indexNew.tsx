@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useState } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef, GridLocaleText } from '@mui/x-data-grid';
+import { TextTranslate } from '../../components/TableLanguage';
 import { format, isValid } from 'date-fns';
 import {
     Button,
@@ -35,6 +36,8 @@ import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../components/abp-custom';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+
 class CustomerScreen extends React.Component {
     state = {
         rowTable: [],
@@ -188,27 +191,72 @@ class CustomerScreen extends React.Component {
                         />
                         {params.value}
                     </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             },
-            { field: 'soDienThoai', headerName: 'Số điện thoại', minWidth: 114, flex: 1 },
+            {
+                field: 'soDienThoai',
+                headerName: 'Số điện thoại',
+                minWidth: 114,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
             {
                 field: 'tenNhomKhach',
                 headerName: 'Nhóm khách',
                 minWidth: 112,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
-            { field: 'gioiTinh', headerName: 'Giới tính', width: 89 },
+            {
+                field: 'gioiTinh',
+                headerName: 'Giới tính',
+                width: 89,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
             {
                 field: 'nhanVienPhuTrach',
                 headerName: 'Nhân viên phục vụ',
                 minWidth: 185,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'tongChiTieu',
                 headerName: 'Tổng chi tiêu',
                 minWidth: 113,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'cuocHenGanNhat',
@@ -220,7 +268,13 @@ class CustomerScreen extends React.Component {
                     </Box>
                 ),
                 minWidth: 128,
-                flex: 1
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
             },
             {
                 field: 'tenNguonKhach',
@@ -231,28 +285,43 @@ class CustomerScreen extends React.Component {
                     <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
                         {params.value}
                     </div>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             },
             {
                 field: 'actions',
-                headerName: '',
+                headerName: 'Hành động',
                 maxWidth: 48,
                 flex: 1,
                 disableColumnMenu: true,
 
                 renderCell: (params) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true"
-                        onClick={(event) => {
-                            this.handleOpenMenu(event, params.row.id);
-                        }}>
-                        <MoreHorizIcon />
-                    </IconButton>
+                    <Box>
+                        <IconButton
+                            aria-label="Actions"
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             }
         ];
+
         const breadcrumbs = [
             <Typography key="1" color="#999699" fontSize="14px">
                 Khách hàng
@@ -383,6 +452,12 @@ class CustomerScreen extends React.Component {
                         }}
                         pageSizeOptions={[5, 10]}
                         checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            }
+                        }}
+                        localeText={TextTranslate}
                     />
                     <Menu
                         id={`actions-menu-${this.state.selectedRowId}`}

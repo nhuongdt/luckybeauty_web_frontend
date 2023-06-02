@@ -61,7 +61,7 @@ p {
 }
 
 .btn-register {
-    background: #7c3367;
+    background: #7c3367 !important;
     border: 0;
     border-radius: 6px;
 }
@@ -97,7 +97,12 @@ p {
 }
 
 .w-5-0 {
+    -ms-flex-preferred-size: unset !important;
     flex-basis: unset !important;
+
+    -webkit-box-flex: 1;
+
+    -ms-flex-positive: 1;
 
     flex-grow: 1;
 }
@@ -163,6 +168,8 @@ p {
     height: 40px !important;
 }
 .register-page .MuiGrid-root {
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
 }
 .bg-pw {
@@ -204,4 +211,18 @@ p {
 .dieu-khoan {
     font-size: 14px;
     color: #666466;
+}
+@media (max-width: 576px) {
+    .register-col {
+        width: 100%;
+    }
+    .register-page {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+@media (max-width: 390px) {
+    .select-row {
+        grid-template-columns: repeat(1, 1fr);
+    }
 }
