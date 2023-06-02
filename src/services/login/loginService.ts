@@ -14,27 +14,18 @@ const http = axios.create({
 });
 class LoginService {
     public async CheckTenant(tenantName: string, isRemember?: boolean) {
-        let tenancy = tenantName;
-        if (tenantName == null || tenantName === '') {
-            tenancy = 'default';
-        }
+        const tenancy = tenantName || 'default';
+
         const result = await http.post('api/services/app/Account/IsTenantAvailable', {
             tenancyName: tenancy
         });
-        let tenantId = result.data.result['tenantId'];
-        if (tenantId == null) {
-            tenantId = 0;
-        }
 
-        if (tenantName == null || tenantName == '') {
-            Cookies.set('TenantId', 'null', {
-                expires: isRemember === true ? 1 : undefined
-            });
-        } else {
-            Cookies.set('TenantId', tenantId, {
-                expires: isRemember === true ? 1 : undefined
-            });
-        }
+        const tenantId = result.data.result['tenantId'] || 0;
+
+        Cookies.set('TenantId', tenantName ? tenantId : 'null', {
+            expires: isRemember === true ? 1 : undefined
+        });
+
         return result.data.result;
     }
 
@@ -73,11 +64,14 @@ class LoginService {
                         Cookies.set('isLogin', 'true', {
                             expires: loginModel.rememberMe ? 1 : undefined
                         });
-                    }
-                    this.GetChiNhanhByUserId(
-                        apiResult.data.result['userId'],
                         loginModel.rememberMe
-                    );
+                            ? Cookies.set('remember', 'true', { expires: 1 })
+                            : Cookies.set('remember', 'false', { expires: 1 });
+                    }
+                    // this.GetChiNhanhByUserId(
+                    //     apiResult.data.result['userId'],
+                    //     loginModel.rememberMe
+                    // );
                 }
             }
             return result;
