@@ -28,7 +28,7 @@ export default function ActionViewEditDelete({ elmHTML, handleClickAction }: any
                         width="64px"
                         fontWeight="400"
                         marginRight="8px">
-                        View
+                        Xem
                     </Typography>
                     <Info sx={{ color: '#009EF7' }} />
                 </MenuItem>
@@ -41,7 +41,7 @@ export default function ActionViewEditDelete({ elmHTML, handleClickAction }: any
                         width="64px"
                         fontWeight="400"
                         marginRight="8px">
-                        Edit
+                        Sửa
                     </Typography>
                     <Edit sx={{ color: '#009EF7' }} />
                 </MenuItem>
@@ -54,7 +54,7 @@ export default function ActionViewEditDelete({ elmHTML, handleClickAction }: any
                         width="64px"
                         fontWeight="400"
                         marginRight="8px">
-                        Delete
+                        Xóa
                     </Typography>
                     <DeleteForever sx={{ color: '#F1416C' }} />
                 </MenuItem>
