@@ -42,6 +42,8 @@ import NotificationIcon from '../../images/notification.svg';
 import { ReactComponent as ToggleIcon } from '../../images/toggleIcon.svg';
 import http from '../../services/httpService';
 import Cookies from 'js-cookie';
+import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
+import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -60,6 +62,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
     };
     const defaultPermission: string[] = [];
     const [lstPermission, setListPermission] = useState(defaultPermission);
+    const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
+    const [currentChiNhanh, setCurrentChiNhanh] = useState('');
     useEffect(() => {
         // Call API to get list of permissions here
         // Example:
@@ -77,8 +81,17 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                 setListPermission(response.data.result['permissions']);
             })
             .catch((error) => console.log(error));
+        const getChiNhanhs = async () => {
+            const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
+            setListChiNhanh(listChiNhanh);
+            setCurrentChiNhanh(listChiNhanh[0].id);
+            const remember = Cookies.get('remember');
+            Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
+                expires: remember === 'true' ? 1 : undefined
+            });
+        };
+        getChiNhanhs();
     }, []);
-
     return (
         <Box
             display="flex"
@@ -87,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
         >
             {' '}
             <Grid container className={'header-container'} justifyContent="space-between">
-                <Grid item sx={{ textAlign: 'left', display: 'flex' }}>
+                <Grid item sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
                     <Button
                         sx={{
                             minWidth: 'unset!important',
@@ -100,6 +113,21 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                         onClick={toggle}>
                         <ToggleIcon />
                     </Button>
+                    <Select
+                        sx={{ marginLeft: 3, height: 32 }}
+                        size="small"
+                        value={currentChiNhanh}
+                        onChange={(e) => {
+                            setCurrentChiNhanh(e.target.value as string);
+                            const remember = Cookies.get('remember');
+                            Cookies.set('IdChiNhanh', e.target.value, {
+                                expires: remember === 'true' ? 1 : undefined
+                            });
+                        }}>
+                        {chiNhanhs.map((item) => {
+                            return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
+                        })}
+                    </Select>
                 </Grid>
                 <Grid item sx={{ textAlign: 'right' }}>
                     <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center' }}>
