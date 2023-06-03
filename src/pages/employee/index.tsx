@@ -176,7 +176,7 @@ class EmployeeScreen extends React.Component {
             minWidth: 171,
             flex: 1,
             renderCell: (params) => (
-                <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Box style={{ display: 'flex', alignItems: 'center' }} width="100%">
                     <Avatar
                         src={params.row.avatar}
                         alt="Avatar"
@@ -188,7 +188,8 @@ class EmployeeScreen extends React.Component {
                         variant="h6"
                         color="#333233"
                         lineHeight="16px"
-                        title={params.value}>
+                        title={params.value}
+                        sx={{ textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                         {params.value}
                     </Typography>
                 </Box>
@@ -255,7 +256,13 @@ class EmployeeScreen extends React.Component {
             minWidth: 130,
             flex: 1,
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '700',
+                        width: '100%',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting className="custom-icon" />{' '}
                 </Box>
@@ -474,16 +481,17 @@ class EmployeeScreen extends React.Component {
                     </Grid>
                 </Grid>
 
-                <Box minHeight={'576px'} height={'576px'} marginTop="24px" bgcolor="#fff">
+                <Box marginTop="24px" bgcolor="#fff">
                     <DataGrid
+                        autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
                         initialState={{
                             pagination: {
-                                paginationModel: { page: 0, pageSize: 5 }
+                                paginationModel: { page: 5, pageSize: 10 }
                             }
                         }}
-                        pageSizeOptions={[5, 10]}
+                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {

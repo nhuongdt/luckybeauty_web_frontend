@@ -203,7 +203,13 @@ class EmployeeHoliday extends Component {
                 headerName: 'Tên ngày lễ',
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '700',
+                            overflow: 'hidden',
+                            width: '100%',
+                            textOverflow: 'ellipsis'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
@@ -412,16 +418,17 @@ class EmployeeHoliday extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box height="60vh" marginTop="24px" bgcolor="#fff">
+                <Box marginTop="24px" bgcolor="#fff">
                     <DataGrid
+                        autoHeight
                         rows={this.state.listHoliday}
                         columns={columns}
                         initialState={{
                             pagination: {
-                                paginationModel: { page: 0, pageSize: 5 }
+                                paginationModel: { page: 5, pageSize: 10 }
                             }
                         }}
-                        pageSizeOptions={[5, 10]}
+                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {

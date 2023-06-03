@@ -182,14 +182,27 @@ class CustomerScreen extends React.Component {
                 flex: 1,
                 renderCell: (params) => (
                     <Box
-                        style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '14px',
+                            width: '100%'
+                        }}
                         title={params.value}>
                         <Avatar
                             src={params.row.avatar}
                             alt="Avatar"
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
-                        {params.value}
+                        <Typography
+                            fontSize="14px"
+                            sx={{
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                                width: '100%'
+                            }}>
+                            {params.value}
+                        </Typography>
                     </Box>
                 ),
                 renderHeader: (params) => (
@@ -240,7 +253,13 @@ class CustomerScreen extends React.Component {
                 minWidth: 185,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '700',
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
@@ -432,12 +451,12 @@ class CustomerScreen extends React.Component {
                 <div
                     className="customer-page_row-2"
                     style={{
-                        height: 582,
                         width: '100%',
                         marginTop: '24px',
                         backgroundColor: '#fff'
                     }}>
                     <DataGrid
+                        autoHeight
                         rows={this.state.rowTable}
                         columns={columns}
                         hideFooterPagination

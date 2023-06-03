@@ -164,6 +164,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 ? '#7C3367'
                                                 : '#333233'
                                     },
+                                    marginY: 0,
+                                    paddingY: '4px',
                                     '& span': {
                                         fontSize: '14px',
                                         color:

@@ -272,8 +272,9 @@ const EmployeeHoliday: React.FC = () => {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box height="60vh" marginTop="24px">
+                <Box marginTop="24px">
                     <DataGrid
+                        autoHeight
                         rows={rows}
                         columns={columns}
                         initialState={{

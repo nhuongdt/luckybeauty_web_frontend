@@ -1,7 +1,19 @@
 import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Box, Grid, TextField, Button, Typography, Pagination, IconButton } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+    Box,
+    Grid,
+    TextField,
+    Button,
+    Typography,
+    Pagination,
+    IconButton,
+    Menu,
+    MenuItem
+} from '@mui/material';
+
+import InfoIcon from '@mui/icons-material/Info';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import userService from '../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
@@ -41,8 +53,6 @@ export interface IUserState {
     suggestNhanSu: SuggestNhanSuDto[];
 }
 class UserScreen extends AppComponentBase<IUserProps, IUserState> {
-    rows;
-    columns;
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -93,7 +103,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
     }
 
-    handlePageChange = (event: any, value: any) => {
+    handlePageChange = (event: any, value: number) => {
         const { maxResultCount } = this.state;
         this.setState({
             currentPage: value,
@@ -165,16 +175,19 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         this.setState({ filter: filter });
     };
 
-    constructor(props: any) {
-        super(props);
-        this.columns = [
+    render(): React.ReactNode {
+        const columns = [
             {
                 field: 'id',
                 headerName: 'ID',
                 minWidth: 50,
-                flex: 1,
+                flex: 0.4,
                 renderCell: (params: any) => (
-                    <Typography variant="caption" fontSize="14px" title={params.value}>
+                    <Typography
+                        variant="caption"
+                        fontSize="14px"
+                        title={params.value}
+                        sx={{ width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {params.value}
                     </Typography>
                 ),
@@ -186,48 +199,58 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 )
             },
             {
-                field: 'nameLogin',
+                field: 'userName',
                 headerName: 'Tên đăng nhập',
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box sx={{ fontWeight: '700' }} title={params.value}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
             {
-                field: 'name',
+                field: 'fullName',
                 headerName: 'Họ và tên',
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
+                        title={params.colDef.headerName}
+                        width="100%">
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
             {
-                field: 'role',
+                field: 'roleNames',
                 headerName: 'Vai trò',
                 minWidth: 100,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
             {
-                field: 'email',
+                field: 'emailAddress',
                 headerName: 'Địa chỉ email',
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '700',
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%'
+                        }}
+                        title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
@@ -239,7 +262,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 minWidth: 150,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
@@ -248,7 +271,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
             {
                 field: 'action',
                 headerName: 'Hành động',
-                maxWidth: 40,
+                maxWidth: 60,
                 flex: 1,
                 disableColumnMenu: true,
                 renderCell: (params: any) => (
@@ -268,20 +291,6 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
             }
         ];
 
-        this.rows = [
-            {
-                id: 1,
-                nameLogin: 'admin',
-                name: 'John Doe',
-                role: 'siêu nhân màu vàng ',
-                creationTime: '	2023-05-23T14:56:31.5545361',
-                email: 'john.doe@example.com'
-            },
-            { id: 2, name: 'Jane Smith', age: 32, email: 'jane.smith@example.com' }
-            // Add more rows as needed
-        ];
-    }
-    render(): React.ReactNode {
         return (
             <Box
                 sx={{
@@ -290,7 +299,11 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                     paddingLeft: '2.2222222222222223vw'
                 }}>
                 <Box>
-                    <Grid container justifyContent="space-between" alignItems="center">
+                    <Grid
+                        container
+                        justifyContent="space-between"
+                        alignItems="center"
+                        rowGap="16px">
                         <Grid item>
                             <div>
                                 <div>
@@ -408,7 +421,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 <Box
                     className="page-content"
                     sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
-                    <Box sx={{ height: '500px' }}>
+                    <Box>
                         <table
                             className="h-100 w-100 table table-border-0 table"
                             style={{ display: 'none' }}>
@@ -503,14 +516,15 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                             </tbody>
                         </table>
                         <DataGrid
-                            columns={this.columns}
-                            rows={this.rows}
+                            autoHeight
+                            columns={columns}
+                            rows={this.state.listUser}
                             initialState={{
                                 pagination: {
-                                    paginationModel: { page: 0, pageSize: 5 }
+                                    paginationModel: { page: 0, pageSize: 10 }
                                 }
                             }}
-                            pageSizeOptions={[5, 10]}
+                            pageSizeOptions={[10, 20, 30]}
                             checkboxSelection
                             sx={{
                                 '& .MuiDataGrid-iconButtonContainer': {
@@ -523,10 +537,14 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                                     mb: 0
                                 }
                             }}
+                            // components={{
+                            //     Pagination: Pagination
+                            // }}
+
                             localeText={TextTranslate}
                         />
                     </Box>
-                    <div className="row">
+                    <div className="row" style={{ display: 'none' }}>
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
                             <div className="row align-items-center" style={{ height: '50px' }}>
@@ -584,6 +602,52 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         isShow={this.state.isShowConfirmDelete}
                         onOk={this.onOkDelete}
                         onCancel={this.onShowDelete}></ConfirmDelete>
+                    <Menu
+                        id={`actions-menu-${this.state.selectedRowId}`}
+                        anchorEl={this.state.anchorEl}
+                        keepMounted
+                        open={Boolean(this.state.anchorEl)}
+                        sx={{ minWidth: '120px' }}>
+                        <MenuItem>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                View
+                            </Typography>
+                            <InfoIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Edit
+                            </Typography>
+                            <EditIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem>
+                            <Typography
+                                color="#F1416C"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Delete
+                            </Typography>
+                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
+                        </MenuItem>
+                    </Menu>
                 </Box>
             </Box>
         );

@@ -1,6 +1,7 @@
 import React, { FormEventHandler, ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import { Box, Grid, Typography, TextField, Button, Pagination } from '@mui/material';
+import { Box, Grid, Typography, TextField, Button, Pagination, IconButton } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -14,6 +15,10 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import CreateTenantInput from '../../services/tenant/dto/createTenantInput';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { TextTranslate } from '../../components/TableLanguage';
+import { AnyAaaaRecord } from 'dns';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -142,6 +147,93 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
     };
 
     render(): React.ReactNode {
+        const columns = [
+            {
+                field: 'id',
+                headerName: 'ID',
+                minWidth: 50,
+                flex: 1,
+                renderCell: (params: any) => (
+                    <Typography variant="caption" fontSize="14px" title={params.value}>
+                        {params.value}
+                    </Typography>
+                ),
+                renderHeader: (params: any) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'name',
+                headerName: 'Tenant',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }} title={params.value}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'tenancyName',
+                headerName: 'Tên tenant',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'state',
+                headerName: 'Trạng thái',
+                minWidth: 100,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        sx={{
+                            padding: '4px 8px',
+                            borderRadius: '100px',
+                            color: 'rgb(0, 158, 247)',
+                            bgcolor: 'rgb(241, 250, 255)'
+                        }}>
+                        Hoạt động{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'action',
+                headerName: 'Hành động',
+                maxWidth: 60,
+                flex: 1,
+                disableColumnMenu: true,
+                renderCell: (params: any) => (
+                    <IconButton
+                        aria-label="Actions"
+                        aria-controls={`actions-menu-${params.row.id}`}
+                        aria-haspopup="true">
+                        <MoreHorizIcon />
+                    </IconButton>
+                ),
+                renderHeader: (params: any) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            }
+        ];
         return (
             <Box sx={{ padding: '24px 2.2222222222222223vw' }}>
                 <div>
@@ -257,7 +349,9 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                     marginTop="24px"
                     className="page-content "
                     sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
-                    <table className="h-100 w-100 table table-border-0 table">
+                    <table
+                        className="h-100 w-100 table table-border-0 table"
+                        style={{ display: 'none' }}>
                         <thead className="bg-table w-100">
                             <tr style={{ height: '48px' }}>
                                 <th className="text-center">
@@ -317,7 +411,31 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                             })}
                         </tbody>
                     </table>
-                    <div className="row">
+                    <DataGrid
+                        autoHeight
+                        columns={columns}
+                        rows={this.state.listTenant}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 10 }
+                            }
+                        }}
+                        pageSizeOptions={[10, 20]}
+                        checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#F2EBF0'
+                            },
+                            '& p': {
+                                mb: 0
+                            }
+                        }}
+                        localeText={TextTranslate}
+                    />
+                    <div className="row" style={{ display: 'none' }}>
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
                             <div className="row align-items-center" style={{ height: '50px' }}>

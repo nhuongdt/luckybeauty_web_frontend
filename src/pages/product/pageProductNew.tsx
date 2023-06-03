@@ -339,7 +339,10 @@ export default function PageProductNew() {
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
-                <Typography variant="body2" color="#333233">
+                <Typography
+                    variant="body2"
+                    color="#333233"
+                    sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
                 </Typography>
             ),
@@ -355,8 +358,12 @@ export default function PageProductNew() {
             headerName: 'Tên dịch vụ',
             minWidth: 250,
             renderCell: (params) => (
-                <Box display="flex">
-                    <Typography variant="body2" color="#333233" title={params.value}>
+                <Box display="flex" width="100%">
+                    <Typography
+                        variant="body2"
+                        color="#333233"
+                        title={params.value}
+                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
                         {params.value}
                     </Typography>
                 </Box>
@@ -595,8 +602,9 @@ export default function PageProductNew() {
                         </Box>
                     </Grid>
                     <Grid item lg={9} md={9} sm={8} xs={12}>
-                        <Box height="504px" sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
+                        <Box sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
                             <DataGrid
+                                autoHeight
                                 rows={pageDataProduct.items}
                                 columns={columns}
                                 hideFooter

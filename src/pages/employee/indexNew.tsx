@@ -174,7 +174,7 @@ const Employee: React.FC = () => {
             minWidth: window.innerWidth < 1390 ? 128 : 0,
             flex: 0.8,
             renderCell: (params) => (
-                <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
                         fontSize="14px"

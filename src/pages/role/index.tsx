@@ -1,6 +1,7 @@
 import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Button, Box, Typography, Grid, TextField, Pagination } from '@mui/material';
+import { Button, Box, Typography, Grid, TextField, Pagination, IconButton } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
@@ -13,10 +14,13 @@ import { GetAllPermissionsOutput } from '../../services/role/dto/getAllPermissio
 import RoleEditModel from '../../models/Roles/roleEditModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { DownloadOutlined, UploadOutlined } from '@mui/icons-material';
+import DownloadIcon from '../../images/download.svg';
+import UploadIcon from '../../images/upload.svg';
 import CreateOrEditRoleModal from './components/create-or-edit-role';
 import { PermissionTree } from '../../services/role/dto/permissionTree';
 import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto';
+import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import { TextTranslate } from '../../components/TableLanguage';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -141,6 +145,70 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
     };
 
     render() {
+        const columns = [
+            {
+                field: 'id',
+                headerName: 'ID',
+                minWidth: 50,
+                flex: 1,
+                renderCell: (params: any) => (
+                    <Typography variant="caption" fontSize="14px" title={params.value}>
+                        {params.value}
+                    </Typography>
+                ),
+                renderHeader: (params: any) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'name',
+                headerName: 'Tên vai trò',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }} title={params.value}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'description',
+                headerName: 'Mô tả',
+                minWidth: 125,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'action',
+                headerName: 'Hành động',
+                maxWidth: 60,
+                flex: 1,
+                disableColumnMenu: true,
+                renderCell: (params: any) => (
+                    <IconButton
+                        aria-label="Actions"
+                        aria-controls={`actions-menu-${params.row.id}`}
+                        aria-haspopup="true">
+                        <MoreHorizIcon />
+                    </IconButton>
+                ),
+                renderHeader: (params: any) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            }
+        ];
         return (
             <Box paddingLeft="2.2222222222222223vw" paddingRight="2.2222222222222223vw">
                 <Box>
@@ -200,7 +268,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                         <Button
                                             variant="outlined"
                                             size="small"
-                                            startIcon={<DownloadOutlined />}
+                                            startIcon={<img src={DownloadIcon} />}
                                             sx={{
                                                 height: '40px',
                                                 fontSize: '14px',
@@ -215,7 +283,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                                         <Button
                                             variant="outlined"
                                             size="small"
-                                            startIcon={<UploadOutlined />}
+                                            startIcon={<img src={UploadIcon} />}
                                             sx={{
                                                 height: '40px',
                                                 fontSize: '14px',
@@ -249,8 +317,10 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box className="page-content" marginTop="24px" bgcolor="#fff" borderRadius="8px">
-                    <table className="h-100 w-100 table table-border-0 table">
+                <Box marginTop="24px" bgcolor="#fff" borderRadius="8px" sx={{ height: 400 }}>
+                    <table
+                        className="h-100 w-100 table table-border-0 table"
+                        style={{ display: 'none' }}>
                         <thead className="bg-table w-100">
                             <tr style={{ height: '48px' }}>
                                 <th className="text-center">
@@ -310,7 +380,7 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                             })}
                         </tbody>
                     </table>
-                    <div className="row">
+                    <div className="row" style={{ display: 'none' }}>
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
                             <div className="row align-items-center" style={{ height: '50px' }}>
@@ -346,6 +416,29 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                             </div>
                         </div>
                     </div>
+                    <DataGrid
+                        columns={columns}
+                        rows={this.state.listRole}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 5, pageSize: 10 }
+                            }
+                        }}
+                        pageSizeOptions={[10, 20]}
+                        checkboxSelection
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#F2EBF0'
+                            },
+                            '& p': {
+                                mb: 0
+                            }
+                        }}
+                        localeText={TextTranslate}
+                    />
                 </Box>
                 <CreateOrEditRoleModal
                     visible={this.state.modalVisible}

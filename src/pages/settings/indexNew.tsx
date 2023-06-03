@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Box, Tabs, Tab, Typography, Grid } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StoreDetail from './cua-hang/indexNew';
-import ChiNhanhScreen from './chi-nhanh';
+import ChiNhanhScreen from './chi-nhanh/indexNew';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
-
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabChange = (event: any, newValue: number) => {

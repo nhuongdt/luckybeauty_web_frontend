@@ -19,11 +19,13 @@ export const TextTranslate = {
     filterOperatorIsEmpty: 'Rỗng',
     filterOperatorIsNotEmpty: 'Không trống',
     filterOperatorIsAnyOf: 'Là bất kỳ trong',
-    toolbarPaginationLabelRowsPerPage: 'Số hàng mỗi trang:',
     filterPanelColumns: 'Cột',
     filterPanelInputLabel: 'Giá trị',
     filterPanelInputPlaceholder: 'Nhập giá trị để tìm kiếm',
-    // Rows selected footer text
+    noRowsLabel: 'không có dữ liệu',
+    noResultsOverlayLabel: 'Không có kết quả phù hợp.',
+    footerTotalVisibleRows: (visibleCount: number, totalCount: number) =>
+        `${visibleCount.toLocaleString()} của ${totalCount.toLocaleString()}`,
     footerRowSelected: (count: number) =>
         count !== 1
             ? `${count.toLocaleString()} Hàng được chọn`

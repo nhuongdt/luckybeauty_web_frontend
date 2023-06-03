@@ -283,7 +283,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/settings/index'))
+                    component: LoadableComponent(() => import('../../pages/settings/indexNew'))
                 }
             ]
         }
