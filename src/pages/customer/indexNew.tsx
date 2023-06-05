@@ -461,8 +461,6 @@ class CustomerScreen extends React.Component {
                         autoHeight
                         rows={this.state.rowTable}
                         columns={columns}
-                        hideFooterPagination
-                        hideFooter
                         initialState={{
                             pagination: {
                                 paginationModel: {
@@ -475,6 +473,9 @@ class CustomerScreen extends React.Component {
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& + .MuiTablePagination-root': {
                                 display: 'none'
                             }
                         }}

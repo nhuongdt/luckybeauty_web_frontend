@@ -229,11 +229,3 @@
     padding: 6px 16px;
     color: #ffffff;
 }
-/* đổi dòng chữ rows per page của các bảng thành tiếng việt */
-.MuiTablePagination-selectLabel {
-    font-size: 0;
-}
-.MuiTablePagination-selectLabel::after {
-    content: 'Số hàng tối đa trên mỗi trang';
-    font-size: 14px;
-}
