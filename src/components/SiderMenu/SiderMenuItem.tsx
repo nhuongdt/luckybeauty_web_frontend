@@ -14,7 +14,6 @@ const SiderMenuItem = (menuItem: any, lstPermission: string[], isCollapse: boole
                 component={Link}
                 to={menuItem.path}
                 className="active-menu-bg">
-                {/* <Link to={menuItem.path}> </Link> */}
                 <Stack
                     alignItems="center"
                     direction="row"

@@ -13,6 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/material';
 import outIcon from '../../images/Logout.svg';
 import logo from '../../images/Lucky_beauty.jpg';
+import { color } from '@mui/system';
 interface Props {
     collapsed: boolean;
     toggle: () => void;
@@ -128,7 +129,17 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                     : 'nav-item'
                             }
                             selected={location.pathname === itemMenu.key}
-                            sx={{ flexWrap: 'wrap' }}>
+                            sx={{
+                                flexWrap: 'wrap',
+                                backgroundColor:
+                                    location.pathname === itemMenu.key ||
+                                    itemMenu.children?.some(
+                                        (dropdownItem) => location.pathname === dropdownItem.key
+                                    )
+                                        ? '#F2EBF0!important'
+                                        : 'transparent',
+                                borderRadius: '8px'
+                            }}>
                             <ListItemIcon
                                 onClick={
                                     itemMenu.children ? () => handleDropdown(index) : undefined
@@ -143,7 +154,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                             )
                                                 ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
                                                 : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
-                                    }
+                                    },
+                                    minWidth: '40px'
                                 }}>
                                 {itemMenu.icon}
                             </ListItemIcon>
@@ -187,6 +199,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 ? () => handleDropdown(index)
                                                 : undefined
                                         }
+                                        sx={{ color: '#666466!important' }}
                                     />
                                 ) : (
                                     <ExpandMoreIcon
@@ -195,6 +208,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 ? () => handleDropdown(index)
                                                 : undefined
                                         }
+                                        sx={{ color: '#666466!important' }}
                                     />
                                 ))}
                             {itemMenu.children && (
@@ -219,21 +233,20 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                         (dropdownItem) =>
                                                             location.pathname === dropdownItem.key
                                                     )
-                                                }>
+                                                }
+                                                sx={{ backgroundColor: 'transparent!important' }}>
                                                 <ListItemIcon
                                                     sx={{
                                                         '& svg': {
-                                                            filter:
-                                                                location.pathname ===
-                                                                    itemMenu.key ||
-                                                                itemMenu.children?.some(
-                                                                    (dropdownItem) =>
-                                                                        location.pathname ===
-                                                                        dropdownItem.key
-                                                                )
-                                                                    ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
-                                                                    : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
-                                                        }
+                                                            filter: itemMenu.children?.some(
+                                                                (dropdownItem) =>
+                                                                    location.pathname ===
+                                                                    dropdownItem.key
+                                                            )
+                                                                ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
+                                                                : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
+                                                        },
+                                                        minWidth: '20px'
                                                     }}>
                                                     {dropdownItem.icon}
                                                 </ListItemIcon>

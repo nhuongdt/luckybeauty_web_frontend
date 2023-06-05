@@ -5,15 +5,19 @@ import renderRoutes from './generate-routes';
 // icon
 import { BallotOutlined } from '@mui/icons-material';
 import { IoCalendarOutline, IoStorefrontOutline } from 'react-icons/io5';
-import {
-    AiOutlineHome,
-    AiOutlineIdcard,
-    AiOutlineLineChart,
-    AiOutlineSetting
-} from 'react-icons/ai';
+
 import { BsDot, BsPeople, BsPersonLock } from 'react-icons/bs';
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
+import { ReactComponent as HomeIcon2 } from '../../images/home-2.svg';
+import { ReactComponent as CalendarIcon2 } from '../../images/calendarMenu.svg';
+import { ReactComponent as ServicesIcon } from '../../images/serviceMenuIcon.svg';
+import { ReactComponent as ShopIcon } from '../../images/shopMenu.svg';
+import { ReactComponent as ClientIcon } from '../../images/personalcardIcon.svg';
+import { ReactComponent as EmployeeIcon } from '../../images/employeeIcon.svg';
+import { ReactComponent as ReportIcon } from '../../images/reportIcon.svg';
+import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
+import { ReactComponent as AdminIcon } from '../../images/settingAdmin.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -117,7 +121,7 @@ export const appRouters: AppRouteProps = {
                     name: 'dashboard',
                     permission: '',
                     title: 'Trang chủ',
-                    icon: <AiOutlineHome style={{ fontSize: 20 }} />,
+                    icon: <HomeIcon2 width="20px" />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
@@ -128,7 +132,7 @@ export const appRouters: AppRouteProps = {
                     name: 'lich hen',
                     permission: '',
                     title: 'Lịch hẹn',
-                    icon: <IoCalendarOutline style={{ fontSize: 20 }} />,
+                    icon: <CalendarIcon2 width="20px" />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
@@ -139,7 +143,7 @@ export const appRouters: AppRouteProps = {
                     name: 'banhang',
                     permission: '',
                     title: 'Bán hàng',
-                    icon: <IoStorefrontOutline style={{ fontSize: 20 }} />,
+                    icon: <ShopIcon width="20px" />,
                     children: [
                         {
                             path: '/page-ban-hang',
@@ -164,7 +168,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Khách hàng',
                     name: 'khachhang',
-                    icon: <AiOutlineIdcard style={{ fontSize: 20 }} />,
+                    icon: <ClientIcon width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
@@ -174,7 +178,7 @@ export const appRouters: AppRouteProps = {
                     path: '/dich-vus',
                     permission: '',
                     title: 'Dich vụ',
-                    icon: <BallotOutlined style={{ fontSize: 20 }} />,
+                    icon: <ServicesIcon width="20px" />,
                     name: 'dichvu',
                     showInMenu: true,
                     isLayout: false,
@@ -186,7 +190,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Nhân viên',
                     name: 'nhanvien',
-                    icon: <BsPeople style={{ fontSize: 20 }} />,
+                    icon: <EmployeeIcon width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [
@@ -222,7 +226,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Báo cáo',
                     name: 'baocao',
-                    icon: <AiOutlineLineChart style={{ fontSize: 20 }} />,
+                    icon: <ReportIcon width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
@@ -232,7 +236,7 @@ export const appRouters: AppRouteProps = {
                     path: 'admin',
                     permission: 'Pages.Administration',
                     title: 'Quản trị',
-                    icon: <BsPersonLock style={{ fontSize: 20 }} />,
+                    icon: <AdminIcon width="20px" />,
                     name: 'QuanTri',
                     showInMenu: true,
                     isLayout: false,
@@ -279,7 +283,7 @@ export const appRouters: AppRouteProps = {
                     permission: 'Pages.CongTy',
                     title: 'Cài đặt',
                     name: 'caidat',
-                    icon: <AiOutlineSetting style={{ fontSize: 20 }} />,
+                    icon: <SettingIcon width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
