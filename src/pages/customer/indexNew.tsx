@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { useState } from 'react';
+import { Component } from 'react';
+import { handleExportClick } from '../../components/exportDataGrid';
 import { DataGrid, GridColDef, useGridApiRef, GridLocaleText } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
 import { format, isValid } from 'date-fns';
@@ -127,6 +128,7 @@ class CustomerScreen extends React.Component {
         });
         fileDowloadService.downloadTempFile(result);
     };
+
     handlePageChange = async (event: any, newPage: number) => {
         const skip = newPage + 1;
         await this.setState({ skipCount: skip, curentPage: newPage });
@@ -171,6 +173,7 @@ class CustomerScreen extends React.Component {
             idNhanSu: ''
         });
     };
+
     render(): React.ReactNode {
         const columns: GridColDef[] = [
             { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
@@ -421,9 +424,6 @@ class CustomerScreen extends React.Component {
                             <Button
                                 className="border-color"
                                 variant="outlined"
-                                onClick={() => {
-                                    this.exportToExcel();
-                                }}
                                 startIcon={<img src={UploadIcon} />}
                                 sx={{
                                     textTransform: 'capitalize',
