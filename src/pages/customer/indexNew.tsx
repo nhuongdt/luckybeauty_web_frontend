@@ -413,7 +413,8 @@ class CustomerScreen extends React.Component {
                                 sx={{
                                     textTransform: 'capitalize',
                                     fontWeight: '400',
-                                    color: '#666466'
+                                    color: '#666466',
+                                    bgcolor: '#fff'
                                 }}>
                                 Nhập
                             </Button>
@@ -429,7 +430,8 @@ class CustomerScreen extends React.Component {
                                     fontWeight: '400',
                                     color: '#666466',
                                     padding: '10px 16px',
-                                    borderColor: '#E6E1E6'
+                                    borderColor: '#E6E1E6',
+                                    bgcolor: '#fff'
                                 }}>
                                 Xuất
                             </Button>

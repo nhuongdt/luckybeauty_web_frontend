@@ -349,6 +349,7 @@ class LichHenScreen extends Component {
                                             marginRight: '8px',
                                             float: 'left',
                                             color: '#4C4B4C',
+                                            bgcolor: '#fff',
                                             '& .MuiSelect-select': {
                                                 padding: '0'
                                             }
@@ -365,6 +366,7 @@ class LichHenScreen extends Component {
                                             fontSize: '14px',
                                             padding: '8px 16px!important',
                                             float: 'left',
+                                            bgcolor: '#fff',
                                             '& .MuiSelect-select': {
                                                 padding: '0'
                                             }
