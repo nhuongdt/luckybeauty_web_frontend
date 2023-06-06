@@ -71,7 +71,7 @@
     overflow-y: auto;
     /*Hiển thị thanh cuộn khi nội dung vượt quá kích thước của SiderMenu*/
     padding-right: 16px;
-    padding-left: 16px;
+    padding-left: 6px;
 }
 
 .ant-menu-item-selected {

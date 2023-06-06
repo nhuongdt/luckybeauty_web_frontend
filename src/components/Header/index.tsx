@@ -34,6 +34,7 @@ import {
     Dialog
 } from '@mui/material';
 import './header.css';
+import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
@@ -44,6 +45,8 @@ import http from '../../services/httpService';
 import Cookies from 'js-cookie';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
+import { ReactComponent as ToggleIconNew } from '../../images/arrow-circle-left.svg';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -96,41 +99,63 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
         <Box
             display="flex"
             className="header"
-            // style={{ position: 'sticky', top: 0, zIndex: 1, width: '100%' }}>
-        >
+            sx={{ position: 'fixed', right: '0', top: '0', zIndex: 5555 }}>
             {' '}
             <Grid container className={'header-container'} justifyContent="space-between">
                 <Grid item sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
+                    <Box display="flex" gap="8px" marginLeft="16px">
+                        <LogoNew />
+                        <Typography
+                            fontFamily="vinhan"
+                            color="#7C3367"
+                            fontSize="18px"
+                            sx={{ opacity: collapsed ? '1' : '0', transition: '.2s' }}>
+                            Lucky Beauty
+                        </Typography>
+                    </Box>
                     <Button
                         sx={{
                             minWidth: 'unset!important',
-                            marginLeft: '32px',
+                            marginLeft: collapsed ? '0' : '-116px',
+                            transition: '.4s',
                             '& svg': {
                                 transform: collapsed ? 'rotate(0deg)' : 'rotate(-180deg)',
                                 transition: '.4s'
+                            },
+                            ':hover svg': {
+                                color: '#CBADC2!important'
                             }
                         }}
                         onClick={toggle}>
-                        <ToggleIcon />
+                        <ArrowBackIosIcon
+                            sx={{ color: 'rgba(203, 173, 194, 0.8)', fontSize: '16px' }}
+                        />
+                        <ArrowBackIosIcon
+                            sx={{
+                                color: 'rgba(203, 173, 194, 0.8)',
+                                fontSize: '16px',
+                                marginLeft: '-8px'
+                            }}
+                        />
                     </Button>
-                    <Select
-                        sx={{ marginLeft: 3, height: 32 }}
-                        size="small"
-                        value={currentChiNhanh}
-                        onChange={(e) => {
-                            setCurrentChiNhanh(e.target.value as string);
-                            const remember = Cookies.get('remember');
-                            Cookies.set('IdChiNhanh', e.target.value, {
-                                expires: remember === 'true' ? 1 : undefined
-                            });
-                        }}>
-                        {chiNhanhs.map((item) => {
-                            return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
-                        })}
-                    </Select>
                 </Grid>
                 <Grid item sx={{ textAlign: 'right' }}>
                     <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center' }}>
+                        <Select
+                            sx={{ marginLeft: '50px', height: 32 }}
+                            size="small"
+                            value={currentChiNhanh}
+                            onChange={(e) => {
+                                setCurrentChiNhanh(e.target.value as string);
+                                const remember = Cookies.get('remember');
+                                Cookies.set('IdChiNhanh', e.target.value, {
+                                    expires: remember === 'true' ? 1 : undefined
+                                });
+                            }}>
+                            {chiNhanhs.map((item) => {
+                                return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
+                            })}
+                        </Select>
                         <Badge style={{ margin: '0px 8px 0px 8px' }}>
                             <Button
                                 sx={{

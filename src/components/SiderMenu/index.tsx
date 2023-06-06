@@ -14,6 +14,8 @@ import { Box } from '@mui/material';
 import outIcon from '../../images/Logout.svg';
 import logo from '../../images/Lucky_beauty.jpg';
 import { color } from '@mui/system';
+import { co } from '@fullcalendar/core/internal-common';
+
 interface Props {
     collapsed: boolean;
     toggle: () => void;
@@ -89,27 +91,35 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
             [index]: !prevOpen[index]
         }));
     };
+    const handleMouseEnter = () => {
+        toggle();
+    };
 
+    const handleMouseLeave = () => {
+        toggle();
+    };
     return (
         <Box
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             sx={{
                 overflow: 'auto',
                 height: '100vh',
                 position: 'fixed',
                 transition: '.4s',
-                left: collapsed ? '-240px' : '0',
+                left: '0',
                 top: 0,
                 bottom: 0,
-                width: '240px'
+                width: collapsed ? '72px' : '240px',
+                '& .MuiList-root': {
+                    display: 'flex',
+                    whiteSpace: 'nowrap',
+                    flexWrap: 'nowrap',
+                    flexDirection: 'column'
+                }
             }}>
-            <div className="side-menu">
-                <div className="toolbar">
-                    <Avatar alt="Lucky Beauty" src={logo} />
-                    <span className="p-2">
-                        <Typography className="toolbar-title">Lucky Beauty</Typography>
-                    </span>
-                </div>
-                <List component="nav">
+            <Box className="side-menu" sx={{ overflow: collapsed ? 'hidden' : 'auto' }}>
+                <List component="nav" sx={{ minWidth: '208px', marginTop: '80px' }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
                             key={itemMenu.key}
@@ -130,7 +140,9 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                             }
                             selected={location.pathname === itemMenu.key}
                             sx={{
-                                flexWrap: 'wrap',
+                                maxWidth: collapsed ? '59px' : '999px',
+                                flexWrap: collapsed ? 'nowrap' : 'wrap',
+                                transition: '.4s',
                                 backgroundColor:
                                     location.pathname === itemMenu.key ||
                                     itemMenu.children?.some(
@@ -155,7 +167,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
                                                 : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
                                     },
-                                    minWidth: '40px'
+                                    minWidth: '40px',
+                                    marginRight: collapsed ? ' 20px' : '0',
+
+                                    transition: '.4s'
                                 }}>
                                 {itemMenu.icon}
                             </ListItemIcon>
@@ -199,7 +214,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 ? () => handleDropdown(index)
                                                 : undefined
                                         }
-                                        sx={{ color: '#666466!important' }}
+                                        sx={{
+                                            color: '#666466!important',
+                                            opacity: collapsed ? '0' : '1'
+                                        }}
                                     />
                                 ) : (
                                     <ExpandMoreIcon
@@ -208,7 +226,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 ? () => handleDropdown(index)
                                                 : undefined
                                         }
-                                        sx={{ color: '#666466!important' }}
+                                        sx={{
+                                            color: '#666466!important',
+                                            opacity: collapsed ? '0' : '1'
+                                        }}
                                     />
                                 ))}
                             {itemMenu.children && (
@@ -275,9 +296,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                     items={itemMenus}
                     defaultSelectedKeys={[location.pathname]}
                     mode="inline"></Menu> */}
-            </div>
+            </Box>
             <div className="hr"></div>
-            <div className="logout">
+            <Box
+                className="logout"
+                sx={{
+                    paddingLeft: collapsed ? '71px' : '0 ',
+                    transition: '.4s',
+                    overflow: 'hidden'
+                }}>
                 <Avatar
                     src={outIcon}
                     sx={{
@@ -316,7 +343,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                     }}>
                     Đăng xuất
                 </Link>
-            </div>
+            </Box>
         </Box>
     );
 };

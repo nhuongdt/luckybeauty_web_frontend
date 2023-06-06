@@ -400,7 +400,7 @@ class ChietKhauDichVuScreen extends Component {
                                     color: '#666466!important',
                                     bgcolor: '#fff!important',
                                     boxShadow: 'none!important',
-                                    borderColor: '#E6E1E6!important',
+                                    borderColor: '#ede4ea!important',
                                     textTransform: 'unset!important',
                                     fontWeight: '400'
                                 }
@@ -414,7 +414,7 @@ class ChietKhauDichVuScreen extends Component {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box>
+                <Box marginTop="8px">
                     {/* <TableContainer component={Paper} sx={{ display: 'none' }}>
                         <Table aria-label="customized table" size="small">
                             <TableHead>
