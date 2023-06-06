@@ -20,7 +20,7 @@ import avatar from '../../images/avatar.png';
 import dotIcon from '../../images/dotssIcon.svg';
 import { LocalOffer, Search } from '@mui/icons-material';
 import { AiOutlineDelete } from 'react-icons/ai';
-
+// import { useReactToPrint } from 'react-to-print';
 import { useState, useEffect, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
 
@@ -54,6 +54,12 @@ const PageBanHang = ({ customerChosed }: any) => {
     const formatCurrency = (value: number) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     };
+    const componentRef = useRef(null);
+    // const handlePrint = useReactToPrint({
+    //     content: () => componentRef.current,
+    //     documentTitle: 'AwesomeFileName'
+    // });
+
     const [txtSearch, setTxtSearch] = useState('');
     const [nhomDichVu, setNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
     const [nhomHangHoa, setNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -340,6 +346,22 @@ const PageBanHang = ({ customerChosed }: any) => {
             })
         );
     };
+    const RemoveNVThucHien = (cthd: any, nv: any) => {
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((x) => {
+                if (x.id === cthd.id) {
+                    return {
+                        ...x,
+                        nhanVienThucHien: x.nhanVienThucHien?.filter(
+                            (nvth) => nvth.idNhanVien !== nv.idNhanVien
+                        )
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+    };
 
     // modal chitiet giohang
     const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
@@ -407,6 +429,9 @@ const PageBanHang = ({ customerChosed }: any) => {
         // print
         const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
         setContentPrint(content);
+        //componentRef.current = content;
+
+        //handlePrint();
 
         const hdPrint = { ...hoadon };
         hdPrint.maHoaDon = hodaDonDB.maHoaDon;
@@ -431,9 +456,10 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     return (
         <>
-            {contentPrint !== '' && <InHoaDon props={propMauIn} />}
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
+            {/* <ComponentToPrint ref={componentRef} /> */}
+            {contentPrint !== '' && <InHoaDon props={propMauIn} />}
             <Grid
                 container
                 spacing={3}
@@ -691,7 +717,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         </Box>
                                     </Box>
                                 </Box>
-                                {/* nhan vien thcu hien */}
+                                {/* nhan vien thuc hien */}
 
                                 {ct.nhanVienThucHien.length > 0 && (
                                     <Box display="flex" alignItems="center">
@@ -718,7 +744,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 }}
                                                 key={index3}>
                                                 <span>{nv.tenNhanVien}</span>
-                                                <span>
+                                                <span onClick={() => RemoveNVThucHien(ct, nv)}>
                                                     <img src={closeIcon} alt="close" />
                                                 </span>
                                             </Typography>
