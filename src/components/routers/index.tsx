@@ -17,7 +17,7 @@ import { ReactComponent as ClientIcon } from '../../images/personalcardIcon.svg'
 import { ReactComponent as EmployeeIcon } from '../../images/employeeIcon.svg';
 import { ReactComponent as ReportIcon } from '../../images/reportIcon.svg';
 import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
-import { ReactComponent as AdminIcon } from '../../images/settingAdmin.svg';
+import { ReactComponent as AdminIcon } from '../../images/admin77.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;

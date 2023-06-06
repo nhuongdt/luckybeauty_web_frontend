@@ -1,4 +1,5 @@
 import { DataGrid } from '@mui/x-data-grid';
+import '../../src/App.css';
 export const TextTranslate = {
     columnMenuUnsort: 'Bỏ sắp xếp',
     columnMenuSortAsc: 'Sắp xếp tăng dần',
