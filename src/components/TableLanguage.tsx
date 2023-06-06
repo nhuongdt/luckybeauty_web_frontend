@@ -1,3 +1,4 @@
+import { DataGrid } from '@mui/x-data-grid';
 export const TextTranslate = {
     columnMenuUnsort: 'Bỏ sắp xếp',
     columnMenuSortAsc: 'Sắp xếp tăng dần',
@@ -25,7 +26,12 @@ export const TextTranslate = {
     noRowsLabel: 'không có dữ liệu',
     noResultsOverlayLabel: 'Không có kết quả phù hợp.',
     footerTotalVisibleRows: (visibleCount: number, totalCount: number) =>
-        `${visibleCount.toLocaleString()} của ${totalCount.toLocaleString()}`,
+        `${visibleCount.toLocaleString()} / ${totalCount.toLocaleString()}does nothing`,
+    MuiTablePagination: {
+        labelDisplayedRows: ({ from, to, count }: { from: number; to: number; count: number }) =>
+            `${from} - ${to} / ${count} hàng`
+    },
+    labelRowsPerPage: 'Số hàng tối đa trên mỗi trang ',
     footerRowSelected: (count: number) =>
         count !== 1
             ? `${count.toLocaleString()} Hàng được chọn`

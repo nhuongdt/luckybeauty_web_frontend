@@ -83,11 +83,12 @@ const SettingsNew: React.FC = () => {
                                         '& button': {
                                             textTransform: 'unset!important',
                                             textAlign: 'left!important',
-                                            padding: '8px 0px!important',
+                                            padding: '8px 8px!important',
                                             minHeight: '36px',
                                             alignItems: 'start',
                                             color: '#4C4B4C!important',
-                                            fontWeight: '400'
+                                            fontWeight: '400',
+                                            borderRadius: '4px'
                                         },
                                         '& button.Mui-selected': {
                                             backgroundColor: '#F2EBF0'

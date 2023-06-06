@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { useState } from 'react';
+import { Component } from 'react';
+import { handleExportClick } from '../../components/exportDataGrid';
 import { DataGrid, GridColDef, useGridApiRef, GridLocaleText } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
 import { format, isValid } from 'date-fns';
@@ -127,6 +128,7 @@ class CustomerScreen extends React.Component {
         });
         fileDowloadService.downloadTempFile(result);
     };
+
     handlePageChange = async (event: any, newPage: number) => {
         const skip = newPage + 1;
         await this.setState({ skipCount: skip, curentPage: newPage });
@@ -171,6 +173,7 @@ class CustomerScreen extends React.Component {
             idNhanSu: ''
         });
     };
+
     render(): React.ReactNode {
         const columns: GridColDef[] = [
             { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
@@ -413,23 +416,22 @@ class CustomerScreen extends React.Component {
                                 sx={{
                                     textTransform: 'capitalize',
                                     fontWeight: '400',
-                                    color: '#666466'
+                                    color: '#666466',
+                                    bgcolor: '#fff'
                                 }}>
                                 Nhập
                             </Button>
                             <Button
                                 className="border-color"
                                 variant="outlined"
-                                onClick={() => {
-                                    this.exportToExcel();
-                                }}
                                 startIcon={<img src={UploadIcon} />}
                                 sx={{
                                     textTransform: 'capitalize',
                                     fontWeight: '400',
                                     color: '#666466',
                                     padding: '10px 16px',
-                                    borderColor: '#E6E1E6'
+                                    borderColor: '#E6E1E6',
+                                    bgcolor: '#fff'
                                 }}>
                                 Xuất
                             </Button>
@@ -459,8 +461,6 @@ class CustomerScreen extends React.Component {
                         autoHeight
                         rows={this.state.rowTable}
                         columns={columns}
-                        hideFooterPagination
-                        hideFooter
                         initialState={{
                             pagination: {
                                 paginationModel: {
@@ -473,6 +473,9 @@ class CustomerScreen extends React.Component {
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& + .MuiTablePagination-root': {
                                 display: 'none'
                             }
                         }}

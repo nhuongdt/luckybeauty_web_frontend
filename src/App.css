@@ -11,16 +11,16 @@ body .font-normal {
     pointer-events: none;
 }
 
-@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-calendars/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-lists/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-navigations/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css";
-@import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
+@import '../node_modules/@syncfusion/ej2-base/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-lists/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
+@import '../node_modules/@syncfusion/ej2-react-schedule/styles/material.css';
 @media (prefers-reduced-motion: no-preference) {
     .App-logo {
         animation: App-logo-spin infinite 20s linear;
@@ -131,14 +131,13 @@ body .font-normal {
     margin-bottom: 0;
 }
 
-
 /* style main button*/
 
 .btnNhapXuat {
     background-color: #fff;
     color: #666466;
     padding: 10px 16px;
-    border-color: #E6E1E6;
+    border-color: #e6e1e6;
     height: 40px;
 }
 
@@ -152,13 +151,11 @@ body .font-normal {
     border-color: #7c3367;
 }
 
-
 /* style text in button */
 
 .MuiButton-root {
     text-transform: initial;
 }
-
 
 /* button paging selected */
 
@@ -181,5 +178,14 @@ body .font-normal {
 }
 
 .modal-lable {
+    font-size: 14px;
+}
+
+/* đổi dòng chữ rows per page của các bảng thành tiếng việt */
+.MuiTablePagination-selectLabel {
+    font-size: 0;
+}
+.MuiTablePagination-selectLabel::after {
+    content: 'Số hàng tối đa trên mỗi trang';
     font-size: 14px;
 }

@@ -33,9 +33,10 @@ class CaiDatHoaHongScreen extends Component {
                                                 ? '#FFF'
                                                 : '#666466',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? '#B085A4'
-                                                : '#FFFFFF',
-                                            border: 'none'
+                                                ? 'rgb(124, 51, 103)!important'
+                                                : '#FFFFFF!important',
+                                            border: 'none!important',
+                                            boxShadow: 'none!important'
                                         }}
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: true });
@@ -54,9 +55,10 @@ class CaiDatHoaHongScreen extends Component {
                                                 ? '#666466'
                                                 : '#fff',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? '#FFFFFF'
-                                                : '#B085A4',
-                                            border: 'none'
+                                                ? '#FFFFFF!important'
+                                                : 'rgb(124, 51, 103)!important',
+                                            border: 'none!important',
+                                            boxShadow: 'none!important'
                                         }}
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: false });
