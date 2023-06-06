@@ -99,7 +99,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                             }}>
                                             <FormGroup>
                                                 <label>
-                                                    Tenant Name
+                                                    Id Tenant
                                                     <span
                                                         style={{
                                                             color: 'red',
@@ -122,7 +122,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                             </FormGroup>
                                             <FormGroup>
                                                 <label htmlFor="name2">
-                                                    Name
+                                                    Tên cửa hàng
                                                     <span
                                                         style={{
                                                             color: 'red',
@@ -212,12 +212,14 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         )}
                                                 </FormGroup>
                                             )}
-                                            <Typography
-                                                variant="body1"
-                                                fontSize="14px"
-                                                textAlign="center">
-                                                Mật khẩu mặc định là : 123qwe
-                                            </Typography>
+                                            {tenantId !== 0 ? null : (
+                                                <Typography
+                                                    variant="body1"
+                                                    fontSize="14px"
+                                                    textAlign="center">
+                                                    Mật khẩu mặc định là : 123qwe
+                                                </Typography>
+                                            )}
                                             <FormGroup>
                                                 <FormControlLabel
                                                     sx={{

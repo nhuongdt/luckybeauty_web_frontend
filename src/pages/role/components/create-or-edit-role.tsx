@@ -29,7 +29,9 @@ import { PermissionTree } from '../../../services/role/dto/permissionTree';
 import TreeItem from '@mui/lab/TreeItem';
 import TreeView from '@mui/lab/TreeView';
 import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';
-
+import { permissionCheckboxTree } from '../../../services/role/dto/permissionCheckboxTree';
+import CheckboxTree from 'react-checkbox-tree';
+import 'react-checkbox-tree/lib/react-checkbox-tree.css';
 export interface ICreateOrEditRoleProps {
     visible: boolean;
     onCancel: () => void;
@@ -44,6 +46,8 @@ interface ICreateOrEditRoleState {
     checkedAll: boolean;
     selectedPermissions: string[];
     tabIndex: string;
+    checked: [];
+    expanded: [];
 }
 
 class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
@@ -54,13 +58,32 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             filteredPermissions: props.permissionTree,
             checkedAll: false,
             selectedPermissions: this.props.formRef.grantedPermissionNames || [],
-            tabIndex: '1'
+            tabIndex: '1',
+            checked: [],
+            expanded: []
         };
     }
     async componentDidMount() {
         await this.setState({
             selectedPermissions: this.props.formRef.grantedPermissionNames
         });
+    }
+    convertPermissionTree(permissionTree: PermissionTree[]): permissionCheckboxTree[] {
+        const data: permissionCheckboxTree[] = [];
+
+        permissionTree.forEach((permission) => {
+            const { name, displayName, children } = permission;
+            const node: permissionCheckboxTree = {
+                value: name,
+                label: displayName
+            };
+
+            if (children && children.length > 0) {
+                node.children = this.convertPermissionTree(children);
+            }
+            data.push(node);
+        });
+        return data;
     }
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         this.setState({ tabIndex: newValue });
@@ -71,6 +94,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             ...values,
             grantedPermissionNames: this.state.selectedPermissions
         });
+        this.props.onOk();
     };
 
     handleSearchPermission = (value: string) => {
@@ -89,17 +113,28 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
 
         let grantedPermissionNames = [...formRef.grantedPermissionNames];
 
-        if (checked) {
-            grantedPermissionNames.push(treeNode.name);
-            if (treeNode.children != null) {
-                treeNode.children.map((child) => {
-                    return grantedPermissionNames.push(child.name);
+        const addPermissions = (node: PermissionTree) => {
+            grantedPermissionNames.push(node.name);
+            if (node.children != null) {
+                node.children.forEach((child) => {
+                    addPermissions(child);
                 });
             }
+        };
+
+        const removePermissions = (node: PermissionTree) => {
+            grantedPermissionNames = grantedPermissionNames.filter((name) => name !== node.name);
+            if (node.children != null) {
+                node.children.forEach((child) => {
+                    removePermissions(child);
+                });
+            }
+        };
+
+        if (checked) {
+            addPermissions(treeNode);
         } else {
-            grantedPermissionNames = grantedPermissionNames.filter(
-                (name) => name !== treeNode.name
-            );
+            removePermissions(treeNode);
         }
 
         this.setState({
@@ -128,6 +163,8 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             id: formRef.id
         };
 
+        const permissionCheckbox = this.convertPermissionTree(permissionTree);
+        console.log(JSON.stringify(permissionCheckbox));
         const renderTree = (nodes: PermissionTree) => (
             <TreeItem
                 key={nodes.name}
@@ -191,7 +228,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     }
                                                 }}>
                                                 <Tab
-                                                    label="RoleDetails"
+                                                    label="Vai trò"
                                                     value="1"
                                                     sx={{
                                                         textTransform: 'unset!important',
@@ -199,7 +236,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     }}
                                                 />
                                                 <Tab
-                                                    label="RolePermission"
+                                                    label="Quyền"
                                                     value="2"
                                                     sx={{
                                                         textTransform: 'unset!important',
@@ -222,7 +259,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             }}>
                                             <FormGroup>
                                                 <label htmlFor="name">
-                                                    RoleName
+                                                    Tên vai trò
                                                     <span
                                                         style={{
                                                             color: 'red',
@@ -243,7 +280,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             </FormGroup>
                                             <FormGroup>
                                                 <label htmlFor="displayName">
-                                                    DisplayName
+                                                    Tên hiển thị
                                                     <span
                                                         style={{
                                                             color: 'red',
@@ -263,7 +300,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 />
                                             </FormGroup>
                                             <FormGroup>
-                                                <label htmlFor="description">Description</label>
+                                                <label htmlFor="description">Mô tả</label>
                                                 <TextField
                                                     fullWidth
                                                     size="small"

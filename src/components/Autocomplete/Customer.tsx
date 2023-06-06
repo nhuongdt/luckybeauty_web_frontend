@@ -59,7 +59,7 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
                 renderInput={(params) => <TextField {...params} label="Tìm kiếm" />}
                 renderOption={(props, option) => {
                     return (
-                        <li {...props} key={option.id}>
+                        <li {...props}>
                             <Grid container alignItems="center">
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />

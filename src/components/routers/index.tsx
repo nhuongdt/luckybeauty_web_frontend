@@ -168,7 +168,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/customer/indexNew'))
+                    component: LoadableComponent(() => import('../../pages/customer'))
                 },
                 {
                     path: '/dich-vus',
@@ -283,7 +283,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/settings/indexNew'))
+                    component: LoadableComponent(() => import('../../pages/settings'))
                 }
             ]
         }
