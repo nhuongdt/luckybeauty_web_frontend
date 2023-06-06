@@ -12,8 +12,20 @@ import {
     TableHead,
     MenuItem,
     TableRow,
-    FormControl
+    FormControl,
+    Grid,
+    Box,
+    TextField,
+    Avatar,
+    Typography
 } from '@mui/material';
+import { TextTranslate } from '../../../../components/TableLanguage';
+import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DownloadIcon from '../../../../images/download.svg';
+import UploadIcon from '../../../../images/upload.svg';
+import SearchIcon from '../../../../images/search-normal.svg';
 import { Component, ReactNode } from 'react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import chietKhauDichVuStore from '../../../../stores/chietKhauDichVuStore';
@@ -86,12 +98,242 @@ class ChietKhauDichVuScreen extends Component {
     };
     render(): ReactNode {
         const { listChietKhauDichVu } = chietKhauDichVuStore;
+
+        const columns: GridColDef[] = [
+            {
+                field: 'id',
+                headerName: 'ID',
+                minWidth: 70,
+                flex: 0.8,
+                renderCell: (params: any) => (
+                    <Box
+                        title={params.value}
+                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                        {params.value}
+                    </Box>
+                )
+            },
+
+            {
+                field: 'tenDichVu',
+                headerName: 'Tên dịch vụ ',
+                minWidth: 140,
+                flex: 1,
+                renderCell: (params: any) => (
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '14px',
+                            width: '100%'
+                        }}
+                        title={params.value}>
+                        <Typography
+                            fontSize="14px"
+                            sx={{
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden',
+                                width: '100%'
+                            }}>
+                            {params.value}
+                        </Typography>
+                    </Box>
+                ),
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'nhomDichVu',
+                headerName: 'Nhóm dịch vụ',
+                minWidth: 114,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        title={params.value}
+                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                        {params.value}
+                    </Box>
+                )
+            },
+            {
+                field: 'hoaHongThucHien',
+                headerName: 'Hoa hồng thực hiện',
+                minWidth: 150,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        title={params.value}
+                        sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: 'calc(100% - 20px)',
+                            border: '1px solid #E6E1E6',
+                            borderRadius: '8px',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0 16px'
+                        }}>
+                        {params.value}
+                    </Box>
+                )
+            },
+            {
+                field: 'hoaHongTheoYeuCau',
+                headerName: 'Hoa hồng theo yêu cầu',
+                minWidth: 170,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        title={params.value}
+                        sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: 'calc(100% - 40px)',
+                            border: '1px solid #E6E1E6',
+                            borderRadius: '8px',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0 16px'
+                        }}>
+                        {params.value}
+                    </Box>
+                )
+            },
+            {
+                field: 'hoaHongTuVan',
+                headerName: 'Hoa hồng tư vấn',
+                minWidth: 130,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        title={params.value}
+                        sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%',
+                            border: '1px solid #E6E1E6',
+                            borderRadius: '8px',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0 16px'
+                        }}>
+                        {params.value}
+                    </Box>
+                )
+            },
+            {
+                field: 'giaBan',
+                headerName: 'Giá bán',
+                minWidth: 85,
+                flex: 1,
+                renderHeader: (params: any) => (
+                    <Box
+                        sx={{
+                            fontWeight: '700',
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%'
+                        }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        title={params.value}
+                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                        {params.value}
+                    </Box>
+                )
+            },
+            {
+                field: 'actions',
+                headerName: 'Hành động',
+                maxWidth: 48,
+                flex: 1,
+                disableColumnMenu: true,
+
+                renderCell: (params) => (
+                    <Box>
+                        <IconButton
+                            aria-label="Actions"
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true">
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            }
+        ];
+        const rows = [
+            {
+                id: '0980898mkjkhs8x0',
+                tenDichVu: 'Tình sầu thiên thu muôn lối',
+                nhomDichVu: 'ABC ADYOGMC KUYJ VHBV VBV',
+                hoaHongThucHien: '66%',
+                hoaHongTheoYeuCau: '88%',
+                hoaHongTuVan: '4009% ',
+                giaBan: '425.000đ'
+            },
+            {
+                id: '09808908mkjkhs8x0',
+                tenDichVu: 'Tình sầu thiên thu muôn lối',
+                nhomDichVu: 'ABC ADYOGMC KUYJ VHBV VBV',
+                hoaHongThucHien: '80%',
+                hoaHongTheoYeuCau: '99%',
+                hoaHongTuVan: '150% ',
+                giaBan: '600.000đ'
+            }
+        ];
+
         return (
             <div>
-                <div
-                    style={{ height: '48px', background: '#F2EBF0' }}
-                    className="row d-flex align-content-center">
-                    <div className="col-4 pl-2">
+                <Grid
+                    container
+                    sx={{
+                        height: '48px',
+                        background: '#F2EBF0',
+                        alignItems: 'center',
+                        paddingX: '8px'
+                    }}>
+                    <Grid item xs={4}>
                         <FormControl size="small">
                             <Select
                                 defaultValue={
@@ -99,7 +341,7 @@ class ChietKhauDichVuScreen extends Component {
                                         ? this.state.suggestNhanSu[0].id
                                         : AppConsts.guidEmpty
                                 }
-                                style={{ height: 32 }}
+                                sx={{ height: 40, bgcolor: '#fff' }}
                                 value={this.state.idNhanVien}
                                 onChange={async (e) => {
                                     await this.setState({ idNhanVien: e.target.value });
@@ -110,10 +352,27 @@ class ChietKhauDichVuScreen extends Component {
                                 })}
                             </Select>
                         </FormControl>
-                    </div>
-                    <div className="col-4"></div>
-                    <div className="col-4">
-                        <Button
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            type="text"
+                            size="small"
+                            sx={{
+                                '& input': { bgcolor: '#fff' },
+                                '& .MuiInputBase-root': { pl: '0', bgcolor: '#fff' }
+                            }}
+                            placeholder="Tìm kiếm"
+                            InputProps={{
+                                startAdornment: (
+                                    <IconButton type="button" sx={{ bgcolor: '#fff' }}>
+                                        <img src={SearchIcon} />
+                                    </IconButton>
+                                )
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        {/* <Button
                             onClick={() => {
                                 this.setState({ visited: true });
                             }}
@@ -131,11 +390,32 @@ class ChietKhauDichVuScreen extends Component {
                                 }}>
                                 Thêm mới
                             </span>
-                        </Button>
-                    </div>
-                </div>
-                <div>
-                    <TableContainer component={Paper}>
+                        </Button> */}
+                        <Box
+                            display="flex"
+                            gap="8px"
+                            justifyContent="end"
+                            sx={{
+                                '& button': {
+                                    color: '#666466!important',
+                                    bgcolor: '#fff!important',
+                                    boxShadow: 'none!important',
+                                    borderColor: '#E6E1E6!important',
+                                    textTransform: 'unset!important',
+                                    fontWeight: '400'
+                                }
+                            }}>
+                            <Button startIcon={<img src={DownloadIcon} />} variant="outlined">
+                                Nhập
+                            </Button>
+                            <Button startIcon={<img src={UploadIcon} />} variant="outlined">
+                                Xuất
+                            </Button>
+                        </Box>
+                    </Grid>
+                </Grid>
+                <Box>
+                    {/* <TableContainer component={Paper} sx={{ display: 'none' }}>
                         <Table aria-label="customized table" size="small">
                             <TableHead>
                                 <TableRow style={{ height: '48px' }}>
@@ -239,8 +519,39 @@ class ChietKhauDichVuScreen extends Component {
                                       })}
                             </TableBody>
                         </Table>
-                    </TableContainer>
-                </div>
+                    </TableContainer> */}
+                    <DataGrid
+                        autoHeight
+                        columns={columns}
+                        rows={rows}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 5, pageSize: 10 }
+                            }
+                        }}
+                        pageSizeOptions={[10, 20]}
+                        sx={{
+                            '& p': {
+                                mb: 0
+                            },
+                            '& .MuiDataGrid-virtualScroller': {
+                                bgcolor: '#fff'
+                            },
+                            '& .MuiDataGrid-columnHeaders': {
+                                borderBottom: '1px solid #CDC9CD',
+                                bgcolor: '#fff'
+                            },
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& + .MuiTablePagination-root': {
+                                display: 'none'
+                            }
+                        }}
+                        localeText={TextTranslate}
+                        checkboxSelection
+                    />
+                </Box>
                 <CreateOrEditChietKhauDichVuModal
                     formRef={this.state.createOrEditDto}
                     onClose={this.onCloseModal}

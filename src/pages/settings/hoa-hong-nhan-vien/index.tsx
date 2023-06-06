@@ -10,32 +10,37 @@ class CaiDatHoaHongScreen extends Component {
     render(): ReactNode {
         return (
             <>
-                <div>
+                <Box>
                     <Box component={'div'}>
                         <Grid container rowSpacing={2}>
                             <Grid item xs={12}>
                                 <ButtonGroup
                                     sx={{
-                                        height: '32px',
+                                        height: '40px',
                                         bottom: '24px',
                                         right: '50px',
-                                        float: 'right'
+                                        float: 'right',
+                                        '& button': {
+                                            padding: '8px 10px!important',
+                                            lineHeight: '24px'
+                                        }
                                     }}>
                                     <Button
                                         variant={
                                             this.state.isChietKhauHoaDon ? 'outlined' : 'contained'
                                         }
                                         sx={{
-                                            fontSize: '14px',
+                                            fontSize: '16px',
                                             textTransform: 'unset',
                                             borderRadius: '8px 0px 0px 8px',
                                             color: this.state.isChietKhauHoaDon
                                                 ? '#FFF'
                                                 : '#666466',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? '#B085A4'
-                                                : '#FFFFFF',
-                                            border: 'none'
+                                                ? 'rgb(124, 51, 103)!important'
+                                                : '#FFFFFF!important',
+                                            border: 'none!important',
+                                            boxShadow: 'none!important'
                                         }}
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: true });
@@ -47,16 +52,17 @@ class CaiDatHoaHongScreen extends Component {
                                             this.state.isChietKhauHoaDon ? 'contained' : 'outlined'
                                         }
                                         sx={{
-                                            fontSize: '14px',
+                                            fontSize: '16px',
                                             textTransform: 'unset',
                                             borderRadius: '0px 8px 8px 0px',
                                             color: this.state.isChietKhauHoaDon
                                                 ? '#666466'
                                                 : '#fff',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? '#FFFFFF'
-                                                : '#B085A4',
-                                            border: 'none'
+                                                ? '#FFFFFF!important'
+                                                : 'rgb(124, 51, 103)!important',
+                                            border: 'none!important',
+                                            boxShadow: 'none!important'
                                         }}
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: false });
@@ -74,7 +80,7 @@ class CaiDatHoaHongScreen extends Component {
                             </Grid>
                         </Grid>
                     </Box>
-                </div>
+                </Box>
             </>
         );
     }

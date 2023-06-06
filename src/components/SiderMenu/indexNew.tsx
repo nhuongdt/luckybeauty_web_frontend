@@ -127,7 +127,13 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                     : 'nav-item'
                             }
                             selected={location.pathname === itemMenu.key}
-                            sx={{ flexWrap: 'wrap' }}>
+                            sx={{
+                                flexWrap: 'wrap',
+                                backgroundColor:
+                                    location.pathname === itemMenu.key
+                                        ? '#F2EBF0!important'
+                                        : 'transparent'
+                            }}>
                             <ListItemIcon
                                 onClick={
                                     itemMenu.children ? () => handleDropdown(index) : undefined

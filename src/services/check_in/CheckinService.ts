@@ -26,9 +26,9 @@ class CheckinService {
             });
         return xx;
     };
-    UpdatetCustomerCheckIn = async (input: KHCheckInDto) => {
+    UpdateCustomerCheckIn = async (input: KHCheckInDto) => {
         const xx = await http
-            .post(`api/services/app/CheckIn/UpdatetCustomerCheckIn`, input)
+            .post(`api/services/app/CheckIn/UpdateCustomerCheckIn`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
