@@ -144,7 +144,7 @@ const Header: React.FC<HeaderProps> = (
                 <Grid item sx={{ textAlign: 'right' }}>
                     <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center' }}>
                         <Select
-                            sx={{ marginLeft: '50px', height: 32 }}
+                            sx={{ marginLeft: '50px' }}
                             size="small"
                             value={currentChiNhanh}
                             onChange={(e) => {
