@@ -33,6 +33,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
         <>
             {dataNhomHang.map((item: any, index: any) => (
                 <Accordion
+                    disableGutters
                     key={index}
                     sx={{
                         border: 'none!important',
@@ -40,7 +41,10 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         '&.MuiAccordion-root::before': { content: 'none' }
                     }}>
                     <AccordionSummary
-                        sx={{ display: 'flex', alignItems: 'center' }}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center'
+                        }}
                         onMouseLeave={(event: any) => {
                             handleHover(event, item, index);
                         }}
@@ -60,7 +64,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                             onClick={() => handleClickTreeItem(false)}>
                             {item.tenNhomHang}
                         </Typography>
-                        {isHover && rowHover.id === item.id && (
+                        {isHover && item.id !== '' && rowHover.id === item.id && (
                             <OpenInNew
                                 onClick={() => handleClickTreeItem(true)}
                                 sx={{ position: 'absolute', right: 16 }}
@@ -68,23 +72,34 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         )}
                     </AccordionSummary>
 
-                    <AccordionDetails sx={{ padding: '0', paddingLeft: '30px' }}>
-                        {item.children?.map((child: any, index2: any) => (
-                            <Button
-                                key={index2}
+                    {item.children?.map((child: any, index2: any) => (
+                        <AccordionDetails
+                            key={index2}
+                            sx={{ display: 'flex', paddingLeft: '30px' }}
+                            onMouseLeave={(event: any) => {
+                                handleHover(event, child, index2);
+                            }}
+                            onMouseEnter={(event: any) => {
+                                handleHover(event, child, index2);
+                            }}>
+                            <LocalOffer sx={{ color: item.color }} />
+                            <Typography
+                                variant="subtitle1"
+                                color="#333233"
                                 sx={{
-                                    display: 'block',
-                                    color: '#4C4B4C',
-
-                                    textTransform: 'unset',
-                                    textAlign: 'left',
-                                    fontWeight: '400'
+                                    marginLeft: '9px'
                                 }}
                                 onClick={() => handleClickTreeItem(false)}>
-                                {item.tenNhomHang}
-                            </Button>
-                        ))}
-                    </AccordionDetails>
+                                {child.tenNhomHang}
+                            </Typography>
+                            {isHover && rowHover.id === child.id && (
+                                <OpenInNew
+                                    onClick={() => handleClickTreeItem(true)}
+                                    sx={{ position: 'absolute', right: 16 }}
+                                />
+                            )}
+                        </AccordionDetails>
+                    ))}
                 </Accordion>
             ))}
         </>
