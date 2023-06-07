@@ -9,8 +9,10 @@ import ColumnChartNew from './components/Charts/ColumnChartNew';
 import HotServicesNew from './components/Statistical/HotServicesNew';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import SearchIcon from '../../images/search-normal.svg';
 import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
+import { Typography, TextField, IconButton } from '@mui/material';
 const Dashboard: React.FC = () => {
     const [month, setMonth] = React.useState('Tháng này');
     const handleChange = (event: any) => {
@@ -18,23 +20,35 @@ const Dashboard: React.FC = () => {
     };
     return (
         <div>
-            <div className="page-header-dashboard">
+            <Box
+                display="flex"
+                alignItems="center"
+                sx={{ padding: '0 2.2222222222222223vw', paddingTop: '1.6666666666666667vw' }}>
                 <div className="page-header_col-1">
                     <div className="breadcrumb">Trang chủ</div>
-                    <div className="overview-title">Tổng quan</div>
                 </div>
-                <div className="page-header_col-2">
-                    <button className="btn-dots-add">
-                        <img src={dotsIcon} alt="dot" />
-                    </button>
-                    <button className="btn-add">
-                        <span className="btn-add_icon">
-                            <img src={addIcon} alt="add" />
-                        </span>
-                        <span className="btn-add-text">Thêm</span>
-                    </button>
-                </div>
-            </div>
+                <Box>
+                    <TextField
+                        sx={{
+                            backgroundColor: '#FFFAFF',
+                            borderColor: '#CDC9CD',
+                            height: '40px',
+                            ml: '12px'
+                        }}
+                        size="small"
+                        className="search-field"
+                        variant="outlined"
+                        placeholder="Tìm kiếm"
+                        InputProps={{
+                            startAdornment: (
+                                <IconButton type="button">
+                                    <img src={SearchIcon} />
+                                </IconButton>
+                            )
+                        }}
+                    />
+                </Box>
+            </Box>
             <div className="page-body">
                 <div className="page-body_row-1">
                     <OverViewNew />

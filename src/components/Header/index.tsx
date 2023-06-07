@@ -153,7 +153,7 @@ const Header: React.FC<HeaderProps> = (
                                     ml: '10px',
                                     border: 'none!important',
                                     '& *': {
-                                        border: '0'
+                                        border: '0!important'
                                     },
                                     '& .MuiSelect-select': {
                                         padding: '0',
