@@ -55,14 +55,8 @@ const MainAppLayout: React.FC = () => {
                     onHoverChange={handleChildHoverChange}
                 />
                 <Box
-<<<<<<< HEAD
                     sx={{
                         marginLeft: collapsed && !isChildHovered ? '72px' : '240px',
-=======
-                    style={{
-                        marginLeft: collapsed ? 240 : 0,
->>>>>>> 545a4da99f60fd37ac919a1083167f6ffa69ae94
-                        position: 'relative',
                         transition: '.4s'
                     }}>
                     <Header

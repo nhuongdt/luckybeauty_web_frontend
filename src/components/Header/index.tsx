@@ -1,15 +1,7 @@
 // import { Avatar, Badge, Col, Dropdown, Layout, Menu, Row, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import avatar from '../../images/user.png';
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    LogoutOutlined,
-    HomeOutlined,
-    DownOutlined,
-    BellOutlined,
-    MessageOutlined
-} from '@ant-design/icons';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
