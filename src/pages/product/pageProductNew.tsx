@@ -1,52 +1,24 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-    Grid,
-    Box,
-    Typography,
-    TextField,
-    InputAdornment,
-    Select,
-    MenuItem,
-    Stack,
-    Button,
-    Container,
-    Link,
-    Avatar,
-    IconButton,
-    TextareaAutosize,
-    ButtonGroup,
-    Breadcrumbs,
-    Dialog,
-    Pagination
-} from '@mui/material';
-import './style.css';
+import { Grid, Box, Typography, TextField, Stack, Button, Pagination } from '@mui/material';
+import { Add, FileDownload, FileUpload, Search } from '@mui/icons-material';
+
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
-import avatar from '../../images/avatar.png';
-import EditIcon from '@mui/icons-material/Edit';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
-import AddIcon from '../../images/add.svg';
-import SearchIcon from '../../images/search-normal.svg';
-import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
-import DownloadIcon from '../../images/download.svg';
-import UploadIcon from '../../images/upload.svg';
-import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
-import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
-import tagIcon1 from '../../images/tagAll.svg';
-import tagIcon2 from '../../images/tag2.svg';
-import tagIcon3 from '../../images/tag3.svg';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { TextTranslate } from '../../components/TableLanguage';
 /* custom component */
-
+import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
+import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import MessageAlert from '../../components/AlertDialog/MessageAlert';
+import { OptionPage } from '../../components/Pagination/OptionPage';
+import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
+import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
 import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
+
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -57,46 +29,13 @@ import {
     ModelHangHoaDto,
     PagedProductSearchDto
 } from '../../services/product/dto';
+
 import Utils from '../../utils/utils'; // func common
-
-import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
-import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
-import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import MessageAlert from '../../components/AlertDialog/MessageAlert';
-import { OptionPage } from '../../components/Pagination/OptionPage';
-import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
-import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-
-import {
-    Add,
-    DeleteOutline,
-    FileDownload,
-    FileUpload,
-    Info,
-    LocalOffer,
-    Menu,
-    ModeEditOutline,
-    MoreHoriz,
-    Search
-} from '@mui/icons-material';
-
 import '../../App.css';
-export const DataGridNoData = () => {
-    return (
-        <>
-            <p>no data</p>
-        </>
-    );
-};
-export default function PageProductNew() {
-    const [open, setOpen] = React.useState(false);
+import './style.css';
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
+export default function PageProductNew() {
+    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
@@ -126,14 +65,6 @@ export default function PageProductNew() {
         columnSort: '',
         typeSort: ''
     });
-
-    /* state in row table */
-    const [showAction, setShowAction] = useState({ index: 0, value: false });
-    const [showListAction, setshowListAction] = useState(true);
-    const [isHover, setIsHover] = useState(false);
-    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
-    const [anchorEl, setAnchorEl] = useState(null);
-    /* end state in row table */
 
     const GetListHangHoa = async () => {
         const list = await ProductService.Get_DMHangHoa(filterPageProduct);
@@ -288,26 +219,21 @@ export default function PageProductNew() {
         }
     };
 
-    const doActionRow = (action: number) => {
+    const doActionRow = (action: any, rowItem: any) => {
+        setRowHover(rowItem);
         if (action < 2) {
-            showModalAddProduct(action, rowHover?.idDonViQuyDoi);
+            showModalAddProduct(action, rowItem?.idDonViQuyDoi);
         } else {
             setInforDeleteProduct(
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowHover?.maHangHoa ?? ' '} không?`
+                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowItem?.maHangHoa ?? ' '} không?`
                 })
             );
         }
     };
     console.log('page');
-
-    const showMenuAction = (elm: any, rowItem: any) => {
-        console.log('row');
-        setRowHover(rowItem);
-        setAnchorEl(elm.currentTarget);
-    };
 
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
@@ -316,20 +242,6 @@ export default function PageProductNew() {
             hiddenAlert();
             setInforDeleteProduct({ ...inforDeleteProduct, show: false });
         }
-    };
-
-    const hoverRow = (event: any, rowData: any, index: number) => {
-        switch (event.type) {
-            case 'mouseenter': // enter
-                setShowAction({ index: index, value: true });
-                break;
-            case 'mouseleave': //leave
-                setShowAction({ index: index, value: false });
-                break;
-        }
-        setshowListAction(false);
-        setRowHover(rowData);
-        setIsHover(event.type === 'mouseenter');
     };
 
     const columns: GridColDef[] = [
@@ -452,20 +364,36 @@ export default function PageProductNew() {
         },
         {
             field: 'actions',
-            headerName: 'Hành động',
+            headerName: '#',
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
 
             renderCell: (params) => (
-                <IconButton
-                    aria-label="Actions"
-                    aria-controls={`actions-menu-${params.row.id}`}
-                    aria-haspopup="true"
-                    onClick={(event) => showMenuAction(event, params.row)}>
-                    <MoreHoriz />
-                </IconButton>
+                <ActionViewEditDelete
+                    handleAction={(action: any) => doActionRow(action, params.row)}
+                />
             ),
+            // renderCell: (params) => {
+            //     const onClick = (event: any) => {
+            //         console.log('elmHTML ', event.currentTarget);
+            //         const api: GridApi = params.api;
+            //         const fields = api
+            //             .getAllColumns()
+            //             .map((c) => c.field)
+            //             .filter((c) => c !== '__check__' && !!c);
+            //         const thisRow: any = {};
+
+            //         fields.forEach((f) => {
+            //             thisRow[f] = params.row;
+            //         });
+
+            //         setRowHover(params.row);
+            //         setAnchorEl(event.currentTarget);
+            //     };
+
+            //     return <Button onClick={onClick}>Click</Button>;
+            // },
             renderHeader: (params) => (
                 <Box sx={{ display: 'none' }}>
                     {params.colDef.headerName}
@@ -616,10 +544,6 @@ export default function PageProductNew() {
                                     }
                                 }}
                                 localeText={TextTranslate}
-                            />
-                            <ActionViewEditDelete
-                                elmHTML={anchorEl}
-                                handleClickAction={doActionRow}
                             />
                         </Box>
 
