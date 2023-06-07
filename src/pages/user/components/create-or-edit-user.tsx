@@ -10,7 +10,6 @@ import {
     IconButton,
     Box,
     Tab,
-    Tabs,
     TextField,
     Checkbox,
     Button,
@@ -30,7 +29,7 @@ import { CreateOrUpdateUserInput } from '../../../services/user/dto/createOrUpda
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import { GetRoles } from '../../../services/user/dto/getRolesOuput';
 import TabList from '@mui/lab/TabList';
-import rules from './createOrUpdateUser.validation';
+//import rules from './createOrUpdateUser.validation';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -89,7 +88,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
         }));
 
         const initialValues = {
-            id: formRef.id,
+            id: formRef.id ?? 0,
             nhanSuId: formRef.nhanSuId,
             surname: formRef.surname,
             name: formRef.name,
@@ -97,10 +96,33 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             phoneNumber: formRef.phoneNumber,
             userName: formRef.userName,
             password: formRef.password,
+            confirmPassword: formRef.password,
             isActive: formRef.isActive,
             roleNames: formRef.roleNames
         };
-
+        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+        const phoneRegex = /^\d{10,13}$/;
+        const rules = Yup.object().shape({
+            surname: Yup.string().required('Tên là bắt buộc'),
+            name: Yup.string().required('Họ là bắt buộc'),
+            emailAddress: Yup.string()
+                .matches(emailRegex, 'Email không hợp lệ')
+                .required('Email là bắt buộc'),
+            userName: Yup.string().required('Tên truy cập là bắt buộc'),
+            phoneNumber: Yup.string().matches(phoneRegex, 'Số điện thoại không hợp lệ'),
+            password:
+                userId === 0
+                    ? Yup.string()
+                          .min(6, 'Mật khẩu tối thiểu 6 ký tự')
+                          .required('Mật khẩu không được để trống')
+                    : Yup.string(),
+            confirmPassword:
+                userId === 0
+                    ? Yup.string()
+                          .oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')
+                          .required('Xác nhận mật khẩu là bắt buộc')
+                    : Yup.string()
+        });
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
                 <DialogTitle>
@@ -135,12 +157,12 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             onChange={this.handleTabChange}
                                             aria-label="lab API tabs example">
                                             <Tab
-                                                label="User detail"
+                                                label="Người dùng"
                                                 value="1"
                                                 sx={{ textTransform: 'unset!important' }}
                                             />
                                             <Tab
-                                                label="Role"
+                                                label="Vai trò"
                                                 value="2"
                                                 sx={{ textTransform: 'unset!important' }}
                                             />
@@ -315,6 +337,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         </span>
                                                     </label>
                                                     <TextField
+                                                        disabled={userId === 0 ? false : true}
                                                         type="text"
                                                         name="userName"
                                                         value={values.userName}
@@ -326,53 +349,56 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         <div>{errors.userName}</div>
                                                     )}
                                                 </FormGroup>
-                                                {userId === 0 ? (
-                                                    <>
-                                                        <FormGroup>
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Mật khẩu
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                            <TextField
-                                                                type="text"
-                                                                name="password"
-                                                                value={values.password}
-                                                                onChange={handleChange}
-                                                                fullWidth
-                                                                size="small"
-                                                            />
-                                                            {touched.password &&
-                                                                errors.password && (
-                                                                    <div>{errors.password}</div>
-                                                                )}
-                                                        </FormGroup>
-                                                        <FormGroup>
-                                                            <label
-                                                                htmlFor="email"
-                                                                style={{ fontSize: '14px' }}>
-                                                                Nhập lại mật khẩu
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                            <TextField
-                                                                type="text"
-                                                                fullWidth
-                                                                size="small"
-                                                            />
-                                                        </FormGroup>
-                                                    </>
-                                                ) : null}
+
+                                                <FormGroup hidden={userId === 0 ? false : true}>
+                                                    <label style={{ fontSize: '14px' }}>
+                                                        Mật khẩu
+                                                        <span
+                                                            style={{
+                                                                color: 'red',
+                                                                marginLeft: '2px'
+                                                            }}>
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    <TextField
+                                                        type="text"
+                                                        name="password"
+                                                        value={values.password}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        size="small"
+                                                    />
+                                                    {touched.password && errors.password && (
+                                                        <div>{errors.password}</div>
+                                                    )}
+                                                </FormGroup>
+                                                <FormGroup hidden={userId === 0 ? false : true}>
+                                                    <label
+                                                        htmlFor="email"
+                                                        style={{ fontSize: '14px' }}>
+                                                        Nhập lại mật khẩu
+                                                        <span
+                                                            style={{
+                                                                color: 'red',
+                                                                marginLeft: '2px'
+                                                            }}>
+                                                            *
+                                                        </span>
+                                                    </label>
+                                                    <TextField
+                                                        type="text"
+                                                        fullWidth
+                                                        name="confirmPassword"
+                                                        value={values.confirmPassword}
+                                                        onChange={handleChange}
+                                                        size="small"
+                                                    />
+                                                    {touched.confirmPassword &&
+                                                        errors.confirmPassword && (
+                                                            <div>{errors.confirmPassword}</div>
+                                                        )}
+                                                </FormGroup>
                                                 <FormGroup>
                                                     <FormControlLabel
                                                         name="isActive"
@@ -433,10 +459,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                         <Button
                                             variant="contained"
                                             size="small"
-                                            type="button"
-                                            onClick={() => {
-                                                this.handleSubmit(values);
-                                            }}
+                                            type="submit"
+                                            // onClick={() => {
+                                            //     this.handleSubmit(values);
+                                            // }}
                                             sx={{ backgroundColor: '#7C3367!important' }}>
                                             Lưu
                                         </Button>

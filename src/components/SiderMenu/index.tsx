@@ -12,13 +12,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 // import Sider from 'antd/es/layout/Sider';
 import { Box } from '@mui/material';
 import outIcon from '../../images/Logout.svg';
-import logo from '../../images/Lucky_beauty.jpg';
-import { color } from '@mui/system';
-import { co } from '@fullcalendar/core/internal-common';
 
 interface Props {
     collapsed: boolean;
     toggle: () => void;
+    onHoverChange: (isHovered: boolean) => void;
 }
 interface MenuItem {
     key: React.Key;
@@ -55,7 +53,7 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
     });
     return menu;
 }
-const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
+const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => {
     const defaultPermission: string[] = [];
     const [lstPermission, setListPermission] = useState(defaultPermission);
     const mainAppRoutes = appRouters.mainRoutes[1].routes.filter(
@@ -91,35 +89,47 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
             [index]: !prevOpen[index]
         }));
     };
+    const [OpenHover, setOpenHover] = useState(false);
+
     const handleMouseEnter = () => {
-        toggle();
+        setOpenHover(true);
+        onHoverChange(true);
     };
 
     const handleMouseLeave = () => {
-        toggle();
+        setOpenHover(false);
+        onHoverChange(false);
     };
+
     return (
         <Box
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={collapsed === true ? undefined : handleMouseEnter}
+            onMouseLeave={collapsed === true ? undefined : handleMouseLeave}
             sx={{
-                overflow: 'auto',
+                overflowY: 'auto',
+                overflowX: 'hidden',
                 height: '100vh',
                 position: 'fixed',
                 transition: '.4s',
                 left: '0',
                 top: 0,
                 bottom: 0,
-                width: collapsed ? '72px' : '240px',
+                width: collapsed || OpenHover ? '240px' : '72px',
+
                 '& .MuiList-root': {
                     display: 'flex',
-                    whiteSpace: 'nowrap',
-                    flexWrap: 'nowrap',
+                    // whiteSpace: 'nowrap',
+                    // flexWrap: 'nowrap',
                     flexDirection: 'column'
                 }
             }}>
-            <Box className="side-menu" sx={{ overflow: collapsed ? 'hidden' : 'auto' }}>
-                <List component="nav" sx={{ minWidth: '208px', marginTop: '80px' }}>
+            <Box
+                className="side-menu"
+                sx={{
+                    overflow: 'hidden',
+                    backgroundColor: '#fff'
+                }}>
+                <List component="nav" sx={{ minWidth: '218px', marginTop: '80px' }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
                             key={itemMenu.key}
@@ -140,8 +150,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                             }
                             selected={location.pathname === itemMenu.key}
                             sx={{
-                                maxWidth: collapsed ? '59px' : '999px',
-                                flexWrap: collapsed ? 'nowrap' : 'wrap',
+                                // maxWidth: collapsed || OpenHover ? '999px' : '59px',
+                                flexWrap: 'wrap',
                                 transition: '.4s',
                                 backgroundColor:
                                     location.pathname === itemMenu.key ||
@@ -168,7 +178,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                                 : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
                                     },
                                     minWidth: '40px',
-                                    marginRight: collapsed ? ' 20px' : '0',
+                                    marginRight: collapsed || OpenHover ? ' 0px' : '20px',
 
                                     transition: '.4s'
                                 }}>
@@ -216,7 +226,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                         }
                                         sx={{
                                             color: '#666466!important',
-                                            opacity: collapsed ? '0' : '1'
+                                            opacity: collapsed === true || OpenHover ? '1' : '0'
                                         }}
                                     />
                                 ) : (
@@ -228,7 +238,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                         }
                                         sx={{
                                             color: '#666466!important',
-                                            opacity: collapsed ? '0' : '1'
+                                            opacity: collapsed === true || OpenHover ? '1' : '0'
                                         }}
                                     />
                                 ))}
@@ -238,7 +248,11 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                                         overflow: 'hidden',
                                         marginLeft: 'auto',
                                         width: '100%',
-                                        transition: open[index] ? '3s' : '1s',
+                                        position: 'relative',
+                                        left: collapsed || OpenHover ? ' 0' : '30px',
+                                        transition: open[index]
+                                            ? 'max-height 3s, left .4s'
+                                            : ' max-height 1s,left .4s',
                                         maxHeight: open[index] == true ? '1000px' : '0px'
                                     }}>
                                     <List component="div" disablePadding>
@@ -292,18 +306,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                         </ListItem>
                     ))}
                 </List>
-                {/* <Menu
-                    items={itemMenus}
-                    defaultSelectedKeys={[location.pathname]}
-                    mode="inline"></Menu> */}
             </Box>
             <div className="hr"></div>
             <Box
                 className="logout"
                 sx={{
-                    paddingLeft: collapsed ? '71px' : '0 ',
                     transition: '.4s',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    paddingLeft: collapsed || OpenHover ? '0' : '0',
+                    cursor: 'pointer'
                 }}>
                 <Avatar
                     src={outIcon}
@@ -314,6 +325,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                         textAlign: 'center',
                         backgroundColor: '#CBADC2',
                         marginRight: 4,
+                        marginLeft: collapsed || OpenHover ? '0' : '100px',
+                        transition: '.4s',
                         '& img': {
                             width: '15px',
                             height: '15px'
@@ -339,7 +352,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
                         color: '#4C4B4C',
                         textAlign: 'center',
                         fontSize: 16,
-                        fontFamily: 'roboto'
+                        fontFamily: 'roboto',
+                        whiteSpace: 'nowrap',
+                        transform: collapsed || OpenHover ? 'scale(1)' : 'scale(0)',
+                        transition: '.4s'
                     }}>
                     Đăng xuất
                 </Link>

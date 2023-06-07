@@ -11,9 +11,9 @@ import {
     Menu,
     MenuItem
 } from '@mui/material';
-
+import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import InfoIcon from '@mui/icons-material/Info';
-import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import userService from '../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
@@ -52,7 +52,7 @@ export interface IUserState {
     roles: GetRoles[];
     suggestNhanSu: SuggestNhanSuDto[];
 }
-class UserScreen extends AppComponentBase<IUserProps, IUserState> {
+class UserScreen extends AppComponentBase<IUserProps> {
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -80,7 +80,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         roles: [] as GetRoles[],
         suggestNhanSu: [] as SuggestNhanSuDto[],
         anchorEl: null,
-        selectedRowId: null
+        selectedRowId: 0
     };
 
     async componentDidMount() {
@@ -112,13 +112,50 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         });
         this.getAll();
     };
-
+    handleSearchChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (
+        event: any
+    ) => {
+        const filter = event.target.value;
+        this.setState({ filter: filter });
+    };
     Modal = () => {
         this.setState({
             modalVisible: !this.state.modalVisible
         });
     };
 
+    handleCreate = () => {
+        this.getAll();
+        this.Modal();
+    };
+    onShowDelete = () => {
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete
+        });
+    };
+    onOkDelete = () => {
+        this.delete(this.state.selectedRowId);
+        this.onShowDelete();
+        this.handleCloseMenu();
+    };
+    async delete(input: number) {
+        await userService.delete(input);
+        await this.getAll();
+    }
+
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
+    };
+
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: 0 });
+        await this.getAll();
+    };
+
+    handleView = () => {
+        // Handle View action
+        this.handleCloseMenu();
+    };
     async createOrUpdateModalOpen(entityDto: number) {
         if (entityDto === 0) {
             const roles = await userService.getRoles();
@@ -149,55 +186,13 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
         this.setState({ userId: entityDto });
         this.Modal();
     }
-
-    async delete(input: number) {
-        await userService.delete(input);
-        await this.getAll();
-    }
-
-    handleCreate = () => {
-        this.getAll();
-        this.Modal();
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? 0);
+        this.handleCloseMenu();
     };
-    onShowDelete = () => {
-        this.setState({
-            isShowConfirmDelete: !this.state.isShowConfirmDelete
-        });
-    };
-    onOkDelete = () => {
-        this.delete(this.state.userId);
-        this.onShowDelete();
-    };
-    handleSearchChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (
-        event: any
-    ) => {
-        const filter = event.target.value;
-        this.setState({ filter: filter });
-    };
-
     render(): React.ReactNode {
         const columns = [
-            {
-                field: 'id',
-                headerName: 'ID',
-                minWidth: 50,
-                flex: 0.4,
-                renderCell: (params: any) => (
-                    <Typography
-                        variant="caption"
-                        fontSize="14px"
-                        title={params.value}
-                        sx={{ width: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {params.value}
-                    </Typography>
-                ),
-                renderHeader: (params: any) => (
-                    <Box>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
-                )
-            },
             {
                 field: 'userName',
                 headerName: 'Tên đăng nhập',
@@ -266,6 +261,19 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                        <DateIcon style={{ marginRight: 4 }} />
+                        <Typography
+                            fontSize="14px"
+                            fontWeight="400"
+                            variant="h6"
+                            color="#333233"
+                            lineHeight="16px">
+                            {new Date(params.value).toLocaleDateString('en-GB')}
+                        </Typography>
+                    </Box>
                 )
             },
             {
@@ -275,12 +283,17 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                 flex: 1,
                 disableColumnMenu: true,
                 renderCell: (params: any) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true">
-                        <MoreHorizIcon />
-                    </IconButton>
+                    <Box>
+                        <IconButton
+                            aria-label="Actions"
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
                 ),
                 renderHeader: (params: any) => (
                     <Box sx={{ display: 'none' }}>
@@ -422,99 +435,6 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                     className="page-content"
                     sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
                     <Box>
-                        <table
-                            className="h-100 w-100 table table-border-0 table"
-                            style={{ display: 'none' }}>
-                            <thead className="bg-table w-100">
-                                <tr style={{ height: '48px' }}>
-                                    <th className="text-center">
-                                        <input
-                                            className="text-th-table text-center"
-                                            type="checkbox"
-                                        />
-                                    </th>
-                                    <th className="text-th-table">STT</th>
-                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
-                                        Tên truy cập
-                                    </th>
-                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
-                                        Họ và tên
-                                    </th>
-                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
-                                        Vai trò
-                                    </th>
-                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
-                                        Địa chỉ email
-                                    </th>
-                                    <th className="text-th-table" style={{ minWidth: '100px' }}>
-                                        Thời gian tạo
-                                    </th>
-                                    <th className="text-th-table">Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {this.state.listUser.map((item, index) => {
-                                    return (
-                                        <tr>
-                                            <td className="text-td-table text-center">
-                                                <input
-                                                    className="text-th-table text-center"
-                                                    type="checkbox"
-                                                />
-                                            </td>
-                                            <td className="text-td-table">{index + 1}</td>
-                                            <td className="text-td-table" title={item['userName']}>
-                                                {item['userName']}
-                                            </td>
-                                            <td className="text-td-table" title={item.fullName}>
-                                                {item.fullName}
-                                            </td>
-                                            <td className="text-td-table">
-                                                {item.roleNames.length > 1
-                                                    ? item.roleNames.map((role: any) => {
-                                                          return <span>{role};</span>;
-                                                      })
-                                                    : item.roleNames.map((role: any) => {
-                                                          return <span>{role} </span>;
-                                                      })}
-                                            </td>
-                                            <td className="text-td-table" title={item.emailAddress}>
-                                                {item.emailAddress}
-                                            </td>
-                                            <td className="text-td-table">
-                                                {item.creationTime.toString()}
-                                            </td>
-                                            <td
-                                                className="text-td-table"
-                                                style={{ width: '150px' }}>
-                                                <Box display="flex" justifyContent="start">
-                                                    <Button
-                                                        onClick={() => {
-                                                            this.setState({
-                                                                userId: item.id
-                                                            });
-                                                            this.createOrUpdateModalOpen(item.id);
-                                                        }}
-                                                        sx={{ minWidth: 'unset' }}>
-                                                        <EditIcon />
-                                                    </Button>
-                                                    <Button
-                                                        onClick={() => {
-                                                            this.setState({
-                                                                userId: item.id
-                                                            });
-                                                            this.onShowDelete();
-                                                        }}
-                                                        sx={{ minWidth: 'unset' }}>
-                                                        <DeleteForeverIcon sx={{ color: 'red' }} />
-                                                    </Button>
-                                                </Box>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
                         <DataGrid
                             autoHeight
                             columns={columns}
@@ -548,16 +468,6 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
                             <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div className="col-5 align-items-center">
-                                    <label
-                                        className="pagination-view-record align-items-center"
-                                        style={{ float: 'right' }}>
-                                        Hiển thị{' '}
-                                        {this.state.currentPage * this.state.maxResultCount - 9}-
-                                        {this.state.currentPage * this.state.maxResultCount} của{' '}
-                                        {this.state.totalCount} mục
-                                    </label>
-                                </div>
                                 <div style={{ float: 'right' }} className="col-7">
                                     <Box display="flex" className="align-items-center">
                                         <Pagination
@@ -607,8 +517,9 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                         anchorEl={this.state.anchorEl}
                         keepMounted
                         open={Boolean(this.state.anchorEl)}
+                        onClose={this.handleCloseMenu}
                         sx={{ minWidth: '120px' }}>
-                        <MenuItem>
+                        <MenuItem onClick={this.handleView}>
                             <Typography
                                 color="#009EF7"
                                 fontSize="12px"
@@ -621,7 +532,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                             </Typography>
                             <InfoIcon sx={{ color: '#009EF7' }} />
                         </MenuItem>
-                        <MenuItem>
+                        <MenuItem onClick={this.handleEdit}>
                             <Typography
                                 color="#009EF7"
                                 fontSize="12px"
@@ -634,7 +545,7 @@ class UserScreen extends AppComponentBase<IUserProps, IUserState> {
                             </Typography>
                             <EditIcon sx={{ color: '#009EF7' }} />
                         </MenuItem>
-                        <MenuItem>
+                        <MenuItem onClick={this.onShowDelete}>
                             <Typography
                                 color="#F1416C"
                                 fontSize="12px"

@@ -4,10 +4,10 @@ import Header from '../Header';
 import AppSiderMenu from '../SiderMenu/index';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
-import { Layout } from 'antd';
-import { Content } from 'antd/es/layout/layout';
+
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
+
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
     console.log(accessToken);
@@ -21,10 +21,6 @@ const isAuthenticated = (): boolean => {
     return false;
 };
 const MainAppLayout: React.FC = () => {
-    const [collapsed, onCollapse] = useState(true);
-    const toggle = () => {
-        onCollapse(!collapsed);
-    };
     const [open, setOpen] = React.useState(!isAuthenticated);
     const navigate = useNavigate();
     useEffect(() => {
@@ -36,18 +32,45 @@ const MainAppLayout: React.FC = () => {
         setOpen(false);
         navigate('/login');
     };
+    const [isChildHovered, setChildHovered] = useState(false);
+
+    const handleChildHoverChange = (isHovered: boolean) => {
+        setChildHovered(isHovered);
+        console.log('collapsed: ' + collapsed);
+        console.log('ischildhoverred: ' + isChildHovered);
+    };
+    const [collapsed, onCollapse] = useState(true);
+
+    const toggle = () => {
+        onCollapse(!collapsed);
+        handleChildHoverChange(!isChildHovered);
+    };
+
     return (
         <>
             <Container maxWidth={false} disableGutters={true}>
-                <AppSiderMenu collapsed={!collapsed} toggle={toggle} />
+                <AppSiderMenu
+                    collapsed={!collapsed}
+                    toggle={toggle}
+                    onHoverChange={handleChildHoverChange}
+                />
                 <Box
                     sx={{
-                        marginLeft: collapsed ? '240px' : '72px',
-                        position: 'relative',
+                        marginLeft: collapsed && !isChildHovered ? '72px' : '240px',
                         transition: '.4s'
                     }}>
-                    <Header collapsed={collapsed} toggle={toggle} onClick={toggle} />
-                    <Box style={{ border: 'solid 0.1rem #e6e1e6', backgroundColor: '#EEECEC' }}>
+                    <Header
+                        collapsed={collapsed}
+                        toggle={toggle}
+                        onClick={toggle}
+                        isChildHovered={isChildHovered}
+                    />
+                    <Box
+                        style={{
+                            border: 'solid 0.1rem #e6e1e6',
+                            backgroundColor: '#EEECEC',
+                            marginTop: '70px'
+                        }}>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Box>

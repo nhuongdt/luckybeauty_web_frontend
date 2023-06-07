@@ -403,7 +403,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
         const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
 
-        // checkout + insert tbl checkin_hoadon
+        //checkout + insert tbl checkin_hoadon
         const checkout = await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
         await CheckinService.InsertCheckInHoaDon({
             idCheckIn: customerChosed.idCheckIn,

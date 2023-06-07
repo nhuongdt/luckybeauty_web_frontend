@@ -1,6 +1,17 @@
 import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Button, Box, Typography, Grid, TextField, Pagination, IconButton } from '@mui/material';
+import {
+    Button,
+    Box,
+    Typography,
+    Grid,
+    TextField,
+    Pagination,
+    IconButton,
+    Menu,
+    MenuItem
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -10,8 +21,6 @@ import AddIcon from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
 import '../../custom.css';
-import { GetAllPermissionsOutput } from '../../services/role/dto/getAllPermissionsOutput';
-import RoleEditModel from '../../models/Roles/roleEditModel';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DownloadIcon from '../../images/download.svg';
@@ -21,6 +30,7 @@ import { PermissionTree } from '../../services/role/dto/permissionTree';
 import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { TextTranslate } from '../../components/TableLanguage';
+import { permissionCheckboxTree } from '../../services/role/dto/permissionCheckboxTree';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -39,7 +49,7 @@ export interface IRoleState {
     startIndex: number;
     isShowConfirmDelete: boolean;
 }
-class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
+class RoleScreen extends AppComponentBase<IRoleProps> {
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -59,7 +69,9 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         currentPage: 1,
         totalPage: 0,
         startIndex: 1,
-        isShowConfirmDelete: false
+        isShowConfirmDelete: false,
+        selectedRowId: 0,
+        anchorEl: null
     };
 
     async componentDidMount() {
@@ -72,7 +84,9 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
             skipCount: this.state.skipCount,
             keyword: this.state.filter
         });
+        const permissionAll = [] as permissionCheckboxTree[];
         const permissionTree = await roleService.getAllPermissionTree();
+        console.log(permissionAll);
         this.setState({
             listRole: roles.items,
             totalCount: roles.totalCount,
@@ -80,6 +94,10 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
             totalPage: Math.ceil(roles.totalCount / this.state.maxResultCount)
         });
     }
+    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
+        const filter = event.target.value;
+        this.setState({ filter: filter }, async () => this.getAll());
+    };
 
     handlePageChange = (event: any, value: any) => {
         const { maxResultCount } = this.state;
@@ -116,12 +134,6 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         this.setState({ roleId: id });
         this.Modal();
     }
-
-    async delete(id: number) {
-        await roleService.delete(id);
-        this.getAll();
-    }
-
     handleCreate = () => {
         this.getAll();
         this.setState({ modalVisible: false });
@@ -132,37 +144,32 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
         });
     };
     onOkDelete = () => {
-        this.delete(this.state.roleId);
+        this.delete(this.state.selectedRowId);
         this.onShowDelete();
     };
-    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
-    //     const filter = event.target.value;
-    //     this.setState({ filter: filter }, async () => this.getAll());
-    // };
-    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
-        const filter = event.target.value;
-        this.setState({ filter: filter }, async () => this.getAll());
+    async delete(id: number) {
+        await roleService.delete(id);
+        this.getAll();
+    }
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
     };
 
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: 0 });
+        await this.getAll();
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? 0);
+        this.handleCloseMenu();
+    };
+    handleView = () => {
+        // Handle View action
+        this.handleCloseMenu();
+    };
     render() {
         const columns = [
-            {
-                field: 'id',
-                headerName: 'ID',
-                minWidth: 50,
-                flex: 1,
-                renderCell: (params: any) => (
-                    <Typography variant="caption" fontSize="14px" title={params.value}>
-                        {params.value}
-                    </Typography>
-                ),
-                renderHeader: (params: any) => (
-                    <Box>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
-                )
-            },
             {
                 field: 'name',
                 headerName: 'Tên vai trò',
@@ -194,12 +201,16 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                 flex: 1,
                 disableColumnMenu: true,
                 renderCell: (params: any) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true">
-                        <MoreHorizIcon />
-                    </IconButton>
+                    <Box>
+                        <IconButton
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
                 ),
                 renderHeader: (params: any) => (
                     <Box sx={{ display: 'none' }}>
@@ -318,104 +329,6 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                     </Grid>
                 </Box>
                 <Box marginTop="24px" bgcolor="#fff" borderRadius="8px" sx={{ height: 400 }}>
-                    <table
-                        className="h-100 w-100 table table-border-0 table"
-                        style={{ display: 'none' }}>
-                        <thead className="bg-table w-100">
-                            <tr style={{ height: '48px' }}>
-                                <th className="text-center">
-                                    <input className="text-th-table text-center" type="checkbox" />
-                                </th>
-                                <th className="text-th-table fw-bold text-center">STT</th>
-                                <th className="text-th-table fw-bold">Tên vai trò</th>
-                                <th className="text-th-table fw-bold">Mô tả</th>
-                                <th className="text-th-table fw-bold">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.listRole.map((item, index) => {
-                                return (
-                                    <tr>
-                                        <td
-                                            className="text-td-table text-center"
-                                            style={{ width: '50px' }}>
-                                            <input
-                                                className="text-th-table text-center"
-                                                type="checkbox"
-                                            />
-                                        </td>
-                                        <td
-                                            className="text-td-table text-center"
-                                            style={{ width: '100px' }}>
-                                            {index + 1}
-                                        </td>
-                                        <td className="text-td-table">{item.name}</td>
-                                        <td className="text-td-table">{item.description}</td>
-                                        <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Box display="flex" justifyContent="start">
-                                                <Button
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            roleId: item.id
-                                                        });
-                                                        this.createOrUpdateModalOpen(item.id);
-                                                    }}
-                                                    sx={{ minWidth: 'unset' }}>
-                                                    <EditIcon />
-                                                </Button>
-                                                <Button
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            roleId: item.id
-                                                        });
-                                                        this.onShowDelete();
-                                                    }}
-                                                    sx={{ minWidth: 'unset' }}>
-                                                    <DeleteForeverIcon sx={{ color: 'red' }} />
-                                                </Button>
-                                            </Box>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                    <div className="row" style={{ display: 'none' }}>
-                        <div className="col-6" style={{ float: 'left' }}></div>
-                        <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div className="col-5 align-items-center">
-                                    <label
-                                        className="pagination-view-record align-items-center"
-                                        style={{ float: 'right' }}>
-                                        Hiển thị{' '}
-                                        {this.state.currentPage * this.state.maxResultCount - 9}-
-                                        {this.state.currentPage * this.state.maxResultCount} của{' '}
-                                        {this.state.totalCount} mục
-                                    </label>
-                                </div>
-                                <div style={{ float: 'right' }} className="col-7">
-                                    <Box className="align-items-center">
-                                        <Pagination
-                                            count={this.state.totalPage}
-                                            page={this.state.currentPage}
-                                            onChange={this.handlePageChange}
-                                            sx={{
-                                                '& button': {
-                                                    borderRadius: '4px',
-                                                    lineHeight: '1'
-                                                },
-                                                '& .Mui-selected': {
-                                                    backgroundColor: '#7C3367!important',
-                                                    color: '#fff'
-                                                }
-                                            }}
-                                        />
-                                    </Box>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <DataGrid
                         columns={columns}
                         rows={this.state.listRole}
@@ -439,6 +352,79 @@ class RoleScreen extends AppComponentBase<IRoleProps, IRoleState> {
                         }}
                         localeText={TextTranslate}
                     />
+                    <Menu
+                        id={`actions-menu-${this.state.selectedRowId}`}
+                        anchorEl={this.state.anchorEl}
+                        keepMounted
+                        open={Boolean(this.state.anchorEl)}
+                        onClose={this.handleCloseMenu}
+                        sx={{ minWidth: '120px' }}>
+                        <MenuItem onClick={this.handleView}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                View
+                            </Typography>
+                            <InfoIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={this.handleEdit}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Edit
+                            </Typography>
+                            <EditIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={this.onShowDelete}>
+                            <Typography
+                                color="#F1416C"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Delete
+                            </Typography>
+                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
+                        </MenuItem>
+                    </Menu>
+                    <div className="row" style={{ display: 'none' }}>
+                        <div className="col-6" style={{ float: 'left' }}></div>
+                        <div className="col-6" style={{ float: 'right' }}>
+                            <div className="row align-items-center" style={{ height: '50px' }}>
+                                <div style={{ float: 'right' }} className="col-7">
+                                    <Box className="align-items-center">
+                                        <Pagination
+                                            count={this.state.totalPage}
+                                            page={this.state.currentPage}
+                                            onChange={this.handlePageChange}
+                                            sx={{
+                                                '& button': {
+                                                    borderRadius: '4px',
+                                                    lineHeight: '1'
+                                                },
+                                                '& .Mui-selected': {
+                                                    backgroundColor: '#7C3367!important',
+                                                    color: '#fff'
+                                                }
+                                            }}
+                                        />
+                                    </Box>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </Box>
                 <CreateOrEditRoleModal
                     visible={this.state.modalVisible}

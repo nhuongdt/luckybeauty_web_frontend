@@ -23,14 +23,12 @@ class StoreDetail extends Component {
     async getData() {
         const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? '';
         const cuaHang = await cuaHangService.getCongTyEdit(idChiNhanh);
-        console.log(cuaHang);
         this.setState({
             editCuaHang: cuaHang
         });
     }
     async componentDidMount() {
         await this.getData();
-        console.log(this.state.editCuaHang);
     }
     handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
