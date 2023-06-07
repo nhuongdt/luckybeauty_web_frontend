@@ -41,8 +41,8 @@ const MainAppLayout: React.FC = () => {
             <Container maxWidth={false} disableGutters={true}>
                 <AppSiderMenu collapsed={!collapsed} toggle={toggle} />
                 <Box
-                    sx={{
-                        marginLeft: collapsed ? '240px' : '72px',
+                    style={{
+                        marginLeft: collapsed ? 240 : 0,
                         position: 'relative',
                         transition: '.4s'
                     }}>

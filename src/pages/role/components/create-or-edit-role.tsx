@@ -1,6 +1,4 @@
-import { Component, ReactNode, ChangeEvent } from 'react';
-import { GetAllPermissionsOutput } from '../../../services/role/dto/getAllPermissionsOutput';
-import RoleEditModel from '../../../models/Roles/roleEditModel';
+import { Component, ReactNode } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {
@@ -24,14 +22,12 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import roleService from '../../../services/role/roleService';
-import SearchIcon from '@mui/icons-material/Search';
 import { PermissionTree } from '../../../services/role/dto/permissionTree';
 import TreeItem from '@mui/lab/TreeItem';
 import TreeView from '@mui/lab/TreeView';
 import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';
-import { permissionCheckboxTree } from '../../../services/role/dto/permissionCheckboxTree';
-import CheckboxTree from 'react-checkbox-tree';
-import 'react-checkbox-tree/lib/react-checkbox-tree.css';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 export interface ICreateOrEditRoleProps {
     visible: boolean;
     onCancel: () => void;
@@ -43,47 +39,23 @@ export interface ICreateOrEditRoleProps {
 
 interface ICreateOrEditRoleState {
     filteredPermissions: PermissionTree[];
-    checkedAll: boolean;
     selectedPermissions: string[];
     tabIndex: string;
-    checked: [];
-    expanded: [];
 }
-
 class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
     constructor(props: ICreateOrEditRoleProps) {
         super(props);
 
         this.state = {
             filteredPermissions: props.permissionTree,
-            checkedAll: false,
             selectedPermissions: this.props.formRef.grantedPermissionNames || [],
-            tabIndex: '1',
-            checked: [],
-            expanded: []
+            tabIndex: '1'
         };
     }
     async componentDidMount() {
         await this.setState({
             selectedPermissions: this.props.formRef.grantedPermissionNames
         });
-    }
-    convertPermissionTree(permissionTree: PermissionTree[]): permissionCheckboxTree[] {
-        const data: permissionCheckboxTree[] = [];
-
-        permissionTree.forEach((permission) => {
-            const { name, displayName, children } = permission;
-            const node: permissionCheckboxTree = {
-                value: name,
-                label: displayName
-            };
-
-            if (children && children.length > 0) {
-                node.children = this.convertPermissionTree(children);
-            }
-            data.push(node);
-        });
-        return data;
     }
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         this.setState({ tabIndex: newValue });
@@ -96,65 +68,98 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         });
         this.props.onOk();
     };
-
-    handleSearchPermission = (value: string) => {
-        const { permissionTree } = this.props;
-        const filtered = permissionTree.filter((x: PermissionTree) =>
-            x.displayName.toLowerCase().includes(value.toLowerCase())
-        );
-        this.setState({ filteredPermissions: filtered });
-    };
-    handlePermissionCheckboxChange = (
-        event: ChangeEvent<HTMLInputElement>,
-        treeNode: PermissionTree
-    ) => {
-        const { formRef } = this.props;
-        const { checked } = event.target;
-
-        let grantedPermissionNames = [...formRef.grantedPermissionNames];
-
-        const addPermissions = (node: PermissionTree) => {
-            grantedPermissionNames.push(node.name);
-            if (node.children != null) {
-                node.children.forEach((child) => {
-                    addPermissions(child);
-                });
-            }
-        };
-
-        const removePermissions = (node: PermissionTree) => {
-            grantedPermissionNames = grantedPermissionNames.filter((name) => name !== node.name);
-            if (node.children != null) {
-                node.children.forEach((child) => {
-                    removePermissions(child);
-                });
-            }
-        };
+    handleCheck = (event: any, node: PermissionTree) => {
+        const checked = event.target.checked;
+        const updatedSelected = [...this.state.selectedPermissions];
 
         if (checked) {
-            addPermissions(treeNode);
+            this.addPermission(updatedSelected, node);
+            this.addChildrenPermissions(updatedSelected, node.children);
         } else {
-            removePermissions(treeNode);
+            this.removePermission(updatedSelected, node);
+            this.removeChildrenPermissions(updatedSelected, node.children);
         }
 
-        this.setState({
-            selectedPermissions: grantedPermissionNames
-        });
+        this.setState({ selectedPermissions: updatedSelected });
     };
-    handleCheckPermissionAll = async (e: ChangeEvent<HTMLInputElement>) => {
-        const { permissionTree, formRef } = this.props;
-        const { checked } = e.target;
-        this.setState({ checkedAll: checked });
 
-        const value = checked ? permissionTree.map((x) => x.name) : [];
-        await this.setState({
-            selectedPermissions: value
-        });
+    addPermission = (selectedPermissions: string[], node: PermissionTree) => {
+        if (selectedPermissions.indexOf(node.name) === -1) {
+            selectedPermissions.push(node.name);
+        }
+    };
+
+    addChildrenPermissions = (selectedPermissions: string[], children: PermissionTree[]) => {
+        if (Array.isArray(children)) {
+            children.forEach((child: PermissionTree) => {
+                this.addPermission(selectedPermissions, child);
+                this.addChildrenPermissions(selectedPermissions, child.children);
+            });
+        }
+    };
+
+    removePermission = (selectedPermissions: string[], node: PermissionTree) => {
+        const index = selectedPermissions.indexOf(node.name);
+        if (index !== -1) {
+            selectedPermissions.splice(index, 1);
+        }
+    };
+
+    removeChildrenPermissions = (selectedPermissions: string[], children: PermissionTree[]) => {
+        if (Array.isArray(children)) {
+            children.forEach((child: PermissionTree) => {
+                this.removePermission(selectedPermissions, child);
+                this.removeChildrenPermissions(selectedPermissions, child.children);
+            });
+        }
+    };
+    renderTree = (nodes: PermissionTree[]) => {
+        return nodes.map((node: PermissionTree) => (
+            <TreeItem
+                key={node.name}
+                nodeId={node.name}
+                label={
+                    <div>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={
+                                        this.state.selectedPermissions.indexOf(node.name) !== -1
+                                    }
+                                    indeterminate={
+                                        this.state.selectedPermissions.indexOf(node.name) === -1 &&
+                                        node.children.some(
+                                            (child: any) =>
+                                                this.state.selectedPermissions.indexOf(
+                                                    child.name
+                                                ) !== -1
+                                        )
+                                    }
+                                    onChange={(event: any) => {
+                                        this.handleCheck(event, node);
+                                    }}
+                                />
+                            }
+                            label={
+                                <>
+                                    {node.children ? (
+                                        <FolderOutlinedIcon />
+                                    ) : (
+                                        <InsertDriveFileOutlinedIcon />
+                                    )}{' '}
+                                    {node.displayName}
+                                </>
+                            }
+                        />
+                    </div>
+                }>
+                {Array.isArray(node.children) ? this.renderTree(node.children) : null}
+            </TreeItem>
+        ));
     };
 
     render(): ReactNode {
-        const { visible, onCancel, modalType, onOk, permissionTree, formRef } = this.props;
-        const { filteredPermissions, checkedAll } = this.state;
+        const { visible, onCancel, modalType, permissionTree, formRef } = this.props;
         const initialValues = {
             description: formRef.description,
             displayName: formRef.displayName,
@@ -162,30 +167,19 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             grantedPermissionNames: formRef.grantedPermissionNames,
             id: formRef.id
         };
+        const getDefaultExpandPermission = (permissions: PermissionTree[]) => {
+            const defaultExpand: string[] = [];
+            permissions.forEach((item: PermissionTree) => {
+                if (item.children.length > 0) {
+                    const childrenExpand = getDefaultExpandPermission(item.children);
+                    defaultExpand.push(item.name, ...childrenExpand);
+                }
+            });
 
-        const permissionCheckbox = this.convertPermissionTree(permissionTree);
-        console.log(JSON.stringify(permissionCheckbox));
-        const renderTree = (nodes: PermissionTree) => (
-            <TreeItem
-                key={nodes.name}
-                nodeId={nodes.name}
-                label={
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={this.state.selectedPermissions.includes(nodes.name)}
-                                onChange={(e) => this.handlePermissionCheckboxChange(e, nodes)}
-                            />
-                        }
-                        label={nodes.displayName}
-                    />
-                }>
-                {Array.isArray(nodes.children)
-                    ? nodes.children.map((node) => renderTree(node))
-                    : null}
-            </TreeItem>
-        );
+            return defaultExpand;
+        };
 
+        const defaultExpand = getDefaultExpandPermission(this.props.permissionTree);
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
                 <DialogTitle>
@@ -313,30 +307,6 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             </FormGroup>
                                         </TabPanel>
                                         <TabPanel value="2" sx={{ padding: '0' }}>
-                                            <Box display="flex">
-                                                <TextField size="small" fullWidth />
-                                                <Button
-                                                    sx={{
-                                                        minWidth: 'unset',
-                                                        borderColor: '#666466!important'
-                                                    }}
-                                                    size="small"
-                                                    variant="outlined">
-                                                    <SearchIcon sx={{ color: '#666466' }} />
-                                                </Button>
-                                            </Box>
-                                            <Box display="flex" gap="16px">
-                                                <FormControlLabel
-                                                    control={
-                                                        <Checkbox
-                                                            name="checkAll"
-                                                            checked={checkedAll}
-                                                            onChange={this.handleCheckPermissionAll}
-                                                        />
-                                                    }
-                                                    label="Check All"
-                                                />
-                                            </Box>
                                             <FormGroup
                                                 sx={{
                                                     '& .MuiFormControlLabel-root': {
@@ -347,18 +317,10 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     maxHeight: '300px'
                                                 }}>
                                                 <TreeView
+                                                    defaultExpanded={defaultExpand}
                                                     defaultCollapseIcon={<ExpandMoreIcon />}
-                                                    defaultExpandIcon={<ChevronRightIcon />}
-                                                    multiSelect
-                                                    sx={{
-                                                        height: 240,
-                                                        flexGrow: 1,
-                                                        maxWidth: 400,
-                                                        overflowY: 'auto'
-                                                    }}>
-                                                    {permissionTree.map((permissions) => {
-                                                        return renderTree(permissions);
-                                                    })}
+                                                    defaultExpandIcon={<ChevronRightIcon />}>
+                                                    {this.renderTree(permissionTree)}
                                                 </TreeView>
                                             </FormGroup>
                                         </TabPanel>
