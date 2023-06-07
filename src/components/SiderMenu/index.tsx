@@ -118,15 +118,17 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
 
                 '& .MuiList-root': {
                     display: 'flex',
-                    whiteSpace: 'nowrap',
-                    flexWrap: 'nowrap',
+                    // whiteSpace: 'nowrap',
+                    // flexWrap: 'nowrap',
                     flexDirection: 'column'
                 }
             }}>
             <Box
                 className="side-menu"
-                sx={{ overflow: collapsed || OpenHover ? 'auto' : 'hidden' }}>
-                <List component="nav" sx={{ minWidth: '208px', marginTop: '80px' }}>
+                sx={{
+                    overflow: 'hidden'
+                }}>
+                <List component="nav" sx={{ minWidth: '218px', marginTop: '80px' }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
                             key={itemMenu.key}
@@ -147,8 +149,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                             }
                             selected={location.pathname === itemMenu.key}
                             sx={{
-                                maxWidth: collapsed || OpenHover ? '999px' : '59px',
-                                flexWrap: collapsed || OpenHover ? 'wrap' : 'nowrap',
+                                // maxWidth: collapsed || OpenHover ? '999px' : '59px',
+                                flexWrap: 'wrap',
                                 transition: '.4s',
                                 backgroundColor:
                                     location.pathname === itemMenu.key ||
@@ -245,7 +247,11 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         overflow: 'hidden',
                                         marginLeft: 'auto',
                                         width: '100%',
-                                        transition: open[index] ? '3s' : '1s',
+                                        position: 'relative',
+                                        left: collapsed || OpenHover ? ' 0' : '30px',
+                                        transition: open[index]
+                                            ? 'max-height 3s, left .4s'
+                                            : ' max-height 1s,left .4s',
                                         maxHeight: open[index] == true ? '1000px' : '0px'
                                     }}>
                                     <List component="div" disablePadding>
@@ -306,7 +312,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                 sx={{
                     transition: '.4s',
                     overflow: 'hidden',
-                    paddingLeft: collapsed || OpenHover ? '0' : '64px'
+                    paddingLeft: collapsed || OpenHover ? '0' : '64px',
+                    cursor: 'pointer'
                 }}>
                 <Avatar
                     src={outIcon}
