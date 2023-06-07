@@ -26,20 +26,8 @@ export const ComponentToPrint = ({ props }: any) => {
             setIsShow(true);
         }
     }, [props.contentHtml]);
-    // const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
-    //     new PropToChildMauIn({ contentHtml: '' })
-    // );
 
-    // const [contentData, setContentData] = React.useState();
     const ReplaceHoaDonChiTiet = (str: string) => {
-        // str = str.replace('{TenHangHoa}', `${props.hoadonChiTiet[0].tenHangHoa}`);
-        // str = str.replace('{SoLuong}', `${props.hoadonChiTiet[0].soLuong}`);
-        // str = str.replace('{GiaBan}', `${utils.formatNumber(props.hoadonChiTiet[0].giaBan)}`);
-        // str = str.replace(
-        //     '{ThanhTien}',
-        //     `${utils.formatNumber(props.hoadonChiTiet[0].thanhTienSauCK)}`
-        // );
-        // return str;
         str = str.replace('{TenHangHoa}', '{ct.tenHangHoa}');
         str = str.replace('{SoLuong}', '{ct.soLuong}');
         str = str.replace('{GiaBan}', '{ct.giaBan}');
@@ -51,7 +39,9 @@ export const ComponentToPrint = ({ props }: any) => {
         <>
             <PrintContext.Provider value={propMauIn}>
                 <div className={isShow ? 'show overlay' : 'overlay'}></div>
-                <ContenPrint />
+                <div className={isShow ? 'show ' : ''}>
+                    <ContenPrint child={contentData} />
+                </div>
             </PrintContext.Provider>
         </>
     );
