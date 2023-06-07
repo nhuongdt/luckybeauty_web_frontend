@@ -42,16 +42,11 @@ interface ICreateOrEditRoleState {
     selectedPermissions: string[];
     tabIndex: string;
 }
-class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
-    constructor(props: ICreateOrEditRoleProps) {
-        super(props);
-
-        this.state = {
-            filteredPermissions: props.permissionTree,
-            selectedPermissions: this.props.formRef.grantedPermissionNames || [],
-            tabIndex: '1'
-        };
-    }
+class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
+    state = {
+        selectedPermissions: [] as string[],
+        tabIndex: '1'
+    };
     async componentDidMount() {
         await this.setState({
             selectedPermissions: this.props.formRef.grantedPermissionNames

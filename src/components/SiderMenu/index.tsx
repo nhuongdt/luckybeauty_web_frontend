@@ -100,8 +100,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle }) => {
     };
     return (
         <Box
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            // onMouseEnter={handleMouseEnter}
+            // onMouseLeave={handleMouseLeave}
             sx={{
                 overflow: 'auto',
                 height: '100vh',
