@@ -21,6 +21,7 @@ interface Props {
 interface MenuItem {
     key: React.Key;
     icon?: React.ReactNode;
+    iconActive?: React.ReactNode;
     children?: MenuItem[];
     label: React.ReactNode;
     type?: 'group';
@@ -42,6 +43,7 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
                         </Link>
                     ),
                 icon: item.icon,
+                iconActive: item.iconActive,
                 type: item.isLayout ? 'group' : undefined,
                 children:
                     item.children.length > 0
@@ -129,11 +131,18 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                     overflow: 'hidden',
                     backgroundColor: '#fff'
                 }}>
-                <List component="nav" sx={{ minWidth: '218px', marginTop: '80px' }}>
+                <List
+                    component="nav"
+                    sx={{
+                        minWidth: '218px',
+                        marginTop: '80px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                    }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
                             key={itemMenu.key}
-                            button={true}
                             component={Link as React.ElementType}
                             to={
                                 itemMenu.children && itemMenu.children.length > 0
@@ -152,96 +161,117 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                             sx={{
                                 // maxWidth: collapsed || OpenHover ? '999px' : '59px',
                                 flexWrap: 'wrap',
-                                transition: '.4s',
-                                backgroundColor:
-                                    location.pathname === itemMenu.key ||
+                                padding: '0'
+                            }}>
+                            <Box
+                                component="button"
+                                sx={{
+                                    width: '100%',
+                                    border: '0',
+                                    display: 'flex',
+                                    padding: '8px 14px',
+                                    transition: '.4s',
+                                    alignItems: 'center',
+                                    backgroundColor:
+                                        location.pathname === itemMenu.key ||
+                                        itemMenu.children?.some(
+                                            (dropdownItem) => location.pathname === dropdownItem.key
+                                        )
+                                            ? '#F2EBF0!important'
+                                            : 'transparent',
+                                    borderRadius: '8px',
+                                    ':hover': {
+                                        backgroundColor: '#F2EBF0!important'
+                                    }
+                                }}
+                                onClick={
+                                    itemMenu.children ? () => handleDropdown(index) : undefined
+                                }>
+                                <ListItemIcon
+                                    onClick={
+                                        itemMenu.children ? () => handleDropdown(index) : undefined
+                                    }
+                                    sx={{
+                                        '& svg': {
+                                            filter:
+                                                location.pathname === itemMenu.key ||
+                                                itemMenu.children?.some(
+                                                    (dropdownItem) =>
+                                                        location.pathname === dropdownItem.key
+                                                )
+                                                    ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
+                                                    : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
+                                        },
+                                        minWidth: '40px',
+                                        marginRight: collapsed || OpenHover ? ' 0px' : '20px',
+
+                                        transition: '.4s'
+                                    }}>
+                                    {location.pathname === itemMenu.key ||
                                     itemMenu.children?.some(
                                         (dropdownItem) => location.pathname === dropdownItem.key
                                     )
-                                        ? '#F2EBF0!important'
-                                        : 'transparent',
-                                borderRadius: '8px'
-                            }}>
-                            <ListItemIcon
-                                onClick={
-                                    itemMenu.children ? () => handleDropdown(index) : undefined
-                                }
-                                sx={{
-                                    '& svg': {
-                                        filter:
-                                            location.pathname === itemMenu.key ||
-                                            itemMenu.children?.some(
-                                                (dropdownItem) =>
-                                                    location.pathname === dropdownItem.key
-                                            )
-                                                ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
-                                                : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
-                                    },
-                                    minWidth: '40px',
-                                    marginRight: collapsed || OpenHover ? ' 0px' : '20px',
+                                        ? itemMenu.iconActive
+                                        : itemMenu.icon}
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary={itemMenu.label}
+                                    sx={{
+                                        flex: 'unset!important',
+                                        '& a': {
+                                            fontSize: '14px',
+                                            color:
+                                                location.pathname === itemMenu.key ||
+                                                itemMenu.children?.some(
+                                                    (dropdownItem) =>
+                                                        location.pathname === dropdownItem.key
+                                                )
+                                                    ? '#7C3367'
+                                                    : '#333233'
+                                        },
 
-                                    transition: '.4s'
-                                }}>
-                                {itemMenu.icon}
-                            </ListItemIcon>
-                            <ListItemText
-                                onClick={
-                                    itemMenu.children ? () => handleDropdown(index) : undefined
-                                }
-                                primary={itemMenu.label}
-                                sx={{
-                                    '& a': {
-                                        fontSize: '14px',
-                                        color:
-                                            location.pathname === itemMenu.key ||
-                                            itemMenu.children?.some(
-                                                (dropdownItem) =>
-                                                    location.pathname === dropdownItem.key
-                                            )
-                                                ? '#7C3367'
-                                                : '#333233'
-                                    },
-                                    marginY: 0,
-                                    paddingY: '4px',
-                                    '& span': {
-                                        fontSize: '14px',
-                                        color:
-                                            location.pathname === itemMenu.key ||
-                                            itemMenu.children?.some(
-                                                (dropdownItem) =>
-                                                    location.pathname === dropdownItem.key
-                                            )
-                                                ? '#7C3367'
-                                                : '#333233'
-                                    }
-                                }}
-                            />
-                            {itemMenu.children &&
-                                (open[index] ? (
-                                    <ExpandLessIcon
-                                        onClick={
-                                            itemMenu.children
-                                                ? () => handleDropdown(index)
-                                                : undefined
+                                        marginY: 0,
+                                        paddingY: '4px',
+                                        '& span': {
+                                            fontSize: '14px',
+                                            color:
+                                                location.pathname === itemMenu.key ||
+                                                itemMenu.children?.some(
+                                                    (dropdownItem) =>
+                                                        location.pathname === dropdownItem.key
+                                                )
+                                                    ? '#7C3367'
+                                                    : '#333233',
+                                            fontWeight:
+                                                location.pathname === itemMenu.key ||
+                                                itemMenu.children?.some(
+                                                    (dropdownItem) =>
+                                                        location.pathname === dropdownItem.key
+                                                )
+                                                    ? '700'
+                                                    : '400'
                                         }
-                                        sx={{
-                                            color: '#666466!important',
-                                            opacity: collapsed === true || OpenHover ? '1' : '0'
-                                        }}
-                                    />
-                                ) : (
-                                    <ExpandMoreIcon
-                                        onClick={
-                                            itemMenu.children
-                                                ? () => handleDropdown(index)
-                                                : undefined
-                                        }
-                                        sx={{
-                                            color: '#666466!important',
-                                            opacity: collapsed === true || OpenHover ? '1' : '0'
-                                        }}
-                                    />
-                                ))}
+                                    }}
+                                />
+                                {itemMenu.children &&
+                                    (open[index] ? (
+                                        <ExpandLessIcon
+                                            sx={{
+                                                color: '#666466!important',
+                                                ml: 'auto'
+                                                // opacity: collapsed === true || OpenHover ? '1' : '0'
+                                            }}
+                                        />
+                                    ) : (
+                                        <ExpandMoreIcon
+                                            sx={{
+                                                color: '#666466!important',
+                                                ml: 'auto'
+                                                // opacity: collapsed === true || OpenHover ? '1' : '0'
+                                            }}
+                                        />
+                                    ))}
+                            </Box>
                             {itemMenu.children && (
                                 <Box
                                     sx={{
@@ -249,7 +279,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         marginLeft: 'auto',
                                         width: '100%',
                                         position: 'relative',
-                                        left: collapsed || OpenHover ? ' 0' : '30px',
+                                        pl: '26px',
+                                        left: collapsed || OpenHover ? ' 0' : '50px',
                                         transition: open[index]
                                             ? 'max-height 3s, left .4s'
                                             : ' max-height 1s,left .4s',
@@ -294,7 +325,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                                 location.pathname ===
                                                                 dropdownItem.key
                                                                     ? '#7C3367'
-                                                                    : '#333233'
+                                                                    : '#999699',
+                                                            fontWeight:
+                                                                location.pathname ===
+                                                                dropdownItem.key
+                                                                    ? '500'
+                                                                    : '400'
+                                                        },
+                                                        ':hover a': {
+                                                            color: '#B085A4'
                                                         }
                                                     }}
                                                 />
@@ -306,59 +345,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                         </ListItem>
                     ))}
                 </List>
-            </Box>
-            <div className="hr"></div>
-            <Box
-                className="logout"
-                sx={{
-                    transition: '.4s',
-                    overflow: 'hidden',
-                    paddingLeft: collapsed || OpenHover ? '0' : '0',
-                    cursor: 'pointer'
-                }}>
-                <Avatar
-                    src={outIcon}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        textAlign: 'center',
-                        backgroundColor: '#CBADC2',
-                        marginRight: 4,
-                        marginLeft: collapsed || OpenHover ? '0' : '100px',
-                        transition: '.4s',
-                        '& img': {
-                            width: '15px',
-                            height: '15px'
-                        }
-                    }}
-                    onClick={() => {
-                        Object.keys(Cookies.get()).forEach((cookieName) => {
-                            Cookies.remove(cookieName);
-                        });
-                        navigate('/login');
-                    }}
-                />
-                <Link
-                    onClick={() => {
-                        Object.keys(Cookies.get()).forEach((cookieName) => {
-                            Cookies.remove(cookieName);
-                        });
-                        navigate('/login');
-                    }}
-                    to={'/login'}
-                    style={{
-                        textDecoration: 'none',
-                        color: '#4C4B4C',
-                        textAlign: 'center',
-                        fontSize: 16,
-                        fontFamily: 'roboto',
-                        whiteSpace: 'nowrap',
-                        transform: collapsed || OpenHover ? 'scale(1)' : 'scale(0)',
-                        transition: '.4s'
-                    }}>
-                    Đăng xuất
-                </Link>
             </Box>
         </Box>
     );

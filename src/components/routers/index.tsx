@@ -18,6 +18,15 @@ import { ReactComponent as EmployeeIcon } from '../../images/employeeIcon.svg';
 import { ReactComponent as ReportIcon } from '../../images/reportIcon.svg';
 import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
 import { ReactComponent as AdminIcon } from '../../images/admin77.svg';
+import { ReactComponent as HomeActive } from '../../images/homeActive.svg';
+import { ReactComponent as LichActive } from '../../images/calendarActive.svg';
+import { ReactComponent as ShopActive } from '../../images/shopActive.svg';
+import { ReactComponent as ClientActive } from '../../images/clientActive.svg';
+import { ReactComponent as ServiceActive } from '../../images/serviceActive.svg';
+import { ReactComponent as EmployeeActive } from '../../images/employeeActive.svg';
+import { ReactComponent as ReportActive } from '../../images/reportActive.svg';
+import { ReactComponent as SetingActive } from '../../images/settingActive.svg';
+import { ReactComponent as AdminActive } from '../../images/adminActive.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -29,6 +38,7 @@ type RouteProps = {
     permission: string;
     title: string;
     icon: ReactNode;
+    iconActive: ReactNode;
     children: RouteProps[];
     showInMenu: boolean;
     isLayout: boolean;
@@ -50,6 +60,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     children: [],
                     title: 'Login',
+                    iconActive: null,
                     icon: '',
                     component: LoadableComponent(() => import('../../pages/login')),
                     isLayout: true,
@@ -61,6 +72,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     children: [],
                     title: 'Login',
+                    iconActive: null,
                     icon: '',
                     component: LoadableComponent(() => import('../../pages/login')),
                     isLayout: true,
@@ -72,6 +84,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     children: [],
                     title: 'Register',
+                    iconActive: null,
                     icon: null,
                     component: LoadableComponent(() => import('../../pages/register')),
                     isLayout: true,
@@ -84,6 +97,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     title: 'Forgot password',
                     icon: null,
+                    iconActive: null,
                     component: LoadableComponent(() => import('../../pages/Forgot_password')),
                     isLayout: true,
                     showInMenu: false
@@ -93,6 +107,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'exception',
                     icon: null,
+                    iconActive: null,
                     name: 'exception',
                     showInMenu: false,
                     isLayout: false,
@@ -111,6 +126,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Home',
                     icon: null,
+                    iconActive: null,
                     component: LoadableComponent(() => import('../../pages/dashboard/indexNew')),
                     children: [],
                     isLayout: true,
@@ -122,6 +138,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Trang chủ',
                     icon: <HomeIcon2 width="20px" />,
+                    iconActive: <HomeActive width="20px" />,
                     children: [],
                     showInMenu: true,
                     isLayout: false,
@@ -134,6 +151,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Lịch hẹn',
                     icon: <CalendarIcon2 width="20px" />,
                     children: [],
+                    iconActive: <LichActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(() => import('../../pages/lich-hen/'))
@@ -143,6 +161,7 @@ export const appRouters: AppRouteProps = {
                     name: 'banhang',
                     permission: '',
                     title: 'Bán hàng',
+                    iconActive: <ShopActive width="20px" />,
                     icon: <ShopIcon width="20px" />,
                     children: [
                         {
@@ -151,7 +170,9 @@ export const appRouters: AppRouteProps = {
                             title: 'Thu ngân',
                             name: 'thungan',
                             icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
                             children: [],
+
                             showInMenu: false,
                             isLayout: false,
                             component: LoadableComponent(
@@ -169,6 +190,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Khách hàng',
                     name: 'khachhang',
                     icon: <ClientIcon width="20px" />,
+                    iconActive: <ClientActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
@@ -179,6 +201,7 @@ export const appRouters: AppRouteProps = {
                     permission: '',
                     title: 'Dich vụ',
                     icon: <ServicesIcon width="20px" />,
+                    iconActive: <ServiceActive width="20px" />,
                     name: 'dichvu',
                     showInMenu: true,
                     isLayout: false,
@@ -191,6 +214,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Nhân viên',
                     name: 'nhanvien',
                     icon: <EmployeeIcon width="20px" />,
+                    iconActive: <EmployeeActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [
@@ -200,6 +224,7 @@ export const appRouters: AppRouteProps = {
                             title: 'Quản lý nhân viên',
                             name: 'nhanvien',
                             icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
                             showInMenu: true,
                             isLayout: false,
                             children: [],
@@ -211,6 +236,7 @@ export const appRouters: AppRouteProps = {
                             title: 'Thời gian nghỉ',
                             name: 'nhanvien',
                             icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: <HomeActive width="20px" />,
                             showInMenu: true,
                             isLayout: false,
                             children: [],
@@ -227,6 +253,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Báo cáo',
                     name: 'baocao',
                     icon: <ReportIcon width="20px" />,
+                    iconActive: <ReportActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
@@ -237,6 +264,7 @@ export const appRouters: AppRouteProps = {
                     permission: 'Pages.Administration',
                     title: 'Quản trị',
                     icon: <AdminIcon width="20px" />,
+                    iconActive: <AdminActive width="20px" />,
                     name: 'QuanTri',
                     showInMenu: true,
                     isLayout: false,
@@ -247,6 +275,7 @@ export const appRouters: AppRouteProps = {
                             title: 'Users',
                             name: 'user',
                             icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
                             children: [],
                             showInMenu: true,
                             isLayout: false,
@@ -257,6 +286,7 @@ export const appRouters: AppRouteProps = {
                             permission: 'Pages.Administration.Roles',
                             title: 'Roles',
                             name: 'role',
+                            iconActive: null,
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             showInMenu: true,
                             isLayout: false,
@@ -268,6 +298,7 @@ export const appRouters: AppRouteProps = {
                             permission: 'Pages.Tenants',
                             title: 'Tenants',
                             name: 'tenant',
+                            iconActive: null,
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             showInMenu: true,
                             children: [],
@@ -284,6 +315,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Cài đặt',
                     name: 'caidat',
                     icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
                     children: [],
