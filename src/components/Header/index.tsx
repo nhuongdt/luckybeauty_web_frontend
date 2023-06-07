@@ -1,15 +1,7 @@
 // import { Avatar, Badge, Col, Dropdown, Layout, Menu, Row, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import avatar from '../../images/user.png';
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    LogoutOutlined,
-    HomeOutlined,
-    DownOutlined,
-    BellOutlined,
-    MessageOutlined
-} from '@ant-design/icons';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -51,9 +43,13 @@ interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
     onClick: () => void;
+    isChildHovered: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps) => {
+const Header: React.FC<HeaderProps> = (
+    { collapsed, toggle, isChildHovered },
+    props: HeaderProps
+) => {
     const { onClick } = props;
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -99,7 +95,7 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
         <Box
             display="flex"
             className="header"
-            sx={{ position: 'fixed', right: '0', top: '0', zIndex: 5555 }}>
+            sx={{ position: 'fixed', right: '0', top: '0', zIndex: 20 }}>
             {' '}
             <Grid container className={'header-container'} justifyContent="space-between">
                 <Grid item sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
@@ -109,17 +105,23 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle }, props: HeaderProps
                             fontFamily="vinhan"
                             color="#7C3367"
                             fontSize="18px"
-                            sx={{ opacity: collapsed ? '1' : '0', transition: '.2s' }}>
+                            sx={{
+                                opacity: collapsed && !isChildHovered ? '0' : '1',
+                                transition: '.2s'
+                            }}>
                             Lucky Beauty
                         </Typography>
                     </Box>
                     <Button
                         sx={{
                             minWidth: 'unset!important',
-                            marginLeft: collapsed ? '0' : '-116px',
+                            marginLeft: collapsed && !isChildHovered ? '-116px' : '0',
                             transition: '.4s',
                             '& svg': {
-                                transform: collapsed ? 'rotate(0deg)' : 'rotate(-180deg)',
+                                transform:
+                                    collapsed && !isChildHovered
+                                        ? 'rotate(-180deg)'
+                                        : 'rotate(0deg)',
                                 transition: '.4s'
                             },
                             ':hover svg': {
