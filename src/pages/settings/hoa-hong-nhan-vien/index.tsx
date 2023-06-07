@@ -12,7 +12,7 @@ class CaiDatHoaHongScreen extends Component {
             <>
                 <Box>
                     <Box component={'div'}>
-                        <Grid container rowSpacing={2}>
+                        <Grid container rowSpacing={2} sx={{ marginTop: '-72px' }}>
                             <Grid item xs={12}>
                                 <ButtonGroup
                                     sx={{
@@ -45,7 +45,7 @@ class CaiDatHoaHongScreen extends Component {
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: true });
                                         }}>
-                                        Theo dịch vụ
+                                        Theo hóa đơn
                                     </Button>
                                     <Button
                                         variant={
@@ -67,7 +67,7 @@ class CaiDatHoaHongScreen extends Component {
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: false });
                                         }}>
-                                        Theo hóa đơn
+                                        Theo dịch vụ
                                     </Button>
                                 </ButtonGroup>
                             </Grid>

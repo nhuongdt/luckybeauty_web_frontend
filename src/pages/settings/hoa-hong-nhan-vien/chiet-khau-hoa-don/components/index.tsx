@@ -5,6 +5,9 @@ import { CreateOrEditChietKhauHoaDonDto } from '../../../../../services/hoa_hong
 import chietKhauHoaDonStore from '../../../../../stores/chietKhauHoaDonStore';
 import AppConsts from '../../../../../lib/appconst';
 import SearchIcon from '../../../../../images/search-normal.svg';
+import { TextTranslate } from '../../../../../components/TableLanguage';
+import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Box,
     Button,
@@ -16,7 +19,8 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField
+    TextField,
+    Grid
 } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import CreateOrEditChietKhauHoaDonModal from './create-or-edit-chiet-khau-hd';
@@ -93,18 +97,28 @@ class ChietKhauHoaDonScreen extends Component {
     };
     render(): ReactNode {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
+        const columns: GridColDef[] = [
+            {
+                field: 'id',
+                headerName: 'ID'
+            }
+        ];
         return (
-            <div>
-                <div
-                    style={{ height: '48px', background: '#F2EBF0' }}
-                    className="row d-flex align-content-center">
-                    <div className="col-4 pl-2">
+            <Box>
+                <Grid
+                    container
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ background: '#ede4ea', padding: '8px' }}>
+                    <Grid item>
                         <Box className="form-search">
                             <TextField
                                 sx={{
                                     backgroundColor: '#FFFAFF',
                                     borderColor: '#CDC9CD',
-                                    height: '40px'
+                                    '& .MuiInputBase-root': {
+                                        height: '32px'
+                                    }
                                 }}
                                 onChange={(e) => {
                                     this.setState({ keyword: e.target.value });
@@ -122,32 +136,21 @@ class ChietKhauHoaDonScreen extends Component {
                                 }}
                             />
                         </Box>
-                    </div>
-                    <div className="col-4"></div>
-                    <div className="col-4">
+                    </Grid>
+
+                    <Grid item>
                         <Button
                             onClick={() => {
                                 this.setState({ visited: true });
                             }}
-                            size="small"
-                            style={{ float: 'right', background: '#7C3367', height: 32 }}
+                            sx={{ background: '#7C3367', height: 32, color: '#FFFAFF' }}
                             startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}>
-                            <span
-                                style={{
-                                    color: '#FFFAFF',
-                                    fontSize: 14,
-                                    fontWeight: 400,
-                                    fontStyle: 'normal',
-                                    fontFamily: 'roboto',
-                                    textAlign: 'center'
-                                }}>
-                                Thêm mới
-                            </span>
+                            Thêm mới
                         </Button>
-                    </div>
-                </div>
-                <div>
-                    <TableContainer component={Paper}>
+                    </Grid>
+                </Grid>
+                <Box>
+                    <TableContainer component={Paper} sx={{ display: 'none' }}>
                         <Table aria-label="customized table" size="small">
                             <TableHead>
                                 <TableRow style={{ height: '48px' }}>
@@ -197,6 +200,7 @@ class ChietKhauHoaDonScreen extends Component {
                             </TableBody>
                         </Table>
                     </TableContainer>
+
                     <CreateOrEditChietKhauHoaDonModal
                         formRef={this.state.createOrEditModel}
                         onClose={this.Modal}
@@ -205,8 +209,8 @@ class ChietKhauHoaDonScreen extends Component {
                         visited={this.state.visited}
                         title={this.state.idChietKhauHD === '' ? 'Thêm mới' : 'Cập nhật'}
                     />
-                </div>
-            </div>
+                </Box>
+            </Box>
         );
     }
 }

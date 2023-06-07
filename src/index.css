@@ -55,3 +55,8 @@ html {
     src: url('./font/Roboto-Black.ttf');
     font-weight: 900;
 }
+
+@font-face {
+    font-family: vinhan;
+    src: url('./font/vni.common.VINHAN.ttf');
+}

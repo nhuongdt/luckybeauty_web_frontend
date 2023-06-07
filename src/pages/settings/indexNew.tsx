@@ -50,7 +50,7 @@ const SettingsNew: React.FC = () => {
                 <Typography variant="h1" fontWeight="700" fontSize="24px" sx={{ marginTop: '4px' }}>
                     Chi tiết cửa hàng
                 </Typography>
-                <Grid container spacing={3}>
+                <Grid container spacing={3} mt={0}>
                     <Grid item xs={3}>
                         <Box
                             sx={{
