@@ -273,7 +273,7 @@ class EmployeeScreen extends React.Component {
             headerName: 'Vị trí',
             minWidth: 113,
             flex: 1,
-            renderCell: (params) => (
+            renderCell: () => (
                 <Typography
                     fontSize="14px"
                     fontWeight="400"
@@ -320,7 +320,7 @@ class EmployeeScreen extends React.Component {
             headerName: 'Trạng thái',
             minWidth: 116,
             flex: 1,
-            renderCell: (params) => (
+            renderCell: () => (
                 <Typography
                     fontSize="14px"
                     variant="h6"

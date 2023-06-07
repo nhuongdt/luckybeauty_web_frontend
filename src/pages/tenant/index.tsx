@@ -1,6 +1,17 @@
-import React, { FormEventHandler, ChangeEventHandler } from 'react';
+import React, { ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import { Box, Grid, Typography, TextField, Button, Pagination, IconButton } from '@mui/material';
+import {
+    Box,
+    Grid,
+    Typography,
+    TextField,
+    Button,
+    Pagination,
+    IconButton,
+    Menu,
+    MenuItem
+} from '@mui/material';
+import InfoIcon from '@mui/icons-material/Info';
 import { DataGrid } from '@mui/x-data-grid';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
@@ -36,7 +47,7 @@ export interface ITenantState {
     createOrEditTenant: CreateTenantInput;
     isShowConfirmDelete: boolean;
 }
-class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
+class TenantScreen extends AppComponentBase<ITenantProps> {
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -55,7 +66,9 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
             connectionString: '',
             tenancyName: ''
         } as CreateTenantInput,
-        isShowConfirmDelete: false
+        isShowConfirmDelete: false,
+        anchorEl: null,
+        selectedRowId: 0
     };
 
     async componentDidMount() {
@@ -84,7 +97,10 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         });
         this.getAll();
     };
-
+    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
+        const filter = event.target.value;
+        this.setState({ filter: filter }, async () => this.getAll());
+    };
     Modal = () => {
         this.setState({
             modalVisible: !this.state.modalVisible
@@ -124,7 +140,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         });
     };
     onOkDelete = () => {
-        this.delete(this.state.tenantId);
+        this.delete(this.state.selectedRowId);
         this.onShowDelete();
     };
     async delete(input: number) {
@@ -136,38 +152,28 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
         this.getAll();
         this.Modal();
     };
-
-    // handleSearch: FormEventHandler<HTMLInputElement> = (event: any) => {
-    //     const filter = event.target.value;
-    //     this.setState({ filter: filter }, async () => this.getAll());
-    // };
-    handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
-        const filter = event.target.value;
-        this.setState({ filter: filter }, async () => this.getAll());
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
     };
 
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: 0 });
+        await this.getAll();
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? 0);
+        this.handleCloseMenu();
+    };
+    handleView = () => {
+        // Handle View action
+        this.handleCloseMenu();
+    };
     render(): React.ReactNode {
         const columns = [
             {
-                field: 'id',
-                headerName: 'ID',
-                minWidth: 50,
-                flex: 1,
-                renderCell: (params: any) => (
-                    <Typography variant="caption" fontSize="14px" title={params.value}>
-                        {params.value}
-                    </Typography>
-                ),
-                renderHeader: (params: any) => (
-                    <Box>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
-                )
-            },
-            {
                 field: 'name',
-                headerName: 'Tenant',
+                headerName: 'Tên cửa hàng',
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
@@ -179,7 +185,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
             },
             {
                 field: 'tenancyName',
-                headerName: 'Tên tenant',
+                headerName: 'Tenant Id',
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
@@ -190,7 +196,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                 )
             },
             {
-                field: 'state',
+                field: 'isActive',
                 headerName: 'Trạng thái',
                 minWidth: 100,
                 flex: 1,
@@ -208,7 +214,7 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                             color: 'rgb(0, 158, 247)',
                             bgcolor: 'rgb(241, 250, 255)'
                         }}>
-                        Hoạt động{' '}
+                        {params.value == true ? 'Hoạt động' : 'Ngừng hoạt động'}
                     </Box>
                 )
             },
@@ -219,12 +225,17 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                 flex: 1,
                 disableColumnMenu: true,
                 renderCell: (params: any) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true">
-                        <MoreHorizIcon />
-                    </IconButton>
+                    <Box>
+                        <IconButton
+                            aria-label="Actions"
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true"
+                            onClick={(event) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
                 ),
                 renderHeader: (params: any) => (
                     <Box sx={{ display: 'none' }}>
@@ -349,68 +360,6 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                     marginTop="24px"
                     className="page-content "
                     sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
-                    <table
-                        className="h-100 w-100 table table-border-0 table"
-                        style={{ display: 'none' }}>
-                        <thead className="bg-table w-100">
-                            <tr style={{ height: '48px' }}>
-                                <th className="text-center">
-                                    <input className="text-th-table text-center" type="checkbox" />
-                                </th>
-                                <th className="text-th-table">STT</th>
-                                <th className="text-th-table">Tenant</th>
-                                <th className="text-th-table">Tên tenant</th>
-                                <th className="text-th-table">Trạng thái</th>
-                                <th className="text-th-table">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.listTenant.map((item, index) => {
-                                return (
-                                    <tr>
-                                        <td className="text-td-table text-center">
-                                            <input
-                                                className="text-th-table text-center"
-                                                type="checkbox"
-                                            />
-                                        </td>
-                                        <td className="text-td-table">{index + 1}</td>
-                                        <td className="text-td-table">{item.tenancyName}</td>
-                                        <td className="text-td-table">{item.name}</td>
-                                        <td className="text-td-table">
-                                            {item.isActive ? 'Hoạt động' : 'Ngừng hoạt động'}
-                                        </td>
-                                        <td className="text-td-table" style={{ width: '150px' }}>
-                                            <Box display="flex" justifyContent="start">
-                                                <Button
-                                                    sx={{ minWidth: 'unset' }}
-                                                    startIcon={<EditIcon />}
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            tenantId: item.id
-                                                        });
-                                                        this.createOrUpdateModalOpen(item.id);
-                                                    }}
-                                                />
-                                                <Button
-                                                    sx={{ minWidth: 'unset' }}
-                                                    startIcon={
-                                                        <DeleteForeverIcon sx={{ color: 'red' }} />
-                                                    }
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            tenantId: item.id
-                                                        });
-                                                        this.onShowDelete();
-                                                    }}
-                                                />
-                                            </Box>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
                     <DataGrid
                         autoHeight
                         columns={columns}
@@ -435,20 +384,57 @@ class TenantScreen extends AppComponentBase<ITenantProps, ITenantState> {
                         }}
                         localeText={TextTranslate}
                     />
+                    <Menu
+                        id={`actions-menu-${this.state.selectedRowId}`}
+                        anchorEl={this.state.anchorEl}
+                        keepMounted
+                        open={Boolean(this.state.anchorEl)}
+                        onClose={this.handleCloseMenu}
+                        sx={{ minWidth: '120px' }}>
+                        <MenuItem onClick={this.handleView}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                View
+                            </Typography>
+                            <InfoIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={this.handleEdit}>
+                            <Typography
+                                color="#009EF7"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Edit
+                            </Typography>
+                            <EditIcon sx={{ color: '#009EF7' }} />
+                        </MenuItem>
+                        <MenuItem onClick={this.onShowDelete}>
+                            <Typography
+                                color="#F1416C"
+                                fontSize="12px"
+                                variant="button"
+                                textTransform="unset"
+                                width="64px"
+                                fontWeight="400"
+                                marginRight="8px">
+                                Delete
+                            </Typography>
+                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
+                        </MenuItem>
+                    </Menu>
                     <div className="row" style={{ display: 'none' }}>
                         <div className="col-6" style={{ float: 'left' }}></div>
                         <div className="col-6" style={{ float: 'right' }}>
                             <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div className="col-5 align-items-center">
-                                    <label
-                                        className="pagination-view-record align-items-center"
-                                        style={{ float: 'right' }}>
-                                        Hiển thị{' '}
-                                        {this.state.currentPage * this.state.maxResultCount - 9}-
-                                        {this.state.currentPage * this.state.maxResultCount} của{' '}
-                                        {this.state.totalCount} mục
-                                    </label>
-                                </div>
                                 <div style={{ float: 'right' }} className="col-7">
                                     <Box className="align-items-center">
                                         <Pagination

@@ -8,6 +8,7 @@ import http from '../httpService';
 import { PermissionTree } from './dto/permissionTree';
 import { CreateOrEditRoleDto } from './dto/createOrEditRoleDto';
 import { RoleDto } from './dto/roleDto';
+import { permissionCheckboxTree } from './dto/permissionCheckboxTree';
 
 class RoleService {
     public async createOrEdit(input: CreateOrEditRoleDto): Promise<RoleDto> {
@@ -31,8 +32,8 @@ class RoleService {
         return result.data.result.items;
     }
     public async getAllPermissionTree(): Promise<PermissionTree[]> {
-        const result = await http.get('api/services/app/Permission/GetAllPermissions');
-        return result.data.result.items;
+        const responsive = await http.get('api/services/app/Permission/GetAllPermissions');
+        return responsive.data.result.items;
     }
 
     public async getRoleForEdit(id: number): Promise<CreateOrEditRoleDto> {
