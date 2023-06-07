@@ -126,7 +126,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
             <Box
                 className="side-menu"
                 sx={{
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    backgroundColor: '#fff'
                 }}>
                 <List component="nav" sx={{ minWidth: '218px', marginTop: '80px' }}>
                     {itemMenus.map((itemMenu, index) => (
@@ -312,7 +313,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                 sx={{
                     transition: '.4s',
                     overflow: 'hidden',
-                    paddingLeft: collapsed || OpenHover ? '0' : '64px',
+                    paddingLeft: collapsed || OpenHover ? '0' : '0',
                     cursor: 'pointer'
                 }}>
                 <Avatar
@@ -324,6 +325,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                         textAlign: 'center',
                         backgroundColor: '#CBADC2',
                         marginRight: 4,
+                        marginLeft: collapsed || OpenHover ? '0' : '100px',
+                        transition: '.4s',
                         '& img': {
                             width: '15px',
                             height: '15px'
@@ -349,7 +352,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                         color: '#4C4B4C',
                         textAlign: 'center',
                         fontSize: 16,
-                        fontFamily: 'roboto'
+                        fontFamily: 'roboto',
+                        whiteSpace: 'nowrap',
+                        transform: collapsed || OpenHover ? 'scale(1)' : 'scale(0)',
+                        transition: '.4s'
                     }}>
                     Đăng xuất
                 </Link>
