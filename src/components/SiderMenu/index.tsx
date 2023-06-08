@@ -118,18 +118,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
 
                 '& .MuiList-root': {
                     display: 'flex',
-                    // whiteSpace: 'nowrap',
-                    // flexWrap: 'nowrap',
+                    whiteSpace: 'nowrap',
+                    flexWrap: 'nowrap',
                     flexDirection: 'column'
                 }
             }}>
             <Box
                 className="side-menu"
-                sx={{
-                    overflow: 'hidden',
-                    backgroundColor: '#fff'
-                }}>
-                <List component="nav" sx={{ minWidth: '218px', marginTop: '80px' }}>
+                sx={{ overflow: collapsed || OpenHover ? 'auto' : 'hidden' }}>
+                <List component="nav" sx={{ minWidth: '208px', marginTop: '80px' }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
                             key={itemMenu.key}
@@ -150,8 +147,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                             }
                             selected={location.pathname === itemMenu.key}
                             sx={{
-                                // maxWidth: collapsed || OpenHover ? '999px' : '59px',
-                                flexWrap: 'wrap',
+                                maxWidth: collapsed || OpenHover ? '999px' : '59px',
+                                flexWrap: collapsed || OpenHover ? 'wrap' : 'nowrap',
                                 transition: '.4s',
                                 backgroundColor:
                                     location.pathname === itemMenu.key ||
@@ -248,11 +245,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         overflow: 'hidden',
                                         marginLeft: 'auto',
                                         width: '100%',
-                                        position: 'relative',
-                                        left: collapsed || OpenHover ? ' 0' : '30px',
-                                        transition: open[index]
-                                            ? 'max-height 3s, left .4s'
-                                            : ' max-height 1s,left .4s',
+                                        transition: open[index] ? '3s' : '1s',
                                         maxHeight: open[index] == true ? '1000px' : '0px'
                                     }}>
                                     <List component="div" disablePadding>
@@ -313,8 +306,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                 sx={{
                     transition: '.4s',
                     overflow: 'hidden',
-                    paddingLeft: collapsed || OpenHover ? '0' : '0',
-                    cursor: 'pointer'
+                    paddingLeft: collapsed || OpenHover ? '0' : '64px'
                 }}>
                 <Avatar
                     src={outIcon}
@@ -325,8 +317,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                         textAlign: 'center',
                         backgroundColor: '#CBADC2',
                         marginRight: 4,
-                        marginLeft: collapsed || OpenHover ? '0' : '100px',
-                        transition: '.4s',
                         '& img': {
                             width: '15px',
                             height: '15px'
@@ -352,10 +342,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                         color: '#4C4B4C',
                         textAlign: 'center',
                         fontSize: 16,
-                        fontFamily: 'roboto',
-                        whiteSpace: 'nowrap',
-                        transform: collapsed || OpenHover ? 'scale(1)' : 'scale(0)',
-                        transition: '.4s'
+                        fontFamily: 'roboto'
                     }}>
                     Đăng xuất
                 </Link>

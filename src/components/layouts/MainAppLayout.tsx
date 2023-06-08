@@ -68,7 +68,6 @@ const MainAppLayout: React.FC = () => {
                     <Box
                         style={{
                             border: 'solid 0.1rem #e6e1e6',
-                            backgroundColor: '#EEECEC',
                             marginTop: '70px'
                         }}>
                         <Outlet />
