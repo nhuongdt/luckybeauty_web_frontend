@@ -259,7 +259,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                             sx={{
                                                 color: '#666466!important',
                                                 ml: 'auto'
-                                                // opacity: collapsed === true || OpenHover ? '1' : '0'
                                             }}
                                         />
                                     ) : (
@@ -267,7 +266,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                             sx={{
                                                 color: '#666466!important',
                                                 ml: 'auto'
-                                                // opacity: collapsed === true || OpenHover ? '1' : '0'
                                             }}
                                         />
                                     ))}

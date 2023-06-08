@@ -364,14 +364,6 @@ class EmployeeScreen extends React.Component {
         }
     ];
     public render() {
-        const breadcrumbs = [
-            <Typography key="1" color="#999699" fontSize="14px">
-                Nhân viên
-            </Typography>,
-            <Typography key="2" color="#333233" fontSize="14px">
-                Danh mục nhân viên
-            </Typography>
-        ];
         const { listNhanVien } = NhanVienStore;
         return (
             <Box
@@ -380,22 +372,10 @@ class EmployeeScreen extends React.Component {
                 paddingRight="2.2222222222222223vw"
                 paddingTop="1.5277777777777777vw">
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto">
-                        <Breadcrumbs separator="›" aria-label="breadcrumb">
-                            {breadcrumbs}
-                        </Breadcrumbs>
-                        <Typography
-                            color="#0C050A"
-                            variant="h1"
-                            fontSize="24px"
-                            fontWeight="700"
-                            lineHeight="32px"
-                            marginTop="4px">
-                            Danh sách nhân viên
+                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
+                        <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
+                            Quản lý nhân viên
                         </Typography>
-                    </Grid>
-
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box className="form-search">
                             <TextField
                                 sx={{
@@ -428,6 +408,9 @@ class EmployeeScreen extends React.Component {
                                 }}
                             />
                         </Box>
+                    </Grid>
+
+                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
                             startIcon={<img src={DownloadIcon} />}

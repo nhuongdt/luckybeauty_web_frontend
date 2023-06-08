@@ -319,65 +319,48 @@ class UserScreen extends AppComponentBase<IUserProps> {
                         rowGap="16px">
                         <Grid item>
                             <div>
-                                <div>
-                                    <Box display="flex" alignItems="center">
-                                        <Typography variant="body1" fontSize="14px" color="#999699">
-                                            Người dùng
-                                        </Typography>
-                                        <ArrowForwardIosIcon
-                                            fontSize="small"
-                                            sx={{
-                                                width: '12px',
-                                                height: '12px'
-                                            }}
-                                        />
-                                        <Typography variant="body1" fontSize="14px" color="#333233">
-                                            Thông tin người dùng
-                                        </Typography>
-                                    </Box>
-                                </div>
-                                <div>
+                                <Box display="flex" gap="10px" alignItems="center">
                                     <Typography
                                         variant="h1"
                                         fontWeight="700"
-                                        fontSize="24px"
-                                        sx={{ marginTop: '4px' }}>
+                                        fontSize="16px"
+                                        color="#333233">
                                         Danh sách người dùng
                                     </Typography>
-                                </div>
+                                    <TextField
+                                        onKeyDown={(e) => {
+                                            if (e.key == 'Enter') {
+                                                this.getAll();
+                                            }
+                                        }}
+                                        onChange={this.handleSearchChange}
+                                        size="small"
+                                        sx={{
+                                            borderColor: '#E6E1E6!important',
+                                            bgcolor: '#fff'
+                                        }}
+                                        placeholder="Tìm kiếm..."
+                                        InputProps={{
+                                            startAdornment: (
+                                                <SearchIcon
+                                                    onClick={() => {
+                                                        this.getAll();
+                                                    }}
+                                                    style={{
+                                                        marginRight: '8px',
+                                                        color: 'gray'
+                                                    }}
+                                                />
+                                            )
+                                        }}
+                                    />
+                                </Box>
                             </div>
                         </Grid>
                         <Grid item style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
                                 <Box display="flex" alignItems="center">
                                     <Box display="flex" gap="8px">
-                                        <TextField
-                                            onKeyDown={(e) => {
-                                                if (e.key == 'Enter') {
-                                                    this.getAll();
-                                                }
-                                            }}
-                                            onChange={this.handleSearchChange}
-                                            size="small"
-                                            sx={{
-                                                borderColor: '#E6E1E6!important',
-                                                bgcolor: '#fff'
-                                            }}
-                                            placeholder="Tìm kiếm..."
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <SearchIcon
-                                                        onClick={() => {
-                                                            this.getAll();
-                                                        }}
-                                                        style={{
-                                                            marginRight: '8px',
-                                                            color: 'gray'
-                                                        }}
-                                                    />
-                                                )
-                                            }}
-                                        />
                                         <Button
                                             variant="outlined"
                                             size="small"

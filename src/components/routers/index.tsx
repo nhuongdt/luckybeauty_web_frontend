@@ -178,6 +178,20 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/main_page_ban_hang')
                             )
+                        },
+                        {
+                            path: '/giao-dich-thanh-toan',
+                            permission: '',
+                            title: 'Giao dịch thanh toán',
+                            name: 'giaoDichThanhToan',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+                            showInMenu: false,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan')
+                            )
                         }
                     ],
                     showInMenu: true,
@@ -199,7 +213,7 @@ export const appRouters: AppRouteProps = {
                 {
                     path: '/dich-vus',
                     permission: '',
-                    title: 'Dich vụ',
+                    title: 'Dịch vụ',
                     icon: <ServicesIcon width="20px" />,
                     iconActive: <ServiceActive width="20px" />,
                     name: 'dichvu',
@@ -319,7 +333,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/settings'))
+                    component: LoadableComponent(() => import('../../pages/settings/indexNew'))
                 }
             ]
         }

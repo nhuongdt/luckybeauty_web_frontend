@@ -324,7 +324,7 @@ class LichHenScreen extends Component {
                                     <KeyboardArrowLeftIcon sx={{ color: '#666466' }} />
                                 </Button>
                                 <Button
-                                    sx={{ padding: '0', marginRight: '16px' }}
+                                    sx={{ padding: '0', marginRight: '16px', color: '#7C3367' }}
                                     onClick={() => {
                                         this.changeHeaderToolbar('today');
                                     }}>
