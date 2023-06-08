@@ -26,7 +26,7 @@ import { ReactComponent as ServiceActive } from '../../images/serviceActive.svg'
 import { ReactComponent as EmployeeActive } from '../../images/employeeActive.svg';
 import { ReactComponent as ReportActive } from '../../images/reportActive.svg';
 import { ReactComponent as SetingActive } from '../../images/settingActive.svg';
-import { ReactComponent as AdminActive } from '../../images/adminActive.svg';
+import { ReactComponent as AdminActive } from '../../images/admin2.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;

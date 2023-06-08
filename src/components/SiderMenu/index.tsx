@@ -138,7 +138,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                         marginTop: '80px',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '8px'
+                        gap: '8px',
+                        '& .Mui-selected': {
+                            bgcolor: 'transparent!important'
+                        }
                     }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
@@ -159,7 +162,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                             }
                             selected={location.pathname === itemMenu.key}
                             sx={{
-                                // maxWidth: collapsed || OpenHover ? '999px' : '59px',
                                 flexWrap: 'wrap',
                                 padding: '0'
                             }}>
@@ -180,6 +182,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                             ? '#F2EBF0!important'
                                             : 'transparent',
                                     borderRadius: '8px',
+                                    maxWidth: collapsed || OpenHover ? '1000px' : '51px',
+                                    maxHeight: collapsed || OpenHover ? '1000px' : '51px',
                                     ':hover': {
                                         backgroundColor: '#F2EBF0!important'
                                     }
@@ -192,19 +196,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         itemMenu.children ? () => handleDropdown(index) : undefined
                                     }
                                     sx={{
-                                        '& svg': {
-                                            filter:
-                                                location.pathname === itemMenu.key ||
-                                                itemMenu.children?.some(
-                                                    (dropdownItem) =>
-                                                        location.pathname === dropdownItem.key
-                                                )
-                                                    ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
-                                                    : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
-                                        },
                                         minWidth: '40px',
-                                        marginRight: collapsed || OpenHover ? ' 0px' : '20px',
-
                                         transition: '.4s'
                                     }}>
                                     {location.pathname === itemMenu.key ||
@@ -229,6 +221,9 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                     ? '#7C3367'
                                                     : '#333233'
                                         },
+                                        transition: '.4s',
+                                        left: collapsed || OpenHover ? '20%' : '50%',
+                                        position: 'absolute',
 
                                         marginY: 0,
                                         paddingY: '4px',
@@ -258,14 +253,20 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         <ExpandLessIcon
                                             sx={{
                                                 color: '#666466!important',
-                                                ml: 'auto'
+                                                ml: 'auto',
+                                                transition: '.4s',
+                                                position: 'relative',
+                                                right: collapsed || OpenHover ? '0' : '-10px'
                                             }}
                                         />
                                     ) : (
                                         <ExpandMoreIcon
                                             sx={{
                                                 color: '#666466!important',
-                                                ml: 'auto'
+                                                ml: 'auto',
+                                                transition: '.4s',
+                                                position: 'relative',
+                                                right: collapsed || OpenHover ? '0' : '-10px'
                                             }}
                                         />
                                     ))}
