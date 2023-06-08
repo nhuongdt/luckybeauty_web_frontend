@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Alert, Stack } from '@mui/material';
+import { Alert } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-export default function MessageAlert({ showAlert = false, type = 1, title = '' }: any) {
+import { ReactComponent as WarningIcon } from '../../images/warning.svg';
+export default function WarningAlert({ showAlert = false, type = 1, title = '' }: any) {
     const getIcon = () => {
         if (type === 1) {
-            return <CheckCircleIcon />;
+            return <WarningIcon />;
         } else if (type === 2) {
             return <DeleteIcon />;
         }
@@ -21,9 +21,9 @@ export default function MessageAlert({ showAlert = false, type = 1, title = '' }
                         width: '400px',
                         fontSize: '16px',
                         height: '40px',
-                        color: '#004434',
                         alignItems: 'center',
-                        bgcolor: '#E8FFF3',
+                        bgcolor: '#FFF8DD',
+                        color: '#FF9900',
                         '& .MuiAlert-message': {
                             padding: '0'
                         }

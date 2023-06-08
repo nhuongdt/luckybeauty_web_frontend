@@ -13,7 +13,7 @@ import SearchIcon from '../../images/search-normal.svg';
 import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
 import { Typography, TextField, IconButton } from '@mui/material';
-import MessageAlert from '../../components/AlertDialog/MessageAlert';
+
 const Dashboard: React.FC = () => {
     const [month, setMonth] = React.useState('Tháng này');
     const handleChange = (event: any) => {
@@ -21,7 +21,6 @@ const Dashboard: React.FC = () => {
     };
     return (
         <div>
-            <MessageAlert title="thành công" type={1} showAlert={true} />
             <Box
                 display="flex"
                 alignItems="center"
