@@ -242,7 +242,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         option.tenNhomHang ? option.tenNhomHang : ''
                                     }
                                     renderInput={(params) => (
-                                        <TextField {...params} label="Chọn nhóm" />
+                                        <TextField {...params} placeholder="Chọn nhóm" />
                                     )}
                                 />
                             </Grid>
