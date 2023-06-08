@@ -254,7 +254,7 @@ const GiaoDichThanhToan: React.FC = () => {
                     </Box>
                 </Grid>
             </Grid>
-            <Box>
+            <Box marginTop="16px">
                 <DataGrid
                     columns={columns}
                     rows={rows}

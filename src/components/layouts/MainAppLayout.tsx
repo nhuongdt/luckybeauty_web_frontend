@@ -66,10 +66,11 @@ const MainAppLayout: React.FC = () => {
                         isChildHovered={isChildHovered}
                     />
                     <Box
-                        style={{
+                        sx={{
                             border: 'solid 0.1rem #e6e1e6',
-                            backgroundColor: '#EEECEC',
-                            marginTop: '70px'
+                            backgroundColor: 'rgba(248,248,248,1)',
+                            marginTop: '70px',
+                            minHeight: 'calc(100vh - 70px)'
                         }}>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
