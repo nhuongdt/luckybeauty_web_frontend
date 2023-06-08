@@ -290,7 +290,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         {itemMenu.children.map((dropdownItem) => (
                                             <ListItem
                                                 key={dropdownItem.key}
-                                                button
                                                 component={Link as React.ElementType}
                                                 to={dropdownItem.key}
                                                 selected={

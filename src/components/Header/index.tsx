@@ -128,6 +128,9 @@ const Header: React.FC<HeaderProps> = (
                             ':hover svg:nth-child(2)': {
                                 color: '#c95ea9d9'
                             },
+                            '& .MuiTouchRipple-root': {
+                                display: 'none'
+                            },
                             transform:
                                 collapsed && !isChildHovered ? 'rotate(-180deg)' : 'rotate(0deg)'
                         }}
