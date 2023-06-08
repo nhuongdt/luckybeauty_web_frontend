@@ -183,7 +183,7 @@ class EmployeeScreen extends React.Component {
                         style={{ width: 24, height: 24, marginRight: 8 }}
                     />
                     <Typography
-                        fontSize="14px"
+                        fontSize="12px"
                         fontWeight="400"
                         variant="h6"
                         color="#333233"
@@ -211,7 +211,7 @@ class EmployeeScreen extends React.Component {
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
-                        fontSize="14px"
+                        fontSize="12px"
                         fontWeight="400"
                         variant="h6"
                         color="#333233"
@@ -234,7 +234,7 @@ class EmployeeScreen extends React.Component {
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography
-                        fontSize="14px"
+                        fontSize="12px"
                         fontWeight="400"
                         variant="h6"
                         color="#333233"
@@ -275,7 +275,7 @@ class EmployeeScreen extends React.Component {
             flex: 1,
             renderCell: () => (
                 <Typography
-                    fontSize="14px"
+                    fontSize="12px"
                     fontWeight="400"
                     variant="h6"
                     color="#333233"
@@ -299,7 +299,7 @@ class EmployeeScreen extends React.Component {
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
-                        fontSize="14px"
+                        fontSize="12px"
                         variant="h6"
                         fontWeight="400"
                         color="#333233"
@@ -322,7 +322,7 @@ class EmployeeScreen extends React.Component {
             flex: 1,
             renderCell: () => (
                 <Typography
-                    fontSize="14px"
+                    fontSize="12px"
                     variant="h6"
                     lineHeight="16px"
                     padding="4px 8px"
@@ -479,6 +479,9 @@ class EmployeeScreen extends React.Component {
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-cellContent': {
+                                fontSize: '12px'
                             }
                         }}
                         localeText={TextTranslate}

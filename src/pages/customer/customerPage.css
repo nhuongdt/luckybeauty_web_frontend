@@ -42,15 +42,6 @@
     background-color: #f2ebf0;
 }
 
-.customer-page .MuiDataGrid-columnHeaderTitle {
-    font-size: 14px;
-}
-
-.customer-page .MuiDataGrid-cellContent {
-    font-size: 14px;
-    color: #333233;
-}
-
 .customer-page .MuiCheckbox-root svg {
     fill: rgba(0, 0, 0, 0.2);
 }

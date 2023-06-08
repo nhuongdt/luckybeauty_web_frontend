@@ -216,7 +216,7 @@ class EmployeeHoliday extends Component {
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -241,7 +241,7 @@ class EmployeeHoliday extends Component {
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -271,7 +271,7 @@ class EmployeeHoliday extends Component {
                             textAlign: 'center'
                         }}>
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -418,6 +418,9 @@ class EmployeeHoliday extends Component {
                             },
                             '& .MuiDataGrid-columnHeadersInner': {
                                 backgroundColor: '#F2EBF0'
+                            },
+                            '& .MuiDataGrid-cellContent': {
+                                fontSize: '12px'
                             }
                         }}
                         localeText={TextTranslate}

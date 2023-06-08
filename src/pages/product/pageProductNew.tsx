@@ -340,6 +340,7 @@ export default function PageProductNew() {
             flex: 1,
             renderCell: (params) => (
                 <Typography
+                    fontSize="12px"
                     variant="body2"
                     color="#333233"
                     sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -360,6 +361,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex" width="100%">
                     <Typography
+                        fontSize="12px"
                         variant="body2"
                         color="#333233"
                         title={params.value}
@@ -394,7 +396,7 @@ export default function PageProductNew() {
             flex: 1,
             renderCell: (params) => (
                 <Box display="flex">
-                    <Typography variant="body2" color="#333233">
+                    <Typography variant="body2" color="#333233" fontSize="12px">
                         {Utils.formatNumber(params.value)}
                     </Typography>
                 </Box>
@@ -414,7 +416,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex">
                     <ClockIcon />
-                    <Typography variant="body2" color="#333233" marginLeft="9px">
+                    <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
                         {params.value} phút
                     </Typography>
                 </Box>
@@ -435,6 +437,7 @@ export default function PageProductNew() {
                 <Typography
                     variant="body2"
                     sx={{
+                        fontSize: '12px',
                         padding: '4px 8px',
                         borderRadius: '1000px',
                         backgroundColor: '#F1FAFF',
@@ -610,6 +613,9 @@ export default function PageProductNew() {
                                     border: 'none!important',
                                     '& .MuiDataGrid-iconButtonContainer': {
                                         display: 'none'
+                                    },
+                                    '& .MuiDataGrid-cellContent': {
+                                        fontSize: '12px'
                                     }
                                 }}
                                 localeText={TextTranslate}

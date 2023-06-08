@@ -266,7 +266,7 @@ class UserScreen extends AppComponentBase<IUserProps> {
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -438,6 +438,9 @@ class UserScreen extends AppComponentBase<IUserProps> {
                                 },
                                 '& p': {
                                     mb: 0
+                                },
+                                '& .MuiDataGrid-cellContent': {
+                                    fontSize: '12px'
                                 }
                             }}
                             // components={{
