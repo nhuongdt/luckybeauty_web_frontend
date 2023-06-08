@@ -26,6 +26,7 @@ import '../../custom.css';
 import '../lich-hen/calendar.css';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { ReactComponent as SettingIcon } from '../../images/setting-00.svg';
 import CreateOrUpdateAppointment from './components/create-or-update-lich-hen';
 import { CreateOrEditBookingDto } from '../../services/dat-lich/dto/CreateOrEditBookingDto';
 import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
@@ -205,20 +206,15 @@ class LichHenScreen extends Component {
     };
 
     render(): ReactNode {
-        const breadcrumbsLink = [
-            { text: 'Lịch hẹn ', color: '#999699' },
-            { text: 'Danh sách lịch hẹn', color: '#333233' }
-        ];
-
         return (
             <Box sx={{ height: '100%', padding: '0 2.2222222222222223vw' }}>
                 <Box sx={{ borderBottom: '1px solid #E6E1E6', paddingBottom: '24px' }}>
                     <Grid container justifyContent="space-between" sx={{ paddingTop: '22px' }}>
                         <Grid item xs={6}>
-                            <BreadcrumbsPageTitle listLink={breadcrumbsLink} />
                             <Typography
                                 marginTop="4px"
                                 color="#0C050A"
+                                fontSize="16px"
                                 variant="h5"
                                 fontWeight="700">
                                 Lịch hẹn
@@ -226,21 +222,46 @@ class LichHenScreen extends Component {
                         </Grid>
                         <Grid item xs={6} style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
-                                <Box display="flex" justifyContent="center" alignItems="center">
+                                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    gap="8px">
                                     <Button
                                         variant="outlined"
                                         onClick={() => {
                                             console.log('ok');
                                         }}
                                         sx={{
+                                            bgcolor: '#fff!important',
                                             borderColor: '#E6E1E6!important',
                                             minWidth: '40px',
                                             height: '40px',
                                             width: '40px',
-                                            marginRight: '8px',
+
                                             padding: '0'
                                         }}>
-                                        <AiOutlineEllipsis color="#231F20" />
+                                        <SettingIcon color="#231F20" />
+                                    </Button>
+                                    <Button
+                                        variant="outlined"
+                                        startIcon={
+                                            <img
+                                                style={{
+                                                    filter: ' brightness(0) saturate(100%) invert(29%) sepia(0%) saturate(1880%) hue-rotate(350deg) brightness(101%) contrast(97%)'
+                                                }}
+                                                src={AddIcon}
+                                            />
+                                        }
+                                        sx={{
+                                            textTransform: 'unset!important',
+                                            height: '40px',
+                                            color: '#4C4B4C',
+                                            fontWeight: '400',
+                                            borderColor: '#E6E1E6!important',
+                                            bgcolor: '#fff!important'
+                                        }}>
+                                        Thêm thời gian chặn
                                     </Button>
                                     <Button
                                         variant="contained"
@@ -255,7 +276,7 @@ class LichHenScreen extends Component {
                                                 modalVisible: !this.state.modalVisible
                                             });
                                         }}>
-                                        Thêm
+                                        Thêm cuộc hẹn
                                     </Button>
                                 </Box>
                             </div>

@@ -16,7 +16,17 @@ export default function MessageAlert({ showAlert = false, type = 1, title = '' }
         <>
             {showAlert && (
                 <Alert
-                    style={{ float: 'right', width: '350px', fontSize: '14px' }}
+                    sx={{
+                        float: 'right',
+                        width: '400px',
+                        fontSize: '16px',
+                        height: '40px',
+                        alignItems: 'center',
+                        bgcolor: '#E8FFF3',
+                        '& .MuiAlert-message': {
+                            padding: '0'
+                        }
+                    }}
                     severity={type == 1 ? 'success' : 'error'}
                     icon={getIcon()}>
                     {title}
