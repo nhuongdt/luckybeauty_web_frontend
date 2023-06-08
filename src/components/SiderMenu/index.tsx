@@ -172,6 +172,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                     border: '0',
                                     display: 'flex',
                                     padding: '8px 14px',
+                                    height: '40px',
                                     transition: '.4s',
                                     alignItems: 'center',
                                     backgroundColor:
@@ -321,7 +322,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                                 location.pathname ===
                                                                 dropdownItem.key
                                                                     ? '#7C3367'
-                                                                    : '#999699',
+                                                                    : '#4C4B4C',
                                                             fontWeight:
                                                                 location.pathname ===
                                                                 dropdownItem.key

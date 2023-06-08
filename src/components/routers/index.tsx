@@ -192,6 +192,20 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Giao_dich_thanh_toan')
                             )
+                        },
+                        {
+                            path: '/hoa-don',
+                            permission: '',
+                            title: 'Hoá đơn',
+                            name: 'HoaDon',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+                            showInMenu: false,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/Hoa_don')
+                            )
                         }
                     ],
                     showInMenu: true,
