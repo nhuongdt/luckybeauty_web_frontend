@@ -1,10 +1,11 @@
 import React from 'react';
 import { useState } from 'react';
 import { Grid, Box, Typography, Button, Tabs, Tab } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
 import Avatar from '../../../images/xinh.png';
+import TabInfo from './Tab_info';
+import TabDiary from './Tab_diary';
 import { ReactComponent as ArrowIcon } from '../../../images/arrow_back.svg';
 const HoaDon: React.FC = () => {
     const Infomations = [
@@ -26,7 +27,7 @@ const HoaDon: React.FC = () => {
             value: 'Tài Đinh Tuấn'
         }
     ];
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(0);
     const handleTabChange = (event: any, newValue: number) => {
         setActiveTab(newValue);
     };
@@ -43,7 +44,13 @@ const HoaDon: React.FC = () => {
         );
     };
     return (
-        <>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                minHeight: 'calc(100vh - 70px)'
+            }}>
             <Box padding="16px 2.2222222222222223vw ">
                 <Grid container justifyContent="space-between" alignItems="center">
                     <Grid item xs="auto">
@@ -87,6 +94,7 @@ const HoaDon: React.FC = () => {
                 <Grid
                     container
                     sx={{
+                        mt: '16px',
                         boxShadow: '0px 4px 20px 0px #AAA9B81A',
                         borderRadius: '12px',
                         padding: '24px 24px 0px 24px',
@@ -94,8 +102,16 @@ const HoaDon: React.FC = () => {
                         alignItems: 'center'
                     }}>
                     <Grid item xs={1.5}>
-                        <Box sx={{ borderRadius: '6px' }}>
-                            <img width={100} height={100} src={Avatar} alt="avatar" />
+                        <Box
+                            sx={{
+                                borderRadius: '6px',
+                                '& img': {
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'cover'
+                                }
+                            }}>
+                            <img width={100} src={Avatar} alt="avatar" />
                         </Box>
                     </Grid>
                     <Grid item xs={10.5}>
@@ -173,12 +189,12 @@ const HoaDon: React.FC = () => {
                         </Tabs>
                     </Grid>
                 </Grid>
-                <Box>
+                <Box sx={{ mt: '40px' }}>
                     <TabPanel value={activeTab} index={0}>
-                        huhuhuhu
+                        <TabInfo />
                     </TabPanel>
                     <TabPanel value={activeTab} index={1}>
-                        hihihihi
+                        <TabDiary />
                     </TabPanel>
                 </Box>
             </Box>
@@ -216,7 +232,7 @@ const HoaDon: React.FC = () => {
                     </Button>
                 </Box>
             </Box>
-        </>
+        </Box>
     );
 };
 export default HoaDon;

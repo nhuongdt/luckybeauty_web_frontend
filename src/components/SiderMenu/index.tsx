@@ -294,7 +294,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         transition: open[index]
                                             ? 'max-height 2.5s, left .4s,min-height .4s'
                                             : ' max-height 1s,left .4s,min-height .4s',
-                                        maxHeight: open[index] == true ? '1000px' : '0px',
+                                        maxHeight: open[index] == true ? '500px' : '0px',
                                         display: collapsed || OpenHover ? 'block' : 'none'
                                     }}>
                                     <List component="div" disablePadding>
@@ -310,7 +310,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                             location.pathname === dropdownItem.key
                                                     )
                                                 }
-                                                sx={{ backgroundColor: 'transparent!important' }}>
+                                                sx={{
+                                                    backgroundColor: 'transparent!important',
+                                                    padding: '2px'
+                                                }}>
                                                 <ListItemIcon
                                                     sx={{
                                                         '& svg': {
