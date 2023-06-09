@@ -185,7 +185,7 @@ class CustomerScreen extends React.Component {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '14px',
+
                             width: '100%'
                         }}
                         title={params.value}>
@@ -195,8 +195,8 @@ class CustomerScreen extends React.Component {
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         <Typography
-                            fontSize="14px"
                             sx={{
+                                fontSize: '12px',
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
                                 width: '100%'
@@ -275,7 +275,8 @@ class CustomerScreen extends React.Component {
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
-                )
+                ),
+                renderCell: (params) => <Box title={params.value}>{params.value}</Box>
             },
             {
                 field: 'cuocHenGanNhat',
@@ -340,15 +341,7 @@ class CustomerScreen extends React.Component {
                 )
             }
         ];
-
-        const breadcrumbs = [
-            <Typography key="1" color="#999699" fontSize="14px">
-                Khách hàng
-            </Typography>,
-            <Typography key="2" color="#333233" fontSize="14px">
-                Quản lý khách hàng
-            </Typography>
-        ];
+        console.log(this.state.rowTable);
         return (
             <Box
                 className="customer-page"
@@ -467,6 +460,9 @@ class CustomerScreen extends React.Component {
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-cellContent': {
+                                fontSize: '12px'
                             }
                         }}
                         localeText={TextTranslate}

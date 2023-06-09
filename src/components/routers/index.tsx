@@ -26,7 +26,7 @@ import { ReactComponent as ServiceActive } from '../../images/serviceActive.svg'
 import { ReactComponent as EmployeeActive } from '../../images/employeeActive.svg';
 import { ReactComponent as ReportActive } from '../../images/reportActive.svg';
 import { ReactComponent as SetingActive } from '../../images/settingActive.svg';
-import { ReactComponent as AdminActive } from '../../images/adminActive.svg';
+import { ReactComponent as AdminActive } from '../../images/admin2.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -191,6 +191,20 @@ export const appRouters: AppRouteProps = {
                             isLayout: false,
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Giao_dich_thanh_toan')
+                            )
+                        },
+                        {
+                            path: '/hoa-don',
+                            permission: '',
+                            title: 'Hoá đơn',
+                            name: 'HoaDon',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+                            showInMenu: false,
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/Hoa_don')
                             )
                         }
                     ],

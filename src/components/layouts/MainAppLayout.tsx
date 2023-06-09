@@ -66,7 +66,7 @@ const MainAppLayout: React.FC = () => {
                         isChildHovered={isChildHovered}
                     />
                     <Box
-                        style={{
+                        sx={{
                             border: 'solid 0.1rem #e6e1e6',
                             marginTop: '70px'
                         }}>

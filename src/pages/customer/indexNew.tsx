@@ -188,7 +188,6 @@ class CustomerScreen extends React.Component {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '14px',
                             width: '100%'
                         }}
                         title={params.value}>
@@ -198,7 +197,6 @@ class CustomerScreen extends React.Component {
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         <Typography
-                            fontSize="14px"
                             sx={{
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
@@ -284,7 +282,7 @@ class CustomerScreen extends React.Component {
                 field: 'cuocHenGanNhat',
                 headerName: 'Cuộc hẹn gần đây',
                 renderCell: (params) => (
-                    <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Box>
@@ -460,6 +458,9 @@ class CustomerScreen extends React.Component {
                             },
                             '& + .MuiTablePagination-root': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-cellContent': {
+                                fontSize: '12px'
                             }
                         }}
                         localeText={TextTranslate}
