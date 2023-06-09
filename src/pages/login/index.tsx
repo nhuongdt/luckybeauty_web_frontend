@@ -41,7 +41,7 @@ const LoginScreen: React.FC = () => {
             navigate('/home');
         }
     }, [isLogin, navigate]);
-    const handleLogin = async (event: React.FormEvent) => {
+    const handleLogin = async () => {
         loginModel.tenancyName = tenant;
         loginModel.userNameOrEmailAddress = userName;
         loginModel.password = password;
@@ -70,6 +70,12 @@ const LoginScreen: React.FC = () => {
             }
         }
     };
+    const handleKeyDown = (event: any) => {
+        if (event.key === 'Enter') {
+            handleLogin();
+        }
+    };
+
     return (
         <div className=" login-page">
             <div className="logo-login">
@@ -96,6 +102,7 @@ const LoginScreen: React.FC = () => {
                                                 ? 'Id cửa hàng không tồn tại hoặc hết hạn.'
                                                 : ''
                                         }
+                                        onKeyDown={handleKeyDown}
                                         variant="outlined"
                                         name="tenant"
                                         placeholder="ID đăng nhập"
@@ -114,6 +121,7 @@ const LoginScreen: React.FC = () => {
                                         onChange={(value) => {
                                             setUserName(value.target.value);
                                         }}
+                                        onKeyDown={handleKeyDown}
                                         // label={<span className="login-label">Tên đăng nhập</span>}
                                         error={errorUser == '' ? false : true}
                                         helperText={errorUser}
@@ -138,6 +146,7 @@ const LoginScreen: React.FC = () => {
                                         onChange={(value) => {
                                             setPassword(value.target.value);
                                         }}
+                                        onKeyDown={handleKeyDown}
                                         // label={<span className="login-label">Mật khẩu</span>}
                                         error={errorPassword == '' ? false : true}
                                         helperText={errorPassword}

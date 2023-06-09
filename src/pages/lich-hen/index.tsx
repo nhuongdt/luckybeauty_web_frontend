@@ -36,6 +36,7 @@ import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
 import { padding } from '@mui/system';
+import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 class LichHenScreen extends Component {
     formRef = React.createRef<FormInstance>();
     calendarRef: RefObject<FullCalendar> = React.createRef();
@@ -68,10 +69,11 @@ class LichHenScreen extends Component {
         console.log(appointments);
         appointments.map((event) => {
             lstEvent.push({
+                id: event.id,
                 title: event.noiDung,
                 start: event.startTime,
                 end: event.endTime,
-                color: '#F1FAFF',
+                color: event.color !== '' && event.color != null ? event.color : '#F1FAFF',
                 textColor: event.color !== '' && event.color != null ? event.color : '#009EF7',
                 borderColor: event.color !== '' && event.color != null ? event.color : '#009EF7'
             });
@@ -413,6 +415,9 @@ class LichHenScreen extends Component {
                             viewHeight={650}
                             height={650}
                             firstDay={1}
+                            eventClick={(e) => {
+                                this.createOrUpdateModalOpen(e.event.id);
+                            }}
                             headerToolbar={false}
                             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
                             allDaySlot={false}
@@ -429,7 +434,19 @@ class LichHenScreen extends Component {
                         />
                     </Box>
                 </Box>
-                <CreateOrUpdateAppointment
+                <CreateOrEditLichHenModal
+                    visible={this.state.modalVisible}
+                    onCancel={() => {
+                        this.setState({
+                            modalVisible: false
+                        });
+                    }}
+                    onOk={this.handleSubmit}
+                    modalType="Thêm cuộc hẹn"
+                    suggestNhanVien={this.state.suggestNhanVien}
+                    suggestDichVu={this.state.suggestDonViQuiDoi}
+                    suggestKhachHang={this.state.suggestKhachHang}></CreateOrEditLichHenModal>
+                {/* <CreateOrUpdateAppointment
                     visible={this.state.modalVisible}
                     onCancel={() => {
                         this.setState({
@@ -442,7 +459,7 @@ class LichHenScreen extends Component {
                     suggestDichVu={this.state.suggestDonViQuiDoi}
                     suggestKhachHang={this.state.suggestKhachHang}
                     formRef={this.formRef}
-                />
+                /> */}
             </Box>
         );
     }

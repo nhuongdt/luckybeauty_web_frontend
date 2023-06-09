@@ -105,8 +105,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
 
     return (
         <Box
-            onMouseEnter={collapsed === true ? undefined : handleMouseEnter}
-            onMouseLeave={collapsed === true ? undefined : handleMouseLeave}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
             sx={{
                 overflowY: 'auto',
                 overflowX: 'hidden',
@@ -120,8 +120,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
 
                 '& .MuiList-root': {
                     display: 'flex',
-                    // whiteSpace: 'nowrap',
-                    // flexWrap: 'nowrap',
+                    whiteSpace: 'nowrap',
+                    flexWrap: 'nowrap',
                     flexDirection: 'column'
                 }
             }}>
