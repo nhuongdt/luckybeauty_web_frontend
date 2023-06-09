@@ -17,6 +17,17 @@ const AppConsts = {
             { value: 10, text: '10/ trang' },
             { value: 20, text: '20/ trang' }
         ]
+    },
+    trangThaiCheckIn: [
+        { value: 1, name: 'Đặt lịch' },
+        { value: 2, name: 'Đã gọi (nhắn tin) cho khách' },
+        { value: 3, name: 'Check in' },
+        { value: 4, name: 'Xóa' }
+    ],
+    loaiBooking: {
+        online: 0,
+        offline: 1,
+        cuaHangBook: 2
     }
 };
 export default AppConsts;

@@ -109,6 +109,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     </span>
                                                 </label>
                                                 <TextField
+                                                    disabled={
+                                                        this.props.tenantId == 0 ? false : true
+                                                    }
                                                     type="text"
                                                     size="small"
                                                     name="tenancyName"

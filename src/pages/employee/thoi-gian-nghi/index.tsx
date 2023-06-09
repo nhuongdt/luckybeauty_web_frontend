@@ -189,14 +189,6 @@ class EmployeeHoliday extends Component {
         });
     };
     render() {
-        const breadcrumbs = [
-            <Typography key="1" color="#999699" fontSize="14px">
-                Dịch vụ
-            </Typography>,
-            <Typography key="2" color="#333233" fontSize="14px">
-                Danh mục dịch vụ
-            </Typography>
-        ];
         const columns: GridColDef[] = [
             {
                 field: 'tenNgayLe',
@@ -224,7 +216,7 @@ class EmployeeHoliday extends Component {
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -249,7 +241,7 @@ class EmployeeHoliday extends Component {
                     <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -279,7 +271,7 @@ class EmployeeHoliday extends Component {
                             textAlign: 'center'
                         }}>
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -322,21 +314,10 @@ class EmployeeHoliday extends Component {
         return (
             <Box padding="22px 32px" className="thoi-gian-nghi-page">
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto">
-                        <Breadcrumbs separator="›" aria-label="breadcrumb">
-                            {breadcrumbs}
-                        </Breadcrumbs>
-                        <Typography
-                            color="#0C050A"
-                            variant="h1"
-                            fontSize="24px"
-                            fontWeight="700"
-                            lineHeight="32px"
-                            marginTop="4px">
+                    <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
+                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                             Quản lý thời gian nghỉ
                         </Typography>
-                    </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box className="form-search">
                             <TextField
                                 size="small"
@@ -369,7 +350,8 @@ class EmployeeHoliday extends Component {
                                 }}
                             />
                         </Box>
-
+                    </Grid>
+                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
                             variant="outlined"
@@ -436,6 +418,9 @@ class EmployeeHoliday extends Component {
                             },
                             '& .MuiDataGrid-columnHeadersInner': {
                                 backgroundColor: '#F2EBF0'
+                            },
+                            '& .MuiDataGrid-cellContent': {
+                                fontSize: '12px'
                             }
                         }}
                         localeText={TextTranslate}

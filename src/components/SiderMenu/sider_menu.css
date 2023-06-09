@@ -66,12 +66,10 @@
 }
 
 .side-menu {
-    height: calc(100% - 100px);
-    /*Đặt chiều cao tối thiểu cho SiderMenu */
     overflow-y: auto;
     /*Hiển thị thanh cuộn khi nội dung vượt quá kích thước của SiderMenu*/
     padding-right: 16px;
-    padding-left: 6px;
+    padding-left: 10px;
 }
 
 .ant-menu-item-selected {

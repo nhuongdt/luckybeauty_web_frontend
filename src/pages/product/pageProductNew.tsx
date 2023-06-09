@@ -253,6 +253,7 @@ export default function PageProductNew() {
             flex: 1,
             renderCell: (params) => (
                 <Typography
+                    fontSize="12px"
                     variant="body2"
                     color="#333233"
                     sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
@@ -274,6 +275,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex" width="100%">
                     <Typography
+                        fontSize="12px"
                         variant="body2"
                         color="#333233"
                         title={params.value}
@@ -310,7 +312,7 @@ export default function PageProductNew() {
             flex: 1,
             renderCell: (params) => (
                 <Box display="flex">
-                    <Typography variant="body2" color="#333233">
+                    <Typography variant="body2" color="#333233" fontSize="12px">
                         {Utils.formatNumber(params.value)}
                     </Typography>
                 </Box>
@@ -330,7 +332,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex">
                     <ClockIcon />
-                    <Typography variant="body2" color="#333233" marginLeft="9px">
+                    <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
                         {params.value} phút
                     </Typography>
                 </Box>
@@ -352,6 +354,7 @@ export default function PageProductNew() {
                 <Typography
                     variant="body2"
                     sx={{
+                        fontSize: '12px',
                         padding: '4px 8px',
                         borderRadius: '1000px',
                         backgroundColor: '#F1FAFF',
@@ -384,11 +387,6 @@ export default function PageProductNew() {
         }
     ];
 
-    const breadcrumbsLink = [
-        { text: 'Dịch vụ', color: '#999699' },
-        { text: 'Danh mục dịch vụ', color: '#333233' }
-    ];
-
     return (
         <>
             <ModalNhomHangHoa
@@ -413,13 +411,10 @@ export default function PageProductNew() {
                 padding="24px 2.2222222222222223vw 24px 2.2222222222222223vw"
                 gap={4}>
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto">
-                        <BreadcrumbsPageTitle listLink={breadcrumbsLink} />
-                        <Typography color="#0C050A" variant="h5" fontWeight="700">
+                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
+                        <Typography color="#333233" fontSize="16px" variant="h5" fontWeight="700">
                             Danh mục dịch vụ
                         </Typography>
-                    </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box>
                             <TextField
                                 size="small"
@@ -429,7 +424,11 @@ export default function PageProductNew() {
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: <Search />
+                                    startAdornment: (
+                                        <IconButton type="button">
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {
@@ -444,7 +443,8 @@ export default function PageProductNew() {
                                 }}
                             />
                         </Box>
-
+                    </Grid>
+                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
                             variant="outlined"
@@ -528,6 +528,9 @@ export default function PageProductNew() {
                                     border: 'none!important',
                                     '& .MuiDataGrid-iconButtonContainer': {
                                         display: 'none'
+                                    },
+                                    '& .MuiDataGrid-cellContent': {
+                                        fontSize: '12px'
                                     }
                                 }}
                                 localeText={TextTranslate}

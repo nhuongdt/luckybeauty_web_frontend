@@ -185,7 +185,7 @@ class CustomerScreen extends React.Component {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '14px',
+
                             width: '100%'
                         }}
                         title={params.value}>
@@ -195,8 +195,8 @@ class CustomerScreen extends React.Component {
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         <Typography
-                            fontSize="14px"
                             sx={{
+                                fontSize: '12px',
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
                                 width: '100%'
@@ -275,7 +275,8 @@ class CustomerScreen extends React.Component {
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
-                )
+                ),
+                renderCell: (params) => <Box title={params.value}>{params.value}</Box>
             },
             {
                 field: 'cuocHenGanNhat',
@@ -340,15 +341,7 @@ class CustomerScreen extends React.Component {
                 )
             }
         ];
-
-        const breadcrumbs = [
-            <Typography key="1" color="#999699" fontSize="14px">
-                Khách hàng
-            </Typography>,
-            <Typography key="2" color="#333233" fontSize="14px">
-                Quản lý khách hàng
-            </Typography>
-        ];
+        console.log(this.state.rowTable);
         return (
             <Box
                 className="customer-page"
@@ -356,21 +349,10 @@ class CustomerScreen extends React.Component {
                 paddingRight="2.2222222222222223vw"
                 paddingTop="1.5277777777777777vw">
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto">
-                        <Breadcrumbs separator="›" aria-label="breadcrumb">
-                            {breadcrumbs}
-                        </Breadcrumbs>
-                        <Typography
-                            color="#0C050A"
-                            variant="h1"
-                            fontSize="24px"
-                            fontWeight="700"
-                            lineHeight="32px"
-                            marginTop="4px">
+                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
+                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                             Danh sách khách hàng
                         </Typography>
-                    </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box className="form-search">
                             <TextField
                                 sx={{
@@ -402,6 +384,8 @@ class CustomerScreen extends React.Component {
                                 }}
                             />
                         </Box>
+                    </Grid>
+                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <ButtonGroup
                             variant="contained"
                             sx={{ gap: '8px' }}
@@ -476,6 +460,9 @@ class CustomerScreen extends React.Component {
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-cellContent': {
+                                fontSize: '12px'
                             }
                         }}
                         localeText={TextTranslate}

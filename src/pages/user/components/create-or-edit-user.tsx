@@ -319,7 +319,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {touched.phoneNumber && errors.phoneNumber && (
+                                                    {errors.phoneNumber && (
                                                         <div>{errors.phoneNumber}</div>
                                                     )}
                                                 </FormGroup>

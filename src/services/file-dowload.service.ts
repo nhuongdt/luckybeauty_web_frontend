@@ -10,7 +10,7 @@ class FileDownloadService {
                 console.error('Invalid file object');
                 return;
             }
-            const url = `${AppConsts.remoteServiceBaseUrl}File/DownloadTempFile?fileType=${file.fileType}&fileToken=${file.fileToken}&fileName=${file.fileName}`;
+            const url = `${file.fileName}`;
             console.log(url);
             window.location.href = url; // TODO: This causes reloading of the same page in Firefox
         } catch (error) {
