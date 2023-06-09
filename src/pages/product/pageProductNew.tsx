@@ -248,6 +248,7 @@ export default function PageProductNew() {
         {
             field: 'maHangHoa',
             headerName: 'Mã dịch vụ',
+
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
@@ -268,6 +269,7 @@ export default function PageProductNew() {
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
+            headerAlign: 'center',
             minWidth: 250,
             renderCell: (params) => (
                 <Box display="flex" width="100%">
@@ -302,6 +304,8 @@ export default function PageProductNew() {
         {
             field: 'giaBan',
             headerName: 'Giá bán',
+            headerAlign: 'center',
+            align: 'right',
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
@@ -341,6 +345,7 @@ export default function PageProductNew() {
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
+            headerAlign: 'center',
             minWidth: 130,
             flex: 1,
             renderCell: (params) => (
@@ -365,6 +370,7 @@ export default function PageProductNew() {
         {
             field: 'actions',
             headerName: '#',
+            headerAlign: 'center',
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
@@ -374,32 +380,7 @@ export default function PageProductNew() {
                     handleAction={(action: any) => doActionRow(action, params.row)}
                 />
             ),
-            // renderCell: (params) => {
-            //     const onClick = (event: any) => {
-            //         console.log('elmHTML ', event.currentTarget);
-            //         const api: GridApi = params.api;
-            //         const fields = api
-            //             .getAllColumns()
-            //             .map((c) => c.field)
-            //             .filter((c) => c !== '__check__' && !!c);
-            //         const thisRow: any = {};
-
-            //         fields.forEach((f) => {
-            //             thisRow[f] = params.row;
-            //         });
-
-            //         setRowHover(params.row);
-            //         setAnchorEl(event.currentTarget);
-            //     };
-
-            //     return <Button onClick={onClick}>Click</Button>;
-            // },
-            renderHeader: (params) => (
-                <Box sx={{ display: 'none' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
 
@@ -530,7 +511,13 @@ export default function PageProductNew() {
                         </Box>
                     </Grid>
                     <Grid item lg={9} md={9} sm={8} xs={12}>
-                        <Box sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#fff',
+                                borderRadius: '8px',
+                                minHeight: '100%',
+                                position: 'relative'
+                            }}>
                             <DataGrid
                                 autoHeight
                                 rows={pageDataProduct.items}
@@ -545,39 +532,40 @@ export default function PageProductNew() {
                                 }}
                                 localeText={TextTranslate}
                             />
-                        </Box>
 
-                        <Grid
-                            container
-                            rowSpacing={2}
-                            columnSpacing={2}
-                            style={{
-                                display: pageDataProduct.totalCount > 1 ? 'flex' : 'none'
-                            }}>
-                            <Grid item xs={4} md={4} lg={4} sm={4}>
-                                <OptionPage
-                                    changeNumberOfpage={changeNumberOfpage}
-                                    totalRow={pageDataProduct.totalCount}
-                                />
-                            </Grid>
-                            <Grid item xs={8} md={8} lg={8} sm={8} style={{ paddingRight: '16px' }}>
-                                <Stack direction="row" spacing={2} style={{ float: 'right' }}>
-                                    <LabelDisplayedRows
-                                        currentPage={filterPageProduct.currentPage}
-                                        pageSize={filterPageProduct.pageSize}
-                                        totalCount={pageDataProduct.totalCount}
+                            <Grid
+                                container
+                                style={{
+                                    display: pageDataProduct.totalCount > 1 ? 'flex' : 'none',
+                                    paddingLeft: '16px',
+                                    position: 'absolute',
+                                    bottom: '16px'
+                                }}>
+                                <Grid item xs={4} md={4} lg={4} sm={4}>
+                                    <OptionPage
+                                        changeNumberOfpage={changeNumberOfpage}
+                                        totalRow={pageDataProduct.totalCount}
                                     />
-                                    <Pagination
-                                        shape="rounded"
-                                        // color="primary"
-                                        count={pageDataProduct.totalPage}
-                                        page={filterPageProduct.currentPage}
-                                        defaultPage={filterPageProduct.currentPage}
-                                        onChange={handleChangePage}
-                                    />
-                                </Stack>
+                                </Grid>
+                                <Grid item xs={8} md={8} lg={8} sm={8}>
+                                    <Stack direction="row" style={{ float: 'right' }}>
+                                        <LabelDisplayedRows
+                                            currentPage={filterPageProduct.currentPage}
+                                            pageSize={filterPageProduct.pageSize}
+                                            totalCount={pageDataProduct.totalCount}
+                                        />
+                                        <Pagination
+                                            shape="rounded"
+                                            // color="primary"
+                                            count={pageDataProduct.totalPage}
+                                            page={filterPageProduct.currentPage}
+                                            defaultPage={filterPageProduct.currentPage}
+                                            onChange={handleChangePage}
+                                        />
+                                    </Stack>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </Box>
                     </Grid>
                 </Grid>
             </Grid>

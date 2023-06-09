@@ -46,3 +46,42 @@ export const ComponentToPrint = ({ props }: any) => {
         </>
     );
 };
+
+// import CKEditor from '@ckeditor/ckeditor5-react';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+// const CKEditorComponent = () => {
+//   const [content, setContent] = useState('');
+
+//   const handleEditorChange = (event, editor) => {
+//     const data = editor.getData();
+//     setContent(data);
+//   };
+
+//   return (
+//     <div>
+//       <CKEditor
+//         editor={ClassicEditor}
+//         data={content}
+//         onChange={handleEditorChange}
+//       />
+//       <div>
+//         <h3>Content:</h3>
+//         <div dangerouslySetInnerHTML={{ __html: content }} />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export  CKEditorComponent;
+
+// const App = () => {
+//     return (
+//       <div>
+//         <h1>CKEditor Example</h1>
+//         <CKEditorComponent />
+//       </div>
+//     );
+//   };
+
+//   export default App;

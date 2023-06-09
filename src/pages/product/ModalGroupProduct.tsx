@@ -167,7 +167,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <Grid container>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
                             <Typography variant="body2">Tên nhóm dịch vụ</Typography>
-
                             <TextField
                                 variant="outlined"
                                 size="small"
