@@ -193,9 +193,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                     itemMenu.children ? () => handleDropdown(index) : undefined
                                 }>
                                 <ListItemIcon
-                                    onClick={
-                                        itemMenu.children ? () => handleDropdown(index) : undefined
-                                    }
                                     sx={{
                                         minWidth: '40px',
                                         transition: '.4s'
@@ -282,9 +279,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         pl: '26px',
                                         left: collapsed || OpenHover ? ' 0' : '50px',
                                         transition: open[index]
-                                            ? 'max-height 3s, left .4s'
-                                            : ' max-height 1s,left .4s',
-                                        maxHeight: open[index] == true ? '1000px' : '0px'
+                                            ? 'max-height 2.5s, left .4s,min-height .4s'
+                                            : ' max-height 1s,left .4s,min-height .4s',
+                                        maxHeight: open[index] == true ? '1000px' : '0px',
+                                        display: collapsed || OpenHover ? 'block' : 'none'
                                     }}>
                                     <List component="div" disablePadding>
                                         {itemMenu.children.map((dropdownItem) => (
