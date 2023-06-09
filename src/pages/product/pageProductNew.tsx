@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Grid, Box, Typography, TextField, Stack, Button, Pagination } from '@mui/material';
+import {
+    Grid,
+    Box,
+    Typography,
+    TextField,
+    Stack,
+    Button,
+    Pagination,
+    IconButton
+} from '@mui/material';
 import { Add, FileDownload, FileUpload, Search } from '@mui/icons-material';
 
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
@@ -241,6 +250,20 @@ export default function PageProductNew() {
             setObjAlert({ show: true, type: 1, mes: 'Xóa dịch vụ thành công' });
             hiddenAlert();
             setInforDeleteProduct({ ...inforDeleteProduct, show: false });
+            setPageDataProduct((olds) => {
+                return {
+                    ...olds,
+                    totalCount: olds.totalCount - 1,
+                    totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageProduct.pageSize),
+                    items: olds.items.map((x: any) => {
+                        if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
+                            return { ...x, txtTrangThaihang: 'Ngừng kinh doanh' };
+                        } else {
+                            return x;
+                        }
+                    })
+                };
+            });
         }
     };
 
@@ -424,11 +447,7 @@ export default function PageProductNew() {
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
+                                    startAdornment: <Search />
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {

@@ -10,7 +10,7 @@ const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) =>
             maxWidth="xs"
             PaperProps={{
                 sx: {
-                    height: '178px',
+                    height: 'auto',
                     width: '450px'
                 }
             }}>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState, useImperativeHandle, forwardRef, useRef } from 'react';
+import { ThemeProvider } from '@mui/material/styles';
 
 import {
     Dialog,
@@ -12,12 +13,18 @@ import {
     Box,
     TextField,
     Autocomplete,
-    Link
+    Link,
+    FormGroup,
+    FormControlLabel,
+    Checkbox
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
+import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+
 import ProductService from '../../services/product/ProductService';
 import Utils from '../../utils/utils';
 import '../../App.css';
@@ -25,17 +32,7 @@ import './style.css';
 import AppConsts from '../../lib/appconst';
 import { minWidth } from '@mui/system';
 
-// const customTheme = createMuiTheme({
-//   overrides: {
-//     MuiInput: {
-//       input: {
-//         "&::placeholder": {
-//           color: "gray"
-//         },
-//         color: "white", // if you also want to change the color of the input, this is the prop you'd use
-//       }
-//     }
-//   });
+import StyleOveride from '../../StyleOveride';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -49,6 +46,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [nhomChosed, setNhomChosed] = useState<ModelNhomHangHoa>(
         new ModelNhomHangHoa({ id: '' })
     );
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
+
     const showModal = async (id: string) => {
         if (id) {
             const obj = await ProductService.GetDetailProduct(id);
@@ -107,10 +108,23 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             return {
                 ...itemOlds,
                 idNhomHangHoa: item?.id ?? null,
-                tenNhomHang: item?.tenNhomHang
+                tenNhomHang: item?.tenNhomHang,
+                laHangHoa: item?.laNhomHangHoa,
+                idLoaiHangHoa: item?.laNhomHangHoa ? 1 : 2,
+                tenLoaiHangHoa: item?.laNhomHangHoa ? 'hàng hóa' : 'dịch vụ'
             };
         });
-        setNhomChosed(new ModelNhomHangHoa({ id: item.id, tenNhomHang: item.tenNhomHang }));
+        setNhomChosed(
+            new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang })
+        );
+        setWasClickSave(false);
+    };
+    const deleteProduct = async () => {
+        if (!Utils.checkNull(product?.id)) {
+            await ProductService.DeleteProduct_byIDHangHoa(product?.id ?? '');
+            setInforDeleteProduct({ ...inforDeleteProduct, show: false });
+            setOpen(false);
+        }
     };
 
     const CheckSave = async () => {
@@ -166,6 +180,14 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     }
     return (
         <>
+            <ConfirmDelete
+                isShow={inforDeleteProduct.show}
+                title={inforDeleteProduct.title}
+                mes={inforDeleteProduct.mes}
+                onOk={deleteProduct}
+                onCancel={() =>
+                    setInforDeleteProduct({ ...inforDeleteProduct, show: false })
+                }></ConfirmDelete>
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
                 <Button
                     onClick={() => setOpen(false)}
@@ -174,7 +196,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 </Button>
                 <DialogTitle fontSize="24px!important" color="#333233" fontWeight="700!important">
                     {' '}
-                    {isNew ? 'Thêm' : 'Cập nhật'} dịch vụ
+                    {isNew ? 'Thêm ' : 'Cập nhật '}
+                    {product.tenLoaiHangHoa?.toLocaleLowerCase()}
                 </DialogTitle>
                 <DialogContent>
                     <Grid container>
@@ -183,7 +206,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 <Typography>Thông tin chi tiết</Typography>
                             </Box>
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">Mã dịch vụ</Typography>
+                                <Typography variant="body2">Mã {product.tenLoaiHangHoa}</Typography>
+
                                 <TextField
                                     variant="outlined"
                                     fullWidth
@@ -193,18 +217,25 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     value={product.maHangHoa}
                                     error={errMaHangHoa && wasClickSave}
                                     helperText={
-                                        errMaHangHoa && wasClickSave ? 'Mã dịch vụ đã tồn tại' : ''
+                                        errMaHangHoa && wasClickSave
+                                            ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại`
+                                            : ''
                                     }
                                     onChange={(event) => {
                                         setProduct((itemOlds) => {
-                                            return { ...itemOlds, maHangHoa: event.target.value };
+                                            return {
+                                                ...itemOlds,
+                                                maHangHoa: event.target.value
+                                            };
                                         });
                                         setWasClickSave(false);
                                     }}
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">Tên dịch vụ</Typography>
+                                <Typography variant="body2">
+                                    Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                </Typography>
                                 <TextField
                                     variant="outlined"
                                     size="small"
@@ -213,7 +244,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     error={wasClickSave && errTenHangHoa}
                                     helperText={
                                         wasClickSave && errTenHangHoa
-                                            ? 'Vui lòng nhập tên hàng hóa'
+                                            ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`
                                             : ''
                                     }
                                     value={product.tenHangHoa}
@@ -227,7 +258,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">Nhóm dịch vụ</Typography>
+                                <Typography variant="body2">
+                                    Nhóm {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                </Typography>
                                 <Autocomplete
                                     size="small"
                                     fullWidth
@@ -301,6 +334,33 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     }
                                 />
                             </Grid>
+                            <Grid item>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={product.laHangHoa}
+                                                onChange={(event) => {
+                                                    setProduct((olds: any) => {
+                                                        return {
+                                                            ...olds,
+                                                            laHangHoa: event.target.checked,
+                                                            idLoaiHangHoa: event.target.checked
+                                                                ? 2
+                                                                : 1,
+                                                            tenLoaiHangHoa: event.target.checked
+                                                                ? 'hàng hóa'
+                                                                : 'dịch vụ'
+                                                        };
+                                                    });
+                                                }}
+                                            />
+                                        }
+                                        label="Là hàng hóa"
+                                    />
+                                </FormGroup>
+                            </Grid>
                         </Grid>
                         <Grid item xs={12} md={4} sm={4} lg={4}>
                             <Box
@@ -324,14 +384,30 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" sx={{ bgcolor: '#7C3367' }} onClick={saveProduct}>
-                        Lưu
-                    </Button>
                     <Button
                         variant="outlined"
                         sx={{ borderColor: '#7C3367' }}
                         onClick={() => setOpen(false)}>
                         Hủy
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{ bgcolor: 'red', display: isNew ? 'none' : '' }}
+                        onClick={() => {
+                            setInforDeleteProduct(
+                                new PropConfirmOKCancel({
+                                    show: true,
+                                    title: 'Xác nhận xóa',
+                                    mes: `Bạn có chắc chắn muốn xóa ${product.tenHangHoa}  ${
+                                        product?.tenLoaiHangHoa ?? ' '
+                                    } không?`
+                                })
+                            );
+                        }}>
+                        Xóa
+                    </Button>
+                    <Button variant="contained" sx={{ bgcolor: '#7C3367' }} onClick={saveProduct}>
+                        Lưu
                     </Button>
                 </DialogActions>
             </Dialog>
