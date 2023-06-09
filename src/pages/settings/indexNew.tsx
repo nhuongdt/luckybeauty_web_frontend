@@ -17,7 +17,7 @@ const SettingsNew: React.FC = () => {
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
         return (
             <div role="tabpanel" hidden={value !== index}>
-                {value === index && <Box p={3}>{children}</Box>}
+                {value === index && <Box>{children}</Box>}
             </div>
         );
     };
@@ -139,14 +139,7 @@ const SettingsNew: React.FC = () => {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid
-                        item
-                        xs={9}
-                        sx={{
-                            '& [role="tabpanel"] > .MuiBox-root': {
-                                padding: 0
-                            }
-                        }}>
+                    <Grid item xs={9}>
                         <TabPanel value={activeTab} index={1}>
                             <StoreDetail />
                         </TabPanel>

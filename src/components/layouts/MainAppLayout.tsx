@@ -56,7 +56,7 @@ const MainAppLayout: React.FC = () => {
                 />
                 <Box
                     sx={{
-                        marginLeft: collapsed && !isChildHovered ? '72px' : '240px',
+                        marginLeft: collapsed ? '72px' : '240px',
                         transition: '.4s'
                     }}>
                     <Header
@@ -68,7 +68,9 @@ const MainAppLayout: React.FC = () => {
                     <Box
                         sx={{
                             border: 'solid 0.1rem #e6e1e6',
-                            marginTop: '70px'
+                            marginTop: '70px',
+                            minHeight: 'calc(100vh - 70px)',
+                            bgcolor: 'rgba(248,248,248,1)'
                         }}>
                         <Outlet />
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
