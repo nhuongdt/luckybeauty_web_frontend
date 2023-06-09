@@ -344,14 +344,6 @@ class CustomerScreen extends React.Component {
             }
         ];
 
-        const breadcrumbs = [
-            <Typography key="1" color="#999699" fontSize="14px">
-                Khách hàng
-            </Typography>,
-            <Typography key="2" color="#333233" fontSize="14px">
-                Quản lý khách hàng
-            </Typography>
-        ];
         return (
             <Box
                 className="customer-page"
@@ -360,16 +352,7 @@ class CustomerScreen extends React.Component {
                 paddingTop="1.5277777777777777vw">
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto">
-                        <Breadcrumbs separator="›" aria-label="breadcrumb">
-                            {breadcrumbs}
-                        </Breadcrumbs>
-                        <Typography
-                            color="#0C050A"
-                            variant="h1"
-                            fontSize="24px"
-                            fontWeight="700"
-                            lineHeight="32px"
-                            marginTop="4px">
+                        <Typography color="#0C050A" variant="h1" fontSize="16px" fontWeight="700">
                             Danh sách khách hàng
                         </Typography>
                     </Grid>

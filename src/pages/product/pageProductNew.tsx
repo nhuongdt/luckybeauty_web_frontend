@@ -475,11 +475,6 @@ export default function PageProductNew() {
         }
     ];
 
-    const breadcrumbsLink = [
-        { text: 'Dịch vụ', color: '#999699' },
-        { text: 'Danh mục dịch vụ', color: '#333233' }
-    ];
-
     return (
         <>
             <ModalNhomHangHoa
@@ -504,13 +499,10 @@ export default function PageProductNew() {
                 padding="24px 2.2222222222222223vw 24px 2.2222222222222223vw"
                 gap={4}>
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto">
-                        <BreadcrumbsPageTitle listLink={breadcrumbsLink} />
-                        <Typography color="#0C050A" variant="h5" fontWeight="700">
+                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
+                        <Typography color="#333233" fontSize="16px" variant="h5" fontWeight="700">
                             Danh mục dịch vụ
                         </Typography>
-                    </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Box>
                             <TextField
                                 size="small"
@@ -520,7 +512,11 @@ export default function PageProductNew() {
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: <Search />
+                                    startAdornment: (
+                                        <IconButton type="button">
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {
@@ -535,7 +531,8 @@ export default function PageProductNew() {
                                 }}
                             />
                         </Box>
-
+                    </Grid>
+                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
                             variant="outlined"

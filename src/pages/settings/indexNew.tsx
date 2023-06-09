@@ -24,31 +24,16 @@ const SettingsNew: React.FC = () => {
     const HoaHong = () => <div>Mẫu hóa đơn</div>;
     const ThanhToan = () => <div>Thanh toasn</div>;
     const Booking = () => <div>Booking</div>;
+    const [selectedTab, setSelectedTab] = useState('Chi tiết cửa hàng');
 
+    const handleTabClick = (tab: string) => {
+        setSelectedTab(tab);
+    };
     return (
         <>
             <Box padding="22px 2.2222222222222223vw">
-                <Box display="flex" alignItems="center">
-                    <Typography variant="body1" fontSize="14px" color="#999699">
-                        Cài đặt
-                    </Typography>
-                    <ArrowForwardIosIcon
-                        fontSize="small"
-                        sx={{
-                            width: '12px',
-                            height: '12px'
-                        }}
-                    />
-                    <Typography
-                        variant="body1"
-                        fontSize="14px"
-                        color="#333233"
-                        sx={{ marginTop: '4px' }}>
-                        Cài đặt cửa hàng
-                    </Typography>
-                </Box>
-                <Typography variant="h1" fontWeight="700" fontSize="24px" sx={{ marginTop: '4px' }}>
-                    Chi tiết cửa hàng
+                <Typography variant="h1" fontWeight="700" fontSize="16px" sx={{ marginTop: '4px' }}>
+                    {selectedTab}
                 </Typography>
                 <Grid container spacing={3} mt={0}>
                     <Grid item xs={3}>
@@ -94,7 +79,8 @@ const SettingsNew: React.FC = () => {
                                             backgroundColor: '#F2EBF0'
                                         },
                                         '& .MuiTabs-indicator': {
-                                            backgroundColor: '#7C3367'
+                                            backgroundColor: '#7C3367',
+                                            display: 'none'
                                         }
                                     }}>
                                     <Typography
@@ -106,10 +92,19 @@ const SettingsNew: React.FC = () => {
                                         mb="6px">
                                         Cài đặt cửa hàng
                                     </Typography>
-                                    <Tab label="Chi tiết cửa hàng" />
+                                    <Tab
+                                        label="Chi tiết cửa hàng"
+                                        onClick={() => handleTabClick('Chi tiết cửa hàng')}
+                                    />
 
-                                    <Tab label="Quản lý chi nhánh" />
-                                    <Tab label="Cài đặt booking" />
+                                    <Tab
+                                        label="Quản lý chi nhánh"
+                                        onClick={() => handleTabClick('Quản lý chi nhánh')}
+                                    />
+                                    <Tab
+                                        label="Cài đặt booking"
+                                        onClick={() => handleTabClick('Cài đặt booking')}
+                                    />
                                     <Typography
                                         variant="h3"
                                         fontWeight="700"
@@ -119,7 +114,10 @@ const SettingsNew: React.FC = () => {
                                         mb="6px">
                                         Cài đặt nhân viên
                                     </Typography>
-                                    <Tab label="Hoa hồng nhân viên" />
+                                    <Tab
+                                        label="Hoa hồng nhân viên"
+                                        onClick={() => handleTabClick('Hoa hồng nhân viên')}
+                                    />
                                     <Typography
                                         variant="h3"
                                         fontWeight="700"
@@ -129,8 +127,14 @@ const SettingsNew: React.FC = () => {
                                         mb="6px">
                                         Bán hàng
                                     </Typography>
-                                    <Tab label="Phương thức thanh toán" />
-                                    <Tab label="Mẫu hóa đơn" />
+                                    <Tab
+                                        label="Phương thức thanh toán"
+                                        onClick={() => handleTabClick('Phương thức thanh toán')}
+                                    />
+                                    <Tab
+                                        label="Mẫu hóa đơn"
+                                        onClick={() => handleTabClick('Mẫu hóa đơn')}
+                                    />
                                 </Tabs>
                             </Box>
                         </Box>

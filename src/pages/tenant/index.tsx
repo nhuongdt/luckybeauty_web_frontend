@@ -251,28 +251,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
                             <div>
-                                <div>
-                                    <Box display="flex" alignItems="center">
-                                        <Typography variant="body1" fontSize="14px" color="#999699">
-                                            Người dùng
-                                        </Typography>
-                                        <ArrowForwardIosIcon
-                                            fontSize="small"
-                                            sx={{
-                                                width: '12px',
-                                                height: '12px'
-                                            }}
-                                        />
-                                        <Typography
-                                            variant="body1"
-                                            fontSize="14px"
-                                            color="#333233"
-                                            sx={{ marginTop: '4px' }}>
-                                            Thông tin người dùng
-                                        </Typography>
-                                    </Box>
-                                </div>
-                                <div>
+                                <Box display="flex" gap="8px" alignItems="center">
                                     <Typography
                                         variant="h1"
                                         fontWeight="700"
@@ -280,12 +259,6 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                         sx={{ marginTop: '4px' }}>
                                         Danh sách tenant
                                     </Typography>
-                                </div>
-                            </div>
-                        </Grid>
-                        <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <div>
-                                <Box display="flex" alignItems="center" gap="8px">
                                     <TextField
                                         onChange={this.handleSearch}
                                         size="small"
@@ -305,6 +278,12 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                             )
                                         }}
                                     />
+                                </Box>
+                            </div>
+                        </Grid>
+                        <Grid item sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <div>
+                                <Box display="flex" alignItems="center" gap="8px">
                                     <Button
                                         variant="outlined"
                                         size="small"

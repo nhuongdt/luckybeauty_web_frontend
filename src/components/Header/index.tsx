@@ -39,6 +39,7 @@ import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhD
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import { ReactComponent as ToggleIconNew } from '../../images/arrow-circle-left.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { ReactComponent as LocationIcon } from '../../images/location.svg';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -116,25 +117,30 @@ const Header: React.FC<HeaderProps> = (
                         sx={{
                             minWidth: 'unset!important',
                             marginLeft: collapsed && !isChildHovered ? '-116px' : '0',
+                            backgroundColor: 'unset!important',
                             transition: '.4s',
-                            '& svg': {
-                                transform:
-                                    collapsed && !isChildHovered
-                                        ? 'rotate(-180deg)'
-                                        : 'rotate(0deg)',
-                                transition: '.4s'
+                            ':hover': {
+                                backgroundColor: 'unset!important'
                             },
-                            ':hover svg': {
-                                color: '#CBADC2!important'
-                            }
+                            ':hover svg:nth-child(1)': {
+                                color: '#c95ea9!important'
+                            },
+                            ':hover svg:nth-child(2)': {
+                                color: '#c95ea9d9'
+                            },
+                            '& .MuiTouchRipple-root': {
+                                display: 'none'
+                            },
+                            transform:
+                                collapsed && !isChildHovered ? 'rotate(-180deg)' : 'rotate(0deg)'
                         }}
                         onClick={toggle}>
                         <ArrowBackIosIcon
-                            sx={{ color: 'rgba(203, 173, 194, 0.8)', fontSize: '16px' }}
+                            sx={{ color: 'rgba(203, 173, 194, 0.7)', fontSize: '16px' }}
                         />
                         <ArrowBackIosIcon
                             sx={{
-                                color: 'rgba(203, 173, 194, 0.8)',
+                                color: 'rgba(203, 173, 194, 0.4)',
                                 fontSize: '16px',
                                 marginLeft: '-8px'
                             }}
@@ -143,22 +149,35 @@ const Header: React.FC<HeaderProps> = (
                 </Grid>
                 <Grid item sx={{ textAlign: 'right' }}>
                     <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center' }}>
-                        <Select
-                            sx={{ marginLeft: '50px' }}
-                            size="small"
-                            value={currentChiNhanh}
-                            onChange={(e) => {
-                                setCurrentChiNhanh(e.target.value as string);
-                                const remember = Cookies.get('remember');
-                                Cookies.set('IdChiNhanh', e.target.value, {
-                                    expires: remember === 'true' ? 1 : undefined
-                                });
-                            }}>
-                            {chiNhanhs.map((item) => {
-                                return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
-                            })}
-                        </Select>
-                        <Badge style={{ margin: '0px 8px 0px 8px' }}>
+                        <Box display="flex">
+                            <LocationIcon />
+                            <Select
+                                sx={{
+                                    ml: '10px',
+                                    border: 'none!important',
+                                    '& *': {
+                                        border: '0!important'
+                                    },
+                                    '& .MuiSelect-select': {
+                                        padding: '0',
+                                        fontSize: '14px'
+                                    }
+                                }}
+                                size="small"
+                                value={currentChiNhanh}
+                                onChange={(e) => {
+                                    setCurrentChiNhanh(e.target.value as string);
+                                    const remember = Cookies.get('remember');
+                                    Cookies.set('IdChiNhanh', e.target.value, {
+                                        expires: remember === 'true' ? 1 : undefined
+                                    });
+                                }}>
+                                {chiNhanhs.map((item) => {
+                                    return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
+                                })}
+                            </Select>
+                        </Box>
+                        <Badge>
                             <Button
                                 sx={{
                                     minWidth: 'unset!important'
@@ -166,7 +185,7 @@ const Header: React.FC<HeaderProps> = (
                                 <img src={MessageIcon} alt="Message" />
                             </Button>
                         </Badge>
-                        <Badge style={{ margin: '0px 8px 0px 8px' }} color="error">
+                        <Badge color="error">
                             <Button sx={{ minWidth: 'unset!important' }}>
                                 <img src={NotificationIcon} alt="notification" />
                             </Button>

@@ -226,56 +226,40 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
                     <Grid container justifyContent="space-between" paddingTop="22px">
                         <Grid item>
                             <div>
-                                <Box display="flex" alignItems="center">
-                                    <Typography variant="body1" fontSize="14px" color="#999699">
-                                        Vai trò
-                                    </Typography>
-                                    <ArrowForwardIosIcon
-                                        fontSize="small"
-                                        sx={{
-                                            width: '12px',
-                                            height: '12px'
-                                        }}
-                                    />
-                                    <Typography variant="body1" fontSize="14px" color="#333233">
-                                        Thông tin vai trò
-                                    </Typography>
-                                </Box>
-                                <div>
+                                <Box display="flex" alignItems="center" gap="10px">
                                     <Typography
                                         variant="h1"
-                                        fontSize="24px"
-                                        color="#0C050A"
-                                        fontWeight="700"
-                                        marginTop="4px">
+                                        fontSize="16px"
+                                        color="#333233"
+                                        fontWeight="700">
                                         Danh sách vai trò
                                     </Typography>
-                                </div>
+                                    <TextField
+                                        onChange={this.handleSearch}
+                                        size="small"
+                                        sx={{
+                                            borderColor: '#E6E1E6!important',
+                                            bgcolor: '#fff'
+                                        }}
+                                        placeholder="Tìm kiếm..."
+                                        InputProps={{
+                                            startAdornment: (
+                                                <SearchIcon
+                                                    style={{
+                                                        marginRight: '8px',
+                                                        color: 'gray'
+                                                    }}
+                                                />
+                                            )
+                                        }}
+                                    />
+                                </Box>
                             </div>
                         </Grid>
                         <Grid item style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
                                 <Box>
                                     <Box display="flex" alignItems="center" gap="8px">
-                                        <TextField
-                                            onChange={this.handleSearch}
-                                            size="small"
-                                            sx={{
-                                                borderColor: '#E6E1E6!important',
-                                                bgcolor: '#fff'
-                                            }}
-                                            placeholder="Tìm kiếm..."
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <SearchIcon
-                                                        style={{
-                                                            marginRight: '8px',
-                                                            color: 'gray'
-                                                        }}
-                                                    />
-                                                )
-                                            }}
-                                        />
                                         <Button
                                             variant="outlined"
                                             size="small"
