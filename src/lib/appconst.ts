@@ -28,6 +28,17 @@ const AppConsts = {
         online: 0,
         offline: 1,
         cuaHangBook: 2
+    },
+    listColumnCustomer: {
+        actions: true,
+        cuocHenGanNhat: true,
+        gioiTinh: true,
+        nhanVienPhuTrach: true,
+        soDienThoai: true,
+        tenKhachHang: true,
+        tenNguonKhach: true,
+        tenNhomKhach: true,
+        tongChiTieu: true
     }
 };
 export default AppConsts;

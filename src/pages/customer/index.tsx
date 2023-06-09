@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useState } from 'react';
-import { DataGrid, GridColDef, useGridApiRef, GridLocaleText } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    useGridApiRef,
+    GridLocaleText,
+    GridColumnVisibilityModel,
+    ColumnsPanelPropsOverrides
+} from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
 import { format, isValid } from 'date-fns';
 import {
@@ -37,6 +44,7 @@ import CreateOrEditCustomerDialog from './components/create-or-edit-customer-mod
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../components/abp-custom';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import AppConsts from '../../lib/appconst';
 
 class CustomerScreen extends React.Component {
     state = {
@@ -53,10 +61,14 @@ class CustomerScreen extends React.Component {
         moreOpen: false,
         anchorEl: null,
         selectedRowId: null,
-        createOrEditKhachHang: {} as CreateOrEditKhachHangDto
+        createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
+        visibilityColumn: {}
     };
+
     componentDidMount(): void {
         this.getData();
+        const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
+        this.setState({ visibilityColumn: visibilityColumn });
     }
 
     async getData() {
@@ -171,10 +183,12 @@ class CustomerScreen extends React.Component {
             idNhanSu: ''
         });
     };
+    toggleColumnVisibility = (column: GridColumnVisibilityModel) => {
+        localStorage.setItem('visibilityColumn', JSON.stringify(column));
+        this.setState({ visibilityColumn: column });
+    };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
-            { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
-
             {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
@@ -341,7 +355,6 @@ class CustomerScreen extends React.Component {
                 )
             }
         ];
-        console.log(this.state.rowTable);
         return (
             <Box
                 className="customer-page"
@@ -447,6 +460,8 @@ class CustomerScreen extends React.Component {
                         columns={columns}
                         hideFooterPagination
                         hideFooter
+                        onColumnVisibilityModelChange={this.toggleColumnVisibility}
+                        columnVisibilityModel={this.state.visibilityColumn}
                         initialState={{
                             pagination: {
                                 paginationModel: {
