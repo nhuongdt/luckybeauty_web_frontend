@@ -38,6 +38,8 @@ import { observer } from 'mobx-react';
 import Stores from '../../stores/storeIdentifier';
 import NhanVienStore from '../../stores/nhanVienStore';
 import { TextTranslate } from '../../components/TableLanguage';
+import ActionMenuTable from '../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
@@ -53,6 +55,7 @@ class EmployeeScreen extends React.Component {
         createOrEditNhanSu: {} as CreateOrUpdateNhanSuDto,
         currentPage: 1,
         totalPage: 1,
+        totalCount: 0,
         isShowConfirmDelete: false
     };
     async componentDidMount() {
@@ -82,11 +85,14 @@ class EmployeeScreen extends React.Component {
         await this.getListNhanVien();
     }
     async getListNhanVien() {
-        const { filter, skipCount, maxResultCount } = this.state;
-        const input = { skipCount, maxResultCount };
-        await NhanVienStore.search(filter, input);
+        const { filter, maxResultCount, currentPage } = this.state;
+        await NhanVienStore.search(filter, {
+            maxResultCount: maxResultCount,
+            skipCount: currentPage
+        });
         await this.setState({
-            totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount)
+            totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
+            totalCount: NhanVienStore.listNhanVien.totalCount
         });
     }
     async createOrEdit() {
@@ -131,6 +137,13 @@ class EmployeeScreen extends React.Component {
                 [name]: value
             }
         });
+    };
+    handlePageChange = async (event: any, value: any) => {
+        await this.setState({
+            currentPage: value,
+            skipCount: value
+        });
+        this.getListNhanVien();
     };
     onOkDelete = () => {
         this.delete(this.state.selectedRowId ?? '');
@@ -484,55 +497,24 @@ class EmployeeScreen extends React.Component {
                                 fontSize: '12px'
                             }
                         }}
+                        hideFooter
                         localeText={TextTranslate}
                     />
-                    <Menu
-                        id={`actions-menu-${this.state.selectedRowId}`}
+                    <ActionMenuTable
+                        selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
-                        keepMounted
-                        open={Boolean(this.state.anchorEl)}
-                        onClose={this.handleCloseMenu}
-                        sx={{ minWidth: '120px' }}>
-                        <MenuItem onClick={this.handleView}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                View
-                            </Typography>
-                            <InfoIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleEdit}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Edit
-                            </Typography>
-                            <EditIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleDelete}>
-                            <Typography
-                                color="#F1416C"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Delete
-                            </Typography>
-                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
-                        </MenuItem>
-                    </Menu>
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleView}
+                        handleEdit={this.handleEdit}
+                        handleDelete={this.handleDelete}
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={this.state.totalCount}
+                        totalPage={this.state.totalPage}
+                        handlePageChange={this.handlePageChange}
+                    />
                 </Box>
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}

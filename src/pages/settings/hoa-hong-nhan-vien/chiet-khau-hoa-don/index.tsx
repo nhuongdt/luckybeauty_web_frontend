@@ -8,32 +8,22 @@ import SearchIcon from '../../../../images/search-normal.svg';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-    Box,
-    Button,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
-    Grid
-} from '@mui/material';
+import { Box, Button, IconButton, TextField, Grid } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
 import { minWidth } from '@mui/system';
+import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,
         visited: false,
         isShowConfirmDelete: false,
         keyword: '',
-        skipCount: 0,
+        skipCount: 1,
         maxResultCount: 10,
+        totalCount: 0,
+        totalPage: 0,
         createOrEditModel: {
             id: AppConsts.guidEmpty,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
@@ -96,11 +86,18 @@ class ChietKhauHoaDonScreen extends Component {
             }
         });
     };
+    handlePageChange = async (event: any, value: any) => {
+        await this.setState({
+            skipCount: value
+        });
+        console.log(value);
+        this.getAll();
+    };
     render(): ReactNode {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
         const columns: GridColDef[] = [
             {
-                field: 'hoaHong',
+                field: 'giaTriChietKhau',
                 headerName: 'Hoa hồng',
                 minWidth: 112,
                 flex: 1,
@@ -112,7 +109,7 @@ class ChietKhauHoaDonScreen extends Component {
                 )
             },
             {
-                field: 'chungTu',
+                field: 'chungTuApDung',
                 headerName: 'Chứng từ áp dụng',
                 minWidth: 120,
                 flex: 1,
@@ -134,14 +131,6 @@ class ChietKhauHoaDonScreen extends Component {
                         <IconSorting />
                     </Box>
                 )
-            }
-        ];
-        const rows = [
-            {
-                id: '98797ugh',
-                hoaHong: '2 % thực thu',
-                chungTu: 'Bán hàng',
-                ghiChu: 'Đây là một ghi chú trông có vẻ buồn cười nhưng lại rất là mang tính chất demo'
             }
         ];
         return (
@@ -192,8 +181,9 @@ class ChietKhauHoaDonScreen extends Component {
                 </Grid>
                 <Box>
                     <DataGrid
+                        autoHeight
                         columns={columns}
-                        rows={rows}
+                        rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
                         pageSizeOptions={[10, 20]}
                         checkboxSelection={false}
@@ -210,6 +200,20 @@ class ChietKhauHoaDonScreen extends Component {
                                 display: 'none'
                             }
                         }}
+                        hideFooter
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.skipCount}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={
+                            chietKhauHoaDons === undefined ? 0 : chietKhauHoaDons.totalCount
+                        }
+                        totalPage={
+                            chietKhauHoaDons === undefined
+                                ? 0
+                                : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)
+                        }
+                        handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditChietKhauHoaDonModal
                         formRef={this.state.createOrEditModel}
