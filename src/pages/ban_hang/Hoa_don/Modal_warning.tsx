@@ -1,16 +1,33 @@
 import React from 'react';
 import { Box, Dialog, Typography, Button } from '@mui/material';
 import { ReactComponent as WarningIcon } from '../../../images/warning.svg';
-const ModalWarning: React.FC = () => {
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
+interface DialogComponentProps {
+    open: boolean;
+    onClose: () => void;
+}
+const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose }) => {
     return (
-        <Dialog>
+        <Dialog open={open} onClose={onClose}>
             <Box
                 sx={{
                     borderRadius: '12px',
                     bgcolor: '#fff',
                     maxWidth: '500px',
-                    padding: '24px'
+                    padding: '24px',
+                    position: 'relative'
                 }}>
+                <Button
+                    onClick={onClose}
+                    sx={{
+                        padding: '0',
+                        position: 'absolute',
+                        right: '16px',
+                        top: '16px',
+                        minWidth: 'unset'
+                    }}>
+                    <CloseIcon />
+                </Button>
                 <Typography variant="h3" color="#333233" fontWeight="700" fontSize="24px">
                     Hủy hóa đơn ?
                 </Typography>
@@ -64,10 +81,14 @@ const ModalWarning: React.FC = () => {
                     </Box>
                 </Box>
                 <Box display="flex" gap="8px" marginTop="40px" justifyContent="end">
-                    <Button variant="contained" sx={{ bgcolor: '#F1416C!important' }}>
+                    <Button
+                        onClick={onClose}
+                        variant="contained"
+                        sx={{ bgcolor: '#F1416C!important' }}>
                         Đồng ý
                     </Button>
                     <Button
+                        onClick={onClose}
                         variant="outlined"
                         sx={{ borderColor: '#E6E1E6!important', color: '#666466!important' }}>
                         Huỷ

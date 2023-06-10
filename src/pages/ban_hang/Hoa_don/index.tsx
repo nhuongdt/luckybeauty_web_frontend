@@ -9,6 +9,15 @@ import TabDiary from './Tab_diary';
 import { ReactComponent as ArrowIcon } from '../../../images/arrow_back.svg';
 import ModalWarning from './Modal_warning';
 const HoaDon: React.FC = () => {
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
     const Infomations = [
         { title: 'Mã hóa đơn', value: 'HD4545675' },
         {
@@ -52,7 +61,7 @@ const HoaDon: React.FC = () => {
                 justifyContent: 'space-between',
                 minHeight: 'calc(100vh - 70px)'
             }}>
-            <ModalWarning />
+            <ModalWarning open={openDialog} onClose={handleCloseDialog} />
             <Box padding="16px 2.2222222222222223vw ">
                 <Grid container justifyContent="space-between" alignItems="center">
                     <Grid item xs="auto">
@@ -228,6 +237,7 @@ const HoaDon: React.FC = () => {
                         Lưu
                     </Button>
                     <Button
+                        onClick={handleOpenDialog}
                         variant="contained"
                         sx={{ bgcolor: '#FF316A!important', color: '#fff' }}>
                         Hủy bỏ
