@@ -1,4 +1,3 @@
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
     Avatar,
     Box,
@@ -17,7 +16,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import { Component, ReactNode } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
@@ -27,10 +25,16 @@ import AppConsts from '../../../lib/appconst';
 import { DataGrid } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../components/TableLanguage';
 import '../../customer/customerPage.css';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 class ChiNhanhScreen extends Component {
     state = {
         idChiNhanh: '',
         isShowModal: false,
+        currentPage: 1,
+        rowPerPage: 10,
+        filter: '',
+        totalCount: 0,
+        totalPage: 0,
         createOrEditChiNhanhDto: {} as CreateOrEditChiNhanhDto,
         listChiNhanh: [] as ChiNhanhDto[]
     };
@@ -39,12 +43,14 @@ class ChiNhanhScreen extends Component {
     }
     async InitData() {
         const lstChiNhanh = await chiNhanhService.GetAll({
-            keyword: '',
-            maxResultCount: 10,
-            skipCount: 0
+            keyword: this.state.filter,
+            maxResultCount: this.state.rowPerPage,
+            skipCount: this.state.currentPage
         });
         this.setState({
-            listChiNhanh: lstChiNhanh.items
+            listChiNhanh: lstChiNhanh.items,
+            totalCount: lstChiNhanh.items.length,
+            totalPage: Math.ceil(lstChiNhanh.items.length / this.state.rowPerPage)
         });
     }
     handleSubmit = async () => {
@@ -93,6 +99,12 @@ class ChiNhanhScreen extends Component {
                 [name]: value
             }
         });
+    };
+    handlePageChange = async (event: any, value: any) => {
+        await this.setState({
+            currentPage: value
+        });
+        this.InitData();
     };
     render(): ReactNode {
         const columns = [
@@ -370,7 +382,15 @@ class ChiNhanhScreen extends Component {
                             }
                         }}
                         pageSizeOptions={[5, 10]}
+                        hideFooter
                         localeText={TextTranslate}
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.rowPerPage}
+                        totalRecord={this.state.totalCount}
+                        totalPage={this.state.totalPage}
+                        handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditChiNhanhModal
                         title={this.state.idChiNhanh == '' ? 'Thêm mới' : 'Cập nhật'}

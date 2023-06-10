@@ -1,35 +1,22 @@
 import React, { ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import {
-    Box,
-    Grid,
-    Typography,
-    TextField,
-    Button,
-    Pagination,
-    IconButton,
-    Menu,
-    MenuItem
-} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+import { Box, Grid, Typography, TextField, Button, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import SearchIcon from '@mui/icons-material/Search';
 import '../../custom.css';
 import AddIcon from '../../images/add.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import CreateTenantInput from '../../services/tenant/dto/createTenantInput';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextTranslate } from '../../components/TableLanguage';
-import { AnyAaaaRecord } from 'dns';
+import ActionMenuTable from '../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -78,7 +65,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
     async getAll() {
         const tenants = await tenantService.getAll({
             maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount,
+            skipCount: this.state.currentPage,
             keyword: this.state.filter
         });
         this.setState({
@@ -88,12 +75,10 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         });
     }
 
-    handlePageChange = (event: any, value: any) => {
-        const { maxResultCount } = this.state;
+    handlePageChange = async (event: any, value: any) => {
         this.setState({
             currentPage: value,
-            skipCount: value,
-            startIndex: (value - 1 <= 0 ? 0 : value - 1) * maxResultCount
+            skipCount: value
         });
         this.getAll();
     };
@@ -343,12 +328,6 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         autoHeight
                         columns={columns}
                         rows={this.state.listTenant}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 10 }
-                            }
-                        }}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -361,83 +340,24 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                 mb: 0
                             }
                         }}
+                        hideFooter
                         localeText={TextTranslate}
                     />
-                    <Menu
-                        id={`actions-menu-${this.state.selectedRowId}`}
+                    <ActionMenuTable
+                        selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
-                        keepMounted
-                        open={Boolean(this.state.anchorEl)}
-                        onClose={this.handleCloseMenu}
-                        sx={{ minWidth: '120px' }}>
-                        <MenuItem onClick={this.handleView}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                View
-                            </Typography>
-                            <InfoIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleEdit}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Edit
-                            </Typography>
-                            <EditIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.onShowDelete}>
-                            <Typography
-                                color="#F1416C"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Delete
-                            </Typography>
-                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
-                        </MenuItem>
-                    </Menu>
-                    <div className="row" style={{ display: 'none' }}>
-                        <div className="col-6" style={{ float: 'left' }}></div>
-                        <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div style={{ float: 'right' }} className="col-7">
-                                    <Box className="align-items-center">
-                                        <Pagination
-                                            count={Math.ceil(
-                                                this.state.totalCount / this.state.maxResultCount
-                                            )}
-                                            page={this.state.currentPage}
-                                            onChange={this.handlePageChange}
-                                            sx={{
-                                                '& button': {
-                                                    borderRadius: '4px',
-                                                    lineHeight: '1'
-                                                },
-                                                '& .Mui-selected': {
-                                                    backgroundColor: '#7C3367!important',
-                                                    color: '#fff'
-                                                }
-                                            }}
-                                        />
-                                    </Box>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleView}
+                        handleEdit={this.handleEdit}
+                        handleDelete={this.onShowDelete}
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={this.state.totalCount}
+                        totalPage={this.state.totalPage}
+                        handlePageChange={this.handlePageChange}
+                    />
                 </Box>
                 <CreateOrEditTenant
                     formRef={this.state.createOrEditTenant}

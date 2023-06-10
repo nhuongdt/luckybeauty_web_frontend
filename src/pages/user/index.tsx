@@ -1,6 +1,6 @@
 import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Box, Grid, TextField, Button, Typography, Pagination, IconButton } from '@mui/material';
+import { Box, Grid, TextField, Button, Typography, IconButton } from '@mui/material';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import { DataGrid } from '@mui/x-data-grid';
 import userService from '../../services/user/userService';
@@ -20,11 +20,11 @@ import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 class UserScreen extends AppComponentBase {
     state = {
         modalVisible: false,
         maxResultCount: 10,
-        skipCount: 0,
         userId: 0,
         filter: '',
         listUser: [] as GetAllUserOutput[],
@@ -58,7 +58,7 @@ class UserScreen extends AppComponentBase {
     async getAll() {
         const users = await userService.getAll({
             maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount,
+            skipCount: this.state.currentPage,
             keyword: this.state.filter
         });
 
@@ -71,12 +71,9 @@ class UserScreen extends AppComponentBase {
         });
     }
 
-    handlePageChange = (event: any, value: number) => {
-        const { maxResultCount } = this.state;
-        this.setState({
-            currentPage: value,
-            skipCount: value,
-            startIndex: (value - 1 <= 0 ? 0 : value - 1) * maxResultCount
+    handlePageChange = async (event: any, value: number) => {
+        await this.setState({
+            currentPage: value
         });
         this.getAll();
     };
@@ -390,12 +387,6 @@ class UserScreen extends AppComponentBase {
                             autoHeight
                             columns={columns}
                             rows={this.state.listUser}
-                            initialState={{
-                                pagination: {
-                                    paginationModel: { page: 0, pageSize: 10 }
-                                }
-                            }}
-                            pageSizeOptions={[10, 20, 30]}
                             checkboxSelection
                             sx={{
                                 '& .MuiDataGrid-iconButtonContainer': {
@@ -411,75 +402,18 @@ class UserScreen extends AppComponentBase {
                                     fontSize: '12px'
                                 }
                             }}
-                            // components={{
-                            //     Pagination: Pagination
-                            // }}
                             hideFooterPagination
                             hideFooter
                             localeText={TextTranslate}
                         />
                     </Box>
-                    <Grid container>
-                        <Grid item xs={3}></Grid>
-                        <Grid item xs={9}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'flex-end',
-                                    alignItems: 'center',
-                                    height: 48
-                                }}>
-                                <Typography>
-                                    Hiển thị {this.state.maxResultCount} của {this.state.totalCount}{' '}
-                                    mục
-                                </Typography>
-                                <Pagination
-                                    count={this.state.totalPage}
-                                    page={this.state.currentPage}
-                                    onChange={this.handlePageChange}
-                                    sx={{
-                                        '& button': {
-                                            display: 'inline-block',
-                                            borderRadius: '4px',
-                                            lineHeight: '1'
-                                        },
-                                        '& .Mui-selected': {
-                                            backgroundColor: '#7C3367!important',
-                                            color: '#fff'
-                                        }
-                                    }}
-                                />
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    {/* <div className="row d-flex align-content-center" style={{ height: '50px' }}>
-                        <div className="col-3" style={{ float: 'left' }}></div>
-                        <div className="col-9" style={{ float: 'right' }}>
-                            <Box sx={{ float: 'right' }}>
-                                <Typography>
-                                    Hiển thị {this.state.maxResultCount} của {this.state.totalCount}{' '}
-                                    mục
-                                </Typography>
-                                <Pagination
-                                    count={this.state.totalPage}
-                                    page={this.state.currentPage}
-                                    onChange={this.handlePageChange}
-                                    sx={{
-                                        float: 'right',
-                                        '& button': {
-                                            display: 'inline-block',
-                                            borderRadius: '4px',
-                                            lineHeight: '1'
-                                        },
-                                        '& .Mui-selected': {
-                                            backgroundColor: '#7C3367!important',
-                                            color: '#fff'
-                                        }
-                                    }}
-                                />
-                            </Box>
-                        </div>
-                    </div> */}
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.maxResultCount}
+                        totalPage={this.state.totalPage}
+                        totalRecord={this.state.totalCount}
+                        handlePageChange={this.handlePageChange}
+                    />
                     <CreateOrEditUser
                         visible={this.state.modalVisible}
                         modalType={
