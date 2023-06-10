@@ -4,7 +4,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StoreDetail from './cua-hang/index';
 import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
-import Booking from './booking';
+import Booking from './Booking';
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabChange = (event: any, newValue: number) => {
@@ -41,7 +41,7 @@ const SettingsNew: React.FC = () => {
                         <Box
                             sx={{
                                 width: '100%',
-
+                                height: '100%',
                                 bgcolor: '#fff',
                                 boxShadow: '0px 7px 20px 0px #28293D14',
                                 padding: '24px 15px',
