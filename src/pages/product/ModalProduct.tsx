@@ -30,7 +30,6 @@ import Utils from '../../utils/utils';
 import '../../App.css';
 import './style.css';
 import AppConsts from '../../lib/appconst';
-import { minWidth } from '@mui/system';
 
 import StyleOveride from '../../StyleOveride';
 
@@ -120,11 +119,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         setWasClickSave(false);
     };
     const deleteProduct = async () => {
-        if (!Utils.checkNull(product?.id)) {
-            await ProductService.DeleteProduct_byIDHangHoa(product?.id ?? '');
-            setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-            setOpen(false);
-        }
+        setOpen(false);
+        setInforDeleteProduct({ ...inforDeleteProduct, show: false });
+        handleSave(product, true); // call api delete at parent
     };
 
     const CheckSave = async () => {
@@ -174,7 +171,14 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
 
         const data = await ProductService.CreateOrEditProduct(objNew);
         objNew.id = data.id;
+        objNew.idHangHoa = data.id;
         objNew.donViQuiDois = [...data.donViQuiDois];
+        objNew.maHangHoa = data.donViQuiDois.filter(
+            (x: any) => x.laDonViTinhChuan === 1
+        )[0]?.maHangHoa;
+        objNew.idDonViQuyDoi = data.donViQuiDois.filter(
+            (x: any) => x.laDonViTinhChuan === 1
+        )[0]?.id;
         handleSave(objNew);
         setOpen(false);
     }
@@ -392,7 +396,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Button>
                     <Button
                         variant="contained"
-                        sx={{ bgcolor: 'red', display: isNew ? 'none' : '' }}
+                        sx={{
+                            bgcolor: 'red',
+                            display: isNew || product.trangThai === 0 ? 'none' : ''
+                        }}
                         onClick={() => {
                             setInforDeleteProduct(
                                 new PropConfirmOKCancel({

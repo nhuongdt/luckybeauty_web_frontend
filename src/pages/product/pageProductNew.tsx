@@ -22,11 +22,10 @@ import { TextTranslate } from '../../components/TableLanguage';
 import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
 import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import MessageAlert from '../../components/AlertDialog/MessageAlert';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
 
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
@@ -97,6 +96,7 @@ export default function PageProductNew() {
             tenNhomHang: 'Tất cả',
             color: '#7C3367'
         });
+        console.log('tree ', list.items);
         setTreeNhomHangHoa([obj, ...list.items]);
     };
 
@@ -155,52 +155,57 @@ export default function PageProductNew() {
         }
     };
 
-    function saveNhomHang(objNew: ModelNhomHangHoa) {
-        if (triggerModalNhomHang.isNew) {
-            const newTree = [
-                // Items before the insertion point:
-                ...treeNhomHangHoa.slice(0, 1),
-                // New item:
-                objNew,
-                // Items after the insertion point:
-                ...treeNhomHangHoa.slice(1)
-            ];
-            setTreeNhomHangHoa(newTree);
-            setObjAlert({ show: true, type: 1, mes: 'Thêm nhóm dịch vụ thành công' });
-        } else {
-            GetTreeNhomHangHoa();
-            setObjAlert({ show: true, type: 1, mes: 'Cập nhật nhóm dịch vụ thành công' });
-        }
-        hiddenAlert();
-    }
-
-    function saveProduct(objNew: ModelHangHoaDto) {
-        if (triggerModalProduct.isNew) {
-            objNew.maHangHoa = objNew.donViQuiDois.filter(
-                (x) => x.laDonViTinhChuan === 1
-            )[0]?.maHangHoa;
-
-            setPageDataProduct((olds) => {
-                return {
-                    ...olds,
-                    totalCount: olds.totalCount + 1,
-                    totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageProduct.pageSize),
-                    items: [objNew, ...olds.items]
-                };
+    function saveNhomHang(objNew: ModelNhomHangHoa, isDelete = false) {
+        if (isDelete) {
+            setObjAlert({
+                show: true,
+                type: 1,
+                mes: 'Xóa ' + objNew.sLoaiNhomHang + ' thành công'
             });
-            setObjAlert({ show: true, type: 1, mes: 'Thêm dịch vụ thành công' });
         } else {
-            GetListHangHoa();
-            setObjAlert({ show: true, type: 1, mes: 'Sửa dịch vụ thành công' });
+            if (triggerModalNhomHang.isNew) {
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Thêm ' + objNew.sLoaiNhomHang + ' thành công'
+                });
+            } else {
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật ' + objNew.sLoaiNhomHang + ' thành công'
+                });
+            }
         }
-        hiddenAlert();
+
+        GetTreeNhomHangHoa();
     }
 
-    const hiddenAlert = () => {
-        setTimeout(() => {
-            setObjAlert({ show: false, mes: '', type: 1 });
-        }, 3000);
-    };
+    function saveProduct(objNew: ModelHangHoaDto, isDelete = false) {
+        console.log('saveProduct ', objNew);
+        const sLoai = objNew.tenLoaiHangHoa?.toLocaleLowerCase();
+        if (isDelete) {
+            deleteProduct();
+        } else {
+            if (triggerModalProduct.isNew) {
+                setPageDataProduct((olds) => {
+                    return {
+                        ...olds,
+                        totalCount: olds.totalCount + 1,
+                        totalPage: Utils.getTotalPage(
+                            olds.totalCount + 1,
+                            filterPageProduct.pageSize
+                        ),
+                        items: [objNew, ...olds.items]
+                    };
+                });
+                setObjAlert({ show: true, type: 1, mes: 'Thêm ' + sLoai + ' thành công' });
+            } else {
+                GetListHangHoa();
+                setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + '  thành công' });
+            }
+        }
+    }
 
     const handleChangePage = (event: any, value: number) => {
         setFilterPageProduct({
@@ -247,17 +252,21 @@ export default function PageProductNew() {
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
             await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
-            setObjAlert({ show: true, type: 1, mes: 'Xóa dịch vụ thành công' });
-            hiddenAlert();
+            setObjAlert({
+                show: true,
+                type: 1,
+                mes: 'Xóa ' + rowHover?.tenLoaiHangHoa?.toLocaleLowerCase() + ' thành công'
+            });
             setInforDeleteProduct({ ...inforDeleteProduct, show: false });
             setPageDataProduct((olds) => {
                 return {
                     ...olds,
-                    totalCount: olds.totalCount - 1,
-                    totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageProduct.pageSize),
+                    // neu sau nay khong can lay hang ngung kinhdoanh --> bo comment doan nay
+                    // totalCount: olds.totalCount - 1,
+                    // totalPage: Utils.getTotalPage(olds.totalCount - 1, filterPageProduct.pageSize),
                     items: olds.items.map((x: any) => {
                         if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
-                            return { ...x, txtTrangThaihang: 'Ngừng kinh doanh' };
+                            return { ...x, txtTrangThaiHang: 'Ngừng kinh doanh' };
                         } else {
                             return x;
                         }
@@ -381,7 +390,7 @@ export default function PageProductNew() {
                         padding: '4px 8px',
                         borderRadius: '1000px',
                         backgroundColor: '#F1FAFF',
-                        color: '#009EF7'
+                        color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
                     }}>
                     {params.value}
                 </Typography>
@@ -428,6 +437,10 @@ export default function PageProductNew() {
                 onCancel={() =>
                     setInforDeleteProduct({ ...inforDeleteProduct, show: false })
                 }></ConfirmDelete>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}></SnackbarAlert>
             <Grid
                 container
                 className="dich-vu-page"
@@ -560,7 +573,7 @@ export default function PageProductNew() {
                                 style={{
                                     display: pageDataProduct.totalCount > 1 ? 'flex' : 'none',
                                     paddingLeft: '16px',
-                                    position: 'absolute',
+                                    // position: 'absolute',
                                     bottom: '16px'
                                 }}>
                                 <Grid item xs={4} md={4} lg={4} sm={4}>

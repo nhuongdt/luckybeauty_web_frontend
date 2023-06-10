@@ -104,7 +104,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
-    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const showModal = async (id: string) => {
         if (id) {
@@ -145,7 +144,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         setWasClickSave(false);
         const arr = [...dataNhomHang];
         setDataNhomHangFilter(arr.filter((x: any) => x.id !== null && x.id !== ''));
-    }, [trigger]);
+        console.log('trigger dataNhom ', arr);
+    }, [trigger, dataNhomHang]); // assign again dataNhomHang after save
 
     function changeColor(colorNew: string) {
         setColorToggle(false);
@@ -158,7 +158,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         const str = await GroupProductService.XoaNhomHangHoa(groupProduct?.id ?? '');
         setIsShow(false);
         setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-        handleSave(groupProduct);
+        handleSave(groupProduct, true);
     };
 
     const CheckSave = () => {
@@ -295,9 +295,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 onChange={(event: any, newValue: any) => {
                                     handleChangeNhomGoc(newValue);
                                 }}
-                                options={dataNhomHang.filter(
-                                    (x: any) => x.id !== null && x.id !== ''
-                                )}
+                                options={dataNhomHangFilter}
                                 getOptionLabel={(option: any) =>
                                     option.tenNhomHang ? option.tenNhomHang : ''
                                 }
