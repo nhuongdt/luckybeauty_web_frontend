@@ -1,30 +1,14 @@
 import { Component, ReactNode } from 'react';
-import { useFormik } from 'formik';
-import { format } from 'date-fns';
 import '../../employee/employee.css';
 import React from 'react';
 import { NgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/NgayNghiLeDto';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
-import {
-    Box,
-    Breadcrumbs,
-    Button,
-    Grid,
-    IconButton,
-    Menu,
-    MenuItem,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
 import AddIcon from '../../../images/add.svg';
 import SearchIcon from '../../../images/search-normal.svg';
-import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import DownloadIcon from '../../../images/download.svg';
 import UploadIcon from '../../../images/upload.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
@@ -33,6 +17,8 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import AppConsts from '../../../lib/appconst';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
+import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -73,7 +59,7 @@ class EmployeeHoliday extends Component {
         const data = await ngayNghiLeService.getAll({
             keyword: this.state.filter,
             maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount
+            skipCount: this.state.currentPage
         });
         await this.setState({
             listHoliday: data.items,
@@ -81,12 +67,12 @@ class EmployeeHoliday extends Component {
             totalPage: Math.ceil(data.totalCount / this.state.maxResultCount)
         });
     }
-    handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
-        const { maxResultCount } = this.state;
-        this.setState({
+    handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
+        await this.setState({
             currentPage: value,
             skipCount: value
         });
+        this.getListHoliday();
     };
     handleChange = (event: any): void => {
         const { name, value } = event.target;
@@ -423,55 +409,24 @@ class EmployeeHoliday extends Component {
                                 fontSize: '12px'
                             }
                         }}
+                        hideFooter
                         localeText={TextTranslate}
                     />
-                    <Menu
-                        id={`actions-menu-${this.state.selectedRowId}`}
+                    <ActionMenuTable
+                        selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
-                        keepMounted
-                        open={Boolean(this.state.anchorEl)}
-                        onClose={this.handleCloseMenu}
-                        sx={{ minWidth: '120px' }}>
-                        <MenuItem onClick={this.handleView}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                View
-                            </Typography>
-                            <InfoIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleEdit}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Edit
-                            </Typography>
-                            <EditIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.showConfirmDelete}>
-                            <Typography
-                                color="#F1416C"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Delete
-                            </Typography>
-                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
-                        </MenuItem>
-                    </Menu>
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleView}
+                        handleEdit={this.handleEdit}
+                        handleDelete={this.showConfirmDelete}
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={this.state.totalCount}
+                        totalPage={this.state.totalPage}
+                        handlePageChange={this.handlePageChange}
+                    />
                 </Box>
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}

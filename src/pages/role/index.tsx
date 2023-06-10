@@ -1,28 +1,14 @@
 import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import {
-    Button,
-    Box,
-    Typography,
-    Grid,
-    TextField,
-    Pagination,
-    IconButton,
-    Menu,
-    MenuItem
-} from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
+import { Button, Box, Typography, Grid, TextField, IconButton } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
 import roleService from '../../services/role/roleService';
 import AddIcon from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
 import '../../custom.css';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import CreateOrEditRoleModal from './components/create-or-edit-role';
@@ -31,6 +17,8 @@ import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { TextTranslate } from '../../components/TableLanguage';
 import { permissionCheckboxTree } from '../../services/role/dto/permissionCheckboxTree';
+import ActionMenuTable from '../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -81,7 +69,7 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
     async getAll() {
         const roles = await roleService.getAll({
             maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount,
+            skipCount: this.state.currentPage,
             keyword: this.state.filter
         });
         const permissionAll = [] as permissionCheckboxTree[];
@@ -99,12 +87,10 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
         this.setState({ filter: filter }, async () => this.getAll());
     };
 
-    handlePageChange = (event: any, value: any) => {
-        const { maxResultCount } = this.state;
-        this.setState({
+    handlePageChange = async (event: any, value: any) => {
+        await this.setState({
             currentPage: value,
-            skipCount: value,
-            startIndex: (value - 1 <= 0 ? 0 : value - 1) * maxResultCount
+            skipCount: value
         });
         this.getAll();
     };
@@ -312,16 +298,11 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box marginTop="24px" bgcolor="#fff" borderRadius="8px" sx={{ height: 400 }}>
+                <Box marginTop="24px" bgcolor="#fff" borderRadius="8px">
                     <DataGrid
+                        autoHeight={true}
                         columns={columns}
                         rows={this.state.listRole}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -334,81 +315,25 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
                                 mb: 0
                             }
                         }}
+                        hideFooter
+                        hideFooterPagination
                         localeText={TextTranslate}
                     />
-                    <Menu
-                        id={`actions-menu-${this.state.selectedRowId}`}
+                    <ActionMenuTable
+                        selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
-                        keepMounted
-                        open={Boolean(this.state.anchorEl)}
-                        onClose={this.handleCloseMenu}
-                        sx={{ minWidth: '120px' }}>
-                        <MenuItem onClick={this.handleView}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                View
-                            </Typography>
-                            <InfoIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleEdit}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Edit
-                            </Typography>
-                            <EditIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.onShowDelete}>
-                            <Typography
-                                color="#F1416C"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Delete
-                            </Typography>
-                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
-                        </MenuItem>
-                    </Menu>
-                    <div className="row" style={{ display: 'none' }}>
-                        <div className="col-6" style={{ float: 'left' }}></div>
-                        <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div style={{ float: 'right' }} className="col-7">
-                                    <Box className="align-items-center">
-                                        <Pagination
-                                            count={this.state.totalPage}
-                                            page={this.state.currentPage}
-                                            onChange={this.handlePageChange}
-                                            sx={{
-                                                '& button': {
-                                                    borderRadius: '4px',
-                                                    lineHeight: '1'
-                                                },
-                                                '& .Mui-selected': {
-                                                    backgroundColor: '#7C3367!important',
-                                                    color: '#fff'
-                                                }
-                                            }}
-                                        />
-                                    </Box>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleView}
+                        handleEdit={this.handleEdit}
+                        handleDelete={this.onShowDelete}
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={this.state.totalCount}
+                        totalPage={this.state.totalPage}
+                        handlePageChange={this.handlePageChange}
+                    />
                 </Box>
                 <CreateOrEditRoleModal
                     visible={this.state.modalVisible}

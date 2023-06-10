@@ -37,14 +37,17 @@ import CreateOrEditChietKhauDichVuModal from './components/create-or-edit-hoa-ho
 import { CreateOrEditChietKhauDichVuDto } from '../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import { SuggestDonViQuiDoiDto } from '../../../../services/suggests/dto/SuggestDonViQuiDoi';
 import Cookies from 'js-cookie';
+import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 class ChietKhauDichVuScreen extends Component {
     state = {
         visited: false,
         idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
         idNhanVien: AppConsts.guidEmpty,
         keyword: '',
-        skipCount: 0,
+        skipCount: 1,
         maxResultCount: 10,
+        totalPage: 0,
+        totalCount: 0,
         createOrEditDto: {} as CreateOrEditChietKhauDichVuDto,
         suggestNhanSu: [] as SuggestNhanSuDto[],
         suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
@@ -84,10 +87,15 @@ class ChietKhauDichVuScreen extends Component {
             }
         });
     };
+    handlePageChange = async (event: any, value: any) => {
+        await this.setState({
+            currentPage: value
+        });
+        this.InitData();
+    };
     handleSubmit = async () => {
         await chietKhauDichVuStore.createOrEdit(this.state.createOrEditDto);
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
-        console.log(this.state.createOrEditDto);
         this.onModal();
     };
     onModal = () => {
@@ -110,6 +118,12 @@ class ChietKhauDichVuScreen extends Component {
                         title={params.value}
                         sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
                         {params.value}
+                    </Box>
+                ),
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 )
             },
@@ -147,7 +161,7 @@ class ChietKhauDichVuScreen extends Component {
                 )
             },
             {
-                field: 'nhomDichVu',
+                field: 'tenNhomDichVu',
                 headerName: 'Nhóm dịch vụ',
                 minWidth: 114,
                 flex: 1,
@@ -195,7 +209,7 @@ class ChietKhauDichVuScreen extends Component {
                 )
             },
             {
-                field: 'hoaHongTheoYeuCau',
+                field: 'hoaHongYeuCauThucHien',
                 headerName: 'Hoa hồng theo yêu cầu',
                 minWidth: 170,
                 flex: 1,
@@ -253,7 +267,7 @@ class ChietKhauDichVuScreen extends Component {
                 )
             },
             {
-                field: 'giaBan',
+                field: 'giaDichVu',
                 headerName: 'Giá bán',
                 minWidth: 85,
                 flex: 1,
@@ -302,27 +316,6 @@ class ChietKhauDichVuScreen extends Component {
                 )
             }
         ];
-        const rows = [
-            {
-                id: '0980898mkjkhs8x0',
-                tenDichVu: 'Tình sầu thiên thu muôn lối',
-                nhomDichVu: 'ABC ADYOGMC KUYJ VHBV VBV',
-                hoaHongThucHien: '66%',
-                hoaHongTheoYeuCau: '88%',
-                hoaHongTuVan: '4009% ',
-                giaBan: '425.000đ'
-            },
-            {
-                id: '09808908mkjkhs8x0',
-                tenDichVu: 'Tình sầu thiên thu muôn lối',
-                nhomDichVu: 'ABC ADYOGMC KUYJ VHBV VBV',
-                hoaHongThucHien: '80%',
-                hoaHongTheoYeuCau: '99%',
-                hoaHongTuVan: '150% ',
-                giaBan: '600.000đ'
-            }
-        ];
-
         return (
             <div>
                 <Grid
@@ -372,25 +365,6 @@ class ChietKhauDichVuScreen extends Component {
                         />
                     </Grid>
                     <Grid item xs={4}>
-                        {/* <Button
-                            onClick={() => {
-                                this.setState({ visited: true });
-                            }}
-                            size="small"
-                            style={{ float: 'right', background: '#7C3367', height: 32 }}
-                            startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}>
-                            <span
-                                style={{
-                                    color: '#FFFAFF',
-                                    fontSize: 14,
-                                    fontWeight: 400,
-                                    fontStyle: 'normal',
-                                    fontFamily: 'roboto',
-                                    textAlign: 'center'
-                                }}>
-                                Thêm mới
-                            </span>
-                        </Button> */}
                         <Box
                             display="flex"
                             gap="8px"
@@ -415,120 +389,16 @@ class ChietKhauDichVuScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box marginTop="8px">
-                    {/* <TableContainer component={Paper} sx={{ display: 'none' }}>
-                        <Table aria-label="customized table" size="small">
-                            <TableHead>
-                                <TableRow style={{ height: '48px' }}>
-                                    <TableCell
-                                        padding="checkbox"
-                                        align="center"
-                                        className="text-td-table">
-                                        <Checkbox />
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        STT
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="left">
-                                        Tên dịch vụ
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="left">
-                                        Nhóm dịch vụ
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        Hoa hồng thực hiện
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        Hoa hồng theo yêu cầu
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        Hoa hồng tư vấn
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        Giá
-                                    </TableCell>
-                                    <TableCell style={{ width: '50px' }} align="center">
-                                        #
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {listChietKhauDichVu === undefined
-                                    ? null
-                                    : listChietKhauDichVu.items.map((item, length) => {
-                                          return (
-                                              <TableRow style={{ height: '48px' }}>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      align="center"
-                                                      padding="checkbox"
-                                                      className="text-th-table">
-                                                      <Checkbox />
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      component="th"
-                                                      scope="row"
-                                                      align="center"
-                                                      className="text-th-table">
-                                                      {length + 1}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table">
-                                                      {item.tenDichVu}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      align="left"
-                                                      className="text-th-table">
-                                                      {item.tenNhomDichVu}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      align="left"
-                                                      className="text-th-table">
-                                                      {item.hoaHongThucHien}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      align="center"
-                                                      className="text-th-table">
-                                                      {item.hoaHongYeuCauThucHien}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      align="center"
-                                                      className="text-th-table">
-                                                      {item.hoaHongTuVan}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      align="center"
-                                                      className="text-th-table">
-                                                      {item.giaDichVu}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px', width: '50px' }}
-                                                      align="right">
-                                                      <IconButton>
-                                                          <BsThreeDotsVertical />
-                                                      </IconButton>
-                                                  </TableCell>
-                                              </TableRow>
-                                          );
-                                      })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer> */}
                     <DataGrid
                         autoHeight
                         columns={columns}
-                        rows={rows}
+                        rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
                         initialState={{
                             pagination: {
                                 paginationModel: { page: 5, pageSize: 10 }
                             }
                         }}
+                        checkboxSelection={false}
                         pageSizeOptions={[10, 20]}
                         sx={{
                             '& p': {
@@ -549,7 +419,22 @@ class ChietKhauDichVuScreen extends Component {
                             }
                         }}
                         localeText={TextTranslate}
-                        checkboxSelection
+                        hideFooter
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.skipCount}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={
+                            listChietKhauDichVu === undefined ? 0 : listChietKhauDichVu.totalCount
+                        }
+                        totalPage={
+                            listChietKhauDichVu === undefined
+                                ? 0
+                                : Math.ceil(
+                                      listChietKhauDichVu.totalCount / this.state.maxResultCount
+                                  )
+                        }
+                        handlePageChange={this.handlePageChange}
                     />
                 </Box>
                 <CreateOrEditChietKhauDichVuModal

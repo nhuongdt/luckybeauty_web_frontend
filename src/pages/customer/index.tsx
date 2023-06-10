@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
 import { useState } from 'react';
-import { DataGrid, GridColDef, useGridApiRef, GridLocaleText } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    useGridApiRef,
+    GridLocaleText,
+    GridColumnVisibilityModel,
+    ColumnsPanelPropsOverrides
+} from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
 import { format, isValid } from 'date-fns';
 import {
@@ -37,6 +44,9 @@ import CreateOrEditCustomerDialog from './components/create-or-edit-customer-mod
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../components/abp-custom';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import AppConsts from '../../lib/appconst';
+import ActionMenuTable from '../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 
 class CustomerScreen extends React.Component {
     state = {
@@ -46,30 +56,36 @@ class CustomerScreen extends React.Component {
         rowPerPage: 10,
         pageSkipCount: 0,
         skipCount: 0,
-        curentPage: 0,
+        currentPage: 1,
         keyword: '',
         totalItems: 0,
+        totalPage: 1,
         isShowConfirmDelete: false,
         moreOpen: false,
         anchorEl: null,
         selectedRowId: null,
-        createOrEditKhachHang: {} as CreateOrEditKhachHangDto
+        createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
+        visibilityColumn: {}
     };
+
     componentDidMount(): void {
         this.getData();
+        const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
+        this.setState({ visibilityColumn: visibilityColumn });
     }
 
     async getData() {
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
-            skipCount: this.state.skipCount,
+            skipCount: this.state.currentPage,
             loaiDoiTuong: 0
         });
 
         this.setState({
             rowTable: khachHangs.items,
-            totalItems: khachHangs.totalCount
+            totalItems: khachHangs.totalCount,
+            totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
     }
     async handleSubmit() {
@@ -79,7 +95,7 @@ class CustomerScreen extends React.Component {
             rowPerPage: 10,
             pageSkipCount: 0,
             skipCount: 0,
-            curentPage: 0,
+            currentPage: 0,
             keyword: '',
             createOrEditKhachHang: {} as CreateOrEditKhachHangDto
         });
@@ -129,14 +145,14 @@ class CustomerScreen extends React.Component {
     };
     handlePageChange = async (event: any, newPage: number) => {
         const skip = newPage + 1;
-        await this.setState({ skipCount: skip, curentPage: newPage });
+        await this.setState({ skipCount: skip, currentPage: newPage });
         await this.getData();
     };
 
     // Handler for rows per page changes
     handleRowsPerPageChange = async (event: any) => {
         await this.setState({ rowPerPage: parseInt(event.target.value, 10) });
-        await this.setState({ curentPage: 0, skipCount: 1 }); // Reset page to the first one when changing rows per page
+        await this.setState({ currentPage: 0, skipCount: 1 }); // Reset page to the first one when changing rows per page
         await this.getData();
     };
 
@@ -171,10 +187,12 @@ class CustomerScreen extends React.Component {
             idNhanSu: ''
         });
     };
+    toggleColumnVisibility = (column: GridColumnVisibilityModel) => {
+        localStorage.setItem('visibilityColumn', JSON.stringify(column));
+        this.setState({ visibilityColumn: column });
+    };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
-            { field: 'id', headerName: 'ID', minWidth: 70, flex: 1 },
-
             {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
@@ -341,7 +359,6 @@ class CustomerScreen extends React.Component {
                 )
             }
         ];
-        console.log(this.state.rowTable);
         return (
             <Box
                 className="customer-page"
@@ -447,10 +464,12 @@ class CustomerScreen extends React.Component {
                         columns={columns}
                         hideFooterPagination
                         hideFooter
+                        onColumnVisibilityModelChange={this.toggleColumnVisibility}
+                        columnVisibilityModel={this.state.visibilityColumn}
                         initialState={{
                             pagination: {
                                 paginationModel: {
-                                    page: this.state.curentPage,
+                                    page: this.state.currentPage,
                                     pageSize: this.state.rowPerPage
                                 }
                             }
@@ -467,61 +486,20 @@ class CustomerScreen extends React.Component {
                         }}
                         localeText={TextTranslate}
                     />
-                    <Menu
-                        id={`actions-menu-${this.state.selectedRowId}`}
+                    <ActionMenuTable
+                        selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
-                        keepMounted
-                        open={Boolean(this.state.anchorEl)}
-                        onClose={this.handleCloseMenu}
-                        sx={{ minWidth: '120px' }}>
-                        <MenuItem onClick={this.handleView}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                View
-                            </Typography>
-                            <InfoIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleEdit}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Edit
-                            </Typography>
-                            <EditIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.showConfirmDelete}>
-                            <Typography
-                                color="#F1416C"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Delete
-                            </Typography>
-                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
-                        </MenuItem>
-                    </Menu>
-                    <TablePagination
-                        rowsPerPageOptions={[10, 25, 50]}
-                        component="div"
-                        count={this.state.totalItems}
-                        rowsPerPage={this.state.rowPerPage}
-                        page={this.state.curentPage}
-                        onPageChange={this.handlePageChange}
-                        onRowsPerPageChange={this.handleRowsPerPageChange}
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleView}
+                        handleEdit={this.handleEdit}
+                        handleDelete={this.showConfirmDelete}
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.currentPage}
+                        rowPerPage={this.state.rowPerPage}
+                        totalRecord={this.state.totalItems}
+                        totalPage={this.state.totalPage}
+                        handlePageChange={this.handlePageChange}
                     />
                 </div>
                 <div

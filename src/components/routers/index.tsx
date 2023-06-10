@@ -210,7 +210,7 @@ export const appRouters: AppRouteProps = {
                     ],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
                 },
                 {
                     path: '/khach-hangs',

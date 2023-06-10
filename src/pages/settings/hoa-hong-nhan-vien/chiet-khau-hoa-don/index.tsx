@@ -1,38 +1,29 @@
 import { observer } from 'mobx-react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { Component, ReactNode } from 'react';
-import { CreateOrEditChietKhauHoaDonDto } from '../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
-import chietKhauHoaDonStore from '../../../../../stores/chietKhauHoaDonStore';
-import AppConsts from '../../../../../lib/appconst';
-import SearchIcon from '../../../../../images/search-normal.svg';
-import { TextTranslate } from '../../../../../components/TableLanguage';
-import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
+import { CreateOrEditChietKhauHoaDonDto } from '../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
+import chietKhauHoaDonStore from '../../../../stores/chietKhauHoaDonStore';
+import AppConsts from '../../../../lib/appconst';
+import SearchIcon from '../../../../images/search-normal.svg';
+import { TextTranslate } from '../../../../components/TableLanguage';
+import { ReactComponent as IconSorting } from '.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import {
-    Box,
-    Button,
-    IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
-    Grid
-} from '@mui/material';
+import { Box, Button, IconButton, TextField, Grid } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import CreateOrEditChietKhauHoaDonModal from './create-or-edit-chiet-khau-hd';
+import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
+import { minWidth } from '@mui/system';
+import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,
         visited: false,
         isShowConfirmDelete: false,
         keyword: '',
-        skipCount: 0,
+        skipCount: 1,
         maxResultCount: 10,
+        totalCount: 0,
+        totalPage: 0,
         createOrEditModel: {
             id: AppConsts.guidEmpty,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
@@ -95,12 +86,51 @@ class ChietKhauHoaDonScreen extends Component {
             }
         });
     };
+    handlePageChange = async (event: any, value: any) => {
+        await this.setState({
+            skipCount: value
+        });
+        console.log(value);
+        this.getAll();
+    };
     render(): ReactNode {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
         const columns: GridColDef[] = [
             {
-                field: 'id',
-                headerName: 'ID'
+                field: 'giaTriChietKhau',
+                headerName: 'Hoa hồng',
+                minWidth: 112,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting />
+                    </Box>
+                )
+            },
+            {
+                field: 'chungTuApDung',
+                headerName: 'Chứng từ áp dụng',
+                minWidth: 120,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting />
+                    </Box>
+                )
+            },
+            {
+                field: 'ghiChu',
+                headerName: 'Ghi chú',
+                minWidth: 150,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting />
+                    </Box>
+                )
             }
         ];
         return (
@@ -150,57 +180,41 @@ class ChietKhauHoaDonScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box>
-                    <TableContainer component={Paper} sx={{ display: 'none' }}>
-                        <Table aria-label="customized table" size="small">
-                            <TableHead>
-                                <TableRow style={{ height: '48px' }}>
-                                    <TableCell className="text-td-table" align="left">
-                                        Hoa hồng
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="left">
-                                        Chứng từ áp dụng
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        Ghi chú
-                                    </TableCell>
-                                    <TableCell style={{ width: '50px' }} align="center">
-                                        #
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {chietKhauHoaDons === undefined
-                                    ? null
-                                    : chietKhauHoaDons.items.map((item, length) => {
-                                          return (
-                                              <TableRow style={{ height: '48px' }}>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table">
-                                                      {item.giaTriChietKhau}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table">
-                                                      {item.chungTuApDung}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table"></TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px', width: '50px' }}
-                                                      align="right">
-                                                      <IconButton>
-                                                          <BsThreeDotsVertical />
-                                                      </IconButton>
-                                                  </TableCell>
-                                              </TableRow>
-                                          );
-                                      })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-
+                    <DataGrid
+                        autoHeight
+                        columns={columns}
+                        rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
+                        localeText={TextTranslate}
+                        pageSizeOptions={[10, 20]}
+                        checkboxSelection={false}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 5, pageSize: 10 }
+                            }
+                        }}
+                        sx={{
+                            '& .uiDataGrid-cellContent': {
+                                fontSize: '12px'
+                            },
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            }
+                        }}
+                        hideFooter
+                    />
+                    <CustomTablePagination
+                        currentPage={this.state.skipCount}
+                        rowPerPage={this.state.maxResultCount}
+                        totalRecord={
+                            chietKhauHoaDons === undefined ? 0 : chietKhauHoaDons.totalCount
+                        }
+                        totalPage={
+                            chietKhauHoaDons === undefined
+                                ? 0
+                                : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)
+                        }
+                        handlePageChange={this.handlePageChange}
+                    />
                     <CreateOrEditChietKhauHoaDonModal
                         formRef={this.state.createOrEditModel}
                         onClose={this.Modal}

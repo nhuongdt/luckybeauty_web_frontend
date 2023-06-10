@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab, Typography, Grid } from '@mui/material';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import StoreDetail from './cua-hang/indexNew';
-import ChiNhanhScreen from './chi-nhanh/indexNew';
+import StoreDetail from './cua-hang/index';
+import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
+import Booking from './Booking';
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabChange = (event: any, newValue: number) => {
@@ -17,13 +18,13 @@ const SettingsNew: React.FC = () => {
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
         return (
             <div role="tabpanel" hidden={value !== index}>
-                {value === index && <Box p={3}>{children}</Box>}
+                {value === index && <Box>{children}</Box>}
             </div>
         );
     };
     const HoaHong = () => <div>Mẫu hóa đơn</div>;
     const ThanhToan = () => <div>Thanh toasn</div>;
-    const Booking = () => <div>Booking</div>;
+
     const [selectedTab, setSelectedTab] = useState('Chi tiết cửa hàng');
 
     const handleTabClick = (tab: string) => {
@@ -40,7 +41,7 @@ const SettingsNew: React.FC = () => {
                         <Box
                             sx={{
                                 width: '100%',
-
+                                height: '100%',
                                 bgcolor: '#fff',
                                 boxShadow: '0px 7px 20px 0px #28293D14',
                                 padding: '24px 15px',
@@ -139,14 +140,7 @@ const SettingsNew: React.FC = () => {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid
-                        item
-                        xs={9}
-                        sx={{
-                            '& [role="tabpanel"] > .MuiBox-root': {
-                                padding: 0
-                            }
-                        }}>
+                    <Grid item xs={9}>
                         <TabPanel value={activeTab} index={1}>
                             <StoreDetail />
                         </TabPanel>

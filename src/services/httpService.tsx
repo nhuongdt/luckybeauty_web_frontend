@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-// import AppConsts from './../lib/appconst'
-// import { L } from '../lib/abpUtility'
-import { Modal } from 'antd';
 import axios from 'axios';
-import { error } from 'console';
 import Cookies from 'js-cookie';
-const qs = require('qs');
-
-//declare let abp: any
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import qs from 'qs';
 const http = axios.create({
     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
     timeout: 30000,
@@ -43,25 +37,40 @@ http.interceptors.response.use(
             !!error.response.data.error.message &&
             error.response.data.error.details
         ) {
-            Modal.error({
-                title: error.response.data.error.message,
-                content: error.response.data.error.details
-            });
+            // Hiển thị thông báo lỗi sử dụng toastify
+            toast.error(
+                `${error.response.data.error.message}: ${error.response.data.error.details}`,
+                {
+                    position: 'top-center',
+                    autoClose: false,
+                    theme: 'colored',
+                    progress: 1
+                }
+            );
         } else if (
             !!error.response &&
             !!error.response.data.error &&
             !!error.response.data.error.message
         ) {
-            Modal.error({
-                title: 'LoginFailed',
-                content: error.response.data.error.message
+            // Hiển thị thông báo lỗi sử dụng toastify
+            toast.error('Đăng nhập thất bại: Người dùng chưa đăng nhập vào ứng dụng', {
+                position: 'top-center',
+                autoClose: false,
+                theme: 'colored',
+                progress: 1
             });
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 3000);
         } else if (!error.response) {
-            Modal.error({ content: 'UnknownError' });
+            // Hiển thị thông báo lỗi sử dụng toastify
+            toast.error('UnknownError', {
+                position: 'top-center',
+                autoClose: false,
+                theme: 'colored',
+                progress: 1
+            });
         }
-
-        setTimeout(() => 1000);
-
         return Promise.reject(error);
     }
 );

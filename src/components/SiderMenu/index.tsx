@@ -9,7 +9,7 @@ import http from '../../services/httpService';
 import { List, ListItem, ListItemIcon, ListItemText, Typography, Avatar } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-// import Sider from 'antd/es/layout/Sider';
+
 import { Box } from '@mui/material';
 import outIcon from '../../images/Logout.svg';
 
@@ -105,8 +105,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
 
     return (
         <Box
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
+            onMouseEnter={collapsed === true ? undefined : handleMouseEnter}
+            onMouseLeave={collapsed === true ? undefined : handleMouseLeave}
             sx={{
                 overflowY: 'auto',
                 overflowX: 'hidden',
@@ -116,13 +116,26 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                 left: '0',
                 top: 0,
                 bottom: 0,
+                bgcolor: '#fff',
+                zIndex: '20',
                 width: collapsed || OpenHover ? '240px' : '72px',
-
+                boxShadow: OpenHover ? '0px 0px 40px -12px rgba(124, 51, 103,0.3);' : 'unset',
                 '& .MuiList-root': {
                     display: 'flex',
-                    whiteSpace: 'nowrap',
-                    flexWrap: 'nowrap',
+                    // whiteSpace: 'nowrap',
+                    // flexWrap: 'nowrap',
                     flexDirection: 'column'
+                },
+                '::-webkit-scrollbar-track': {
+                    background: '#f1f1f1'
+                },
+
+                '::-webkit-scrollbar': {
+                    width: '0px'
+                },
+                '::-webkit-scrollbar-thumb': {
+                    borderRadius: '8px',
+                    bgcolor: 'rgba(124, 51, 103,0.1)'
                 }
             }}>
             <Box
@@ -193,9 +206,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                     itemMenu.children ? () => handleDropdown(index) : undefined
                                 }>
                                 <ListItemIcon
-                                    onClick={
-                                        itemMenu.children ? () => handleDropdown(index) : undefined
-                                    }
                                     sx={{
                                         minWidth: '40px',
                                         transition: '.4s'
@@ -282,9 +292,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                         pl: '26px',
                                         left: collapsed || OpenHover ? ' 0' : '50px',
                                         transition: open[index]
-                                            ? 'max-height 3s, left .4s'
-                                            : ' max-height 1s,left .4s',
-                                        maxHeight: open[index] == true ? '1000px' : '0px'
+                                            ? 'max-height 2.5s, left .4s,min-height .4s'
+                                            : ' max-height 1s,left .4s,min-height .4s',
+                                        maxHeight: open[index] == true ? '500px' : '0px',
+                                        display: collapsed || OpenHover ? 'block' : 'none'
                                     }}>
                                     <List component="div" disablePadding>
                                         {itemMenu.children.map((dropdownItem) => (
@@ -299,7 +310,10 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                             location.pathname === dropdownItem.key
                                                     )
                                                 }
-                                                sx={{ backgroundColor: 'transparent!important' }}>
+                                                sx={{
+                                                    backgroundColor: 'transparent!important',
+                                                    padding: '2px'
+                                                }}>
                                                 <ListItemIcon
                                                     sx={{
                                                         '& svg': {

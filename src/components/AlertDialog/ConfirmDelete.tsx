@@ -1,6 +1,5 @@
-import { CloseOutlined } from '@ant-design/icons';
 import { Button, Dialog, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
-
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) => {
     return (
         <Dialog
@@ -19,7 +18,7 @@ const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) =>
                     <Typography variant="h6" component="h6" style={{ color: 'blue' }}>
                         {title != '' ? title : 'Thông báo xóa'}
                     </Typography>
-                    <CloseOutlined style={{ height: '24px' }} onClick={onCancel} />
+                    <CloseOutlinedIcon sx={{ height: '24px' }} onClick={onCancel} />
                 </Stack>
             </DialogTitle>
             <DialogContent>

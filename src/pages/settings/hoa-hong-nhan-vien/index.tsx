@@ -2,7 +2,8 @@ import { Component, ReactNode } from 'react';
 import ChietKhauDichVuScreen from '../hoa-hong-nhan-vien/chiet-khau-dich-vu/index';
 import { Box, Button, ButtonGroup, Grid } from '@mui/material';
 import { stubTrue } from 'lodash';
-import ChietKhauHoaDonScreen from './chiet-khau-hoa-don/components';
+import ChietKhauHoaDonScreen from '../hoa-hong-nhan-vien/chiet-khau-hoa-don/index';
+
 class CaiDatHoaHongScreen extends Component {
     state = {
         isChietKhauHoaDon: true
@@ -45,7 +46,7 @@ class CaiDatHoaHongScreen extends Component {
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: true });
                                         }}>
-                                        Theo hóa đơn
+                                        Theo dịch vụ
                                     </Button>
                                     <Button
                                         variant={
@@ -67,15 +68,15 @@ class CaiDatHoaHongScreen extends Component {
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: false });
                                         }}>
-                                        Theo dịch vụ
+                                        Theo hóa đơn
                                     </Button>
                                 </ButtonGroup>
                             </Grid>
                             <Grid item xs={12}>
                                 {this.state.isChietKhauHoaDon ? (
-                                    <ChietKhauDichVuScreen></ChietKhauDichVuScreen>
+                                    <ChietKhauDichVuScreen />
                                 ) : (
-                                    <ChietKhauHoaDonScreen></ChietKhauHoaDonScreen>
+                                    <ChietKhauHoaDonScreen />
                                 )}
                             </Grid>
                         </Grid>
