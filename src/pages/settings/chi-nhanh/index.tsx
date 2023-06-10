@@ -279,7 +279,7 @@ class ChiNhanhScreen extends Component {
                         <Box className="form-search">
                             <TextField
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
+                                    backgroundColor: '#FFF',
                                     borderColor: '#CDC9CD'
                                 }}
                                 className="search-field"

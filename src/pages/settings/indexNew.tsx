@@ -4,6 +4,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StoreDetail from './cua-hang/index';
 import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
+import Booking from './booking';
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabChange = (event: any, newValue: number) => {
@@ -23,7 +24,7 @@ const SettingsNew: React.FC = () => {
     };
     const HoaHong = () => <div>Mẫu hóa đơn</div>;
     const ThanhToan = () => <div>Thanh toasn</div>;
-    const Booking = () => <div>Booking</div>;
+
     const [selectedTab, setSelectedTab] = useState('Chi tiết cửa hàng');
 
     const handleTabClick = (tab: string) => {
