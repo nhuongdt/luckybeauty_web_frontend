@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab, Typography, Grid } from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StoreDetail from './cua-hang/index';
 import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
-import Booking from './booking';
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabChange = (event: any, newValue: number) => {
@@ -148,7 +146,7 @@ const SettingsNew: React.FC = () => {
                             <ChiNhanhScreen />
                         </TabPanel>
                         <TabPanel value={activeTab} index={3}>
-                            <Booking />
+                            <div>Booking </div>
                         </TabPanel>
                         <TabPanel value={activeTab} index={5}>
                             <CaiDatHoaHongScreen />

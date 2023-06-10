@@ -1,16 +1,10 @@
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import avatar from '../../images/avatar.png';
 import React from 'react';
-import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
@@ -21,25 +15,21 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
-    Breadcrumbs,
     Button,
     ButtonGroup,
     Grid,
     IconButton,
-    Menu,
-    MenuItem,
     TextField,
     Typography
 } from '@mui/material';
 import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
-import AppConsts from '../../lib/appconst';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { observer } from 'mobx-react';
-import Stores from '../../stores/storeIdentifier';
 import NhanVienStore from '../../stores/nhanVienStore';
 import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import './employee.css';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
