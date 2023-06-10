@@ -1,14 +1,14 @@
-import { Col, Row } from 'antd';
 import { Component, ReactNode } from 'react';
 import cake from '../../../../images/cake.png';
 import { AiOutlineUser } from 'react-icons/ai';
 import { FaRegCalendarPlus, FaRegMoneyBillAlt } from 'react-icons/fa';
+import { Grid } from '@mui/material';
 class OverView extends Component {
     render(): ReactNode {
         return (
             <div className="mt-3">
-                <Row gutter={16} style={{ maxHeight: '120px' }}>
-                    <Col span={6}>
+                <Grid container style={{ maxHeight: '120px' }}>
+                    <Grid item xs={3}>
                         <div
                             className="row text-center"
                             style={{
@@ -45,8 +45,8 @@ class OverView extends Component {
                                 </div>
                             </div>
                         </div>
-                    </Col>
-                    <Col span={6}>
+                    </Grid>
+                    <Grid item xs={3}>
                         <div
                             className="ovver-view-item"
                             style={{
@@ -81,8 +81,8 @@ class OverView extends Component {
                                 </div>
                             </div>
                         </div>
-                    </Col>
-                    <Col span={6}>
+                    </Grid>
+                    <Grid item xs={3}>
                         <div
                             className="ovver-view-item"
                             style={{
@@ -121,8 +121,8 @@ class OverView extends Component {
                                 </div>
                             </div>
                         </div>
-                    </Col>
-                    <Col span={6}>
+                    </Grid>
+                    <Grid item xs={3}>
                         <div
                             className="ovver-view-item"
                             style={{
@@ -157,8 +157,8 @@ class OverView extends Component {
                                 </div>
                             </div>
                         </div>
-                    </Col>
-                </Row>
+                    </Grid>
+                </Grid>
             </div>
         );
     }

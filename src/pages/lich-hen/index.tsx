@@ -1,21 +1,11 @@
-import { PlusOutlined } from '@ant-design/icons';
-
-import { Col, FormInstance, Row, Space, Tooltip } from 'antd';
-import { Box, Button, Grid, Typography, Select } from '@mui/material';
+import { Box, Button, Grid, Typography, Select, Tooltip } from '@mui/material';
 import React, { Component, ReactNode, RefObject } from 'react';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import AddIcon from '../../images/add.svg';
-import {
-    AiOutlineBars,
-    AiOutlineCalendar,
-    AiOutlineEllipsis,
-    AiOutlineLeft,
-    AiOutlineRight
-} from 'react-icons/ai';
+import { AiOutlineBars, AiOutlineCalendar } from 'react-icons/ai';
 import { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -27,18 +17,13 @@ import '../lich-hen/calendar.css';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { ReactComponent as SettingIcon } from '../../images/setting-00.svg';
-import CreateOrUpdateAppointment from './components/create-or-update-lich-hen';
-import { CreateOrEditBookingDto } from '../../services/dat-lich/dto/CreateOrEditBookingDto';
 import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
 import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
-import { enqueueSnackbar } from 'notistack';
-import { padding } from '@mui/system';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 class LichHenScreen extends Component {
-    formRef = React.createRef<FormInstance>();
     calendarRef: RefObject<FullCalendar> = React.createRef();
     state = {
         initialView: 'timeGridWeek',
@@ -46,7 +31,6 @@ class LichHenScreen extends Component {
         modalVisible: false,
         events: [],
         idBooking: '',
-        createOrEditBooking: {} as CreateOrEditBookingDto,
         suggestNhanVien: [] as SuggestNhanSuDto[],
         suggestKhachHang: [] as SuggestKhachHangDto[],
         suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
@@ -66,7 +50,6 @@ class LichHenScreen extends Component {
         const idChiNhanh = Cookies.get('IdChiNhanh');
         const appointments = await bookingServices.getAllBooking({ idChiNhanh: idChiNhanh ?? '' });
         const lstEvent: any[] = [];
-        console.log(appointments);
         appointments.map((event) => {
             lstEvent.push({
                 id: event.id,
@@ -138,73 +121,12 @@ class LichHenScreen extends Component {
     };
 
     async createOrUpdateModalOpen(entityDto: string) {
-        if (entityDto === '') {
-            this.formRef.current?.resetFields();
-            this.setState({
-                createOrEditBooking: {
-                    id: '',
-                    startTime: '',
-                    startHours: '',
-                    trangThai: 1,
-                    ghiChu: '',
-                    idKhachHang: '',
-                    idNhanVien: '',
-                    idDonViQuiDoi: ''
-                }
-            });
-        } else {
-            // const booking = await nhanVienService.getNhanSu(entityDto);
-            // this.setState({
-            //     createOrEditNhanSu: employee
-            // });
-            // setTimeout(() => {
-            //     this.formRef.current?.setFieldsValue({ ...this.state.createOrEditNhanSu });
-            // }, 100);
-        }
-
         this.setState({ idBooking: entityDto });
         this.Modal();
     }
     handleSubmit = async () => {
-        const idChiNhanh = Cookies.get('IdChiNhanh');
-        this.formRef.current?.validateFields().then(async (values: any) => {
-            if (this.state.idBooking === '') {
-                const result = await bookingServices.CreateBooking({
-                    ...values,
-                    idChiNhanh: idChiNhanh
-                });
-                result
-                    ? enqueueSnackbar('Thêm mới lịch hẹn thàn công', { variant: 'success' })
-                    : enqueueSnackbar('Thêm mới lịch hẹn thất bại! vui lòng thử lại sau', {
-                          variant: 'error'
-                      });
-            } else {
-                const result = await bookingServices.CreateBooking({
-                    id: this.state.idBooking,
-                    idChiNhanh: idChiNhanh,
-                    ...values
-                });
-                result
-                    ? enqueueSnackbar('Cập nhật lịch hẹn thành công', {
-                          variant: 'success',
-                          anchorOrigin: {
-                              vertical: 'top',
-                              horizontal: 'center'
-                          }
-                      })
-                    : enqueueSnackbar('Cập nhật lịch hẹn thất bại! vui lòng thử lại sau', {
-                          variant: 'error',
-                          anchorOrigin: {
-                              vertical: 'top',
-                              horizontal: 'center'
-                          }
-                      });
-            }
-
-            await this.getData();
-            this.setState({ modalVisible: false });
-            this.formRef.current?.resetFields();
-        });
+        await this.getData();
+        this.setState({ modalVisible: false });
     };
 
     render(): ReactNode {
@@ -442,24 +364,10 @@ class LichHenScreen extends Component {
                         });
                     }}
                     onOk={this.handleSubmit}
-                    modalType="Thêm cuộc hẹn"
+                    idLichHen={this.state.idBooking}
                     suggestNhanVien={this.state.suggestNhanVien}
                     suggestDichVu={this.state.suggestDonViQuiDoi}
                     suggestKhachHang={this.state.suggestKhachHang}></CreateOrEditLichHenModal>
-                {/* <CreateOrUpdateAppointment
-                    visible={this.state.modalVisible}
-                    onCancel={() => {
-                        this.setState({
-                            modalVisible: false
-                        });
-                    }}
-                    onOk={this.handleSubmit}
-                    modalType="Thêm cuộc hẹn"
-                    suggestNhanVien={this.state.suggestNhanVien}
-                    suggestDichVu={this.state.suggestDonViQuiDoi}
-                    suggestKhachHang={this.state.suggestKhachHang}
-                    formRef={this.formRef}
-                /> */}
             </Box>
         );
     }
