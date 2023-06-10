@@ -1,24 +1,34 @@
-import { useEffect, useState } from 'react';
-import { Menu, MenuItem, Typography } from '@mui/material';
-import { Info, Edit, DeleteForever } from '@mui/icons-material';
+import * as React from 'react';
+import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { Info, Edit, DeleteForever, MoreHoriz } from '@mui/icons-material';
 
-export default function ActionViewEditDelete({ elmHTML, handleClickAction }: any) {
-    const [show, setShow] = useState(false);
+export default function ActionViewEditDelete({ handleAction }: any) {
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClickAction = (type: number) => {
+        setAnchorEl(null);
+        handleAction(type);
+    };
 
-    useEffect(() => {
-        if (elmHTML) {
-            setShow(true);
-        }
-    }, [elmHTML]);
     return (
-        <>
+        <div>
+            <IconButton
+                id="demo-positioned-button"
+                aria-controls={open ? 'demo-positioned-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}>
+                <MoreHoriz />
+            </IconButton>
             <Menu
-                // id={`actions-menu-${this.state.selectedRowId}`}
-                anchorEl={elmHTML}
-                keepMounted
-                open={show}
-                onClose={() => setShow(false)}
-                sx={{ minWidth: '120px' }}>
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={() => setAnchorEl(null)}>
                 <MenuItem onClick={() => handleClickAction(0)}>
                     <Typography
                         color="#009EF7"
@@ -59,6 +69,6 @@ export default function ActionViewEditDelete({ elmHTML, handleClickAction }: any
                     <DeleteForever sx={{ color: '#F1416C' }} />
                 </MenuItem>
             </Menu>
-        </>
+        </div>
     );
 }

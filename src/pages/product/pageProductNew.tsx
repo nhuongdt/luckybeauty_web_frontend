@@ -6,47 +6,27 @@ import {
     Box,
     Typography,
     TextField,
-    InputAdornment,
-    Select,
-    MenuItem,
     Stack,
     Button,
-    Container,
-    Link,
-    Avatar,
-    IconButton,
-    TextareaAutosize,
-    ButtonGroup,
-    Breadcrumbs,
-    Dialog,
-    Pagination
+    Pagination,
+    IconButton
 } from '@mui/material';
-import './style.css';
+import { Add, FileDownload, FileUpload, Search } from '@mui/icons-material';
+
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
-import avatar from '../../images/avatar.png';
-import EditIcon from '@mui/icons-material/Edit';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
-import AddIcon from '../../images/add.svg';
-import SearchIcon from '../../images/search-normal.svg';
-import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
-import DownloadIcon from '../../images/download.svg';
-import UploadIcon from '../../images/upload.svg';
-import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
-import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
-import tagIcon1 from '../../images/tagAll.svg';
-import tagIcon2 from '../../images/tag2.svg';
-import tagIcon3 from '../../images/tag3.svg';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { TextTranslate } from '../../components/TableLanguage';
 /* custom component */
+import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
+import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import { OptionPage } from '../../components/Pagination/OptionPage';
+import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
+import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
 
-import TreeViewGroupProduct from '../../components/Treeview/ProductGroup';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -57,46 +37,13 @@ import {
     ModelHangHoaDto,
     PagedProductSearchDto
 } from '../../services/product/dto';
+
 import Utils from '../../utils/utils'; // func common
-
-import BreadcrumbsPageTitle from '../../components/Breadcrumbs/PageTitle';
-import AccordionNhomHangHoa from '../../components/Accordion/NhomHangHoa';
-import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import MessageAlert from '../../components/AlertDialog/MessageAlert';
-import { OptionPage } from '../../components/Pagination/OptionPage';
-import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
-import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-
-import {
-    Add,
-    DeleteOutline,
-    FileDownload,
-    FileUpload,
-    Info,
-    LocalOffer,
-    Menu,
-    ModeEditOutline,
-    MoreHoriz,
-    Search
-} from '@mui/icons-material';
-
 import '../../App.css';
-export const DataGridNoData = () => {
-    return (
-        <>
-            <p>no data</p>
-        </>
-    );
-};
-export default function PageProductNew() {
-    const [open, setOpen] = React.useState(false);
+import './style.css';
 
-    const handleOpen = () => {
-        setOpen(true);
-    };
-    const handleClose = () => {
-        setOpen(false);
-    };
+export default function PageProductNew() {
+    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
@@ -127,14 +74,6 @@ export default function PageProductNew() {
         typeSort: ''
     });
 
-    /* state in row table */
-    const [showAction, setShowAction] = useState({ index: 0, value: false });
-    const [showListAction, setshowListAction] = useState(true);
-    const [isHover, setIsHover] = useState(false);
-    const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
-    const [anchorEl, setAnchorEl] = useState(null);
-    /* end state in row table */
-
     const GetListHangHoa = async () => {
         const list = await ProductService.Get_DMHangHoa(filterPageProduct);
         setPageDataProduct({
@@ -157,6 +96,7 @@ export default function PageProductNew() {
             tenNhomHang: 'Tất cả',
             color: '#7C3367'
         });
+        console.log('tree ', list.items);
         setTreeNhomHangHoa([obj, ...list.items]);
     };
 
@@ -215,52 +155,57 @@ export default function PageProductNew() {
         }
     };
 
-    function saveNhomHang(objNew: ModelNhomHangHoa) {
-        if (triggerModalNhomHang.isNew) {
-            const newTree = [
-                // Items before the insertion point:
-                ...treeNhomHangHoa.slice(0, 1),
-                // New item:
-                objNew,
-                // Items after the insertion point:
-                ...treeNhomHangHoa.slice(1)
-            ];
-            setTreeNhomHangHoa(newTree);
-            setObjAlert({ show: true, type: 1, mes: 'Thêm nhóm dịch vụ thành công' });
-        } else {
-            GetTreeNhomHangHoa();
-            setObjAlert({ show: true, type: 1, mes: 'Cập nhật nhóm dịch vụ thành công' });
-        }
-        hiddenAlert();
-    }
-
-    function saveProduct(objNew: ModelHangHoaDto) {
-        if (triggerModalProduct.isNew) {
-            objNew.maHangHoa = objNew.donViQuiDois.filter(
-                (x) => x.laDonViTinhChuan === 1
-            )[0]?.maHangHoa;
-
-            setPageDataProduct((olds) => {
-                return {
-                    ...olds,
-                    totalCount: olds.totalCount + 1,
-                    totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageProduct.pageSize),
-                    items: [objNew, ...olds.items]
-                };
+    function saveNhomHang(objNew: ModelNhomHangHoa, isDelete = false) {
+        if (isDelete) {
+            setObjAlert({
+                show: true,
+                type: 1,
+                mes: 'Xóa ' + objNew.sLoaiNhomHang + ' thành công'
             });
-            setObjAlert({ show: true, type: 1, mes: 'Thêm dịch vụ thành công' });
         } else {
-            GetListHangHoa();
-            setObjAlert({ show: true, type: 1, mes: 'Sửa dịch vụ thành công' });
+            if (triggerModalNhomHang.isNew) {
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Thêm ' + objNew.sLoaiNhomHang + ' thành công'
+                });
+            } else {
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật ' + objNew.sLoaiNhomHang + ' thành công'
+                });
+            }
         }
-        hiddenAlert();
+
+        GetTreeNhomHangHoa();
     }
 
-    const hiddenAlert = () => {
-        setTimeout(() => {
-            setObjAlert({ show: false, mes: '', type: 1 });
-        }, 3000);
-    };
+    function saveProduct(objNew: ModelHangHoaDto, isDelete = false) {
+        console.log('saveProduct ', objNew);
+        const sLoai = objNew.tenLoaiHangHoa?.toLocaleLowerCase();
+        if (isDelete) {
+            deleteProduct();
+        } else {
+            if (triggerModalProduct.isNew) {
+                setPageDataProduct((olds) => {
+                    return {
+                        ...olds,
+                        totalCount: olds.totalCount + 1,
+                        totalPage: Utils.getTotalPage(
+                            olds.totalCount + 1,
+                            filterPageProduct.pageSize
+                        ),
+                        items: [objNew, ...olds.items]
+                    };
+                });
+                setObjAlert({ show: true, type: 1, mes: 'Thêm ' + sLoai + ' thành công' });
+            } else {
+                GetListHangHoa();
+                setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + '  thành công' });
+            }
+        }
+    }
 
     const handleChangePage = (event: any, value: number) => {
         setFilterPageProduct({
@@ -288,54 +233,54 @@ export default function PageProductNew() {
         }
     };
 
-    const doActionRow = (action: number) => {
+    const doActionRow = (action: any, rowItem: any) => {
+        setRowHover(rowItem);
         if (action < 2) {
-            showModalAddProduct(action, rowHover?.idDonViQuyDoi);
+            showModalAddProduct(action, rowItem?.idDonViQuyDoi);
         } else {
             setInforDeleteProduct(
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowHover?.maHangHoa ?? ' '} không?`
+                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowItem?.maHangHoa ?? ' '} không?`
                 })
             );
         }
     };
     console.log('page');
 
-    const showMenuAction = (elm: any, rowItem: any) => {
-        console.log('row');
-        setRowHover(rowItem);
-        setAnchorEl(elm.currentTarget);
-    };
-
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
             await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
-            setObjAlert({ show: true, type: 1, mes: 'Xóa dịch vụ thành công' });
-            hiddenAlert();
+            setObjAlert({
+                show: true,
+                type: 1,
+                mes: 'Xóa ' + rowHover?.tenLoaiHangHoa?.toLocaleLowerCase() + ' thành công'
+            });
             setInforDeleteProduct({ ...inforDeleteProduct, show: false });
+            setPageDataProduct((olds) => {
+                return {
+                    ...olds,
+                    // neu sau nay khong can lay hang ngung kinhdoanh --> bo comment doan nay
+                    // totalCount: olds.totalCount - 1,
+                    // totalPage: Utils.getTotalPage(olds.totalCount - 1, filterPageProduct.pageSize),
+                    items: olds.items.map((x: any) => {
+                        if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
+                            return { ...x, txtTrangThaiHang: 'Ngừng kinh doanh' };
+                        } else {
+                            return x;
+                        }
+                    })
+                };
+            });
         }
-    };
-
-    const hoverRow = (event: any, rowData: any, index: number) => {
-        switch (event.type) {
-            case 'mouseenter': // enter
-                setShowAction({ index: index, value: true });
-                break;
-            case 'mouseleave': //leave
-                setShowAction({ index: index, value: false });
-                break;
-        }
-        setshowListAction(false);
-        setRowHover(rowData);
-        setIsHover(event.type === 'mouseenter');
     };
 
     const columns: GridColDef[] = [
         {
             field: 'maHangHoa',
             headerName: 'Mã dịch vụ',
+
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
@@ -357,6 +302,7 @@ export default function PageProductNew() {
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
+            headerAlign: 'center',
             minWidth: 250,
             renderCell: (params) => (
                 <Box display="flex" width="100%">
@@ -392,6 +338,8 @@ export default function PageProductNew() {
         {
             field: 'giaBan',
             headerName: 'Giá bán',
+            headerAlign: 'center',
+            align: 'right',
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
@@ -431,6 +379,7 @@ export default function PageProductNew() {
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
+            headerAlign: 'center',
             minWidth: 130,
             flex: 1,
             renderCell: (params) => (
@@ -441,7 +390,7 @@ export default function PageProductNew() {
                         padding: '4px 8px',
                         borderRadius: '1000px',
                         backgroundColor: '#F1FAFF',
-                        color: '#009EF7'
+                        color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
                     }}>
                     {params.value}
                 </Typography>
@@ -455,26 +404,18 @@ export default function PageProductNew() {
         },
         {
             field: 'actions',
-            headerName: 'Hành động',
+            headerName: '#',
+            headerAlign: 'center',
             maxWidth: 60,
             flex: 1,
             disableColumnMenu: true,
 
             renderCell: (params) => (
-                <IconButton
-                    aria-label="Actions"
-                    aria-controls={`actions-menu-${params.row.id}`}
-                    aria-haspopup="true"
-                    onClick={(event) => showMenuAction(event, params.row)}>
-                    <MoreHoriz />
-                </IconButton>
+                <ActionViewEditDelete
+                    handleAction={(action: any) => doActionRow(action, params.row)}
+                />
             ),
-            renderHeader: (params) => (
-                <Box sx={{ display: 'none' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
 
@@ -496,6 +437,10 @@ export default function PageProductNew() {
                 onCancel={() =>
                     setInforDeleteProduct({ ...inforDeleteProduct, show: false })
                 }></ConfirmDelete>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}></SnackbarAlert>
             <Grid
                 container
                 className="dich-vu-page"
@@ -515,11 +460,7 @@ export default function PageProductNew() {
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
+                                    startAdornment: <Search />
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {
@@ -602,7 +543,13 @@ export default function PageProductNew() {
                         </Box>
                     </Grid>
                     <Grid item lg={9} md={9} sm={8} xs={12}>
-                        <Box sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
+                        <Box
+                            sx={{
+                                backgroundColor: '#fff',
+                                borderRadius: '8px',
+                                minHeight: '100%',
+                                position: 'relative'
+                            }}>
                             <DataGrid
                                 autoHeight
                                 rows={pageDataProduct.items}
@@ -620,43 +567,40 @@ export default function PageProductNew() {
                                 }}
                                 localeText={TextTranslate}
                             />
-                            <ActionViewEditDelete
-                                elmHTML={anchorEl}
-                                handleClickAction={doActionRow}
-                            />
-                        </Box>
 
-                        <Grid
-                            container
-                            rowSpacing={2}
-                            columnSpacing={2}
-                            style={{
-                                display: pageDataProduct.totalCount > 1 ? 'flex' : 'none'
-                            }}>
-                            <Grid item xs={4} md={4} lg={4} sm={4}>
-                                <OptionPage
-                                    changeNumberOfpage={changeNumberOfpage}
-                                    totalRow={pageDataProduct.totalCount}
-                                />
-                            </Grid>
-                            <Grid item xs={8} md={8} lg={8} sm={8} style={{ paddingRight: '16px' }}>
-                                <Stack direction="row" spacing={2} style={{ float: 'right' }}>
-                                    <LabelDisplayedRows
-                                        currentPage={filterPageProduct.currentPage}
-                                        pageSize={filterPageProduct.pageSize}
-                                        totalCount={pageDataProduct.totalCount}
+                            <Grid
+                                container
+                                style={{
+                                    display: pageDataProduct.totalCount > 1 ? 'flex' : 'none',
+                                    paddingLeft: '16px',
+                                    // position: 'absolute',
+                                    bottom: '16px'
+                                }}>
+                                <Grid item xs={4} md={4} lg={4} sm={4}>
+                                    <OptionPage
+                                        changeNumberOfpage={changeNumberOfpage}
+                                        totalRow={pageDataProduct.totalCount}
                                     />
-                                    <Pagination
-                                        shape="rounded"
-                                        // color="primary"
-                                        count={pageDataProduct.totalPage}
-                                        page={filterPageProduct.currentPage}
-                                        defaultPage={filterPageProduct.currentPage}
-                                        onChange={handleChangePage}
-                                    />
-                                </Stack>
+                                </Grid>
+                                <Grid item xs={8} md={8} lg={8} sm={8}>
+                                    <Stack direction="row" style={{ float: 'right' }}>
+                                        <LabelDisplayedRows
+                                            currentPage={filterPageProduct.currentPage}
+                                            pageSize={filterPageProduct.pageSize}
+                                            totalCount={pageDataProduct.totalCount}
+                                        />
+                                        <Pagination
+                                            shape="rounded"
+                                            // color="primary"
+                                            count={pageDataProduct.totalPage}
+                                            page={filterPageProduct.currentPage}
+                                            defaultPage={filterPageProduct.currentPage}
+                                            onChange={handleChangePage}
+                                        />
+                                    </Stack>
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        </Box>
                     </Grid>
                 </Grid>
             </Grid>

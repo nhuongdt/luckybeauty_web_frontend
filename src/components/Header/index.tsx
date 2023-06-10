@@ -40,6 +40,8 @@ import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import { ReactComponent as ToggleIconNew } from '../../images/arrow-circle-left.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
+import MessageAlert from '../../components/AlertDialog/MessageAlert';
+
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -82,13 +84,13 @@ const Header: React.FC<HeaderProps> = (
             })
             .catch((error) => console.log(error));
         const getChiNhanhs = async () => {
-            const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
-            setListChiNhanh(listChiNhanh);
-            setCurrentChiNhanh(listChiNhanh[0].id);
-            const remember = Cookies.get('remember');
-            Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
-                expires: remember === 'true' ? 1 : undefined
-            });
+            // const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
+            // setListChiNhanh(listChiNhanh);
+            // setCurrentChiNhanh(listChiNhanh[0].id);
+            // const remember = Cookies.get('remember');
+            // Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
+            //     expires: remember === 'true' ? 1 : undefined
+            // });
         };
         getChiNhanhs();
     }, []);
