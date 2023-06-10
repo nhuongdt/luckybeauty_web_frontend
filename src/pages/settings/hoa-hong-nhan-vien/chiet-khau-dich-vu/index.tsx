@@ -111,6 +111,12 @@ class ChietKhauDichVuScreen extends Component {
                         sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
                         {params.value}
                     </Box>
+                ),
+                renderHeader: (params: any) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
                 )
             },
 
@@ -529,6 +535,7 @@ class ChietKhauDichVuScreen extends Component {
                                 paginationModel: { page: 5, pageSize: 10 }
                             }
                         }}
+                        checkboxSelection={false}
                         pageSizeOptions={[10, 20]}
                         sx={{
                             '& p': {
@@ -549,7 +556,6 @@ class ChietKhauDichVuScreen extends Component {
                             }
                         }}
                         localeText={TextTranslate}
-                        checkboxSelection
                     />
                 </Box>
                 <CreateOrEditChietKhauDichVuModal
