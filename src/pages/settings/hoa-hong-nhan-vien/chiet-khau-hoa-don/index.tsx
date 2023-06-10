@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { Component, ReactNode } from 'react';
-import { CreateOrEditChietKhauHoaDonDto } from '../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
-import chietKhauHoaDonStore from '../../../../../stores/chietKhauHoaDonStore';
-import AppConsts from '../../../../../lib/appconst';
-import SearchIcon from '../../../../../images/search-normal.svg';
-import { TextTranslate } from '../../../../../components/TableLanguage';
-import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
+import { CreateOrEditChietKhauHoaDonDto } from '../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
+import chietKhauHoaDonStore from '../../../../stores/chietKhauHoaDonStore';
+import AppConsts from '../../../../lib/appconst';
+import SearchIcon from '../../../../images/search-normal.svg';
+import { TextTranslate } from '../../../../components/TableLanguage';
+import { ReactComponent as IconSorting } from '.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Box,
@@ -23,8 +23,9 @@ import {
     Grid
 } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import CreateOrEditChietKhauHoaDonModal from './create-or-edit-chiet-khau-hd';
+import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
+import { minWidth } from '@mui/system';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,
@@ -99,8 +100,48 @@ class ChietKhauHoaDonScreen extends Component {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
         const columns: GridColDef[] = [
             {
-                field: 'id',
-                headerName: 'ID'
+                field: 'hoaHong',
+                headerName: 'Hoa hồng',
+                minWidth: 112,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting />
+                    </Box>
+                )
+            },
+            {
+                field: 'chungTu',
+                headerName: 'Chứng từ áp dụng',
+                minWidth: 120,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting />
+                    </Box>
+                )
+            },
+            {
+                field: 'ghiChu',
+                headerName: 'Ghi chú',
+                minWidth: 150,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box>
+                        {params.colDef.headerName}
+                        <IconSorting />
+                    </Box>
+                )
+            }
+        ];
+        const rows = [
+            {
+                id: '98797ugh',
+                hoaHong: '2 % thực thu',
+                chungTu: 'Bán hàng',
+                ghiChu: 'Đây là một ghi chú trông có vẻ buồn cười nhưng lại rất là mang tính chất demo'
             }
         ];
         return (
@@ -150,57 +191,26 @@ class ChietKhauHoaDonScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box>
-                    <TableContainer component={Paper} sx={{ display: 'none' }}>
-                        <Table aria-label="customized table" size="small">
-                            <TableHead>
-                                <TableRow style={{ height: '48px' }}>
-                                    <TableCell className="text-td-table" align="left">
-                                        Hoa hồng
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="left">
-                                        Chứng từ áp dụng
-                                    </TableCell>
-                                    <TableCell className="text-td-table" align="center">
-                                        Ghi chú
-                                    </TableCell>
-                                    <TableCell style={{ width: '50px' }} align="center">
-                                        #
-                                    </TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {chietKhauHoaDons === undefined
-                                    ? null
-                                    : chietKhauHoaDons.items.map((item, length) => {
-                                          return (
-                                              <TableRow style={{ height: '48px' }}>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table">
-                                                      {item.giaTriChietKhau}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table">
-                                                      {item.chungTuApDung}
-                                                  </TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px' }}
-                                                      className="text-th-table"></TableCell>
-                                                  <TableCell
-                                                      style={{ height: '48px', width: '50px' }}
-                                                      align="right">
-                                                      <IconButton>
-                                                          <BsThreeDotsVertical />
-                                                      </IconButton>
-                                                  </TableCell>
-                                              </TableRow>
-                                          );
-                                      })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-
+                    <DataGrid
+                        columns={columns}
+                        rows={rows}
+                        localeText={TextTranslate}
+                        pageSizeOptions={[10, 20]}
+                        checkboxSelection={false}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 5, pageSize: 10 }
+                            }
+                        }}
+                        sx={{
+                            '& .uiDataGrid-cellContent': {
+                                fontSize: '12px'
+                            },
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            }
+                        }}
+                    />
                     <CreateOrEditChietKhauHoaDonModal
                         formRef={this.state.createOrEditModel}
                         onClose={this.Modal}
