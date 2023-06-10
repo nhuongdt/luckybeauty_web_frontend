@@ -39,6 +39,8 @@ import {
 } from '../../services/product/dto';
 
 import Utils from '../../utils/utils'; // func common
+import AppConsts from '../../lib/appconst';
+
 import '../../App.css';
 import './style.css';
 
@@ -69,7 +71,7 @@ export default function PageProductNew() {
         idNhomHangHoas: '',
         textSearch: '',
         currentPage: 1,
-        pageSize: Utils.pageOption[0].value,
+        pageSize: AppConsts.pageOption[0].value,
         columnSort: '',
         typeSort: ''
     });
