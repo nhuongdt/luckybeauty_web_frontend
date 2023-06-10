@@ -264,12 +264,26 @@ export const appRouters: AppRouteProps = {
                             title: 'Thời gian nghỉ',
                             name: 'nhanvien',
                             icon: <BsDot style={{ fontSize: 20 }} />,
-                            iconActive: <HomeActive width="20px" />,
+                            iconActive: null,
                             showInMenu: true,
                             isLayout: false,
                             children: [],
                             component: LoadableComponent(
                                 () => import('../../pages/employee/thoi-gian-nghi')
+                            )
+                        },
+                        {
+                            path: '/lich-lam-viec',
+                            permission: '',
+                            title: 'Lịch làm việc',
+                            name: 'lichlamviec',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(
+                                () => import('../../pages/employee/lich-lam-viec')
                             )
                         }
                     ],
