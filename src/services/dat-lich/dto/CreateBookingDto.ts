@@ -1,5 +1,4 @@
-export interface CreateOrEditBookingDto {
-    id: string;
+export interface CreateBookingDto {
     startHours: string;
     startTime: string;
     trangThai: number;
@@ -7,4 +6,5 @@ export interface CreateOrEditBookingDto {
     idKhachHang: string;
     idNhanVien: string;
     idDonViQuiDoi: string;
+    idChiNhanh: string;
 }

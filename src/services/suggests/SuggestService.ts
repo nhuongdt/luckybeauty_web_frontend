@@ -1,4 +1,3 @@
-import { List } from 'lodash';
 import { SuggestPhongBanDto } from './dto/SuggestPhongBanDto';
 import http from '../httpService';
 import { SuggestCaLamViecDto } from './dto/SuggestCaLamViecDto';
@@ -15,52 +14,124 @@ import { SuggestChucVuDto } from './dto/SuggestChucVuDto';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestPhongBans');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestPhongBans');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting PhongBans:', error);
+            return [];
+        }
     }
+
     public async SuggestCaLamViec(): Promise<SuggestCaLamViecDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestPhongBans');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestCaLamViec');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting CaLamViec:', error);
+            return [];
+        }
     }
+
     public async SuggestChiNhanh(): Promise<SuggestChiNhanhDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestChiNhanhs');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestChiNhanhs');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting ChiNhanhs:', error);
+            return [];
+        }
     }
+
     public async SuggestLoaiHangHoa(): Promise<SuggestLoaiHangHoaDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestLoaiHangHoas');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestLoaiHangHoas');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting LoaiHangHoas:', error);
+            return [];
+        }
     }
+
     public async SuggestHangHoa(): Promise<SuggestHangHoaDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestHangHoas');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestHangHoas');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting HangHoas:', error);
+            return [];
+        }
     }
+
     public async SuggestDonViQuiDoi(): Promise<SuggestDonViQuiDoiDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestDonViQuiDois');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestDonViQuiDois');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting DonViQuiDois:', error);
+            return [];
+        }
     }
+
     public async SuggestNguonKhach(): Promise<SuggestNguonKhachDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestNguonKhachHangs');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestNguonKhachHangs');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting NguonKhachHangs:', error);
+            return [];
+        }
     }
+
     public async SuggestNhomKhach(): Promise<SuggestNhomKhachDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestNhomKhachHangs');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestNhomKhachHangs');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting NhomKhachHangs:', error);
+            return [];
+        }
     }
+
     public async SuggestLoaiKhach(): Promise<SuggestLoaiKhachDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestLoaiKhachHangs');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestLoaiKhachHangs');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting LoaiKhachHangs:', error);
+            return [];
+        }
     }
+
     public async SuggestKhachHang(): Promise<SuggestKhachHangDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestKhachHangs');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestKhachHangs');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting KhachHangs:', error);
+            return [];
+        }
     }
+
     public async SuggestNhanSu(): Promise<SuggestNhanSuDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestNhanSus');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestNhanSus');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting NhanSus:', error);
+            return [];
+        }
     }
+
     public async SuggestChucVu(): Promise<SuggestChucVuDto[]> {
-        const result = await http.post('api/services/app/Suggest/SuggestChucVus');
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestChucVus');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting ChucVus:', error);
+            return [];
+        }
     }
 }
+
 export default new SuggestService();

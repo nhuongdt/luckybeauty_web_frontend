@@ -1,27 +1,13 @@
-import React, { FormEventHandler, ChangeEventHandler } from 'react';
+import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import {
-    Box,
-    Grid,
-    TextField,
-    Button,
-    Typography,
-    Pagination,
-    IconButton,
-    Menu,
-    MenuItem
-} from '@mui/material';
+import { Box, Grid, TextField, Button, Typography, Pagination, IconButton } from '@mui/material';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
-import InfoIcon from '@mui/icons-material/Info';
 import { DataGrid } from '@mui/x-data-grid';
 import userService from '../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '../../images/add.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import '../../custom.css';
 import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
 import CreateOrEditUser from './components/create-or-edit-user';
@@ -33,26 +19,8 @@ import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextTranslate } from '../../components/TableLanguage';
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface IUserProps {}
-
-export interface IUserState {
-    modalVisible: boolean;
-    maxResultCount: number;
-    skipCount: number;
-    userId: number;
-    filter: string;
-    listUser: GetAllUserOutput[];
-    totalCount: number;
-    currentPage: number;
-    totalPage: number;
-    startIndex: number;
-    userEdit: CreateOrUpdateUserInput;
-    isShowConfirmDelete: boolean;
-    roles: GetRoles[];
-    suggestNhanSu: SuggestNhanSuDto[];
-}
-class UserScreen extends AppComponentBase<IUserProps> {
+import ActionMenuTable from '../../components/Menu/ActionMenuTable';
+class UserScreen extends AppComponentBase {
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -446,38 +414,72 @@ class UserScreen extends AppComponentBase<IUserProps> {
                             // components={{
                             //     Pagination: Pagination
                             // }}
-
+                            hideFooterPagination
+                            hideFooter
                             localeText={TextTranslate}
                         />
                     </Box>
-                    <div className="row" style={{ display: 'none' }}>
-                        <div className="col-6" style={{ float: 'left' }}></div>
-                        <div className="col-6" style={{ float: 'right' }}>
-                            <div className="row align-items-center" style={{ height: '50px' }}>
-                                <div style={{ float: 'right' }} className="col-7">
-                                    <Box display="flex" className="align-items-center">
-                                        <Pagination
-                                            count={Math.ceil(
-                                                this.state.totalCount / this.state.maxResultCount
-                                            )}
-                                            page={this.state.currentPage}
-                                            onChange={this.handlePageChange}
-                                            sx={{
-                                                '& button': {
-                                                    borderRadius: '4px',
-                                                    lineHeight: '1'
-                                                },
-                                                '& .Mui-selected': {
-                                                    backgroundColor: '#7C3367!important',
-                                                    color: '#fff'
-                                                }
-                                            }}
-                                        />
-                                    </Box>
-                                </div>
-                            </div>
+                    <Grid container>
+                        <Grid item xs={3}></Grid>
+                        <Grid item xs={9}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'flex-end',
+                                    alignItems: 'center',
+                                    height: 48
+                                }}>
+                                <Typography>
+                                    Hiển thị {this.state.maxResultCount} của {this.state.totalCount}{' '}
+                                    mục
+                                </Typography>
+                                <Pagination
+                                    count={this.state.totalPage}
+                                    page={this.state.currentPage}
+                                    onChange={this.handlePageChange}
+                                    sx={{
+                                        '& button': {
+                                            display: 'inline-block',
+                                            borderRadius: '4px',
+                                            lineHeight: '1'
+                                        },
+                                        '& .Mui-selected': {
+                                            backgroundColor: '#7C3367!important',
+                                            color: '#fff'
+                                        }
+                                    }}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    {/* <div className="row d-flex align-content-center" style={{ height: '50px' }}>
+                        <div className="col-3" style={{ float: 'left' }}></div>
+                        <div className="col-9" style={{ float: 'right' }}>
+                            <Box sx={{ float: 'right' }}>
+                                <Typography>
+                                    Hiển thị {this.state.maxResultCount} của {this.state.totalCount}{' '}
+                                    mục
+                                </Typography>
+                                <Pagination
+                                    count={this.state.totalPage}
+                                    page={this.state.currentPage}
+                                    onChange={this.handlePageChange}
+                                    sx={{
+                                        float: 'right',
+                                        '& button': {
+                                            display: 'inline-block',
+                                            borderRadius: '4px',
+                                            lineHeight: '1'
+                                        },
+                                        '& .Mui-selected': {
+                                            backgroundColor: '#7C3367!important',
+                                            color: '#fff'
+                                        }
+                                    }}
+                                />
+                            </Box>
                         </div>
-                    </div>
+                    </div> */}
                     <CreateOrEditUser
                         visible={this.state.modalVisible}
                         modalType={
@@ -498,53 +500,14 @@ class UserScreen extends AppComponentBase<IUserProps> {
                         isShow={this.state.isShowConfirmDelete}
                         onOk={this.onOkDelete}
                         onCancel={this.onShowDelete}></ConfirmDelete>
-                    <Menu
-                        id={`actions-menu-${this.state.selectedRowId}`}
+                    <ActionMenuTable
                         anchorEl={this.state.anchorEl}
-                        keepMounted
-                        open={Boolean(this.state.anchorEl)}
-                        onClose={this.handleCloseMenu}
-                        sx={{ minWidth: '120px' }}>
-                        <MenuItem onClick={this.handleView}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                View
-                            </Typography>
-                            <InfoIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.handleEdit}>
-                            <Typography
-                                color="#009EF7"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Edit
-                            </Typography>
-                            <EditIcon sx={{ color: '#009EF7' }} />
-                        </MenuItem>
-                        <MenuItem onClick={this.onShowDelete}>
-                            <Typography
-                                color="#F1416C"
-                                fontSize="12px"
-                                variant="button"
-                                textTransform="unset"
-                                width="64px"
-                                fontWeight="400"
-                                marginRight="8px">
-                                Delete
-                            </Typography>
-                            <DeleteForeverIcon sx={{ color: '#F1416C' }} />
-                        </MenuItem>
-                    </Menu>
+                        selectedRowId={this.state.selectedRowId}
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleView}
+                        handleEdit={this.handleEdit}
+                        handleDelete={this.onOkDelete}
+                    />
                 </Box>
             </Box>
         );

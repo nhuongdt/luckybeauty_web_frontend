@@ -9,42 +9,81 @@ import http from '../httpService';
 
 class UserService {
     public async create(createUserInput: CreateOrUpdateUserInput) {
-        const result = await http.post('api/services/app/User/Create', createUserInput);
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/User/Create', createUserInput);
+            return result.data.result;
+        } catch (error) {
+            // Handle the error here
+            console.error('Error occurred while creating user:', error);
+            throw error; // Optional: Rethrow the error to the caller
+        }
     }
 
     public async update(updateUserInput: UpdateUserInput) {
-        const result = await http.post('api/services/app/User/UpdateUser', updateUserInput);
-        return result.data.result;
+        try {
+            const result = await http.post('api/services/app/User/UpdateUser', updateUserInput);
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while updating user:', error);
+            throw error;
+        }
     }
 
     public async delete(entityDto: number) {
-        const result = await http.delete(`api/services/app/User/Delete?id=${entityDto}`);
-        return result.data;
+        try {
+            const result = await http.delete(`api/services/app/User/Delete?id=${entityDto}`);
+            return result.data;
+        } catch (error) {
+            console.error('Error occurred while deleting user:', error);
+            throw error;
+        }
     }
 
     public async getRoles() {
-        const result = await http.get('api/services/app/User/GetRoles');
-        return result.data.result.items;
+        try {
+            const result = await http.get('api/services/app/User/GetRoles');
+            return result.data.result.items;
+        } catch (error) {
+            console.error('Error occurred while retrieving roles:', error);
+            throw error;
+        }
     }
 
     public async changeLanguage(changeLanguageInput: ChangeLanguagaInput) {
-        const result = await http.post('api/services/app/User/ChangeLanguage', changeLanguageInput);
-        return result.data;
+        try {
+            const result = await http.post(
+                'api/services/app/User/ChangeLanguage',
+                changeLanguageInput
+            );
+            return result.data;
+        } catch (error) {
+            console.error('Error occurred while changing language:', error);
+            throw error;
+        }
     }
 
     public async get(entityDto: number): Promise<CreateOrUpdateUserInput> {
-        const result = await http.get(`api/services/app/User/Get?Id=${entityDto}`);
-        return result.data.result;
+        try {
+            const result = await http.get(`api/services/app/User/Get?Id=${entityDto}`);
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while retrieving user:', error);
+            throw error;
+        }
     }
 
     public async getAll(
         pagedFilterAndSortedRequest: PagedUserResultRequestDto
     ): Promise<PagedResultDto<GetAllUserOutput>> {
-        const result = await http.get('api/services/app/User/GetAll', {
-            params: pagedFilterAndSortedRequest
-        });
-        return result.data.result;
+        try {
+            const result = await http.get('api/services/app/User/GetAll', {
+                params: pagedFilterAndSortedRequest
+            });
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while retrieving all users:', error);
+            throw error;
+        }
     }
 }
 
