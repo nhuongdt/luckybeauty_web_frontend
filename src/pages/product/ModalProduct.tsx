@@ -38,6 +38,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [isNew, setIsNew] = useState(false);
     const [product, setProduct] = useState(new ModelHangHoaDto());
     const [wasClickSave, setWasClickSave] = useState(false);
+    const [actionProduct, setActionProduct] = useState(1);
 
     const [errTenHangHoa, setErrTenHangHoa] = useState(false);
     const [errMaHangHoa, setErrMaHangHoa] = useState(false);
@@ -54,6 +55,13 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             const obj = await ProductService.GetDetailProduct(id);
             setProduct(obj);
 
+            setProduct((old: any) => {
+                return {
+                    ...old,
+                    laHangHoa: old.idLoaiHangHoa === 1
+                };
+            });
+
             // find nhomhang
             const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);
             if (nhom.length > 0) {
@@ -62,6 +70,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 setNhomChosed(new ModelNhomHangHoa({ id: '' }));
             }
         } else {
+            setProduct(new ModelHangHoaDto());
+
             if (trigger.item.idNhomHangHoa !== undefined) {
                 const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
                 if (nhom.length > 0) {
@@ -77,7 +87,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     setNhomChosed(new ModelNhomHangHoa({ id: '' }));
                 }
             } else {
-                setProduct(new ModelHangHoaDto());
                 setNhomChosed(new ModelNhomHangHoa({ id: '' }));
             }
         }
@@ -118,10 +127,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         );
         setWasClickSave(false);
     };
-    const deleteProduct = async () => {
+
+    const handleClickOKComfirm = () => {
         setOpen(false);
         setInforDeleteProduct({ ...inforDeleteProduct, show: false });
-        handleSave(product, true); // call api delete at parent
+        handleSave(product, actionProduct);
     };
 
     const CheckSave = async () => {
@@ -179,7 +189,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         objNew.idDonViQuyDoi = data.donViQuiDois.filter(
             (x: any) => x.laDonViTinhChuan === 1
         )[0]?.id;
-        handleSave(objNew);
+        handleSave(objNew, isNew ? 1 : 2);
         setOpen(false);
     }
     return (
@@ -188,7 +198,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 isShow={inforDeleteProduct.show}
                 title={inforDeleteProduct.title}
                 mes={inforDeleteProduct.mes}
-                onOk={deleteProduct}
+                onOk={handleClickOKComfirm}
                 onCancel={() =>
                     setInforDeleteProduct({ ...inforDeleteProduct, show: false })
                 }></ConfirmDelete>
@@ -397,6 +407,27 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <Button
                         variant="contained"
                         sx={{
+                            bgcolor: '#633434',
+                            display: !isNew && product.trangThai === 0 ? '' : 'none'
+                        }}
+                        onClick={() => {
+                            setInforDeleteProduct(
+                                new PropConfirmOKCancel({
+                                    show: true,
+                                    title:
+                                        'Khôi phục ' + product?.tenLoaiHangHoa?.toLocaleLowerCase(),
+                                    mes: `Bạn có chắc chắn muốn khôi phục ${product?.tenLoaiHangHoa?.toLocaleLowerCase()} ${
+                                        product.tenHangHoa
+                                    }   không?`
+                                })
+                            );
+                            setActionProduct(4);
+                        }}>
+                        Khôi phục
+                    </Button>
+                    <Button
+                        variant="contained"
+                        sx={{
                             bgcolor: 'red',
                             display: isNew || product.trangThai === 0 ? 'none' : ''
                         }}
@@ -410,6 +441,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     } không?`
                                 })
                             );
+                            setActionProduct(3);
                         }}>
                         Xóa
                     </Button>
