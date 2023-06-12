@@ -21,6 +21,7 @@ export class ModelHangHoaDto {
     tyLeChuyenDoi?: number = 1;
     laDonViTinhChuan?: number = 1;
     idHangHoa?: string;
+    laHangHoa?: boolean;
 
     donViQuiDois:
         | any[]
@@ -35,6 +36,7 @@ export class ModelHangHoaDto {
 
     constructor(
         id = Utils.GuidEmpty,
+        idLoaiHangHoa = 2,
         tenHangHoa = '',
         idNhomHangHoa = '',
         moTa = '',
@@ -42,23 +44,26 @@ export class ModelHangHoaDto {
     ) {
         this.id = id;
         this.tenHangHoa = tenHangHoa;
+        this.idLoaiHangHoa = idLoaiHangHoa;
         this.idNhomHangHoa = idNhomHangHoa;
         this.moTa = moTa;
         this.donViQuiDois = donViQuiDois;
+        this.laHangHoa = this.idLoaiHangHoa === 1;
     }
 }
 
 /* group product */
 export class ModelNhomHangHoa {
     id?: string | null = Utils.GuidEmpty;
+
     maNhomHang? = '';
     tenNhomHang? = '';
-    //tenNhomHang_KhongDau = '';
     moTa? = '';
     idParent: string | null = null;
     color = '';
     laNhomHangHoa = false;
     children?: ModelNhomHangHoa[] = [];
+    sLoaiNhomHang?: string;
 
     constructor({
         id = Utils.GuidEmpty,
@@ -74,6 +79,13 @@ export class ModelNhomHangHoa {
         this.laNhomHangHoa = laNhomHangHoa;
         this.color = color;
         this.children = [];
+        Object.defineProperties(this, {
+            sLoaiNhomHang: {
+                get() {
+                    return this.laNhomHangHoa ? 'nhóm hàng hóa' : 'nhóm dịch vụ';
+                }
+            }
+        });
     }
 
     get tenNhomHang_KhongDau() {

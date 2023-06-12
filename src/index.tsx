@@ -5,7 +5,6 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import initializeStores from './stores/storeInitializer';
 import { Provider } from 'mobx-react';
-import { SnackbarProvider, useSnackbar } from 'notistack';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 const stores = initializeStores();
 root.render(

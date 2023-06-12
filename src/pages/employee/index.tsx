@@ -99,15 +99,14 @@ class EmployeeScreen extends React.Component {
     };
 
     async createOrUpdateModalOpen(id: string) {
-        console.log(this.state.idChiNhanh);
         if (id === '') {
             await NhanVienStore.createNhanVien(this.state.idChiNhanh);
-            this.setState({
+            await this.setState({
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         } else {
             await NhanVienStore.getForEdit(id);
-            this.setState({
+            await this.setState({
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         }
@@ -354,7 +353,7 @@ class EmployeeScreen extends React.Component {
                     aria-label="Actions"
                     aria-controls={`actions-menu-${params.row.id}`}
                     aria-haspopup="true"
-                    onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
+                    onClick={(event: any) => this.handleOpenMenu(event, params.row.id)}>
                     <MoreHorizIcon />
                 </IconButton>
             ),
@@ -386,7 +385,7 @@ class EmployeeScreen extends React.Component {
                                     borderColor: '#CDC9CD',
                                     height: '40px'
                                 }}
-                                onChange={(e) => {
+                                onChange={(e: any) => {
                                     this.setState({ filter: e.target.value });
                                 }}
                                 onKeyDown={(e) => {

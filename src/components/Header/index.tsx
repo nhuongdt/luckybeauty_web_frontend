@@ -9,21 +9,12 @@ import {
     Grid,
     Box,
     Typography,
-    TextField,
-    InputAdornment,
     Select,
     MenuItem,
     Menu,
-    Stack,
     Button,
     Badge,
-    Container,
-    Avatar,
-    IconButton,
-    TextareaAutosize,
-    ButtonGroup,
-    Breadcrumbs,
-    Dialog
+    Avatar
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
@@ -32,14 +23,13 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import MessageIcon from '../../images/message-question.svg';
 import NotificationIcon from '../../images/notification.svg';
-import { ReactComponent as ToggleIcon } from '../../images/toggleIcon.svg';
 import http from '../../services/httpService';
 import Cookies from 'js-cookie';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
-import { ReactComponent as ToggleIconNew } from '../../images/arrow-circle-left.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
+
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -171,6 +161,7 @@ const Header: React.FC<HeaderProps> = (
                                     Cookies.set('IdChiNhanh', e.target.value, {
                                         expires: remember === 'true' ? 1 : undefined
                                     });
+                                    window.location.reload();
                                 }}>
                                 {chiNhanhs.map((item) => {
                                     return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;

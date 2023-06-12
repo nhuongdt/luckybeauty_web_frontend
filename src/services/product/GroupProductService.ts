@@ -43,5 +43,13 @@ class GroupProductService {
             });
         return xx;
     };
+    XoaNhomHangHoa = async (idNhomHangHoa: string) => {
+        const xx = await http
+            .post(`api/services/app/NhomHangHoa/XoaNhomHangHoa?id=${idNhomHangHoa}`)
+            .then((res) => {
+                return res.data.result;
+            });
+        return xx;
+    };
 }
 export default new GroupProductService();

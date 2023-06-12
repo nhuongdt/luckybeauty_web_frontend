@@ -26,20 +26,8 @@ export const ComponentToPrint = ({ props }: any) => {
             setIsShow(true);
         }
     }, [props.contentHtml]);
-    // const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
-    //     new PropToChildMauIn({ contentHtml: '' })
-    // );
 
-    // const [contentData, setContentData] = React.useState();
     const ReplaceHoaDonChiTiet = (str: string) => {
-        // str = str.replace('{TenHangHoa}', `${props.hoadonChiTiet[0].tenHangHoa}`);
-        // str = str.replace('{SoLuong}', `${props.hoadonChiTiet[0].soLuong}`);
-        // str = str.replace('{GiaBan}', `${utils.formatNumber(props.hoadonChiTiet[0].giaBan)}`);
-        // str = str.replace(
-        //     '{ThanhTien}',
-        //     `${utils.formatNumber(props.hoadonChiTiet[0].thanhTienSauCK)}`
-        // );
-        // return str;
         str = str.replace('{TenHangHoa}', '{ct.tenHangHoa}');
         str = str.replace('{SoLuong}', '{ct.soLuong}');
         str = str.replace('{GiaBan}', '{ct.giaBan}');
@@ -51,8 +39,49 @@ export const ComponentToPrint = ({ props }: any) => {
         <>
             <PrintContext.Provider value={propMauIn}>
                 <div className={isShow ? 'show overlay' : 'overlay'}></div>
-                <ContenPrint />
+                <div className={isShow ? 'show ' : ''}>
+                    <ContenPrint child={contentData} />
+                </div>
             </PrintContext.Provider>
         </>
     );
 };
+
+// import CKEditor from '@ckeditor/ckeditor5-react';
+// import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
+// const CKEditorComponent = () => {
+//   const [content, setContent] = useState('');
+
+//   const handleEditorChange = (event, editor) => {
+//     const data = editor.getData();
+//     setContent(data);
+//   };
+
+//   return (
+//     <div>
+//       <CKEditor
+//         editor={ClassicEditor}
+//         data={content}
+//         onChange={handleEditorChange}
+//       />
+//       <div>
+//         <h3>Content:</h3>
+//         <div dangerouslySetInnerHTML={{ __html: content }} />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export  CKEditorComponent;
+
+// const App = () => {
+//     return (
+//       <div>
+//         <h1>CKEditor Example</h1>
+//         <CKEditorComponent />
+//       </div>
+//     );
+//   };
+
+//   export default App;
