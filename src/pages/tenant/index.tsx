@@ -240,7 +240,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                     <Typography
                                         variant="h1"
                                         fontWeight="700"
-                                        fontSize="24px"
+                                        fontSize="16px"
                                         sx={{ marginTop: '4px' }}>
                                         Danh sách tenant
                                     </Typography>
