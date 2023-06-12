@@ -8,10 +8,8 @@ const App = () => {
     return (
         <div>
             <StrictMode>
-                <BrowserRouter>
-                    {Routes}
-                    <SnackbarProvider maxSnack={3} />
-                </BrowserRouter>
+                <BrowserRouter>{Routes}</BrowserRouter>
+                <SnackbarProvider maxSnack={3} />
                 <DeleteExpiredCookie />
             </StrictMode>
         </div>
