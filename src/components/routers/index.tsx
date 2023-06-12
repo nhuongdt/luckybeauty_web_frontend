@@ -122,18 +122,6 @@ export const appRouters: AppRouteProps = {
             routes: [
                 {
                     path: '/home',
-                    name: 'home',
-                    permission: '',
-                    title: 'Home',
-                    icon: null,
-                    iconActive: null,
-                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew')),
-                    children: [],
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/home',
                     name: 'dashboard',
                     permission: '',
                     title: 'Trang chủ',
@@ -154,7 +142,7 @@ export const appRouters: AppRouteProps = {
                     iconActive: <LichActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/lich-hen/'))
+                    component: LoadableComponent(() => import('../../pages/lich-hen'))
                 },
                 {
                     path: '/ban-hangs',

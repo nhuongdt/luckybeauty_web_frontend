@@ -39,6 +39,8 @@ import {
 } from '../../services/product/dto';
 
 import Utils from '../../utils/utils'; // func common
+import AppConsts from '../../lib/appconst';
+
 import '../../App.css';
 import './style.css';
 
@@ -69,7 +71,7 @@ export default function PageProductNew() {
         idNhomHangHoas: '',
         textSearch: '',
         currentPage: 1,
-        pageSize: Utils.pageOption[0].value,
+        pageSize: AppConsts.pageOption[0].value,
         columnSort: '',
         typeSort: ''
     });
@@ -149,6 +151,7 @@ export default function PageProductNew() {
             setTriggerModalProduct((old: any) => {
                 return {
                     ...old,
+                    isShow: false,
                     item: { ...old.item, idNhomHangHoa: item.id }
                 };
             });
@@ -181,13 +184,12 @@ export default function PageProductNew() {
         GetTreeNhomHangHoa();
     }
 
-    function saveProduct(objNew: ModelHangHoaDto, isDelete = false) {
+    function saveProduct(objNew: ModelHangHoaDto, type = 1) {
+        // 1.insert, 2.update, 3.delete, 4.khoiphuc
         console.log('saveProduct ', objNew);
         const sLoai = objNew.tenLoaiHangHoa?.toLocaleLowerCase();
-        if (isDelete) {
-            deleteProduct();
-        } else {
-            if (triggerModalProduct.isNew) {
+        switch (type) {
+            case 1:
                 setPageDataProduct((olds) => {
                     return {
                         ...olds,
@@ -200,10 +202,18 @@ export default function PageProductNew() {
                     };
                 });
                 setObjAlert({ show: true, type: 1, mes: 'Thêm ' + sLoai + ' thành công' });
-            } else {
+                break;
+            case 2:
                 GetListHangHoa();
                 setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + '  thành công' });
-            }
+                break;
+            case 3:
+                deleteProduct();
+                break;
+            case 4:
+                restoreProduct();
+                setObjAlert({ show: true, type: 1, mes: 'Khôi phục ' + sLoai + '  thành công' });
+                break;
         }
     }
 
@@ -222,14 +232,18 @@ export default function PageProductNew() {
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
-            if (filterPageProduct.currentPage !== 1) {
-                setFilterPageProduct({
-                    ...filterPageProduct,
-                    currentPage: 1
-                });
-            } else {
-                GetListHangHoa();
-            }
+            hanClickIconSearch();
+        }
+    };
+
+    const hanClickIconSearch = () => {
+        if (filterPageProduct.currentPage !== 1) {
+            setFilterPageProduct({
+                ...filterPageProduct,
+                currentPage: 1
+            });
+        } else {
+            GetListHangHoa();
         }
     };
 
@@ -266,7 +280,7 @@ export default function PageProductNew() {
                     // totalPage: Utils.getTotalPage(olds.totalCount - 1, filterPageProduct.pageSize),
                     items: olds.items.map((x: any) => {
                         if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
-                            return { ...x, txtTrangThaiHang: 'Ngừng kinh doanh' };
+                            return { ...x, trangThai: 0, txtTrangThaiHang: 'Ngừng kinh doanh' };
                         } else {
                             return x;
                         }
@@ -274,6 +288,31 @@ export default function PageProductNew() {
                 };
             });
         }
+    };
+
+    const restoreProduct = async () => {
+        await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Khôi phục ' + rowHover?.tenLoaiHangHoa?.toLocaleLowerCase() + ' thành công'
+        });
+        setInforDeleteProduct({ ...inforDeleteProduct, show: false });
+        setPageDataProduct((olds) => {
+            return {
+                ...olds,
+                // neu sau nay khong can lay hang ngung kinhdoanh --> bo comment doan nay
+                // totalCount: olds.totalCount - 1,
+                // totalPage: Utils.getTotalPage(olds.totalCount - 1, filterPageProduct.pageSize),
+                items: olds.items.map((x: any) => {
+                    if (x.idDonViQuyDoi === rowHover?.idDonViQuyDoi) {
+                        return { ...x, trangThai: 1, txtTrangThaiHang: 'Đang kinh doanh' };
+                    } else {
+                        return x;
+                    }
+                })
+            };
+        });
     };
 
     const columns: GridColDef[] = [
@@ -460,7 +499,7 @@ export default function PageProductNew() {
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: <Search />
+                                    startAdornment: <Search onClick={hanClickIconSearch} />
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {
@@ -571,7 +610,7 @@ export default function PageProductNew() {
                             <Grid
                                 container
                                 style={{
-                                    display: pageDataProduct.totalCount > 1 ? 'flex' : 'none',
+                                    display: pageDataProduct.totalCount > 0 ? 'flex' : 'none',
                                     paddingLeft: '16px',
                                     // position: 'absolute',
                                     bottom: '16px'

@@ -28,6 +28,7 @@ export interface ICreateOrEditCustomerProps {
 class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef, onChange } = this.props;
+        console.log(formRef);
         return (
             <div className={visible ? 'show poppup-add' : 'poppup-add'}>
                 <div className="poppup-title">{title}</div>

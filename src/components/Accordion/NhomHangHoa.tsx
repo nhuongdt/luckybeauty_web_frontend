@@ -26,7 +26,6 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
         setRowHover(rowData);
     };
     const handleClickTreeItem = (isEdit = false) => {
-        console.log('handleClickTreeItem ', rowHover);
         clickTreeItem(isEdit, rowHover);
     };
     return (

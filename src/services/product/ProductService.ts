@@ -51,6 +51,14 @@ class ProductService {
             });
         return xx;
     };
+    RestoreProduct_byIdHangHoa = async (idHangHoa: string) => {
+        const xx = await http
+            .post(`api/services/app/HangHoa/RestoreProduct?idHangHoa=${idHangHoa}`)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        return xx;
+    };
     GetDMHangHoa_groupByNhom = async (input: any) => {
         const xx = await http
             .post(`api/services/app/HangHoa/GetDMHangHoa_groupByNhom`, input)

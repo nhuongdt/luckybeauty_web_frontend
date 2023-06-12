@@ -1,8 +1,9 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import qs from 'qs';
+import { enqueueSnackbar } from 'notistack';
+import { IconButton } from '@mui/material';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 const http = axios.create({
     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
     timeout: 30000,
@@ -37,14 +38,22 @@ http.interceptors.response.use(
             !!error.response.data.error.message &&
             error.response.data.error.details
         ) {
-            // Hiển thị thông báo lỗi sử dụng toastify
-            toast.error(
-                `${error.response.data.error.message}: ${error.response.data.error.details}`,
+            enqueueSnackbar(
+                <>
+                    <div>
+                        <div>Lỗi</div>
+                        <span>
+                            {error.response.data.error.message}:{error.response.data.error.details}
+                        </span>
+                    </div>
+                </>,
                 {
-                    position: 'top-center',
-                    autoClose: false,
-                    theme: 'colored',
-                    progress: 1
+                    variant: 'error',
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center'
+                    },
+                    autoHideDuration: 3000
                 }
             );
         } else if (
@@ -52,24 +61,49 @@ http.interceptors.response.use(
             !!error.response.data.error &&
             !!error.response.data.error.message
         ) {
-            // Hiển thị thông báo lỗi sử dụng toastify
-            toast.error('Đăng nhập thất bại: Người dùng chưa đăng nhập vào ứng dụng', {
-                position: 'top-center',
-                autoClose: false,
-                theme: 'colored',
-                progress: 1
-            });
-            setTimeout(() => {
-                window.location.href = '/login';
-            }, 3000);
+            enqueueSnackbar(
+                <>
+                    <div>
+                        <div>Lỗi</div>
+                        <span>Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại!</span>
+                    </div>
+                </>,
+                {
+                    variant: 'error',
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center'
+                    },
+                    action: (key) => (
+                        <>
+                            <IconButton
+                                onClick={() => {
+                                    window.location.href = '/login';
+                                }}>
+                                <CloseOutlinedIcon sx={{ color: '#FFFFFF' }} />
+                            </IconButton>
+                        </>
+                    )
+                }
+            );
         } else if (!error.response) {
             // Hiển thị thông báo lỗi sử dụng toastify
-            toast.error('UnknownError', {
-                position: 'top-center',
-                autoClose: false,
-                theme: 'colored',
-                progress: 1
-            });
+            (
+                <>
+                    <div>
+                        <div>Error</div>
+                        <span>UnknownError</span>
+                    </div>
+                </>
+            ),
+                {
+                    variant: 'error',
+                    anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center'
+                    },
+                    autoHideDuration: 3000
+                };
         }
         return Promise.reject(error);
     }
