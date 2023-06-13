@@ -1,4 +1,3 @@
-import { Guid } from 'guid-typescript';
 import { PagedResultDto } from '../services/dto/pagedResultDto';
 import { CreateOrUpdateNhanSuDto } from '../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import NhanSuItemDto from '../services/nhan-vien/dto/nhanSuItemDto';

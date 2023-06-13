@@ -161,6 +161,7 @@ const Header: React.FC<HeaderProps> = (
                                     Cookies.set('IdChiNhanh', e.target.value, {
                                         expires: remember === 'true' ? 1 : undefined
                                     });
+                                    window.location.reload();
                                 }}>
                                 {chiNhanhs.map((item) => {
                                     return (

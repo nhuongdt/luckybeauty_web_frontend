@@ -1,4 +1,4 @@
-import React, { StrictMode, useEffect } from 'react';
+import React, { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes } from './components/routers';
@@ -8,13 +8,8 @@ const App = () => {
     return (
         <div>
             <StrictMode>
-                <BrowserRouter>
-                    {Routes}
-                    <SnackbarProvider
-                        maxSnack={3}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    />
-                </BrowserRouter>
+                <BrowserRouter>{Routes}</BrowserRouter>
+                <SnackbarProvider maxSnack={3} />
                 <DeleteExpiredCookie />
             </StrictMode>
         </div>

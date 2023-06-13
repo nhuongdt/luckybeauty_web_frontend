@@ -74,12 +74,12 @@ class CustomerScreen extends React.Component {
     }
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
-            this.setState({
+            await this.setState({
                 createOrEditKhachHang: {}
             });
         } else {
             const createOrEdit = await khachHangService.getKhachHang(id);
-            this.setState({
+            await this.setState({
                 createOrEditKhachHang: createOrEdit
             });
         }
