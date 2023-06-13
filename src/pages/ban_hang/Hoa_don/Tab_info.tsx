@@ -141,7 +141,15 @@ const TabInfo: React.FC = () => {
                             },
                             '& .MuiIconButton-root': {
                                 display: 'none'
-                            }
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                }
                         }}
                         localeText={TextTranslate}
                     />
