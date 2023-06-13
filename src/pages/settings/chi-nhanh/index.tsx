@@ -54,7 +54,8 @@ class ChiNhanhScreen extends Component {
         });
     }
     handleSubmit = async () => {
-        await chiNhanhService.CreateOrEdit(this.state.createOrEditChiNhanhDto);
+        await this.InitData();
+        this.Modal();
     };
     Modal = () => {
         this.setState({ isShowModal: !this.state.isShowModal });
@@ -90,15 +91,6 @@ class ChiNhanhScreen extends Component {
     };
     onCloseModal = () => {
         this.setState({ isShowModal: false });
-    };
-    handleChange = (event: any) => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditChiNhanhDto: {
-                ...this.state.createOrEditChiNhanhDto,
-                [name]: value
-            }
-        });
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
@@ -398,7 +390,6 @@ class ChiNhanhScreen extends Component {
                         isShow={this.state.isShowModal}
                         onCLose={this.onCloseModal}
                         onSave={this.handleSubmit}
-                        onChange={this.handleChange}
                     />
                 </div>
             </Box>

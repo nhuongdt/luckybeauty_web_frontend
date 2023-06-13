@@ -1,3 +1,6 @@
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+const phoneRegex = /^\d{10,13}$/;
+
 const AppConsts = {
     userManagement: {
         defaultAdminUserName: 'admin'
@@ -36,6 +39,9 @@ const AppConsts = {
         tenNguonKhach: true,
         tenNhomKhach: true,
         tongChiTieu: true
-    }
+    },
+    emailRegex: emailRegex,
+    phoneRegex: phoneRegex
 };
+
 export default AppConsts;

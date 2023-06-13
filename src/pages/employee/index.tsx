@@ -1,41 +1,29 @@
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import avatar from '../../images/avatar.png';
 import React from 'react';
-import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
-import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import SuggestService from '../../services/suggests/SuggestService';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
-    Breadcrumbs,
     Button,
     ButtonGroup,
     Grid,
     IconButton,
-    Menu,
-    MenuItem,
     TextField,
     Typography
 } from '@mui/material';
 import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
-import AppConsts from '../../lib/appconst';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { observer } from 'mobx-react';
-import Stores from '../../stores/storeIdentifier';
 import NhanVienStore from '../../stores/nhanVienStore';
 import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
@@ -95,9 +83,6 @@ class EmployeeScreen extends React.Component {
             totalCount: NhanVienStore.listNhanVien.totalCount
         });
     }
-    async createOrEdit() {
-        nhanVienService.createOrEdit(this.state.createOrEditNhanSu);
-    }
     async delete(id: string) {
         NhanVienStore.delete(id);
         this.resetData();
@@ -125,18 +110,8 @@ class EmployeeScreen extends React.Component {
         this.Modal();
     }
     handleSubmit = async () => {
-        await NhanVienStore.createOrEdit(this.state.createOrEditNhanSu);
         await this.getData();
         this.setState({ modalVisible: false });
-    };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditNhanSu: {
-                ...this.state.createOrEditNhanSu,
-                [name]: value
-            }
-        });
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
@@ -526,7 +501,6 @@ class EmployeeScreen extends React.Component {
                         this.setState({ modalVisible: false });
                     }}
                     onOk={this.handleSubmit}
-                    onChange={this.handleChange}
                     title={
                         this.state.idNhanSu === ''
                             ? 'Thêm mới nhân viên'

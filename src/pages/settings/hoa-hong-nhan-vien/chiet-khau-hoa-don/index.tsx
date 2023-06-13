@@ -57,7 +57,6 @@ class ChietKhauHoaDonScreen extends Component {
         this.Modal();
     };
     handleCreate = async () => {
-        await chietKhauHoaDonStore.createOrEdit(this.state.createOrEditModel);
         await this.getAll();
         this.Modal();
     };
@@ -74,17 +73,6 @@ class ChietKhauHoaDonScreen extends Component {
     };
     onCancelDelete = () => {
         this.setState({ isShowConfirmDelete: false });
-    };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditModel: {
-                ...this.state.createOrEditModel,
-                idNhanVien: this.state.idChietKhauHD,
-                idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
-                [name]: value
-            }
-        });
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
@@ -219,7 +207,6 @@ class ChietKhauHoaDonScreen extends Component {
                         formRef={this.state.createOrEditModel}
                         onClose={this.Modal}
                         onSave={this.handleCreate}
-                        onChange={this.handleChange}
                         visited={this.state.visited}
                         title={this.state.idChietKhauHD === '' ? 'Thêm mới' : 'Cập nhật'}
                     />

@@ -1,30 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { useState } from 'react';
-import {
-    DataGrid,
-    GridColDef,
-    useGridApiRef,
-    GridLocaleText,
-    GridColumnVisibilityModel,
-    ColumnsPanelPropsOverrides
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
-import { format, isValid } from 'date-fns';
 import {
     Button,
     ButtonGroup,
-    Breadcrumbs,
     Typography,
     Grid,
     Box,
     TextField,
     IconButton,
-    Select,
-    MenuItem,
-    Menu,
-    FormControl,
-    TablePagination,
     Avatar
 } from '@mui/material';
 import './customerPage.css';
@@ -33,18 +18,13 @@ import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import abpCustom from '../../components/abp-custom';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
-import AppConsts from '../../lib/appconst';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 
@@ -89,41 +69,22 @@ class CustomerScreen extends React.Component {
         });
     }
     async handleSubmit() {
-        await khachHangService.createOrEdit(this.state.createOrEditKhachHang);
-        this.setState({
-            idkhachHang: '',
-            rowPerPage: 10,
-            pageSkipCount: 0,
-            skipCount: 0,
-            currentPage: 0,
-            keyword: '',
-            createOrEditKhachHang: {} as CreateOrEditKhachHangDto
-        });
-        this.getData();
+        await this.getData();
         this.handleToggle();
     }
-    handleChange = (event: any) => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditKhachHang: {
-                ...this.state.createOrEditKhachHang,
-                [name]: value
-            }
-        });
-    };
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
             this.setState({
-                idKhachHang: '',
                 createOrEditKhachHang: {}
             });
         } else {
             const createOrEdit = await khachHangService.getKhachHang(id);
             this.setState({
-                idKhachHang: id,
                 createOrEditKhachHang: createOrEdit
             });
         }
+        this.setState({ idKhachHang: id });
+        console.log(JSON.stringify(this.state.createOrEditKhachHang));
         this.handleToggle();
     }
     async delete(id: string) {
@@ -516,7 +477,6 @@ class CustomerScreen extends React.Component {
                             ? 'Thêm mới khách hàng'
                             : 'Cập nhật thông tin khách hàng'
                     }
-                    onChange={this.handleChange}
                     visible={this.state.toggle}
                 />
                 <ConfirmDelete

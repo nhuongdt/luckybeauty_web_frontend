@@ -1,7 +1,9 @@
-const employeeRules = {
-    hoNhanVien: [{ require: true, message: 'Họ nhân viên không được để trống' }],
-    tenNhanVien: [{ require: true, message: 'Tên nhân viên không được để trống' }],
-    soDienThoai: [{ require: true, message: 'Số điện thoại nhân viên không được để trống' }],
-    ngaySinh: [{ require: true, message: 'Ngày sinh không được để trống' }]
-};
-export default employeeRules;
+import * as Yup from 'yup';
+import AppConsts from '../../../lib/appconst';
+const rules = Yup.object().shape({
+    ho: Yup.string().required('Tên là bắt buộc'),
+    tenLot: Yup.string().required('Họ là bắt buộc'),
+    emailAddress: Yup.string().matches(AppConsts.emailRegex, 'Email không hợp lệ'),
+    soDienThoai: Yup.string().matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ')
+});
+export default rules;

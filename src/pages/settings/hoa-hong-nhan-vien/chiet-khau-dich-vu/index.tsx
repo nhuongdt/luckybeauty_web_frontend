@@ -1,22 +1,12 @@
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
     Button,
-    Checkbox,
     IconButton,
-    Paper,
     Select,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
     MenuItem,
-    TableRow,
     FormControl,
     Grid,
     Box,
     TextField,
-    Avatar,
     Typography
 } from '@mui/material';
 import { TextTranslate } from '../../../../components/TableLanguage';
@@ -25,9 +15,9 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
+import AddIcon from '../../../../images/add.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
 import { Component, ReactNode } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import chietKhauDichVuStore from '../../../../stores/chietKhauDichVuStore';
 import SuggestService from '../../../../services/suggests/SuggestService';
 import { SuggestNhanSuDto } from '../../../../services/suggests/dto/SuggestNhanSuDto';
@@ -76,17 +66,6 @@ class ChietKhauDichVuScreen extends Component {
             idNhanVien
         );
     };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditDto: {
-                ...this.state.createOrEditDto,
-                idNhanVien: this.state.idNhanVien,
-                idChiNhanh: this.state.idChiNhanh,
-                [name]: value
-            }
-        });
-    };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             currentPage: value
@@ -94,7 +73,6 @@ class ChietKhauDichVuScreen extends Component {
         this.InitData();
     };
     handleSubmit = async () => {
-        await chietKhauDichVuStore.createOrEdit(this.state.createOrEditDto);
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
         this.onModal();
     };
@@ -385,6 +363,14 @@ class ChietKhauDichVuScreen extends Component {
                             <Button startIcon={<img src={UploadIcon} />} variant="outlined">
                                 Xuất
                             </Button>
+                            <Button
+                                startIcon={<img src={AddIcon} />}
+                                variant="outlined"
+                                onClick={() => {
+                                    this.onModal();
+                                }}>
+                                Thêm mới
+                            </Button>
                         </Box>
                     </Grid>
                 </Grid>
@@ -441,7 +427,7 @@ class ChietKhauDichVuScreen extends Component {
                     formRef={this.state.createOrEditDto}
                     onClose={this.onCloseModal}
                     onSave={this.handleSubmit}
-                    onChange={this.handleChange}
+                    idNhanVien={this.state.idNhanVien}
                     suggestDonViQuiDoi={this.state.suggestDonViQuiDoi}
                     visited={this.state.visited}
                     title="Thêm mới"
