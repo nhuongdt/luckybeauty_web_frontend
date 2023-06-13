@@ -21,6 +21,7 @@ const LichLamViec: React.FC = () => {
     const handleCloseDelete = () => {
         setOpenDelete(false);
     };
+    const [openCustom, setOpenCustom] = useState(false);
     return (
         <Box>
             <ThemLich open={openDialog} onClose={handleCloseDialog} />
