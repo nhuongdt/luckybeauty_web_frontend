@@ -1,4 +1,12 @@
-import { Box, Grid, MenuItem, Pagination, Select, Typography } from '@mui/material';
+import {
+    Box,
+    Grid,
+    MenuItem,
+    Pagination,
+    Select,
+    SelectChangeEvent,
+    Typography
+} from '@mui/material';
 import { Component, ReactNode } from 'react';
 
 interface TablePaginationProps {
@@ -22,7 +30,12 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                             alignItems: 'center',
                             height: 48
                         }}>
-                        <Select sx={{ height: '23px' }} defaultValue={rowPerPage}>
+                        <Select
+                            sx={{ height: '23px' }}
+                            onChange={(event: SelectChangeEvent<number>) => {
+                                console.log(event.target.value);
+                            }}
+                            defaultValue={rowPerPage}>
                             <MenuItem value={5}>
                                 <Typography variant="caption">5 Trang</Typography>
                             </MenuItem>
