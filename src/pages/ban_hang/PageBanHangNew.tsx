@@ -26,8 +26,7 @@ import { debounce } from '@mui/material/utils';
 import { useReactToPrint } from 'react-to-print';
 
 import { InHoaDon } from '../../components/Print/InHoaDon';
-import { ComponentToPrint } from '../../components/Print/ComponentToPrint';
-import { Resume2 } from '../../components/Print/Test';
+import { MauInHoaDon } from '../../components/Print/MauInHoaDon';
 
 import ProductService from '../../services/product/ProductService';
 import GroupProductService from '../../services/product/GroupProductService';
@@ -52,32 +51,12 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
+import logo from '../../images/Lucky_beauty.jpg';
 
 const PageBanHang = ({ customerChosed }: any) => {
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-    };
+    console.log('pagebanhang');
+
     const componentRef = useRef(null);
-
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current,
-        documentTitle: 'AwesomeFileName'
-    });
-    const printtest = async () => {
-        const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
-        setContentPrint(content);
-        setPropMauIn((old: any) => {
-            return {
-                ...old,
-                contentHtml: content,
-                hoadon: hoadon,
-                khachhang: { ...customerChosed },
-                hoadonChiTiet: [...hoaDonChiTiet]
-            };
-        });
-        handlePrint();
-    };
-
     const [txtSearch, setTxtSearch] = useState('');
     const [nhomDichVu, setNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
     const [nhomHangHoa, setNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -87,7 +66,10 @@ const PageBanHang = ({ customerChosed }: any) => {
         new PageHoaDonDto({ idKhachHang: null, tenKhachHang: '' })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+
+    const [firstLoad, setFirstLoad] = useState(true);
     const [clickSSave, setClickSave] = useState(false);
+    const [isPrint, setIsPrint] = useState(false);
     const [idNhomHang, setIdNhomHang] = useState('');
     const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
 
@@ -122,6 +104,12 @@ const PageBanHang = ({ customerChosed }: any) => {
         setListProduct(data);
     };
 
+    const PageLoad = async () => {
+        await GetTreeNhomHangHoa();
+        await FirstLoad_getSetDataFromCache();
+        setFirstLoad(false);
+    };
+
     React.useEffect(() => {
         const input = {
             IdNhomHangHoas: idNhomHang,
@@ -143,6 +131,7 @@ const PageBanHang = ({ customerChosed }: any) => {
     ).current;
 
     React.useEffect(() => {
+        if (firstLoad) return;
         const input = {
             IdNhomHangHoas: idNhomHang,
             TextSearch: txtSearch,
@@ -154,16 +143,8 @@ const PageBanHang = ({ customerChosed }: any) => {
         debounceDropDown(input);
     }, [txtSearch]);
 
-    const PageLoad = () => {
-        GetTreeNhomHangHoa();
-    };
     useEffect(() => {
         PageLoad();
-    }, []);
-
-    useEffect(() => {
-        console.log('customerChosed ', customerChosed);
-        FirstLoad_getSetDataFromCache();
     }, [customerChosed]);
 
     // filter list product
@@ -179,10 +160,9 @@ const PageBanHang = ({ customerChosed }: any) => {
     // end filter
     const FirstLoad_getSetDataFromCache = async () => {
         const idCus = customerChosed.idKhachHang;
-
         if (!utils.checkNull(idCus)) {
             const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
-            console.log('FirstLoad_getSetDataFromCache data ', data);
+
             if (data.length === 0) {
                 const dataHD: PageHoaDonDto = {
                     ...hoadon,
@@ -273,6 +253,7 @@ const PageBanHang = ({ customerChosed }: any) => {
     };
 
     useEffect(() => {
+        if (firstLoad) return;
         updateCurrentInvoice();
     }, [hoaDonChiTiet]);
 
@@ -313,6 +294,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     // auto update cthd
     useEffect(() => {
+        if (firstLoad) return;
         Update_HoaDonChiTiet();
         UpdateHoaHongDichVu_forNVThucHien();
     }, [cthdDoing]);
@@ -436,6 +418,31 @@ const PageBanHang = ({ customerChosed }: any) => {
             );
     };
 
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current
+    });
+
+    const printtest = async () => {
+        // const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
+        // setContentPrint(content);
+        setIsPrint(true);
+
+        // setPropMauIn((old: any) => {
+        //     return {
+        //         ...old,
+        //         // contentHtml: content,
+        //         hoadon: hoadon,
+        //         khachhang: { ...customerChosed },
+        //         hoadonChiTiet: [...hoaDonChiTiet],
+        //         chinhanh: {
+        //             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
+        //             soDienThoai: '0973474985',
+        //             logo: logo
+        //         }
+        //     };
+        // });
+        handlePrint();
+    };
     const saveHoaDon = async () => {
         setClickSave(true);
 
@@ -473,15 +480,15 @@ const PageBanHang = ({ customerChosed }: any) => {
         const hdPrint = { ...hoadon };
         hdPrint.maHoaDon = hodaDonDB.maHoaDon;
 
-        setPropMauIn((old: any) => {
-            return {
-                ...old,
-                contentHtml: content,
-                hoadon: hdPrint,
-                khachhang: { ...customerChosed },
-                hoadonChiTiet: [...hoaDonChiTiet]
-            };
-        });
+        // setPropMauIn((old: any) => {
+        //     return {
+        //         ...old,
+        //         contentHtml: content,
+        //         hoadon: hdPrint,
+        //         khachhang: { ...customerChosed },
+        //         hoadonChiTiet: [...hoaDonChiTiet]
+        //     };
+        // });
 
         // reset after save
         setHoaDonChiTiet([]);
@@ -495,9 +502,10 @@ const PageBanHang = ({ customerChosed }: any) => {
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
-            <ComponentToPrint ref={componentRef} props={propMauIn} />
-            {/* <Resume2 ref={componentRef} props={propMauIn} /> */}
-            {/* {contentPrint !== '' && <InHoaDon props={propMauIn} />} */}
+
+            <div style={{ display: 'none' }}>
+                <MauInHoaDon ref={componentRef} props={propMauIn} />
+            </div>
             <Grid
                 container
                 spacing={3}
