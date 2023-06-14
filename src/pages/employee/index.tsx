@@ -18,6 +18,7 @@ import {
     ButtonGroup,
     Grid,
     IconButton,
+    SelectChangeEvent,
     TextField,
     Typography
 } from '@mui/material';
@@ -119,6 +120,14 @@ class EmployeeScreen extends React.Component {
             skipCount: value
         });
         this.getListNhanVien();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
+        this.getData();
     };
     onOkDelete = () => {
         this.delete(this.state.selectedRowId ?? '');
@@ -457,12 +466,6 @@ class EmployeeScreen extends React.Component {
                         autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -519,6 +522,7 @@ class EmployeeScreen extends React.Component {
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>

@@ -87,8 +87,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             skipCount: this.state.currentPage,
             loaiDoiTuong: 0
         });
-
-        this.setState({
+        await this.setState({
             rowTable: khachHangs.items,
             totalItems: khachHangs.totalCount,
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
@@ -147,14 +146,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         await this.setState({ skipCount: skip, currentPage: newPage });
         await this.getData();
     };
-    // handlePerPageChange = (event: SelectChangeEvent<number>) => {
-    //     this.setState({ rowPerPage:  event.target.value });
-    // };
-    // Handler for rows per page changes
-    handleRowsPerPageChange = async (event: any) => {
-        await this.setState({ rowPerPage: parseInt(event.target.value, 10) });
-        await this.setState({ currentPage: 0, skipCount: 1 }); // Reset page to the first one when changing rows per page
-        await this.getData();
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            rowPerPage: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
+        this.getData();
     };
 
     handleOpenMenu = (event: any, rowId: any) => {
@@ -466,15 +464,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         hideFooter
                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                         columnVisibilityModel={this.state.visibilityColumn}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    page: this.state.currentPage,
-                                    pageSize: this.state.rowPerPage
-                                }
-                            }
-                        }}
-                        pageSizeOptions={[5, 10]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -530,6 +519,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         rowPerPage={this.state.rowPerPage}
                         totalRecord={this.state.totalItems}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditCustomerDialog

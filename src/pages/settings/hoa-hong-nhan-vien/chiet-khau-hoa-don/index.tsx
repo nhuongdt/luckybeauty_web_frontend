@@ -8,7 +8,7 @@ import SearchIcon from '../../../../images/search-normal.svg';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, IconButton, TextField, Grid } from '@mui/material';
+import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
@@ -79,6 +79,14 @@ class ChietKhauHoaDonScreen extends Component {
             skipCount: value
         });
         console.log(value);
+        this.getAll();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
         this.getAll();
     };
     render(): ReactNode {
@@ -173,13 +181,7 @@ class ChietKhauHoaDonScreen extends Component {
                         columns={columns}
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection={false}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
                         sx={{
                             '& .uiDataGrid-cellContent': {
                                 fontSize: '12px'
@@ -232,6 +234,7 @@ class ChietKhauHoaDonScreen extends Component {
                                 ? 0
                                 : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)
                         }
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditChietKhauHoaDonModal

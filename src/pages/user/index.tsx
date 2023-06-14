@@ -1,6 +1,14 @@
 import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
-import { Box, Grid, TextField, Button, Typography, IconButton } from '@mui/material';
+import {
+    Box,
+    Grid,
+    TextField,
+    Button,
+    Typography,
+    IconButton,
+    SelectChangeEvent
+} from '@mui/material';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import { DataGrid } from '@mui/x-data-grid';
 import userService from '../../services/user/userService';
@@ -74,6 +82,14 @@ class UserScreen extends AppComponentBase {
     handlePageChange = async (event: any, value: number) => {
         await this.setState({
             currentPage: value
+        });
+        this.getAll();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
         });
         this.getAll();
     };
@@ -444,6 +460,7 @@ class UserScreen extends AppComponentBase {
                         rowPerPage={this.state.maxResultCount}
                         totalPage={this.state.totalPage}
                         totalRecord={this.state.totalCount}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditUser

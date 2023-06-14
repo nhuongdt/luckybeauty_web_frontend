@@ -14,12 +14,20 @@ interface TablePaginationProps {
     totalPage: number;
     currentPage: number;
     handlePageChange: (e: any, page: number) => void;
+    handlePerPageChange: (event: SelectChangeEvent<number>) => void;
     rowPerPage: number;
 }
 
 class CustomTablePagination extends Component<TablePaginationProps> {
     render(): ReactNode {
-        const { totalPage, totalRecord, currentPage, rowPerPage, handlePageChange } = this.props;
+        const {
+            totalPage,
+            totalRecord,
+            currentPage,
+            rowPerPage,
+            handlePageChange,
+            handlePerPageChange
+        } = this.props;
         return (
             <Grid container>
                 <Grid item xs={3}>
@@ -32,9 +40,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                         }}>
                         <Select
                             sx={{ height: '23px' }}
-                            onChange={(event: SelectChangeEvent<number>) => {
-                                console.log(event.target.value);
-                            }}
+                            onChange={handlePerPageChange}
                             defaultValue={rowPerPage}>
                             <MenuItem value={5}>
                                 <Typography variant="caption">5 Trang</Typography>

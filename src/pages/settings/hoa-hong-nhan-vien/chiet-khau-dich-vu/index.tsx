@@ -7,7 +7,8 @@ import {
     Grid,
     Box,
     TextField,
-    Typography
+    Typography,
+    SelectChangeEvent
 } from '@mui/material';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
@@ -69,6 +70,14 @@ class ChietKhauDichVuScreen extends Component {
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             currentPage: value
+        });
+        this.InitData();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
         });
         this.InitData();
     };
@@ -379,13 +388,7 @@ class ChietKhauDichVuScreen extends Component {
                         autoHeight
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
                         checkboxSelection={false}
-                        pageSizeOptions={[10, 20]}
                         sx={{
                             '& p': {
                                 mb: 0
@@ -451,6 +454,7 @@ class ChietKhauDichVuScreen extends Component {
                                       listChietKhauDichVu.totalCount / this.state.maxResultCount
                                   )
                         }
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
