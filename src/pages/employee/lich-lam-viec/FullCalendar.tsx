@@ -23,6 +23,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { ReactComponent as CalendarIcon } from '../../../images/calendar.svg';
 import { ReactComponent as ListIcon } from '../../../images/list.svg';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
+import CustomEmployee from './DialogCustom';
 const Calendar: React.FC = () => {
     const [weekDates, setWeekDates] = useState<any[]>([]);
 
@@ -125,8 +126,25 @@ const Calendar: React.FC = () => {
     const changeValue = (event: SelectChangeEvent) => {
         setValue(event.target.value);
     };
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [selectedId, setSelectedId] = useState('');
+    const open = Boolean(anchorEl);
+    const handleOpenCustom = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedId(event.currentTarget.className);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
     return (
         <Box>
+            <CustomEmployee
+                open={open}
+                handleClose={handleClose}
+                anchorEl={anchorEl}
+                selectedRowId={selectedId}
+            />
             <Box mb="16px" display="flex" justifyContent="space-between">
                 <Box>
                     <Select
@@ -296,6 +314,7 @@ const Calendar: React.FC = () => {
                                             </Typography>
                                         </Box>
                                         <Button
+                                            onClick={handleOpenCustom}
                                             variant="text"
                                             sx={{ minWidth: 'unset', ml: 'auto' }}>
                                             <EditIcon />
