@@ -43,19 +43,21 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
         <Dialog open={open} onClose={onClose}>
             <Box
                 sx={{
+                    width: '100vw',
                     maxWidth: '448px',
                     '& button': {
                         textTransform: 'unset!important',
                         fontSize: '14px',
                         minWidth: 'unset',
                         bgcolor: '#fff'
-                    }
+                    },
+                    padding: '28px 24px'
                 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography fontSize="24px" color="#4C4B4C" fontWeight="700" variant="h2">
                         Xóa tất cả ca làm việc
                     </Typography>
-                    <Button sx={{ minWidth: 'unset' }}>
+                    <Button sx={{ minWidth: 'unset' }} onClick={onClose}>
                         <CloseIcon />
                     </Button>
                 </Box>
@@ -81,10 +83,14 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     {daysOfWeek}
                 </Select>
                 <Box display="flex" justifyContent="end" gap="8px" mt="24px">
-                    <Button variant="contained" sx={{ bgcolor: '#F1416C!important' }}>
+                    <Button
+                        onClick={onClose}
+                        variant="contained"
+                        sx={{ bgcolor: '#F1416C!important' }}>
                         Xoá
                     </Button>
                     <Button
+                        onClick={onClose}
                         variant="outlined"
                         sx={{ color: '#965C85!important', borderColor: '#965C85!important' }}>
                         Hủy

@@ -1,0 +1,335 @@
+import React, { useEffect, useState } from 'react';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Box,
+    Avatar,
+    Typography,
+    Button,
+    Select,
+    SelectChangeEvent,
+    MenuItem,
+    ButtonGroup
+} from '@mui/material';
+import avatar from '../../../images/avatar.png';
+import { ReactComponent as EditIcon } from '../../../images/edit-2.svg';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { ReactComponent as CalendarIcon } from '../../../images/calendar.svg';
+import { ReactComponent as ListIcon } from '../../../images/list.svg';
+import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
+const Calendar: React.FC = () => {
+    const [weekDates, setWeekDates] = useState<any[]>([]);
+
+    useEffect(() => {
+        const today = new Date();
+        const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+
+        const dates = [];
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(firstDayOfWeek);
+            date.setDate(date.getDate() + i);
+            const formattedDate = formatDate(date);
+            dates.push(formattedDate);
+        }
+
+        setWeekDates(dates);
+    }, []);
+
+    const formatDate = (date: Date): JSX.Element => {
+        const day = date.toLocaleDateString('vi', { weekday: 'long' });
+        const month = date.toLocaleDateString('vi', { month: 'long' });
+        const dayOfMonth = date.getDate();
+        return (
+            <>
+                <Box sx={{ fontWeight: '400', fontSize: '12px' }}>{day}</Box>
+                <div>
+                    {dayOfMonth} {month}
+                </div>
+            </>
+        );
+    };
+
+    const datas = [
+        {
+            name: 'Hà Nguyễn',
+            totalTime: '63h',
+            avatar: avatar,
+            MonDay: '04:00 - 18:00',
+            Tuesday: '00:00 - 18:00',
+            Wednesday: '10:00 - 18:00',
+            Thursday: '19:00 - 18:00',
+            Friday: '09:00 - 18:00',
+            Saturday: '03:00 - 18:00',
+            Sunday: '02:00 - 18:00'
+        },
+        {
+            name: 'Hà em',
+            totalTime: '63h',
+            avatar: avatar,
+            MonDay: '09:00 - 18:00',
+            Tuesday: '09:00 - 18:00',
+            Wednesday: '09:00 - 18:00',
+            Thursday: '09:00 - 18:00',
+            Friday: '09:00 - 18:00',
+            Saturday: '09:00 - 18:00',
+            Sunday: '09:00 - 18:00'
+        },
+        {
+            name: 'Tên gì trông hay ',
+            totalTime: '63h',
+            avatar: avatar,
+            MonDay: '09:00 - 18:00',
+            Tuesday: '09:00 - 18:00',
+            Wednesday: '09:00 - 18:00',
+            Thursday: '09:00 - 18:00',
+            Friday: '09:00 - 18:00',
+            Saturday: '09:00 - 18:00',
+            Sunday: '09:00 - 18:00'
+        },
+        {
+            name: 'Tài',
+            totalTime: '63h',
+            avatar: avatar,
+            MonDay: '09:00 - 17:00',
+            Tuesday: '09:00 - 8:00',
+            Wednesday: '09:00 - 10:00',
+            Thursday: '09:00 - 15:00',
+            Friday: '09:00 - 18:00',
+            Saturday: '09:00 - 18:00',
+            Sunday: '09:00 - 18:00'
+        },
+        {
+            name: 'Tên của ',
+            totalTime: '63h',
+            avatar: avatar,
+            MonDay: '09:00 - 10:00',
+            Tuesday: '09:00 - 3:00',
+            Wednesday: '09:00 - 18:00',
+            Thursday: '09:00 - 8:00',
+            Friday: '09:00 - 18:00',
+            Saturday: '09:00 - 18:00',
+            Sunday: '09:00 - 18:00'
+        }
+    ];
+    const [employ, setEmploy] = useState('');
+    const changeEmploy = (event: SelectChangeEvent) => {
+        setEmploy(event.target.value);
+    };
+    const [value, setValue] = useState('');
+    const changeValue = (event: SelectChangeEvent) => {
+        setValue(event.target.value);
+    };
+    return (
+        <Box>
+            <Box mb="16px" display="flex" justifyContent="space-between">
+                <Box>
+                    <Select
+                        onChange={changeEmploy}
+                        value={employ}
+                        displayEmpty
+                        size="small"
+                        sx={{
+                            '& svg': {
+                                position: 'relative',
+                                left: '-10px'
+                            },
+                            bgcolor: '#fff',
+                            '[aria-expanded="true"] ~ svg': {
+                                transform: 'rotate(180deg)'
+                            }
+                        }}
+                        IconComponent={() => <ArrowDown />}>
+                        <MenuItem value="">Tất cả nhân viên</MenuItem>
+                        <MenuItem value="Tài">Đinh Tuấn Tài</MenuItem>
+                        <MenuItem value="vân">Đinh Thị vân anh</MenuItem>
+                        <MenuItem value="Anh">Đinh Thị Phương Anh</MenuItem>
+                        <MenuItem value="Dương">Đinh Tuấn Dương</MenuItem>
+                    </Select>
+                </Box>
+                <Box
+                    display="flex"
+                    sx={{
+                        '& button:not(.btn-to-day)': {
+                            minWidth: 'unset',
+                            borderColor: '#E6E1E6!important',
+                            bgcolor: '#fff!important',
+                            px: '7px!important'
+                        },
+                        '& svg': {
+                            color: '#666466!important'
+                        },
+                        alignItems: 'center'
+                    }}>
+                    <Button variant="outlined" sx={{ mr: '16px' }}>
+                        <ChevronLeftIcon />
+                    </Button>
+                    <Button
+                        className="btn-to-day"
+                        variant="text"
+                        sx={{
+                            color: '#7C3367!important',
+                            fontSize: '16px!important',
+                            textTransform: 'unset!important',
+                            bgcolor: 'transparent!important',
+                            fontWeight: '400',
+                            paddingX: '0',
+                            pb: '10px',
+                            mr: '20px'
+                        }}>
+                        Hôm nay
+                    </Button>
+                    <Typography variant="h3" color="#333233" fontSize="16px" fontWeight="700">
+                        Thứ 2, 27 tháng 3, 2023
+                    </Typography>
+                    <Button variant="outlined" sx={{ ml: '16px' }}>
+                        <ChevronRightIcon />
+                    </Button>
+                </Box>
+                <Box display="flex" alignItems="center" gap="8px">
+                    <ButtonGroup
+                        variant="outlined"
+                        sx={{
+                            '& button': {
+                                minWidth: 'unset!important',
+                                paddingX: '6px!important',
+                                height: '32px',
+                                borderColor: '#E6E1E6!important'
+                            }
+                        }}>
+                        <Button>
+                            <CalendarIcon />
+                        </Button>
+                        <Button>
+                            <ListIcon />
+                        </Button>
+                    </ButtonGroup>
+                    <Select
+                        onChange={changeValue}
+                        value={value}
+                        IconComponent={() => <ArrowDown />}
+                        displayEmpty
+                        size="small"
+                        sx={{
+                            '& .MuiSelect-select': {
+                                lineHeight: '32px',
+                                p: '0',
+                                height: '32px',
+                                pl: '10px'
+                            },
+                            bgcolor: '#fff',
+                            '& svg': {
+                                position: 'relative',
+                                left: '-10px',
+                                width: '20px',
+                                height: '20px'
+                            },
+                            '[aria-expanded="true"] ~ svg': {
+                                transform: 'rotate(180deg)'
+                            }
+                        }}>
+                        <MenuItem value="">Tuần</MenuItem>
+                        <MenuItem value="Tháng">Tháng</MenuItem>
+                        <MenuItem value="Năm">Năm</MenuItem>
+                    </Select>
+                </Box>
+            </Box>
+            <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
+                <Table>
+                    <TableHead>
+                        <TableRow
+                            sx={{
+                                '& .MuiTableCell-root': {
+                                    paddingTop: '8px',
+                                    paddingLeft: '4px',
+                                    paddingRight: '4px'
+                                }
+                            }}>
+                            <TableCell sx={{ border: 'none' }}>Nhân viên</TableCell>
+                            {weekDates.map((date, index) => (
+                                <TableCell key={index}>{date}</TableCell>
+                            ))}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody
+                        sx={{
+                            '& .custom-time': {
+                                fontFamily: 'Roboto',
+                                height: '32px',
+                                bgcolor: '#F2EBF0',
+                                borderRadius: '8px',
+                                padding: '8px',
+                                fontSize: '12px',
+                                color: '#333233'
+                            },
+                            '& .bodder-inline': {
+                                borderInline: '1px solid #E6E1E6',
+                                padding: '4px 4px 20px 4px'
+                            }
+                        }}>
+                        {datas.map((item) => (
+                            <TableRow key={item.name.replace(/\s/g, '')}>
+                                <TableCell sx={{ border: '0!important' }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <Avatar
+                                            sx={{ width: 32, height: 32 }}
+                                            src={item.avatar}
+                                            alt={item.name}
+                                        />
+                                        <Box>
+                                            <Typography
+                                                fontSize="14px"
+                                                color="#4C4B4C"
+                                                variant="body1">
+                                                {item.name}
+                                            </Typography>
+                                            <Typography
+                                                fontSize="12px"
+                                                color="#999699"
+                                                variant="body1">
+                                                {item.totalTime}
+                                            </Typography>
+                                        </Box>
+                                        <Button
+                                            variant="text"
+                                            sx={{ minWidth: 'unset', ml: 'auto' }}>
+                                            <EditIcon />
+                                        </Button>
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.MonDay}</Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.Tuesday}</Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.Wednesday}</Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.Thursday}</Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.Friday}</Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.Saturday}</Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">{item.Sunday}</Box>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Box>
+    );
+};
+
+export default Calendar;

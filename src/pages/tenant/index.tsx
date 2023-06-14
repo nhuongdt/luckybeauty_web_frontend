@@ -338,7 +338,38 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             },
                             '& p': {
                                 mb: 0
-                            }
+                            },
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
                         }}
                         hideFooter
                         localeText={TextTranslate}
