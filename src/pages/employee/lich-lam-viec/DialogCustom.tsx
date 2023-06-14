@@ -5,13 +5,20 @@ interface DialogComponentProps {
     handleClose: () => void;
     selectedRowId: any;
     anchorEl: any;
+    handleOpenDelete: () => void;
+    handleOpenEdit: () => void;
+    handleOpenDialog: () => void;
+    handleCloseDialog: () => void;
 }
 
 const CustomEmployee: React.FC<DialogComponentProps> = ({
     open,
     handleClose,
     selectedRowId,
-    anchorEl
+    anchorEl,
+    handleOpenEdit,
+    handleOpenDelete,
+    handleOpenDialog
 }) => {
     return (
         <Menu
@@ -34,10 +41,10 @@ const CustomEmployee: React.FC<DialogComponentProps> = ({
                 gap: '10px'
             }}>
             <Box>
-                <MenuItem onClick={undefined}>Thêm ca làm việc thường xuyên</MenuItem>
+                <MenuItem onClick={handleOpenDialog}>Thêm ca làm việc thường xuyên</MenuItem>
                 <MenuItem onClick={undefined}>Xóa nhân viên khỏi lịch làm việc</MenuItem>
-                <MenuItem onClick={undefined}>Xóa tất cả ca làm việc</MenuItem>
-                <MenuItem onClick={undefined}>Chỉnh sửa nhân viên</MenuItem>
+                <MenuItem onClick={handleOpenDelete}>Xóa tất cả ca làm việc</MenuItem>
+                <MenuItem onClick={handleOpenEdit}>Chỉnh sửa nhân viên</MenuItem>
             </Box>
         </Menu>
     );

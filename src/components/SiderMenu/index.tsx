@@ -17,6 +17,7 @@ interface Props {
     collapsed: boolean;
     toggle: () => void;
     onHoverChange: (isHovered: boolean) => void;
+    CookieSidebar: boolean;
 }
 interface MenuItem {
     key: React.Key;
@@ -55,7 +56,7 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
     });
     return menu;
 }
-const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => {
+const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, CookieSidebar }) => {
     const defaultPermission: string[] = [];
     const [lstPermission, setListPermission] = useState(defaultPermission);
     const mainAppRoutes = appRouters.mainRoutes[1].routes.filter(
@@ -105,8 +106,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
 
     return (
         <Box
-            onMouseEnter={collapsed === true ? undefined : handleMouseEnter}
-            onMouseLeave={collapsed === true ? undefined : handleMouseLeave}
+            onMouseEnter={collapsed ? undefined : handleMouseEnter}
+            onMouseLeave={collapsed ? undefined : handleMouseLeave}
             sx={{
                 overflowY: 'auto',
                 overflowX: 'hidden',
@@ -122,8 +123,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                 boxShadow: OpenHover ? '0px 0px 40px -12px rgba(124, 51, 103,0.3);' : 'unset',
                 '& .MuiList-root': {
                     display: 'flex',
-                    // whiteSpace: 'nowrap',
-                    // flexWrap: 'nowrap',
+
                     flexDirection: 'column'
                 },
                 '::-webkit-scrollbar-track': {
@@ -196,8 +196,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                             ? '#F2EBF0!important'
                                             : 'transparent',
                                     borderRadius: '8px',
-                                    maxWidth: collapsed || OpenHover ? '1000px' : '51px',
-                                    maxHeight: collapsed || OpenHover ? '1000px' : '51px',
+                                    maxWidth: collapsed || OpenHover ? '500px' : '51px',
+                                    maxHeight: collapsed || OpenHover ? '500px' : '51px',
                                     ':hover': {
                                         backgroundColor: '#F2EBF0!important'
                                     }
@@ -267,7 +267,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                 ml: 'auto',
                                                 transition: '.4s',
                                                 position: 'relative',
-                                                right: collapsed || OpenHover ? '0' : '-10px'
+                                                right: collapsed || OpenHover ? '0' : '-30px'
                                             }}
                                         />
                                     ) : (
@@ -277,7 +277,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange }) => 
                                                 ml: 'auto',
                                                 transition: '.4s',
                                                 position: 'relative',
-                                                right: collapsed || OpenHover ? '0' : '-10px'
+                                                right: collapsed || OpenHover ? '0' : '-30px'
                                             }}
                                         />
                                     ))}

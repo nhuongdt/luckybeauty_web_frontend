@@ -24,6 +24,9 @@ import { ReactComponent as CalendarIcon } from '../../../images/calendar.svg';
 import { ReactComponent as ListIcon } from '../../../images/list.svg';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 import CustomEmployee from './DialogCustom';
+import ThemLich from './them_lich_lam_viec';
+import Delete from './deleteAlert';
+import Edit from './editNhanVien';
 const Calendar: React.FC = () => {
     const [weekDates, setWeekDates] = useState<any[]>([]);
 
@@ -137,6 +140,28 @@ const Calendar: React.FC = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+    const [openDelete, setOpenDelete] = useState(false);
+    const handleOpenDelete = () => {
+        setOpenDelete(true);
+    };
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
+    const [openEdit, setOpenEdit] = useState(false);
+    const handleOpenEdit = () => {
+        setOpenEdit(true);
+    };
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+    };
     return (
         <Box>
             <CustomEmployee
@@ -144,7 +169,14 @@ const Calendar: React.FC = () => {
                 handleClose={handleClose}
                 anchorEl={anchorEl}
                 selectedRowId={selectedId}
+                handleOpenDelete={handleOpenDelete}
+                handleOpenDialog={handleOpenDialog}
+                handleCloseDialog={handleCloseDialog}
+                handleOpenEdit={handleOpenEdit}
             />
+            <Edit open={openEdit} onClose={handleCloseEdit} />
+            <Delete open={openDelete} onClose={handleCloseDelete} />
+            <ThemLich open={openDialog} onClose={handleCloseDialog} />
             <Box mb="16px" display="flex" justifyContent="space-between">
                 <Box>
                     <Select

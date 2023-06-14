@@ -6,27 +6,8 @@ import Delete from './deleteAlert';
 import Calendar from './FullCalendar';
 import Edit from './editNhanVien';
 const LichLamViec: React.FC = () => {
-    const [openDialog, setOpenDialog] = useState(false);
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-    };
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
-
-    const [openDelete, setOpenDelete] = useState(false);
-    const handleOpenDelete = () => {
-        setOpenDelete(true);
-    };
-    const handleCloseDelete = () => {
-        setOpenDelete(false);
-    };
-    const [openCustom, setOpenCustom] = useState(false);
     return (
         <Box>
-            <ThemLich open={openDialog} onClose={handleCloseDialog} />
-            {/* <Edit open={openDialog} onClose={handleCloseDialog} />
-            <Delete open={openDialog} onClose={handleCloseDialog} /> */}
             <Box sx={{ padding: '16px 2.2222222222222223vw' }}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs="auto">
@@ -39,10 +20,7 @@ const LichLamViec: React.FC = () => {
                             <Button>
                                 <MoreHorizIcon sx={{ color: '#231F20' }} />
                             </Button>
-                            <Button
-                                onClick={handleOpenDialog}
-                                variant="contained"
-                                sx={{ bgcolor: '#7C3367!important' }}>
+                            <Button variant="contained" sx={{ bgcolor: '#7C3367!important' }}>
                                 Thêm ca
                             </Button>
                         </Box>
