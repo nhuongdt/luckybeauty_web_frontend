@@ -164,7 +164,11 @@ const Header: React.FC<HeaderProps> = (
                                     window.location.reload();
                                 }}>
                                 {chiNhanhs.map((item) => {
-                                    return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
+                                    return (
+                                        <MenuItem key={item.id} value={item.id}>
+                                            {item.tenChiNhanh}
+                                        </MenuItem>
+                                    );
                                 })}
                             </Select>
                         </Box>

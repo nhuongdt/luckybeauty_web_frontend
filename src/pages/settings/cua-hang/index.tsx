@@ -221,6 +221,7 @@ class StoreDetail extends Component {
                         </Grid>
                         <Button
                             variant="contained"
+                            onClick={this.handSubmit}
                             sx={{
                                 width: 'fit-content',
                                 minWidth: 'unset',

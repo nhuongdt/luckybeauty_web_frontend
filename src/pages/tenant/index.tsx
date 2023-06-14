@@ -1,6 +1,14 @@
 import React, { ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import { Box, Grid, Typography, TextField, Button, IconButton } from '@mui/material';
+import {
+    Box,
+    Grid,
+    Typography,
+    TextField,
+    Button,
+    IconButton,
+    SelectChangeEvent
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
@@ -79,6 +87,14 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         this.setState({
             currentPage: value,
             skipCount: value
+        });
+        this.getAll();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
         });
         this.getAll();
     };
@@ -387,6 +403,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>

@@ -8,7 +8,6 @@ import React from 'react';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
-import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import SuggestService from '../../services/suggests/SuggestService';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
@@ -19,6 +18,7 @@ import {
     ButtonGroup,
     Grid,
     IconButton,
+    SelectChangeEvent,
     TextField,
     Typography
 } from '@mui/material';
@@ -85,9 +85,6 @@ class EmployeeScreen extends React.Component {
             totalCount: NhanVienStore.listNhanVien.totalCount
         });
     }
-    async createOrEdit() {
-        nhanVienService.createOrEdit(this.state.createOrEditNhanSu);
-    }
     async delete(id: string) {
         NhanVienStore.delete(id);
         this.resetData();
@@ -114,18 +111,8 @@ class EmployeeScreen extends React.Component {
         this.Modal();
     }
     handleSubmit = async () => {
-        await NhanVienStore.createOrEdit(this.state.createOrEditNhanSu);
         await this.getData();
         this.setState({ modalVisible: false });
-    };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditNhanSu: {
-                ...this.state.createOrEditNhanSu,
-                [name]: value
-            }
-        });
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
@@ -133,6 +120,14 @@ class EmployeeScreen extends React.Component {
             skipCount: value
         });
         this.getListNhanVien();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
+        this.getData();
     };
     onOkDelete = () => {
         this.delete(this.state.selectedRowId ?? '');
@@ -471,12 +466,6 @@ class EmployeeScreen extends React.Component {
                         autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -533,6 +522,7 @@ class EmployeeScreen extends React.Component {
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
@@ -546,7 +536,6 @@ class EmployeeScreen extends React.Component {
                         this.setState({ modalVisible: false });
                     }}
                     onOk={this.handleSubmit}
-                    onChange={this.handleChange}
                     title={
                         this.state.idNhanSu === ''
                             ? 'Thêm mới nhân viên'

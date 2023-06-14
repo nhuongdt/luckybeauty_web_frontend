@@ -62,10 +62,12 @@ const LoginScreen: React.FC = () => {
                 if (userName == null || userName == '') {
                     setErrorUser('Tài khoản không được để trống');
                     setErrorPassword('');
-                }
-                if (password == null || password == '') {
+                } else if (password == null || password == '') {
                     setErrorPassword('Mật khẩu không được để trống');
                     setErrorUser('');
+                } else {
+                    setErrorUser('Tài khoản không được để trống');
+                    setErrorPassword('Mật khẩu không được để trống');
                 }
             }
         }
@@ -91,7 +93,7 @@ const LoginScreen: React.FC = () => {
                         <form className="login-form">
                             <Grid container>
                                 <span className="login-label">ID đăng nhập</span>
-                                <Grid xs={12} className="form-item">
+                                <Grid xs={12} item className="form-item">
                                     <TextField
                                         onChange={(value) => {
                                             setTenant(value.target.value);
@@ -116,7 +118,7 @@ const LoginScreen: React.FC = () => {
                                         }}></TextField>
                                 </Grid>
                                 <span className="login-label">Tên đăng nhập</span>
-                                <Grid xs={12} className="form-item">
+                                <Grid xs={12} item className="form-item">
                                     <TextField
                                         onChange={(value) => {
                                             setUserName(value.target.value);
@@ -141,7 +143,7 @@ const LoginScreen: React.FC = () => {
                                         }}></TextField>
                                 </Grid>
                                 <span className="login-label">Mật khẩu</span>
-                                <Grid xs={12} className="form-item">
+                                <Grid xs={12} item className="form-item">
                                     <TextField
                                         onChange={(value) => {
                                             setPassword(value.target.value);
@@ -181,7 +183,7 @@ const LoginScreen: React.FC = () => {
                                             )
                                         }}></TextField>
                                 </Grid>
-                                <Grid xs={12} className="form-item_checkBox">
+                                <Grid xs={12} item className="form-item_checkBox">
                                     <FormControlLabel
                                         control={
                                             <Checkbox
@@ -198,7 +200,7 @@ const LoginScreen: React.FC = () => {
                                     </Link>
                                 </Grid>
 
-                                <Grid xs={12}>
+                                <Grid xs={12} item>
                                     <button
                                         type="button"
                                         className="btn-login"
@@ -206,12 +208,12 @@ const LoginScreen: React.FC = () => {
                                         <span className="text-login">Đăng nhập</span>
                                     </button>
                                 </Grid>
-                                <Grid xs={12}>
+                                <Grid xs={12} item>
                                     <p className="text-support">
                                         Tổng đài hỗ trợ : <span>0247 303 9333 - 0936 363 069</span>
                                     </p>
                                 </Grid>
-                                <Grid xs={12}>
+                                <Grid xs={12} item>
                                     <p className="text-register">
                                         Bạn chưa có tài khoản?{' '}
                                         <Link className="a quenMk" to="/register">

@@ -4,7 +4,15 @@ import React from 'react';
 import { NgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/NgayNghiLeDto';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
-import { Box, Button, Grid, IconButton, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Grid,
+    IconButton,
+    SelectChangeEvent,
+    TextField,
+    Typography
+} from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import AddIcon from '../../../images/add.svg';
@@ -71,6 +79,14 @@ class EmployeeHoliday extends Component {
         await this.setState({
             currentPage: value,
             skipCount: value
+        });
+        this.getListHoliday();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
         });
         this.getListHoliday();
     };
@@ -391,12 +407,6 @@ class EmployeeHoliday extends Component {
                         autoHeight
                         rows={this.state.listHoliday}
                         columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -456,6 +466,7 @@ class EmployeeHoliday extends Component {
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>

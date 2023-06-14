@@ -1,31 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react';
-import { useState } from 'react';
-import {
-    DataGrid,
-    GridColDef,
-    useGridApiRef,
-    GridLocaleText,
-    GridColumnVisibilityModel,
-    ColumnsPanelPropsOverrides
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
-import { format, isValid } from 'date-fns';
 import {
     Button,
     ButtonGroup,
-    Breadcrumbs,
     Typography,
     Grid,
     Box,
     TextField,
     IconButton,
-    Select,
-    MenuItem,
-    Menu,
-    FormControl,
-    TablePagination,
-    Avatar
+    Avatar,
+    SelectChangeEvent
 } from '@mui/material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
@@ -33,40 +18,61 @@ import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import abpCustom from '../../components/abp-custom';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
-import AppConsts from '../../lib/appconst';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import AppConsts from '../../lib/appconst';
+import { observer } from 'mobx-react';
+import khachHangStore from '../../stores/khachHangStore';
 
-class CustomerScreen extends React.Component {
-    state = {
-        rowTable: [],
-        toggle: false,
-        idkhachHang: '',
-        rowPerPage: 10,
-        pageSkipCount: 0,
-        skipCount: 0,
-        currentPage: 1,
-        keyword: '',
-        totalItems: 0,
-        totalPage: 1,
-        isShowConfirmDelete: false,
-        moreOpen: false,
-        anchorEl: null,
-        selectedRowId: null,
-        createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
-        visibilityColumn: {}
-    };
+interface CustomerScreenState {
+    rowTable: KhachHangItemDto[];
+    toggle: boolean;
+    idkhachHang: string;
+    rowPerPage: number;
+    pageSkipCount: number;
+    skipCount: number;
+    currentPage: number;
+    keyword: string;
+    totalItems: number;
+    totalPage: number;
+    isShowConfirmDelete: boolean;
+    moreOpen: boolean;
+    anchorEl: any;
+    selectedRowId: any;
+    createOrEditKhachHang: CreateOrEditKhachHangDto;
+    visibilityColumn: any;
+}
+class CustomerScreen extends React.Component<any, CustomerScreenState> {
+    constructor(props: any) {
+        super(props);
+
+        this.state = {
+            rowTable: [],
+            toggle: false,
+            idkhachHang: '',
+            rowPerPage: 10,
+            pageSkipCount: 0,
+            skipCount: 0,
+            currentPage: 1,
+            keyword: '',
+            totalItems: 0,
+            totalPage: 0,
+            isShowConfirmDelete: false,
+            moreOpen: false,
+            anchorEl: null,
+            selectedRowId: null,
+            createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
+            visibilityColumn: {}
+        };
+    }
 
     componentDidMount(): void {
         this.getData();
@@ -81,51 +87,43 @@ class CustomerScreen extends React.Component {
             skipCount: this.state.currentPage,
             loaiDoiTuong: 0
         });
-
-        this.setState({
+        await this.setState({
             rowTable: khachHangs.items,
             totalItems: khachHangs.totalCount,
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
     }
     async handleSubmit() {
-        await khachHangService.createOrEdit(this.state.createOrEditKhachHang);
-        this.setState({
-            idkhachHang: '',
-            rowPerPage: 10,
-            pageSkipCount: 0,
-            skipCount: 0,
-            currentPage: 0,
-            keyword: '',
-            createOrEditKhachHang: {} as CreateOrEditKhachHangDto
-        });
-        this.getData();
+        await this.getData();
         this.handleToggle();
     }
-    handleChange = (event: any) => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditKhachHang: {
-                ...this.state.createOrEditKhachHang,
-                [name]: value
-            }
-        });
-    };
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
-            await this.setState({
-                idKhachHang: '',
-                createOrEditKhachHang: {}
+            this.setState({
+                createOrEditKhachHang: {
+                    id: AppConsts.guidEmpty,
+                    gioiTinh: false,
+                    idNhomKhach: AppConsts.guidEmpty,
+                    idLoaiKhach: 0,
+                    idNguonKhach: AppConsts.guidEmpty,
+                    maKhachHang: '',
+                    soDienThoai: '',
+                    tenKhachHang: ''
+                }
             });
         } else {
-            const createOrEdit = await khachHangService.getKhachHang(id);
-            await this.setState({
-                idKhachHang: id,
-                createOrEditKhachHang: createOrEdit
-            });
+            await khachHangStore.getForEdit(id ?? '');
+
+            this.updateModal();
         }
-        this.handleToggle();
+        console.log(JSON.stringify(this.state.createOrEditKhachHang));
+        this.setState({ idkhachHang: id ?? '' }, () => {
+            this.handleToggle();
+        });
     }
+    updateModal = () => {
+        this.setState({ createOrEditKhachHang: khachHangStore.createEditKhachHangDto });
+    };
     async delete(id: string) {
         await khachHangService.delete(id);
     }
@@ -148,12 +146,13 @@ class CustomerScreen extends React.Component {
         await this.setState({ skipCount: skip, currentPage: newPage });
         await this.getData();
     };
-
-    // Handler for rows per page changes
-    handleRowsPerPageChange = async (event: any) => {
-        await this.setState({ rowPerPage: parseInt(event.target.value, 10) });
-        await this.setState({ currentPage: 0, skipCount: 1 }); // Reset page to the first one when changing rows per page
-        await this.getData();
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            rowPerPage: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
+        this.getData();
     };
 
     handleOpenMenu = (event: any, rowId: any) => {
@@ -183,8 +182,7 @@ class CustomerScreen extends React.Component {
     showConfirmDelete = () => {
         // Handle Delete action
         this.setState({
-            isShowConfirmDelete: !this.state.isShowConfirmDelete,
-            idNhanSu: ''
+            isShowConfirmDelete: !this.state.isShowConfirmDelete
         });
     };
     toggleColumnVisibility = (column: GridColumnVisibilityModel) => {
@@ -359,6 +357,7 @@ class CustomerScreen extends React.Component {
                 )
             }
         ];
+        const { createOrEditKhachHang } = this.state;
         return (
             <Box
                 className="customer-page"
@@ -462,19 +461,9 @@ class CustomerScreen extends React.Component {
                         autoHeight
                         rows={this.state.rowTable}
                         columns={columns}
-                        hideFooterPagination
                         hideFooter
                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                         columnVisibilityModel={this.state.visibilityColumn}
-                        initialState={{
-                            pagination: {
-                                paginationModel: {
-                                    page: this.state.currentPage,
-                                    pageSize: this.state.rowPerPage
-                                }
-                            }
-                        }}
-                        pageSizeOptions={[5, 10]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -530,26 +519,25 @@ class CustomerScreen extends React.Component {
                         rowPerPage={this.state.rowPerPage}
                         totalRecord={this.state.totalItems}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
+                    />
+                    <CreateOrEditCustomerDialog
+                        visible={this.state.toggle}
+                        onCancel={this.handleToggle}
+                        onOk={this.handleSubmit}
+                        title={
+                            this.state.idkhachHang == ''
+                                ? 'Thêm mới khách hàng'
+                                : 'Cập nhật thông tin khách hàng'
+                        }
+                        formRef={createOrEditKhachHang}
                     />
                 </div>
                 <div
                     className={this.state.toggle ? 'show customer-overlay' : 'customer-overlay'}
                     onClick={this.handleToggle}></div>
-                <CreateOrEditCustomerDialog
-                    formRef={this.state.createOrEditKhachHang}
-                    onCancel={this.handleToggle}
-                    onOk={() => {
-                        this.handleSubmit();
-                    }}
-                    title={
-                        this.state.idkhachHang == ''
-                            ? 'Thêm mới khách hàng'
-                            : 'Cập nhật thông tin khách hàng'
-                    }
-                    onChange={this.handleChange}
-                    visible={this.state.toggle}
-                />
+
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
@@ -558,4 +546,4 @@ class CustomerScreen extends React.Component {
         );
     }
 }
-export default CustomerScreen;
+export default observer(CustomerScreen);

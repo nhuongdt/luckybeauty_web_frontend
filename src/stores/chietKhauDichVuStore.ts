@@ -30,7 +30,7 @@ class ChietKhauDichVuStore {
             id: AppConsts.guidEmpty,
             idChiNhanh: idChiNhanh,
             giaTri: 0,
-            idDonViQuyDoi: '',
+            idDonViQuiDoi: '',
             idNhanVien: '',
             laPhanTram: false,
             loaiChietKhau: 0

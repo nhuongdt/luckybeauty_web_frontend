@@ -47,7 +47,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                 trangThai: values.trangThai
             });
         }
-        console.log(values);
         this.props.onOk();
     };
     render(): ReactNode {

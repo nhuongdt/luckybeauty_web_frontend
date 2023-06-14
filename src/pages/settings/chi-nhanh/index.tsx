@@ -5,6 +5,7 @@ import {
     ButtonGroup,
     Grid,
     IconButton,
+    SelectChangeEvent,
     TextField,
     Typography
 } from '@mui/material';
@@ -54,7 +55,8 @@ class ChiNhanhScreen extends Component {
         });
     }
     handleSubmit = async () => {
-        await chiNhanhService.CreateOrEdit(this.state.createOrEditChiNhanhDto);
+        await this.InitData();
+        this.Modal();
     };
     Modal = () => {
         this.setState({ isShowModal: !this.state.isShowModal });
@@ -91,18 +93,16 @@ class ChiNhanhScreen extends Component {
     onCloseModal = () => {
         this.setState({ isShowModal: false });
     };
-    handleChange = (event: any) => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditChiNhanhDto: {
-                ...this.state.createOrEditChiNhanhDto,
-                [name]: value
-            }
-        });
-    };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             currentPage: value
+        });
+        this.InitData();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            rowPerPage: parseInt(event.target.value.toString(), 10),
+            currentPage: 1
         });
         this.InitData();
     };
@@ -407,12 +407,6 @@ class ChiNhanhScreen extends Component {
                                     bgcolor: '#f2ebf0'
                                 }
                         }}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 5 }
-                            }
-                        }}
-                        pageSizeOptions={[5, 10]}
                         hideFooter
                         localeText={TextTranslate}
                     />
@@ -421,6 +415,7 @@ class ChiNhanhScreen extends Component {
                         rowPerPage={this.state.rowPerPage}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditChiNhanhModal
@@ -429,7 +424,6 @@ class ChiNhanhScreen extends Component {
                         isShow={this.state.isShowModal}
                         onCLose={this.onCloseModal}
                         onSave={this.handleSubmit}
-                        onChange={this.handleChange}
                     />
                 </div>
             </Box>
