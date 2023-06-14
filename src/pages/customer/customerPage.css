@@ -42,10 +42,6 @@
     background-color: #f2ebf0;
 }
 
-.customer-page .MuiCheckbox-root svg {
-    fill: rgba(0, 0, 0, 0.2);
-}
-
 .poppup-add input {
     border-radius: 8px;
     border: 1px solid #e6e1e6;

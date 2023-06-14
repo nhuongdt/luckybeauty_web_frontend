@@ -8,7 +8,7 @@ import SearchIcon from '../../../../images/search-normal.svg';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, Button, IconButton, TextField, Grid } from '@mui/material';
+import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
@@ -57,7 +57,6 @@ class ChietKhauHoaDonScreen extends Component {
         this.Modal();
     };
     handleCreate = async () => {
-        await chietKhauHoaDonStore.createOrEdit(this.state.createOrEditModel);
         await this.getAll();
         this.Modal();
     };
@@ -75,22 +74,19 @@ class ChietKhauHoaDonScreen extends Component {
     onCancelDelete = () => {
         this.setState({ isShowConfirmDelete: false });
     };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditModel: {
-                ...this.state.createOrEditModel,
-                idNhanVien: this.state.idChietKhauHD,
-                idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
-                [name]: value
-            }
-        });
-    };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             skipCount: value
         });
         console.log(value);
+        this.getAll();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
         this.getAll();
     };
     render(): ReactNode {
@@ -185,20 +181,45 @@ class ChietKhauHoaDonScreen extends Component {
                         columns={columns}
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection={false}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
                         sx={{
                             '& .uiDataGrid-cellContent': {
                                 fontSize: '12px'
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
-                            }
+                            },
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
                         }}
                         hideFooter
                     />
@@ -213,13 +234,13 @@ class ChietKhauHoaDonScreen extends Component {
                                 ? 0
                                 : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)
                         }
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditChietKhauHoaDonModal
                         formRef={this.state.createOrEditModel}
                         onClose={this.Modal}
                         onSave={this.handleCreate}
-                        onChange={this.handleChange}
                         visited={this.state.visited}
                         title={this.state.idChietKhauHD === '' ? 'Thêm mới' : 'Cập nhật'}
                     />

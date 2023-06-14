@@ -1,23 +1,14 @@
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import {
     Button,
-    Checkbox,
     IconButton,
-    Paper,
     Select,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
     MenuItem,
-    TableRow,
     FormControl,
     Grid,
     Box,
     TextField,
-    Avatar,
-    Typography
+    Typography,
+    SelectChangeEvent
 } from '@mui/material';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
@@ -25,9 +16,9 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
+import AddIcon from '../../../../images/add.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
 import { Component, ReactNode } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import chietKhauDichVuStore from '../../../../stores/chietKhauDichVuStore';
 import SuggestService from '../../../../services/suggests/SuggestService';
 import { SuggestNhanSuDto } from '../../../../services/suggests/dto/SuggestNhanSuDto';
@@ -76,25 +67,21 @@ class ChietKhauDichVuScreen extends Component {
             idNhanVien
         );
     };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditDto: {
-                ...this.state.createOrEditDto,
-                idNhanVien: this.state.idNhanVien,
-                idChiNhanh: this.state.idChiNhanh,
-                [name]: value
-            }
-        });
-    };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             currentPage: value
         });
         this.InitData();
     };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
+        this.InitData();
+    };
     handleSubmit = async () => {
-        await chietKhauDichVuStore.createOrEdit(this.state.createOrEditDto);
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
         this.onModal();
     };
@@ -385,6 +372,14 @@ class ChietKhauDichVuScreen extends Component {
                             <Button startIcon={<img src={UploadIcon} />} variant="outlined">
                                 Xuất
                             </Button>
+                            <Button
+                                startIcon={<img src={AddIcon} />}
+                                variant="outlined"
+                                onClick={() => {
+                                    this.onModal();
+                                }}>
+                                Thêm mới
+                            </Button>
                         </Box>
                     </Grid>
                 </Grid>
@@ -393,13 +388,7 @@ class ChietKhauDichVuScreen extends Component {
                         autoHeight
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
                         checkboxSelection={false}
-                        pageSizeOptions={[10, 20]}
                         sx={{
                             '& p': {
                                 mb: 0
@@ -416,7 +405,38 @@ class ChietKhauDichVuScreen extends Component {
                             },
                             '& + .MuiTablePagination-root': {
                                 display: 'none'
-                            }
+                            },
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
                         }}
                         localeText={TextTranslate}
                         hideFooter
@@ -434,6 +454,7 @@ class ChietKhauDichVuScreen extends Component {
                                       listChietKhauDichVu.totalCount / this.state.maxResultCount
                                   )
                         }
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
@@ -441,7 +462,7 @@ class ChietKhauDichVuScreen extends Component {
                     formRef={this.state.createOrEditDto}
                     onClose={this.onCloseModal}
                     onSave={this.handleSubmit}
-                    onChange={this.handleChange}
+                    idNhanVien={this.state.idNhanVien}
                     suggestDonViQuiDoi={this.state.suggestDonViQuiDoi}
                     visited={this.state.visited}
                     title="Thêm mới"

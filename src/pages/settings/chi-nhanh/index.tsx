@@ -5,6 +5,7 @@ import {
     ButtonGroup,
     Grid,
     IconButton,
+    SelectChangeEvent,
     TextField,
     Typography
 } from '@mui/material';
@@ -54,7 +55,8 @@ class ChiNhanhScreen extends Component {
         });
     }
     handleSubmit = async () => {
-        await chiNhanhService.CreateOrEdit(this.state.createOrEditChiNhanhDto);
+        await this.InitData();
+        this.Modal();
     };
     Modal = () => {
         this.setState({ isShowModal: !this.state.isShowModal });
@@ -91,18 +93,16 @@ class ChiNhanhScreen extends Component {
     onCloseModal = () => {
         this.setState({ isShowModal: false });
     };
-    handleChange = (event: any) => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditChiNhanhDto: {
-                ...this.state.createOrEditChiNhanhDto,
-                [name]: value
-            }
-        });
-    };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             currentPage: value
+        });
+        this.InitData();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            rowPerPage: parseInt(event.target.value.toString(), 10),
+            currentPage: 1
         });
         this.InitData();
     };
@@ -374,14 +374,39 @@ class ChiNhanhScreen extends Component {
                             },
                             '& .MuiDataGrid-virtualScroller': {
                                 bgcolor: '#fff'
-                            }
+                            },
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
                         }}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 5 }
-                            }
-                        }}
-                        pageSizeOptions={[5, 10]}
                         hideFooter
                         localeText={TextTranslate}
                     />
@@ -390,6 +415,7 @@ class ChiNhanhScreen extends Component {
                         rowPerPage={this.state.rowPerPage}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                     <CreateOrEditChiNhanhModal
@@ -398,7 +424,6 @@ class ChiNhanhScreen extends Component {
                         isShow={this.state.isShowModal}
                         onCLose={this.onCloseModal}
                         onSave={this.handleSubmit}
-                        onChange={this.handleChange}
                     />
                 </div>
             </Box>

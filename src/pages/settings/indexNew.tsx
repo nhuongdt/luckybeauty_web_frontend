@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Box, Tabs, Tab, Typography, Grid } from '@mui/material';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import StoreDetail from './cua-hang/index';
 import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';

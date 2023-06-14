@@ -1,11 +1,13 @@
 import { Box, Typography, Grid, Button } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ThemLich from './them_lich_lam_viec';
+import Delete from './deleteAlert';
+import Calendar from './FullCalendar';
+import Edit from './editNhanVien';
 const LichLamViec: React.FC = () => {
     return (
         <Box>
-            <ThemLich />
             <Box sx={{ padding: '16px 2.2222222222222223vw' }}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs="auto">
@@ -24,6 +26,9 @@ const LichLamViec: React.FC = () => {
                         </Box>
                     </Grid>
                 </Grid>
+                <Box sx={{ borderTop: '1px solid #E6E1E6', mt: '18px', pt: '16px' }}>
+                    <Calendar />
+                </Box>
             </Box>
         </Box>
     );

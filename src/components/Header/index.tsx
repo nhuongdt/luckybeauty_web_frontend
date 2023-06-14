@@ -9,21 +9,12 @@ import {
     Grid,
     Box,
     Typography,
-    TextField,
-    InputAdornment,
     Select,
     MenuItem,
     Menu,
-    Stack,
     Button,
     Badge,
-    Container,
-    Avatar,
-    IconButton,
-    TextareaAutosize,
-    ButtonGroup,
-    Breadcrumbs,
-    Dialog
+    Avatar
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
@@ -32,25 +23,23 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import MessageIcon from '../../images/message-question.svg';
 import NotificationIcon from '../../images/notification.svg';
-import { ReactComponent as ToggleIcon } from '../../images/toggleIcon.svg';
 import http from '../../services/httpService';
 import Cookies from 'js-cookie';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
-import { ReactComponent as ToggleIconNew } from '../../images/arrow-circle-left.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
-import MessageAlert from '../../components/AlertDialog/MessageAlert';
 
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
     onClick: () => void;
     isChildHovered: boolean;
+    CookieSidebar: boolean;
 }
 
 const Header: React.FC<HeaderProps> = (
-    { collapsed, toggle, isChildHovered },
+    { collapsed, toggle, isChildHovered, CookieSidebar },
     props: HeaderProps
 ) => {
     const { onClick } = props;
@@ -84,16 +73,17 @@ const Header: React.FC<HeaderProps> = (
             })
             .catch((error) => console.log(error));
         const getChiNhanhs = async () => {
-            // const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
-            // setListChiNhanh(listChiNhanh);
-            // setCurrentChiNhanh(listChiNhanh[0].id);
-            // const remember = Cookies.get('remember');
-            // Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
-            //     expires: remember === 'true' ? 1 : undefined
-            // });
+            const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
+            setListChiNhanh(listChiNhanh);
+            setCurrentChiNhanh(listChiNhanh[0].id);
+            const remember = Cookies.get('remember');
+            Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
+                expires: remember === 'true' ? 1 : undefined
+            });
         };
         getChiNhanhs();
     }, []);
+
     return (
         <Box
             display="flex"
@@ -173,9 +163,14 @@ const Header: React.FC<HeaderProps> = (
                                     Cookies.set('IdChiNhanh', e.target.value, {
                                         expires: remember === 'true' ? 1 : undefined
                                     });
+                                    window.location.reload();
                                 }}>
                                 {chiNhanhs.map((item) => {
-                                    return <MenuItem value={item.id}>{item.tenChiNhanh}</MenuItem>;
+                                    return (
+                                        <MenuItem key={item.id} value={item.id}>
+                                            {item.tenChiNhanh}
+                                        </MenuItem>
+                                    );
                                 })}
                             </Select>
                         </Box>

@@ -1,45 +1,35 @@
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import InfoIcon from '@mui/icons-material/Info';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import avatar from '../../images/avatar.png';
 import React from 'react';
-import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
-import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import SuggestService from '../../services/suggests/SuggestService';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
-    Breadcrumbs,
     Button,
     ButtonGroup,
     Grid,
     IconButton,
-    Menu,
-    MenuItem,
+    SelectChangeEvent,
     TextField,
     Typography
 } from '@mui/material';
 import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
-import AppConsts from '../../lib/appconst';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import { observer } from 'mobx-react';
-import Stores from '../../stores/storeIdentifier';
 import NhanVienStore from '../../stores/nhanVienStore';
 import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import './employee.css';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
@@ -95,9 +85,6 @@ class EmployeeScreen extends React.Component {
             totalCount: NhanVienStore.listNhanVien.totalCount
         });
     }
-    async createOrEdit() {
-        nhanVienService.createOrEdit(this.state.createOrEditNhanSu);
-    }
     async delete(id: string) {
         NhanVienStore.delete(id);
         this.resetData();
@@ -109,15 +96,14 @@ class EmployeeScreen extends React.Component {
     };
 
     async createOrUpdateModalOpen(id: string) {
-        console.log(this.state.idChiNhanh);
         if (id === '') {
             await NhanVienStore.createNhanVien(this.state.idChiNhanh);
-            this.setState({
+            await this.setState({
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         } else {
             await NhanVienStore.getForEdit(id);
-            this.setState({
+            await this.setState({
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         }
@@ -125,18 +111,8 @@ class EmployeeScreen extends React.Component {
         this.Modal();
     }
     handleSubmit = async () => {
-        await NhanVienStore.createOrEdit(this.state.createOrEditNhanSu);
         await this.getData();
         this.setState({ modalVisible: false });
-    };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditNhanSu: {
-                ...this.state.createOrEditNhanSu,
-                [name]: value
-            }
-        });
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
@@ -144,6 +120,14 @@ class EmployeeScreen extends React.Component {
             skipCount: value
         });
         this.getListNhanVien();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
+        });
+        this.getData();
     };
     onOkDelete = () => {
         this.delete(this.state.selectedRowId ?? '');
@@ -364,7 +348,7 @@ class EmployeeScreen extends React.Component {
                     aria-label="Actions"
                     aria-controls={`actions-menu-${params.row.id}`}
                     aria-haspopup="true"
-                    onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
+                    onClick={(event: any) => this.handleOpenMenu(event, params.row.id)}>
                     <MoreHorizIcon />
                 </IconButton>
             ),
@@ -396,7 +380,7 @@ class EmployeeScreen extends React.Component {
                                     borderColor: '#CDC9CD',
                                     height: '40px'
                                 }}
-                                onChange={(e) => {
+                                onChange={(e: any) => {
                                     this.setState({ filter: e.target.value });
                                 }}
                                 onKeyDown={(e) => {
@@ -482,12 +466,6 @@ class EmployeeScreen extends React.Component {
                         autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 5, pageSize: 10 }
-                            }
-                        }}
-                        pageSizeOptions={[10, 20]}
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
@@ -495,7 +473,38 @@ class EmployeeScreen extends React.Component {
                             },
                             '& .MuiDataGrid-cellContent': {
                                 fontSize: '12px'
-                            }
+                            },
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
                         }}
                         hideFooter
                         localeText={TextTranslate}
@@ -513,6 +522,7 @@ class EmployeeScreen extends React.Component {
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
@@ -526,7 +536,6 @@ class EmployeeScreen extends React.Component {
                         this.setState({ modalVisible: false });
                     }}
                     onOk={this.handleSubmit}
-                    onChange={this.handleChange}
                     title={
                         this.state.idNhanSu === ''
                             ? 'Thêm mới nhân viên'

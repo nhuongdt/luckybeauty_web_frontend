@@ -17,7 +17,7 @@ import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/cr
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { format } from 'date-fns';
 import AppConsts from '../../../lib/appconst';
-
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 interface CreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -49,7 +49,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                             {title}
                         </div>
                         <div className="col-4" style={{ float: 'right' }}>
-                            <BsX
+                            <CloseIcon
                                 style={{ float: 'right', height: '24px', cursor: 'pointer' }}
                                 onClick={onCancel}
                             />
@@ -109,10 +109,19 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     </Grid>
                                 </Grid>
                                 <DialogActions>
-                                    <Button type="submit" className="btn-ok-dialog">
+                                    <Button
+                                        sx={{ bgcolor: '#7C3367!important' }}
+                                        variant="contained"
+                                        type="submit"
+                                        className="btn-ok-dialog">
                                         Lưu
                                     </Button>
                                     <Button
+                                        sx={{
+                                            borderColor: '#965C85!important',
+                                            color: '#965C85!important'
+                                        }}
+                                        variant="outlined"
                                         type="button"
                                         onClick={onCancel}
                                         className="btn-cancel-dialog">

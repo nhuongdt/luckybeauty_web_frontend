@@ -1,6 +1,14 @@
 import React, { ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
-import { Box, Grid, Typography, TextField, Button, IconButton } from '@mui/material';
+import {
+    Box,
+    Grid,
+    Typography,
+    TextField,
+    Button,
+    IconButton,
+    SelectChangeEvent
+} from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import AppComponentBase from '../../components/AppComponentBase';
 import tenantService from '../../services/tenant/tenantService';
@@ -79,6 +87,14 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         this.setState({
             currentPage: value,
             skipCount: value
+        });
+        this.getAll();
+    };
+    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        await this.setState({
+            maxResultCount: parseInt(event.target.value.toString(), 10),
+            currentPage: 1,
+            skipCount: 1
         });
         this.getAll();
     };
@@ -338,7 +354,38 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             },
                             '& p': {
                                 mb: 0
-                            }
+                            },
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
                         }}
                         hideFooter
                         localeText={TextTranslate}
@@ -356,6 +403,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
+                        handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
