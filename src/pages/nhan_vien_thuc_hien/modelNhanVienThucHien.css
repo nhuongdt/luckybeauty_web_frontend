@@ -12,6 +12,7 @@
     opacity: 0;
     pointer-events: none;
     transition: 0.4s;
+    z-index: 30;
 }
 #poppup-nhanVienThucHien.show {
     opacity: 1;
@@ -28,6 +29,7 @@
     cursor: pointer;
     pointer-events: none;
     transition: 0.4s;
+    z-index: 20;
 }
 .overlay.show {
     pointer-events: all;
