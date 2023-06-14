@@ -11,6 +11,12 @@ const TabDiary: React.FC = () => {
             headerName: 'mã phiếu',
             minWidth: 130,
             flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -18,6 +24,12 @@ const TabDiary: React.FC = () => {
             headerName: 'Thời gian',
             minWidth: 120,
             flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -25,6 +37,12 @@ const TabDiary: React.FC = () => {
             headerName: 'Người tạo',
             minWidth: 112,
             flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -32,6 +50,12 @@ const TabDiary: React.FC = () => {
             headerName: 'Loại thu/chi',
             minWidth: 90,
             flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -39,6 +63,12 @@ const TabDiary: React.FC = () => {
             headerName: 'Phương thức',
             minWidth: 100,
             flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -46,6 +76,12 @@ const TabDiary: React.FC = () => {
             headerName: 'Tiền thu',
             minWidth: 100,
             flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         }
     ];
@@ -85,7 +121,41 @@ const TabDiary: React.FC = () => {
                     },
                     '& .MuiDataGrid-cell .MuiBox-root': {
                         fontSize: '12px'
-                    }
+                    },
+                    '& .MuiIconButton-root': {
+                        display: 'none'
+                    },
+                    '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                        outline: 'none '
+                    },
+                    '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                        color: '#7C3367'
+                    },
+                    '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                        fill: '#7C3367'
+                    },
+                    '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                        {
+                            fill: '#000'
+                        },
+                    '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                        {
+                            fill: '#000'
+                        },
+                    '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                        color: '#7C3367!important'
+                    },
+                    '& .MuiDataGrid-columnHeaderTitleContainerContent': {
+                        fontWeight: '700',
+                        fontSize: '12px'
+                    },
+                    '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
+                        outline: 'none'
+                    },
+                    '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                        {
+                            bgcolor: '#f2ebf0'
+                        }
                 }}
                 localeText={TextTranslate}
             />
