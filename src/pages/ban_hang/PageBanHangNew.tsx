@@ -23,8 +23,11 @@ import { AiOutlineDelete } from 'react-icons/ai';
 // import { useReactToPrint } from 'react-to-print';
 import { useState, useEffect, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
+import { useReactToPrint } from 'react-to-print';
 
 import { InHoaDon } from '../../components/Print/InHoaDon';
+import { ComponentToPrint } from '../../components/Print/ComponentToPrint';
+import { Resume2 } from '../../components/Print/Test';
 
 import ProductService from '../../services/product/ProductService';
 import GroupProductService from '../../services/product/GroupProductService';
@@ -55,10 +58,25 @@ const PageBanHang = ({ customerChosed }: any) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
     };
     const componentRef = useRef(null);
-    // const handlePrint = useReactToPrint({
-    //     content: () => componentRef.current,
-    //     documentTitle: 'AwesomeFileName'
-    // });
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        documentTitle: 'AwesomeFileName'
+    });
+    const printtest = async () => {
+        const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
+        setContentPrint(content);
+        setPropMauIn((old: any) => {
+            return {
+                ...old,
+                contentHtml: content,
+                hoadon: hoadon,
+                khachhang: { ...customerChosed },
+                hoadonChiTiet: [...hoaDonChiTiet]
+            };
+        });
+        handlePrint();
+    };
 
     const [txtSearch, setTxtSearch] = useState('');
     const [nhomDichVu, setNhomDichVu] = useState<ModelNhomHangHoa[]>([]);
@@ -78,7 +96,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         new PageHoaDonChiTietDto({ id: '' })
     );
 
-    const [contentPrint, setContentPrint] = useState('');
+    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
     );
@@ -99,6 +117,24 @@ const PageBanHang = ({ customerChosed }: any) => {
         setNhomHangHoa(lstAll.filter((x) => x.laNhomHangHoa));
     };
 
+    const getListHangHoa_groupbyNhom = async (input: any) => {
+        const data = await ProductService.GetDMHangHoa_groupByNhom(input);
+        setListProduct(data);
+    };
+
+    React.useEffect(() => {
+        const input = {
+            IdNhomHangHoas: idNhomHang,
+            TextSearch: txtSearch,
+            IdLoaiHangHoa: idLoaiHangHoa,
+            CurrentPage: 0,
+            PageSize: 50
+        };
+
+        getListHangHoa_groupbyNhom(input);
+    }, [idNhomHang, idLoaiHangHoa]);
+
+    // only used when change textseach
     const debounceDropDown = useRef(
         debounce(async (input: any) => {
             const data = await ProductService.GetDMHangHoa_groupByNhom(input);
@@ -116,7 +152,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         };
 
         debounceDropDown(input);
-    }, [txtSearch, idNhomHang, idLoaiHangHoa]);
+    }, [txtSearch]);
 
     const PageLoad = () => {
         GetTreeNhomHangHoa();
@@ -126,11 +162,12 @@ const PageBanHang = ({ customerChosed }: any) => {
     }, []);
 
     useEffect(() => {
+        console.log('customerChosed ', customerChosed);
         FirstLoad_getSetDataFromCache();
     }, [customerChosed]);
 
     // filter list product
-    const choseNhomDichVu = (item: any) => {
+    const choseNhomDichVu = async (item: any) => {
         setIdNhomHang(item.id);
     };
 
@@ -145,6 +182,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
         if (!utils.checkNull(idCus)) {
             const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
+            console.log('FirstLoad_getSetDataFromCache data ', data);
             if (data.length === 0) {
                 const dataHD: PageHoaDonDto = {
                     ...hoadon,
@@ -430,8 +468,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         const content = await MauInServices.GetFileMauIn('HoaDonBan.txt');
         setContentPrint(content);
         //componentRef.current = content;
-
-        //handlePrint();
+        handlePrint();
 
         const hdPrint = { ...hoadon };
         hdPrint.maHoaDon = hodaDonDB.maHoaDon;
@@ -458,8 +495,9 @@ const PageBanHang = ({ customerChosed }: any) => {
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
-            {/* <ComponentToPrint ref={componentRef} /> */}
-            {contentPrint !== '' && <InHoaDon props={propMauIn} />}
+            <ComponentToPrint ref={componentRef} props={propMauIn} />
+            {/* <Resume2 ref={componentRef} props={propMauIn} /> */}
+            {/* {contentPrint !== '' && <InHoaDon props={propMauIn} />} */}
             <Grid
                 container
                 spacing={3}
@@ -835,7 +873,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                         backgroundColor: '#7C3367!important',
                         width: 'calc(33.33333% - 75px)'
                     }}
-                    onClick={saveHoaDon}>
+                    onClick={printtest}>
                     Thanh Toán
                 </Button>
             </Box>
