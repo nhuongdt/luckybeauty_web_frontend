@@ -135,8 +135,12 @@ class EmployeeScreen extends React.Component {
         this.handleDelete;
         this.handleCloseMenu();
     };
-    handleKeyDown = (event: any) => {
+    handleKeyDown = async (event: any) => {
         if (event.key === 'Enter') {
+            await this.setState({
+                currentPage: 1,
+                skipCount: 1
+            });
             this.getListNhanVien();
         }
     };

@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler } from 'react';
+import React, { ChangeEventHandler, useRef } from 'react';
 import AppComponentBase from '../../components/AppComponentBase';
 import {
     Button,
@@ -27,6 +27,8 @@ import { TextTranslate } from '../../components/TableLanguage';
 import { permissionCheckboxTree } from '../../services/role/dto/permissionCheckboxTree';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { observer } from 'mobx-react';
+import RoleStore from '../../stores/roleStore';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -45,7 +47,7 @@ export interface IRoleState {
     startIndex: number;
     isShowConfirmDelete: boolean;
 }
-class RoleScreen extends AppComponentBase<IRoleProps> {
+class RoleScreen extends React.Component<IRoleProps> {
     state = {
         modalVisible: false,
         maxResultCount: 10,
@@ -80,14 +82,19 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
             skipCount: this.state.currentPage,
             keyword: this.state.filter
         });
-        const permissionAll = [] as permissionCheckboxTree[];
         const permissionTree = await roleService.getAllPermissionTree();
-        console.log(permissionAll);
         this.setState({
             listRole: roles.items,
             totalCount: roles.totalCount,
             permissionTree: permissionTree,
-            totalPage: Math.ceil(roles.totalCount / this.state.maxResultCount)
+            totalPage: Math.ceil(roles.totalCount / this.state.maxResultCount),
+            roleEdit: {
+                id: 0,
+                name: '',
+                displayName: '',
+                grandPermissions: [],
+                description: ''
+            }
         });
     }
     handleSearch: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
@@ -120,12 +127,19 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
         if (id === 0) {
             const allPermission = await roleService.getAllPermissionTree();
             await this.setState({
-                permissionTree: allPermission
+                permissionTree: allPermission,
+                roleEdit: {
+                    id: 0,
+                    name: '',
+                    displayName: '',
+                    grandPermissions: [],
+                    description: ''
+                }
             });
         } else {
             const roleForEdit = await roleService.getRoleForEdit(id);
             const allPermission = await roleService.getAllPermissionTree();
-            await this.setState({
+            this.setState({
                 permissionTree: allPermission,
                 roleId: id,
                 roleEdit: roleForEdit
@@ -403,4 +417,4 @@ class RoleScreen extends AppComponentBase<IRoleProps> {
     }
 }
 
-export default RoleScreen;
+export default observer(RoleScreen);
