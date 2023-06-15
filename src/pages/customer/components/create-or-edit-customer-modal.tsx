@@ -19,16 +19,22 @@ import React from 'react';
 import { Form, Formik } from 'formik';
 import rules from './create-or-edit-customer.validate';
 import khachHangService from '../../../services/khach-hang/khachHangService';
+import AppConsts from '../../../lib/appconst';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
     title: string;
     onOk: () => void;
+    handleChange: (event: any) => void;
     formRef: CreateOrEditKhachHangDto;
 }
 class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
+    state = {
+        errorPhoneNumber: false,
+        errorTenKhach: false
+    };
     render(): ReactNode {
-        const { visible, onCancel, title, onOk, formRef } = this.props;
+        const { visible, onCancel, title, onOk, formRef, handleChange } = this.props;
         const initValues: CreateOrEditKhachHangDto = formRef;
         return (
             <div className={visible ? 'show poppup-add' : 'poppup-add'}>
@@ -36,20 +42,36 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                 <div className="poppup-des">Thông tin chi tiết</div>
                 <Formik
                     initialValues={initValues}
-                    validationSchema={rules}
                     onSubmit={async (values) => {
-                        await khachHangService.createOrEdit(values);
-                        onOk();
+                        const isValidPhoneNumber = AppConsts.phoneRegex.test(formRef.soDienThoai);
+                        console.log(isValidPhoneNumber);
+                        if (isValidPhoneNumber == false) {
+                            this.setState({ errorPhoneNumber: true });
+                        }
+                        if (formRef.tenKhachHang === '' || formRef.tenKhachHang === null) {
+                            this.setState({ errorTenKhach: true });
+                        }
+                        if (formRef.tenKhachHang && isValidPhoneNumber) {
+                            await khachHangService.createOrEdit(formRef);
+                            this.setState({ errorPhoneNumber: false, errorTenKhach: false });
+                            onOk();
+                        }
                     }}>
-                    {({ handleChange, errors, values }) => (
+                    {() => (
                         <Form>
-                            <Box className="form-add">
+                            <Box
+                                className="form-add"
+                                sx={{
+                                    '& .text-danger': {
+                                        fontSize: '12px'
+                                    }
+                                }}>
                                 <Grid container className="form-container" spacing={2}>
                                     <Grid item xs={12}>
                                         <TextField
                                             size="small"
                                             name="id"
-                                            value={values.id}
+                                            value={formRef.id}
                                             fullWidth
                                             hidden></TextField>
                                         <Typography color="#4C4B4C" variant="subtitle2">
@@ -59,15 +81,17 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             size="small"
                                             placeholder="Họ và tên"
                                             name="tenKhachHang"
-                                            value={values.tenKhachHang}
+                                            value={formRef.tenKhachHang}
                                             onChange={handleChange}
+                                            helperText={
+                                                this.state.errorTenKhach ? (
+                                                    <small className="text-danger">
+                                                        Tên khách hàng không được để trống
+                                                    </small>
+                                                ) : null
+                                            }
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                                        {errors.tenKhachHang && (
-                                            <small className="text-danger">
-                                                {errors.tenKhachHang}
-                                            </small>
-                                        )}
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
@@ -77,16 +101,19 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             type="tel"
                                             size="small"
                                             name="soDienThoai"
-                                            value={values.soDienThoai}
+                                            value={formRef.soDienThoai}
                                             onChange={handleChange}
                                             placeholder="Số điện thoại"
                                             fullWidth
+                                            helperText={
+                                                this.state.errorPhoneNumber ? (
+                                                    <small className="text-danger">
+                                                        Số điện thoại không hợp lệ
+                                                    </small>
+                                                ) : null
+                                            }
                                             sx={{ fontSize: '16px' }}></TextField>
-                                        {errors.soDienThoai && (
-                                            <small className="text-danger">
-                                                {errors.soDienThoai}
-                                            </small>
-                                        )}
+                                        <small className="text-danger"></small>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
@@ -97,7 +124,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             size="small"
                                             placeholder="Nhập địa chỉ của khách hàng"
                                             name="diaChi"
-                                            value={values.diaChi}
+                                            value={formRef.diaChi}
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px' }}></TextField>
@@ -112,8 +139,8 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             placeholder="21/04/2004"
                                             name="ngaySinh"
                                             value={
-                                                values.ngaySinh != null
-                                                    ? values.ngaySinh?.toString().substring(0, 10)
+                                                formRef.ngaySinh != null
+                                                    ? formRef.ngaySinh?.toString().substring(0, 10)
                                                     : ''
                                             }
                                             onChange={handleChange}
@@ -128,7 +155,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Select
                                             id="gender"
                                             fullWidth
-                                            value={values.gioiTinh ? 'true' : 'false'}
+                                            value={formRef.gioiTinh ? 'true' : 'false'}
                                             name="gioiTinh"
                                             onChange={handleChange}
                                             sx={{
@@ -151,7 +178,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <TextareaAutosize
                                             placeholder="Điền"
                                             name="moTa"
-                                            value={values.moTa}
+                                            value={formRef.moTa}
                                             onChange={handleChange}
                                             maxRows={4}
                                             minRows={4}
@@ -171,7 +198,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             <TextField
                                                 type="file"
                                                 name="avatar"
-                                                value={values.avatar}
+                                                value={formRef.avatar}
                                                 onChange={handleChange}
                                                 id="input-file"
                                                 sx={{

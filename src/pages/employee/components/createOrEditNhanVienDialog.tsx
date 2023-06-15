@@ -28,10 +28,12 @@ export interface ICreateOrEditUserProps {
     formRef: CreateOrUpdateNhanSuDto;
     suggestChucVu: SuggestChucVuDto[];
 }
+
 class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef, suggestChucVu } = this.props;
         const initValues: CreateOrUpdateNhanSuDto = formRef;
+
         return (
             <Dialog
                 open={visible}

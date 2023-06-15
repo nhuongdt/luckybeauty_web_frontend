@@ -29,7 +29,7 @@ import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhD
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
-
+import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -196,7 +196,8 @@ const Header: React.FC<HeaderProps> = (
                             aria-controls={open ? 'author' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
-                            onClick={handleClick}>
+                            onClick={handleClick}
+                            sx={{ pr: '25px', mr: '-20px' }}>
                             <Avatar src={avatar} sx={{ height: 36, width: 36 }} alt={'profile'} />
                         </Button>
 
@@ -226,6 +227,20 @@ const Header: React.FC<HeaderProps> = (
                     </Box>
                 </Grid>
             </Grid>
+            {/* <Button
+                variant="contained"
+                sx={{
+                    position: 'fixed',
+                    right: '24px',
+                    bottom: '40px',
+                    width: '60px',
+                    height: '60px',
+                    minWidth: 'unset',
+                    borderRadius: '50%',
+                    bgcolor: '#7C3367!important'
+                }}>
+                <SuportIcon />
+            </Button> */}
         </Box>
     );
 };

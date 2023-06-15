@@ -47,9 +47,10 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
         selectedPermissions: [] as string[],
         tabIndex: '1'
     };
-    async componentDidMount() {
-        await this.setState({
-            selectedPermissions: this.props.formRef.grantedPermissionNames
+    componentDidMount() {
+        console.log(this.props.formRef.grantedPermissionNames);
+        this.setState({ selectedPermissions: this.props.formRef.grantedPermissionNames }, () => {
+            console.log(this.state.selectedPermissions);
         });
     }
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -65,7 +66,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
     };
     handleCheck = (event: any, node: PermissionTree) => {
         const checked = event.target.checked;
-        const updatedSelected = [...this.state.selectedPermissions];
+        const updatedSelected = [...this.state.selectedPermissions, 'Pages'];
 
         if (checked) {
             this.addPermission(updatedSelected, node);
@@ -108,7 +109,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
             });
         }
     };
-    renderTree = (nodes: PermissionTree[]) => {
+    renderTree = (nodes: PermissionTree[], selectedPermissions: string[]) => {
         return nodes.map((node: PermissionTree) => (
             <TreeItem
                 key={node.name}
@@ -118,16 +119,12 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={
-                                        this.state.selectedPermissions.indexOf(node.name) !== -1
-                                    }
+                                    checked={selectedPermissions?.indexOf(node.name) !== -1}
                                     indeterminate={
-                                        this.state.selectedPermissions.indexOf(node.name) === -1 &&
+                                        selectedPermissions?.indexOf(node.name) === -1 &&
                                         node.children.some(
                                             (child: any) =>
-                                                this.state.selectedPermissions.indexOf(
-                                                    child.name
-                                                ) !== -1
+                                                selectedPermissions?.indexOf(child.name) !== -1
                                         )
                                     }
                                     onChange={(event: any) => {
@@ -148,7 +145,9 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                         />
                     </div>
                 }>
-                {Array.isArray(node.children) ? this.renderTree(node.children) : null}
+                {Array.isArray(node.children)
+                    ? this.renderTree(node.children, selectedPermissions)
+                    : null}
             </TreeItem>
         ));
     };
@@ -197,11 +196,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={initialValues}
-                        onSubmit={(e) => {
-                            console.log(e);
-                        }}>
+                    <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
                         {({ values, handleChange, errors, touched }) => (
                             <Form>
                                 <Box>
@@ -315,7 +310,10 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                                                     defaultExpanded={defaultExpand}
                                                     defaultCollapseIcon={<ExpandMoreIcon />}
                                                     defaultExpandIcon={<ChevronRightIcon />}>
-                                                    {this.renderTree(permissionTree)}
+                                                    {this.renderTree(
+                                                        permissionTree,
+                                                        this.state.selectedPermissions
+                                                    )}
                                                 </TreeView>
                                             </FormGroup>
                                         </TabPanel>

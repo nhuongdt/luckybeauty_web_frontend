@@ -23,10 +23,11 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../lib/appconst';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../components/TableLanguage';
 import '../../customer/customerPage.css';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+
 class ChiNhanhScreen extends Component {
     state = {
         idChiNhanh: '',
@@ -106,6 +107,11 @@ class ChiNhanhScreen extends Component {
         });
         this.InitData();
     };
+
+    handleColumnVisibilityChange = () => {
+        this.setState({ hiddenColumns: true });
+    };
+
     render(): ReactNode {
         const columns = [
             {
@@ -407,6 +413,8 @@ class ChiNhanhScreen extends Component {
                                     bgcolor: '#f2ebf0'
                                 }
                         }}
+                        onColumnVisibilityModelChange={this.handleColumnVisibilityChange}
+                        columnBuffer={0}
                         hideFooter
                         localeText={TextTranslate}
                     />

@@ -42,18 +42,21 @@ const MainAppLayout: React.FC = () => {
     const toggle = () => {
         onCollapse(!collapsed);
         handleChildHoverChange(!isChildHovered);
-        if (collapsed !== true) {
+        if (collapsed == false) {
             Cookies.set('sidebar', 'true', { expires: 7 });
         } else {
             Cookies.set('sidebar', 'false');
         }
     };
     const CookieSidebar = Cookies.get('sidebar') === 'true';
+
     useEffect(() => {
         if (CookieSidebar) {
-            onCollapse(!collapsed);
+            onCollapse(true);
+            handleChildHoverChange(false);
         } else {
             onCollapse(false);
+            handleChildHoverChange(true);
         }
     }, []);
     return (
@@ -67,7 +70,7 @@ const MainAppLayout: React.FC = () => {
                 />
                 <Box
                     sx={{
-                        marginLeft: collapsed ? '72px' : '240px',
+                        marginLeft: !collapsed ? '240px' : '72px',
                         transition: '.4s'
                     }}>
                     <Header

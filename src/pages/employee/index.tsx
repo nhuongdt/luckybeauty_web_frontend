@@ -53,6 +53,7 @@ class EmployeeScreen extends React.Component {
         await this.setState({ idChiNhanh: idChiNhanh });
         await this.getData();
     }
+
     resetData() {
         this.setState({
             idNhanSu: '',
@@ -134,8 +135,12 @@ class EmployeeScreen extends React.Component {
         this.handleDelete;
         this.handleCloseMenu();
     };
-    handleKeyDown = (event: any) => {
+    handleKeyDown = async (event: any) => {
         if (event.key === 'Enter') {
+            await this.setState({
+                currentPage: 1,
+                skipCount: 1
+            });
             this.getListNhanVien();
         }
     };
@@ -198,7 +203,18 @@ class EmployeeScreen extends React.Component {
                 </Box>
             )
         },
-        { field: 'soDienThoai', headerName: 'Số điện thoại', width: 114 },
+        {
+            field: 'soDienThoai',
+            headerName: 'Số điện thoại',
+            minWidth: 114,
+            flex: 1,
+            renderHeader: (params) => (
+                <Box sx={{ fontWeight: '700' }}>
+                    {params.colDef.headerName}
+                    <IconSorting className="custom-icon" />{' '}
+                </Box>
+            )
+        },
         {
             field: 'ngaySinh',
             headerName: 'Ngày sinh',
@@ -362,6 +378,7 @@ class EmployeeScreen extends React.Component {
     ];
     public render() {
         const { listNhanVien } = NhanVienStore;
+
         return (
             <Box
                 className="list-nhan-vien"
@@ -503,7 +520,7 @@ class EmployeeScreen extends React.Component {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: '#faf2f8'
                                 }
                         }}
                         hideFooter

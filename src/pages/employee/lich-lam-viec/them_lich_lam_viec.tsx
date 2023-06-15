@@ -111,7 +111,7 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                                         },
                                         pr: '20px',
                                         color: '#4C4B4C',
-                                        height: '48px',
+
                                         mt: '8px'
                                     }}
                                     displayEmpty
@@ -136,9 +136,7 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                                         mt: '8px',
                                         cursor: 'pointer',
                                         position: 'relative',
-                                        '& .MuiInputBase-root': {
-                                            height: '48px'
-                                        },
+
                                         '& input': {
                                             flexDirection: 'row-reverse',
                                             gap: '10px'
@@ -178,9 +176,7 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                                         mt: '8px',
                                         cursor: 'pointer',
                                         position: 'relative',
-                                        '& .MuiInputBase-root': {
-                                            height: '48px'
-                                        },
+
                                         '& input': {
                                             flexDirection: 'row-reverse',
                                             gap: '10px'
@@ -317,21 +313,22 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                                                         sx={{
                                                             '& input': {
                                                                 flexDirection: 'row-reverse',
-                                                                paddingY: '12.5px',
+
                                                                 gap: '10px'
                                                             },
                                                             '& input::-webkit-calendar-picker-indicator':
                                                                 {
                                                                     opacity: '0',
                                                                     width: '24px',
-                                                                    height: '24px'
+                                                                    height: '24px',
+                                                                    cursor: 'pointer'
                                                                 },
                                                             '& svg': {
                                                                 pointerEvents: 'none',
                                                                 position: 'absolute',
                                                                 left: '10%',
-                                                                width: '24px',
-                                                                height: '24px'
+                                                                width: '20px',
+                                                                height: '20px'
                                                             }
                                                         }}
                                                         InputProps={{
@@ -353,21 +350,21 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                                                         value={item.timeEnd}
                                                         sx={{
                                                             '& input': {
-                                                                flexDirection: 'row-reverse',
-                                                                paddingY: '12.5px'
+                                                                flexDirection: 'row-reverse'
                                                             },
                                                             '& input::-webkit-calendar-picker-indicator':
                                                                 {
                                                                     opacity: '0',
                                                                     width: '24px',
-                                                                    height: '24px'
+                                                                    height: '24px',
+                                                                    cursor: 'pointer'
                                                                 },
                                                             '& svg': {
                                                                 position: 'absolute',
                                                                 pointerEvents: 'none',
                                                                 left: '10%',
-                                                                width: '24px',
-                                                                height: '24px'
+                                                                width: '20px',
+                                                                height: '20px'
                                                             }
                                                         }}
                                                         InputProps={{
