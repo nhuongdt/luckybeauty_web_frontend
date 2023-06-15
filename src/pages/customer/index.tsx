@@ -93,30 +93,27 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
     }
-    async handleSubmit() {
-        await this.getData();
+    handleChange = (event: any) => {
+        const { name, value } = event.target;
+        this.setState({
+            createOrEditKhachHang: {
+                ...this.state.createOrEditKhachHang,
+                [name]: value
+            }
+        });
+    };
+    handleSubmit = () => {
+        this.getData();
         this.handleToggle();
-    }
+    };
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
-            this.setState({
-                createOrEditKhachHang: {
-                    id: AppConsts.guidEmpty,
-                    gioiTinh: false,
-                    idNhomKhach: AppConsts.guidEmpty,
-                    idLoaiKhach: 0,
-                    idNguonKhach: AppConsts.guidEmpty,
-                    maKhachHang: '',
-                    soDienThoai: '',
-                    tenKhachHang: ''
-                }
-            });
+            await khachHangStore.createKhachHangDto();
+            this.updateModal();
         } else {
             await khachHangStore.getForEdit(id ?? '');
-
             this.updateModal();
         }
-        console.log(JSON.stringify(this.state.createOrEditKhachHang));
         this.setState({ idkhachHang: id ?? '' }, () => {
             this.handleToggle();
         });
@@ -378,8 +375,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 className="search-field"
                                 variant="outlined"
                                 type="search"
-                                onChange={(e) => {
-                                    this.setState({ keyword: e.target.value });
+                                onChange={async (e) => {
+                                    await this.setState({ keyword: e.target.value });
                                 }}
                                 onKeyDown={(event) => {
                                     if (event.key === 'Enter') {
@@ -392,6 +389,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         <IconButton
                                             type="button"
                                             onClick={() => {
+                                                this.setState({ skipCount: 1 });
                                                 this.getData();
                                             }}>
                                             <img src={SearchIcon} />
@@ -437,7 +435,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             </Button>
                             <Button
                                 className="bg-main"
-                                onClick={this.handleToggle}
+                                onClick={() => {
+                                    this.createOrUpdateModalOpen('');
+                                }}
                                 variant="contained"
                                 startIcon={<img src={AddIcon} />}
                                 sx={{
@@ -526,6 +526,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         visible={this.state.toggle}
                         onCancel={this.handleToggle}
                         onOk={this.handleSubmit}
+                        handleChange={this.handleChange}
                         title={
                             this.state.idkhachHang == ''
                                 ? 'Thêm mới khách hàng'
