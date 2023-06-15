@@ -13,6 +13,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     maNhanVien = '';
     tenNhanVien = '';
 
+    daThanhToan? = 0;
     txtTrangThaiHD = 'Hoàn thành';
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
@@ -29,6 +30,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         maHoaDon = '',
         ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
         tongTienHang = 0,
+        daThanhToan = 0,
         tongTienThue = 0
     }) {
         super({
@@ -46,6 +48,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         this.txtTrangThaiHD = txtTrangThaiHD;
         this.maNhanVien = maNhanVien;
         this.tenNhanVien = tenNhanVien;
+        this.daThanhToan = daThanhToan;
         this.hoaDonChiTiet = [];
     }
 }
