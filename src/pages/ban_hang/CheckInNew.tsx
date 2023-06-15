@@ -50,13 +50,8 @@ const shortNameCus = createTheme({
 });
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
-    const history = useNavigate();
+    const MaxPc1490 = useMediaQuery('(max-width: 1490px)');
     const [txtSearch, setTextSeach] = useState('');
-
-    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(
-        new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
-    );
-    const [listCusChecking, setListCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
     const [allCusChecking, setAllCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
 
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
@@ -66,7 +61,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const GetListCustomerChecking = async () => {
         const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
         const list = await CheckinService.GetListCustomerChecking(input);
-        setListCusChecking(list);
         setAllCusChecking([...list]);
     };
 
@@ -97,15 +91,14 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                     (x.soDienThoai !== null &&
                         utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
             );
-            setListCusChecking(data);
+            return data;
         } else {
-            setListCusChecking([...allCusChecking]);
+            return allCusChecking;
         }
     };
+    console.log('checkin ');
 
-    useEffect(() => {
-        SearhCusChecking();
-    }, [txtSearch]);
+    const listCusChecking = SearhCusChecking();
 
     const saveCheckInOK = async (dataCheckIn: any) => {
         console.log('saveCheckInOK ', dataCheckIn);
@@ -119,7 +112,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             tongTichDiem: dataCheckIn.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
-        setListCusChecking([...listCusChecking, cusChecking]);
+        setAllCusChecking([...allCusChecking, cusChecking]);
 
         // check exist dexie
         if (dataCheckIn.idKhachHang !== Guid.EMPTY) {
@@ -139,17 +132,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     const handleClickCustomer = async (item: any) => {
-        setCusChecking((old: any) => {
-            return {
-                ...old,
-                idCheckIn: item.idCheckIn,
-                idKhachHang: item.idKhachHang,
-                maKhachHang: item.maKhachHang,
-                tenKhachHang: item.tenKhachHang,
-                soDienThoai: item.soDienThoai,
-                tongTichDiem: item.tongTichDiem
-            };
-        });
         console.log('item', item);
         hanleChoseCustomer(item);
 
@@ -159,11 +141,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             await dbDexie.khachCheckIn.add(item);
         }
     };
-    const [show, setShow] = useState(false);
-    const handleToggle = () => {
-        setShow(!show);
-    };
-    const MaxPc1490 = useMediaQuery('(max-width: 1490px)');
+
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />

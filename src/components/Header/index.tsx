@@ -35,10 +35,11 @@ interface HeaderProps {
     toggle: () => void;
     onClick: () => void;
     isChildHovered: boolean;
+    CookieSidebar: boolean;
 }
 
 const Header: React.FC<HeaderProps> = (
-    { collapsed, toggle, isChildHovered },
+    { collapsed, toggle, isChildHovered, CookieSidebar },
     props: HeaderProps
 ) => {
     const { onClick } = props;
@@ -82,6 +83,7 @@ const Header: React.FC<HeaderProps> = (
         };
         getChiNhanhs();
     }, []);
+
     return (
         <Box
             display="flex"

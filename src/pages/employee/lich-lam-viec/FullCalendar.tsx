@@ -23,6 +23,10 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { ReactComponent as CalendarIcon } from '../../../images/calendar.svg';
 import { ReactComponent as ListIcon } from '../../../images/list.svg';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
+import CustomEmployee from './DialogCustom';
+import ThemLich from './them_lich_lam_viec';
+import Delete from './deleteAlert';
+import Edit from './editNhanVien';
 const Calendar: React.FC = () => {
     const [weekDates, setWeekDates] = useState<any[]>([]);
 
@@ -125,8 +129,54 @@ const Calendar: React.FC = () => {
     const changeValue = (event: SelectChangeEvent) => {
         setValue(event.target.value);
     };
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [selectedId, setSelectedId] = useState('');
+    const open = Boolean(anchorEl);
+    const handleOpenCustom = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedId(event.currentTarget.className);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+    const [openDelete, setOpenDelete] = useState(false);
+    const handleOpenDelete = () => {
+        setOpenDelete(true);
+    };
+    const handleCloseDelete = () => {
+        setOpenDelete(false);
+    };
+    const [openEdit, setOpenEdit] = useState(false);
+    const handleOpenEdit = () => {
+        setOpenEdit(true);
+    };
+    const handleCloseEdit = () => {
+        setOpenEdit(false);
+    };
     return (
         <Box>
+            <CustomEmployee
+                open={open}
+                handleClose={handleClose}
+                anchorEl={anchorEl}
+                selectedRowId={selectedId}
+                handleOpenDelete={handleOpenDelete}
+                handleOpenDialog={handleOpenDialog}
+                handleCloseDialog={handleCloseDialog}
+                handleOpenEdit={handleOpenEdit}
+            />
+            <Edit open={openEdit} onClose={handleCloseEdit} />
+            <Delete open={openDelete} onClose={handleCloseDelete} />
+            <ThemLich open={openDialog} onClose={handleCloseDialog} />
             <Box mb="16px" display="flex" justifyContent="space-between">
                 <Box>
                     <Select
@@ -296,6 +346,7 @@ const Calendar: React.FC = () => {
                                             </Typography>
                                         </Box>
                                         <Button
+                                            onClick={handleOpenCustom}
                                             variant="text"
                                             sx={{ minWidth: 'unset', ml: 'auto' }}>
                                             <EditIcon />
