@@ -148,7 +148,7 @@
     -webkit-transition: 0.4s;
     -o-transition: 0.4s;
     transition: 0.4s;
-    z-index: 5;
+    z-index: 30;
 }
 
 .poppup-add.show {
@@ -162,7 +162,7 @@
     left: 0;
     width: 100vw;
     background-color: rgba(0, 0, 0, 0.2);
-    z-index: 2;
+    z-index: 20;
     height: 100vh;
     opacity: 0;
     -webkit-transition: 0.4s;
