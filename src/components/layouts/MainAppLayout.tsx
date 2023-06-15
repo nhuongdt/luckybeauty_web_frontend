@@ -42,18 +42,23 @@ const MainAppLayout: React.FC = () => {
     const toggle = () => {
         onCollapse(!collapsed);
         handleChildHoverChange(!isChildHovered);
-        if (collapsed !== true) {
+        if (collapsed == false) {
+            console.log('cookie side bar :' + CookieSidebar);
             Cookies.set('sidebar', 'true', { expires: 7 });
         } else {
             Cookies.set('sidebar', 'false');
+            console.log('cookie side bar :' + CookieSidebar);
         }
     };
     const CookieSidebar = Cookies.get('sidebar') === 'true';
+
     useEffect(() => {
         if (CookieSidebar) {
-            onCollapse(!collapsed);
+            onCollapse(true);
+            handleChildHoverChange(false);
         } else {
             onCollapse(false);
+            handleChildHoverChange(true);
         }
     }, []);
     return (
