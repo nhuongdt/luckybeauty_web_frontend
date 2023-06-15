@@ -13,6 +13,7 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: any) {
     const [rowHover, setRowHover] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
     const [isHover, setIsHover] = useState(false);
+    const [isClick, setIsClick] = useState(false);
 
     const handleHover = (event: any, rowData: any, index: number) => {
         switch (event.type) {
@@ -27,6 +28,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
     };
     const handleClickTreeItem = (isEdit = false) => {
         clickTreeItem(isEdit, rowHover);
+        setIsClick(true);
     };
     return (
         <>
@@ -42,7 +44,8 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                     <AccordionSummary
                         sx={{
                             display: 'flex',
-                            alignItems: 'center'
+                            alignItems: 'center',
+                            backgroundColor: isClick && rowHover.id === item.id ? 'red' : ''
                         }}
                         onMouseLeave={(event: any) => {
                             handleHover(event, item, index);
