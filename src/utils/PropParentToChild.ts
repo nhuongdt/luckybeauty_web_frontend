@@ -1,6 +1,7 @@
 import HoaDonChiTietDto from '../services/ban_hang/HoaDonChiTietDto';
 import PageHoaDonChiTietDto from '../services/ban_hang/PageHoaDonChiTietDto';
 import PageHoaDonDto from '../services/ban_hang/PageHoaDonDto';
+import { ChiNhanhDto } from '../services/chi_nhanh/Dto/chiNhanhDto';
 import { KhachHangDto } from '../services/khach-hang/dto/KhachHangDto';
 
 export class PropModal {
@@ -34,14 +35,17 @@ export class PropToChildMauIn {
     hoadon?: PageHoaDonDto;
     hoadonChiTiet?: PageHoaDonChiTietDto[];
     khachhang?: KhachHangDto;
+    chinhanh?: ChiNhanhDto;
 
     constructor({
         contentHtml = '',
         hoadon = new PageHoaDonDto({ idKhachHang: null }),
-        hoadonChiTiet = [new PageHoaDonChiTietDto({ soLuong: 1 })]
+        hoadonChiTiet = [new PageHoaDonChiTietDto({ soLuong: 1 })],
+        chinhanh = {} as ChiNhanhDto
     }) {
         this.contentHtml = contentHtml;
         this.hoadon = hoadon;
         this.hoadonChiTiet = hoadonChiTiet;
+        this.chinhanh = chinhanh;
     }
 }
