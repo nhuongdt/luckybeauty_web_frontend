@@ -43,6 +43,9 @@ class CheckinService {
         return xx;
     };
     UpdateTrangThaiCheckin = async (idCheckIn: string, trangThai = 1) => {
+        if (utils.checkNull(idCheckIn) || idCheckIn === Guid.EMPTY) {
+            return;
+        }
         const xx = await http
             .put(
                 `api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`
@@ -50,11 +53,13 @@ class CheckinService {
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
-        console.log('UpdateTrangThaiCheckin', xx);
         return xx;
     };
 
     InsertCheckInHoaDon = async (input: any) => {
+        if (utils.checkNull(input?.idCheckIn) || input?.idCheckIn === Guid.EMPTY) {
+            return;
+        }
         // used to khachhang checkout --> insert (idCheckin + idHoadon)
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCheckInHoaDon`, input)

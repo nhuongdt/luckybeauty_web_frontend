@@ -1,8 +1,12 @@
 import http from '../httpService';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+import { Guid } from 'guid-typescript';
 class HoaDonService {
     CreateHoaDon = async (input: any) => {
+        if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
+            input.idKhachHang = null;
+        }
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon', input);
         return result.data.result;
     };
