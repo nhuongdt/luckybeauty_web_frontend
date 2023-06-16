@@ -9,7 +9,10 @@ const App = () => {
         <div>
             <StrictMode>
                 <BrowserRouter>{Routes}</BrowserRouter>
-                <SnackbarProvider maxSnack={3} />
+                <SnackbarProvider
+                    maxSnack={3}
+                    anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+                />
                 <DeleteExpiredCookie />
             </StrictMode>
         </div>

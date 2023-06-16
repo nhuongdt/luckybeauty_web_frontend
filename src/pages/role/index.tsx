@@ -29,6 +29,7 @@ import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { observer } from 'mobx-react';
 import RoleStore from '../../stores/roleStore';
+import { enqueueSnackbar } from 'notistack';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -163,7 +164,16 @@ class RoleScreen extends React.Component<IRoleProps> {
         this.onShowDelete();
     };
     async delete(id: number) {
-        await roleService.delete(id);
+        const deleteResult = await roleService.delete(id);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
         this.getAll();
     }
     handleOpenMenu = (event: any, rowId: any) => {

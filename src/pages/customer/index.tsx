@@ -31,6 +31,8 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import AppConsts from '../../lib/appconst';
 import { observer } from 'mobx-react';
 import khachHangStore from '../../stores/khachHangStore';
+import { enqueueSnackbar } from 'notistack';
+import Cookies from 'js-cookie';
 
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
@@ -85,7 +87,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
             skipCount: this.state.currentPage,
-            loaiDoiTuong: 0
+            loaiDoiTuong: 0,
+            sortBy: '',
+            sortType: 'desc',
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
         });
         await this.setState({
             rowTable: khachHangs.items,
@@ -122,7 +127,16 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.setState({ createOrEditKhachHang: khachHangStore.createEditKhachHangDto });
     };
     async delete(id: string) {
-        await khachHangService.delete(id);
+        const deleteReult = await khachHangService.delete(id);
+        deleteReult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
     }
     handleToggle = () => {
         this.setState({
@@ -134,7 +148,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
             skipCount: this.state.skipCount,
-            loaiDoiTuong: 0
+            loaiDoiTuong: 0,
+            sortBy: '',
+            sortType: 'desc'
         });
         fileDowloadService.downloadTempFile(result);
     };
@@ -289,7 +305,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
-                renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+                renderCell: (params) => (
+                    <Box title={params.value}>
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
+                    </Box>
+                )
             },
             {
                 field: 'cuocHenGanNhat',

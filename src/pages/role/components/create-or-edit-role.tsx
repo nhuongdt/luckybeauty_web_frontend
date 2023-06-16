@@ -28,6 +28,7 @@ import TreeView from '@mui/lab/TreeView';
 import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import { enqueueSnackbar } from 'notistack';
 export interface ICreateOrEditRoleProps {
     visible: boolean;
     onCancel: () => void;
@@ -58,10 +59,25 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
     };
 
     handleSubmit = async (values: CreateOrEditRoleDto) => {
-        await roleService.createOrEdit({
+        const createOrEdit = await roleService.createOrEdit({
             ...values,
             grantedPermissionNames: this.state.selectedPermissions
         });
+        createOrEdit != null
+            ? values.id === 0
+                ? enqueueSnackbar('Thêm mới thành công', {
+                      variant: 'success',
+                      autoHideDuration: 3000
+                  })
+                : enqueueSnackbar('Cập nhật thành công', {
+                      variant: 'success',
+                      autoHideDuration: 3000
+                  })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
+
         this.props.onOk();
     };
     handleCheck = (event: any, node: PermissionTree) => {

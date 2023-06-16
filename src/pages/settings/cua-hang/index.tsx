@@ -4,6 +4,7 @@ import AddLogoIcon from '../../../images/add-logo.svg';
 import cuaHangService from '../../../services/cua_hang/cuaHangService';
 import Cookies from 'js-cookie';
 import { EditCuaHangDto } from '../../../services/cua_hang/Dto/EditCuaHangDto';
+import { enqueueSnackbar } from 'notistack';
 class StoreDetail extends Component {
     state = {
         editCuaHang: {
@@ -40,7 +41,16 @@ class StoreDetail extends Component {
         });
     };
     handSubmit = async () => {
-        await cuaHangService.Update(this.state.editCuaHang);
+        const result = await cuaHangService.Update(this.state.editCuaHang);
+        result != null
+            ? enqueueSnackbar('Cập nhật thông tin thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
     };
     render(): ReactNode {
         const { editCuaHang } = this.state;

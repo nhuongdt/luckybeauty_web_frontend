@@ -30,6 +30,7 @@ import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import './employee.css';
+import { enqueueSnackbar } from 'notistack';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
@@ -76,9 +77,13 @@ class EmployeeScreen extends React.Component {
     }
     async getListNhanVien() {
         const { filter, maxResultCount, currentPage } = this.state;
-        await NhanVienStore.search(filter, {
+        await NhanVienStore.getAll({
             maxResultCount: maxResultCount,
-            skipCount: currentPage
+            skipCount: currentPage,
+            filter: filter,
+            sortBy: '',
+            sortType: 'desc',
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
         });
         await this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
@@ -86,7 +91,16 @@ class EmployeeScreen extends React.Component {
         });
     }
     async delete(id: string) {
-        NhanVienStore.delete(id);
+        const deleteResult = NhanVienStore.delete(id);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
         this.resetData();
     }
     Modal = () => {
@@ -210,15 +224,19 @@ class EmployeeScreen extends React.Component {
             flex: 1,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }}>
-                    <DateIcon style={{ marginRight: 4 }} />
-                    <Typography
-                        fontSize="12px"
-                        fontWeight="400"
-                        variant="h6"
-                        color="#333233"
-                        lineHeight="16px">
-                        {new Date(params.value).toLocaleDateString('en-GB')}
-                    </Typography>
+                    {params.value != null ? (
+                        <>
+                            <DateIcon style={{ marginRight: 4 }} />
+                            <Typography
+                                fontSize="12px"
+                                fontWeight="400"
+                                variant="h6"
+                                color="#333233"
+                                lineHeight="16px">
+                                {new Date(params.value).toLocaleDateString('en-GB')}
+                            </Typography>
+                        </>
+                    ) : null}
                 </Box>
             ),
             renderHeader: (params) => (
@@ -240,7 +258,7 @@ class EmployeeScreen extends React.Component {
                         variant="h6"
                         color="#333233"
                         lineHeight="16px">
-                        {params.value == 1 ? 'Nam' : 'Nữ'}
+                        {params.value == 0 ? '' : params.value == 1 ? 'Nam' : 'Nữ'}
                     </Typography>
                 </Box>
             ),
@@ -274,14 +292,14 @@ class EmployeeScreen extends React.Component {
             headerName: 'Vị trí',
             minWidth: 113,
             flex: 1,
-            renderCell: () => (
+            renderCell: (params) => (
                 <Typography
                     fontSize="12px"
                     fontWeight="400"
                     variant="h6"
                     color="#333233"
                     lineHeight="16px">
-                    Kỹ thuật viên
+                    {params.value}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -321,7 +339,7 @@ class EmployeeScreen extends React.Component {
             headerName: 'Trạng thái',
             minWidth: 116,
             flex: 1,
-            renderCell: () => (
+            renderCell: (params) => (
                 <Typography
                     fontSize="12px"
                     variant="h6"
@@ -331,7 +349,7 @@ class EmployeeScreen extends React.Component {
                     fontWeight="400"
                     color="#009EF7"
                     sx={{ backgroundColor: '#F1FAFF' }}>
-                    Hoạt động
+                    {params.value}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -352,7 +370,11 @@ class EmployeeScreen extends React.Component {
                     aria-label="Actions"
                     aria-controls={`actions-menu-${params.row.id}`}
                     aria-haspopup="true"
-                    onClick={(event: any) => this.handleOpenMenu(event, params.row.id)}>
+                    onClick={(event: any) => {
+                        params.row.trangThai == 'Hoạt động'
+                            ? this.handleOpenMenu(event, params.row.id)
+                            : null;
+                    }}>
                     <MoreHorizIcon />
                 </IconButton>
             ),

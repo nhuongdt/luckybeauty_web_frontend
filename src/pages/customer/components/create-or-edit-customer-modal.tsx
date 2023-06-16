@@ -20,6 +20,7 @@ import { Form, Formik } from 'formik';
 import rules from './create-or-edit-customer.validate';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
+import { enqueueSnackbar } from 'notistack';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
@@ -52,7 +53,21 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             this.setState({ errorTenKhach: true });
                         }
                         if (formRef.tenKhachHang && isValidPhoneNumber) {
-                            await khachHangService.createOrEdit(formRef);
+                            const createOrEdit = await khachHangService.createOrEdit(formRef);
+                            createOrEdit != null
+                                ? formRef.id === AppConsts.guidEmpty
+                                    ? enqueueSnackbar('Thêm mới thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                    : enqueueSnackbar('Cập nhật thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                                      variant: 'error',
+                                      autoHideDuration: 3000
+                                  });
                             this.setState({ errorPhoneNumber: false, errorTenKhach: false });
                             onOk();
                         }

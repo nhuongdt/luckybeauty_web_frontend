@@ -23,6 +23,8 @@ import { CreateOrEditChietKhauHoaDonDto } from '../../../../../services/hoa_hong
 import { Form, Formik } from 'formik';
 import { values } from 'lodash';
 import chietKhauHoaDonStore from '../../../../../stores/chietKhauHoaDonStore';
+import { enqueueSnackbar } from 'notistack';
+import AppConsts from '../../../../../lib/appconst';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;
@@ -80,7 +82,21 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                     <Formik
                         initialValues={initValues}
                         onSubmit={async (values) => {
-                            await chietKhauHoaDonStore.createOrEdit(values);
+                            const createOrEdit = await chietKhauHoaDonStore.createOrEdit(values);
+                            createOrEdit != null
+                                ? formRef.id === AppConsts.guidEmpty || formRef.id === ''
+                                    ? enqueueSnackbar('Thêm mới thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                    : enqueueSnackbar('Cập nhật thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                                      variant: 'error',
+                                      autoHideDuration: 3000
+                                  });
                             await onSave();
                         }}>
                         {({ handleChange, errors, values }) => (

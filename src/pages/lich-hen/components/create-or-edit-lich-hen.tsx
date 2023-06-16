@@ -23,6 +23,7 @@ import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDt
 import AppConsts from '../../../lib/appconst';
 import datLichService from '../../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
+import { enqueueSnackbar } from 'notistack';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -36,7 +37,7 @@ interface ICreateOrEditProps {
 class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
     handleSubmit = async (values: any) => {
         if (this.props.idLichHen === '') {
-            await datLichService.CreateBooking({
+            const createResult = await datLichService.CreateBooking({
                 idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
                 idDonViQuiDoi: values.idDonViQuiDoi,
                 idKhachHang: values.idKhachHang,
@@ -46,6 +47,15 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                 ghiChu: values.ghiChu,
                 trangThai: values.trangThai
             });
+            createResult != null
+                ? enqueueSnackbar('Thêm mới thành công', {
+                      variant: 'success',
+                      autoHideDuration: 3000
+                  })
+                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                      variant: 'error',
+                      autoHideDuration: 3000
+                  });
         }
         this.props.onOk();
     };
