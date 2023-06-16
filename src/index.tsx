@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import './custom.css';
 import reportWebVitals from './reportWebVitals';
 import initializeStores from './stores/storeInitializer';
 import registerServiceWorker from './registerServiceWorker';

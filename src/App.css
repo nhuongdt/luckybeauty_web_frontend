@@ -131,11 +131,10 @@ body .font-normal {
     margin-bottom: 0;
 }
 
-
 /* style main button*/
 
 .btnNhapXuat {
-    background-color: #fff;
+    background-color: #fff !important;
     color: #666466;
     padding: 10px 16px;
     border-color: #e6e1e6;
@@ -152,13 +151,11 @@ body .font-normal {
     border-color: #7c3367;
 }
 
-
 /* style text in button */
 
 .MuiButton-root {
     text-transform: initial;
 }
-
 
 /* button paging selected */
 
@@ -184,7 +181,6 @@ body .font-normal {
     font-size: 14px;
 }
 
-
 /* đổi dòng chữ rows per page của các bảng thành tiếng việt */
 
 .MuiTablePagination-selectLabel {
@@ -195,7 +191,6 @@ body .font-normal {
     content: 'Số hàng tối đa trên mỗi trang';
     font-size: 14px;
 }
-
 
 /* error at TextField */
 

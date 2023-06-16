@@ -44,7 +44,13 @@ export default function MainPageBanHang() {
 
                                 color: activeTab == 1 ? '#fff' : '#999699',
                                 backgroundColor: activeTab == 1 ? '#7C3367!important' : '#F2EBF0',
-                                border: 'unset!important'
+                                borderColor: 'transparent!important',
+                                '&:hover': {
+                                    borderColor:
+                                        activeTab == 2
+                                            ? '#7C3367!important'
+                                            : 'transparent!important'
+                                }
                             }}
                             onClick={() => handleTab(1)}
                             className={activeTab === 1 ? 'active' : ''}
@@ -56,8 +62,14 @@ export default function MainPageBanHang() {
                                 textTransform: 'unset',
 
                                 color: activeTab == 2 ? '#fff' : '#999699',
-                                border: 'unset!important',
-                                backgroundColor: activeTab == 2 ? '#7C3367!important' : '#F2EBF0'
+                                borderColor: 'transparent!important',
+                                backgroundColor: activeTab == 2 ? '#7C3367!important' : '#F2EBF0',
+                                '&:hover': {
+                                    borderColor:
+                                        activeTab == 1
+                                            ? '#7C3367!important'
+                                            : 'transparent!important'
+                                }
                             }}
                             onClick={() => handleTab(2)}
                             className={activeTab === 2 ? 'active' : ''}

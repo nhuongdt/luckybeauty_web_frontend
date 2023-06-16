@@ -406,19 +406,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             sx={{ gap: '8px' }}
                             className="rounded-4px resize-height">
                             <Button
-                                className="border-color"
+                                className="border-color btn-outline-hover"
                                 variant="outlined"
                                 startIcon={<img src={DownloadIcon} />}
                                 sx={{
                                     textTransform: 'capitalize',
                                     fontWeight: '400',
                                     color: '#666466',
-                                    bgcolor: '#fff'
+                                    bgcolor: '#fff!important'
                                 }}>
                                 Nhập
                             </Button>
                             <Button
-                                className="border-color"
+                                className="border-color btn-outline-hover"
                                 variant="outlined"
                                 onClick={() => {
                                     this.exportToExcel();
@@ -430,12 +430,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     color: '#666466',
                                     padding: '10px 16px',
                                     borderColor: '#E6E1E6',
-                                    bgcolor: '#fff'
+                                    bgcolor: '#fff!important'
                                 }}>
                                 Xuất
                             </Button>
                             <Button
-                                className="bg-main"
+                                className="bg-main btn-container-hover"
                                 onClick={() => {
                                     this.createOrUpdateModalOpen('');
                                 }}
