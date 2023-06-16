@@ -20,13 +20,8 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                 }
             }}>
             <Box sx={{ padding: '28px 24px', width: '100vw', maxWidth: '680px' }}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography
-                        fontSize="24px"
-                        color="#4C4B4C"
-                        fontWeight="700"
-                        variant="h2"
-                        mb="24px">
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb="24px">
+                    <Typography fontSize="24px" color="#4C4B4C" fontWeight="700" variant="h2">
                         Hà Đinh
                     </Typography>
                     <Button sx={{ minWidth: 'unset' }} onClick={onClose}>

@@ -43,11 +43,9 @@ const MainAppLayout: React.FC = () => {
         onCollapse(!collapsed);
         handleChildHoverChange(!isChildHovered);
         if (collapsed == false) {
-            console.log('cookie side bar :' + CookieSidebar);
             Cookies.set('sidebar', 'true', { expires: 7 });
         } else {
             Cookies.set('sidebar', 'false');
-            console.log('cookie side bar :' + CookieSidebar);
         }
     };
     const CookieSidebar = Cookies.get('sidebar') === 'true';
@@ -72,7 +70,7 @@ const MainAppLayout: React.FC = () => {
                 />
                 <Box
                     sx={{
-                        marginLeft: collapsed ? '72px' : '240px',
+                        marginLeft: !collapsed ? '240px' : '72px',
                         transition: '.4s'
                     }}>
                     <Header

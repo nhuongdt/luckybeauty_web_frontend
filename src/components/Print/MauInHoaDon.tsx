@@ -5,14 +5,17 @@ import moment from 'moment';
 import '../../App.css';
 
 export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: any) {
+    const [tenKhachHang, setTenKhachHang] = useState('');
     const [tienKhachThieu, setTienKhachThieu] = useState(0);
     const [tienKhachThieu_BangChu, setTienKhachThieu_BangChu] = useState('');
-    console.log('props ', props);
     useEffect(() => {
         const khachthieu = props?.hoadon?.tongThanhToan - props?.hoadon?.daThanhToan;
         setTienKhachThieu(khachthieu);
         setTienKhachThieu_BangChu(utils.DocSo(khachthieu));
-    }, [props.contentHtml]);
+
+        if (props?.khachhang?.tenKhachHang === '') setTenKhachHang('Khách lẻ');
+        else setTenKhachHang(props?.khachhang?.tenKhachHang);
+    }, [props]);
     return (
         <>
             <div ref={ref}>
@@ -95,7 +98,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                 <div>
                     <span style={{ fontSize: 12 }}>
                         <span style={{ fontFamily: 'Tahoma' }}>
-                            Khách hàng: <span>{props?.khachhang?.tenKhachHang}</span>
+                            Khách hàng: <span>{tenKhachHang}</span>
                         </span>
                     </span>
                 </div>
@@ -283,7 +286,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                 <p>
                     <span style={{ fontSize: 12 }}>
                         <span style={{ fontFamily: 'Tahoma' }}>
-                            Tiền bằng chữ: <span>{utils.DocSo(props?.hoadon?.tongThanhToan)}</span>
+                            Tiền bằng chữ: <span>{tienKhachThieu_BangChu}</span>
                         </span>
                     </span>
                 </p>

@@ -74,7 +74,13 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                     }}>
                     {() => (
                         <Form>
-                            <Box className="form-add">
+                            <Box
+                                className="form-add"
+                                sx={{
+                                    '& .text-danger': {
+                                        fontSize: '12px'
+                                    }
+                                }}>
                                 <Grid container className="form-container" spacing={2}>
                                     <Grid item xs={12}>
                                         <TextField

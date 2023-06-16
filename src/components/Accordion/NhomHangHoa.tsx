@@ -13,7 +13,7 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: any) {
     const [rowHover, setRowHover] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
     const [isHover, setIsHover] = useState(false);
-    const [isClick, setIsClick] = useState(false);
+    const [idChosing, setIdChosing] = useState('');
 
     const handleHover = (event: any, rowData: any, index: number) => {
         switch (event.type) {
@@ -26,9 +26,9 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
         }
         setRowHover(rowData);
     };
-    const handleClickTreeItem = (isEdit = false) => {
+    const handleClickTreeItem = (isEdit = false, idChosing: string) => {
         clickTreeItem(isEdit, rowHover);
-        setIsClick(true);
+        setIdChosing(idChosing);
     };
     return (
         <>
@@ -45,7 +45,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            backgroundColor: isClick && rowHover.id === item.id ? 'red' : ''
+                            bgcolor: idChosing === item.id ? '#cccc' : ''
                         }}
                         onMouseLeave={(event: any) => {
                             handleHover(event, item, index);
@@ -63,12 +63,12 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                 display: 'flex',
                                 alignItems: 'center'
                             }}
-                            onClick={() => handleClickTreeItem(false)}>
+                            onClick={() => handleClickTreeItem(false, item.id)}>
                             {item.tenNhomHang}
                         </Typography>
                         {isHover && item.id !== '' && rowHover.id === item.id && (
                             <OpenInNew
-                                onClick={() => handleClickTreeItem(true)}
+                                onClick={() => handleClickTreeItem(true, item.id)}
                                 sx={{ position: 'absolute', right: 16 }}
                             />
                         )}
@@ -77,7 +77,11 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                     {item.children?.map((child: any, index2: any) => (
                         <AccordionDetails
                             key={index2}
-                            sx={{ display: 'flex', paddingLeft: '30px' }}
+                            sx={{
+                                display: 'flex',
+                                paddingLeft: '30px',
+                                bgcolor: idChosing === child.id ? 'red' : ''
+                            }}
                             onMouseLeave={(event: any) => {
                                 handleHover(event, child, index2);
                             }}
@@ -91,12 +95,12 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                 sx={{
                                     marginLeft: '9px'
                                 }}
-                                onClick={() => handleClickTreeItem(false)}>
+                                onClick={() => handleClickTreeItem(false, child.id)}>
                                 {child.tenNhomHang}
                             </Typography>
                             {isHover && rowHover.id === child.id && (
                                 <OpenInNew
-                                    onClick={() => handleClickTreeItem(true)}
+                                    onClick={() => handleClickTreeItem(true, child.id)}
                                     sx={{ position: 'absolute', right: 16 }}
                                 />
                             )}

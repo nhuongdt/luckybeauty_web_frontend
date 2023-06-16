@@ -294,7 +294,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         transition: open[index]
                                             ? 'max-height 2.5s, left .4s,min-height .4s'
                                             : ' max-height 1s,left .4s,min-height .4s',
-                                        maxHeight: open[index] == true ? '500px' : '0px',
+                                        maxHeight: open[index] == true ? '400px' : '0px',
                                         display: collapsed || OpenHover ? 'block' : 'none'
                                     }}>
                                     <List component="div" disablePadding>

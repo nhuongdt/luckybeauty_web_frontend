@@ -268,7 +268,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             {
                 field: 'gioiTinh',
                 headerName: 'Giới tính',
-                width: 89,
+                minWidth: 100,
+                flex: 0.8,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}

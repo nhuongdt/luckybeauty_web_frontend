@@ -229,3 +229,12 @@
     padding: 6px 16px;
     color: #ffffff;
 }
+.btn-outline-hover:hover {
+    border-color: #7c3367 !important;
+}
+.btn-container-hover:hover {
+    background-color: rgba(124, 51, 103, 0.7) !important;
+}
+.btn-container-hover .MuiTouchRipple-root * {
+    background-color: #5d264d !important;
+}
