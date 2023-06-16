@@ -15,7 +15,9 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
         keyword: '',
         loaiDoiTuong: 1,
         maxResultCount: 50,
-        skipCount: 0
+        skipCount: 0,
+        sortBy: '',
+        sortType: ''
     });
 
     const debounceDropDown = useRef(

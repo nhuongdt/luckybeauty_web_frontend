@@ -6,6 +6,7 @@ import NhanSuDto from '../services/nhan-vien/dto/nhanSuDto';
 import { PagedFilterAndSortedRequest } from '../services/dto/pagedFilterAndSortedRequest';
 import { action, makeObservable, observable } from 'mobx';
 import AppConsts from '../lib/appconst';
+import { PagedNhanSuRequestDto } from '../services/nhan-vien/dto/PagedNhanSuRequestDto';
 
 class NhanVienStore {
     listNhanVien!: PagedResultDto<NhanSuItemDto>;
@@ -33,6 +34,11 @@ class NhanVienStore {
     }
     async search(keyWord: string, input: PagedFilterAndSortedRequest) {
         const result = await NhanVienService.search(keyWord, input);
+        this.listNhanVien = result;
+    }
+
+    async getAll(input: PagedNhanSuRequestDto) {
+        const result = await NhanVienService.getAll(input);
         this.listNhanVien = result;
     }
     async getForEdit(id: string) {

@@ -225,7 +225,7 @@ export const appRouters: AppRouteProps = {
                     component: LoadableComponent(() => import('../../pages/product/pageProductNew'))
                 },
                 {
-                    path: 'employee',
+                    path: '/employee',
                     permission: '',
                     title: 'Nhân viên',
                     name: 'nhanvien',

@@ -25,6 +25,7 @@ import Cookies from 'js-cookie';
 import * as Yup from 'yup';
 import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
 import AppConsts from '../../../../../lib/appconst';
+import { enqueueSnackbar } from 'notistack';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;
@@ -70,7 +71,21 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                             values.idNhanVien = idNhanVien;
                             values.idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
                             values.idDonViQuiDoi = values.idDonViQuiDoi ?? suggestDonViQuiDoi[0].id;
-                            await chietKhauDichVuService.CreateOrEdit(values);
+                            const createOrEdit = await chietKhauDichVuService.CreateOrEdit(values);
+                            createOrEdit != null
+                                ? formRef.id === AppConsts.guidEmpty
+                                    ? enqueueSnackbar('Thêm mới thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                    : enqueueSnackbar('Cập nhật thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                                      variant: 'error',
+                                      autoHideDuration: 3000
+                                  });
                             await onSave();
                         }}>
                         {({ values, handleChange, errors, touched }) => (

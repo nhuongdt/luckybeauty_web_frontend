@@ -20,6 +20,8 @@ import '../employee.css';
 import { Form, Formik } from 'formik';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import rules from './createOrEditNhanVien.validate';
+import AppConsts from '../../../lib/appconst';
+import { enqueueSnackbar } from 'notistack';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -69,7 +71,22 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     initialValues={initValues}
                     validationSchema={rules}
                     onSubmit={async (values) => {
-                        await nhanVienService.createOrEdit(values);
+                        const createOrEdit = await nhanVienService.createOrEdit(values);
+                        console.log(createOrEdit);
+                        createOrEdit != null
+                            ? formRef.id === AppConsts.guidEmpty
+                                ? enqueueSnackbar('Thêm mới thành công', {
+                                      variant: 'success',
+                                      autoHideDuration: 3000
+                                  })
+                                : enqueueSnackbar('Cập nhật thành công', {
+                                      variant: 'success',
+                                      autoHideDuration: 3000
+                                  })
+                            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                                  variant: 'error',
+                                  autoHideDuration: 3000
+                              });
                         onOk();
                     }}>
                     {({ handleChange, errors, values }) => (
