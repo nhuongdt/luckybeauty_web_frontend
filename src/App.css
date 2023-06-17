@@ -210,3 +210,9 @@ body .font-normal {
 .MuiFormControlLabel-label {
     font-size: 14px;
 }
+
+.dialog-title {
+    font-size: 24px;
+    color: #333233;
+    font-weight: 700;
+}
