@@ -8,6 +8,7 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
     giaNhap? = 0;
     idNhomHangHoa = null;
     idHangHoa? = null;
+    expanded? = false; // sử dụng khi cập nhật chi tiết, mở rộng để xem đầy đủ thông tin giỏ hàng
 
     constructor({
         id = Guid.create().toString(),
@@ -18,7 +19,8 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         idNhomHangHoa = null,
         idHangHoa = null,
         idDonViQuyDoi = null,
-        soLuong = 1
+        soLuong = 1,
+        expanded = false
     }) {
         super({
             id: id,
@@ -32,5 +34,6 @@ export default class PageHoaDonChiTietDto extends HoaDonChiTietDto {
         this.giaNhap = giaNhap;
         this.idNhomHangHoa = idNhomHangHoa;
         this.idHangHoa = idHangHoa;
+        this.expanded = expanded;
     }
 }

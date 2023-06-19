@@ -44,6 +44,7 @@ import { dbDexie } from '../../lib/dexie/dexieDB';
 
 import Utils from '../../utils/utils';
 import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
+import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
@@ -52,6 +53,8 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
+import NhanVienService from '../../services/nhan-vien/nhanVienService';
+
 import logo from '../../images/Lucky_beauty.jpg';
 import { ReactComponent as IconDv } from '../../images/icon-DV.svg';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
@@ -60,7 +63,6 @@ import { ReactComponent as UserIcon } from '../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
 const PageBanHang = ({ customerChosed }: any) => {
     console.log('pagebanhang');
-
     const componentRef = useRef(null);
     const [txtSearch, setTxtSearch] = useState('');
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -80,14 +82,14 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
-        new PageHoaDonChiTietDto({ id: '' })
+        new PageHoaDonChiTietDto({ id: '', expanded: true })
     );
 
     const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
     );
-
+    const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
@@ -104,8 +106,14 @@ const PageBanHang = ({ customerChosed }: any) => {
     const nhomDichVu = allNhomHangHoa.filter((x) => !x.laNhomHangHoa);
     const nhomHangHoa = allNhomHangHoa.filter((x) => x.laNhomHangHoa);
 
+    const GetListNhanVien = async () => {
+        const data = await NhanVienService.search('', { skipCount: 0, maxResultCount: 100 });
+        setAllNhanVien([...data.items]);
+    };
+
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
+        await GetListNhanVien();
         await FirstLoad_getSetDataFromCache();
         afterRender.current = true;
     };
@@ -126,7 +134,6 @@ const PageBanHang = ({ customerChosed }: any) => {
             CurrentPage: 0,
             PageSize: 50
         };
-
         const data = await ProductService.GetDMHangHoa_groupByNhom(input);
         setListProduct(data);
     };
@@ -312,7 +319,8 @@ const PageBanHang = ({ customerChosed }: any) => {
             giaBan: item.giaBan,
             idNhomHangHoa: item.idNhomHangHoa,
             idHangHoa: item.id,
-            soLuong: 1
+            soLuong: 1,
+            expanded: true
         });
         console.log('newCT ', newCT);
 
@@ -540,7 +548,11 @@ const PageBanHang = ({ customerChosed }: any) => {
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
-            <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
+            <ModalEditChiTietGioHang
+                trigger={triggerModalEditGioHang}
+                dataNhanVien={allNhanVien}
+                handleSave={AgreeGioHang}
+            />
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
