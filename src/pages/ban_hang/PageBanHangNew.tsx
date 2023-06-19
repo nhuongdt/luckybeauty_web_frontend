@@ -18,8 +18,6 @@ import closeIcon from '../../images/closeSmall.svg';
 import arrowIcon from '../../images/arrow_back.svg';
 import avatar from '../../images/avatar.png';
 import dotIcon from '../../images/dotssIcon.svg';
-import { LocalOffer, Search } from '@mui/icons-material';
-import { AiOutlineDelete } from 'react-icons/ai';
 // import { useReactToPrint } from 'react-to-print';
 import { useState, useEffect, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
@@ -37,7 +35,6 @@ import HoaDonService from '../../services/ban_hang/HoaDonService';
 
 import SoQuyServices from '../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
-import MauInServices from '../../services/mau_in/MauInServices';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
@@ -441,6 +438,19 @@ const PageBanHang = ({ customerChosed }: any) => {
         });
     };
     const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
+        // assign ctdoing --> used to update hoadhong dichvu of nhanvien
+        setCTHDDoing({
+            ...cthdDoing,
+            soLuong: ctUpdate.soLuong,
+            donGiaTruocCK: ctUpdate.donGiaTruocCK,
+            pTChietKhau: ctUpdate.pTChietKhau,
+            tienChietKhau: ctUpdate.tienChietKhau,
+            donGiaSauCK: ctUpdate.donGiaSauCK,
+            donGiaSauVAT: ctUpdate.donGiaSauVAT,
+            thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+            thanhTienSauCK: ctUpdate.thanhTienSauCK,
+            thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+        });
         // update cthd + save to cache
         setHoaDonChiTiet(
             hoaDonChiTiet.map((item: any, index: number) => {
@@ -946,7 +956,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             sx={{ display: 'flex', gap: '8px' }}
                                             onClick={() => showPopChiTietGioHang(ct)}>
                                             <span> {ct.soLuong + 'x'} </span>
-                                            <span> {Utils.formatNumber(ct.donGiaSauCK)}</span>
+                                            <span> {Utils.formatNumber(ct.donGiaTruocCK)}</span>
                                         </Typography>
                                         <Box
                                             sx={{
