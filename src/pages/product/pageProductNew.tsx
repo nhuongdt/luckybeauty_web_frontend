@@ -206,14 +206,14 @@ export default function PageProductNew() {
                 break;
             case 2:
                 GetListHangHoa();
-                setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + '  thành công' });
+                setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + ' thành công' });
                 break;
             case 3:
                 deleteProduct();
                 break;
             case 4:
                 restoreProduct();
-                setObjAlert({ show: true, type: 1, mes: 'Khôi phục ' + sLoai + '  thành công' });
+                setObjAlert({ show: true, type: 1, mes: 'Khôi phục ' + sLoai + ' thành công' });
                 break;
         }
     }
@@ -480,7 +480,8 @@ export default function PageProductNew() {
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
-                title={objAlert.mes}></SnackbarAlert>
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid
                 container
                 className="dich-vu-page"
