@@ -392,7 +392,7 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                                                     style={{
                                                         float: 'right',
                                                         fontSize: '18px',
-                                                        color: '#b25656'
+                                                        color: '#999699'
                                                     }}
                                                     onClick={() => {
                                                         deleteChiTietHoaDon(ct);
