@@ -163,7 +163,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                     <td style={{ borderBottom: '1px dashed black' }}>
                                         <span style={{ fontSize: 12 }}>
                                             <span style={{ fontFamily: 'Tahoma' }}>
-                                                <span>{utils.formatNumber(ct.giaBan)}</span>
+                                                <span>{utils.formatNumber(ct.donGiaTruocCK)}</span>
                                             </span>
                                         </span>
                                     </td>
@@ -209,7 +209,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <span>
-                                            {utils.formatNumber(props?.hoadon.tongTienHang)}
+                                            {utils.formatNumber(
+                                                props?.hoadon.tongTienHangChuaChietKhau
+                                            )}
                                         </span>
                                     </span>
                                 </span>
