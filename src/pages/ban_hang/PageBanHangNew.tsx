@@ -439,9 +439,28 @@ const PageBanHang = ({ customerChosed }: any) => {
             return { ...old, isShow: true, isNew: true, item: item, id: item.id };
         });
     };
-    const AgreeGioHang = (ctUpdate: any) => {
+    const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
         // update cthd + save to cache
-        console.log('ctUpdate ', ctUpdate);
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((item: any, index: number) => {
+                if (item.id === ctUpdate.id) {
+                    return {
+                        ...item,
+                        soLuong: ctUpdate.soLuong,
+                        donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                        pTChietKhau: ctUpdate.pTChietKhau,
+                        tienChietKhau: ctUpdate.tienChietKhau,
+                        donGiaSauCK: ctUpdate.donGiaSauCK,
+                        donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                        thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+                        thanhTienSauCK: ctUpdate.thanhTienSauCK,
+                        thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
     };
 
     // end modal chi tiet
@@ -555,7 +574,8 @@ const PageBanHang = ({ customerChosed }: any) => {
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
-                title={objAlert.mes}></SnackbarAlert>
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
             <div style={{ display: 'none' }}>
                 <MauInHoaDon ref={componentRef} props={propMauIn} />
@@ -926,7 +946,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             sx={{ display: 'flex', gap: '8px' }}
                                             onClick={() => showPopChiTietGioHang(ct)}>
                                             <span> {ct.soLuong + 'x'} </span>
-                                            <span> {Utils.formatNumber(ct.giaBan)}</span>
+                                            <span> {Utils.formatNumber(ct.donGiaSauCK)}</span>
                                         </Typography>
                                         <Box
                                             sx={{
