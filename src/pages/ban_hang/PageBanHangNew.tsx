@@ -662,9 +662,10 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         flexWrap: layout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
                                         '&::-webkit-scrollbar': {
-                                            width: '7px'
+                                            width: '7px',
+                                            height: '7px'
                                         },
-                                        '&::-webkit-scrollbar-thumb': {
+                                        '&::-webkit-scrollbar-thumb:horizontal': {
                                             bgcolor: 'rgba(0,0,0,0.1)',
                                             borderRadius: '8px'
                                         }
@@ -745,16 +746,12 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         flexWrap: layout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
                                         '&::-webkit-scrollbar': {
-                                            width: '4px!important',
-                                            height: '4px!important',
-                                            border: '1px solid #000'
+                                            width: '7px',
+                                            height: '7px'
                                         },
                                         '&::-webkit-scrollbar-thumb:horizontal': {
                                             bgcolor: 'rgba(0,0,0,0.1)',
                                             borderRadius: '8px'
-                                        },
-                                        '&::-webkit-scrollbar-track': {
-                                            background: '#f1f1f1'
                                         }
                                     }}>
                                     {nhomHangHoa.map((nhomHH, index) => (
