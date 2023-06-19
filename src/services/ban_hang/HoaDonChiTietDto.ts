@@ -1,5 +1,6 @@
 import { Guid } from 'guid-typescript';
 import NhanVienThucHienDto from '../nhan_vien_thuc_hien/NhanVienThucHienDto';
+import { ClassInputNumber } from '../../services/dto/InputFormat';
 
 export default class HoaDonChiTietDto {
     id = Guid.create().toString();
@@ -9,6 +10,7 @@ export default class HoaDonChiTietDto {
     donGiaTruocCK = 0;
     pTChietKhau? = 0;
     tienChietKhau? = 0;
+    laPTChietKhau = true;
     thanhTienTruocCK? = 0;
     pTThue? = 0;
     tienThue? = 0;
@@ -30,6 +32,7 @@ export default class HoaDonChiTietDto {
         donGiaTruocCK = 0,
         pTChietKhau = 0,
         tienChietKhau = 0,
+        // laPTChietKhau
         pTThue = 0,
         tienThue = 0,
         ghiChu = '',
