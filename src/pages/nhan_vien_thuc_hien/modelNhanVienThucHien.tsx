@@ -26,7 +26,8 @@ import NhanVienService from '../../services/nhan-vien/nhanVienService';
 import { dbDexie } from '../../lib/dexie/dexieDB';
 import NhanVienThucHienDto from '../../services/nhan_vien_thuc_hien/NhanVienThucHienDto';
 import HoaHongDichVuServices from '../../services/nhan_vien_thuc_hien/HoaHongDichVuServices';
-
+import { ReactComponent as CheckIcon } from '../../images/checkIcon.svg';
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
@@ -177,7 +178,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                     InputProps={{
                         startAdornment: (
                             <IconButton type="submit">
-                                <Search />
+                                <SearchIcon />
                             </IconButton>
                         )
                     }}
@@ -200,12 +201,38 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '8px',
+                                    position: 'relative',
                                     padding: ' 24px 24px 20px 24px',
                                     borderRadius: '8px',
+                                    transition: '.4s',
                                     cursor: 'pointer',
-                                    backgroundColor: person.isChosed ? '#ccc' : ''
-                                }}
-                                border="1px solid #CDC9CD">
+                                    border: '1px solid #CDC9CD',
+                                    borderColor: person.isChosed ? '#7C3367' : '',
+
+                                    '&:hover': {
+                                        borderColor: '#7C3367'
+                                    },
+                                    '& .Check-icon': {
+                                        position: 'absolute',
+                                        right: '-10px',
+                                        height: '20px',
+                                        borderRadius: '50%',
+                                        top: '5px',
+                                        zIndex: '2',
+                                        transition: '.4s',
+                                        opacity: person.isChosed ? '1' : '0'
+                                    }
+                                }}>
+                                <Box
+                                    bgcolor="#fff"
+                                    className="Check-icon"
+                                    sx={{
+                                        '& svg': {
+                                            verticalAlign: 'unset'
+                                        }
+                                    }}>
+                                    <CheckIcon />
+                                </Box>
                                 <div className="person-avatar">
                                     <Avatar
                                         src={person.avatar}
@@ -239,19 +266,31 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                         transform: 'translateX(-50%)',
                         background: '#fff'
                     }}>
-                    <Button variant="contained" className="button-container" onClick={onSave}>
+                    <Button
+                        variant="contained"
+                        className="button-container btn-container-hover"
+                        onClick={onSave}>
                         Lưu
                     </Button>
                     <Button
                         variant="outlined"
-                        className="button-outline"
+                        className="button-outline btn-outline-hover"
                         onClick={() => setIsShow(false)}>
                         Hủy
                     </Button>
                 </Stack>
 
                 <Close
-                    sx={{ position: 'absolute', top: '35px', right: '31px', fontSize: '30px' }}
+                    sx={{
+                        position: 'absolute',
+                        top: '35px',
+                        right: '31px',
+                        fontSize: '30px',
+                        cursor: 'pointer',
+                        '&:hover': {
+                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                        }
+                    }}
                     onClick={() => setIsShow(false)}
                 />
             </div>

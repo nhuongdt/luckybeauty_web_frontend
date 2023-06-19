@@ -60,6 +60,7 @@ import { ReactComponent as IconDv } from '../../images/icon-DV.svg';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
 import { ReactComponent as UserIcon } from '../../images/user.svg';
+import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
 const PageBanHang = ({ customerChosed }: any) => {
     console.log('pagebanhang');
     const componentRef = useRef(null);
@@ -909,7 +910,6 @@ const PageBanHang = ({ customerChosed }: any) => {
                         {/* 1 row chi tiet */}
                         {hoaDonChiTiet?.map((ct: any, index) => (
                             <Box
-                                marginBottom="auto"
                                 padding="12px"
                                 borderRadius="8px"
                                 border="1px solid #F2F2F2"
@@ -919,7 +919,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     display="flex"
                                     justifyContent="space-between"
                                     alignItems="center">
-                                    <Box onClick={() => showPopNhanVienThucHien(ct)} width="100%">
+                                    <Box width="100%">
                                         <Typography
                                             variant="body1"
                                             fontSize="16px"
@@ -954,7 +954,15 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 display: 'flex',
                                                 gap: '10px'
                                             }}>
-                                            <Button sx={{ minWidth: '0', padding: '0' }}>
+                                            <Button
+                                                sx={{
+                                                    minWidth: '0',
+                                                    padding: '0',
+                                                    '&:hover': {
+                                                        filter: ' brightness(0) saturate(100%) invert(25%) sepia(16%) saturate(2588%) hue-rotate(267deg) brightness(96%) contrast(88%)'
+                                                    }
+                                                }}
+                                                onClick={() => showPopNhanVienThucHien(ct)}>
                                                 <UserIcon style={{ cursor: 'pointer' }} />
                                             </Button>
                                             <Button
@@ -962,12 +970,13 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                     minWidth: '0',
                                                     padding: '0',
                                                     '&:hover svg': {
-                                                        fill: '#000'
+                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
                                                     }
                                                 }}>
                                                 <DeleteIcon
                                                     style={{
-                                                        cursor: 'pointer'
+                                                        cursor: 'pointer',
+                                                        color: '#999699'
                                                     }}
                                                     onClick={() => {
                                                         deleteChiTietHoaDon(ct);
@@ -980,7 +989,12 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 {/* nhan vien thuc hien */}
 
                                 {ct.nhanVienThucHien.length > 0 && (
-                                    <Box display="flex" alignItems="center">
+                                    <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        flexWrap="wrap"
+                                        gap="8px"
+                                        mt="8px">
                                         <Typography
                                             variant="body2"
                                             fontSize="12px"
@@ -1000,11 +1014,17 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                     backgroundColor: '#F2EBF0',
                                                     padding: '4px 8px',
                                                     gap: '10px',
-                                                    borderRadius: '100px'
+                                                    borderRadius: '100px',
+                                                    '& .remove-NV:hover img': {
+                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                    }
                                                 }}
                                                 key={index3}>
                                                 <span>{nv.tenNhanVien}</span>
-                                                <span onClick={() => RemoveNVThucHien(ct, nv)}>
+                                                <span
+                                                    className="remove-NV"
+                                                    style={{ cursor: 'pointer' }}
+                                                    onClick={() => RemoveNVThucHien(ct, nv)}>
                                                     <img src={closeIcon} alt="close" />
                                                 </span>
                                             </Typography>
@@ -1013,62 +1033,131 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 )}
                             </Box>
                         ))}
-
-                        <Box display="flex" flexDirection="column" gap="32px" marginTop="24px">
-                            <Box display="flex" justifyContent="space-between">
-                                <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                    Tổng tiền hàng
-                                </Typography>
-                                <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
-                                </Typography>
-                            </Box>
-                            <Box display="flex" justifyContent="space-between">
-                                <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                    Giảm giá
-                                </Typography>
-                                <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
-                                </Typography>
-                            </Box>
-                            <Box display="flex" justifyContent="space-between">
-                                <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                    Tổng giảm giá
-                                </Typography>
-                                <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
-                                </Typography>
-                            </Box>
-                            <Box display="flex" justifyContent="space-between">
+                        <Box marginTop="auto">
+                            <Box pt="24px">
                                 <Typography
-                                    variant="h5"
-                                    fontWeight="700"
-                                    fontSize="18px"
-                                    color="#3B4758">
-                                    Tổng thanh toán
+                                    variant="h3"
+                                    color="#333233"
+                                    fontSize="14px"
+                                    fontWeight="500"
+                                    mb="8px">
+                                    Mã giảm giá
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontWeight="700"
-                                    fontSize="16px"
-                                    color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongThanhToan)}
-                                </Typography>
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    placeholder="Nhập mã"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <VoucherIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <Button
+                                                variant="text"
+                                                sx={{
+                                                    padding: '0',
+                                                    transition: '.4s',
+                                                    bgcolor: 'transparent!important',
+                                                    color: '#4C4B4C',
+                                                    '&:hover': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}>
+                                                Áp dụng
+                                            </Button>
+                                        )
+                                    }}
+                                    sx={{ '& input': { fontSize: '14px' } }}
+                                />
                             </Box>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    fontSize: '16px',
-                                    fontWeight: '700',
-                                    color: '#fff',
-                                    textTransform: 'unset!important',
-                                    backgroundColor: '#7C3367!important',
-                                    paddingY: '18px'
-                                }}
-                                className="btn-container-hover"
-                                onClick={saveHoaDon}>
-                                Thanh Toán
-                            </Button>
+                            <Box borderTop="1px solid #F2F2F2" marginY="16px"></Box>
+                            <Box>
+                                <Box
+                                    display="flex"
+                                    flexDirection="column"
+                                    gap="16px"
+                                    pt="16px"
+                                    pb="32px"
+                                    borderRadius="12px"
+                                    paddingX="16px"
+                                    bgcolor="#F9F9F9">
+                                    <Box display="flex" justifyContent="space-between">
+                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                            Tổng tiền hàng
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            fontSize="12px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
+                                        </Typography>
+                                    </Box>
+                                    <Box display="flex" justifyContent="space-between">
+                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                            Giảm giá
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            fontSize="12px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        borderBottom="1px solid #CBADC2"
+                                        pb="8px">
+                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                            Tổng giảm giá
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            fontSize="12px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        mt="8px">
+                                        <Typography
+                                            variant="h5"
+                                            fontWeight="700"
+                                            fontSize="18px"
+                                            color="#3B4758">
+                                            Tổng thanh toán
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            fontWeight="700"
+                                            fontSize="16px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongThanhToan)}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{
+                                        fontSize: '16px',
+                                        fontWeight: '700',
+                                        color: '#fff',
+                                        textTransform: 'unset!important',
+                                        backgroundColor: '#7C3367!important',
+                                        paddingY: '12px',
+                                        mt: '24px'
+                                    }}
+                                    className="btn-container-hover"
+                                    onClick={saveHoaDon}>
+                                    Thanh Toán
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
                 </Grid>
