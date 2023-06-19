@@ -1,5 +1,4 @@
 import React, { ChangeEventHandler, useRef } from 'react';
-import AppComponentBase from '../../components/AppComponentBase';
 import {
     Button,
     Box,
@@ -19,16 +18,14 @@ import '../../custom.css';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
-import CreateOrEditRoleModal from './components/create-or-edit-role';
+import CreateOrEditRoleModal from './components/create-or-edit-role-test';
 import { PermissionTree } from '../../services/role/dto/permissionTree';
 import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { TextTranslate } from '../../components/TableLanguage';
-import { permissionCheckboxTree } from '../../services/role/dto/permissionCheckboxTree';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { observer } from 'mobx-react';
-import RoleStore from '../../stores/roleStore';
 import { enqueueSnackbar } from 'notistack';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
