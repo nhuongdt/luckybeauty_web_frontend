@@ -44,6 +44,7 @@ import { dbDexie } from '../../lib/dexie/dexieDB';
 
 import Utils from '../../utils/utils';
 import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
+import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
@@ -52,11 +53,16 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
+import NhanVienService from '../../services/nhan-vien/nhanVienService';
+
 import logo from '../../images/Lucky_beauty.jpg';
+import { ReactComponent as IconDv } from '../../images/icon-DV.svg';
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
+import { ReactComponent as UserIcon } from '../../images/user.svg';
+import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
 
 const PageBanHang = ({ customerChosed }: any) => {
-    console.log('pagebanhang');
-
     const componentRef = useRef(null);
     const [txtSearch, setTxtSearch] = useState('');
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -76,14 +82,14 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
-        new PageHoaDonChiTietDto({ id: '' })
+        new PageHoaDonChiTietDto({ id: '', expanded: true })
     );
 
     const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
     );
-
+    const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
@@ -100,8 +106,14 @@ const PageBanHang = ({ customerChosed }: any) => {
     const nhomDichVu = allNhomHangHoa.filter((x) => !x.laNhomHangHoa);
     const nhomHangHoa = allNhomHangHoa.filter((x) => x.laNhomHangHoa);
 
+    const GetListNhanVien = async () => {
+        const data = await NhanVienService.search('', { skipCount: 0, maxResultCount: 100 });
+        setAllNhanVien([...data.items]);
+    };
+
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
+        await GetListNhanVien();
         await FirstLoad_getSetDataFromCache();
         afterRender.current = true;
     };
@@ -122,7 +134,6 @@ const PageBanHang = ({ customerChosed }: any) => {
             CurrentPage: 0,
             PageSize: 50
         };
-
         const data = await ProductService.GetDMHangHoa_groupByNhom(input);
         setListProduct(data);
     };
@@ -308,7 +319,8 @@ const PageBanHang = ({ customerChosed }: any) => {
             giaBan: item.giaBan,
             idNhomHangHoa: item.idNhomHangHoa,
             idHangHoa: item.id,
-            soLuong: 1
+            soLuong: 1,
+            expanded: true
         });
         console.log('newCT ', newCT);
 
@@ -428,9 +440,28 @@ const PageBanHang = ({ customerChosed }: any) => {
             return { ...old, isShow: true, isNew: true, item: item, id: item.id };
         });
     };
-    const AgreeGioHang = (ctUpdate: any) => {
+    const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
         // update cthd + save to cache
-        console.log('ctUpdate ', ctUpdate);
+        setHoaDonChiTiet(
+            hoaDonChiTiet.map((item: any, index: number) => {
+                if (item.id === ctUpdate.id) {
+                    return {
+                        ...item,
+                        soLuong: ctUpdate.soLuong,
+                        donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                        pTChietKhau: ctUpdate.pTChietKhau,
+                        tienChietKhau: ctUpdate.tienChietKhau,
+                        donGiaSauCK: ctUpdate.donGiaSauCK,
+                        donGiaSauVAT: ctUpdate.donGiaSauVAT,
+                        thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+                        thanhTienSauCK: ctUpdate.thanhTienSauCK,
+                        thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
     };
 
     // end modal chi tiet
@@ -532,15 +563,24 @@ const PageBanHang = ({ customerChosed }: any) => {
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
         await RemoveCache();
     };
+    const [layout, setLayout] = useState(false);
+    const handleLayoutToggle = () => {
+        setLayout(!layout);
+    };
 
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
-            <ModalEditChiTietGioHang trigger={triggerModalEditGioHang} handleSave={AgreeGioHang} />
+            <ModalEditChiTietGioHang
+                trigger={triggerModalEditGioHang}
+                dataNhanVien={allNhanVien}
+                handleSave={AgreeGioHang}
+            />
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
-                title={objAlert.mes}></SnackbarAlert>
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
             <div style={{ display: 'none' }}>
                 <MauInHoaDon ref={componentRef} props={propMauIn} />
@@ -550,95 +590,24 @@ const PageBanHang = ({ customerChosed }: any) => {
                 spacing={3}
                 marginTop="21px"
                 paddingLeft="2.2222222222222223vw"
-                paddingBottom="24px">
-                <Grid item md={3}>
-                    <Box
-                        sx={{
-                            backgroundColor: '#fff',
-                            borderRadius: '8px',
-                            boxShadow: ' 0px 20px 100px 0px #0000000D',
-                            padding: '16px 24px',
-                            height: '100%',
-                            maxHeight: '62.5vh',
-                            overflowY: 'auto'
-                        }}>
-                        <Box>
-                            <Typography
-                                variant="h3"
-                                fontSize="18px"
-                                color="#4C4B4C"
-                                fontWeight="700"
-                                onClick={() => choseLoaiHang(2)}>
-                                Nhóm dịch vụ
-                            </Typography>
-                            <List>
-                                {nhomDichVu.map((nhomDV, index) => (
-                                    <ListItem
-                                        key={index}
-                                        onClick={() => choseNhomDichVu(nhomDV)}
-                                        sx={{
-                                            gap: '6px',
-                                            padding: '10px',
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid',
-                                            borderColor: nhomDV.color,
-                                            borderRadius: '8px',
-                                            marginTop: '12px'
-                                        }}>
-                                        <ListItemIcon sx={{ minWidth: '0' }}>
-                                            <LocalOffer style={{ color: nhomDV.color }} />
-                                        </ListItemIcon>
-                                        <ListItemText>{nhomDV.tenNhomHang}</ListItemText>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Box>
-                        <Box>
-                            <Typography
-                                variant="h3"
-                                fontSize="18px"
-                                color="#4C4B4C"
-                                fontWeight="700"
-                                marginTop="12px"
-                                onClick={() => choseLoaiHang(1)}>
-                                Sản phẩm
-                            </Typography>
-                            <List>
-                                {nhomHangHoa.map((nhomHH, index) => (
-                                    <ListItem
-                                        key={index}
-                                        sx={{
-                                            gap: '6px',
-                                            padding: '10px',
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid',
-                                            borderColor: nhomHH.color,
-                                            borderRadius: '8px',
-                                            marginTop: '12px'
-                                        }}
-                                        onClick={() => choseNhomDichVu(nhomHH)}>
-                                        <ListItemIcon sx={{ minWidth: '0' }}>
-                                            <LocalOffer style={{ color: nhomHH.color }} />
-                                        </ListItemIcon>
-                                        <ListItemText>{nhomHH.tenNhomHang}</ListItemText>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Box>
-                    </Box>
-                </Grid>
-                <Grid item md={5}>
-                    <Box display="flex" flexDirection="column">
+                paddingBottom="24px"
+                sx={{
+                    '& > div': {
+                        paddingTop: '0!important'
+                    }
+                }}>
+                <Grid item container md={8} spacing={3} marginTop={layout ? '-60px' : '-24px'}>
+                    {layout && (
                         <TextField
                             fullWidth
                             sx={{
                                 backgroundColor: '#fff',
-                                borderColor: '#CDC9CD!important',
+                                borderColor: '#CFD3D4!important',
                                 borderWidth: '1px!important',
-                                maxWidth: 'calc(100% - 32px)',
+                                maxWidth: '60%',
                                 boxShadow: ' 0px 20px 100px 0px #0000000D',
 
-                                margin: 'auto'
+                                marginLeft: 'auto'
                             }}
                             size="small"
                             className="search-field"
@@ -652,86 +621,343 @@ const PageBanHang = ({ customerChosed }: any) => {
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <Search />
+                                        <SearchIcon />
                                     </InputAdornment>
                                 )
                             }}
                         />
+                    )}
+                    <Grid item md={5} lg={layout ? 12 : 5}>
                         <Box
-                            display="flex"
-                            flexDirection="column"
-                            gap="24px"
-                            padding="16px"
-                            marginTop="12px"
                             sx={{
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
-                                maxHeight: '56.0898vh',
-                                overflowY: 'auto'
+                                boxShadow: ' 0px 20px 100px 0px #0000000D',
+                                padding: '16px 24px',
+                                height: '100%',
+                                overflowX: 'hidden',
+                                maxHeight: '77vh',
+                                overflowY: 'auto',
+                                '&::-webkit-scrollbar': {
+                                    width: '7px'
+                                },
+                                '&::-webkit-scrollbar-thumb': {
+                                    bgcolor: 'rgba(0,0,0,0.1)',
+                                    borderRadius: '8px'
+                                }
                             }}>
-                            {listProduct.map((nhom: any, index: any) => (
-                                <Box key={index}>
-                                    <Typography
-                                        variant="h4"
-                                        fontSize="16px"
-                                        color="#000"
-                                        fontWeight="700"
-                                        marginBottom="16px">
-                                        {nhom.tenNhomHang}
-                                    </Typography>
-
-                                    <Grid container spacing={1.5}>
-                                        {nhom.hangHoas.map((item: any, index2: any) => (
-                                            <Grid item md={4} key={item.id}>
-                                                <Box
-                                                    minHeight="104px"
-                                                    padding="8px 12px 9px 12px"
-                                                    display="flex"
-                                                    flexDirection="column"
-                                                    justifyContent="space-between"
-                                                    gap="16px"
-                                                    borderRadius="4px"
-                                                    style={{
-                                                        backgroundColor: nhom.color + '1a'
-                                                    }}
-                                                    onClick={() => {
-                                                        choseChiTiet(item, index);
-                                                    }}>
-                                                    <Typography
-                                                        variant="h5"
-                                                        fontSize="14px"
-                                                        fontWeight="700"
-                                                        color="#333233">
-                                                        {item.tenHangHoa}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body1"
-                                                        fontSize="14px"
-                                                        color="#333233">
-                                                        {utils.formatNumber(item.giaBan)}
-                                                    </Typography>
-                                                </Box>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </Box>
-                            ))}
+                            <Box>
+                                <Typography
+                                    variant="h3"
+                                    fontSize="18px"
+                                    color="#4C4B4C"
+                                    fontWeight="700"
+                                    onClick={() => choseLoaiHang(2)}>
+                                    Nhóm dịch vụ
+                                </Typography>
+                                <List
+                                    sx={{
+                                        display: layout ? 'flex' : 'block',
+                                        columnGap: '12px',
+                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        overflowX: 'auto',
+                                        '&::-webkit-scrollbar': {
+                                            width: '7px'
+                                        },
+                                        '&::-webkit-scrollbar-thumb': {
+                                            bgcolor: 'rgba(0,0,0,0.1)',
+                                            borderRadius: '8px'
+                                        }
+                                    }}>
+                                    {nhomDichVu.map((nhomDV, index) => (
+                                        <ListItem
+                                            key={index}
+                                            onClick={() => choseNhomDichVu(nhomDV)}
+                                            sx={{
+                                                gap: '6px',
+                                                padding: '10px',
+                                                overflow: 'hidden',
+                                                backgroundColor: nhomDV.color,
+                                                borderRadius: '8px',
+                                                marginTop: '12px',
+                                                cursor: 'pointer',
+                                                transition: '.4s',
+                                                minWidth: layout ? '200px' : 'unset',
+                                                position: 'relative',
+                                                '&::after': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    left: '0',
+                                                    bottom: '0',
+                                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                                    zIndex: '0',
+                                                    opacity: '0',
+                                                    transition: '.4s'
+                                                },
+                                                '&:hover::after': {
+                                                    opacity: '1'
+                                                }
+                                            }}>
+                                            <ListItemIcon
+                                                sx={{
+                                                    minWidth: '0',
+                                                    position: 'relative',
+                                                    zIndex: '2'
+                                                }}>
+                                                <IconDv style={{ color: '#F1FAFF' }} />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                sx={{
+                                                    '& .MuiTypography-root': {
+                                                        color: '#F1FAFF',
+                                                        whiteSpace: 'nowrap',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        fontWeight: '700',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }
+                                                }}
+                                                title={nhomDV.tenNhomHang}>
+                                                {nhomDV.tenNhomHang}
+                                            </ListItemText>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Box>
+                            <Box>
+                                <Typography
+                                    variant="h3"
+                                    fontSize="18px"
+                                    color="#4C4B4C"
+                                    fontWeight="700"
+                                    marginTop="12px"
+                                    onClick={() => choseLoaiHang(1)}>
+                                    Sản phẩm
+                                </Typography>
+                                <List
+                                    sx={{
+                                        display: layout ? 'flex' : 'block',
+                                        columnGap: '12px',
+                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        overflowX: 'auto',
+                                        '&::-webkit-scrollbar': {
+                                            width: '4px!important',
+                                            height: '4px!important',
+                                            border: '1px solid #000'
+                                        },
+                                        '&::-webkit-scrollbar-thumb:horizontal': {
+                                            bgcolor: 'rgba(0,0,0,0.1)',
+                                            borderRadius: '8px'
+                                        },
+                                        '&::-webkit-scrollbar-track': {
+                                            background: '#f1f1f1'
+                                        }
+                                    }}>
+                                    {nhomHangHoa.map((nhomHH, index) => (
+                                        <ListItem
+                                            key={index}
+                                            sx={{
+                                                gap: '6px',
+                                                padding: '10px',
+                                                borderWidth: '1px',
+                                                borderStyle: 'solid',
+                                                bgcolor: nhomHH.color,
+                                                borderRadius: '8px',
+                                                marginTop: '12px',
+                                                minWidth: layout ? '200px' : 'unset',
+                                                cursor: 'pointer',
+                                                transition: '.4s',
+                                                position: 'relative',
+                                                '&::after': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    left: '0',
+                                                    bottom: '0',
+                                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                                    zIndex: '0',
+                                                    opacity: '0',
+                                                    transition: '.4s'
+                                                },
+                                                '&:hover::after': {
+                                                    opacity: '1'
+                                                }
+                                            }}
+                                            onClick={() => choseNhomDichVu(nhomHH)}>
+                                            <ListItemIcon
+                                                sx={{
+                                                    minWidth: '0',
+                                                    position: 'relative',
+                                                    zIndex: '2'
+                                                }}>
+                                                <IconDv style={{ color: '#F1FAFF' }} />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                sx={{
+                                                    '& .MuiTypography-root': {
+                                                        color: '#F1FAFF',
+                                                        whiteSpace: 'nowrap',
+                                                        width: '100%',
+                                                        fontWeight: '700',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }
+                                                }}
+                                                title={nhomHH.tenNhomHang}>
+                                                {nhomHH.tenNhomHang}
+                                            </ListItemText>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Box>
                         </Box>
-                    </Box>
+                    </Grid>
+                    <Grid item md={7} lg={layout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                        <Box display="flex" flexDirection="column">
+                            {!layout && (
+                                <TextField
+                                    fullWidth
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderColor: '#CFD3D4!important',
+                                        borderWidth: '1px!important',
+                                        maxWidth: 'calc(100% - 32px)',
+                                        boxShadow: ' 0px 20px 100px 0px #0000000D',
+
+                                        margin: 'auto'
+                                    }}
+                                    size="small"
+                                    className="search-field"
+                                    variant="outlined"
+                                    type="search"
+                                    placeholder="Tìm kiếm"
+                                    value={txtSearch}
+                                    onChange={(event) => {
+                                        setTxtSearch(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                            <Box
+                                display="flex"
+                                flexDirection="column"
+                                gap="24px"
+                                padding="16px"
+                                marginTop="16px"
+                                sx={{
+                                    backgroundColor: '#fff',
+                                    borderRadius: '8px',
+                                    maxHeight: '77vh',
+                                    overflowX: 'hidden',
+                                    overflowY: 'auto',
+                                    '&::-webkit-scrollbar': {
+                                        width: '7px'
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        bgcolor: 'rgba(0,0,0,0.1)',
+                                        borderRadius: '8px'
+                                    }
+                                }}>
+                                {listProduct.map((nhom: any, index: any) => (
+                                    <Box key={index}>
+                                        <Typography
+                                            variant="h4"
+                                            fontSize="16px"
+                                            color="#000"
+                                            fontWeight="700"
+                                            marginBottom="16px">
+                                            {nhom.tenNhomHang}
+                                        </Typography>
+
+                                        <Grid container spacing={1.5}>
+                                            {nhom.hangHoas.map((item: any, index2: any) => (
+                                                <Grid item md={4} key={item.id}>
+                                                    <Box
+                                                        minHeight="104px"
+                                                        padding="8px 12px 9px 12px"
+                                                        display="flex"
+                                                        flexDirection="column"
+                                                        justifyContent="space-between"
+                                                        gap="16px"
+                                                        borderRadius="4px"
+                                                        sx={{
+                                                            border: '1px solid transparent',
+                                                            cursor: 'pointer',
+                                                            transition: '.4s',
+                                                            backgroundColor: '#F2EBF0',
+                                                            '&:hover': {
+                                                                borderColor: '#7C3367'
+                                                            }
+                                                        }}
+                                                        onClick={() => {
+                                                            choseChiTiet(item, index);
+                                                        }}>
+                                                        <Typography
+                                                            variant="h5"
+                                                            fontSize="12px"
+                                                            fontWeight="700"
+                                                            color="#333233"
+                                                            title={item.tenHangHoa}
+                                                            sx={{
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                display: '-webkit-box',
+                                                                WebkitBoxOrient: 'vertical',
+                                                                WebkitLineClamp: 2,
+                                                                maxHeight: '32px'
+                                                            }}>
+                                                            {item.tenHangHoa}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontSize="14px"
+                                                            color="#333233">
+                                                            {utils.formatNumber(item.giaBan)}
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                    </Grid>
                 </Grid>
-                <Grid item lg={4}>
+                <Grid item md={4} sx={{ marginTop: '-74px' }}>
                     <Box
                         sx={{
                             backgroundColor: '#fff',
                             borderRadius: '8px',
                             overflow: 'hidden',
                             height: '100%',
-                            maxHeight: '72.9492vh',
+                            maxHeight: '86vh',
+                            overflowX: 'hidden',
                             overflowY: 'auto',
                             padding: '24px 16px',
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
+                            '&::-webkit-scrollbar': {
+                                width: '7px'
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                bgcolor: 'rgba(0,0,0,0.1)',
+                                borderRadius: '8px'
+                            }
                         }}>
                         <Box
                             sx={{
@@ -750,7 +976,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
-                                <Button sx={{ marginLeft: 'auto' }}>
+                                <Button sx={{ marginLeft: 'auto' }} onClick={handleLayoutToggle}>
                                     <img
                                         src={dotIcon}
                                         style={{
@@ -763,8 +989,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                         {/* 1 row chi tiet */}
                         {hoaDonChiTiet?.map((ct: any, index) => (
                             <Box
-                                marginBottom="auto"
-                                padding="24px 16px"
+                                padding="12px"
                                 borderRadius="8px"
                                 border="1px solid #F2F2F2"
                                 marginTop="24px"
@@ -773,13 +998,21 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     display="flex"
                                     justifyContent="space-between"
                                     alignItems="center">
-                                    <Box onClick={() => showPopNhanVienThucHien(ct)}>
+                                    <Box width="100%">
                                         <Typography
                                             variant="body1"
                                             fontSize="16px"
                                             color="#7C3367"
                                             fontWeight="400"
-                                            lineHeight="24px">
+                                            lineHeight="24px"
+                                            sx={{
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: '1',
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }}
+                                            title={ct.tenHangHoa}>
                                             {ct.tenHangHoa}
                                         </Typography>
                                     </Box>
@@ -789,23 +1022,58 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             variant="body1"
                                             fontSize="16px"
                                             fontWeight="400"
+                                            sx={{ display: 'flex', gap: '8px' }}
                                             onClick={() => showPopChiTietGioHang(ct)}>
-                                            <span> {ct.soLuong}</span>x
-                                            <span> {Utils.formatNumber(ct.giaBan)}</span>
+                                            <span> {ct.soLuong + 'x'} </span>
+                                            <span> {Utils.formatNumber(ct.donGiaSauCK)}</span>
                                         </Typography>
-                                        <Box sx={{ marginLeft: '16px' }}>
-                                            <AiOutlineDelete
-                                                onClick={() => {
-                                                    deleteChiTietHoaDon(ct);
+                                        <Box
+                                            sx={{
+                                                marginLeft: '8px',
+                                                display: 'flex',
+                                                gap: '10px'
+                                            }}>
+                                            <Button
+                                                sx={{
+                                                    minWidth: '0',
+                                                    padding: '0',
+                                                    '&:hover': {
+                                                        filter: ' brightness(0) saturate(100%) invert(25%) sepia(16%) saturate(2588%) hue-rotate(267deg) brightness(96%) contrast(88%)'
+                                                    }
                                                 }}
-                                            />
+                                                onClick={() => showPopNhanVienThucHien(ct)}>
+                                                <UserIcon style={{ cursor: 'pointer' }} />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    minWidth: '0',
+                                                    padding: '0',
+                                                    '&:hover svg': {
+                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                    }
+                                                }}>
+                                                <DeleteIcon
+                                                    style={{
+                                                        cursor: 'pointer',
+                                                        color: '#999699'
+                                                    }}
+                                                    onClick={() => {
+                                                        deleteChiTietHoaDon(ct);
+                                                    }}
+                                                />
+                                            </Button>
                                         </Box>
                                     </Box>
                                 </Box>
                                 {/* nhan vien thuc hien */}
 
                                 {ct.nhanVienThucHien.length > 0 && (
-                                    <Box display="flex" alignItems="center">
+                                    <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        flexWrap="wrap"
+                                        gap="8px"
+                                        mt="8px">
                                         <Typography
                                             variant="body2"
                                             fontSize="12px"
@@ -816,7 +1084,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {ct.nhanVienThucHien.map((nv: any, index3: any) => (
                                             <Typography
                                                 variant="body1"
-                                                fontSize="14px"
+                                                fontSize="12px"
                                                 lineHeight="16px"
                                                 color="#4C4B4C"
                                                 display="flex"
@@ -825,11 +1093,28 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                     backgroundColor: '#F2EBF0',
                                                     padding: '4px 8px',
                                                     gap: '10px',
-                                                    borderRadius: '100px'
+                                                    borderRadius: '100px',
+                                                    '& .remove-NV:hover img': {
+                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                    },
+                                                    flexGrow: '1',
+                                                    width: 'calc(50% - 69px)'
                                                 }}
                                                 key={index3}>
-                                                <span>{nv.tenNhanVien}</span>
-                                                <span onClick={() => RemoveNVThucHien(ct, nv)}>
+                                                <Box
+                                                    sx={{
+                                                        width: '100%',
+                                                        whiteSpace: 'nowrap',
+                                                        textOverflow: 'ellipsis',
+                                                        overflow: 'hidden'
+                                                    }}
+                                                    title={nv.tenNhanVien}>
+                                                    {nv.tenNhanVien}
+                                                </Box>
+                                                <span
+                                                    className="remove-NV"
+                                                    style={{ cursor: 'pointer' }}
+                                                    onClick={() => RemoveNVThucHien(ct, nv)}>
                                                     <img src={closeIcon} alt="close" />
                                                 </span>
                                             </Typography>
@@ -838,92 +1123,135 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 )}
                             </Box>
                         ))}
-
-                        <Box display="flex" flexDirection="column" gap="32px" marginTop="24px">
-                            <Box display="flex" justifyContent="space-between">
-                                <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                    Tổng tiền hàng
-                                </Typography>
-                                <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
-                                </Typography>
-                            </Box>
-                            <Box display="flex" justifyContent="space-between">
-                                <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                    Giảm giá
-                                </Typography>
-                                <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
-                                </Typography>
-                            </Box>
-                            <Box display="flex" justifyContent="space-between">
-                                <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                    Tổng giảm giá
-                                </Typography>
-                                <Typography variant="caption" fontSize="12px" color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
-                                </Typography>
-                            </Box>
-                            <Box display="flex" justifyContent="space-between">
+                        <Box marginTop="auto">
+                            <Box pt="24px">
                                 <Typography
-                                    variant="h5"
-                                    fontWeight="700"
-                                    fontSize="18px"
-                                    color="#3B4758">
-                                    Tổng thanh toán
+                                    variant="h3"
+                                    color="#333233"
+                                    fontSize="14px"
+                                    fontWeight="500"
+                                    mb="8px">
+                                    Mã giảm giá
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontWeight="700"
-                                    fontSize="16px"
-                                    color="#3B4758">
-                                    {Utils.formatNumber(hoadon.tongThanhToan)}
-                                </Typography>
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    placeholder="Nhập mã"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <VoucherIcon />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <Button
+                                                variant="text"
+                                                sx={{
+                                                    padding: '0',
+                                                    transition: '.4s',
+                                                    bgcolor: 'transparent!important',
+                                                    color: '#4C4B4C',
+                                                    '&:hover': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}>
+                                                Áp dụng
+                                            </Button>
+                                        )
+                                    }}
+                                    sx={{ '& input': { fontSize: '14px' } }}
+                                />
+                            </Box>
+                            <Box borderTop="1px solid #F2F2F2" marginY="16px"></Box>
+                            <Box>
+                                <Box
+                                    display="flex"
+                                    flexDirection="column"
+                                    gap="16px"
+                                    pt="16px"
+                                    pb="32px"
+                                    borderRadius="12px"
+                                    paddingX="16px"
+                                    bgcolor="#F9F9F9">
+                                    <Box display="flex" justifyContent="space-between">
+                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                            Tổng tiền hàng
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            fontSize="12px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
+                                        </Typography>
+                                    </Box>
+                                    <Box display="flex" justifyContent="space-between">
+                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                            Giảm giá
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            fontSize="12px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        borderBottom="1px solid #CBADC2"
+                                        pb="8px">
+                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                            Tổng giảm giá
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            fontSize="12px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                        </Typography>
+                                    </Box>
+                                    <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        mt="8px">
+                                        <Typography
+                                            variant="h5"
+                                            fontWeight="700"
+                                            fontSize="18px"
+                                            color="#3B4758">
+                                            Tổng thanh toán
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            fontWeight="700"
+                                            fontSize="16px"
+                                            color="#3B4758">
+                                            {Utils.formatNumber(hoadon.tongThanhToan)}
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Button
+                                    variant="contained"
+                                    fullWidth
+                                    sx={{
+                                        fontSize: '16px',
+                                        fontWeight: '700',
+                                        color: '#fff',
+                                        textTransform: 'unset!important',
+                                        backgroundColor: '#7C3367!important',
+                                        paddingY: '12px',
+                                        mt: '24px'
+                                    }}
+                                    className="btn-container-hover"
+                                    onClick={saveHoaDon}>
+                                    Thanh Toán
+                                </Button>
                             </Box>
                         </Box>
                     </Box>
                 </Grid>
             </Grid>
-            <Box
-                sx={{
-                    width: '100%',
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    padding: '28px 32px',
-                    backgroundColor: '#fff'
-                }}>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        display: 'flex',
-                        gap: '6px',
-                        borderColor: '#3B4758',
-                        textTransform: 'unset!important'
-                    }}>
-                    <img src={arrowIcon} />
-                    <Typography
-                        color="#3B4758"
-                        variant="button"
-                        fontSize="14px"
-                        fontWeight="400"
-                        sx={{ textTransform: 'unset!important' }}>
-                        Quay trở lại
-                    </Typography>
-                </Button>
-                <Button
-                    variant="contained"
-                    sx={{
-                        fontSize: '14px',
-                        fontWeight: '400',
-                        color: '#fff',
-                        textTransform: 'unset!important',
-                        backgroundColor: '#7C3367!important',
-                        width: 'calc(33.33333% - 75px)'
-                    }}
-                    onClick={saveHoaDon}>
-                    Thanh Toán
-                </Button>
-            </Box>
         </>
     );
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useImperativeHandle, forwardRef, useRef } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-
+import { NumericFormat } from 'react-number-format';
 import {
     Dialog,
     DialogTitle,
@@ -296,15 +296,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             <Grid container sx={{ pb: 2 }}>
                                 <Grid item xs={12} sm={6} md={6} lg={6} sx={{ pr: 4 }}>
                                     <Typography variant="body2">Giá</Typography>
-                                    <TextField
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        placeholder="0"
+                                    <NumericFormat
                                         value={product.giaBan}
-                                        onKeyPress={(event) =>
-                                            Utils.keypressNumber_limitNumber(event)
-                                        }
+                                        thousandSeparator
+                                        customInput={TextField}
                                         onChange={(event) => editGiaBan(event)}
                                     />
                                 </Grid>

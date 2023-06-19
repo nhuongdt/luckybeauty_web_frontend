@@ -222,7 +222,6 @@ class LichHenScreen extends Component {
                             <Select
                                 defaultValue="all"
                                 sx={{
-                                    borderWidth: '0!important',
                                     backgroundColor: '#fff',
                                     width: 'auto',
                                     fontSize: '14px',
@@ -278,7 +277,7 @@ class LichHenScreen extends Component {
                         </Box>
                         <Box>
                             <div>
-                                <Box display="flex">
+                                <Box display="flex" gap="8px">
                                     <Tooltip title="Like">
                                         <Button
                                             sx={{

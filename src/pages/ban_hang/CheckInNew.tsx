@@ -30,7 +30,8 @@ import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien'
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
 import MauInServices from '../../services/mau_in/MauInServices';
-
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 const shortNameCus = createTheme({
     components: {
         MuiButton: {
@@ -146,50 +147,54 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
             <Grid item xs={12} sm={6} md={8} lg={9} xl={9}>
-                <Grid container display="flex" justifyContent="end">
-                    <Grid item xs={12} lg={7} sm={7} md={4}>
-                        <TextField
-                            sx={{
-                                backgroundColor: '#FFFAFF',
-                                borderColor: '#CDC9CD!important',
-                                borderWidth: '1px!important'
-                            }}
-                            size="small"
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            fullWidth
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <Search />
-                                    </InputAdornment>
-                                )
-                            }}
-                            onChange={(event) => {
-                                setTextSeach(event.target.value);
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} lg={5} sm={5} md={8}>
+                <Grid container justifyContent="end">
+                    <Grid item xs={12}>
                         <Stack spacing={1} direction="row" display="flex" justifyContent="end">
-                            <Menu className="btnIcon" />
-                            <CalendarMonth className="btnIcon" />
+                            <TextField
+                                sx={{
+                                    backgroundColor: '#FFFAFF',
+                                    borderColor: '#CDC9CD!important',
+                                    borderWidth: '1px!important',
+                                    maxWidth: '300px'
+                                }}
+                                size="small"
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                fullWidth
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    )
+                                }}
+                                onChange={(event) => {
+                                    setTextSeach(event.target.value);
+                                }}
+                            />
                             <Button
                                 variant="outlined"
                                 size="small"
                                 sx={{
-                                    borderColor: '#7C3367!important',
-                                    color: '#4C4B4C'
-                                }}>
-                                Dịch vụ
+                                    minWidth: 'unset',
+                                    '& svg': {
+                                        width: '24px',
+                                        height: '24px',
+                                        bgcolor: '#fff!important'
+                                    }
+                                }}
+                                className="btn-outline-hover">
+                                <DateIcon />
                             </Button>
+
                             <Button
                                 variant="contained"
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#7C3367!important'
+                                    backgroundColor: '#7C3367!important',
+                                    padding: '10px 16px!important'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() =>
@@ -197,7 +202,8 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                         ...triggerAddCheckIn,
                                         isShow: true
                                     })
-                                }>
+                                }
+                                className="btn-container-hover">
                                 Thêm khách
                             </Button>
                         </Stack>
@@ -218,13 +224,19 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             }}>
                             <CloseIcon sx={{ color: '#333233' }} />
                         </Button>
-                        <div
-                            style={{
+                        <Box
+                            sx={{
                                 boxShadow: '0px 7px 20px 0px #28293D14',
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
                                 padding: '24px',
-                                height: '100%'
+                                height: '100%',
+                                border: '1px solid transparent',
+                                transition: '.4s',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    borderColor: '#7C3367'
+                                }
                             }}
                             onClick={() => {
                                 handleClickCustomer(item);
@@ -297,7 +309,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     </Typography>
                                 </Box>
                             </Box>
-                        </div>
+                        </Box>
                     </Grid>
                 ))}
             </Grid>

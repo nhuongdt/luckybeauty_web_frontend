@@ -37,7 +37,8 @@ import {
     ModelHangHoaDto,
     PagedProductSearchDto
 } from '../../services/product/dto';
-
+import { ReactComponent as UploadIcon } from '../../images/upload.svg';
+import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
 
@@ -205,14 +206,14 @@ export default function PageProductNew() {
                 break;
             case 2:
                 GetListHangHoa();
-                setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + '  thành công' });
+                setObjAlert({ show: true, type: 1, mes: 'Sửa ' + sLoai + ' thành công' });
                 break;
             case 3:
                 deleteProduct();
                 break;
             case 4:
                 restoreProduct();
-                setObjAlert({ show: true, type: 1, mes: 'Khôi phục ' + sLoai + '  thành công' });
+                setObjAlert({ show: true, type: 1, mes: 'Khôi phục ' + sLoai + ' thành công' });
                 break;
         }
     }
@@ -479,7 +480,8 @@ export default function PageProductNew() {
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
-                title={objAlert.mes}></SnackbarAlert>
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid
                 container
                 className="dich-vu-page"
@@ -519,21 +521,21 @@ export default function PageProductNew() {
                         <Button
                             size="small"
                             variant="outlined"
-                            startIcon={<FileUpload />}
-                            className="btnNhapXuat">
+                            startIcon={<UploadIcon />}
+                            className="btnNhapXuat btn-outline-hover">
                             Nhập
                         </Button>
                         <Button
                             size="small"
                             variant="outlined"
-                            startIcon={<FileDownload />}
-                            className="btnNhapXuat">
+                            startIcon={<DownIcon />}
+                            className="btnNhapXuat btn-outline-hover">
                             Xuất
                         </Button>
                         <Button
                             size="small"
                             variant="contained"
-                            className="button-container"
+                            className="button-container btn-container-hover"
                             sx={{
                                 minWidth: '143px',
                                 backgroundColor: '#7c3367!important',
@@ -573,7 +575,7 @@ export default function PageProductNew() {
                                     onClick={() => showModalAddNhomHang()}
                                 />
                             </Box>
-                            <Box sx={{ overflow: 'auto', maxHeight: '400px' }}>
+                            <Box sx={{ overflow: 'auto', maxHeight: '400px', padding: '0px 24px' }}>
                                 <AccordionNhomHangHoa
                                     dataNhomHang={treeNhomHangHoa}
                                     clickTreeItem={editNhomHangHoa}

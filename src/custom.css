@@ -229,6 +229,9 @@
     padding: 6px 16px;
     color: #ffffff;
 }
+.btn-outline-hover {
+    border-color: #e6e1e6 !important;
+}
 .btn-outline-hover:hover {
     border-color: #7c3367 !important;
 }
@@ -237,4 +240,13 @@
 }
 .btn-container-hover .MuiTouchRipple-root * {
     background-color: #5d264d !important;
+}
+
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-width: 1px !important;
+    border-color: #7c3367 !important;
+}
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary:hover
+    .MuiOutlinedInput-notchedOutline {
+    border-color: #7c3367 !important;
 }
