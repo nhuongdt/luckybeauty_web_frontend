@@ -152,13 +152,14 @@ class LichHenScreen extends Component {
                                     alignItems="center"
                                     gap="8px">
                                     <Button
+                                        className="btn-outline-hover"
                                         variant="outlined"
                                         onClick={() => {
                                             console.log('ok');
                                         }}
                                         sx={{
                                             bgcolor: '#fff!important',
-                                            borderColor: '#E6E1E6!important',
+                                            borderColor: '#E6E1E6',
                                             minWidth: '40px',
                                             height: '40px',
                                             width: '40px',
@@ -168,6 +169,7 @@ class LichHenScreen extends Component {
                                         <SettingIcon color="#231F20" />
                                     </Button>
                                     <Button
+                                        className="btn-outline-hover"
                                         variant="outlined"
                                         startIcon={
                                             <img
@@ -182,7 +184,7 @@ class LichHenScreen extends Component {
                                             height: '40px',
                                             color: '#4C4B4C',
                                             fontWeight: '400',
-                                            borderColor: '#E6E1E6!important',
+                                            borderColor: '#E6E1E6',
                                             bgcolor: '#fff!important'
                                         }}>
                                         Thêm thời gian chặn
@@ -199,7 +201,8 @@ class LichHenScreen extends Component {
                                             this.setState({
                                                 modalVisible: !this.state.modalVisible
                                             });
-                                        }}>
+                                        }}
+                                        className="btn-container-hover">
                                         Thêm cuộc hẹn
                                     </Button>
                                 </Box>
@@ -219,7 +222,6 @@ class LichHenScreen extends Component {
                             <Select
                                 defaultValue="all"
                                 sx={{
-                                    borderWidth: '0!important',
                                     backgroundColor: '#fff',
                                     width: 'auto',
                                     fontSize: '14px',
@@ -244,7 +246,8 @@ class LichHenScreen extends Component {
                                     }}
                                     onClick={() => {
                                         this.changeHeaderToolbar('prev');
-                                    }}>
+                                    }}
+                                    className="btn-outline-hover">
                                     <KeyboardArrowLeftIcon sx={{ color: '#666466' }} />
                                 </Button>
                                 <Button
@@ -266,21 +269,33 @@ class LichHenScreen extends Component {
                                     }}
                                     onClick={() => {
                                         this.changeHeaderToolbar('next');
-                                    }}>
+                                    }}
+                                    className="btn-outline-hover">
                                     <KeyboardArrowRightIcon sx={{ color: '#666466' }} />
                                 </Button>
                             </Box>
                         </Box>
                         <Box>
                             <div>
-                                <Box display="flex">
+                                <Box display="flex" gap="8px">
                                     <Tooltip title="Like">
-                                        <Button sx={{ minWidth: 'unset' }}>
+                                        <Button
+                                            sx={{
+                                                minWidth: 'unset',
+                                                border: '1px solid transparent'
+                                            }}
+                                            className="btn-outline-hover">
                                             <AiOutlineCalendar color="#231F20" />
                                         </Button>
                                     </Tooltip>
                                     <Tooltip title="Like">
-                                        <Button sx={{ minWidth: 'unset' }}>
+                                        <Button
+                                            sx={{
+                                                minWidth: 'unset',
+                                                border: '1px solid transparent',
+                                                marginRight: '16px'
+                                            }}
+                                            className="btn-outline-hover">
                                             <AiOutlineBars color="#231F20" />
                                         </Button>
                                     </Tooltip>

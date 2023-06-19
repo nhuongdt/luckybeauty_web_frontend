@@ -29,6 +29,7 @@ import { CreateOrUpdateUserInput } from '../../../services/user/dto/createOrUpda
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import { GetRoles } from '../../../services/user/dto/getRolesOuput';
 import TabList from '@mui/lab/TabList';
+import { enqueueSnackbar } from 'notistack';
 //import rules from './createOrUpdateUser.validation';
 export interface ICreateOrEditUserProps {
     visible: boolean;
@@ -60,6 +61,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             const { formRef, onOk } = this.props;
             if (formRef.id === 0) {
                 await userService.create(values);
+                enqueueSnackbar('Thêm mới thành công!', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
             } else {
                 await userService.update({
                     id: formRef.id,
@@ -72,10 +77,17 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     userName: values.userName,
                     roleNames: values.roleNames
                 });
+                enqueueSnackbar('Cập nhật thành công!', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
             }
             onOk();
         } catch (error) {
-            console.error(error);
+            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                variant: 'error',
+                autoHideDuration: 3000
+            });
         }
     };
 

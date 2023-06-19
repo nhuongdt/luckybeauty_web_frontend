@@ -3,4 +3,7 @@ import { PagedFilterAndSortedRequest } from '../../dto/pagedFilterAndSortedReque
 export interface PagedKhachHangResultRequestDto extends PagedFilterAndSortedRequest {
     keyword: string;
     loaiDoiTuong?: number;
+    idChiNhanh?: string;
+    sortBy: string;
+    sortType: string;
 }

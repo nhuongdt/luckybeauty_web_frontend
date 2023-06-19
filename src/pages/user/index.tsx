@@ -29,6 +29,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { enqueueSnackbar } from 'notistack';
 class UserScreen extends AppComponentBase {
     state = {
         modalVisible: false,
@@ -120,7 +121,16 @@ class UserScreen extends AppComponentBase {
         this.handleCloseMenu();
     };
     async delete(input: number) {
-        await userService.delete(input);
+        const deleteResult = await userService.delete(input);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
         await this.getAll();
     }
 

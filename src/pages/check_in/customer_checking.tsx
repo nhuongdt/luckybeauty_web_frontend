@@ -127,8 +127,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             <div className={show ? 'show overlay' : 'overlay'} onClick={handleToggle}></div>
             <Grid item xs={9} sm={9} md={9} lg={10} display="flex" justifyContent="flex-end">
                 <Stack direction="row" spacing={1}>
-                    <Menu className="btnIcon" />
-                    <CalendarMonth className="btnIcon" />
+                    <Button variant="outlined">
+                        <Menu className="btnIcon" />
+                    </Button>
+                    <Button variant="outlined">
+                        <CalendarMonth className="btnIcon" />
+                    </Button>
                     {/* <Button
                         variant="contained"
                         className="btnIconText"

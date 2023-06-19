@@ -25,6 +25,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextTranslate } from '../../components/TableLanguage';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { enqueueSnackbar } from 'notistack';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -145,7 +146,16 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         this.onShowDelete();
     };
     async delete(input: number) {
-        await tenantService.delete(input);
+        const deleteResult = await tenantService.delete(input);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
         this.getAll();
     }
 

@@ -61,31 +61,51 @@ http.interceptors.response.use(
             !!error.response.data.error &&
             !!error.response.data.error.message
         ) {
-            enqueueSnackbar(
-                <>
-                    <div>
-                        <div>Lỗi</div>
-                        <span>Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại!</span>
-                    </div>
-                </>,
-                {
-                    variant: 'error',
-                    anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'center'
-                    },
-                    action: (key) => (
-                        <>
-                            <IconButton
-                                onClick={() => {
-                                    window.location.href = '/login';
-                                }}>
-                                <CloseOutlinedIcon sx={{ color: '#FFFFFF' }} />
-                            </IconButton>
-                        </>
-                    )
-                }
-            );
+            error.response.status == 500
+                ? enqueueSnackbar(
+                      <>
+                          <div>
+                              <div>Lỗi</div>
+                              <span>
+                                  {error.response.data.error.message}:
+                                  {error.response.data.error.details}
+                              </span>
+                          </div>
+                      </>,
+                      {
+                          variant: 'error',
+                          anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                          },
+                          autoHideDuration: 3000
+                      }
+                  )
+                : enqueueSnackbar(
+                      <>
+                          <div>
+                              <div>Lỗi</div>
+                              <span>Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại!</span>
+                          </div>
+                      </>,
+                      {
+                          variant: 'error',
+                          anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                          },
+                          action: (key) => (
+                              <>
+                                  <IconButton
+                                      onClick={() => {
+                                          window.location.href = '/login';
+                                      }}>
+                                      <CloseOutlinedIcon sx={{ color: '#FFFFFF' }} />
+                                  </IconButton>
+                              </>
+                          )
+                      }
+                  );
         } else if (!error.response) {
             // Hiển thị thông báo lỗi sử dụng toastify
             (

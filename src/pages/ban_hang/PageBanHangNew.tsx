@@ -56,7 +56,10 @@ import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
 
 import logo from '../../images/Lucky_beauty.jpg';
-
+import { ReactComponent as IconDv } from '../../images/icon-DV.svg';
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
+import { ReactComponent as UserIcon } from '../../images/user.svg';
 const PageBanHang = ({ customerChosed }: any) => {
     console.log('pagebanhang');
     const componentRef = useRef(null);
@@ -562,7 +565,12 @@ const PageBanHang = ({ customerChosed }: any) => {
                 spacing={3}
                 marginTop="21px"
                 paddingLeft="2.2222222222222223vw"
-                paddingBottom="24px">
+                paddingBottom="24px"
+                sx={{
+                    '& > div': {
+                        paddingTop: '0!important'
+                    }
+                }}>
                 <Grid item md={3}>
                     <Box
                         sx={{
@@ -571,8 +579,16 @@ const PageBanHang = ({ customerChosed }: any) => {
                             boxShadow: ' 0px 20px 100px 0px #0000000D',
                             padding: '16px 24px',
                             height: '100%',
-                            maxHeight: '62.5vh',
-                            overflowY: 'auto'
+                            overflowX: 'hidden',
+                            maxHeight: '77vh',
+                            overflowY: 'auto',
+                            '&::-webkit-scrollbar': {
+                                width: '7px'
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                bgcolor: 'rgba(0,0,0,0.1)',
+                                borderRadius: '8px'
+                            }
                         }}>
                         <Box>
                             <Typography
@@ -591,16 +607,53 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         sx={{
                                             gap: '6px',
                                             padding: '10px',
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid',
-                                            borderColor: nhomDV.color,
+                                            overflow: 'hidden',
+                                            backgroundColor: nhomDV.color,
                                             borderRadius: '8px',
-                                            marginTop: '12px'
+                                            marginTop: '12px',
+                                            cursor: 'pointer',
+                                            transition: '.4s',
+                                            position: 'relative',
+                                            '&::after': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                height: '100%',
+                                                width: '100%',
+                                                left: '0',
+                                                bottom: '0',
+                                                backgroundColor: 'rgba(0,0,0,0.3)',
+                                                zIndex: '0',
+                                                opacity: '0',
+                                                transition: '.4s'
+                                            },
+                                            '&:hover::after': {
+                                                opacity: '1'
+                                            }
                                         }}>
-                                        <ListItemIcon sx={{ minWidth: '0' }}>
-                                            <LocalOffer style={{ color: nhomDV.color }} />
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: '0',
+                                                position: 'relative',
+                                                zIndex: '2'
+                                            }}>
+                                            <IconDv style={{ color: '#F1FAFF' }} />
                                         </ListItemIcon>
-                                        <ListItemText>{nhomDV.tenNhomHang}</ListItemText>
+                                        <ListItemText
+                                            sx={{
+                                                '& .MuiTypography-root': {
+                                                    color: '#F1FAFF',
+                                                    whiteSpace: 'nowrap',
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    fontWeight: '700',
+                                                    position: 'relative',
+                                                    zIndex: '2'
+                                                }
+                                            }}
+                                            title={nhomDV.tenNhomHang}>
+                                            {nhomDV.tenNhomHang}
+                                        </ListItemText>
                                     </ListItem>
                                 ))}
                             </List>
@@ -624,28 +677,66 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             padding: '10px',
                                             borderWidth: '1px',
                                             borderStyle: 'solid',
-                                            borderColor: nhomHH.color,
+                                            bgcolor: nhomHH.color,
                                             borderRadius: '8px',
-                                            marginTop: '12px'
+                                            marginTop: '12px',
+                                            cursor: 'pointer',
+                                            transition: '.4s',
+                                            position: 'relative',
+                                            '&::after': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                height: '100%',
+                                                width: '100%',
+                                                left: '0',
+                                                bottom: '0',
+                                                backgroundColor: 'rgba(0,0,0,0.3)',
+                                                zIndex: '0',
+                                                opacity: '0',
+                                                transition: '.4s'
+                                            },
+                                            '&:hover::after': {
+                                                opacity: '1'
+                                            }
                                         }}
                                         onClick={() => choseNhomDichVu(nhomHH)}>
-                                        <ListItemIcon sx={{ minWidth: '0' }}>
-                                            <LocalOffer style={{ color: nhomHH.color }} />
+                                        <ListItemIcon
+                                            sx={{
+                                                minWidth: '0',
+                                                position: 'relative',
+                                                zIndex: '2'
+                                            }}>
+                                            <IconDv style={{ color: '#F1FAFF' }} />
                                         </ListItemIcon>
-                                        <ListItemText>{nhomHH.tenNhomHang}</ListItemText>
+                                        <ListItemText
+                                            sx={{
+                                                '& .MuiTypography-root': {
+                                                    color: '#F1FAFF',
+                                                    whiteSpace: 'nowrap',
+                                                    width: '100%',
+                                                    fontWeight: '700',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    position: 'relative',
+                                                    zIndex: '2'
+                                                }
+                                            }}
+                                            title={nhomHH.tenNhomHang}>
+                                            {nhomHH.tenNhomHang}
+                                        </ListItemText>
                                     </ListItem>
                                 ))}
                             </List>
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item md={5}>
+                <Grid item md={5} sx={{ marginTop: '-58px' }}>
                     <Box display="flex" flexDirection="column">
                         <TextField
                             fullWidth
                             sx={{
                                 backgroundColor: '#fff',
-                                borderColor: '#CDC9CD!important',
+                                borderColor: '#CFD3D4!important',
                                 borderWidth: '1px!important',
                                 maxWidth: 'calc(100% - 32px)',
                                 boxShadow: ' 0px 20px 100px 0px #0000000D',
@@ -664,7 +755,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <Search />
+                                        <SearchIcon />
                                     </InputAdornment>
                                 )
                             }}
@@ -674,12 +765,20 @@ const PageBanHang = ({ customerChosed }: any) => {
                             flexDirection="column"
                             gap="24px"
                             padding="16px"
-                            marginTop="12px"
+                            marginTop="16px"
                             sx={{
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
-                                maxHeight: '56.0898vh',
-                                overflowY: 'auto'
+                                maxHeight: '77vh',
+                                overflowX: 'hidden',
+                                overflowY: 'auto',
+                                '&::-webkit-scrollbar': {
+                                    width: '7px'
+                                },
+                                '&::-webkit-scrollbar-thumb': {
+                                    bgcolor: 'rgba(0,0,0,0.1)',
+                                    borderRadius: '8px'
+                                }
                             }}>
                             {listProduct.map((nhom: any, index: any) => (
                                 <Box key={index}>
@@ -703,17 +802,24 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                     justifyContent="space-between"
                                                     gap="16px"
                                                     borderRadius="4px"
-                                                    style={{
-                                                        backgroundColor: nhom.color + '1a'
+                                                    sx={{
+                                                        border: '1px solid transparent',
+                                                        cursor: 'pointer',
+                                                        transition: '.4s',
+                                                        backgroundColor: '#F2EBF0',
+                                                        '&:hover': {
+                                                            borderColor: '#7C3367'
+                                                        }
                                                     }}
                                                     onClick={() => {
                                                         choseChiTiet(item, index);
                                                     }}>
                                                     <Typography
                                                         variant="h5"
-                                                        fontSize="14px"
+                                                        fontSize="12px"
                                                         fontWeight="700"
-                                                        color="#333233">
+                                                        color="#333233"
+                                                        title={item.tenHangHoa}>
                                                         {item.tenHangHoa}
                                                     </Typography>
                                                     <Typography
@@ -731,19 +837,27 @@ const PageBanHang = ({ customerChosed }: any) => {
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item lg={4}>
+                <Grid item md={4} sx={{ marginTop: '-74px' }}>
                     <Box
                         sx={{
                             backgroundColor: '#fff',
                             borderRadius: '8px',
                             overflow: 'hidden',
                             height: '100%',
-                            maxHeight: '72.9492vh',
+                            maxHeight: '86vh',
+                            overflowX: 'hidden',
                             overflowY: 'auto',
                             padding: '24px 16px',
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
+                            '&::-webkit-scrollbar': {
+                                width: '7px'
+                            },
+                            '&::-webkit-scrollbar-thumb': {
+                                bgcolor: 'rgba(0,0,0,0.1)',
+                                borderRadius: '8px'
+                            }
                         }}>
                         <Box
                             sx={{
@@ -776,7 +890,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                         {hoaDonChiTiet?.map((ct: any, index) => (
                             <Box
                                 marginBottom="auto"
-                                padding="24px 16px"
+                                padding="12px"
                                 borderRadius="8px"
                                 border="1px solid #F2F2F2"
                                 marginTop="24px"
@@ -785,13 +899,21 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     display="flex"
                                     justifyContent="space-between"
                                     alignItems="center">
-                                    <Box onClick={() => showPopNhanVienThucHien(ct)}>
+                                    <Box onClick={() => showPopNhanVienThucHien(ct)} width="100%">
                                         <Typography
                                             variant="body1"
                                             fontSize="16px"
                                             color="#7C3367"
                                             fontWeight="400"
-                                            lineHeight="24px">
+                                            lineHeight="24px"
+                                            sx={{
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: '1',
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }}
+                                            title={ct.tenHangHoa}>
                                             {ct.tenHangHoa}
                                         </Typography>
                                     </Box>
@@ -801,16 +923,37 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             variant="body1"
                                             fontSize="16px"
                                             fontWeight="400"
+                                            sx={{ display: 'flex', gap: '8px' }}
                                             onClick={() => showPopChiTietGioHang(ct)}>
-                                            <span> {ct.soLuong}</span>x
+                                            <span> {ct.soLuong + 'x'} </span>
                                             <span> {Utils.formatNumber(ct.giaBan)}</span>
                                         </Typography>
-                                        <Box sx={{ marginLeft: '16px' }}>
-                                            <AiOutlineDelete
-                                                onClick={() => {
-                                                    deleteChiTietHoaDon(ct);
-                                                }}
-                                            />
+                                        <Box
+                                            sx={{
+                                                marginLeft: '8px',
+                                                display: 'flex',
+                                                gap: '10px'
+                                            }}>
+                                            <Button sx={{ minWidth: '0', padding: '0' }}>
+                                                <UserIcon style={{ cursor: 'pointer' }} />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    minWidth: '0',
+                                                    padding: '0',
+                                                    '&:hover svg': {
+                                                        fill: '#000'
+                                                    }
+                                                }}>
+                                                <DeleteIcon
+                                                    style={{
+                                                        cursor: 'pointer'
+                                                    }}
+                                                    onClick={() => {
+                                                        deleteChiTietHoaDon(ct);
+                                                    }}
+                                                />
+                                            </Button>
                                         </Box>
                                     </Box>
                                 </Box>
@@ -892,50 +1035,24 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     {Utils.formatNumber(hoadon.tongThanhToan)}
                                 </Typography>
                             </Box>
+                            <Button
+                                variant="contained"
+                                sx={{
+                                    fontSize: '16px',
+                                    fontWeight: '700',
+                                    color: '#fff',
+                                    textTransform: 'unset!important',
+                                    backgroundColor: '#7C3367!important',
+                                    paddingY: '18px'
+                                }}
+                                className="btn-container-hover"
+                                onClick={saveHoaDon}>
+                                Thanh Toán
+                            </Button>
                         </Box>
                     </Box>
                 </Grid>
             </Grid>
-            <Box
-                sx={{
-                    width: '100%',
-                    justifyContent: 'space-between',
-                    display: 'flex',
-                    padding: '28px 32px',
-                    backgroundColor: '#fff'
-                }}>
-                <Button
-                    variant="outlined"
-                    sx={{
-                        display: 'flex',
-                        gap: '6px',
-                        borderColor: '#3B4758',
-                        textTransform: 'unset!important'
-                    }}>
-                    <img src={arrowIcon} />
-                    <Typography
-                        color="#3B4758"
-                        variant="button"
-                        fontSize="14px"
-                        fontWeight="400"
-                        sx={{ textTransform: 'unset!important' }}>
-                        Quay trở lại
-                    </Typography>
-                </Button>
-                <Button
-                    variant="contained"
-                    sx={{
-                        fontSize: '14px',
-                        fontWeight: '400',
-                        color: '#fff',
-                        textTransform: 'unset!important',
-                        backgroundColor: '#7C3367!important',
-                        width: 'calc(33.33333% - 75px)'
-                    }}
-                    onClick={saveHoaDon}>
-                    Thanh Toán
-                </Button>
-            </Box>
         </>
     );
 };

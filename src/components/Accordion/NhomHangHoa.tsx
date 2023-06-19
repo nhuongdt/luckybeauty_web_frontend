@@ -38,6 +38,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                     key={index}
                     sx={{
                         border: 'none!important',
+                        marginTop: '12px',
                         boxShadow: 'unset',
                         '&.MuiAccordion-root::before': { content: 'none' }
                     }}>
@@ -45,7 +46,11 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            bgcolor: idChosing === item.id ? '#cccc' : ''
+                            bgcolor: idChosing === item.id ? '#F2EBF0' : '',
+                            borderRadius: '8px',
+                            '&:hover': {
+                                bgcolor: '#F2EBF0'
+                            }
                         }}
                         onMouseLeave={(event: any) => {
                             handleHover(event, item, index);
@@ -57,13 +62,20 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         <Typography
                             variant="subtitle1"
                             color="#333233"
+                            fontSize="14px"
                             fontWeight="700"
+                            textTransform="capitalize"
                             sx={{
                                 marginLeft: '9px',
-                                display: 'flex',
-                                alignItems: 'center'
+                                alignItems: 'center',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: '-webkit-box',
+                                WebkitBoxOrient: 'vertical',
+                                WebkitLineClamp: 1
                             }}
-                            onClick={() => handleClickTreeItem(false, item.id)}>
+                            onClick={() => handleClickTreeItem(false, item.id)}
+                            title={item.tenNhomHang}>
                             {item.tenNhomHang}
                         </Typography>
                         {isHover && item.id !== '' && rowHover.id === item.id && (
@@ -78,9 +90,15 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         <AccordionDetails
                             key={index2}
                             sx={{
+                                padding: '8px 4px',
                                 display: 'flex',
-                                paddingLeft: '30px',
-                                bgcolor: idChosing === child.id ? 'red' : ''
+                                alignItems: 'center',
+                                margin: 'auto',
+                                bgcolor: idChosing === child.id ? '#F2EBF0' : '',
+                                borderRadius: '8px',
+                                '&:hover': {
+                                    bgcolor: '#F2EBF0'
+                                }
                             }}
                             onMouseLeave={(event: any) => {
                                 handleHover(event, child, index2);
@@ -88,14 +106,23 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                             onMouseEnter={(event: any) => {
                                 handleHover(event, child, index2);
                             }}>
-                            <LocalOffer sx={{ color: item.color }} />
+                            <LocalOffer sx={{ color: item.color, opacity: '0' }} />
                             <Typography
                                 variant="subtitle1"
                                 color="#333233"
+                                fontSize="14px"
+                                textTransform="capitalize"
                                 sx={{
-                                    marginLeft: '9px'
+                                    cursor: 'poitner',
+                                    marginLeft: '9px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitBoxOrient: 'vertical',
+                                    WebkitLineClamp: 1
                                 }}
-                                onClick={() => handleClickTreeItem(false, child.id)}>
+                                onClick={() => handleClickTreeItem(false, child.id)}
+                                title={child.tenNhomHang}>
                                 {child.tenNhomHang}
                             </Typography>
                             {isHover && rowHover.id === child.id && (

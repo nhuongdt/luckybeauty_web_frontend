@@ -27,6 +27,7 @@ import { ReactComponent as IconSorting } from '../../../images/column-sorting.sv
 import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import { enqueueSnackbar } from 'notistack';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -170,7 +171,16 @@ class EmployeeHoliday extends Component {
         this.handleCloseMenu();
     };
     delete = async (id: string) => {
-        await ngayNghiLeService.delete(id);
+        const deleteResult = await ngayNghiLeService.delete(id);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
     };
     onOkDelete = async () => {
         await this.delete(this.state.selectedRowId ?? '');

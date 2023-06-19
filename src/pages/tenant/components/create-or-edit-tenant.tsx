@@ -18,6 +18,7 @@ import { Form, Formik } from 'formik';
 import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
 import tenantService from '../../../services/tenant/tenantService';
 import rules from './createOrUpdateTenant.validation';
+import { enqueueSnackbar } from 'notistack';
 export interface ICreateOrEditTenantProps {
     visible: boolean;
     onCancel: () => void;
@@ -34,6 +35,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
         try {
             if (this.props.tenantId === 0) {
                 await tenantService.create(values);
+                enqueueSnackbar('Thêm mới thành công', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
             } else {
                 await tenantService.update({
                     id: this.props.tenantId,
@@ -41,10 +46,17 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     name: values.name,
                     tenancyName: values.tenancyName
                 });
+                enqueueSnackbar('Cập nhật thông tin thành công', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
             }
             this.props.onOk();
         } catch (error) {
-            console.log(error);
+            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                variant: 'error',
+                autoHideDuration: 3000
+            });
         }
     };
     render(): React.ReactNode {

@@ -30,24 +30,25 @@ export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});
 
     const arrColor = [
-        '#D2691E',
-        '#DC143C',
-        '#00008B',
-        '#8B008B',
-        '#696969',
-        '#B22222',
-        '#2F4F4F',
+        '#FF979C',
+        '#FF7597',
+        '#FF5677',
+        '#DCAFFF',
+        //
+        '#7F75BE',
+        '#5654A8',
+        '#78CEFF',
         '#00FF7F',
-        '#FFFF00',
-        '#B22222',
-        '#2F4F4F',
-        '#00FF7F',
-        '#FFFF00',
-        '#B22222',
-        '#2F4F4F',
-        '#00FF7F',
-        '#2F4F4F',
-        '#00FF7F'
+        '#009688',
+        '#4B9C62',
+        '#50CD89',
+        '#89D49B',
+        '#E1CF43',
+        '#F4D292',
+        '#EFB279',
+        '#FC8C4A',
+        '#F17448',
+        '#DB4335'
     ];
     function choseColor(color: string) {
         setItemColor(color);

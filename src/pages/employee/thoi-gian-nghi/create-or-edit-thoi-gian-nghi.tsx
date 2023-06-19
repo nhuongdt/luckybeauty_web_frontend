@@ -18,6 +18,7 @@ import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService'
 import { format } from 'date-fns';
 import AppConsts from '../../../lib/appconst';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
+import { enqueueSnackbar } from 'notistack';
 interface CreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -37,7 +38,21 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
         };
 
         const handleSubmit = async (values: CreateOrEditNgayNghiLeDto) => {
-            await ngayNghiLeService.createOrEdit(values);
+            const createOrEdit = await ngayNghiLeService.createOrEdit(values);
+            createOrEdit != null
+                ? values.id === AppConsts.guidEmpty || values.id === ''
+                    ? enqueueSnackbar('Thêm mới thành công', {
+                          variant: 'success',
+                          autoHideDuration: 3000
+                      })
+                    : enqueueSnackbar('Cập nhật thành công', {
+                          variant: 'success',
+                          autoHideDuration: 3000
+                      })
+                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                      variant: 'error',
+                      autoHideDuration: 3000
+                  });
             onCancel();
         };
 
