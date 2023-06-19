@@ -61,8 +61,8 @@ import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
 import { ReactComponent as UserIcon } from '../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
+
 const PageBanHang = ({ customerChosed }: any) => {
-    console.log('pagebanhang');
     const componentRef = useRef(null);
     const [txtSearch, setTxtSearch] = useState('');
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -544,6 +544,10 @@ const PageBanHang = ({ customerChosed }: any) => {
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
         await RemoveCache();
     };
+    const [layout, setLayout] = useState(false);
+    const handleLayoutToggle = () => {
+        setLayout(!layout);
+    };
 
     return (
         <>
@@ -572,177 +576,18 @@ const PageBanHang = ({ customerChosed }: any) => {
                         paddingTop: '0!important'
                     }
                 }}>
-                <Grid item md={3}>
-                    <Box
-                        sx={{
-                            backgroundColor: '#fff',
-                            borderRadius: '8px',
-                            boxShadow: ' 0px 20px 100px 0px #0000000D',
-                            padding: '16px 24px',
-                            height: '100%',
-                            overflowX: 'hidden',
-                            maxHeight: '77vh',
-                            overflowY: 'auto',
-                            '&::-webkit-scrollbar': {
-                                width: '7px'
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                                bgcolor: 'rgba(0,0,0,0.1)',
-                                borderRadius: '8px'
-                            }
-                        }}>
-                        <Box>
-                            <Typography
-                                variant="h3"
-                                fontSize="18px"
-                                color="#4C4B4C"
-                                fontWeight="700"
-                                onClick={() => choseLoaiHang(2)}>
-                                Nhóm dịch vụ
-                            </Typography>
-                            <List>
-                                {nhomDichVu.map((nhomDV, index) => (
-                                    <ListItem
-                                        key={index}
-                                        onClick={() => choseNhomDichVu(nhomDV)}
-                                        sx={{
-                                            gap: '6px',
-                                            padding: '10px',
-                                            overflow: 'hidden',
-                                            backgroundColor: nhomDV.color,
-                                            borderRadius: '8px',
-                                            marginTop: '12px',
-                                            cursor: 'pointer',
-                                            transition: '.4s',
-                                            position: 'relative',
-                                            '&::after': {
-                                                content: '""',
-                                                position: 'absolute',
-                                                height: '100%',
-                                                width: '100%',
-                                                left: '0',
-                                                bottom: '0',
-                                                backgroundColor: 'rgba(0,0,0,0.3)',
-                                                zIndex: '0',
-                                                opacity: '0',
-                                                transition: '.4s'
-                                            },
-                                            '&:hover::after': {
-                                                opacity: '1'
-                                            }
-                                        }}>
-                                        <ListItemIcon
-                                            sx={{
-                                                minWidth: '0',
-                                                position: 'relative',
-                                                zIndex: '2'
-                                            }}>
-                                            <IconDv style={{ color: '#F1FAFF' }} />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            sx={{
-                                                '& .MuiTypography-root': {
-                                                    color: '#F1FAFF',
-                                                    whiteSpace: 'nowrap',
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    fontWeight: '700',
-                                                    position: 'relative',
-                                                    zIndex: '2'
-                                                }
-                                            }}
-                                            title={nhomDV.tenNhomHang}>
-                                            {nhomDV.tenNhomHang}
-                                        </ListItemText>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Box>
-                        <Box>
-                            <Typography
-                                variant="h3"
-                                fontSize="18px"
-                                color="#4C4B4C"
-                                fontWeight="700"
-                                marginTop="12px"
-                                onClick={() => choseLoaiHang(1)}>
-                                Sản phẩm
-                            </Typography>
-                            <List>
-                                {nhomHangHoa.map((nhomHH, index) => (
-                                    <ListItem
-                                        key={index}
-                                        sx={{
-                                            gap: '6px',
-                                            padding: '10px',
-                                            borderWidth: '1px',
-                                            borderStyle: 'solid',
-                                            bgcolor: nhomHH.color,
-                                            borderRadius: '8px',
-                                            marginTop: '12px',
-                                            cursor: 'pointer',
-                                            transition: '.4s',
-                                            position: 'relative',
-                                            '&::after': {
-                                                content: '""',
-                                                position: 'absolute',
-                                                height: '100%',
-                                                width: '100%',
-                                                left: '0',
-                                                bottom: '0',
-                                                backgroundColor: 'rgba(0,0,0,0.3)',
-                                                zIndex: '0',
-                                                opacity: '0',
-                                                transition: '.4s'
-                                            },
-                                            '&:hover::after': {
-                                                opacity: '1'
-                                            }
-                                        }}
-                                        onClick={() => choseNhomDichVu(nhomHH)}>
-                                        <ListItemIcon
-                                            sx={{
-                                                minWidth: '0',
-                                                position: 'relative',
-                                                zIndex: '2'
-                                            }}>
-                                            <IconDv style={{ color: '#F1FAFF' }} />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            sx={{
-                                                '& .MuiTypography-root': {
-                                                    color: '#F1FAFF',
-                                                    whiteSpace: 'nowrap',
-                                                    width: '100%',
-                                                    fontWeight: '700',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    position: 'relative',
-                                                    zIndex: '2'
-                                                }
-                                            }}
-                                            title={nhomHH.tenNhomHang}>
-                                            {nhomHH.tenNhomHang}
-                                        </ListItemText>
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </Box>
-                    </Box>
-                </Grid>
-                <Grid item md={5} sx={{ marginTop: '-58px' }}>
-                    <Box display="flex" flexDirection="column">
+                <Grid item container md={8} spacing={3} marginTop={layout ? '-60px' : '-24px'}>
+                    {layout && (
                         <TextField
                             fullWidth
                             sx={{
                                 backgroundColor: '#fff',
                                 borderColor: '#CFD3D4!important',
                                 borderWidth: '1px!important',
-                                maxWidth: 'calc(100% - 32px)',
+                                maxWidth: '60%',
                                 boxShadow: ' 0px 20px 100px 0px #0000000D',
 
-                                margin: 'auto'
+                                marginLeft: 'auto'
                             }}
                             size="small"
                             className="search-field"
@@ -761,17 +606,17 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 )
                             }}
                         />
+                    )}
+                    <Grid item md={5} lg={layout ? 12 : 5}>
                         <Box
-                            display="flex"
-                            flexDirection="column"
-                            gap="24px"
-                            padding="16px"
-                            marginTop="16px"
                             sx={{
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
-                                maxHeight: '77vh',
+                                boxShadow: ' 0px 20px 100px 0px #0000000D',
+                                padding: '16px 24px',
+                                height: '100%',
                                 overflowX: 'hidden',
+                                maxHeight: '77vh',
                                 overflowY: 'auto',
                                 '&::-webkit-scrollbar': {
                                     width: '7px'
@@ -781,62 +626,296 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     borderRadius: '8px'
                                 }
                             }}>
-                            {listProduct.map((nhom: any, index: any) => (
-                                <Box key={index}>
-                                    <Typography
-                                        variant="h4"
-                                        fontSize="16px"
-                                        color="#000"
-                                        fontWeight="700"
-                                        marginBottom="16px">
-                                        {nhom.tenNhomHang}
-                                    </Typography>
-
-                                    <Grid container spacing={1.5}>
-                                        {nhom.hangHoas.map((item: any, index2: any) => (
-                                            <Grid item md={4} key={item.id}>
-                                                <Box
-                                                    minHeight="104px"
-                                                    padding="8px 12px 9px 12px"
-                                                    display="flex"
-                                                    flexDirection="column"
-                                                    justifyContent="space-between"
-                                                    gap="16px"
-                                                    borderRadius="4px"
-                                                    sx={{
-                                                        border: '1px solid transparent',
-                                                        cursor: 'pointer',
-                                                        transition: '.4s',
-                                                        backgroundColor: '#F2EBF0',
-                                                        '&:hover': {
-                                                            borderColor: '#7C3367'
-                                                        }
-                                                    }}
-                                                    onClick={() => {
-                                                        choseChiTiet(item, index);
-                                                    }}>
-                                                    <Typography
-                                                        variant="h5"
-                                                        fontSize="12px"
-                                                        fontWeight="700"
-                                                        color="#333233"
-                                                        title={item.tenHangHoa}>
-                                                        {item.tenHangHoa}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant="body1"
-                                                        fontSize="14px"
-                                                        color="#333233">
-                                                        {utils.formatNumber(item.giaBan)}
-                                                    </Typography>
-                                                </Box>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </Box>
-                            ))}
+                            <Box>
+                                <Typography
+                                    variant="h3"
+                                    fontSize="18px"
+                                    color="#4C4B4C"
+                                    fontWeight="700"
+                                    onClick={() => choseLoaiHang(2)}>
+                                    Nhóm dịch vụ
+                                </Typography>
+                                <List
+                                    sx={{
+                                        display: layout ? 'flex' : 'block',
+                                        columnGap: '12px',
+                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        overflowX: 'auto',
+                                        '&::-webkit-scrollbar': {
+                                            width: '7px'
+                                        },
+                                        '&::-webkit-scrollbar-thumb': {
+                                            bgcolor: 'rgba(0,0,0,0.1)',
+                                            borderRadius: '8px'
+                                        }
+                                    }}>
+                                    {nhomDichVu.map((nhomDV, index) => (
+                                        <ListItem
+                                            key={index}
+                                            onClick={() => choseNhomDichVu(nhomDV)}
+                                            sx={{
+                                                gap: '6px',
+                                                padding: '10px',
+                                                overflow: 'hidden',
+                                                backgroundColor: nhomDV.color,
+                                                borderRadius: '8px',
+                                                marginTop: '12px',
+                                                cursor: 'pointer',
+                                                transition: '.4s',
+                                                minWidth: layout ? '200px' : 'unset',
+                                                position: 'relative',
+                                                '&::after': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    left: '0',
+                                                    bottom: '0',
+                                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                                    zIndex: '0',
+                                                    opacity: '0',
+                                                    transition: '.4s'
+                                                },
+                                                '&:hover::after': {
+                                                    opacity: '1'
+                                                }
+                                            }}>
+                                            <ListItemIcon
+                                                sx={{
+                                                    minWidth: '0',
+                                                    position: 'relative',
+                                                    zIndex: '2'
+                                                }}>
+                                                <IconDv style={{ color: '#F1FAFF' }} />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                sx={{
+                                                    '& .MuiTypography-root': {
+                                                        color: '#F1FAFF',
+                                                        whiteSpace: 'nowrap',
+                                                        width: '100%',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        fontWeight: '700',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }
+                                                }}
+                                                title={nhomDV.tenNhomHang}>
+                                                {nhomDV.tenNhomHang}
+                                            </ListItemText>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Box>
+                            <Box>
+                                <Typography
+                                    variant="h3"
+                                    fontSize="18px"
+                                    color="#4C4B4C"
+                                    fontWeight="700"
+                                    marginTop="12px"
+                                    onClick={() => choseLoaiHang(1)}>
+                                    Sản phẩm
+                                </Typography>
+                                <List
+                                    sx={{
+                                        display: layout ? 'flex' : 'block',
+                                        columnGap: '12px',
+                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        overflowX: 'auto',
+                                        '&::-webkit-scrollbar': {
+                                            width: '4px!important',
+                                            height: '4px!important',
+                                            border: '1px solid #000'
+                                        },
+                                        '&::-webkit-scrollbar-thumb:horizontal': {
+                                            bgcolor: 'rgba(0,0,0,0.1)',
+                                            borderRadius: '8px'
+                                        },
+                                        '&::-webkit-scrollbar-track': {
+                                            background: '#f1f1f1'
+                                        }
+                                    }}>
+                                    {nhomHangHoa.map((nhomHH, index) => (
+                                        <ListItem
+                                            key={index}
+                                            sx={{
+                                                gap: '6px',
+                                                padding: '10px',
+                                                borderWidth: '1px',
+                                                borderStyle: 'solid',
+                                                bgcolor: nhomHH.color,
+                                                borderRadius: '8px',
+                                                marginTop: '12px',
+                                                minWidth: layout ? '200px' : 'unset',
+                                                cursor: 'pointer',
+                                                transition: '.4s',
+                                                position: 'relative',
+                                                '&::after': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    left: '0',
+                                                    bottom: '0',
+                                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                                    zIndex: '0',
+                                                    opacity: '0',
+                                                    transition: '.4s'
+                                                },
+                                                '&:hover::after': {
+                                                    opacity: '1'
+                                                }
+                                            }}
+                                            onClick={() => choseNhomDichVu(nhomHH)}>
+                                            <ListItemIcon
+                                                sx={{
+                                                    minWidth: '0',
+                                                    position: 'relative',
+                                                    zIndex: '2'
+                                                }}>
+                                                <IconDv style={{ color: '#F1FAFF' }} />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                sx={{
+                                                    '& .MuiTypography-root': {
+                                                        color: '#F1FAFF',
+                                                        whiteSpace: 'nowrap',
+                                                        width: '100%',
+                                                        fontWeight: '700',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }
+                                                }}
+                                                title={nhomHH.tenNhomHang}>
+                                                {nhomHH.tenNhomHang}
+                                            </ListItemText>
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            </Box>
                         </Box>
-                    </Box>
+                    </Grid>
+                    <Grid item md={7} lg={layout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                        <Box display="flex" flexDirection="column">
+                            {!layout && (
+                                <TextField
+                                    fullWidth
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderColor: '#CFD3D4!important',
+                                        borderWidth: '1px!important',
+                                        maxWidth: 'calc(100% - 32px)',
+                                        boxShadow: ' 0px 20px 100px 0px #0000000D',
+
+                                        margin: 'auto'
+                                    }}
+                                    size="small"
+                                    className="search-field"
+                                    variant="outlined"
+                                    type="search"
+                                    placeholder="Tìm kiếm"
+                                    value={txtSearch}
+                                    onChange={(event) => {
+                                        setTxtSearch(event.target.value);
+                                    }}
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                />
+                            )}
+                            <Box
+                                display="flex"
+                                flexDirection="column"
+                                gap="24px"
+                                padding="16px"
+                                marginTop="16px"
+                                sx={{
+                                    backgroundColor: '#fff',
+                                    borderRadius: '8px',
+                                    maxHeight: '77vh',
+                                    overflowX: 'hidden',
+                                    overflowY: 'auto',
+                                    '&::-webkit-scrollbar': {
+                                        width: '7px'
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        bgcolor: 'rgba(0,0,0,0.1)',
+                                        borderRadius: '8px'
+                                    }
+                                }}>
+                                {listProduct.map((nhom: any, index: any) => (
+                                    <Box key={index}>
+                                        <Typography
+                                            variant="h4"
+                                            fontSize="16px"
+                                            color="#000"
+                                            fontWeight="700"
+                                            marginBottom="16px">
+                                            {nhom.tenNhomHang}
+                                        </Typography>
+
+                                        <Grid container spacing={1.5}>
+                                            {nhom.hangHoas.map((item: any, index2: any) => (
+                                                <Grid item md={4} key={item.id}>
+                                                    <Box
+                                                        minHeight="104px"
+                                                        padding="8px 12px 9px 12px"
+                                                        display="flex"
+                                                        flexDirection="column"
+                                                        justifyContent="space-between"
+                                                        gap="16px"
+                                                        borderRadius="4px"
+                                                        sx={{
+                                                            border: '1px solid transparent',
+                                                            cursor: 'pointer',
+                                                            transition: '.4s',
+                                                            backgroundColor: '#F2EBF0',
+                                                            '&:hover': {
+                                                                borderColor: '#7C3367'
+                                                            }
+                                                        }}
+                                                        onClick={() => {
+                                                            choseChiTiet(item, index);
+                                                        }}>
+                                                        <Typography
+                                                            variant="h5"
+                                                            fontSize="12px"
+                                                            fontWeight="700"
+                                                            color="#333233"
+                                                            title={item.tenHangHoa}
+                                                            sx={{
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                display: '-webkit-box',
+                                                                WebkitBoxOrient: 'vertical',
+                                                                WebkitLineClamp: 2,
+                                                                maxHeight: '32px'
+                                                            }}>
+                                                            {item.tenHangHoa}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontSize="14px"
+                                                            color="#333233">
+                                                            {utils.formatNumber(item.giaBan)}
+                                                        </Typography>
+                                                    </Box>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
+                                    </Box>
+                                ))}
+                            </Box>
+                        </Box>
+                    </Grid>
                 </Grid>
                 <Grid item md={4} sx={{ marginTop: '-74px' }}>
                     <Box
@@ -877,7 +956,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
-                                <Button sx={{ marginLeft: 'auto' }}>
+                                <Button sx={{ marginLeft: 'auto' }} onClick={handleLayoutToggle}>
                                     <img
                                         src={dotIcon}
                                         style={{
@@ -985,7 +1064,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {ct.nhanVienThucHien.map((nv: any, index3: any) => (
                                             <Typography
                                                 variant="body1"
-                                                fontSize="14px"
+                                                fontSize="12px"
                                                 lineHeight="16px"
                                                 color="#4C4B4C"
                                                 display="flex"
@@ -997,10 +1076,21 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                     borderRadius: '100px',
                                                     '& .remove-NV:hover img': {
                                                         filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                                                    }
+                                                    },
+                                                    flexGrow: '1',
+                                                    width: 'calc(50% - 69px)'
                                                 }}
                                                 key={index3}>
-                                                <span>{nv.tenNhanVien}</span>
+                                                <Box
+                                                    sx={{
+                                                        width: '100%',
+                                                        whiteSpace: 'nowrap',
+                                                        textOverflow: 'ellipsis',
+                                                        overflow: 'hidden'
+                                                    }}
+                                                    title={nv.tenNhanVien}>
+                                                    {nv.tenNhanVien}
+                                                </Box>
                                                 <span
                                                     className="remove-NV"
                                                     style={{ cursor: 'pointer' }}
