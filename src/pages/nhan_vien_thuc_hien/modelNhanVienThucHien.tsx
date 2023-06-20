@@ -111,12 +111,12 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
             avatar: item.avatar
         });
         if (hoahongDV.length > 0) {
-            newNV.ptChietKhau = hoahongDV[0].giaTri;
+            newNV.ptChietKhau = hoahongDV[0].laPhanTram ? hoahongDV[0].giaTri : 0;
             newNV.chietKhauMacDinh = hoahongDV[0].giaTri;
             if (newNV.ptChietKhau > 0) {
                 newNV.tienChietKhau = (newNV.ptChietKhau * triggerModal.item.thanhTienSauCK) / 100;
             } else {
-                newNV.tienChietKhau = hoahongDV[0].giaTri * triggerModal.item.soLuong;
+                newNV.tienChietKhau = newNV.ptChietKhau * triggerModal.item.soLuong;
             }
         }
         // check exists
