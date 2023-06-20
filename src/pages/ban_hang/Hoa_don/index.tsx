@@ -221,25 +221,35 @@ const HoaDon: React.FC = () => {
                     <Button
                         startIcon={<ArrowIcon />}
                         variant="outlined"
-                        sx={{ color: '#3B4758', borderColor: '#3B4758!important' }}>
+                        sx={{ color: '#3B4758', borderColor: '#3B4758' }}
+                        className="btn-outline-hover">
                         Đóng
                     </Button>
                 </Box>
                 <Box display="flex" gap="8px">
                     <Button
                         variant="outlined"
-                        sx={{ borderColor: '#7C3367!important', color: '#4C4B4C' }}>
+                        sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                        className="btn-outline-hover">
                         Chỉnh sửa
                     </Button>
                     <Button
                         variant="contained"
-                        sx={{ bgcolor: '#7C3367!important', color: '#fff' }}>
+                        sx={{ bgcolor: '#7C3367!important', color: '#fff' }}
+                        className="btn-container-hover">
                         Lưu
                     </Button>
                     <Button
                         onClick={handleOpenDialog}
                         variant="contained"
-                        sx={{ bgcolor: '#FF316A!important', color: '#fff' }}>
+                        sx={{
+                            transition: '.4s',
+                            bgcolor: '#FF316A!important',
+                            color: '#fff',
+                            '&:hover': {
+                                bgcolor: 'red!important'
+                            }
+                        }}>
                         Hủy bỏ
                     </Button>
                 </Box>

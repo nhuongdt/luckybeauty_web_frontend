@@ -18,8 +18,6 @@ import closeIcon from '../../images/closeSmall.svg';
 import arrowIcon from '../../images/arrow_back.svg';
 import avatar from '../../images/avatar.png';
 import dotIcon from '../../images/dotssIcon.svg';
-import { LocalOffer, Search } from '@mui/icons-material';
-import { AiOutlineDelete } from 'react-icons/ai';
 // import { useReactToPrint } from 'react-to-print';
 import { useState, useEffect, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
@@ -37,7 +35,6 @@ import HoaDonService from '../../services/ban_hang/HoaDonService';
 
 import SoQuyServices from '../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
-import MauInServices from '../../services/mau_in/MauInServices';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
@@ -61,7 +58,8 @@ import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
 import { ReactComponent as UserIcon } from '../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
-
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 const PageBanHang = ({ customerChosed }: any) => {
     const componentRef = useRef(null);
     const [txtSearch, setTxtSearch] = useState('');
@@ -440,6 +438,19 @@ const PageBanHang = ({ customerChosed }: any) => {
         });
     };
     const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
+        // assign ctdoing --> used to update hoadhong dichvu of nhanvien
+        setCTHDDoing({
+            ...cthdDoing,
+            soLuong: ctUpdate.soLuong,
+            donGiaTruocCK: ctUpdate.donGiaTruocCK,
+            pTChietKhau: ctUpdate.pTChietKhau,
+            tienChietKhau: ctUpdate.tienChietKhau,
+            donGiaSauCK: ctUpdate.donGiaSauCK,
+            donGiaSauVAT: ctUpdate.donGiaSauVAT,
+            thanhTienTruocCK: ctUpdate.thanhTienTruocCK,
+            thanhTienSauCK: ctUpdate.thanhTienSauCK,
+            thanhTienSauVAT: ctUpdate.thanhTienSauVAT
+        });
         // update cthd + save to cache
         setHoaDonChiTiet(
             hoaDonChiTiet.map((item: any, index: number) => {
@@ -562,11 +573,75 @@ const PageBanHang = ({ customerChosed }: any) => {
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
         await RemoveCache();
     };
+    // đổi layout
     const [layout, setLayout] = useState(false);
     const handleLayoutToggle = () => {
         setLayout(!layout);
     };
+    // thêm 2 nút điều hướng cho phần cuộn ngang
+    const containerRef = useRef<HTMLUListElement>(null);
+    const [isScrollable, setIsScrollable] = useState<boolean>(false);
 
+    const handleNextClick = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollLeft += 100;
+        }
+    };
+
+    const handlePrevClick = () => {
+        if (containerRef.current) {
+            containerRef.current.scrollLeft -= 100;
+        }
+    };
+    const handleScroll = () => {
+        if (containerRef.current) {
+            setIsScrollable(containerRef.current.scrollWidth > containerRef.current.clientWidth);
+        }
+    };
+    useEffect(() => {
+        const containerElement = containerRef.current;
+        if (containerElement) {
+            handleScroll();
+
+            const resizeObserver = new ResizeObserver(handleScroll);
+            resizeObserver.observe(containerElement);
+
+            return () => {
+                resizeObserver.disconnect();
+            };
+        }
+    }, [layout]);
+    // xử lý next và prev khi cuộn dọc
+    const handleWheel = (event: React.WheelEvent<HTMLUListElement>) => {
+        if (containerRef.current) {
+            containerRef.current.scrollLeft += event.deltaY;
+        }
+    };
+
+    // nhóm hàng hóa
+    const containerRef2 = useRef<HTMLUListElement>(null);
+
+    const handleNextClick2 = () => {
+        if (containerRef2.current) {
+            containerRef2.current.scrollLeft += 100;
+        }
+    };
+
+    const handlePrevClick2 = () => {
+        if (containerRef2.current) {
+            containerRef2.current.scrollLeft -= 100;
+        }
+    };
+    const handleScroll2 = () => {
+        if (containerRef2.current) {
+            setIsScrollable(containerRef2.current.scrollWidth > containerRef2.current.clientWidth);
+        }
+    };
+    const handleWheel2 = (event: React.WheelEvent<HTMLUListElement>) => {
+        if (containerRef2.current) {
+            containerRef2.current.scrollLeft += event.deltaY;
+        }
+    };
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
@@ -588,8 +663,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                 container
                 spacing={3}
                 marginTop="21px"
-                paddingLeft="2.2222222222222223vw"
+                paddingLeft="16px"
                 paddingBottom="24px"
+                ml="0"
                 sx={{
                     '& > div': {
                         paddingTop: '0!important'
@@ -600,13 +676,16 @@ const PageBanHang = ({ customerChosed }: any) => {
                         <TextField
                             fullWidth
                             sx={{
-                                backgroundColor: '#fff',
                                 borderColor: '#CFD3D4!important',
                                 borderWidth: '1px!important',
-                                maxWidth: '60%',
+                                maxWidth: '55%',
+                                mr: '24px',
                                 boxShadow: ' 0px 20px 100px 0px #0000000D',
 
-                                marginLeft: 'auto'
+                                marginLeft: 'auto',
+                                '& .MuiInputBase-root': {
+                                    bgcolor: '#fff'
+                                }
                             }}
                             size="small"
                             className="search-field"
@@ -626,16 +705,16 @@ const PageBanHang = ({ customerChosed }: any) => {
                             }}
                         />
                     )}
-                    <Grid item md={5} lg={layout ? 12 : 5}>
+                    <Grid item md={5} lg={layout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
                         <Box
                             sx={{
-                                backgroundColor: '#fff',
+                                backgroundColor: layout ? 'transparent' : '#fff',
                                 borderRadius: '8px',
-                                boxShadow: ' 0px 20px 100px 0px #0000000D',
+                                boxShadow: layout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
                                 padding: '16px 24px',
-                                height: '100%',
+                                height: layout ? 'unset' : '100vh',
                                 overflowX: 'hidden',
-                                maxHeight: '77vh',
+                                maxHeight: layout ? 'unset' : '77.5vh',
                                 overflowY: 'auto',
                                 '&::-webkit-scrollbar': {
                                     width: '7px'
@@ -643,27 +722,78 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 '&::-webkit-scrollbar-thumb': {
                                     bgcolor: 'rgba(0,0,0,0.1)',
                                     borderRadius: '8px'
+                                },
+                                '&::-webkit-scrollbar-track': {
+                                    bgcolor: '#F2EBF0'
                                 }
                             }}>
                             <Box>
-                                <Typography
-                                    variant="h3"
-                                    fontSize="18px"
-                                    color="#4C4B4C"
-                                    fontWeight="700"
-                                    onClick={() => choseLoaiHang(2)}>
-                                    Nhóm dịch vụ
-                                </Typography>
+                                <Box
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center">
+                                    <Typography
+                                        variant="h3"
+                                        fontSize="18px"
+                                        color="#4C4B4C"
+                                        fontWeight="700"
+                                        onClick={() => choseLoaiHang(2)}>
+                                        Nhóm dịch vụ
+                                    </Typography>
+                                    {isScrollable && (
+                                        <Box
+                                            sx={{
+                                                '& button': {
+                                                    minWidth: 'unset',
+                                                    bgcolor: 'unset!important'
+                                                }
+                                            }}>
+                                            <Button
+                                                variant="text"
+                                                onClick={handlePrevClick}
+                                                sx={{
+                                                    '&:hover svg': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}>
+                                                <ArrowBackIosIcon
+                                                    sx={{
+                                                        color: '#CBADC2'
+                                                    }}
+                                                />
+                                            </Button>
+                                            <Button
+                                                variant="text"
+                                                onClick={handleNextClick}
+                                                sx={{
+                                                    '&:hover svg': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}>
+                                                <ArrowForwardIosIcon
+                                                    sx={{
+                                                        color: '#CBADC2'
+                                                    }}
+                                                />
+                                            </Button>
+                                        </Box>
+                                    )}
+                                </Box>
                                 <List
+                                    onScroll={handleScroll}
+                                    ref={containerRef}
+                                    onWheel={handleWheel}
                                     sx={{
                                         display: layout ? 'flex' : 'block',
                                         columnGap: '12px',
                                         flexWrap: layout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
+                                        scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
-                                            width: '7px'
+                                            width: '7px',
+                                            height: '7px'
                                         },
-                                        '&::-webkit-scrollbar-thumb': {
+                                        '&::-webkit-scrollbar-thumb:horizontal': {
                                             bgcolor: 'rgba(0,0,0,0.1)',
                                             borderRadius: '8px'
                                         }
@@ -728,32 +858,77 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 </List>
                             </Box>
                             <Box>
-                                <Typography
-                                    variant="h3"
-                                    fontSize="18px"
-                                    color="#4C4B4C"
-                                    fontWeight="700"
-                                    marginTop="12px"
-                                    onClick={() => choseLoaiHang(1)}>
-                                    Sản phẩm
-                                </Typography>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Typography
+                                        variant="h3"
+                                        fontSize="18px"
+                                        color="#4C4B4C"
+                                        fontWeight="700"
+                                        marginTop="12px"
+                                        onClick={() => choseLoaiHang(1)}>
+                                        Sản phẩm
+                                    </Typography>
+                                    {isScrollable && (
+                                        <Box
+                                            sx={{
+                                                '& button': {
+                                                    minWidth: 'unset',
+                                                    bgcolor: 'unset!important'
+                                                }
+                                            }}>
+                                            <Button
+                                                variant="text"
+                                                onClick={handlePrevClick2}
+                                                sx={{
+                                                    '&:hover svg': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}>
+                                                <ArrowBackIosIcon
+                                                    sx={{
+                                                        color: '#CBADC2'
+                                                    }}
+                                                />
+                                            </Button>
+                                            <Button
+                                                variant="text"
+                                                onClick={handleNextClick2}
+                                                sx={{
+                                                    '&:hover svg': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}>
+                                                <ArrowForwardIosIcon
+                                                    sx={{
+                                                        color: '#CBADC2'
+                                                    }}
+                                                />
+                                            </Button>
+                                        </Box>
+                                    )}
+                                </Box>
                                 <List
+                                    onScroll={handleScroll2}
+                                    onWheel={handleWheel2}
+                                    ref={containerRef2}
                                     sx={{
                                         display: layout ? 'flex' : 'block',
                                         columnGap: '12px',
                                         flexWrap: layout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
+                                        scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
-                                            width: '4px!important',
-                                            height: '4px!important',
-                                            border: '1px solid #000'
+                                            width: '7px',
+                                            height: '7px'
                                         },
                                         '&::-webkit-scrollbar-thumb:horizontal': {
                                             bgcolor: 'rgba(0,0,0,0.1)',
                                             borderRadius: '8px'
-                                        },
-                                        '&::-webkit-scrollbar-track': {
-                                            background: '#f1f1f1'
                                         }
                                     }}>
                                     {nhomHangHoa.map((nhomHH, index) => (
@@ -770,6 +945,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 minWidth: layout ? '200px' : 'unset',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
+
                                                 position: 'relative',
                                                 '&::after': {
                                                     content: '""',
@@ -827,7 +1003,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         backgroundColor: '#fff',
                                         borderColor: '#CFD3D4!important',
                                         borderWidth: '1px!important',
-                                        maxWidth: 'calc(100% - 32px)',
+
                                         boxShadow: ' 0px 20px 100px 0px #0000000D',
 
                                         margin: 'auto'
@@ -857,7 +1033,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 padding="16px"
                                 marginTop="16px"
                                 sx={{
-                                    backgroundColor: '#fff',
+                                    backgroundColor: layout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
                                     maxHeight: '77vh',
                                     overflowX: 'hidden',
@@ -868,6 +1044,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     '&::-webkit-scrollbar-thumb': {
                                         bgcolor: 'rgba(0,0,0,0.1)',
                                         borderRadius: '8px'
+                                    },
+                                    '&::-webkit-scrollbar-track': {
+                                        bgcolor: '#F2EBF0'
                                     }
                                 }}>
                                 {listProduct.map((nhom: any, index: any) => (
@@ -883,7 +1062,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
                                         <Grid container spacing={1.5}>
                                             {nhom.hangHoas.map((item: any, index2: any) => (
-                                                <Grid item md={4} key={item.id}>
+                                                <Grid item xs={layout ? 2.4 : 4} key={item.id}>
                                                     <Box
                                                         minHeight="104px"
                                                         padding="8px 12px 9px 12px"
@@ -936,36 +1115,28 @@ const PageBanHang = ({ customerChosed }: any) => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Grid item md={4} sx={{ marginTop: '-74px' }}>
+                <Grid item md={4} sx={{ marginTop: '-74px', paddingRight: '0' }}>
                     <Box
                         sx={{
                             backgroundColor: '#fff',
                             borderRadius: '8px',
                             overflow: 'hidden',
-                            height: '100%',
-                            maxHeight: '86vh',
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            padding: '24px 16px',
+                            height: '100vh',
+                            maxHeight: '89vh',
+
+                            padding: '16px',
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'space-between',
-                            '&::-webkit-scrollbar': {
-                                width: '7px'
-                            },
-                            '&::-webkit-scrollbar-thumb': {
-                                bgcolor: 'rgba(0,0,0,0.1)',
-                                borderRadius: '8px'
-                            }
+                            justifyContent: 'space-between'
                         }}>
                         <Box
                             sx={{
                                 backgroundColor: '#fff',
                                 radius: '8px',
                                 borderBottom: '1px solid #F2F2F2',
-                                paddingBottom: '24px'
+                                paddingBottom: '16px'
                             }}>
-                            <Box display="flex" gap="8px" alignItems="start">
+                            <Box display="flex" gap="8px" alignItems="center">
                                 <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
                                 <Box>
                                     <Typography variant="body2" fontSize="14px" color="#666466">
@@ -986,144 +1157,159 @@ const PageBanHang = ({ customerChosed }: any) => {
                             </Box>
                         </Box>
                         {/* 1 row chi tiet */}
-                        {hoaDonChiTiet?.map((ct: any, index) => (
-                            <Box
-                                padding="12px"
-                                borderRadius="8px"
-                                border="1px solid #F2F2F2"
-                                marginTop="24px"
-                                key={index}>
+                        <Box
+                            sx={{
+                                overflowY: 'auto',
+                                '&::-webkit-scrollbar': {
+                                    width: '7px'
+                                },
+                                '&::-webkit-scrollbar-thumb': {
+                                    bgcolor: 'rgba(0,0,0,0.1)',
+                                    borderRadius: '8px'
+                                },
+                                '&::-webkit-scrollbar-track': {
+                                    bgcolor: '#F2EBF0'
+                                }
+                            }}>
+                            {hoaDonChiTiet?.map((ct: any, index) => (
                                 <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center">
-                                    <Box width="100%">
-                                        <Typography
-                                            variant="body1"
-                                            fontSize="16px"
-                                            color="#7C3367"
-                                            fontWeight="400"
-                                            lineHeight="24px"
-                                            sx={{
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: '1',
-                                                WebkitBoxOrient: 'vertical',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }}
-                                            title={ct.tenHangHoa}>
-                                            {ct.tenHangHoa}
-                                        </Typography>
-                                    </Box>
-                                    <Box display="flex" alignItems="center">
-                                        <Typography
-                                            color="#000"
-                                            variant="body1"
-                                            fontSize="16px"
-                                            fontWeight="400"
-                                            sx={{ display: 'flex', gap: '8px' }}
-                                            onClick={() => showPopChiTietGioHang(ct)}>
-                                            <span> {ct.soLuong + 'x'} </span>
-                                            <span> {Utils.formatNumber(ct.donGiaSauCK)}</span>
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                marginLeft: '8px',
-                                                display: 'flex',
-                                                gap: '10px'
-                                            }}>
-                                            <Button
-                                                sx={{
-                                                    minWidth: '0',
-                                                    padding: '0',
-                                                    '&:hover': {
-                                                        filter: ' brightness(0) saturate(100%) invert(25%) sepia(16%) saturate(2588%) hue-rotate(267deg) brightness(96%) contrast(88%)'
-                                                    }
-                                                }}
-                                                onClick={() => showPopNhanVienThucHien(ct)}>
-                                                <UserIcon style={{ cursor: 'pointer' }} />
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    minWidth: '0',
-                                                    padding: '0',
-                                                    '&:hover svg': {
-                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                                                    }
-                                                }}>
-                                                <DeleteIcon
-                                                    style={{
-                                                        cursor: 'pointer',
-                                                        color: '#999699'
-                                                    }}
-                                                    onClick={() => {
-                                                        deleteChiTietHoaDon(ct);
-                                                    }}
-                                                />
-                                            </Button>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                                {/* nhan vien thuc hien */}
-
-                                {ct.nhanVienThucHien.length > 0 && (
+                                    padding="12px"
+                                    borderRadius="8px"
+                                    border="1px solid #F2F2F2"
+                                    marginTop="24px"
+                                    key={index}>
                                     <Box
                                         display="flex"
-                                        alignItems="center"
-                                        flexWrap="wrap"
-                                        gap="8px"
-                                        mt="8px">
-                                        <Typography
-                                            variant="body2"
-                                            fontSize="12px"
-                                            color="#666466"
-                                            lineHeight="16px">
-                                            Nhân viên :
-                                        </Typography>
-                                        {ct.nhanVienThucHien.map((nv: any, index3: any) => (
+                                        justifyContent="space-between"
+                                        alignItems="center">
+                                        <Box width="100%">
                                             <Typography
                                                 variant="body1"
-                                                fontSize="12px"
-                                                lineHeight="16px"
-                                                color="#4C4B4C"
-                                                display="flex"
-                                                alignItems="center"
+                                                fontSize="16px"
+                                                color="#7C3367"
+                                                fontWeight="400"
+                                                lineHeight="24px"
                                                 sx={{
-                                                    backgroundColor: '#F2EBF0',
-                                                    padding: '4px 8px',
-                                                    gap: '10px',
-                                                    borderRadius: '100px',
-                                                    '& .remove-NV:hover img': {
-                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                                                    },
-                                                    flexGrow: '1',
-                                                    width: 'calc(50% - 69px)'
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: '1',
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
                                                 }}
-                                                key={index3}>
-                                                <Box
-                                                    sx={{
-                                                        width: '100%',
-                                                        whiteSpace: 'nowrap',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden'
-                                                    }}
-                                                    title={nv.tenNhanVien}>
-                                                    {nv.tenNhanVien}
-                                                </Box>
-                                                <span
-                                                    className="remove-NV"
-                                                    style={{ cursor: 'pointer' }}
-                                                    onClick={() => RemoveNVThucHien(ct, nv)}>
-                                                    <img src={closeIcon} alt="close" />
-                                                </span>
+                                                title={ct.tenHangHoa}>
+                                                {ct.tenHangHoa}
                                             </Typography>
-                                        ))}
+                                        </Box>
+                                        <Box display="flex" alignItems="center">
+                                            <Typography
+                                                color="#000"
+                                                variant="body1"
+                                                fontSize="16px"
+                                                fontWeight="400"
+                                                sx={{ display: 'flex', gap: '8px' }}
+                                                onClick={() => showPopChiTietGioHang(ct)}>
+                                                <span> {ct.soLuong + 'x'} </span>
+                                                <span> {Utils.formatNumber(ct.donGiaTruocCK)}</span>
+                                            </Typography>
+                                            <Box
+                                                sx={{
+                                                    marginLeft: '8px',
+                                                    display: 'flex',
+                                                    gap: '10px'
+                                                }}>
+                                                <Button
+                                                    sx={{
+                                                        minWidth: '0',
+                                                        padding: '0',
+                                                        '&:hover': {
+                                                            filter: ' brightness(0) saturate(100%) invert(25%) sepia(16%) saturate(2588%) hue-rotate(267deg) brightness(96%) contrast(88%)'
+                                                        }
+                                                    }}
+                                                    onClick={() => showPopNhanVienThucHien(ct)}>
+                                                    <UserIcon style={{ cursor: 'pointer' }} />
+                                                </Button>
+                                                <Button
+                                                    sx={{
+                                                        minWidth: '0',
+                                                        padding: '0',
+                                                        '&:hover svg': {
+                                                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                        }
+                                                    }}>
+                                                    <DeleteIcon
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                            color: '#999699'
+                                                        }}
+                                                        onClick={() => {
+                                                            deleteChiTietHoaDon(ct);
+                                                        }}
+                                                    />
+                                                </Button>
+                                            </Box>
+                                        </Box>
                                     </Box>
-                                )}
-                            </Box>
-                        ))}
+                                    {/* nhan vien thuc hien */}
+
+                                    {ct.nhanVienThucHien.length > 0 && (
+                                        <Box
+                                            display="flex"
+                                            alignItems="center"
+                                            flexWrap="wrap"
+                                            gap="8px"
+                                            mt="8px">
+                                            <Typography
+                                                variant="body2"
+                                                fontSize="12px"
+                                                color="#666466"
+                                                lineHeight="16px">
+                                                Nhân viên :
+                                            </Typography>
+                                            {ct.nhanVienThucHien.map((nv: any, index3: any) => (
+                                                <Typography
+                                                    variant="body1"
+                                                    fontSize="12px"
+                                                    lineHeight="16px"
+                                                    color="#4C4B4C"
+                                                    display="flex"
+                                                    alignItems="center"
+                                                    sx={{
+                                                        backgroundColor: '#F2EBF0',
+                                                        padding: '4px 8px',
+                                                        gap: '10px',
+                                                        borderRadius: '100px',
+                                                        '& .remove-NV:hover img': {
+                                                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                        },
+                                                        flexGrow: '1',
+                                                        width: 'calc(50% - 69px)'
+                                                    }}
+                                                    key={index3}>
+                                                    <Box
+                                                        sx={{
+                                                            width: '100%',
+                                                            whiteSpace: 'nowrap',
+                                                            textOverflow: 'ellipsis',
+                                                            overflow: 'hidden'
+                                                        }}
+                                                        title={nv.tenNhanVien}>
+                                                        {nv.tenNhanVien}
+                                                    </Box>
+                                                    <span
+                                                        className="remove-NV"
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => RemoveNVThucHien(ct, nv)}>
+                                                        <img src={closeIcon} alt="close" />
+                                                    </span>
+                                                </Typography>
+                                            ))}
+                                        </Box>
+                                    )}
+                                </Box>
+                            ))}
+                        </Box>
                         <Box marginTop="auto">
-                            <Box pt="24px">
+                            <Box pt="8px">
                                 <Typography
                                     variant="h3"
                                     color="#333233"
@@ -1168,7 +1354,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     flexDirection="column"
                                     gap="16px"
                                     pt="16px"
-                                    pb="32px"
+                                    pb="16px"
                                     borderRadius="12px"
                                     paddingX="16px"
                                     bgcolor="#F9F9F9">
@@ -1195,7 +1381,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         </Typography>
                                     </Box>
                                     <Box
-                                        display="flex"
+                                        display="none"
                                         justifyContent="space-between"
                                         borderBottom="1px solid #CBADC2"
                                         pb="8px">

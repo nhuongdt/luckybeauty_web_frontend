@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, ButtonGroup, Button, Box } from '@mui/material';
 import CheckInNew from './CheckInNew';
 import PageBanHang from './PageBanHangNew';
@@ -33,7 +33,18 @@ export default function MainPageBanHang() {
         });
         setActiveTab(2);
     };
+    useEffect(() => {
+        // Disable scroll when component mounts
 
+        activeTab === 2
+            ? (document.documentElement.style.overflowY = 'hidden')
+            : (document.documentElement.style.overflowY = 'auto');
+
+        return () => {
+            // Enable scroll when component unmounts
+            document.documentElement.style.overflowY = 'auto';
+        };
+    }, [activeTab]);
     return (
         <>
             <Grid container padding={2} columnSpacing={2} rowSpacing={2}>

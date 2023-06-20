@@ -448,6 +448,7 @@ class EmployeeScreen extends React.Component {
 
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
+                            variant="outlined"
                             size="small"
                             startIcon={<img src={DownloadIcon} />}
                             sx={{
@@ -459,10 +460,12 @@ class EmployeeScreen extends React.Component {
                                 padding: '10px 16px',
                                 marginRight: '8px',
                                 borderRadius: '4px!important'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Nhập
                         </Button>
                         <Button
+                            variant="outlined"
                             size="small"
                             startIcon={<img src={UploadIcon} />}
                             sx={{
@@ -473,7 +476,8 @@ class EmployeeScreen extends React.Component {
                                 padding: '10px 16px',
                                 height: '40px',
                                 borderRadius: '4px!important'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Xuất
                         </Button>
                         <ButtonGroup
@@ -493,7 +497,8 @@ class EmployeeScreen extends React.Component {
                                     fontSize: '14px',
                                     borderRadius: '4px!important',
                                     backgroundColor: '#7C3367!important'
-                                }}>
+                                }}
+                                className="btn-container-hover">
                                 Thêm nhân viên
                             </Button>
                         </ButtonGroup>

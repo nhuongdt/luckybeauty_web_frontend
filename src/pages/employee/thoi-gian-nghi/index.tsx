@@ -375,7 +375,8 @@ class EmployeeHoliday extends Component {
                                 height: '40px',
                                 backgroundColor: '#fff',
                                 borderColor: '#E6E1E6!important'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Nhập
                         </Button>
                         <Button
@@ -390,7 +391,8 @@ class EmployeeHoliday extends Component {
                                 padding: '10px 16px',
                                 borderColor: '#E6E1E6!important',
                                 height: '40px'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Xuất
                         </Button>
                         <Button
@@ -407,7 +409,8 @@ class EmployeeHoliday extends Component {
                                 height: '40px',
                                 fontSize: '14px',
                                 backgroundColor: '#7C3367!important'
-                            }}>
+                            }}
+                            className="btn-container-hover">
                             Thêm ngày nghỉ
                         </Button>
                     </Grid>
