@@ -601,13 +601,16 @@ const PageBanHang = ({ customerChosed }: any) => {
                         <TextField
                             fullWidth
                             sx={{
-                                backgroundColor: '#fff',
                                 borderColor: '#CFD3D4!important',
                                 borderWidth: '1px!important',
-                                maxWidth: '60%',
+                                maxWidth: '55%',
+                                mr: '24px',
                                 boxShadow: ' 0px 20px 100px 0px #0000000D',
 
-                                marginLeft: 'auto'
+                                marginLeft: 'auto',
+                                '& input': {
+                                    bgcolor: '#fff'
+                                }
                             }}
                             size="small"
                             className="search-field"
@@ -630,13 +633,13 @@ const PageBanHang = ({ customerChosed }: any) => {
                     <Grid item md={5} lg={layout ? 12 : 5}>
                         <Box
                             sx={{
-                                backgroundColor: '#fff',
+                                backgroundColor: layout ? 'transparent' : '#fff',
                                 borderRadius: '8px',
-                                boxShadow: ' 0px 20px 100px 0px #0000000D',
+                                boxShadow: layout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
                                 padding: '16px 24px',
                                 height: '100%',
                                 overflowX: 'hidden',
-                                maxHeight: '77vh',
+                                maxHeight: layout ? '57vh' : '77vh',
                                 overflowY: 'auto',
                                 '&::-webkit-scrollbar': {
                                     width: '7px'
@@ -855,7 +858,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 padding="16px"
                                 marginTop="16px"
                                 sx={{
-                                    backgroundColor: '#fff',
+                                    backgroundColor: layout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
                                     maxHeight: '77vh',
                                     overflowX: 'hidden',
