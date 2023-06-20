@@ -5,7 +5,8 @@ import {
     Pagination,
     Select,
     SelectChangeEvent,
-    Typography
+    Typography,
+    FormControl
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 
@@ -29,7 +30,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
             handlePerPageChange
         } = this.props;
         return (
-            <Grid container>
+            <Grid container sx={{ display: totalRecord > 0 ? '' : 'none' }}>
                 <Grid item xs={3}>
                     <Box
                         sx={{
@@ -38,26 +39,28 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                             alignItems: 'center',
                             height: 48
                         }}>
-                        <Select
-                            sx={{ height: '23px' }}
-                            onChange={handlePerPageChange}
-                            defaultValue={rowPerPage}>
-                            <MenuItem value={5}>
-                                <Typography variant="caption">5 Trang</Typography>
-                            </MenuItem>
-                            <MenuItem value={10}>
-                                <Typography variant="caption">10 Trang</Typography>
-                            </MenuItem>
-                            <MenuItem value={20}>
-                                <Typography variant="caption">20 Trang</Typography>
-                            </MenuItem>
-                            <MenuItem value={50}>
-                                <Typography variant="caption">50 Trang</Typography>
-                            </MenuItem>
-                            <MenuItem value={100}>
-                                <Typography variant="caption">100 Trang</Typography>
-                            </MenuItem>
-                        </Select>
+                        <FormControl variant="standard">
+                            <Select
+                                sx={{ height: '32px' }}
+                                onChange={handlePerPageChange}
+                                defaultValue={rowPerPage}>
+                                <MenuItem value={5}>
+                                    <Typography variant="body2">5/ Trang</Typography>
+                                </MenuItem>
+                                <MenuItem value={10}>
+                                    <Typography variant="body2">10/ Trang</Typography>
+                                </MenuItem>
+                                <MenuItem value={20}>
+                                    <Typography variant="body2">20/ Trang</Typography>
+                                </MenuItem>
+                                <MenuItem value={50}>
+                                    <Typography variant="body2">50/ Trang</Typography>
+                                </MenuItem>
+                                <MenuItem value={100}>
+                                    <Typography variant="body2">100/ Trang</Typography>
+                                </MenuItem>
+                            </Select>
+                        </FormControl>
                     </Box>
                 </Grid>
                 <Grid item xs={9}>
@@ -69,8 +72,11 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                             height: 48
                         }}>
                         <Typography variant="body2">
-                            Hiển thị {rowPerPage * currentPage - 9} - {rowPerPage * currentPage} của{' '}
-                            {totalRecord} mục
+                            Hiển thị {(currentPage - 1) * rowPerPage + 1} -{' '}
+                            {rowPerPage * currentPage > totalRecord
+                                ? totalRecord
+                                : rowPerPage * currentPage}{' '}
+                            của {totalRecord} mục
                         </Typography>
                         <Pagination
                             count={totalPage}
