@@ -858,7 +858,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     ))}
                                 </List>
                             </Box>
-                            <Box>
+                            <Box sx={{ marginTop: '16px' }}>
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -870,7 +870,6 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         fontSize="18px"
                                         color="#4C4B4C"
                                         fontWeight="700"
-                                        marginTop="12px"
                                         onClick={() => choseLoaiHang(1)}>
                                         Sản phẩm
                                     </Typography>
