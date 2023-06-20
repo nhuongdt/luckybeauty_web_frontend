@@ -75,11 +75,16 @@ const Header: React.FC<HeaderProps> = (
         const getChiNhanhs = async () => {
             const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
             setListChiNhanh(listChiNhanh);
-            setCurrentChiNhanh(listChiNhanh[0].id);
-            const remember = Cookies.get('remember');
-            Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
-                expires: remember === 'true' ? 1 : undefined
-            });
+            if (Cookies.get('IdChiNhanh') === undefined || Cookies.get('IdChiNhanh') === '') {
+                setCurrentChiNhanh(listChiNhanh[0].id);
+                const remember = Cookies.get('remember');
+                Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
+                    expires: remember === 'true' ? 1 : undefined
+                });
+            } else {
+                const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
+                setCurrentChiNhanh(idChiNhanh);
+            }
         };
         getChiNhanhs();
     }, []);

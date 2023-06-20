@@ -11,6 +11,7 @@ import RoleEditModel from '../models/Roles/roleEditModel';
 import type { UpdateRoleInput } from '../services/role/dto/updateRoleInput';
 import roleService from '../services/role/roleService';
 import { CreateOrEditRoleDto } from '../services/role/dto/createOrEditRoleDto';
+import role from '../pages/role';
 
 class RoleStore {
     roles!: PagedResultDto<GetAllRoleOutput>;
@@ -19,6 +20,13 @@ class RoleStore {
 
     allPermissions: GetAllPermissionsOutput[] = [];
 
+    createOrEditRoleDto: CreateOrEditRoleDto = {
+        description: '',
+        displayName: '',
+        grantedPermissionNames: [],
+        id: 0,
+        name: ''
+    };
     constructor() {
         makeAutoObservable(this);
     }
@@ -38,10 +46,22 @@ class RoleStore {
             permissions: [{ name: '', displayName: '', description: '' }]
         };
     }
+    async initCreateOrEditRoleDto() {
+        this.createOrEditRoleDto = {
+            description: '',
+            displayName: '',
+            grantedPermissionNames: [],
+            id: 0,
+            name: ''
+        };
+    }
     async getRolesAsync(getRoleAsyncInput: GetRoleAsyncInput) {
         await roleService.getRolesAsync(getRoleAsyncInput);
     }
-
+    async getRoleForEdit(id: number) {
+        const response = await roleService.getRoleForEdit(id);
+        this.createOrEditRoleDto = response;
+    }
     async delete(entityDto: EntityDto) {
         await roleService.delete(entityDto.id);
         this.roles.items = this.roles.items.filter((x: GetAllRoleOutput) => x.id !== entityDto.id);
@@ -63,4 +83,4 @@ class RoleStore {
     }
 }
 
-export default RoleStore;
+export default new RoleStore();

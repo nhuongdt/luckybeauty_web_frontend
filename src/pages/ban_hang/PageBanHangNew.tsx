@@ -120,8 +120,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
     useEffect(() => {
         if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return; // avoid load again
+            isFirstRender.current = false; // avoid load again
         }
         PageLoad();
     }, [customerChosed]);

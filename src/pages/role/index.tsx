@@ -27,6 +27,7 @@ import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { observer } from 'mobx-react';
 import { enqueueSnackbar } from 'notistack';
+import roleStore from '../../stores/roleStore';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -124,18 +125,14 @@ class RoleScreen extends React.Component<IRoleProps> {
     async createOrUpdateModalOpen(id: number) {
         if (id === 0) {
             const allPermission = await roleService.getAllPermissionTree();
+            await roleStore.initCreateOrEditRoleDto();
             await this.setState({
                 permissionTree: allPermission,
-                roleEdit: {
-                    id: 0,
-                    name: '',
-                    displayName: '',
-                    grandPermissions: [],
-                    description: ''
-                }
+                roleEdit: roleStore.createOrEditRoleDto
             });
         } else {
-            const roleForEdit = await roleService.getRoleForEdit(id);
+            await roleStore.getRoleForEdit(id);
+            const roleForEdit = roleStore.createOrEditRoleDto;
             const allPermission = await roleService.getAllPermissionTree();
             this.setState({
                 permissionTree: allPermission,
@@ -147,8 +144,9 @@ class RoleScreen extends React.Component<IRoleProps> {
         this.setState({ roleId: id });
         this.Modal();
     }
-    handleCreate = () => {
+    handleCreate = async () => {
         this.getAll();
+        await roleStore.initCreateOrEditRoleDto();
         this.setState({ modalVisible: false });
     };
     onShowDelete = () => {
@@ -405,15 +403,16 @@ class RoleScreen extends React.Component<IRoleProps> {
                 </Box>
                 <CreateOrEditRoleModal
                     visible={this.state.modalVisible}
-                    onCancel={() =>
+                    onCancel={async () => {
                         this.setState({
                             modalVisible: false
-                        })
-                    }
+                        });
+                        await roleStore.initCreateOrEditRoleDto();
+                    }}
                     modalType={this.state.roleId === 0 ? 'Thêm mới quyền' : 'Cập nhật quyền'}
                     onOk={this.handleCreate}
                     permissionTree={this.state.permissionTree}
-                    formRef={this.state.roleEdit}
+                    formRef={roleStore.createOrEditRoleDto}
                 />
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}

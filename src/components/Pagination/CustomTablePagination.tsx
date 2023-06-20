@@ -28,6 +28,8 @@ class CustomTablePagination extends Component<TablePaginationProps> {
             handlePageChange,
             handlePerPageChange
         } = this.props;
+        const startRow = rowPerPage * (currentPage - 1) + 1;
+        const endRow = rowPerPage * currentPage;
         return (
             <Grid container>
                 <Grid item xs={3}>
@@ -40,7 +42,9 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                         }}>
                         <Select
                             sx={{ height: '23px' }}
-                            onChange={handlePerPageChange}
+                            onChange={(e) => {
+                                handlePerPageChange(e);
+                            }}
                             defaultValue={rowPerPage}>
                             <MenuItem value={5}>
                                 <Typography variant="caption">5 Trang</Typography>
@@ -69,8 +73,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                             height: 48
                         }}>
                         <Typography variant="body2">
-                            Hiển thị {rowPerPage * currentPage - 9} - {rowPerPage * currentPage} của{' '}
-                            {totalRecord} mục
+                            Hiển thị {startRow} - {endRow} của {totalRecord} mục
                         </Typography>
                         <Pagination
                             count={totalPage}

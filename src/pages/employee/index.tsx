@@ -86,7 +86,7 @@ class EmployeeScreen extends React.Component {
             sortType: 'desc',
             idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
         });
-        await this.setState({
+        this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
             totalCount: NhanVienStore.listNhanVien.totalCount
         });

@@ -1,6 +1,8 @@
 import { Component, ReactNode } from 'react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FolderIcon from '@mui/icons-material/Folder';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import {
     Box,
     Button,
@@ -9,9 +11,11 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControlLabel,
     FormGroup,
     IconButton,
+    List,
+    ListItem,
+    ListItemText,
     Tab,
     TextField,
     Typography
@@ -23,13 +27,10 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import roleService from '../../../services/role/roleService';
 import { PermissionTree } from '../../../services/role/dto/permissionTree';
-import TreeItem from '@mui/lab/TreeItem';
-import TreeView from '@mui/lab/TreeView';
 import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';
-import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
-import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import { enqueueSnackbar } from 'notistack';
-import { Permission } from '../../../services/role/dto/getRoleForEditOutput';
+import { observer } from 'mobx-react';
+import rules from './createOrUpdateRole.validation';
 export interface ICreateOrEditRoleProps {
     visible: boolean;
     onCancel: () => void;
@@ -40,25 +41,35 @@ export interface ICreateOrEditRoleProps {
 }
 
 interface ICreateOrEditRoleState {
-    filteredPermissions: PermissionTree[];
     selectedPermissions: string[];
+    expandedPermissions: string[];
     tabIndex: string;
 }
-class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
+class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
     state = {
-        selectedPermissions: [] as string[],
+        selectedPermissions: this.props.formRef.grantedPermissionNames,
+        expandedPermissions: ['Pages'],
         tabIndex: '1'
     };
-    componentDidMount() {
-        console.log(this.props.formRef.grantedPermissionNames);
-        this.setState({ selectedPermissions: this.props.formRef.grantedPermissionNames }, () => {
-            console.log(this.state.selectedPermissions);
-        });
-    }
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-        this.setState({ tabIndex: newValue });
+        const defaultExpand = this.getDefaultExpandPermission(this.props.permissionTree);
+        this.setState({
+            tabIndex: newValue,
+            selectedPermissions: this.props.formRef.grantedPermissionNames,
+            expandedPermissions: defaultExpand
+        });
     };
+    getDefaultExpandPermission = (permissions: PermissionTree[]) => {
+        const defaultExpand: string[] = [];
+        permissions.forEach((item: PermissionTree) => {
+            if (item.children.length > 0) {
+                const childrenExpand = this.getDefaultExpandPermission(item.children);
+                defaultExpand.push(item.name, ...childrenExpand);
+            }
+        });
 
+        return defaultExpand;
+    };
     handleSubmit = async (values: CreateOrEditRoleDto) => {
         const createOrEdit = await roleService.createOrEdit({
             ...values,
@@ -78,12 +89,15 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                   variant: 'error',
                   autoHideDuration: 3000
               });
-
+        this.setState({
+            tabIndex: '1',
+            selectedPermissions: []
+        });
         this.props.onOk();
     };
     handleCheck = (event: any, node: PermissionTree) => {
         const checked = event.target.checked;
-        const updatedSelected = [...this.state.selectedPermissions, 'Pages'];
+        const updatedSelected = [...this.state.selectedPermissions];
 
         if (checked) {
             this.addPermission(updatedSelected, node);
@@ -93,14 +107,12 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
             this.removeChildrenPermissions(updatedSelected, node.children);
         }
         this.setState({ selectedPermissions: updatedSelected });
-
-        alert(this.state.selectedPermissions);
     };
 
     addPermission = (selectedPermissions: string[], node: PermissionTree) => {
         if (selectedPermissions.indexOf(node.name) === -1) {
             selectedPermissions.push(node.name);
-            if (this.state.selectedPermissions.includes(node.parentNode) == false) {
+            if (selectedPermissions.includes(node.parentNode) == false) {
                 selectedPermissions.push(node.parentNode);
             }
         }
@@ -116,7 +128,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
     };
 
     removePermission = (selectedPermissions: string[], node: PermissionTree) => {
-        const index = selectedPermissions.indexOf(node.name);
+        const index = selectedPermissions?.indexOf(node.name);
         if (index !== -1) {
             selectedPermissions.splice(index, 1);
         }
@@ -131,22 +143,66 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
         }
     };
 
-    renderTree = (nodes: PermissionTree[]) => {
-        return nodes.map((node) => (
-            <li key={node.name}>
-                <label>
-                    <input
-                        type="checkbox"
-                        onChange={(e) => this.handleCheck(e, node)}
-                        checked={this.state.selectedPermissions.includes(node.name)}
-                    />
-                    {node.displayName}
-                </label>
-                {node.children && node.children.length > 0 && (
-                    <ul>{this.renderTree(node.children)}</ul>
-                )}
-            </li>
-        ));
+    renderTree = (nodes: PermissionTree[], isCollapsed = false) => {
+        return nodes.map((node) => {
+            const hasChildren = node.children && node.children.length > 0;
+            const isItemCollapsed =
+                isCollapsed || !this.state.expandedPermissions.includes(node.name);
+
+            return (
+                <ListItem key={node.name} disablePadding>
+                    <ListItemText>
+                        {hasChildren && (
+                            <>
+                                {isItemCollapsed ? (
+                                    <ExpandMoreIcon
+                                        onClick={() => this.toggleCollapse(node.name)}
+                                    />
+                                ) : (
+                                    <ChevronRightIcon
+                                        onClick={() => this.toggleCollapse(node.name)}
+                                    />
+                                )}
+                            </>
+                        )}
+                        <Checkbox
+                            onChange={(e) => this.handleCheck(e, node)}
+                            checked={this.state.selectedPermissions.includes(node.name)}
+                        />
+                        <>
+                            {node.children !== null && node.children.length > 0 ? (
+                                <FolderIcon sx={{ color: '#FFA800' }} />
+                            ) : (
+                                <InsertDriveFileOutlinedIcon sx={{ color: '#FFA800' }} />
+                            )}{' '}
+                            {node.displayName}
+                        </>
+                        {hasChildren && (
+                            <>
+                                {!isItemCollapsed && (
+                                    <List disablePadding sx={{ pl: 4 }}>
+                                        {this.renderTree(node.children)}
+                                    </List>
+                                )}
+                            </>
+                        )}
+                    </ListItemText>
+                </ListItem>
+            );
+        });
+    };
+
+    toggleCollapse = (nodeName: string) => {
+        const expandedPermissions = [...this.state.expandedPermissions];
+        const index = expandedPermissions.indexOf(nodeName);
+
+        if (index > -1) {
+            expandedPermissions.splice(index, 1);
+        } else {
+            expandedPermissions.push(nodeName);
+        }
+
+        this.setState({ expandedPermissions: expandedPermissions });
     };
 
     render(): ReactNode {
@@ -158,19 +214,6 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
             grantedPermissionNames: formRef.grantedPermissionNames,
             id: formRef.id
         };
-        const getDefaultExpandPermission = (permissions: PermissionTree[]) => {
-            const defaultExpand: string[] = [];
-            permissions.forEach((item: PermissionTree) => {
-                if (item.children.length > 0) {
-                    const childrenExpand = getDefaultExpandPermission(item.children);
-                    defaultExpand.push(item.name, ...childrenExpand);
-                }
-            });
-
-            return defaultExpand;
-        };
-
-        const defaultExpand = getDefaultExpandPermission(this.props.permissionTree);
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
                 <DialogTitle>
@@ -183,7 +226,13 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                     </Typography>
                     <IconButton
                         aria-label="close"
-                        onClick={onCancel}
+                        onClick={() => {
+                            this.setState({
+                                tabIndex: '1',
+                                selectedPermissions: []
+                            });
+                            onCancel();
+                        }}
                         sx={{
                             position: 'absolute',
                             right: 8,
@@ -193,8 +242,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-                        {({ values, handleChange, errors, touched }) => (
+                    <Formik
+                        initialValues={initialValues}
+                        onSubmit={this.handleSubmit}
+                        validationSchema={rules}>
+                        {({ values, handleChange, errors }) => (
                             <Form>
                                 <Box>
                                     <TabContext value={this.state.tabIndex}>
@@ -258,6 +310,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                                                     value={values.name}
                                                     onChange={handleChange}
                                                 />
+                                                {errors.name && (
+                                                    <small className="text-danger">
+                                                        {errors.name}
+                                                    </small>
+                                                )}
                                             </FormGroup>
                                             <FormGroup>
                                                 <label htmlFor="displayName">
@@ -279,6 +336,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                                                     value={values.displayName}
                                                     onChange={handleChange}
                                                 />
+                                                {errors.displayName && (
+                                                    <small className="text-danger">
+                                                        {errors.displayName}
+                                                    </small>
+                                                )}
                                             </FormGroup>
                                             <FormGroup>
                                                 <label htmlFor="description">Mô tả</label>
@@ -294,6 +356,14 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                                             </FormGroup>
                                         </TabPanel>
                                         <TabPanel value="2" sx={{ padding: '0' }}>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                placeholder="Tìm kiếm..."
+                                                sx={{
+                                                    paddingTop: 1,
+                                                    paddingBottom: 2
+                                                }}></TextField>
                                             <FormGroup
                                                 sx={{
                                                     '& .MuiFormControlLabel-root': {
@@ -301,18 +371,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                                                     },
                                                     overflowY: 'auto',
                                                     overflowX: 'hidden',
-                                                    maxHeight: '300px'
+                                                    maxHeight: '450px'
                                                 }}>
-                                                {/* <TreeView
-                                                    defaultExpanded={defaultExpand}
-                                                    defaultCollapseIcon={<ExpandMoreIcon />}
-                                                    defaultExpandIcon={<ChevronRightIcon />}>
-                                                    {this.renderTree(
-                                                        permissionTree,
-                                                        this.state.selectedPermissions
-                                                    )}
-                                                </TreeView> */}
-                                                <ul>{this.renderTree(permissionTree)}</ul>
+                                                <List component="nav" disablePadding>
+                                                    {this.renderTree(permissionTree)}
+                                                </List>
                                             </FormGroup>
                                         </TabPanel>
                                     </TabContext>
@@ -334,15 +397,19 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
                                                     borderColor: '#7C3367!important',
                                                     color: '#7C3367'
                                                 }}
-                                                onClick={onCancel}>
+                                                onClick={() => {
+                                                    this.setState({
+                                                        tabIndex: '1',
+                                                        selectedPermissions: []
+                                                    });
+                                                    onCancel();
+                                                }}>
                                                 Hủy
                                             </Button>
                                             <Button
                                                 variant="contained"
+                                                type="submit"
                                                 size="small"
-                                                onClick={() => {
-                                                    this.handleSubmit(values);
-                                                }}
                                                 sx={{ backgroundColor: '#7C3367!important' }}>
                                                 Lưu
                                             </Button>
@@ -358,4 +425,4 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps> {
     }
 }
 
-export default CreateOrEditRoleModal;
+export default observer(CreateOrEditRoleModal);
