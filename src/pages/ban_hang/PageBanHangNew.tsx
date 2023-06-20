@@ -598,19 +598,7 @@ const PageBanHang = ({ customerChosed }: any) => {
             setIsScrollable(containerRef.current.scrollWidth > containerRef.current.clientWidth);
         }
     };
-    useEffect(() => {
-        const containerElement = containerRef.current;
-        if (containerElement) {
-            handleScroll();
 
-            const resizeObserver = new ResizeObserver(handleScroll);
-            resizeObserver.observe(containerElement);
-
-            return () => {
-                resizeObserver.disconnect();
-            };
-        }
-    }, [layout]);
     // xử lý next và prev khi cuộn dọc
     const handleWheel = (event: React.WheelEvent<HTMLUListElement>) => {
         if (containerRef.current) {
@@ -643,6 +631,28 @@ const PageBanHang = ({ customerChosed }: any) => {
             containerRef2.current.scrollLeft += event.deltaY;
         }
     };
+
+    useEffect(() => {
+        const containerElement = containerRef.current;
+        const containerElement2 = containerRef2.current;
+        if (containerElement) {
+            handleScroll();
+            handleScroll2();
+
+            const resizeObserver = new ResizeObserver(handleScroll);
+            resizeObserver.observe(containerElement);
+
+            return () => {
+                resizeObserver.disconnect();
+            };
+        } else if (containerElement2) {
+            const resizeObserver2 = new ResizeObserver(handleScroll2);
+            resizeObserver2.observe(containerElement2);
+            return () => {
+                resizeObserver2.disconnect();
+            };
+        }
+    }, [layout]);
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
