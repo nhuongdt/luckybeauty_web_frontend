@@ -619,6 +619,7 @@ const PageBanHang = ({ customerChosed }: any) => {
     };
 
     // nhóm hàng hóa
+    const [isScrollable2, setIsScrollable2] = useState<boolean>(false);
     const containerRef2 = useRef<HTMLUListElement>(null);
 
     const handleNextClick2 = () => {
@@ -634,7 +635,7 @@ const PageBanHang = ({ customerChosed }: any) => {
     };
     const handleScroll2 = () => {
         if (containerRef2.current) {
-            setIsScrollable(containerRef2.current.scrollWidth > containerRef2.current.clientWidth);
+            setIsScrollable2(containerRef2.current.scrollWidth > containerRef2.current.clientWidth);
         }
     };
     const handleWheel2 = (event: React.WheelEvent<HTMLUListElement>) => {
@@ -705,7 +706,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                             }}
                         />
                     )}
-                    <Grid item md={5} lg={layout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
+                    <Grid item md={layout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
                         <Box
                             sx={{
                                 backgroundColor: layout ? 'transparent' : '#fff',
@@ -812,6 +813,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 cursor: 'pointer',
                                                 transition: '.4s',
                                                 minWidth: layout ? '200px' : 'unset',
+                                                maxWidth: layout ? '200px' : 'unset',
                                                 position: 'relative',
                                                 '&::after': {
                                                     content: '""',
@@ -872,7 +874,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         onClick={() => choseLoaiHang(1)}>
                                         Sản phẩm
                                     </Typography>
-                                    {isScrollable && (
+                                    {isScrollable2 && (
                                         <Box
                                             sx={{
                                                 '& button': {
@@ -936,12 +938,12 @@ const PageBanHang = ({ customerChosed }: any) => {
                                             sx={{
                                                 gap: '6px',
                                                 padding: '10px',
-                                                borderWidth: '1px',
-                                                borderStyle: 'solid',
+                                                overflow: 'hidden',
                                                 bgcolor: nhomHH.color,
                                                 borderRadius: '8px',
                                                 marginTop: '12px',
                                                 minWidth: layout ? '200px' : 'unset',
+                                                maxWidth: layout ? '200px' : 'unset',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
 
@@ -993,7 +995,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item md={7} lg={layout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                    <Grid item md={layout ? 12 : 7} sx={{ marginTop: '-58px' }}>
                         <Box display="flex" flexDirection="column">
                             {!layout && (
                                 <TextField

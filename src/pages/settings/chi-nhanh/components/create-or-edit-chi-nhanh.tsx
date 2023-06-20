@@ -37,7 +37,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                             position: 'absolute',
                             right: 8,
                             top: 8,
-                            color: (theme) => theme.palette.grey[500]
+                            color: (theme) => theme.palette.grey[500],
+                            '&:hover svg': {
+                                filter: ' brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                            }
                         }}>
                         <CloseOutlinedIcon />
                     </IconButton>
@@ -159,10 +162,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 color: '#fff',
-                                                backgroundColor: '#B085A4',
-                                                border: 'none'
+                                                backgroundColor: '#7C3367'
                                             }}
-                                            type="submit">
+                                            type="submit"
+                                            className="btn-container-hover">
                                             Lưu
                                         </Button>
                                         <Button
@@ -170,10 +173,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
-                                                color: '#965C85',
-                                                borderColor: '#965C85'
+                                                color: '#965C85'
                                             }}
-                                            onClick={this.props.onCLose}>
+                                            onClick={this.props.onCLose}
+                                            className="btn-outline-hover">
                                             Hủy
                                         </Button>
                                     </ButtonGroup>

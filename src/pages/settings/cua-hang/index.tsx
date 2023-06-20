@@ -241,7 +241,8 @@ class StoreDetail extends Component {
                                 ml: 'auto',
                                 backgroundColor: '#7C3367!important',
                                 mt: '16px'
-                            }}>
+                            }}
+                            className="btn-container-hover">
                             Cập nhật
                         </Button>
                     </Grid>

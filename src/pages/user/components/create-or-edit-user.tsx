@@ -151,7 +151,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                         sx={{
                             position: 'absolute',
                             right: 8,
-                            top: 8
+                            top: 8,
+                            '&:hover': {
+                                filter: ' brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                            }
                         }}>
                         <CloseIcon />
                     </IconButton>
@@ -417,7 +420,16 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         value={values.isActive}
                                                         onChange={handleChange}
                                                         checked={values.isActive}
-                                                        control={<Checkbox />}
+                                                        control={
+                                                            <Checkbox
+                                                                sx={{
+                                                                    color: '#7C3367',
+                                                                    '&.Mui-checked': {
+                                                                        color: '#7C3367'
+                                                                    }
+                                                                }}
+                                                            />
+                                                        }
                                                         label="Kích hoạt"
                                                     />
                                                 </FormGroup>
@@ -439,6 +451,12 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 onChange={handleChange}
                                                                 name="roleNames"
                                                                 value={option.value}
+                                                                sx={{
+                                                                    color: '#7C3367',
+                                                                    '&.Mui-checked': {
+                                                                        color: '#7C3367'
+                                                                    }
+                                                                }}
                                                             />
                                                         }
                                                         label={option.label}
@@ -462,10 +480,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             variant="outlined"
                                             size="small"
                                             sx={{
-                                                borderColor: '#7C3367!important',
                                                 color: '#7C3367'
                                             }}
-                                            onClick={onCancel}>
+                                            onClick={onCancel}
+                                            className="btn-outline-hover">
                                             Hủy
                                         </Button>
                                         <Button
@@ -475,7 +493,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             // onClick={() => {
                                             //     this.handleSubmit(values);
                                             // }}
-                                            sx={{ backgroundColor: '#7C3367!important' }}>
+                                            sx={{ backgroundColor: '#7C3367!important' }}
+                                            className="btn-container-hover">
                                             Lưu
                                         </Button>
                                     </Box>

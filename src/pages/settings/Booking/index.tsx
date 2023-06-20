@@ -209,12 +209,30 @@ const Booking: React.FC = () => {
                         }}>
                         <FormControlLabel
                             sx={{ width: '100%' }}
-                            control={<Checkbox />}
+                            control={
+                                <Checkbox
+                                    sx={{
+                                        color: '#7C3367',
+                                        '&.Mui-checked': {
+                                            color: '#7C3367'
+                                        }
+                                    }}
+                                />
+                            }
                             label="Gửi thông báo đến nhân viên khách hàng đặt lịch"
                         />
                         <FormControlLabel
                             sx={{ width: '100%' }}
-                            control={<Checkbox />}
+                            control={
+                                <Checkbox
+                                    sx={{
+                                        color: '#7C3367',
+                                        '&.Mui-checked': {
+                                            color: '#7C3367'
+                                        }
+                                    }}
+                                />
+                            }
                             label="Gửi thông báo đến địa chỉ email"
                         />
                         <TextField
@@ -225,7 +243,16 @@ const Booking: React.FC = () => {
                         />
                         <FormControlLabel
                             sx={{ width: '100%' }}
-                            control={<Checkbox />}
+                            control={
+                                <Checkbox
+                                    sx={{
+                                        color: '#7C3367',
+                                        '&.Mui-checked': {
+                                            color: '#7C3367'
+                                        }
+                                    }}
+                                />
+                            }
                             label="Các cuộc hẹn sẽ được tự động xác nhận"
                         />
                     </Box>

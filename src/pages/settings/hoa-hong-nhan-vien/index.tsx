@@ -40,8 +40,13 @@ class CaiDatHoaHongScreen extends Component {
                                             backgroundColor: this.state.isChietKhauHoaDon
                                                 ? 'rgb(124, 51, 103)!important'
                                                 : '#FFFFFF!important',
-                                            border: 'none!important',
-                                            boxShadow: 'none!important'
+                                            borderColor: 'transparent!important',
+                                            boxShadow: 'none!important',
+                                            '&:hover': {
+                                                color: this.state.isChietKhauHoaDon
+                                                    ? '#fff'
+                                                    : '#7C3367'
+                                            }
                                         }}
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: true });
@@ -63,7 +68,12 @@ class CaiDatHoaHongScreen extends Component {
                                                 ? '#FFFFFF!important'
                                                 : 'rgb(124, 51, 103)!important',
                                             border: 'none!important',
-                                            boxShadow: 'none!important'
+                                            boxShadow: 'none!important',
+                                            '&:hover': {
+                                                color: this.state.isChietKhauHoaDon
+                                                    ? '#7C3367'
+                                                    : '#fff'
+                                            }
                                         }}
                                         onClick={() => {
                                             this.setState({ isChietKhauHoaDon: false });

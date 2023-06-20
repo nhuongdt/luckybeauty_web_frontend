@@ -289,10 +289,11 @@ class RoleScreen extends React.Component<IRoleProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 fontWeight: '400',
-                                                borderColor: '#E6E1E6!important',
+                                                borderColor: '#E6E1E6',
                                                 color: '#666466',
                                                 backgroundColor: '#fff!important'
-                                            }}>
+                                            }}
+                                            className="btn-outline-hover">
                                             Nhập
                                         </Button>
                                         <Button
@@ -304,10 +305,11 @@ class RoleScreen extends React.Component<IRoleProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 fontWeight: '400',
-                                                borderColor: '#E6E1E6!important',
+                                                borderColor: '#E6E1E6',
                                                 color: '#666466',
                                                 backgroundColor: '#fff!important'
-                                            }}>
+                                            }}
+                                            className="btn-outline-hover">
                                             Xuất
                                         </Button>
                                         <Button
@@ -323,7 +325,8 @@ class RoleScreen extends React.Component<IRoleProps> {
                                                 textTransform: 'unset',
                                                 fontWeight: '400',
                                                 backgroundColor: '#7C3367!important'
-                                            }}>
+                                            }}
+                                            className="btn-container-hover">
                                             Thêm vai trò
                                         </Button>
                                     </Box>

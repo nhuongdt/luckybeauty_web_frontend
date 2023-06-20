@@ -522,14 +522,16 @@ export default function PageProductNew() {
                             size="small"
                             variant="outlined"
                             startIcon={<UploadIcon />}
-                            className="btnNhapXuat btn-outline-hover">
+                            className="btnNhapXuat btn-outline-hover"
+                            sx={{ bgcolor: '#fff!important' }}>
                             Nhập
                         </Button>
                         <Button
                             size="small"
                             variant="outlined"
                             startIcon={<DownIcon />}
-                            className="btnNhapXuat btn-outline-hover">
+                            className="btnNhapXuat btn-outline-hover"
+                            sx={{ bgcolor: '#fff!important' }}>
                             Xuất
                         </Button>
                         <Button
@@ -566,6 +568,10 @@ export default function PageProductNew() {
                                 <Add
                                     className="button-container"
                                     sx={{
+                                        transition: '.4s',
+                                        '&:hover': {
+                                            transform: 'rotate(90deg)'
+                                        },
                                         height: '30px',
                                         cursor: 'pointer',
                                         width: '30px',

@@ -86,7 +86,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                             sx={{
                                 position: 'absolute',
                                 right: 8,
-                                top: 8
+                                top: 8,
+                                '&:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                }
                             }}>
                             <CloseIcon />
                         </IconButton>
@@ -201,7 +204,16 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                                         !this.state.isHostDatabase
                                                                 });
                                                             }}
-                                                            control={<Checkbox />}
+                                                            control={
+                                                                <Checkbox
+                                                                    sx={{
+                                                                        color: '#7C3367',
+                                                                        '&.Mui-checked': {
+                                                                            color: '#7C3367'
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            }
                                                             label="Dùng chung cơ sở dữ liệu với Host"
                                                         />
                                                     </FormGroup>
@@ -246,7 +258,16 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     value={values.isActive}
                                                     onChange={handleChange}
                                                     checked={values.isActive}
-                                                    control={<Checkbox />}
+                                                    control={
+                                                        <Checkbox
+                                                            sx={{
+                                                                color: '#7C3367',
+                                                                '&.Mui-checked': {
+                                                                    color: '#7C3367'
+                                                                }
+                                                            }}
+                                                        />
+                                                    }
                                                     label="IsActive"
                                                 />
                                             </FormGroup>
@@ -256,10 +277,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
-                                                    borderColor: '#7C3367!important',
                                                     color: '#7C3367'
                                                 }}
-                                                onClick={onCancel}>
+                                                onClick={onCancel}
+                                                className="btn-outline-hover">
                                                 Hủy
                                             </Button>
                                             <Button
@@ -268,7 +289,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 onClick={() => {
                                                     this.handleSubmit(values);
                                                 }}
-                                                sx={{ backgroundColor: '#7C3367!important' }}>
+                                                sx={{ backgroundColor: '#7C3367!important' }}
+                                                className="btn-container-hover">
                                                 Lưu
                                             </Button>
                                         </DialogActions>

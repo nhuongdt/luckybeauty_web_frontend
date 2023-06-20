@@ -290,9 +290,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 color: '#fff',
-                                                backgroundColor: '#B085A4',
+                                                backgroundColor: '#7C3367',
                                                 border: 'none'
-                                            }}>
+                                            }}
+                                            className="btn-container-hover">
                                             Lưu
                                         </Button>
                                         <Button
@@ -301,9 +302,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
-                                                color: '#965C85',
-                                                borderColor: '#965C85'
-                                            }}>
+                                                color: '#965C85'
+                                            }}
+                                            className="btn-outline-hover">
                                             Hủy
                                         </Button>
                                     </ButtonGroup>
@@ -320,7 +321,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         right: '28px',
                         padding: '0',
                         maxWidth: '24px',
-                        minWidth: '0'
+                        minWidth: '0',
+                        '&:hover img': {
+                            filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                        }
                     }}>
                     <img src={closeIcon} />
                 </Button>
