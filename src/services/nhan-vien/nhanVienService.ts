@@ -13,7 +13,7 @@ class NhanVienService {
     }
     public async getAll(input: PagedNhanSuRequestDto): Promise<PagedResultDto<NhanSuItemDto>> {
         const result = await http.get(`api/services/app/NhanSu/GetAll`, {
-            params: JSON.stringify(input)
+            params: input
         });
         return result.data.result;
     }

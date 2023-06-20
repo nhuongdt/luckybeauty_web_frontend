@@ -3,4 +3,5 @@ export interface PermissionTree {
     displayName: string;
     description: string;
     children: PermissionTree[];
+    parentNode: string;
 }
