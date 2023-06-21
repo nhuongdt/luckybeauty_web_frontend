@@ -16,6 +16,7 @@ import { ReactComponent as IconSorting } from '../../../images/column-sorting.sv
 import { TextTranslate } from '../../../components/TableLanguage';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
 
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
@@ -27,6 +28,11 @@ import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
+    const firstLoad = useRef(true);
+
+    const [idHoadonChosing, setIdHoadonChosing] = useState('');
+    const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
+
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
         currentPage: 1,
@@ -42,8 +48,6 @@ const GiaoDichThanhToan: React.FC = () => {
         totalPage: 0,
         items: []
     });
-
-    const firstLoad = useRef(true);
 
     const GetListHoaDon = async () => {
         const data = await HoaDonService.GetListHoaDon(paramSearch);
@@ -99,6 +103,12 @@ const GiaoDichThanhToan: React.FC = () => {
             ...paramSearch,
             pageSize: parseInt(event.target.value.toString(), 10)
         });
+    };
+
+    const choseRow = (param: any) => {
+        console.log('into');
+        setIdHoadonChosing(param.id);
+        setHoaDon(param.row);
     };
 
     const columns: GridColDef[] = [
@@ -282,160 +292,174 @@ const GiaoDichThanhToan: React.FC = () => {
     ];
 
     return (
-        <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
-            <Grid container justifyContent="space-between">
-                <Grid item md="auto" display="flex" alignItems="center" gap="10px">
-                    <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
-                        Giao dịch thanh toán
-                    </Typography>
-                    <Box className="form-search">
-                        <TextField
-                            size="small"
-                            sx={{
-                                backgroundColor: '#FFFAFF',
-                                borderColor: '#CDC9CD!important'
-                            }}
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            InputProps={{
-                                startAdornment: (
-                                    <IconButton type="button">
-                                        <img src={SearchIcon} />
-                                    </IconButton>
-                                )
-                            }}
-                            onChange={(event) =>
-                                setParamSearch((itemOlds: any) => {
-                                    return {
-                                        ...itemOlds,
-                                        textSearch: event.target.value
-                                    };
-                                })
-                            }
-                            onKeyDown={(event) => {
-                                handleKeyDownTextSearch(event);
-                            }}
-                        />
-                    </Box>
-                </Grid>
-                <Grid item md="auto">
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            gap: '8px',
-                            '& button': {
-                                height: '40px'
-                            }
-                        }}>
-                        <DatePickerCustom
-                            defaultVal={paramSearch.fromDate}
-                            handleChangeDate={(newVal: string) =>
-                                setParamSearch({ ...paramSearch, fromDate: newVal })
-                            }
-                        />
-                        <DatePickerCustom
-                            defaultVal={paramSearch.toDate}
-                            handleChangeDate={(newVal: string) =>
-                                setParamSearch({ ...paramSearch, toDate: newVal })
-                            }
-                        />
+        <>
+            {idHoadonChosing !== '' ? (
+                <ThongTinHoaDon
+                    idHoaDon={idHoadonChosing}
+                    hoadon={hoadon}
+                    gotoBack={() => setIdHoadonChosing('')}
+                />
+            ) : (
+                <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
+                    <Grid container justifyContent="space-between">
+                        <Grid item md="auto" display="flex" alignItems="center" gap="10px">
+                            <Typography
+                                color="#333233"
+                                variant="h1"
+                                fontSize="16px"
+                                fontWeight="700">
+                                Giao dịch thanh toán
+                            </Typography>
+                            <Box className="form-search">
+                                <TextField
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: '#FFFAFF',
+                                        borderColor: '#CDC9CD!important'
+                                    }}
+                                    className="search-field"
+                                    variant="outlined"
+                                    type="search"
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <IconButton type="button">
+                                                <img src={SearchIcon} />
+                                            </IconButton>
+                                        )
+                                    }}
+                                    onChange={(event) =>
+                                        setParamSearch((itemOlds: any) => {
+                                            return {
+                                                ...itemOlds,
+                                                textSearch: event.target.value
+                                            };
+                                        })
+                                    }
+                                    onKeyDown={(event) => {
+                                        handleKeyDownTextSearch(event);
+                                    }}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item md="auto">
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: '8px',
+                                    '& button': {
+                                        height: '40px'
+                                    }
+                                }}>
+                                <DatePickerCustom
+                                    defaultVal={paramSearch.fromDate}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, fromDate: newVal })
+                                    }
+                                />
+                                <DatePickerCustom
+                                    defaultVal={paramSearch.toDate}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, toDate: newVal })
+                                    }
+                                />
 
-                        <Button
-                            variant="outlined"
-                            startIcon={<UploadIcon />}
+                                <Button
+                                    variant="outlined"
+                                    startIcon={<UploadIcon />}
+                                    sx={{
+                                        borderColor: '#CDC9CD!important',
+                                        bgcolor: '#fff!important',
+                                        color: '#333233',
+                                        fontSize: '14px'
+                                    }}
+                                    className="btn-outline-hover">
+                                    Xuất{' '}
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    startIcon={<FilterIcon />}
+                                    sx={{
+                                        bgcolor: '#7C3367!important',
+                                        color: '#fff',
+                                        fontSize: '14px'
+                                    }}
+                                    className="btn-container-hover">
+                                    Bộ lọc{' '}
+                                </Button>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    <Box marginTop="16px">
+                        <DataGrid
+                            autoHeight
+                            columns={columns}
+                            rows={pageDataHoaDon.items}
+                            hideFooter
+                            checkboxSelection
+                            onRowClick={(row) => choseRow(row)}
                             sx={{
-                                borderColor: '#CDC9CD!important',
-                                bgcolor: '#fff!important',
-                                color: '#333233',
-                                fontSize: '14px'
+                                '& .MuiDataGrid-iconButtonContainer': {
+                                    display: 'none'
+                                },
+                                '& .MuiDataGrid-columnHeadersInner': {
+                                    backgroundColor: '#F2EBF0'
+                                },
+                                '& .MuiBox-root': {
+                                    maxWidth: '100%',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    fontSize: '12px'
+                                },
+                                '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
+                                    fontWeight: '700'
+                                },
+                                '& .MuiDataGrid-virtualScroller': {
+                                    bgcolor: '#fff'
+                                },
+                                '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                    outline: 'none '
+                                },
+                                '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                    color: '#7C3367'
+                                },
+                                '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                    fill: '#7C3367'
+                                },
+                                '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                    {
+                                        fill: '#000'
+                                    },
+                                '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                    {
+                                        fill: '#000'
+                                    },
+                                '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                    color: '#7C3367!important'
+                                },
+                                '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                    {
+                                        outline: 'none'
+                                    },
+                                '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                    {
+                                        bgcolor: '#f2ebf0'
+                                    }
                             }}
-                            className="btn-outline-hover">
-                            Xuất{' '}
-                        </Button>
-                        <Button
-                            variant="contained"
-                            startIcon={<FilterIcon />}
-                            sx={{
-                                bgcolor: '#7C3367!important',
-                                color: '#fff',
-                                fontSize: '14px'
-                            }}
-                            className="btn-container-hover">
-                            Bộ lọc{' '}
-                        </Button>
+                            localeText={TextTranslate}
+                        />
+                        <CustomTablePagination
+                            currentPage={paramSearch.currentPage ?? 1}
+                            rowPerPage={paramSearch.pageSize ?? 10}
+                            totalRecord={pageDataHoaDon.totalCount}
+                            totalPage={pageDataHoaDon.totalPage}
+                            handlePerPageChange={handlePerPageChange}
+                            handlePageChange={handleChangePage}
+                        />
                     </Box>
-                </Grid>
-            </Grid>
-            <Box marginTop="16px">
-                <DataGrid
-                    autoHeight
-                    columns={columns}
-                    rows={pageDataHoaDon.items}
-                    hideFooter
-                    pageSizeOptions={[10, 20]}
-                    checkboxSelection
-                    sx={{
-                        '& .MuiDataGrid-iconButtonContainer': {
-                            display: 'none'
-                        },
-                        '& .MuiDataGrid-columnHeadersInner': {
-                            backgroundColor: '#F2EBF0'
-                        },
-                        '& .MuiBox-root': {
-                            maxWidth: '100%',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            fontSize: '12px'
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
-                            fontWeight: '700'
-                        },
-                        '& .MuiDataGrid-virtualScroller': {
-                            bgcolor: '#fff'
-                        },
-                        '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                            outline: 'none '
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                            color: '#7C3367'
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                            fill: '#7C3367'
-                        },
-                        '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
-                            {
-                                fill: '#000'
-                            },
-                        '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
-                            {
-                                fill: '#000'
-                            },
-                        '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                            color: '#7C3367!important'
-                        },
-                        '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                            {
-                                outline: 'none'
-                            },
-                        '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                            {
-                                bgcolor: '#f2ebf0'
-                            }
-                    }}
-                    localeText={TextTranslate}
-                />
-                <CustomTablePagination
-                    currentPage={paramSearch.currentPage ?? 1}
-                    rowPerPage={paramSearch.pageSize ?? 10}
-                    totalRecord={pageDataHoaDon.totalCount}
-                    totalPage={pageDataHoaDon.totalPage}
-                    handlePerPageChange={handlePerPageChange}
-                    handlePageChange={handleChangePage}
-                />
-            </Box>
-        </Box>
+                </Box>
+            )}
+        </>
     );
 };
 export default GiaoDichThanhToan;

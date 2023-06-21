@@ -1,14 +1,13 @@
-import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 
-const TabInfo: React.FC = () => {
+export default function TabInfo({ hoadon, chitietHoaDon }: any) {
     const columns: GridColDef[] = [
         {
-            field: 'id',
-            headerName: 'ID',
+            field: 'maHangHoa',
+            headerName: 'Mã hàng',
             minWidth: 50,
             flex: 0.8,
             renderHeader: (params) => (
@@ -20,7 +19,7 @@ const TabInfo: React.FC = () => {
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
-            field: 'name',
+            field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
             minWidth: 150,
             flex: 1,
@@ -33,8 +32,10 @@ const TabInfo: React.FC = () => {
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
-            field: 'quantity',
+            field: 'soLuong',
             headerName: 'Số lượng',
+            headerAlign: 'center',
+            align: 'center',
             minWidth: 80,
             flex: 0.9,
             renderHeader: (params) => (
@@ -43,11 +44,17 @@ const TabInfo: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => (
+                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'price',
-            headerName: 'Giá',
+            field: 'donGiaTruocCK',
+            headerName: 'Đơn giá',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 90,
             flex: 1,
             renderHeader: (params) => (
@@ -56,11 +63,18 @@ const TabInfo: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => (
+                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
+                    {' '}
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'discount',
+            field: 'tienChietKhau',
             headerName: 'Chiết khấu',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 100,
             flex: 1,
             renderHeader: (params) => (
@@ -69,11 +83,17 @@ const TabInfo: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => (
+                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'gia_Ban',
+            field: 'donGiaSauCK',
             headerName: 'Giá bán',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 100,
             flex: 1,
             renderHeader: (params) => (
@@ -82,11 +102,17 @@ const TabInfo: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => (
+                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'thanh_Tien',
+            field: 'thanhTienSauCK',
             headerName: 'Thành tiền',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 100,
             flex: 1,
             renderHeader: (params) => (
@@ -95,20 +121,14 @@ const TabInfo: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => (
+                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         }
     ];
-    const rows = [
-        {
-            id: '647587yuihjklllnjhj',
-            name: 'Dịch vụ uốn ép duỗi nhuộm các kiểu  ',
-            quantity: 60,
-            price: '7.000.000đ',
-            discount: '400.000đ',
-            gia_Ban: '6.000.000đ',
-            thanh_Tien: '9.000.000đ'
-        }
-    ];
+
     return (
         <>
             <Grid container spacing={3}>
@@ -116,7 +136,7 @@ const TabInfo: React.FC = () => {
                     <DataGrid
                         autoHeight
                         columns={columns}
-                        rows={rows}
+                        rows={chitietHoaDon}
                         sx={{
                             '& p': {
                                 mb: 0
@@ -214,7 +234,7 @@ const TabInfo: React.FC = () => {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    700.000đ
+                                    {new Intl.NumberFormat('en-IN').format(hoadon?.tongTienHang)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -232,7 +252,7 @@ const TabInfo: React.FC = () => {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    700.000đ
+                                    {new Intl.NumberFormat('en-IN').format(hoadon?.tongGiamGiaHD)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -250,7 +270,7 @@ const TabInfo: React.FC = () => {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    700.000đ
+                                    {new Intl.NumberFormat('en-IN').format(hoadon?.tongThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -268,7 +288,7 @@ const TabInfo: React.FC = () => {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    700.000đ
+                                    {new Intl.NumberFormat('en-IN').format(hoadon?.daThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} marginTop="28px">
@@ -286,7 +306,7 @@ const TabInfo: React.FC = () => {
                                     fontSize="18px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    700.000đ
+                                    {new Intl.NumberFormat('en-IN').format(hoadon?.conNo)}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -295,5 +315,4 @@ const TabInfo: React.FC = () => {
             </Grid>
         </>
     );
-};
-export default TabInfo;
+}
