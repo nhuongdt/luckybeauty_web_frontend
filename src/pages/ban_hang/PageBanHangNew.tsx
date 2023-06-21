@@ -60,7 +60,7 @@ import { ReactComponent as UserIcon } from '../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-const PageBanHang = ({ customerChosed }: any) => {
+const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
     const componentRef = useRef(null);
     const [txtSearch, setTxtSearch] = useState('');
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -573,18 +573,6 @@ const PageBanHang = ({ customerChosed }: any) => {
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
         await RemoveCache();
     };
-    // đổi layout
-
-    const [layout, setLayout] = useState(false);
-    const handleLayoutToggle = () => {
-        setLayout(!layout);
-        if (layout == true) {
-            Cookies.set('changed', 'true', { expires: 7 });
-        } else {
-            Cookies.set('changed', 'false');
-        }
-        console.log(Cookies.get('changed'));
-    };
 
     // thêm 2 nút điều hướng cho phần cuộn ngang
     const containerRef = useRef<HTMLUListElement>(null);
@@ -651,7 +639,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                 resizeObserver2.disconnect();
             };
         }
-    }, [layout]);
+    }, [CoditionLayout]);
     useEffect(() => {
         const containerElement = containerRef.current;
         if (containerElement) {
@@ -664,14 +652,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                 resizeObserver.disconnect();
             };
         }
-    }, [layout]);
-    useEffect(() => {
-        if (Cookies.get('changed') === 'true') {
-            setLayout(false);
-        } else {
-            setLayout(true);
-        }
-    }, []);
+    }, [CoditionLayout]);
+
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
@@ -701,8 +683,13 @@ const PageBanHang = ({ customerChosed }: any) => {
                         paddingTop: '0!important'
                     }
                 }}>
-                <Grid item container md={8} spacing={3} marginTop={layout ? '-60px' : '-24px'}>
-                    {layout && (
+                <Grid
+                    item
+                    container
+                    md={8}
+                    spacing={3}
+                    marginTop={CoditionLayout ? '-60px' : '-24px'}>
+                    {CoditionLayout && (
                         <TextField
                             fullWidth
                             sx={{
@@ -735,16 +722,18 @@ const PageBanHang = ({ customerChosed }: any) => {
                             }}
                         />
                     )}
-                    <Grid item md={layout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
+                    <Grid item md={CoditionLayout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
                         <Box
                             sx={{
-                                backgroundColor: layout ? 'transparent' : '#fff',
+                                backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                 borderRadius: '8px',
-                                boxShadow: layout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
+                                boxShadow: CoditionLayout
+                                    ? 'unset'
+                                    : ' 0px 20px 100px 0px #0000000D',
                                 padding: '16px 24px',
-                                height: layout ? 'unset' : '100vh',
+                                height: CoditionLayout ? 'unset' : '100vh',
                                 overflowX: 'hidden',
-                                maxHeight: layout ? 'unset' : '77.5vh',
+                                maxHeight: CoditionLayout ? 'unset' : '77.5vh',
                                 overflowY: 'auto',
                                 '&::-webkit-scrollbar': {
                                     width: '7px'
@@ -814,9 +803,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     ref={containerRef}
                                     onWheel={handleWheel}
                                     sx={{
-                                        display: layout ? 'flex' : 'block',
+                                        display: CoditionLayout ? 'flex' : 'block',
                                         columnGap: '12px',
-                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
                                         scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
@@ -841,8 +830,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 marginTop: '12px',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
-                                                minWidth: layout ? '200px' : 'unset',
-                                                maxWidth: layout ? '200px' : 'unset',
+                                                minWidth: CoditionLayout ? '200px' : 'unset',
+                                                maxWidth: CoditionLayout ? '200px' : 'unset',
                                                 position: 'relative',
                                                 '&::after': {
                                                     content: '""',
@@ -947,9 +936,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     onWheel={handleWheel2}
                                     ref={containerRef2}
                                     sx={{
-                                        display: layout ? 'flex' : 'block',
+                                        display: CoditionLayout ? 'flex' : 'block',
                                         columnGap: '12px',
-                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
                                         scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
@@ -971,8 +960,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 bgcolor: nhomHH.color,
                                                 borderRadius: '8px',
                                                 marginTop: '12px',
-                                                minWidth: layout ? '200px' : 'unset',
-                                                maxWidth: layout ? '200px' : 'unset',
+                                                minWidth: CoditionLayout ? '200px' : 'unset',
+                                                maxWidth: CoditionLayout ? '200px' : 'unset',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
 
@@ -1024,9 +1013,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item md={layout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                    <Grid item md={CoditionLayout ? 12 : 7} sx={{ marginTop: '-58px' }}>
                         <Box display="flex" flexDirection="column">
-                            {!layout && (
+                            {!CoditionLayout && (
                                 <TextField
                                     fullWidth
                                     sx={{
@@ -1063,9 +1052,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 padding="16px"
                                 marginTop="16px"
                                 sx={{
-                                    backgroundColor: layout ? 'transparent' : '#fff',
+                                    backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    maxHeight: layout ? '30vh' : '77.5vh',
+                                    maxHeight: CoditionLayout ? '30vh' : '77.5vh',
                                     overflowX: 'hidden',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {
@@ -1092,7 +1081,10 @@ const PageBanHang = ({ customerChosed }: any) => {
 
                                         <Grid container spacing={1.5}>
                                             {nhom.hangHoas.map((item: any, index2: any) => (
-                                                <Grid item xs={layout ? 2.4 : 4} key={item.id}>
+                                                <Grid
+                                                    item
+                                                    xs={CoditionLayout ? 2.4 : 4}
+                                                    key={item.id}>
                                                     <Box
                                                         minHeight="104px"
                                                         padding="8px 12px 9px 12px"
@@ -1152,9 +1144,10 @@ const PageBanHang = ({ customerChosed }: any) => {
                             borderRadius: '8px',
                             overflow: 'hidden',
                             height: '100vh',
-                            maxHeight: '89vh',
+                            maxHeight: 'calc(100vh - 70px)',
 
                             padding: '16px',
+                            paddingBottom: '32px',
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between'
@@ -1176,7 +1169,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
-                                <Button sx={{ marginLeft: 'auto' }} onClick={handleLayoutToggle}>
+                                <Button sx={{ marginLeft: 'auto' }}>
                                     <img
                                         src={dotIcon}
                                         style={{

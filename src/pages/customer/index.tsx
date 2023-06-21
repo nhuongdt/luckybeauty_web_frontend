@@ -202,6 +202,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         localStorage.setItem('visibilityColumn', JSON.stringify(column));
         this.setState({ visibilityColumn: column });
     };
+
     render(): React.ReactNode {
         const columns: GridColDef[] = [
             {
@@ -376,6 +377,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             }
         ];
         const { createOrEditKhachHang } = this.state;
+
         return (
             <Box
                 className="customer-page"
