@@ -297,6 +297,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 <Grid item xs={12} sm={6} md={6} lg={6} sx={{ pr: 4 }}>
                                     <Typography variant="body2">Giá</Typography>
                                     <NumericFormat
+                                        size="small"
+                                        fullWidth
                                         value={product.giaBan}
                                         thousandSeparator
                                         customInput={TextField}
@@ -395,8 +397,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 <DialogActions>
                     <Button
                         variant="outlined"
-                        sx={{ borderColor: '#7C3367' }}
-                        onClick={() => setOpen(false)}>
+                        sx={{ color: '#7C3367' }}
+                        onClick={() => setOpen(false)}
+                        className="btn-outline-hover">
                         Hủy
                     </Button>
                     <Button
@@ -440,7 +443,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         }}>
                         Xóa
                     </Button>
-                    <Button variant="contained" sx={{ bgcolor: '#7C3367' }} onClick={saveProduct}>
+                    <Button
+                        variant="contained"
+                        sx={{ bgcolor: '#7C3367' }}
+                        onClick={saveProduct}
+                        className="btn-container-hover">
                         Lưu
                     </Button>
                 </DialogActions>

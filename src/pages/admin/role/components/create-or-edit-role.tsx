@@ -170,6 +170,12 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         <Checkbox
                             onChange={(e) => this.handleCheck(e, node)}
                             checked={this.state.selectedPermissions?.includes(node.name)}
+                            sx={{
+                                color: '#7C3367',
+                                '&.Mui-checked': {
+                                    color: '#7C3367'
+                                }
+                            }}
                         />
                         <>
                             {node.children !== null && node.children.length > 0 ? (
@@ -238,7 +244,10 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         sx={{
                             position: 'absolute',
                             right: 8,
-                            top: 8
+                            top: 8,
+                            '&:hover svg': {
+                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                            }
                         }}>
                         <CloseIcon />
                     </IconButton>
@@ -396,7 +405,6 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
-                                                    borderColor: '#7C3367!important',
                                                     color: '#7C3367'
                                                 }}
                                                 onClick={() => {
@@ -405,14 +413,16 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                         selectedPermissions: []
                                                     });
                                                     onCancel();
-                                                }}>
+                                                }}
+                                                className="btn-outline-hover">
                                                 Hủy
                                             </Button>
                                             <Button
                                                 variant="contained"
                                                 type="submit"
                                                 size="small"
-                                                sx={{ backgroundColor: '#7C3367!important' }}>
+                                                sx={{ backgroundColor: '#7C3367!important' }}
+                                                className="btn-container-hover">
                                                 Lưu
                                             </Button>
                                         </Box>

@@ -80,7 +80,15 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                 }}>
                 <Button
                     onClick={onClose}
-                    sx={{ position: 'absolute', right: '16px', top: '16px', minWidth: 'unset' }}>
+                    sx={{
+                        position: 'absolute',
+                        right: '16px',
+                        top: '16px',
+                        minWidth: 'unset',
+                        '&:hover svg': {
+                            filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                        }
+                    }}>
                     <CloseIcon />
                 </Button>
                 <Typography variant="h3" fontSize="24px" color="#333233" fontWeight="700" mb={3}>
@@ -440,13 +448,15 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Button
                         onClick={onClose}
                         variant="contained"
-                        sx={{ bgcolor: '#7C3367!important' }}>
+                        sx={{ bgcolor: '#7C3367!important' }}
+                        className="btn-container-hover">
                         Lưu
                     </Button>
                     <Button
                         onClick={onClose}
                         variant="outlined"
-                        sx={{ color: '#965C85!important', borderColor: '#965C85!important' }}>
+                        sx={{ color: '#965C85!important' }}
+                        className="btn-outline-hover">
                         Hủy
                     </Button>
                 </Box>

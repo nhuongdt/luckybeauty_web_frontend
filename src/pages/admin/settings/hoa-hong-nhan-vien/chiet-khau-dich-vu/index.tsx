@@ -313,7 +313,7 @@ class ChietKhauDichVuScreen extends Component {
                         alignItems: 'center',
                         paddingX: '8px'
                     }}>
-                    <Grid item xs={4}>
+                    <Grid item xs={5}>
                         <FormControl size="small">
                             <Select
                                 defaultValue={
@@ -333,7 +333,16 @@ class ChietKhauDichVuScreen extends Component {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={4}>
+
+                    <Grid
+                        item
+                        xs={7}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            justifyContent: 'end'
+                        }}>
                         <TextField
                             type="text"
                             size="small"
@@ -350,34 +359,40 @@ class ChietKhauDichVuScreen extends Component {
                                 )
                             }}
                         />
-                    </Grid>
-                    <Grid item xs={4}>
                         <Box
                             display="flex"
                             gap="8px"
                             justifyContent="end"
                             sx={{
-                                '& button': {
+                                '& button:not(.btn-container-hover)': {
                                     color: '#666466!important',
                                     bgcolor: '#fff!important',
                                     boxShadow: 'none!important',
-                                    borderColor: '#ede4ea!important',
+                                    borderColor: '#ede4ea',
                                     textTransform: 'unset!important',
                                     fontWeight: '400'
                                 }
                             }}>
-                            <Button startIcon={<img src={DownloadIcon} />} variant="outlined">
+                            <Button
+                                startIcon={<img src={DownloadIcon} />}
+                                variant="outlined"
+                                className="btn-outline-hover">
                                 Nhập
                             </Button>
-                            <Button startIcon={<img src={UploadIcon} />} variant="outlined">
+                            <Button
+                                startIcon={<img src={UploadIcon} />}
+                                variant="outlined"
+                                className="btn-outline-hover">
                                 Xuất
                             </Button>
                             <Button
                                 startIcon={<img src={AddIcon} />}
-                                variant="outlined"
+                                variant="contained"
+                                sx={{ bgcolor: '#7C3367' }}
                                 onClick={() => {
                                     this.onModal();
-                                }}>
+                                }}
+                                className="btn-container-hover">
                                 Thêm mới
                             </Button>
                         </Box>

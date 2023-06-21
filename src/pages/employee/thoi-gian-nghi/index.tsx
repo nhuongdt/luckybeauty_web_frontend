@@ -373,7 +373,7 @@ class EmployeeHoliday extends Component {
                                 fontWeight: '400',
                                 color: '#666466',
                                 height: '40px',
-                                backgroundColor: '#fff',
+                                backgroundColor: '#fff!important',
                                 borderColor: '#E6E1E6!important'
                             }}
                             className="btn-outline-hover">
@@ -387,7 +387,7 @@ class EmployeeHoliday extends Component {
                                 textTransform: 'capitalize',
                                 fontWeight: '400',
                                 color: '#666466',
-                                backgroundColor: '#fff',
+                                backgroundColor: '#fff!important',
                                 padding: '10px 16px',
                                 borderColor: '#E6E1E6!important',
                                 height: '40px'

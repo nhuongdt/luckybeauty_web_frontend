@@ -307,7 +307,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                             borderColor: '#E6E1E6!important',
                                             color: '#666466',
                                             backgroundColor: '#fff!important'
-                                        }}>
+                                        }}
+                                        className="btn-outline-hover">
                                         Nhập
                                     </Button>
                                     <Button
@@ -322,7 +323,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                             borderColor: '#E6E1E6!important',
                                             color: '#666466',
                                             backgroundColor: '#fff!important'
-                                        }}>
+                                        }}
+                                        className="btn-outline-hover">
                                         Xuất
                                     </Button>
                                     <Button
@@ -338,7 +340,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                         }}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen(0);
-                                        }}>
+                                        }}
+                                        className="btn-container-hover">
                                         Thêm tenant
                                     </Button>
                                 </Box>

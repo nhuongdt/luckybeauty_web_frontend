@@ -461,7 +461,7 @@ class EmployeeScreen extends React.Component {
                                 color: '#666466',
                                 height: '40px',
                                 padding: '10px 16px',
-                                marginRight: '8px',
+
                                 borderRadius: '4px!important'
                             }}
                             className="btn-outline-hover">

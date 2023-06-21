@@ -57,7 +57,15 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Typography fontSize="24px" color="#4C4B4C" fontWeight="700" variant="h2">
                         Xóa tất cả ca làm việc
                     </Typography>
-                    <Button sx={{ minWidth: 'unset' }} onClick={onClose}>
+                    <Button
+                        sx={{
+                            bgcolor: 'transparent!important',
+                            minWidth: 'unset',
+                            '&:hover svg': {
+                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                            }
+                        }}
+                        onClick={onClose}>
                         <CloseIcon />
                     </Button>
                 </Box>
@@ -86,13 +94,15 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Button
                         onClick={onClose}
                         variant="contained"
-                        sx={{ bgcolor: '#F1416C!important' }}>
+                        sx={{ bgcolor: '#F1416C!important' }}
+                        className="btn-container-hover">
                         Xoá
                     </Button>
                     <Button
                         onClick={onClose}
                         variant="outlined"
-                        sx={{ color: '#965C85!important', borderColor: '#965C85!important' }}>
+                        sx={{ color: '#965C85!important' }}
+                        className="btn-outline-hover">
                         Hủy
                     </Button>
                 </Box>

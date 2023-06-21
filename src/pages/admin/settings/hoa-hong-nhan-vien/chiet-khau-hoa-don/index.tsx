@@ -166,11 +166,13 @@ class ChietKhauHoaDonScreen extends Component {
 
                     <Grid item>
                         <Button
+                            variant="contained"
                             onClick={() => {
                                 this.setState({ visited: true });
                             }}
-                            sx={{ background: '#7C3367', height: 32, color: '#FFFAFF' }}
-                            startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}>
+                            sx={{ backgroundColor: '#7C3367', height: 32, color: '#FFFAFF' }}
+                            startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
+                            className="btn-container-hover">
                             Thêm mới
                         </Button>
                     </Grid>

@@ -17,10 +17,24 @@ const LichLamViec: React.FC = () => {
                     </Grid>
                     <Grid item xs="auto">
                         <Box sx={{ display: 'flex', gap: '8px' }}>
-                            <Button>
-                                <MoreHorizIcon sx={{ color: '#231F20' }} />
+                            <Button
+                                sx={{
+                                    minWidth: 'unset',
+                                    bgcolor: 'unset!important',
+                                    '&:hover svg': {
+                                        color: '#7C3367'
+                                    }
+                                }}>
+                                <MoreHorizIcon
+                                    sx={{
+                                        color: '#231F20'
+                                    }}
+                                />
                             </Button>
-                            <Button variant="contained" sx={{ bgcolor: '#7C3367!important' }}>
+                            <Button
+                                variant="contained"
+                                sx={{ bgcolor: '#7C3367!important' }}
+                                className="btn-container-hover">
                                 Thêm ca
                             </Button>
                         </Box>
