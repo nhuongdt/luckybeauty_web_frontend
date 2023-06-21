@@ -51,7 +51,7 @@ import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
-
+import Cookies from 'js-cookie';
 import logo from '../../images/Lucky_beauty.jpg';
 import { ReactComponent as IconDv } from '../../images/icon-DV.svg';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
@@ -574,10 +574,18 @@ const PageBanHang = ({ customerChosed }: any) => {
         await RemoveCache();
     };
     // đổi layout
+
     const [layout, setLayout] = useState(false);
     const handleLayoutToggle = () => {
         setLayout(!layout);
+        if (layout == true) {
+            Cookies.set('changed', 'true', { expires: 7 });
+        } else {
+            Cookies.set('changed', 'false');
+        }
+        console.log(Cookies.get('changed'));
     };
+
     // thêm 2 nút điều hướng cho phần cuộn ngang
     const containerRef = useRef<HTMLUListElement>(null);
     const [isScrollable, setIsScrollable] = useState<boolean>(false);
@@ -606,9 +614,9 @@ const PageBanHang = ({ customerChosed }: any) => {
         }
     };
 
-    // nhóm hàng hóa
-    const [isScrollable2, setIsScrollable2] = useState<boolean>(false);
+    // nhóm hàng hóa cũng tương tự nhóm dịch vụ
     const containerRef2 = useRef<HTMLUListElement>(null);
+    const [isScrollable2, setIsScrollable2] = useState<boolean>(false);
 
     const handleNextClick2 = () => {
         if (containerRef2.current) {
@@ -633,19 +641,10 @@ const PageBanHang = ({ customerChosed }: any) => {
     };
 
     useEffect(() => {
-        const containerElement = containerRef.current;
         const containerElement2 = containerRef2.current;
-        if (containerElement) {
-            handleScroll();
+        if (containerElement2) {
             handleScroll2();
 
-            const resizeObserver = new ResizeObserver(handleScroll);
-            resizeObserver.observe(containerElement);
-
-            return () => {
-                resizeObserver.disconnect();
-            };
-        } else if (containerElement2) {
             const resizeObserver2 = new ResizeObserver(handleScroll2);
             resizeObserver2.observe(containerElement2);
             return () => {
@@ -653,6 +652,26 @@ const PageBanHang = ({ customerChosed }: any) => {
             };
         }
     }, [layout]);
+    useEffect(() => {
+        const containerElement = containerRef.current;
+        if (containerElement) {
+            handleScroll();
+
+            const resizeObserver = new ResizeObserver(handleScroll);
+            resizeObserver.observe(containerElement);
+
+            return () => {
+                resizeObserver.disconnect();
+            };
+        }
+    }, [layout]);
+    useEffect(() => {
+        if (Cookies.get('changed') === 'true') {
+            setLayout(false);
+        } else {
+            setLayout(true);
+        }
+    }, []);
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
@@ -1046,7 +1065,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 sx={{
                                     backgroundColor: layout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    maxHeight: '77vh',
+                                    maxHeight: layout ? '30vh' : '77.5vh',
                                     overflowX: 'hidden',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {

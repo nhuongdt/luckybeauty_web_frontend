@@ -181,9 +181,18 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     };
     return (
         <>
-            <Dialog open={isShow} onClose={() => setIsShow(false)} fullWidth maxWidth="md">
-                <DialogTitle>Thêm khách hàng checkin</DialogTitle>
-                <DialogContent>
+            <Dialog
+                open={isShow}
+                onClose={() => setIsShow(false)}
+                fullWidth
+                maxWidth="md"
+                sx={{
+                    '& .MuiDialog-paperScrollPaper': {
+                        overflowX: 'hidden'
+                    }
+                }}>
+                <DialogTitle fontWeight="700!important">Thêm khách hàng checkin</DialogTitle>
+                <DialogContent sx={{ overflow: 'visible' }}>
                     <Grid container columnSpacing={6}>
                         <Grid item xs={12} sm={5} md={5} lg={5}>
                             <AutocompleteCustomer handleChoseItem={changeCustomer} />
@@ -244,14 +253,14 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                                 justifyContent="flex-end">
                                 <Button
                                     variant="outlined"
-                                    className="button-outline"
+                                    className="button-outline btn-outline-hover"
                                     sx={{ width: '70px' }}
                                     onClick={() => setIsShow(false)}>
                                     Hủy
                                 </Button>
                                 <Button
                                     variant="contained"
-                                    className="button-container"
+                                    className="button-container btn-container-hover"
                                     sx={{ width: '70px' }}
                                     onClick={saveCheckIn}>
                                     Lưu

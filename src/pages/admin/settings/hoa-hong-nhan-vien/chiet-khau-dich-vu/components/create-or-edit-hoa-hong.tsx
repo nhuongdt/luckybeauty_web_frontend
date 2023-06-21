@@ -56,7 +56,10 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                             sx={{
                                 position: 'absolute',
                                 right: 8,
-                                top: 8
+                                top: 8,
+                                '&:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                }
                             }}>
                             <CloseIcon />
                         </IconButton>
@@ -131,17 +134,44 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             sx={{ display: 'flex', flexDirection: 'row' }}>
                                             <FormControlLabel
                                                 value={1}
-                                                control={<Radio />}
+                                                control={
+                                                    <Radio
+                                                        sx={{
+                                                            color: '#7C3367',
+                                                            '&.Mui-checked': {
+                                                                color: '#7C3367'
+                                                            }
+                                                        }}
+                                                    />
+                                                }
                                                 label="Thực hiện"
                                             />
                                             <FormControlLabel
                                                 value={2}
-                                                control={<Radio />}
+                                                control={
+                                                    <Radio
+                                                        sx={{
+                                                            color: '#7C3367',
+                                                            '&.Mui-checked': {
+                                                                color: '#7C3367'
+                                                            }
+                                                        }}
+                                                    />
+                                                }
                                                 label="Yêu cầu"
                                             />
                                             <FormControlLabel
                                                 value={3}
-                                                control={<Radio />}
+                                                control={
+                                                    <Radio
+                                                        sx={{
+                                                            color: '#7C3367',
+                                                            '&.Mui-checked': {
+                                                                color: '#7C3367'
+                                                            }
+                                                        }}
+                                                    />
+                                                }
                                                 label="Tư vấn"
                                             />
                                         </RadioGroup>
@@ -168,7 +198,12 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             control={
                                                 <Checkbox
                                                     checked={values.laPhanTram ? true : false}
-                                                    color="primary"
+                                                    sx={{
+                                                        color: '#7C3367',
+                                                        '&.Mui-checked': {
+                                                            color: '#7C3367'
+                                                        }
+                                                    }}
                                                 />
                                             }
                                         />
@@ -188,9 +223,10 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 color: '#fff',
-                                                backgroundColor: '#B085A4',
+                                                backgroundColor: '#7C3367',
                                                 border: 'none'
-                                            }}>
+                                            }}
+                                            className="btn-container-hover">
                                             Lưu
                                         </Button>
                                         <Button
@@ -201,7 +237,8 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                 textTransform: 'unset',
                                                 color: '#965C85',
                                                 borderColor: '#965C85'
-                                            }}>
+                                            }}
+                                            className="btn-outline-hover">
                                             Hủy
                                         </Button>
                                     </ButtonGroup>
