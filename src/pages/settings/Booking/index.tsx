@@ -42,7 +42,8 @@ const Booking: React.FC = () => {
                     mb: '16px',
                     width: 'fit-content',
                     marginLeft: 'auto'
-                }}>
+                }}
+                className="btn-container-hover">
                 Cập nhật
             </Button>
             <Box

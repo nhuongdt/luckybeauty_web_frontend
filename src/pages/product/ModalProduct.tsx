@@ -18,7 +18,7 @@ import {
     FormControlLabel,
     Checkbox
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
@@ -205,8 +205,16 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
                 <Button
                     onClick={() => setOpen(false)}
-                    sx={{ minWidth: 'unset', position: 'absolute', top: '16px', right: '16px' }}>
-                    <CloseIcon sx={{ color: '#666466' }} />
+                    sx={{
+                        minWidth: 'unset',
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        '&:hover svg': {
+                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                        }
+                    }}>
+                    <CloseIcon />
                 </Button>
                 <DialogTitle fontSize="24px!important" color="#333233" fontWeight="700!important">
                     {' '}
@@ -365,6 +373,12 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                                                 : 'dịch vụ'
                                                         };
                                                     });
+                                                }}
+                                                sx={{
+                                                    color: '#7C3367',
+                                                    '&.Mui-checked': {
+                                                        color: '#7C3367'
+                                                    }
                                                 }}
                                             />
                                         }

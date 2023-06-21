@@ -226,8 +226,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     sx={{
                         minWidth: 'unset',
                         position: 'absolute',
-                        top: '30px',
-                        right: '30px',
+                        top: '16px',
+                        right: '16px',
                         '&:hover svg': {
                             filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
                         }
@@ -260,6 +260,12 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                                             x.laNhomHangHoa === event.target.checked
                                                     )
                                                 );
+                                            }}
+                                            sx={{
+                                                color: '#7C3367',
+                                                '&.Mui-checked': {
+                                                    color: '#7C3367'
+                                                }
                                             }}
                                         />
                                     }

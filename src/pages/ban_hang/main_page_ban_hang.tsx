@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Grid, ButtonGroup, Button, Box } from '@mui/material';
 import CheckInNew from './CheckInNew';
 import PageBanHang from './PageBanHangNew';
-
+import Cookies from 'js-cookie';
 import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import './style.css';
 import { Guid } from 'guid-typescript';
@@ -17,6 +17,11 @@ export default function MainPageBanHang() {
 
     const handleTab = (tabIndex: number) => {
         setActiveTab(tabIndex);
+        if (tabIndex === 1) {
+            Cookies.set('tab', '1', { expires: 7 });
+        } else {
+            Cookies.set('tab', '2');
+        }
     };
 
     const choseCustomer = (cus: any) => {
@@ -34,17 +39,21 @@ export default function MainPageBanHang() {
         setActiveTab(2);
     };
     useEffect(() => {
-        // Disable scroll when component mounts
-
         activeTab === 2
             ? (document.documentElement.style.overflowY = 'hidden')
             : (document.documentElement.style.overflowY = 'auto');
 
         return () => {
-            // Enable scroll when component unmounts
             document.documentElement.style.overflowY = 'auto';
         };
     }, [activeTab]);
+    useEffect(() => {
+        if (Cookies.get('tab') === '1') {
+            handleTab(1);
+        } else {
+            handleTab(2);
+        }
+    }, []);
     return (
         <>
             <Grid container padding={2} columnSpacing={2} rowSpacing={2}>
