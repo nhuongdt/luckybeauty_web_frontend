@@ -14,11 +14,11 @@ import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
-
-import moment from 'moment';
-import Utils from '../../../utils/utils'; // func common
-
+import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+
+import Utils from '../../../utils/utils'; // func common.
+import { format, lastDayOfMonth } from 'date-fns';
 
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
@@ -26,13 +26,17 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 
 const GiaoDichThanhToan: React.FC = () => {
+    const today = new Date();
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
         currentPage: 1,
         pageSize: 5,
-        columnSort: '',
-        typeSort: ''
+        columnSort: 'NgayLapHoaDon',
+        typeSort: 'DESC',
+        fromDate: format(today, 'yyyy-MM-01'),
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
     });
+
     const [pageDataHoaDon, setPageDataHoaDon] = useState<PagedResultDto<PageHoaDonDto>>({
         totalCount: 0,
         totalPage: 0,
@@ -64,7 +68,7 @@ const GiaoDichThanhToan: React.FC = () => {
             return;
         }
         GetListHoaDon();
-    }, [paramSearch.currentPage, paramSearch.pageSize]);
+    }, [paramSearch.currentPage, paramSearch.pageSize, paramSearch.fromDate, paramSearch.toDate]);
 
     const handleKeyDownTextSearch = (event: any) => {
         console.log(22);
@@ -125,7 +129,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>{moment(params.value).format('DD/MM/YYYY HH:mm')}</Box>
+                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
             )
         },
         {
@@ -325,16 +329,19 @@ const GiaoDichThanhToan: React.FC = () => {
                                 height: '40px'
                             }
                         }}>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderColor: '#CDC9CD!important',
-                                bgcolor: '#fff!important',
-                                color: '#333233',
-                                fontSize: '14px'
-                            }}>
-                            30 tháng 6, 2023 - 30 tháng 6, 2023{' '}
-                        </Button>
+                        <DatePickerCustom
+                            defaultVal={paramSearch.fromDate}
+                            handleChangeDate={(newVal: string) =>
+                                setParamSearch({ ...paramSearch, fromDate: newVal })
+                            }
+                        />
+                        <DatePickerCustom
+                            defaultVal={paramSearch.toDate}
+                            handleChangeDate={(newVal: string) =>
+                                setParamSearch({ ...paramSearch, toDate: newVal })
+                            }
+                        />
+
                         <Button
                             variant="outlined"
                             startIcon={<UploadIcon />}

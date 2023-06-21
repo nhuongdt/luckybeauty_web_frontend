@@ -27,7 +27,6 @@ class HoaDonService {
     };
     GetListHoaDon = async (input: HoaDonRequestDto): Promise<PagedResultDto<PageHoaDonDto>> => {
         const result = await http.post('api/services/app/HoaDon/GetListHoaDon', input);
-        console.log('GetListHoaDon ', result);
         return result.data.result;
     };
 }

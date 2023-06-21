@@ -24,8 +24,8 @@ export class ParamSearchDto {
 }
 
 export class RequestFromToDto extends ParamSearchDto {
-    fromDate? = null;
-    toDate? = null;
+    fromDate?: string | null = null;
+    toDate?: string | null = null;
 
     constructor({
         idChiNhanhs = [],
