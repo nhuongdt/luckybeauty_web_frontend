@@ -32,6 +32,25 @@ export interface ICreateOrEditUserProps {
 }
 
 class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
+    state = {
+        avatarFile: ''
+    };
+    onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const avatar = {
+                    fileBase64: reader.result?.toString().split(',')[1],
+                    fileName: file.name,
+                    fileType: file.type
+                };
+                this.props.formRef.avatarFile = avatar;
+                this.setState({ avatarFile: reader.result?.toString() });
+            };
+        }
+    };
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef, suggestChucVu } = this.props;
         const initValues: CreateOrUpdateNhanSuDto = formRef;
@@ -235,11 +254,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             position="relative"
                                             paddingTop="5.0403vh"
                                             style={{ textAlign: 'center', borderColor: '#FFFAFF' }}>
-                                            <img src={fileIcon} />
+                                            <img src={this.state.avatarFile} />
                                             <TextField
+                                                onChange={this.onSelectAvatarFile}
                                                 type="file"
                                                 id="input-file"
-                                                name="avatar"
+                                                name="avatarFile"
                                                 sx={{
                                                     position: 'absolute',
                                                     top: '0',

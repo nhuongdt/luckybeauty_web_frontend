@@ -62,7 +62,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Login',
                     iconActive: null,
                     icon: '',
-                    component: LoadableComponent(() => import('../../pages/login')),
+                    component: LoadableComponent(() => import('../../pages/account/login')),
                     isLayout: true,
                     showInMenu: false
                 },
@@ -74,7 +74,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Login',
                     iconActive: null,
                     icon: '',
-                    component: LoadableComponent(() => import('../../pages/login')),
+                    component: LoadableComponent(() => import('../../pages/account/login')),
                     isLayout: true,
                     showInMenu: false
                 },
@@ -86,7 +86,7 @@ export const appRouters: AppRouteProps = {
                     title: 'Register',
                     iconActive: null,
                     icon: null,
-                    component: LoadableComponent(() => import('../../pages/register')),
+                    component: LoadableComponent(() => import('../../pages/account/register')),
                     isLayout: true,
                     showInMenu: false
                 },
@@ -98,7 +98,9 @@ export const appRouters: AppRouteProps = {
                     title: 'Forgot password',
                     icon: null,
                     iconActive: null,
-                    component: LoadableComponent(() => import('../../pages/Forgot_password')),
+                    component: LoadableComponent(
+                        () => import('../../pages/account/Forgot_password')
+                    ),
                     isLayout: true,
                     showInMenu: false
                 },
@@ -135,7 +137,7 @@ export const appRouters: AppRouteProps = {
                 {
                     path: '/lich-hens',
                     name: 'lich hen',
-                    permission: '',
+                    permission: 'Pages.Booking',
                     title: 'Lịch hẹn',
                     icon: <CalendarIcon2 width="20px" />,
                     children: [],
@@ -161,7 +163,7 @@ export const appRouters: AppRouteProps = {
                             iconActive: null,
                             children: [],
 
-                            showInMenu: false,
+                            showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/main_page_ban_hang')
@@ -169,13 +171,13 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/giao-dich-thanh-toan',
-                            permission: '',
+                            permission: 'Pages.QuyHoaDon',
                             title: 'Giao dịch thanh toán',
                             name: 'giaoDichThanhToan',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
                             children: [],
-                            showInMenu: false,
+                            showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Giao_dich_thanh_toan')
@@ -183,13 +185,13 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/hoa-don',
-                            permission: '',
+                            permission: 'Pages.HoaDon',
                             title: 'Hoá đơn',
                             name: 'HoaDon',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
                             children: [],
-                            showInMenu: false,
+                            showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Hoa_don')
@@ -202,7 +204,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: '/khach-hangs',
-                    permission: '',
+                    permission: 'Pages.KhachHang',
                     title: 'Khách hàng',
                     name: 'khachhang',
                     icon: <ClientIcon width="20px" />,
@@ -236,7 +238,7 @@ export const appRouters: AppRouteProps = {
                     children: [
                         {
                             path: '/nhan-viens',
-                            permission: '',
+                            permission: 'Pages.NhanSu',
                             title: 'Quản lý nhân viên',
                             name: 'nhanvien',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -248,7 +250,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/nghi-le-nhan-viens',
-                            permission: '',
+                            permission: 'Pages.NhanSu_NgayNghiLe',
                             title: 'Thời gian nghỉ',
                             name: 'nhanvien',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -262,7 +264,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/lich-lam-viec',
-                            permission: '',
+                            permission: 'Pages.NhanSu_TimeOff',
                             title: 'Lịch làm việc',
                             name: 'lichlamviec',
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -309,7 +311,7 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/user'))
+                            component: LoadableComponent(() => import('../../pages/admin/user'))
                         },
                         {
                             path: '/roles',
@@ -321,7 +323,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(() => import('../../pages/role'))
+                            component: LoadableComponent(() => import('../../pages/admin/role'))
                         },
                         {
                             path: '/tenants',
@@ -334,7 +336,9 @@ export const appRouters: AppRouteProps = {
                             children: [],
 
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/tenant/index'))
+                            component: LoadableComponent(
+                                () => import('../../pages/admin/tenant/index')
+                            )
                         }
                     ],
                     component: null
@@ -349,7 +353,34 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/settings/indexNew'))
+                    component: LoadableComponent(
+                        () => import('../../pages/admin/settings/indexNew')
+                    )
+                },
+                {
+                    path: '/account',
+                    permission: '',
+                    title: 'Profile',
+                    name: 'profile',
+                    icon: null,
+                    iconActive: null,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [
+                        {
+                            path: '/profile',
+                            permission: 'Pages',
+                            title: 'Profile',
+                            name: 'profile',
+                            icon: null,
+                            iconActive: null,
+                            showInMenu: false,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/employee'))
+                        }
+                    ],
+                    component: null
                 }
             ]
         }

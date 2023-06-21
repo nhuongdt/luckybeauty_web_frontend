@@ -47,7 +47,7 @@ interface ICreateOrEditRoleState {
 }
 class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
     state = {
-        selectedPermissions: this.props.formRef.grantedPermissionNames,
+        selectedPermissions: this.props.formRef.grantedPermissions ?? ['Pages'],
         expandedPermissions: ['Pages'],
         tabIndex: '1'
     };
@@ -55,7 +55,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         const defaultExpand = this.getDefaultExpandPermission(this.props.permissionTree);
         this.setState({
             tabIndex: newValue,
-            selectedPermissions: this.props.formRef.grantedPermissionNames,
+            selectedPermissions: this.props.formRef.grantedPermissions ?? ['Pages'],
             expandedPermissions: defaultExpand
         });
     };
@@ -71,9 +71,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         return defaultExpand;
     };
     handleSubmit = async (values: CreateOrEditRoleDto) => {
+        const permission = this.state.selectedPermissions.filter((x) => x != '');
+        alert(JSON.stringify(permission));
         const createOrEdit = await roleService.createOrEdit({
             ...values,
-            grantedPermissionNames: this.state.selectedPermissions
+            grantedPermissions: permission
         });
         createOrEdit != null
             ? values.id === 0
@@ -112,7 +114,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
     addPermission = (selectedPermissions: string[], node: PermissionTree) => {
         if (selectedPermissions.indexOf(node.name) === -1) {
             selectedPermissions.push(node.name);
-            if (selectedPermissions.includes(node.parentNode) == false) {
+            if (selectedPermissions?.includes(node.parentNode) == false) {
                 selectedPermissions.push(node.parentNode);
             }
         }
@@ -147,7 +149,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         return nodes.map((node) => {
             const hasChildren = node.children && node.children.length > 0;
             const isItemCollapsed =
-                isCollapsed || !this.state.expandedPermissions.includes(node.name);
+                isCollapsed || !this.state.expandedPermissions?.includes(node.name);
 
             return (
                 <ListItem key={node.name} disablePadding>
@@ -167,7 +169,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         )}
                         <Checkbox
                             onChange={(e) => this.handleCheck(e, node)}
-                            checked={this.state.selectedPermissions.includes(node.name)}
+                            checked={this.state.selectedPermissions?.includes(node.name)}
                         />
                         <>
                             {node.children !== null && node.children.length > 0 ? (
@@ -211,7 +213,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             description: formRef.description,
             displayName: formRef.displayName,
             name: formRef.name,
-            grantedPermissionNames: formRef.grantedPermissionNames,
+            grantedPermissions: formRef.grantedPermissions,
             id: formRef.id
         };
         return (

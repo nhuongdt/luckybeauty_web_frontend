@@ -18,7 +18,7 @@ import '../../custom.css';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
-import CreateOrEditRoleModal from './components/create-or-edit-role-test';
+import CreateOrEditRoleModal from './components/create-or-edit-role';
 import { PermissionTree } from '../../services/role/dto/permissionTree';
 import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto';
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
@@ -60,7 +60,7 @@ class RoleScreen extends React.Component<IRoleProps> {
             description: '',
             displayName: '',
             name: '',
-            grantedPermissionNames: [],
+            grantedPermissions: [],
             id: 0
         } as CreateOrEditRoleDto,
         currentPage: 1,
