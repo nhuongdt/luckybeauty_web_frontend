@@ -9,6 +9,7 @@ import {
     FormLabel,
     Grid,
     TextField,
+    Box,
     TextFieldProps
 } from '@mui/material';
 import { BsX } from 'react-icons/bs';
@@ -60,15 +61,22 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <div className="row">
-                        <div className="col-8" style={{ float: 'left' }}>
+                        <Box className="col-8" sx={{ float: 'left' }}>
                             {title}
-                        </div>
-                        <div className="col-4" style={{ float: 'right' }}>
+                        </Box>
+                        <Box
+                            className="col-4"
+                            sx={{
+                                float: 'right',
+                                '& svg:hover': {
+                                    filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                                }
+                            }}>
                             <CloseIcon
                                 style={{ float: 'right', height: '24px', cursor: 'pointer' }}
                                 onClick={onCancel}
                             />
-                        </div>
+                        </Box>
                     </div>
                 </DialogTitle>
                 <DialogContent>
@@ -128,18 +136,18 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         sx={{ bgcolor: '#7C3367!important' }}
                                         variant="contained"
                                         type="submit"
-                                        className="btn-ok-dialog">
+                                        className="btn-ok-dialog btn-container-hover">
                                         Lưu
                                     </Button>
                                     <Button
                                         sx={{
-                                            borderColor: '#965C85!important',
-                                            color: '#965C85!important'
+                                            color: '#965C85!important',
+                                            bgcolor: '#fff!important'
                                         }}
                                         variant="outlined"
                                         type="button"
                                         onClick={onCancel}
-                                        className="btn-cancel-dialog">
+                                        className="btn-cancel-dialog btn-outline-hover">
                                         Hủy
                                     </Button>
                                 </DialogActions>

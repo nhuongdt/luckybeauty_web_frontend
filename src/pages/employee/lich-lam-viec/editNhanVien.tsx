@@ -24,7 +24,14 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Typography fontSize="24px" color="#4C4B4C" fontWeight="700" variant="h2">
                         Hà Đinh
                     </Typography>
-                    <Button sx={{ minWidth: 'unset' }} onClick={onClose}>
+                    <Button
+                        sx={{
+                            minWidth: 'unset',
+                            '&:hover svg': {
+                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                            }
+                        }}
+                        onClick={onClose}>
                         <CloseIcon />
                     </Button>
                 </Box>
@@ -52,7 +59,14 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                         <TextField id="endTime" defaultValue="20:00" size="small" fullWidth />
                     </Grid>
                     <Grid item xs={1} sx={{ p: '0!important', display: 'flex' }}>
-                        <Button sx={{ mt: 'auto', minWidth: 'unset!important' }}>
+                        <Button
+                            sx={{
+                                mt: 'auto',
+                                minWidth: 'unset!important',
+                                '&:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                }
+                            }}>
                             <DeleteIcon />
                         </Button>
                     </Grid>
@@ -60,7 +74,14 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                 <Box sx={{ '& button': { minWidth: 'unset' }, marginTop: '16px' }}>
                     <Button
                         variant="outlined"
-                        sx={{ paddingX: '5px', borderColor: '#965C85!important' }}>
+                        sx={{
+                            paddingX: '5px',
+                            borderColor: '#965C85!important',
+                            transition: '.4s',
+                            '&:hover': {
+                                transform: 'rotate(90deg)'
+                            }
+                        }}>
                         <AddIcon sx={{ color: '#4C4B4C' }} />
                     </Button>
                     <Button
@@ -88,13 +109,15 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Button
                         onClick={onClose}
                         variant="contained"
-                        sx={{ bgcolor: '#7C3367!important' }}>
+                        sx={{ bgcolor: '#7C3367' }}
+                        className="btn-container-hover">
                         Lưu
                     </Button>
                     <Button
                         onClick={onClose}
                         variant="outlined"
-                        sx={{ borderColor: '#965C85!important', color: '#965C85!important' }}>
+                        sx={{ color: '#965C85!important', bgcolor: '#fff!important' }}
+                        className="btn-outline-hover">
                         Hủy{' '}
                     </Button>
                 </Box>

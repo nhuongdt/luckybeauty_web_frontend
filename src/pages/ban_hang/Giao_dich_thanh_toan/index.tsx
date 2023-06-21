@@ -350,7 +350,8 @@ const GiaoDichThanhToan: React.FC = () => {
                                 bgcolor: '#fff!important',
                                 color: '#333233',
                                 fontSize: '14px'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Xuất{' '}
                         </Button>
                         <Button
@@ -360,7 +361,8 @@ const GiaoDichThanhToan: React.FC = () => {
                                 bgcolor: '#7C3367!important',
                                 color: '#fff',
                                 fontSize: '14px'
-                            }}>
+                            }}
+                            className="btn-container-hover">
                             Bộ lọc{' '}
                         </Button>
                     </Box>

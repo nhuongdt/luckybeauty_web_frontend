@@ -84,13 +84,19 @@ const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Button
                         onClick={onClose}
                         variant="contained"
-                        sx={{ bgcolor: '#F1416C!important' }}>
+                        sx={{
+                            bgcolor: '#F1416C',
+                            '&:hover': {
+                                bgcolor: 'red'
+                            }
+                        }}>
                         Đồng ý
                     </Button>
                     <Button
                         onClick={onClose}
                         variant="outlined"
-                        sx={{ borderColor: '#E6E1E6!important', color: '#666466!important' }}>
+                        sx={{ borderColor: '#E6E1E6', color: '#666466!important' }}
+                        className="btn-outline-hover">
                         Huỷ
                     </Button>
                 </Box>

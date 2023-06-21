@@ -32,6 +32,25 @@ export interface ICreateOrEditUserProps {
 }
 
 class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
+    state = {
+        avatarFile: ''
+    };
+    onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const avatar = {
+                    fileBase64: reader.result?.toString().split(',')[1],
+                    fileName: file.name,
+                    fileType: file.type
+                };
+                this.props.formRef.avatarFile = avatar;
+                this.setState({ avatarFile: reader.result?.toString() });
+            };
+        }
+    };
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef, suggestChucVu } = this.props;
         const initValues: CreateOrUpdateNhanSuDto = formRef;
@@ -235,11 +254,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             position="relative"
                                             paddingTop="5.0403vh"
                                             style={{ textAlign: 'center', borderColor: '#FFFAFF' }}>
-                                            <img src={fileIcon} />
+                                            <img src={this.state.avatarFile} />
                                             <TextField
+                                                onChange={this.onSelectAvatarFile}
                                                 type="file"
                                                 id="input-file"
-                                                name="avatar"
+                                                name="avatarFile"
                                                 sx={{
                                                     position: 'absolute',
                                                     top: '0',
@@ -290,9 +310,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 color: '#fff',
-                                                backgroundColor: '#B085A4',
+                                                backgroundColor: '#7C3367',
                                                 border: 'none'
-                                            }}>
+                                            }}
+                                            className="btn-container-hover">
                                             Lưu
                                         </Button>
                                         <Button
@@ -301,9 +322,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
-                                                color: '#965C85',
-                                                borderColor: '#965C85'
-                                            }}>
+                                                color: '#965C85'
+                                            }}
+                                            className="btn-outline-hover">
                                             Hủy
                                         </Button>
                                     </ButtonGroup>
@@ -320,7 +341,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         right: '28px',
                         padding: '0',
                         maxWidth: '24px',
-                        minWidth: '0'
+                        minWidth: '0',
+                        '&:hover img': {
+                            filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                        }
                     }}>
                     <img src={closeIcon} />
                 </Button>

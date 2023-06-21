@@ -40,7 +40,12 @@ const CustomEmployee: React.FC<DialogComponentProps> = ({
                 flexDirection: 'column',
                 gap: '10px'
             }}>
-            <Box>
+            <Box
+                sx={{
+                    '& li:hover': {
+                        color: '#7C3367'
+                    }
+                }}>
                 <MenuItem onClick={handleOpenDialog}>Thêm ca làm việc thường xuyên</MenuItem>
                 <MenuItem onClick={undefined}>Xóa nhân viên khỏi lịch làm việc</MenuItem>
                 <MenuItem onClick={handleOpenDelete}>Xóa tất cả ca làm việc</MenuItem>

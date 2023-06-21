@@ -223,7 +223,15 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     {isNew ? 'Thêm' : 'Cập nhật'} {groupProduct.sLoaiNhomHang}
                 </DialogTitle>
                 <Button
-                    sx={{ minWidth: 'unset', position: 'absolute', top: '30px', right: '30px' }}
+                    sx={{
+                        minWidth: 'unset',
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        '&:hover svg': {
+                            filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                        }
+                    }}
                     onClick={() => setIsShow(false)}>
                     <CloseIcon />
                 </Button>
@@ -252,6 +260,12 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                                             x.laNhomHangHoa === event.target.checked
                                                     )
                                                 );
+                                            }}
+                                            sx={{
+                                                color: '#7C3367',
+                                                '&.Mui-checked': {
+                                                    color: '#7C3367'
+                                                }
                                             }}
                                         />
                                     }
@@ -300,9 +314,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 getOptionLabel={(option: any) =>
                                     option.tenNhomHang ? option.tenNhomHang : ''
                                 }
-                                renderInput={(params) => (
-                                    <TextField {...params} label="Chọn nhóm" />
-                                )}
+                                renderInput={(params) => <TextField {...params} />}
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
@@ -346,10 +358,10 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <Button
                         variant="outlined"
                         sx={{
-                            borderColor: '#7C3367!important',
                             color: '#965C85'
                         }}
-                        onClick={() => setIsShow(false)}>
+                        onClick={() => setIsShow(false)}
+                        className="btn-outline-hover">
                         Hủy
                     </Button>
                     <Button
@@ -371,7 +383,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <Button
                         variant="contained"
                         sx={{ bgcolor: '#7C3367!important' }}
-                        onClick={saveNhomHangHoa}>
+                        onClick={saveNhomHangHoa}
+                        className="btn-container-hover">
                         Lưu
                     </Button>
                 </DialogActions>

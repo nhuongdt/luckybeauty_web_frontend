@@ -31,10 +31,12 @@ import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import './employee.css';
 import { enqueueSnackbar } from 'notistack';
+import nhanVienStore from '../../stores/nhanVienStore';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
         idChiNhanh: '',
+        avatarFile: '',
         modalVisible: false,
         maxResultCount: 10,
         skipCount: 0,
@@ -86,7 +88,7 @@ class EmployeeScreen extends React.Component {
             sortType: 'desc',
             idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
         });
-        await this.setState({
+        this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
             totalCount: NhanVienStore.listNhanVien.totalCount
         });
@@ -185,6 +187,7 @@ class EmployeeScreen extends React.Component {
             idNhanSu: ''
         });
     };
+
     columns: GridColDef[] = [
         {
             field: 'tenNhanVien',
@@ -448,6 +451,7 @@ class EmployeeScreen extends React.Component {
 
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
+                            variant="outlined"
                             size="small"
                             startIcon={<img src={DownloadIcon} />}
                             sx={{
@@ -457,12 +461,14 @@ class EmployeeScreen extends React.Component {
                                 color: '#666466',
                                 height: '40px',
                                 padding: '10px 16px',
-                                marginRight: '8px',
+
                                 borderRadius: '4px!important'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Nhập
                         </Button>
                         <Button
+                            variant="outlined"
                             size="small"
                             startIcon={<img src={UploadIcon} />}
                             sx={{
@@ -473,7 +479,8 @@ class EmployeeScreen extends React.Component {
                                 padding: '10px 16px',
                                 height: '40px',
                                 borderRadius: '4px!important'
-                            }}>
+                            }}
+                            className="btn-outline-hover">
                             Xuất
                         </Button>
                         <ButtonGroup
@@ -493,7 +500,8 @@ class EmployeeScreen extends React.Component {
                                     fontSize: '14px',
                                     borderRadius: '4px!important',
                                     backgroundColor: '#7C3367!important'
-                                }}>
+                                }}
+                                className="btn-container-hover">
                                 Thêm nhân viên
                             </Button>
                         </ButtonGroup>
@@ -581,7 +589,7 @@ class EmployeeScreen extends React.Component {
                             : 'Cập nhật thông tin nhân viên'
                     }
                     suggestChucVu={this.state.suggestChucVu}
-                    formRef={this.state.createOrEditNhanSu}></CreateOrEditNhanVienDialog>
+                    formRef={nhanVienStore.createEditNhanVien}></CreateOrEditNhanVienDialog>
             </Box>
         );
     }

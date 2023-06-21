@@ -207,7 +207,7 @@ const Calendar: React.FC = () => {
                     sx={{
                         '& button:not(.btn-to-day)': {
                             minWidth: 'unset',
-                            borderColor: '#E6E1E6!important',
+                            borderColor: '#E6E1E6',
                             bgcolor: '#fff!important',
                             px: '7px!important'
                         },
@@ -216,7 +216,7 @@ const Calendar: React.FC = () => {
                         },
                         alignItems: 'center'
                     }}>
-                    <Button variant="outlined" sx={{ mr: '16px' }}>
+                    <Button variant="outlined" sx={{ mr: '16px' }} className="btn-outline-hover">
                         <ChevronLeftIcon />
                     </Button>
                     <Button
@@ -237,7 +237,7 @@ const Calendar: React.FC = () => {
                     <Typography variant="h3" color="#333233" fontSize="16px" fontWeight="700">
                         Thứ 2, 27 tháng 3, 2023
                     </Typography>
-                    <Button variant="outlined" sx={{ ml: '16px' }}>
+                    <Button variant="outlined" sx={{ ml: '16px' }} className="btn-outline-hover">
                         <ChevronRightIcon />
                     </Button>
                 </Box>
@@ -252,10 +252,10 @@ const Calendar: React.FC = () => {
                                 borderColor: '#E6E1E6!important'
                             }
                         }}>
-                        <Button>
+                        <Button className="btn-outline-hover" sx={{ mr: '1px' }}>
                             <CalendarIcon />
                         </Button>
-                        <Button>
+                        <Button className="btn-outline-hover">
                             <ListIcon />
                         </Button>
                     </ButtonGroup>
@@ -348,7 +348,13 @@ const Calendar: React.FC = () => {
                                         <Button
                                             onClick={handleOpenCustom}
                                             variant="text"
-                                            sx={{ minWidth: 'unset', ml: 'auto' }}>
+                                            sx={{
+                                                minWidth: 'unset',
+                                                ml: 'auto',
+                                                '&:hover svg': {
+                                                    filter: 'brightness(0) saturate(100%) invert(23%) sepia(23%) saturate(1797%) hue-rotate(267deg) brightness(103%) contrast(88%)'
+                                                }
+                                            }}>
                                             <EditIcon />
                                         </Button>
                                     </Box>

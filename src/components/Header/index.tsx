@@ -29,6 +29,7 @@ import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhD
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
+import PortraitOutlinedIcon from '@mui/icons-material/PortraitOutlined';
 import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
 interface HeaderProps {
     collapsed: boolean;
@@ -75,11 +76,16 @@ const Header: React.FC<HeaderProps> = (
         const getChiNhanhs = async () => {
             const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
             setListChiNhanh(listChiNhanh);
-            setCurrentChiNhanh(listChiNhanh[0].id);
-            const remember = Cookies.get('remember');
-            Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
-                expires: remember === 'true' ? 1 : undefined
-            });
+            if (Cookies.get('IdChiNhanh') === undefined || Cookies.get('IdChiNhanh') === '') {
+                setCurrentChiNhanh(listChiNhanh[0].id);
+                const remember = Cookies.get('remember');
+                Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
+                    expires: remember === 'true' ? 1 : undefined
+                });
+            } else {
+                const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
+                setCurrentChiNhanh(idChiNhanh);
+            }
         };
         getChiNhanhs();
     }, []);
@@ -212,6 +218,7 @@ const Header: React.FC<HeaderProps> = (
                             <MenuItem onClick={handleClose}>
                                 <Link
                                     to="/login"
+                                    style={{ textDecoration: 'none', listStyle: 'none' }}
                                     onClick={() => {
                                         Object.keys(Cookies.get()).forEach((cookieName) => {
                                             Cookies.remove(cookieName);
@@ -219,6 +226,14 @@ const Header: React.FC<HeaderProps> = (
                                     }}>
                                     <LogoutIcon />
                                     <span> Logout </span>
+                                </Link>
+                            </MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <Link
+                                    to="/profile"
+                                    style={{ textDecoration: 'none', listStyle: 'none' }}>
+                                    <PortraitOutlinedIcon />
+                                    <span> Profile </span>
                                 </Link>
                             </MenuItem>
                         </Menu>
