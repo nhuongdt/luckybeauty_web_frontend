@@ -1,15 +1,109 @@
-import React from 'react';
-import { Box, Typography, Grid, TextField, IconButton, Button } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    Box,
+    Typography,
+    Grid,
+    TextField,
+    IconButton,
+    Button,
+    SelectChangeEvent
+} from '@mui/material';
 import SearchIcon from '../../../images/search-normal.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
+import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+
+import Utils from '../../../utils/utils'; // func common.
+import { format, lastDayOfMonth } from 'date-fns';
+
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
+import HoaDonService from '../../../services/ban_hang/HoaDonService';
+import { PagedResultDto } from '../../../services/dto/pagedResultDto';
+
 const GiaoDichThanhToan: React.FC = () => {
+    const today = new Date();
+    const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
+        textSearch: '',
+        currentPage: 1,
+        pageSize: 5,
+        columnSort: 'NgayLapHoaDon',
+        typeSort: 'DESC',
+        fromDate: format(today, 'yyyy-MM-01'),
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
+    });
+
+    const [pageDataHoaDon, setPageDataHoaDon] = useState<PagedResultDto<PageHoaDonDto>>({
+        totalCount: 0,
+        totalPage: 0,
+        items: []
+    });
+
+    const firstLoad = useRef(true);
+
+    const GetListHoaDon = async () => {
+        const data = await HoaDonService.GetListHoaDon(paramSearch);
+        setPageDataHoaDon({
+            totalCount: data.totalCount,
+            totalPage: Utils.getTotalPage(data.totalCount, paramSearch.pageSize),
+            items: data.items
+        });
+    };
+
+    const PageLoad = () => {
+        GetListHoaDon();
+    };
+
+    useEffect(() => {
+        PageLoad();
+    }, []);
+
+    useEffect(() => {
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
+        }
+        GetListHoaDon();
+    }, [paramSearch.currentPage, paramSearch.pageSize, paramSearch.fromDate, paramSearch.toDate]);
+
+    const handleKeyDownTextSearch = (event: any) => {
+        console.log(22);
+        if (event.keyCode === 13) {
+            hanClickIconSearch();
+        }
+    };
+
+    const hanClickIconSearch = () => {
+        if (paramSearch.currentPage !== 1) {
+            setParamSearch({
+                ...paramSearch,
+                currentPage: 1
+            });
+        } else {
+            GetListHoaDon();
+        }
+    };
+
+    const handleChangePage = (event: any, value: number) => {
+        setParamSearch({
+            ...paramSearch,
+            currentPage: value
+        });
+    };
+    const handlePerPageChange = (event: SelectChangeEvent<number>) => {
+        setParamSearch({
+            ...paramSearch,
+            pageSize: parseInt(event.target.value.toString(), 10)
+        });
+    };
+
     const columns: GridColDef[] = [
         {
-            field: 'id',
+            field: 'maHoaDon',
             headerName: 'Mã hóa đơn',
             minWidth: 100,
             flex: 1,
@@ -22,8 +116,10 @@ const GiaoDichThanhToan: React.FC = () => {
             renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
         },
         {
-            field: 'ngayBan',
+            field: 'ngayLapHoaDon',
             headerName: 'Ngày bán',
+            headerAlign: 'center',
+            align: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -32,7 +128,9 @@ const GiaoDichThanhToan: React.FC = () => {
                     <IconSorting />{' '}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
+            )
         },
         {
             field: 'tenKhachHang',
@@ -50,6 +148,8 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -58,11 +158,17 @@ const GiaoDichThanhToan: React.FC = () => {
                     <IconSorting />{' '}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'tongGiamGia',
+            field: 'tongGiamGiaHD',
             headerName: 'Tổng giảm giá',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -71,11 +177,18 @@ const GiaoDichThanhToan: React.FC = () => {
                     <IconSorting />{' '}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>
+                    {' '}
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'tongPhaiTra',
+            field: 'tongThanhToan',
             headerName: 'Tổng phải trả',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -84,11 +197,18 @@ const GiaoDichThanhToan: React.FC = () => {
                     <IconSorting />{' '}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>
+                    {' '}
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'khachDaTra',
+            field: 'daThanhToan',
             headerName: 'Khách đã trả',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -97,11 +217,18 @@ const GiaoDichThanhToan: React.FC = () => {
                     <IconSorting />{' '}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>
+                    {' '}
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
             field: 'conNo',
             headerName: 'Còn nợ',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -110,10 +237,15 @@ const GiaoDichThanhToan: React.FC = () => {
                     <IconSorting />{' '}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>
+                    {' '}
+                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                </Box>
+            )
         },
         {
-            field: 'trangThai',
+            field: 'txtTrangThaiHD',
             headerName: 'Trạng thái',
             minWidth: 118,
             flex: 1,
@@ -130,15 +262,15 @@ const GiaoDichThanhToan: React.FC = () => {
                         padding: '4px 8px',
                         borderRadius: '100px',
                         backgroundColor:
-                            params.value === 'Hoàn thành'
+                            params.row.trangThai === 3
                                 ? '#E8FFF3'
-                                : params.value === 'Chưa thanh toán'
+                                : params.row.trangThai === 1
                                 ? '#FFF8DD'
                                 : '#FFF5F8',
                         color:
-                            params.value === 'Hoàn thành'
+                            params.row.trangThai === 3
                                 ? '#50CD89'
-                                : params.value === 'Chưa thanh toán'
+                                : params.row.trangThai === 1
                                 ? '#FF9900'
                                 : '#F1416C'
                     }}
@@ -148,41 +280,7 @@ const GiaoDichThanhToan: React.FC = () => {
             )
         }
     ];
-    const rows = [
-        {
-            id: 'y68765gfghfnbgf,mjhg',
-            ngayBan: '21/01/2004',
-            tenKhachHang: 'Đinh Tuấn Tài',
-            tongTienHang: '100.000đ',
-            tongGiamGia: '300đ',
-            tongPhaiTra: '150.000đ',
-            khachDaTra: '300.000đ',
-            conNo: '2.000.000đ',
-            trangThai: 'Hoàn thành'
-        },
-        {
-            id: '09bnmbmnb',
-            ngayBan: '21/01/2004',
-            tenKhachHang: 'Đinh Tuấn Tài1',
-            tongTienHang: '100.000đ',
-            tongGiamGia: '300đ',
-            tongPhaiTra: '150.000đ',
-            khachDaTra: '300.000đ',
-            conNo: '2.000.000đ',
-            trangThai: 'Chưa thanh toán'
-        },
-        {
-            id: 'y68765gfghfnblkl',
-            ngayBan: '21/01/2004',
-            tenKhachHang: 'Đinh Tuấn Tài1',
-            tongTienHang: '100.000đ',
-            tongGiamGia: '300đ',
-            tongPhaiTra: '150.000đ',
-            khachDaTra: '300.000đ',
-            conNo: '2.000.000đ',
-            trangThai: 'Hủy'
-        }
-    ];
+
     return (
         <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
             <Grid container justifyContent="space-between">
@@ -208,6 +306,17 @@ const GiaoDichThanhToan: React.FC = () => {
                                     </IconButton>
                                 )
                             }}
+                            onChange={(event) =>
+                                setParamSearch((itemOlds: any) => {
+                                    return {
+                                        ...itemOlds,
+                                        textSearch: event.target.value
+                                    };
+                                })
+                            }
+                            onKeyDown={(event) => {
+                                handleKeyDownTextSearch(event);
+                            }}
                         />
                     </Box>
                 </Grid>
@@ -220,16 +329,19 @@ const GiaoDichThanhToan: React.FC = () => {
                                 height: '40px'
                             }
                         }}>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderColor: '#CDC9CD!important',
-                                bgcolor: '#fff!important',
-                                color: '#333233',
-                                fontSize: '14px'
-                            }}>
-                            30 tháng 6, 2023 - 30 tháng 6, 2023{' '}
-                        </Button>
+                        <DatePickerCustom
+                            defaultVal={paramSearch.fromDate}
+                            handleChangeDate={(newVal: string) =>
+                                setParamSearch({ ...paramSearch, fromDate: newVal })
+                            }
+                        />
+                        <DatePickerCustom
+                            defaultVal={paramSearch.toDate}
+                            handleChangeDate={(newVal: string) =>
+                                setParamSearch({ ...paramSearch, toDate: newVal })
+                            }
+                        />
+
                         <Button
                             variant="outlined"
                             startIcon={<UploadIcon />}
@@ -258,13 +370,10 @@ const GiaoDichThanhToan: React.FC = () => {
             </Grid>
             <Box marginTop="16px">
                 <DataGrid
+                    autoHeight
                     columns={columns}
-                    rows={rows}
-                    initialState={{
-                        pagination: {
-                            paginationModel: { page: 5, pageSize: 10 }
-                        }
-                    }}
+                    rows={pageDataHoaDon.items}
+                    hideFooter
                     pageSizeOptions={[10, 20]}
                     checkboxSelection
                     sx={{
@@ -316,6 +425,14 @@ const GiaoDichThanhToan: React.FC = () => {
                             }
                     }}
                     localeText={TextTranslate}
+                />
+                <CustomTablePagination
+                    currentPage={paramSearch.currentPage ?? 1}
+                    rowPerPage={paramSearch.pageSize ?? 10}
+                    totalRecord={pageDataHoaDon.totalCount}
+                    totalPage={pageDataHoaDon.totalPage}
+                    handlePerPageChange={handlePerPageChange}
+                    handlePageChange={handleChangePage}
                 />
             </Box>
         </Box>

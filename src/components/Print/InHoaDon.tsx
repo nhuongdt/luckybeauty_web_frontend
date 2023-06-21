@@ -1,7 +1,7 @@
 import * as React from 'react';
 import utils from '../../utils/utils';
 import { PropToChildMauIn } from '../../utils/PropParentToChild';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 interface InHoaDonProp {
     props?: PropToChildMauIn;
@@ -26,7 +26,7 @@ export function InHoaDon({ props }: any) {
         str = str.replace('{MaHoaDon}', `${props.hoadon?.maHoaDon}`);
         str = str.replace(
             '{NgayBan}',
-            `${moment(props.hoadon?.ngayLapHoaDon).format('DD/MM/YYYY HH:mm')}`
+            `${format(new Date(props.hoadon?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}`
         );
         str = str.replace('{TongTienHang}', `${utils.formatNumber(props.hoadon?.tongTienHang)}`);
         str = str.replace('{DaThanhToan}', `${utils.formatNumber(props.hoadon?.tongTienHang)}`);

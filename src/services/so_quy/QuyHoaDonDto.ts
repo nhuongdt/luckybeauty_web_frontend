@@ -1,7 +1,6 @@
 import { Guid } from 'guid-typescript';
-import { truncate } from 'lodash';
 import QuyChiTietDto from './QuyChiTietDto';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 export default class QuyHoaDonDto {
     id = Guid.create().toString();
@@ -11,7 +10,7 @@ export default class QuyHoaDonDto {
     maHoaDon? = '';
     tienThu = 0;
     tongTienThu = 0;
-    ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS');
+    ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
     trangThai? = 1;
 
     noiDungThu? = '';
@@ -33,7 +32,7 @@ export default class QuyHoaDonDto {
         idLoaiChungTu = 11,
         maHoaDon = '',
         idNhanVien = null,
-        ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
+        ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
         tongTienThu = 0,
         noiDungThu = '',
         hachToanKinhDoanh = true,

@@ -1,15 +1,16 @@
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
-import moment from 'moment';
+import { format } from 'date-fns';
+
 export class KHCheckInDto {
     idKhachHang = '';
     idChiNhanh = '';
-    dateTimeCheckIn = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS');
+    dateTimeCheckIn = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
     ghiChu = '';
     constructor({
         idKhachHang = '',
         idChiNhanh = '',
-        dateTimeCheckIn = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS')
+        dateTimeCheckIn = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS')
     }) {
         this.idKhachHang = idKhachHang;
         this.idChiNhanh = idChiNhanh;
@@ -53,12 +54,10 @@ export class PageKhachHangCheckInDto {
         this.txtTrangThaiCheckIn = txtTrangThaiCheckIn;
     }
     get dateCheckIn() {
-        return moment(new Date(this.dateTimeCheckIn)).format('DD/MM/YYYY');
-        return utils.formatDatetoDDMMYYY(new Date(this.dateTimeCheckIn));
+        return format(new Date(this.dateTimeCheckIn), 'dd/MM/yyyy');
     }
     get timeCheckIn() {
-        return moment(new Date(this.dateTimeCheckIn)).format('hh:mm A');
-        return utils.formatDatetime_AMPM(new Date(this.dateTimeCheckIn));
+        return format(new Date(this.dateTimeCheckIn), 'hh:mm a');
     }
     get tenKhach_KiTuDau() {
         return utils.getFirstLetter(this.tenKhachHang);

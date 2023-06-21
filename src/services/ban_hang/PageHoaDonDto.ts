@@ -2,7 +2,7 @@ import { Guid } from 'guid-typescript';
 import { KhachHangItemDto } from '../khach-hang/dto/KhachHangItemDto';
 import HoaDonDto from './HoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
@@ -28,7 +28,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         maNhanVien = '',
         tenNhanVien = '',
         maHoaDon = '',
-        ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
+        ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
         tongTienHang = 0,
         daThanhToan = 0,
         tongTienThue = 0
