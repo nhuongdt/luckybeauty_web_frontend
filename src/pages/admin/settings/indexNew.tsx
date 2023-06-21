@@ -11,7 +11,7 @@ const SettingsNew: React.FC = () => {
         setActiveTab(newValue);
         switch (newValue) {
             case 1:
-                Cookies.set('tabSetting', '1');
+                Cookies.set('tabSetting', '1', { expires: 7 });
                 break;
             case 2:
                 Cookies.set('tabSetting', '2');
