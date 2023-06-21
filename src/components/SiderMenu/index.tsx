@@ -30,7 +30,8 @@ interface MenuItem {
 
 function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): MenuItem[] {
     const menu: MenuItem[] = [];
-    menuItems.forEach((item) => {
+    const routerMenu = menuItems.filter((x) => x.showInMenu === true);
+    routerMenu.forEach((item) => {
         // Check if item has permission to be added to menu
         if (listPermission.includes(item.permission) || item.permission === '') {
             const menuItem: MenuItem = {

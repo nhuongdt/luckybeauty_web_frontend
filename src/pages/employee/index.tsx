@@ -31,10 +31,12 @@ import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import './employee.css';
 import { enqueueSnackbar } from 'notistack';
+import nhanVienStore from '../../stores/nhanVienStore';
 class EmployeeScreen extends React.Component {
     state = {
         idNhanSu: '',
         idChiNhanh: '',
+        avatarFile: '',
         modalVisible: false,
         maxResultCount: 10,
         skipCount: 0,
@@ -185,6 +187,7 @@ class EmployeeScreen extends React.Component {
             idNhanSu: ''
         });
     };
+
     columns: GridColDef[] = [
         {
             field: 'tenNhanVien',
@@ -586,7 +589,7 @@ class EmployeeScreen extends React.Component {
                             : 'Cập nhật thông tin nhân viên'
                     }
                     suggestChucVu={this.state.suggestChucVu}
-                    formRef={this.state.createOrEditNhanSu}></CreateOrEditNhanVienDialog>
+                    formRef={nhanVienStore.createEditNhanVien}></CreateOrEditNhanVienDialog>
             </Box>
         );
     }

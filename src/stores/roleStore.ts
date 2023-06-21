@@ -23,7 +23,7 @@ class RoleStore {
     createOrEditRoleDto: CreateOrEditRoleDto = {
         description: '',
         displayName: '',
-        grantedPermissionNames: [],
+        grantedPermissions: [],
         id: 0,
         name: ''
     };
@@ -50,7 +50,7 @@ class RoleStore {
         this.createOrEditRoleDto = {
             description: '',
             displayName: '',
-            grantedPermissionNames: [],
+            grantedPermissions: [],
             id: 0,
             name: ''
         };

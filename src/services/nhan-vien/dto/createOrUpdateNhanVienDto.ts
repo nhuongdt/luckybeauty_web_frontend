@@ -1,3 +1,5 @@
+import { IAvatarFile } from '../../dto/AvatarFile';
+
 export interface CreateOrUpdateNhanSuDto {
     id: string;
     maNhanVien: string;
@@ -13,6 +15,7 @@ export interface CreateOrUpdateNhanSuDto {
     ngayCap?: string;
     noiCap?: string;
     avatar?: string;
+    avatarFile?: IAvatarFile;
     idChucVu: string;
     idChiNhanh?: string;
     ghiChu?: string;

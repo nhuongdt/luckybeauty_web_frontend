@@ -29,6 +29,7 @@ import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhD
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
+import PortraitOutlinedIcon from '@mui/icons-material/PortraitOutlined';
 import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
 interface HeaderProps {
     collapsed: boolean;
@@ -217,6 +218,7 @@ const Header: React.FC<HeaderProps> = (
                             <MenuItem onClick={handleClose}>
                                 <Link
                                     to="/login"
+                                    style={{ textDecoration: 'none', listStyle: 'none' }}
                                     onClick={() => {
                                         Object.keys(Cookies.get()).forEach((cookieName) => {
                                             Cookies.remove(cookieName);
@@ -224,6 +226,14 @@ const Header: React.FC<HeaderProps> = (
                                     }}>
                                     <LogoutIcon />
                                     <span> Logout </span>
+                                </Link>
+                            </MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <Link
+                                    to="/profile"
+                                    style={{ textDecoration: 'none', listStyle: 'none' }}>
+                                    <PortraitOutlinedIcon />
+                                    <span> Profile </span>
                                 </Link>
                             </MenuItem>
                         </Menu>
