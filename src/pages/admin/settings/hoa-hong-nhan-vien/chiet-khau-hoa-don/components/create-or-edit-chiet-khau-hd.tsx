@@ -19,12 +19,11 @@ import {
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CloseIcon from '@mui/icons-material/Close';
 import { Component, ReactNode } from 'react';
-import { CreateOrEditChietKhauHoaDonDto } from '../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
+import { CreateOrEditChietKhauHoaDonDto } from '../../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
 import { Form, Formik } from 'formik';
-import { values } from 'lodash';
-import chietKhauHoaDonStore from '../../../../../stores/chietKhauHoaDonStore';
+import chietKhauHoaDonStore from '../../../../../../stores/chietKhauHoaDonStore';
 import { enqueueSnackbar } from 'notistack';
-import AppConsts from '../../../../../lib/appconst';
+import AppConsts from '../../../../../../lib/appconst';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;

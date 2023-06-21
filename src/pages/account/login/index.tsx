@@ -11,11 +11,11 @@ import {
     IconButton
 } from '@mui/material';
 import './login.css';
-import LoginModel from '../../models/Login/loginModel';
-import LoginService from '../../services/login/loginService';
+import LoginModel from '../../../models/Login/loginModel';
+import LoginService from '../../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../images/Lucky_beauty.jpg';
+import logo from '../../../images/Lucky_beauty.jpg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { set } from 'lodash';

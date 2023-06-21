@@ -11,7 +11,6 @@ import RoleEditModel from '../models/Roles/roleEditModel';
 import type { UpdateRoleInput } from '../services/role/dto/updateRoleInput';
 import roleService from '../services/role/roleService';
 import { CreateOrEditRoleDto } from '../services/role/dto/createOrEditRoleDto';
-import role from '../pages/role';
 
 class RoleStore {
     roles!: PagedResultDto<GetAllRoleOutput>;

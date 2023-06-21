@@ -12,9 +12,9 @@ import {
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
+import { CreateOrEditChiNhanhDto } from '../../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import { Form, Formik } from 'formik';
-import chiNhanhService from '../../../../services/chi_nhanh/chiNhanhService';
+import chiNhanhService from '../../../../../services/chi_nhanh/chiNhanhService';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;

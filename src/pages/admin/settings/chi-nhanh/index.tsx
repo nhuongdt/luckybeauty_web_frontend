@@ -9,24 +9,24 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import DownloadIcon from '../../../images/download.svg';
-import UploadIcon from '../../../images/upload.svg';
-import AddIcon from '../../../images/add.svg';
-import SearchIcon from '../../../images/search-normal.svg';
+import DownloadIcon from '../../../../images/download.svg';
+import UploadIcon from '../../../../images/upload.svg';
+import AddIcon from '../../../../images/add.svg';
+import SearchIcon from '../../../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
-import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
+import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
+import { ReactComponent as DateIcon } from '../../../../images/calendar-5.svg';
 import { Component, ReactNode } from 'react';
-import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
-import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
+import chiNhanhService from '../../../../services/chi_nhanh/chiNhanhService';
 import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
-import { CreateOrEditChiNhanhDto } from '../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
+import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
-import AppConsts from '../../../lib/appconst';
+import AppConsts from '../../../../lib/appconst';
 import { DataGrid, GridColumnVisibilityModel } from '@mui/x-data-grid';
-import { TextTranslate } from '../../../components/TableLanguage';
-import '../../customer/customerPage.css';
-import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import { TextTranslate } from '../../../../components/TableLanguage';
+import '../../../customer/customerPage.css';
+import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
 
 class ChiNhanhScreen extends Component {
     state = {

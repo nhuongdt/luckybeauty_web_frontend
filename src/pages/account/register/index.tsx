@@ -16,7 +16,7 @@ import {
 
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
-import logo from '../../images/Lucky_beauty.jpg';
+import logo from '../../../images/Lucky_beauty.jpg';
 import ApiVN from './api_VN';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';

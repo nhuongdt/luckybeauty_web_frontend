@@ -1,19 +1,19 @@
 import { observer } from 'mobx-react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { Component, ReactNode } from 'react';
-import { CreateOrEditChietKhauHoaDonDto } from '../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
-import chietKhauHoaDonStore from '../../../../stores/chietKhauHoaDonStore';
-import AppConsts from '../../../../lib/appconst';
-import SearchIcon from '../../../../images/search-normal.svg';
-import { TextTranslate } from '../../../../components/TableLanguage';
-import { ReactComponent as IconSorting } from '.././../../../images/column-sorting.svg';
+import { CreateOrEditChietKhauHoaDonDto } from '../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
+import chietKhauHoaDonStore from '../../../../../stores/chietKhauHoaDonStore';
+import AppConsts from '../../../../../lib/appconst';
+import SearchIcon from '../../../../../images/search-normal.svg';
+import { TextTranslate } from '../../../../../components/TableLanguage';
+import { ReactComponent as IconSorting } from '../.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
 import { minWidth } from '@mui/system';
-import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
+import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,

@@ -10,25 +10,25 @@ import {
     Typography,
     SelectChangeEvent
 } from '@mui/material';
-import { TextTranslate } from '../../../../components/TableLanguage';
-import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
+import { TextTranslate } from '../../../../../components/TableLanguage';
+import { ReactComponent as IconSorting } from '../../../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import DownloadIcon from '../../../../images/download.svg';
-import UploadIcon from '../../../../images/upload.svg';
-import AddIcon from '../../../../images/add.svg';
-import SearchIcon from '../../../../images/search-normal.svg';
+import DownloadIcon from '../../../../../images/download.svg';
+import UploadIcon from '../../../../../images/upload.svg';
+import AddIcon from '../../../../../images/add.svg';
+import SearchIcon from '../../../../../images/search-normal.svg';
 import { Component, ReactNode } from 'react';
-import chietKhauDichVuStore from '../../../../stores/chietKhauDichVuStore';
-import SuggestService from '../../../../services/suggests/SuggestService';
-import { SuggestNhanSuDto } from '../../../../services/suggests/dto/SuggestNhanSuDto';
+import chietKhauDichVuStore from '../../../../../stores/chietKhauDichVuStore';
+import SuggestService from '../../../../../services/suggests/SuggestService';
+import { SuggestNhanSuDto } from '../../../../../services/suggests/dto/SuggestNhanSuDto';
 import { observer } from 'mobx-react';
-import AppConsts from '../../../../lib/appconst';
+import AppConsts from '../../../../../lib/appconst';
 import CreateOrEditChietKhauDichVuModal from './components/create-or-edit-hoa-hong';
-import { CreateOrEditChietKhauDichVuDto } from '../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
-import { SuggestDonViQuiDoiDto } from '../../../../services/suggests/dto/SuggestDonViQuiDoi';
+import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
+import { SuggestDonViQuiDoiDto } from '../../../../../services/suggests/dto/SuggestDonViQuiDoi';
 import Cookies from 'js-cookie';
-import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
+import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
 class ChietKhauDichVuScreen extends Component {
     state = {
         visited: false,

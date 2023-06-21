@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler } from 'react';
-import { GetAllTenantOutput } from '../../services/tenant/dto/getAllTenantOutput';
+import { GetAllTenantOutput } from '../../../services/tenant/dto/getAllTenantOutput';
 import {
     Box,
     Grid,
@@ -10,21 +10,21 @@ import {
     SelectChangeEvent
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import AppComponentBase from '../../components/AppComponentBase';
-import tenantService from '../../services/tenant/tenantService';
+import AppComponentBase from '../../../components/AppComponentBase';
+import tenantService from '../../../services/tenant/tenantService';
 import SearchIcon from '@mui/icons-material/Search';
-import '../../custom.css';
-import AddIcon from '../../images/add.svg';
-import DownloadIcon from '../../images/download.svg';
-import UploadIcon from '../../images/upload.svg';
+import '../../../custom.css';
+import AddIcon from '../../../images/add.svg';
+import DownloadIcon from '../../../images/download.svg';
+import UploadIcon from '../../../images/upload.svg';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
-import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import CreateTenantInput from '../../services/tenant/dto/createTenantInput';
-import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
+import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { TextTranslate } from '../../components/TableLanguage';
-import ActionMenuTable from '../../components/Menu/ActionMenuTable';
-import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { TextTranslate } from '../../../components/TableLanguage';
+import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}

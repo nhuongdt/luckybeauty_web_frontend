@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Box } from '@mui/material';
 import './forgotPassword.css';
-import logo from '../../images/Lucky_beauty.jpg';
+import logo from '../../../images/Lucky_beauty.jpg';
 import { Link } from 'react-router-dom';
 interface ForgotPasswordFormData {
     email: string;

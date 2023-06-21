@@ -10,24 +10,24 @@ import {
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
-import roleService from '../../services/role/roleService';
-import AddIcon from '../../images/add.svg';
+import roleService from '../../../services/role/roleService';
+import AddIcon from '../../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { GetAllRoleOutput } from '../../services/role/dto/getAllRoleOutput';
-import '../../custom.css';
-import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import DownloadIcon from '../../images/download.svg';
-import UploadIcon from '../../images/upload.svg';
+import { GetAllRoleOutput } from '../../../services/role/dto/getAllRoleOutput';
+import '../../../custom.css';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import DownloadIcon from '../../../images/download.svg';
+import UploadIcon from '../../../images/upload.svg';
 import CreateOrEditRoleModal from './components/create-or-edit-role';
-import { PermissionTree } from '../../services/role/dto/permissionTree';
-import { CreateOrEditRoleDto } from '../../services/role/dto/createOrEditRoleDto';
-import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
-import { TextTranslate } from '../../components/TableLanguage';
-import ActionMenuTable from '../../components/Menu/ActionMenuTable';
-import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { PermissionTree } from '../../../services/role/dto/permissionTree';
+import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';
+import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
+import { TextTranslate } from '../../../components/TableLanguage';
+import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { observer } from 'mobx-react';
 import { enqueueSnackbar } from 'notistack';
-import roleStore from '../../stores/roleStore';
+import roleStore from '../../../stores/roleStore';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 

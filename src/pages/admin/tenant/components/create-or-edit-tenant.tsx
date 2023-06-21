@@ -15,8 +15,8 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Form, Formik } from 'formik';
-import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
-import tenantService from '../../../services/tenant/tenantService';
+import CreateTenantInput from '../../../../services/tenant/dto/createTenantInput';
+import tenantService from '../../../../services/tenant/tenantService';
 import rules from './createOrUpdateTenant.validation';
 import { enqueueSnackbar } from 'notistack';
 export interface ICreateOrEditTenantProps {

@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler } from 'react';
-import AppComponentBase from '../../components/AppComponentBase';
+import AppComponentBase from '../../../components/AppComponentBase';
 import {
     Box,
     Grid,
@@ -9,26 +9,26 @@ import {
     IconButton,
     SelectChangeEvent
 } from '@mui/material';
-import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import { DataGrid } from '@mui/x-data-grid';
-import userService from '../../services/user/userService';
+import userService from '../../../services/user/userService';
 import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '../../images/add.svg';
-import DownloadIcon from '../../images/download.svg';
-import UploadIcon from '../../images/upload.svg';
-import '../../custom.css';
-import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
+import AddIcon from '../../../images/add.svg';
+import DownloadIcon from '../../../images/download.svg';
+import UploadIcon from '../../../images/upload.svg';
+import '../../../custom.css';
+import { GetAllUserOutput } from '../../../services/user/dto/getAllUserOutput';
 import CreateOrEditUser from './components/create-or-edit-user';
-import { CreateOrUpdateUserInput } from '../../services/user/dto/createOrUpdateUserInput';
-import SuggestService from '../../services/suggests/SuggestService';
-import { GetRoles } from '../../services/user/dto/getRolesOuput';
-import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
-import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
+import { CreateOrUpdateUserInput } from '../../../services/user/dto/createOrUpdateUserInput';
+import SuggestService from '../../../services/suggests/SuggestService';
+import { GetRoles } from '../../../services/user/dto/getRolesOuput';
+import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { TextTranslate } from '../../components/TableLanguage';
-import ActionMenuTable from '../../components/Menu/ActionMenuTable';
-import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
+import { TextTranslate } from '../../../components/TableLanguage';
+import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 class UserScreen extends AppComponentBase {
     state = {

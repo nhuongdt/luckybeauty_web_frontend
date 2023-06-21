@@ -20,14 +20,14 @@ import {
     Grid
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import fileIcon from '../../../images/file.svg';
-import fileUpload from '../../../images/fi_upload-cloud.svg';
-import userService from '../../../services/user/userService';
+import fileIcon from '../../../../images/file.svg';
+import fileUpload from '../../../../images/fi_upload-cloud.svg';
+import userService from '../../../../services/user/userService';
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
-import { CreateOrUpdateUserInput } from '../../../services/user/dto/createOrUpdateUserInput';
-import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
-import { GetRoles } from '../../../services/user/dto/getRolesOuput';
+import { CreateOrUpdateUserInput } from '../../../../services/user/dto/createOrUpdateUserInput';
+import { SuggestNhanSuDto } from '../../../../services/suggests/dto/SuggestNhanSuDto';
+import { GetRoles } from '../../../../services/user/dto/getRolesOuput';
 import TabList from '@mui/lab/TabList';
 import { enqueueSnackbar } from 'notistack';
 //import rules from './createOrUpdateUser.validation';

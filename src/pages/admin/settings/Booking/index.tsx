@@ -12,10 +12,10 @@ import {
 
 import { SelectChangeEvent } from '@mui/material/Select';
 import React, { useState } from 'react';
-import { ReactComponent as HelpIcon } from '../../../images/help-circle.svg';
+import { ReactComponent as HelpIcon } from '../../../../images/help-circle.svg';
 import ArrowIcon from '@mui/icons-material/ArrowDropDown';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
+import { ReactComponent as ArrowDown } from '../../../../images/arow-down.svg';
 const Booking: React.FC = () => {
     const [option1, setOption1] = useState('1');
     const [option2, setOption2] = useState('1');

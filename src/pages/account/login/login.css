@@ -82,7 +82,7 @@
 .login-page {
     margin-top: 32px;
     padding-left: 41px;
-    background-image: url('../../images/bg-login.png');
+    background-image: url('../../../images/bg-login.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

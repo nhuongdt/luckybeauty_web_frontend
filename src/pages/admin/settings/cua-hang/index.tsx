@@ -1,9 +1,9 @@
 import React, { ChangeEvent, Component, ReactNode } from 'react';
 import { Box, Typography, Grid, TextField, Button } from '@mui/material';
-import AddLogoIcon from '../../../images/add-logo.svg';
-import cuaHangService from '../../../services/cua_hang/cuaHangService';
+import AddLogoIcon from '../../../../images/add-logo.svg';
+import cuaHangService from '../../../../services/cua_hang/cuaHangService';
 import Cookies from 'js-cookie';
-import { EditCuaHangDto } from '../../../services/cua_hang/Dto/EditCuaHangDto';
+import { EditCuaHangDto } from '../../../../services/cua_hang/Dto/EditCuaHangDto';
 import { enqueueSnackbar } from 'notistack';
 class StoreDetail extends Component {
     state = {
