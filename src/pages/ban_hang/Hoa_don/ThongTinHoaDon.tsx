@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Grid, Box, Typography, Button, Tabs, Tab } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+import { Grid, Box, Typography, Button, Tabs, Tab, TextField } from '@mui/material';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
 import Avatar from '../../../images/xinh.png';
@@ -10,13 +11,31 @@ import ModalWarning from './Modal_warning';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
+import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
+import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import { format } from 'date-fns';
+import { Stack } from '@mui/system';
+
+const themeNgayLapHoaDon = createTheme({
+    components: {
+        MuiOutlinedInput: {
+            styleOverrides: {
+                root: {
+                    borderRadius: '8px'
+                }
+            }
+        }
+    }
+});
 
 const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
-    // const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
+    const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
+
+    const current = useContext(ChiNhanhContext);
+    console.log('current ', current);
 
     const handleOpenDialog = () => {
         setOpenDialog(true);
@@ -37,7 +56,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
 
     useEffect(() => {
         GetChiTietHoaDon_byIdHoaDon();
+        setHoaDonChosed(hoadon);
     }, [idHoaDon]);
+
+    const changeNgayLapHoaDon = (value: any) => {
+        setHoaDonChosed({ ...hoadonChosed, ngayLapHoaDon: value });
+    };
 
     const [activeTab, setActiveTab] = useState(0);
     const handleTabChange = (event: any, newValue: number) => {
@@ -155,64 +179,68 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                                     variant="h5"
                                     fontSize="12px"
                                     color="#999699"
-                                    fontWeight="400">
+                                    fontWeight="400"
+                                    height={24}>
                                     Mã hóa đơn
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    color="#333233"
-                                    marginTop="2px">
-                                    {hoadon?.maHoaDon}
-                                </Typography>
+                                <TextField
+                                    size="small"
+                                    className="inputEdit"
+                                    onChange={(event: any) =>
+                                        setHoaDonChosed({
+                                            ...hoadonChosed,
+                                            maHoaDon: event.target.value
+                                        })
+                                    }
+                                    value={hoadonChosed?.maHoaDon}
+                                />
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
                                     color="#999699"
-                                    fontWeight="400">
+                                    fontWeight="400"
+                                    height={24}>
                                     Ngày lập
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    color="#333233"
-                                    marginTop="2px">
-                                    {format(new Date(hoadon?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
-                                </Typography>
+                                <ThemeProvider theme={themeNgayLapHoaDon}>
+                                    <DateTimePickerCustom
+                                        className="inputEdit"
+                                        defaultVal={hoadonChosed?.ngayLapHoaDon}
+                                        handleChangeDate={changeNgayLapHoaDon}
+                                    />
+                                </ThemeProvider>
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
                                     color="#999699"
-                                    fontWeight="400">
+                                    fontWeight="400"
+                                    height={24}>
                                     Chi nhánh
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    color="#333233"
-                                    marginTop="2px">
-                                    {hoadon?.tenChiNhanh}
-                                </Typography>
+                                <TextField
+                                    size="small"
+                                    className="inputEdit"
+                                    value={hoadonChosed?.tenChiNhanh || ''}
+                                />
                             </Grid>
                             <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
                                     color="#999699"
-                                    fontWeight="400">
+                                    fontWeight="400"
+                                    height={24}>
                                     User lập phiếu
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    color="#333233"
-                                    marginTop="2px">
-                                    {hoadon?.nguoiTaoHD}
-                                </Typography>
+                                {/* <TextField
+                                    size="small"
+                                    className="inputEdit"
+                                    value={hoadonChosed?.nguoiTaoHD || ''}
+                                /> */}
                             </Grid>
                         </Grid>
                     </Grid>

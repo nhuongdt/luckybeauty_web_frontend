@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import {
     Box,
     Typography,
@@ -17,6 +17,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
+import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
@@ -29,12 +30,15 @@ import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
+    const current = useContext(ChiNhanhContext);
+    console.log('current ', current);
 
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
+        idChiNhanhs: [current.id],
         currentPage: 1,
         pageSize: 5,
         columnSort: 'NgayLapHoaDon',
