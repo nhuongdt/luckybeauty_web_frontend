@@ -216,3 +216,11 @@ body .font-normal {
     color: #333233;
     font-weight: 700;
 }
+
+.MuiOutlinedInput-root {
+    font-size: 14px
+}
+
+.inputEdit .MuiOutlinedInput-root {
+    border-radius: 8px
+}
