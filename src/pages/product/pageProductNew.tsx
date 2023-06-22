@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridSlotsComponent,
+    GridSlotsComponentsProps
+} from '@mui/x-data-grid';
 import {
     Grid,
     Box,
@@ -26,7 +31,7 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-
+import CustomRowDetails from '../ban_hang/Hoa_don/ChiTietHoaDon';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -458,6 +463,11 @@ export default function PageProductNew() {
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
+    const [selectedRow, setSelectedRow] = useState(null);
+
+    const handleRowClick = (params: any) => {
+        setSelectedRow(params.row);
+    };
 
     return (
         <>
@@ -603,6 +613,7 @@ export default function PageProductNew() {
                                 columns={columns}
                                 hideFooter
                                 checkboxSelection
+                                onRowClick={handleRowClick}
                                 sx={{
                                     border: 'none!important',
                                     '& .MuiDataGrid-iconButtonContainer': {
@@ -646,6 +657,7 @@ export default function PageProductNew() {
                                 }}
                                 localeText={TextTranslate}
                             />
+                            {/* {selectedRow && <CustomRowDetails />} */}
 
                             <Grid
                                 container

@@ -186,7 +186,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                 <Typography variant="subtitle1" fontWeight="700" color="#999699" marginTop="28px">
                     Danh sách kỹ thuật viên
                 </Typography>
-                <Grid container className="list-persons" spacing={2} marginTop="24px">
+                <Grid container className="list-persons" spacing={2} marginTop="8px">
                     {lstNhanVien?.map((person: any, index: any) => (
                         <Grid
                             className="person-item"
@@ -259,12 +259,9 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                 <Stack
                     direction="row"
                     spacing={1}
-                    style={{
-                        position: 'absolute',
-                        bottom: '24px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        background: '#fff'
+                    sx={{
+                        background: '#fff',
+                        justifyContent: 'center'
                     }}>
                     <Button
                         variant="contained"

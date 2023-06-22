@@ -21,7 +21,7 @@ import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
-
+import avatar from '../../../images/avatar.png';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
@@ -294,22 +294,7 @@ const GiaoDichThanhToan: React.FC = () => {
             )
         }
     ];
-    const [selectedRow, setSelectedRow] = useState(null);
 
-    const handleRowClick = (params: any) => {
-        setSelectedRow(params.id);
-    };
-    const CustomRowDetails = ({ row }: any) => {
-        // Giao diện tùy chỉnh dưới hàng được chọn
-        return (
-            <div>
-                <h4>Thông tin chi tiết</h4>
-                <p>ID: {row.id}</p>
-                <p>Name: {row.name}</p>
-                {/* Các trường thông tin khác */}
-            </div>
-        );
-    };
     return (
         <>
             {idHoadonChosing !== '' ? (
