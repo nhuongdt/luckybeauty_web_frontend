@@ -182,6 +182,9 @@ const Header: React.FC<HeaderProps> = (
                                     '& .MuiSelect-select': {
                                         padding: '0',
                                         fontSize: '14px'
+                                    },
+                                    '&:hover': {
+                                        color: '#7C3367'
                                     }
                                 }}
                                 size="small"
