@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Box, Typography, Button, Tabs, Tab } from '@mui/material';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
@@ -8,8 +7,16 @@ import TabInfo from './Tab_info';
 import TabDiary from './Tab_diary';
 import { ReactComponent as ArrowIcon } from '../../../images/arrow_back.svg';
 import ModalWarning from './Modal_warning';
-const HoaDon: React.FC = () => {
+import HoaDonService from '../../../services/ban_hang/HoaDonService';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
+
+import { format } from 'date-fns';
+
+const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
+    // const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
+    const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
 
     const handleOpenDialog = () => {
         setOpenDialog(true);
@@ -18,25 +25,20 @@ const HoaDon: React.FC = () => {
     const handleCloseDialog = () => {
         setOpenDialog(false);
     };
-    const Infomations = [
-        { title: 'Mã hóa đơn', value: 'HD4545675' },
-        {
-            value: '30/06/2023  08:30',
-            title: 'Ngày lập'
-        },
-        {
-            title: 'Chi nhánh',
-            value: 'Chi nhánh 1'
-        },
-        {
-            title: 'Người tạo',
-            value: 'Đinh Tuấn Tài'
-        },
-        {
-            title: 'Nguời bán',
-            value: 'Tài Đinh Tuấn'
-        }
-    ];
+
+    const GetInforHoaDon_byId = async () => {
+        const data = await HoaDonService.GetInforHoaDon_byId(idHoaDon);
+        // setHoaDon(data[0]);
+    };
+    const GetChiTietHoaDon_byIdHoaDon = async () => {
+        const data = await HoaDonService.GetChiTietHoaDon_byIdHoaDon(idHoaDon);
+        setChiTietHoaDon(data);
+    };
+
+    useEffect(() => {
+        GetChiTietHoaDon_byIdHoaDon();
+    }, [idHoaDon]);
+
     const [activeTab, setActiveTab] = useState(0);
     const handleTabChange = (event: any, newValue: number) => {
         setActiveTab(newValue);
@@ -144,28 +146,90 @@ const HoaDon: React.FC = () => {
                                     fontSize: '12px',
                                     height: 'fit-content'
                                 }}>
-                                Hoàn thành
+                                {hoadon?.txtTrangThaiHD}
                             </Box>
                         </Box>
                         <Grid container>
-                            {Infomations.map((item) => (
-                                <Grid item xs={2.4} key={item.title.replace(/\s/g, '')}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400">
-                                        {item.title}
-                                    </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        fontSize="14px"
-                                        color="#333233"
-                                        marginTop="2px">
-                                        {item.value}
-                                    </Typography>
-                                </Grid>
-                            ))}
+                            <Grid item xs={2.4}>
+                                <Typography
+                                    variant="h5"
+                                    fontSize="12px"
+                                    color="#999699"
+                                    fontWeight="400">
+                                    Mã hóa đơn
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize="14px"
+                                    color="#333233"
+                                    marginTop="2px">
+                                    {hoadon?.maHoaDon}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2.4}>
+                                <Typography
+                                    variant="h5"
+                                    fontSize="12px"
+                                    color="#999699"
+                                    fontWeight="400">
+                                    Ngày lập
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize="14px"
+                                    color="#333233"
+                                    marginTop="2px">
+                                    {format(new Date(hoadon?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2.4}>
+                                <Typography
+                                    variant="h5"
+                                    fontSize="12px"
+                                    color="#999699"
+                                    fontWeight="400">
+                                    Chi nhánh
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize="14px"
+                                    color="#333233"
+                                    marginTop="2px">
+                                    {hoadon?.tenChiNhanh}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2.4}>
+                                <Typography
+                                    variant="h5"
+                                    fontSize="12px"
+                                    color="#999699"
+                                    fontWeight="400">
+                                    User lập phiếu
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize="14px"
+                                    color="#333233"
+                                    marginTop="2px">
+                                    {hoadon?.nguoiTaoHD}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={2.4}>
+                                <Typography
+                                    variant="h5"
+                                    fontSize="12px"
+                                    color="#999699"
+                                    fontWeight="400">
+                                    NV bán hàng
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    fontSize="14px"
+                                    color="#333233"
+                                    marginTop="2px">
+                                    {hoadon?.tenNhanVien}
+                                </Typography>
+                            </Grid>
                         </Grid>
                     </Grid>
                     <Grid xs={12} item>
@@ -202,7 +266,7 @@ const HoaDon: React.FC = () => {
                 </Grid>
                 <Box sx={{ mt: '40px' }}>
                     <TabPanel value={activeTab} index={0}>
-                        <TabInfo />
+                        <TabInfo hoadon={hoadon} chitietHoaDon={chitietHoaDon} />
                     </TabPanel>
                     <TabPanel value={activeTab} index={1}>
                         <TabDiary />
@@ -222,8 +286,9 @@ const HoaDon: React.FC = () => {
                         startIcon={<ArrowIcon />}
                         variant="outlined"
                         sx={{ color: '#3B4758', borderColor: '#3B4758' }}
-                        className="btn-outline-hover">
-                        Đóng
+                        className="btn-outline-hover"
+                        onClick={gotoBack}>
+                        Quay trở lại
                     </Button>
                 </Box>
                 <Box display="flex" gap="8px">
@@ -257,4 +322,4 @@ const HoaDon: React.FC = () => {
         </Box>
     );
 };
-export default HoaDon;
+export default ThongTinHoaDon;
