@@ -134,7 +134,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                                 color="#3B4758"
                                 fontWeight="700"
                                 fontSize="24px">
-                                Đinh Tuấn Tài
+                                {hoadon?.tenKhachHang}
                             </Typography>
                             <Box
                                 sx={{
@@ -150,7 +150,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                             </Box>
                         </Box>
                         <Grid container>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
@@ -166,7 +166,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                                     {hoadon?.maHoaDon}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
@@ -182,7 +182,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                                     {format(new Date(hoadon?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
@@ -198,7 +198,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                                     {hoadon?.tenChiNhanh}
                                 </Typography>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Typography
                                     variant="h5"
                                     fontSize="12px"
@@ -212,22 +212,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                                     color="#333233"
                                     marginTop="2px">
                                     {hoadon?.nguoiTaoHD}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={2.4}>
-                                <Typography
-                                    variant="h5"
-                                    fontSize="12px"
-                                    color="#999699"
-                                    fontWeight="400">
-                                    NV bán hàng
-                                </Typography>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    color="#333233"
-                                    marginTop="2px">
-                                    {hoadon?.tenNhanVien}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -269,7 +253,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                         <TabInfo hoadon={hoadon} chitietHoaDon={chitietHoaDon} />
                     </TabPanel>
                     <TabPanel value={activeTab} index={1}>
-                        <TabDiary />
+                        <TabDiary idHoaDon={idHoaDon} />
                     </TabPanel>
                 </Box>
             </Box>
