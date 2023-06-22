@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import {
-    DataGrid,
-    GridColDef,
-    GridSlotsComponent,
-    GridSlotsComponentsProps
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import {
     Grid,
     Box,
@@ -334,7 +329,7 @@ export default function PageProductNew() {
                     variant="body2"
                     color="#333233"
                     sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value}
+                    {params.value || ''}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -355,7 +350,7 @@ export default function PageProductNew() {
                         fontSize="12px"
                         variant="body2"
                         color="#333233"
-                        title={params.value}
+                        title={params.value || ''}
                         sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
                         {params.value}
                     </Typography>
@@ -390,7 +385,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex">
                     <Typography variant="body2" color="#333233" fontSize="12px">
-                        {Utils.formatNumber(params.value)}
+                        {Utils.formatNumber(params.value || '')}
                     </Typography>
                 </Box>
             ),
@@ -410,7 +405,7 @@ export default function PageProductNew() {
                 <Box display="flex">
                     <ClockIcon />
                     <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
-                        {params.value} phút
+                        {params.value || ''} phút
                     </Typography>
                 </Box>
             ),
@@ -437,7 +432,7 @@ export default function PageProductNew() {
                         backgroundColor: '#F1FAFF',
                         color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
                     }}>
-                    {params.value}
+                    {params.value || ''}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -463,11 +458,6 @@ export default function PageProductNew() {
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
-    const [selectedRow, setSelectedRow] = useState(null);
-
-    const handleRowClick = (params: any) => {
-        setSelectedRow(params.row);
-    };
 
     return (
         <>
@@ -613,7 +603,6 @@ export default function PageProductNew() {
                                 columns={columns}
                                 hideFooter
                                 checkboxSelection
-                                onRowClick={handleRowClick}
                                 sx={{
                                     border: 'none!important',
                                     '& .MuiDataGrid-iconButtonContainer': {
