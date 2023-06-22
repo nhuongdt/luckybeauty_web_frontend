@@ -1,27 +1,25 @@
-import React from 'react';
-import { Box } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Link } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
+import { format } from 'date-fns';
+import SoQuyServices from '../../../services/so_quy/SoQuyServices';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 
-const TabDiary: React.FC = () => {
+export default function TabDiary({ idHoaDon }: any) {
+    const [phieuThuChi, setPhieuThuChi] = useState<QuyHoaDonDto[]>([]);
+    const GetNhatKyThanhToan = async () => {
+        const data = await SoQuyServices.GetNhatKyThanhToan_ofHoaDon(idHoaDon);
+        setPhieuThuChi(data);
+    };
+    useEffect(() => {
+        GetNhatKyThanhToan();
+    }, [idHoaDon]);
     const columns: GridColDef[] = [
         {
-            field: 'id',
-            headerName: 'mã phiếu',
-            minWidth: 130,
-            flex: 1,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-        },
-        {
-            field: 'time',
-            headerName: 'Thời gian',
+            field: 'maHoaDon',
+            headerName: 'Mã phiếu',
             minWidth: 120,
             flex: 1,
             renderHeader: (params) => (
@@ -30,12 +28,12 @@ const TabDiary: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => <Link>{params.value}</Link>
         },
         {
-            field: 'creator',
-            headerName: 'Người tạo',
-            minWidth: 112,
+            field: 'ngayLapHoaDon',
+            headerName: 'Ngày lập phiếu',
+            minWidth: 120,
             flex: 1,
             renderHeader: (params) => (
                 <Box>
@@ -43,10 +41,10 @@ const TabDiary: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => <Box>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
         },
         {
-            field: 'type',
+            field: 'sLoaiPhieu',
             headerName: 'Loại thu/chi',
             minWidth: 90,
             flex: 1,
@@ -56,10 +54,10 @@ const TabDiary: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
-            field: 'method',
+            field: 'sHinhThucThanhToan',
             headerName: 'Phương thức',
             minWidth: 100,
             flex: 1,
@@ -69,11 +67,13 @@ const TabDiary: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
-            field: 'revenue',
+            field: 'tongTienThu',
             headerName: 'Tiền thu',
+            headerAlign: 'right',
+            align: 'right',
             minWidth: 100,
             flex: 1,
             renderHeader: (params) => (
@@ -82,25 +82,29 @@ const TabDiary: React.FC = () => {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-        }
-    ];
-    const rows = [
+            renderCell: (params) => <Box>{new Intl.NumberFormat('en-IN').format(params.value)}</Box>
+        },
         {
-            id: 'TTHDBL0000000526',
-            time: '06/04/2023 08:49',
-            creator: '0985064986',
-            type: 'Phiếu thu',
-            method: 'Tiền mặt',
-            revenue: '670.000đ'
+            field: 'sTrangThai',
+            headerName: 'Trạng thái',
+            minWidth: 100,
+            flex: 1,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
+            renderCell: (params) => <Box>{params.value}</Box>
         }
     ];
+
     return (
         <Box>
             <DataGrid
                 autoHeight
                 columns={columns}
-                rows={rows}
+                rows={phieuThuChi}
                 sx={{
                     '& p': {
                         mb: 0
@@ -161,5 +165,4 @@ const TabDiary: React.FC = () => {
             />
         </Box>
     );
-};
-export default TabDiary;
+}

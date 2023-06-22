@@ -297,7 +297,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     variant="h3"
                                     fontSize="18px"
                                     fontWeight="700">
-                                    Tiền còn lại{' '}
+                                    Còn nợ
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} marginTop="28px">

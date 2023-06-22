@@ -8,7 +8,6 @@ export default class QuyHoaDonDto {
     idNhanVien?: string | null = null;
     idLoaiChungTu = 11;
     maHoaDon? = '';
-    tienThu = 0;
     tongTienThu = 0;
     ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
     trangThai? = 1;
@@ -26,6 +25,7 @@ export default class QuyHoaDonDto {
     tenChiNhanh? = '';
     tenNhanVien? = '';
     sTrangThai? = '';
+    sHinhThucThanhToan? = '';
 
     constructor({
         id = Guid.create().toString(),
@@ -37,8 +37,7 @@ export default class QuyHoaDonDto {
         noiDungThu = '',
         hachToanKinhDoanh = true,
         thuPhiTienGui = 0,
-        diemThanhToan = 0,
-        tienThu = 0
+        diemThanhToan = 0
     }) {
         this.id = id;
         this.idLoaiChungTu = idLoaiChungTu;
@@ -50,7 +49,6 @@ export default class QuyHoaDonDto {
         this.hachToanKinhDoanh = hachToanKinhDoanh;
         this.thuPhiTienGui = thuPhiTienGui;
         this.diemThanhToan = diemThanhToan;
-        this.tienThu = tienThu;
         this.quyHoaDon_ChiTiet = [];
 
         Object.defineProperties(this, {
