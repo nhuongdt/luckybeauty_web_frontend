@@ -14,7 +14,8 @@ import {
     Menu,
     Button,
     Badge,
-    Avatar
+    Avatar,
+    SelectChangeEvent
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
@@ -37,10 +38,11 @@ interface HeaderProps {
     onClick: () => void;
     isChildHovered: boolean;
     CookieSidebar: boolean;
+    handleChangeChiNhanh: (currentChiNhanh: SuggestChiNhanhDto) => void;
 }
 
 const Header: React.FC<HeaderProps> = (
-    { collapsed, toggle, isChildHovered, CookieSidebar },
+    { collapsed, toggle, isChildHovered, CookieSidebar, handleChangeChiNhanh },
     props: HeaderProps
 ) => {
     const { onClick } = props;
@@ -75,20 +77,41 @@ const Header: React.FC<HeaderProps> = (
             .catch((error) => console.log(error));
         const getChiNhanhs = async () => {
             const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
-            setListChiNhanh(listChiNhanh);
-            if (Cookies.get('IdChiNhanh') === undefined || Cookies.get('IdChiNhanh') === '') {
-                setCurrentChiNhanh(listChiNhanh[0].id);
-                const remember = Cookies.get('remember');
-                Cookies.set('IdChiNhanh', listChiNhanh[0].id, {
-                    expires: remember === 'true' ? 1 : undefined
-                });
-            } else {
-                const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
-                setCurrentChiNhanh(idChiNhanh);
+            if (listChiNhanh != null && listChiNhanh.length > 0) {
+                setListChiNhanh(listChiNhanh);
+
+                if (Cookies.get('IdChiNhanh') === undefined || Cookies.get('IdChiNhanh') === '') {
+                    const idChiNhanh = listChiNhanh[0].id;
+                    const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+
+                    setCurrentChiNhanh(idChiNhanh);
+                    const remember = Cookies.get('remember');
+                    Cookies.set('IdChiNhanh', idChiNhanh, {
+                        expires: remember === 'true' ? 1 : undefined
+                    });
+                    handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
+                } else {
+                    const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
+                    setCurrentChiNhanh(idChiNhanh);
+                    // todo tenChiNhanh
+                    handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: '' });
+                }
             }
         };
         getChiNhanhs();
     }, []);
+
+    const changeChiNhanh = (e: any, item: any) => {
+        const idChiNhanh = item.props.value;
+        const tenChiNhanh = item.props.children;
+        setCurrentChiNhanh(idChiNhanh);
+        const remember = Cookies.get('remember');
+        Cookies.set('IdChiNhanh', idChiNhanh, {
+            expires: remember === 'true' ? 1 : undefined
+        });
+        // window.location.reload();
+        handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
+    };
 
     return (
         <Box
@@ -163,14 +186,7 @@ const Header: React.FC<HeaderProps> = (
                                 }}
                                 size="small"
                                 value={currentChiNhanh}
-                                onChange={(e) => {
-                                    setCurrentChiNhanh(e.target.value as string);
-                                    const remember = Cookies.get('remember');
-                                    Cookies.set('IdChiNhanh', e.target.value, {
-                                        expires: remember === 'true' ? 1 : undefined
-                                    });
-                                    window.location.reload();
-                                }}>
+                                onChange={(e, item) => changeChiNhanh(e, item)}>
                                 {chiNhanhs.map((item) => {
                                     return (
                                         <MenuItem key={item.id} value={item.id}>
