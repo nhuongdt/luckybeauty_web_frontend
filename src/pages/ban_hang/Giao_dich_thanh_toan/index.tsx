@@ -280,7 +280,22 @@ const GiaoDichThanhToan: React.FC = () => {
             )
         }
     ];
+    const [selectedRow, setSelectedRow] = useState(null);
 
+    const handleRowClick = (params: any) => {
+        setSelectedRow(params.id);
+    };
+    const CustomRowDetails = ({ row }: any) => {
+        // Giao diện tùy chỉnh dưới hàng được chọn
+        return (
+            <div>
+                <h4>Thông tin chi tiết</h4>
+                <p>ID: {row.id}</p>
+                <p>Name: {row.name}</p>
+                {/* Các trường thông tin khác */}
+            </div>
+        );
+    };
     return (
         <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
             <Grid container justifyContent="space-between">
