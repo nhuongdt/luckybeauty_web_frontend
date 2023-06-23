@@ -364,6 +364,7 @@ class ChiNhanhScreen extends Component {
                 </Grid>
                 <div className="mt-2">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={this.state.listChiNhanh}

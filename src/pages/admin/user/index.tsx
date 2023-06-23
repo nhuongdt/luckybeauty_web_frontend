@@ -410,6 +410,7 @@ class UserScreen extends AppComponentBase {
                     sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
                     <Box>
                         <DataGrid
+                            disableRowSelectionOnClick
                             autoHeight
                             columns={columns}
                             rows={this.state.listUser}

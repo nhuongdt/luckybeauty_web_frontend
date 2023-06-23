@@ -149,7 +149,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             <Grid item xs={12} sm={6} md={8} lg={9} xl={9}>
                 <Grid container justifyContent="end">
                     <Grid item xs={12}>
-                        <Stack spacing={1} direction="row" display="flex" justifyContent="end">
+                        <Stack
+                            spacing={1}
+                            direction="row"
+                            display="flex"
+                            justifyContent="end"
+                            alignItems="center">
                             <TextField
                                 sx={{
                                     backgroundColor: '#FFFAFF',

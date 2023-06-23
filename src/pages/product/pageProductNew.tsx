@@ -613,6 +613,7 @@ export default function PageProductNew() {
                                 position: 'relative'
                             }}>
                             <DataGrid
+                                disableRowSelectionOnClick
                                 autoHeight
                                 rows={pageDataProduct.items}
                                 columns={columns}

@@ -400,6 +400,7 @@ class ChietKhauDichVuScreen extends Component {
                 </Grid>
                 <Box marginTop="8px">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
