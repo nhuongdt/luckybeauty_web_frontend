@@ -7,7 +7,7 @@ import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import './style.css';
 import { Guid } from 'guid-typescript';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 export default function MainPageBanHang() {
     const [activeTab, setActiveTab] = useState(1);
 
@@ -73,6 +73,7 @@ export default function MainPageBanHang() {
             setLayout(true);
         }
     }, []);
+
     return (
         <>
             <Grid container padding={2} columnSpacing={2} rowSpacing={2}>
