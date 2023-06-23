@@ -568,10 +568,10 @@ export default function PageProductNew() {
                                 <Add
                                     className="button-container"
                                     sx={{
-                                        transition: '.4s',
                                         '&:hover': {
-                                            transform: 'rotate(90deg)'
+                                            bgcolor: 'rgba(124, 51, 103, 0.7) !important'
                                         },
+                                        transition: '.4s',
                                         height: '30px',
                                         cursor: 'pointer',
                                         width: '30px',
@@ -581,7 +581,22 @@ export default function PageProductNew() {
                                     onClick={() => showModalAddNhomHang()}
                                 />
                             </Box>
-                            <Box sx={{ overflow: 'auto', maxHeight: '400px', padding: '0px 24px' }}>
+                            <Box
+                                sx={{
+                                    overflow: 'auto',
+                                    maxHeight: '66vh',
+                                    padding: '0px 24px',
+                                    '&::-webkit-scrollbar': {
+                                        width: '7px'
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        bgcolor: 'rgba(0,0,0,0.1)',
+                                        borderRadius: '8px'
+                                    },
+                                    '&::-webkit-scrollbar-track': {
+                                        bgcolor: '#F2EBF0'
+                                    }
+                                }}>
                                 <AccordionNhomHangHoa
                                     dataNhomHang={treeNhomHangHoa}
                                     clickTreeItem={editNhomHangHoa}

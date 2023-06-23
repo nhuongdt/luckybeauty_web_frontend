@@ -209,7 +209,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         />
                                     </Grid>
                                 </Grid>
-                                <DialogActions>
+                                <DialogActions sx={{ pr: '0!important' }}>
                                     <ButtonGroup
                                         sx={{
                                             height: '32px',

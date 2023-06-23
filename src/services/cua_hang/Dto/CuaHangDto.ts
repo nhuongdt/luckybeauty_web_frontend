@@ -9,4 +9,5 @@ export interface CuaHangDto {
     website: string;
     instagram: string;
     twitter: string;
+    fileLogo: string;
 }

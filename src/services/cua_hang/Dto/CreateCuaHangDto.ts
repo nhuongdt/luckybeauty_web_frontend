@@ -14,4 +14,5 @@ export interface CreateCuaHangDto {
     trangThai: number;
     ngayHetHan: Date;
     ngayApDung: Date;
+    fileLogo: string;
 }
