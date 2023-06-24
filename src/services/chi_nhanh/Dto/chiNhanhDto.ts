@@ -1,4 +1,5 @@
 export interface ChiNhanhDto {
+    id: string;
     idCongTy: string;
     maChiNhanh: string;
     tenChiNhanh: string;

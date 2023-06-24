@@ -17,7 +17,12 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
-import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import {
+    ChiNhanhContext,
+    ChiNhanhContextbyUser
+} from '../../../services/chi_nhanh/ChiNhanhContext';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
@@ -31,10 +36,10 @@ const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
     const current = useContext(ChiNhanhContext);
-    console.log('current ', current);
 
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
+    const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
@@ -62,8 +67,20 @@ const GiaoDichThanhToan: React.FC = () => {
         });
     };
 
+    const GetAllChiNhanh = async () => {
+        const data = await chiNhanhService.GetAll({
+            keyword: '',
+            maxResultCount: 10,
+            skipCount: 1
+        });
+        if (data != null) {
+            setAllChiNhanh(data.items);
+        }
+    };
+
     const PageLoad = () => {
         GetListHoaDon();
+        GetAllChiNhanh();
     };
 
     useEffect(() => {
@@ -71,12 +88,22 @@ const GiaoDichThanhToan: React.FC = () => {
     }, []);
 
     useEffect(() => {
+        setParamSearch({ ...paramSearch, idChiNhanhs: [current.id] });
+    }, [current.id]);
+
+    useEffect(() => {
         if (firstLoad.current) {
             firstLoad.current = false;
             return;
         }
         GetListHoaDon();
-    }, [paramSearch.currentPage, paramSearch.pageSize, paramSearch.fromDate, paramSearch.toDate]);
+    }, [
+        paramSearch.currentPage,
+        paramSearch.pageSize,
+        paramSearch.fromDate,
+        paramSearch.toDate,
+        paramSearch.idChiNhanhs
+    ]);
 
     const handleKeyDownTextSearch = (event: any) => {
         console.log(22);
@@ -113,6 +140,32 @@ const GiaoDichThanhToan: React.FC = () => {
         console.log('into');
         setIdHoadonChosing(param.id);
         setHoaDon(param.row);
+    };
+
+    const childGotoBack = (hoadonAfterChange: PageHoaDonDto) => {
+        setIdHoadonChosing('');
+        if (
+            hoadonAfterChange.trangThai === 0 ||
+            hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
+        ) {
+            // remove if huyhoadon or change chinhanh
+            setPageDataHoaDon({
+                ...pageDataHoaDon,
+                items: pageDataHoaDon.items.filter((x: any) => x.id !== hoadonAfterChange.id)
+            });
+        } else {
+            // update
+            setPageDataHoaDon({
+                ...pageDataHoaDon,
+                items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
+                    if (itemHD.id === hoadonAfterChange.id) {
+                        return hoadonAfterChange;
+                    } else {
+                        return itemHD;
+                    }
+                })
+            });
+        }
     };
 
     const columns: GridColDef[] = [
@@ -298,11 +351,13 @@ const GiaoDichThanhToan: React.FC = () => {
     return (
         <>
             {idHoadonChosing !== '' ? (
-                <ThongTinHoaDon
-                    idHoaDon={idHoadonChosing}
-                    hoadon={hoadon}
-                    gotoBack={() => setIdHoadonChosing('')}
-                />
+                <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
+                    <ThongTinHoaDon
+                        idHoaDon={idHoadonChosing}
+                        hoadon={hoadon}
+                        handleGotoBack={childGotoBack}
+                    />
+                </ChiNhanhContextbyUser.Provider>
             ) : (
                 <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
                     <Grid container justifyContent="space-between">
