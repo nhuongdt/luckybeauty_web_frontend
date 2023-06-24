@@ -14,6 +14,12 @@ class SoQuyServices {
         console.log('GetNhatKyThanhToan_ofHoaDon ', result.data.result);
         return result.data.result;
     };
+    HuyPhieuThuChi_ofHoaDonLienQuan = async (idHoaDonLienQuan: string) => {
+        const result = await http.get(
+            `api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`
+        );
+        return result.data.result;
+    };
 }
 
 export default new SoQuyServices();

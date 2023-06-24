@@ -62,6 +62,13 @@ class HoaDonService {
         );
         return result.data.result;
     };
+    DeleteHoaDon = async (idHoaDon: string) => {
+        if (utils.checkNull(idHoaDon)) {
+            return [];
+        }
+        const result = await http.get(`api/services/app/HoaDon/DeleteHoaDon?id=${idHoaDon}`);
+        return result.data.result;
+    };
 }
 
 export default new HoaDonService();
