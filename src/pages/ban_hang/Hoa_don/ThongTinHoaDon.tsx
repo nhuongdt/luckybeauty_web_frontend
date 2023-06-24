@@ -1,5 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Box, Typography, Button, Tabs, Tab, TextField } from '@mui/material';
+import {
+    Grid,
+    Box,
+    Typography,
+    Button,
+    Tabs,
+    Tab,
+    TextField,
+    Select,
+    MenuItem
+} from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
@@ -13,7 +23,7 @@ import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
-
+import { ReactComponent as ArrowDown } from '../.././../images/arow-down.svg';
 import { format } from 'date-fns';
 import { Stack } from '@mui/system';
 
@@ -88,46 +98,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                 minHeight: 'calc(100vh - 70px)'
             }}>
             <ModalWarning open={openDialog} onClose={handleCloseDialog} />
-            <Box padding="16px 2.2222222222222223vw ">
-                <Grid container justifyContent="space-between" alignItems="center">
-                    <Grid item xs="auto">
-                        <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
-                            Hóa đơn
-                        </Typography>
-                    </Grid>
-                    <Grid item xs="auto">
-                        <Box display="flex" gap="8px">
-                            <Button
-                                startIcon={<InIcon />}
-                                variant="outlined"
-                                sx={{
-                                    bgcolor: '#fff!important',
-                                    color: '#666466',
-                                    borderColor: '#E6E1E6!important'
-                                }}>
-                                In
-                            </Button>
-                            <Button
-                                startIcon={<UploadIcon />}
-                                variant="outlined"
-                                sx={{
-                                    bgcolor: '#fff!important',
-                                    color: '#666466',
-                                    borderColor: '#E6E1E6!important'
-                                }}>
-                                Xuất
-                            </Button>
-                            <Button
-                                variant="contained"
-                                sx={{
-                                    bgcolor: '#7C3367!important',
-                                    color: '#fff'
-                                }}>
-                                Sao chép
-                            </Button>
-                        </Box>
-                    </Grid>
-                </Grid>
+            <Box>
                 <Grid
                     container
                     sx={{
@@ -152,95 +123,177 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, gotoBack }: any) => {
                         </Box>
                     </Grid>
                     <Grid item xs={10.5}>
-                        <Box display="flex" gap="23px" mb="12px">
-                            <Typography
-                                variant="h4"
-                                color="#3B4758"
-                                fontWeight="700"
-                                fontSize="24px">
-                                {hoadon?.tenKhachHang}
-                            </Typography>
-                            <Box
-                                sx={{
-                                    padding: '2px 3px',
-                                    borderRadius: '100px',
-                                    color: '#0DA678',
-                                    bgcolor: '#CAFBEC',
-                                    width: 'fit-content',
-                                    fontSize: '12px',
-                                    height: 'fit-content'
-                                }}>
-                                {hoadon?.txtTrangThaiHD}
+                        <Box display="flex" justifyContent="space-between" mb="12px">
+                            <Box display="flex" gap="23px">
+                                <Typography
+                                    variant="h4"
+                                    color="#3B4758"
+                                    fontWeight="700"
+                                    fontSize="24px">
+                                    Đinh Tuấn Tài
+                                </Typography>
+                                <Box
+                                    sx={{
+                                        padding: '2px 3px',
+                                        borderRadius: '100px',
+                                        color: '#0DA678',
+                                        bgcolor: '#CAFBEC',
+                                        width: 'fit-content',
+                                        fontSize: '12px',
+                                        height: 'fit-content'
+                                    }}>
+                                    Hoàn thành
+                                </Box>
+                            </Box>
+                            <Box display="flex" gap="8px">
+                                <Button
+                                    startIcon={<InIcon />}
+                                    variant="outlined"
+                                    sx={{
+                                        bgcolor: '#fff!important',
+                                        color: '#666466',
+                                        borderColor: '#E6E1E6!important'
+                                    }}>
+                                    In
+                                </Button>
+                                <Button
+                                    startIcon={<UploadIcon />}
+                                    variant="outlined"
+                                    sx={{
+                                        bgcolor: '#fff!important',
+                                        color: '#666466',
+                                        borderColor: '#E6E1E6!important'
+                                    }}>
+                                    Xuất
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        bgcolor: '#7C3367!important',
+                                        color: '#fff'
+                                    }}>
+                                    Sao chép
+                                </Button>
                             </Box>
                         </Box>
-                        <Grid container>
-                            <Grid item xs={3}>
-                                <Typography
-                                    variant="h5"
-                                    fontSize="12px"
-                                    color="#999699"
-                                    fontWeight="400"
-                                    height={24}>
-                                    Mã hóa đơn
-                                </Typography>
-                                <TextField
-                                    size="small"
-                                    className="inputEdit"
-                                    onChange={(event: any) =>
-                                        setHoaDonChosed({
-                                            ...hoadonChosed,
-                                            maHoaDon: event.target.value
-                                        })
-                                    }
-                                    value={hoadonChosed?.maHoaDon}
-                                />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <Typography
-                                    variant="h5"
-                                    fontSize="12px"
-                                    color="#999699"
-                                    fontWeight="400"
-                                    height={24}>
-                                    Ngày lập
-                                </Typography>
-                                <ThemeProvider theme={themeNgayLapHoaDon}>
-                                    <DateTimePickerCustom
+                        <Grid container spacing={2}>
+                            <Grid item xs={2.4}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
+                                        Mã hóa đơn
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
                                         className="inputEdit"
-                                        defaultVal={hoadonChosed?.ngayLapHoaDon}
-                                        handleChangeDate={changeNgayLapHoaDon}
+                                        onChange={(event: any) =>
+                                            setHoaDonChosed({
+                                                ...hoadonChosed,
+                                                maHoaDon: event.target.value
+                                            })
+                                        }
+                                        value={hoadonChosed?.maHoaDon || '0911290476'}
                                     />
-                                </ThemeProvider>
+                                </Box>
                             </Grid>
-                            <Grid item xs={3}>
-                                <Typography
-                                    variant="h5"
-                                    fontSize="12px"
-                                    color="#999699"
-                                    fontWeight="400"
-                                    height={24}>
-                                    Chi nhánh
-                                </Typography>
-                                <TextField
-                                    size="small"
-                                    className="inputEdit"
-                                    value={hoadonChosed?.tenChiNhanh || ''}
-                                />
+                            <Grid item xs={2.4}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
+                                        Ngày lập
+                                    </Typography>
+                                    <ThemeProvider theme={themeNgayLapHoaDon}>
+                                        <DateTimePickerCustom
+                                            fullWidth
+                                            className="inputEdit"
+                                            // defaultVal={hoadonChosed?.ngayLapHoaDon}
+                                            defaultVal=""
+                                            handleChangeDate={changeNgayLapHoaDon}
+                                        />
+                                    </ThemeProvider>
+                                </Box>
                             </Grid>
-                            <Grid item xs={3}>
-                                <Typography
-                                    variant="h5"
-                                    fontSize="12px"
-                                    color="#999699"
-                                    fontWeight="400"
-                                    height={24}>
-                                    User lập phiếu
-                                </Typography>
-                                {/* <TextField
-                                    size="small"
-                                    className="inputEdit"
-                                    value={hoadonChosed?.nguoiTaoHD || ''}
-                                /> */}
+                            <Grid item xs={2.4}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
+                                        Chi nhánh
+                                    </Typography>
+                                    {/* <TextField
+                                        size="small"
+                                        className="inputEdit"
+                                        value={hoadonChosed?.tenChiNhanh || 'Chi '}
+                                    /> */}
+                                    <Select
+                                        sx={{
+                                            borderRadius: '8px',
+                                            fontSize: '14px',
+                                            pr: '20px',
+                                            '& [aria-expanded="true"] ~ svg': {
+                                                transform: 'rotate(180deg)'
+                                            },
+                                            '& svg': {
+                                                width: '20px'
+                                            }
+                                        }}
+                                        size="small"
+                                        defaultValue={1}
+                                        fullWidth
+                                        IconComponent={() => <ArrowDown />}>
+                                        <MenuItem value={1}>Chi nhánh 1</MenuItem>
+                                        <MenuItem value={2}>Chi nhánh 2</MenuItem>
+                                        <MenuItem value={3}>Chi nhánh 3</MenuItem>
+                                    </Select>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={2.4}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
+                                        Người tạo
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        className="inputEdit"
+                                        value={hoadonChosed?.nguoiTaoHD || '0911290'}
+                                    />
+                                </Box>
+                            </Grid>
+                            <Grid item xs={2.4}>
+                                <Box>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
+                                        Người bán
+                                    </Typography>
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        className="inputEdit"
+                                        defaultValue="Tài đẹp trai"
+                                    />
+                                </Box>
                             </Grid>
                         </Grid>
                     </Grid>

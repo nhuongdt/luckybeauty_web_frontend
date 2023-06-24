@@ -180,7 +180,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
-                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan')
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/indexTest')
                             )
                         }
                     ],
