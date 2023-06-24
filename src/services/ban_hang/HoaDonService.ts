@@ -10,6 +10,9 @@ class HoaDonService {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
             input.idKhachHang = null;
         }
+        if (input.idChiNhanh === '' || input.idChiNhanh === Guid.EMPTY.toString()) {
+            input.idChiNhanh = null;
+        }
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon', input);
         return result.data.result;
     };
@@ -22,8 +25,21 @@ class HoaDonService {
         return result.data.result;
     };
     UpdateHoaDon = async (input: any) => {
+        // update hoadon + chitiet
         const result = await http.post('api/services/app/HoaDon/UpdateHoaDon', input);
         console.log('UpdateHoaDon ', result);
+        return result.data.result;
+    };
+    Update_InforHoaDon = async (input: any) => {
+        // only update hoadon
+        const result = await http.put('api/services/app/HoaDon/Update_InforHoaDon', input);
+        console.log('Update_InforHoaDon ', result);
+        return result.data.result;
+    };
+    Update_ChiTietHoaDon = async (input: any) => {
+        // only update chitiet
+        const result = await http.put('api/services/app/HoaDon/Update_ChiTietHoaDon', input);
+        console.log('Update_ChiTietHoaDon ', result);
         return result.data.result;
     };
     GetListHoaDon = async (input: HoaDonRequestDto): Promise<PagedResultDto<PageHoaDonDto>> => {

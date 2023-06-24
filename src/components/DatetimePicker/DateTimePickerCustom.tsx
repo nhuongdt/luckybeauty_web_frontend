@@ -15,7 +15,6 @@ export default function DateTimePickerCustom({ defaultVal, handleChangeDate }: a
     useEffect(() => {
         setValue(new Date(defaultVal));
     }, [defaultVal]);
-    console.log('valye', value, 'defaultVal ', defaultVal);
 
     return (
         <>

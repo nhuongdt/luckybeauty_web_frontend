@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 export default class HoaDonDto {
     id = Guid.create().toString();
     idKhachHang = null;
-    idChiNhanh? = null;
+    idChiNhanh?: string;
     idNhanVien? = null;
     idLoaiChungTu = 1;
     maHoaDon = '';
@@ -31,7 +31,7 @@ export default class HoaDonDto {
         id = Guid.create().toString(),
         idLoaiChungTu = 1,
         idKhachHang = null,
-        idChiNhanh = null,
+        idChiNhanh = '',
         idNhanVien = null,
         maHoaDon = '',
         ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),

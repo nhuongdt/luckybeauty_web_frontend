@@ -13,7 +13,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     maNhanVien = '';
     tenNhanVien = '';
 
-    nguoiTaoHD = '';
+    userName = ''; // user lap phieu
     tenChiNhanh = '';
 
     daThanhToan? = 0;
@@ -23,6 +23,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     constructor({
         id = Guid.create().toString(),
         idKhachHang = null,
+        idChiNhanh = '',
         maKhachHang = '',
         tenKhachHang = '',
         soDienThoai = '',
@@ -39,6 +40,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         super({
             id: id,
             idKhachHang: idKhachHang,
+            idChiNhanh: idChiNhanh,
             maHoaDon: maHoaDon,
             ngayLapHoaDon: ngayLapHoaDon,
             tongTienHang: tongTienHang,
