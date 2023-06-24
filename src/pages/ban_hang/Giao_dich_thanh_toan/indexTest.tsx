@@ -26,7 +26,7 @@ import { ReactComponent as IconSorting } from '../../../images/column-sorting.sv
 import { TextTranslate } from '../../../components/TableLanguage';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
+import ThongTinHoaDon from '../Hoa_don/ChiTietHoaDon';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../../utils/utils'; // func common.
