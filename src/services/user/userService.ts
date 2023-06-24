@@ -6,6 +6,8 @@ import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { PagedUserResultRequestDto } from './dto/PagedUserResultRequestDto';
 import { UpdateUserInput } from './dto/updateUserInput';
 import http from '../httpService';
+import { ProfileDto } from './dto/ProfileDto';
+import { ChangePasswordDto } from './dto/ChangePasswordDto';
 
 class UserService {
     public async create(createUserInput: CreateOrUpdateUserInput) {
@@ -71,7 +73,19 @@ class UserService {
             throw error;
         }
     }
+    public async getForUpdateProfile(): Promise<ProfileDto> {
+        const response = await http.get('api/services/app/User/GetForUpdateProfile');
+        return response.data.result;
+    }
 
+    public async updateProfile(input: ProfileDto): Promise<boolean> {
+        const response = await http.post('api/services/app/User/UpdateProfile', input);
+        return response.data.result;
+    }
+    public async updatePassword(input: ChangePasswordDto) {
+        const response = await http.post('api/services/app/User/ChangePassword', input);
+        return response.data.result;
+    }
     public async getAll(
         pagedFilterAndSortedRequest: PagedUserResultRequestDto
     ): Promise<PagedResultDto<GetAllUserOutput>> {

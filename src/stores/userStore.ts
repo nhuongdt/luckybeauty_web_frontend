@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 import type { CreateOrUpdateUserInput } from '../services/user/dto/createOrUpdateUserInput';
 import { EntityDto } from '../services/dto/entityDto';
@@ -8,6 +8,7 @@ import type { PagedResultDto } from '../services/dto/pagedResultDto';
 import type { PagedUserResultRequestDto } from '../services/user/dto/PagedUserResultRequestDto';
 import type { UpdateUserInput } from '../services/user/dto/updateUserInput';
 import userService from '../services/user/userService';
+import { ProfileDto } from '../services/user/dto/ProfileDto';
 
 class UserStore {
     users!: PagedResultDto<GetUserOutput>;
@@ -15,6 +16,22 @@ class UserStore {
     editUser!: CreateOrUpdateUserInput;
 
     roles: GetRoles[] = [];
+
+    profileDto: ProfileDto = {
+        avatar: '',
+        cccd: '',
+        emailAddress: '',
+        gioiTinh: 0,
+        id: 0,
+        name: '',
+        ngayCap: '',
+        ngaySinh: '',
+        noiCap: '',
+        password: '',
+        phoneNumber: '',
+        surname: '',
+        userName: ''
+    };
 
     constructor() {
         makeAutoObservable(this);
@@ -64,7 +81,12 @@ class UserStore {
         };
         this.roles = [];
     }
-
+    async getForUpdateProfile() {
+        runInAction(async () => {
+            const result = await userService.getForUpdateProfile();
+            this.profileDto = result;
+        });
+    }
     async getAll(pagedFilterAndSortedRequest: PagedUserResultRequestDto) {
         const result = await userService.getAll(pagedFilterAndSortedRequest);
         this.users = result;
@@ -75,4 +97,4 @@ class UserStore {
     }
 }
 
-export default UserStore;
+export default new UserStore();

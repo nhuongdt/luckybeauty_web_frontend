@@ -20,6 +20,8 @@ class ChietKhauHoaDonScreen extends Component {
         visited: false,
         isShowConfirmDelete: false,
         keyword: '',
+        sortBy: '',
+        sortType: 'desc',
         skipCount: 1,
         maxResultCount: 10,
         totalCount: 0,
@@ -39,7 +41,9 @@ class ChietKhauHoaDonScreen extends Component {
         await chietKhauHoaDonStore.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount
+            skipCount: this.state.skipCount,
+            sortBy: this.state.sortBy,
+            sortType: this.state.sortType
         });
     };
     Modal = () => {
@@ -89,30 +93,48 @@ class ChietKhauHoaDonScreen extends Component {
         });
         this.getAll();
     };
+    onSort = async (sortType: string, sortBy: string) => {
+        const type = sortType === 'desc' ? 'asc' : 'desc';
+        await this.setState({
+            sortType: type,
+            sortBy: sortBy
+        });
+        this.getAll();
+    };
     render(): ReactNode {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
         const columns: GridColDef[] = [
             {
                 field: 'giaTriChietKhau',
+                sortable: false,
                 headerName: 'Hoa hồng',
                 minWidth: 112,
                 flex: 1,
                 renderHeader: (params) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting />
+                        <IconSorting
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'giaTriChietKhau');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'chungTuApDung',
+                sortable: false,
                 headerName: 'Chứng từ áp dụng',
                 minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting />
+                        <IconSorting
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'chungTuApDung');
+                            }}
+                        />
                     </Box>
                 )
             },

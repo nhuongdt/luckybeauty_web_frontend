@@ -25,7 +25,6 @@ const MainAppLayout: React.FC = () => {
     const navigate = useNavigate();
     useEffect(() => {
         setOpen(!isAuthenticated);
-        console.log(open);
     }, []);
 
     const confirm = () => {

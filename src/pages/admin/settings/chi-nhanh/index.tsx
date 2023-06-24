@@ -35,6 +35,8 @@ class ChiNhanhScreen extends Component {
         currentPage: 1,
         rowPerPage: 10,
         filter: '',
+        sortBy: '',
+        sortType: 'desc',
         totalCount: 0,
         totalPage: 0,
         createOrEditChiNhanhDto: {} as CreateOrEditChiNhanhDto,
@@ -47,7 +49,9 @@ class ChiNhanhScreen extends Component {
         const lstChiNhanh = await chiNhanhService.GetAll({
             keyword: this.state.filter,
             maxResultCount: this.state.rowPerPage,
-            skipCount: this.state.currentPage
+            skipCount: this.state.currentPage,
+            sortBy: this.state.sortBy,
+            sortType: this.state.sortType
         });
         this.setState({
             listChiNhanh: lstChiNhanh.items,
@@ -111,24 +115,19 @@ class ChiNhanhScreen extends Component {
     handleColumnVisibilityChange = () => {
         this.setState({ hiddenColumns: true });
     };
-
+    onSort = async (sortType: string, sortBy: string) => {
+        const type = sortType === 'desc' ? 'asc' : 'desc';
+        await this.setState({
+            sortBy: sortBy,
+            sortType: type
+        });
+        this.InitData();
+    };
     render(): ReactNode {
         const columns = [
             {
-                field: 'id',
-                headerName: 'ID',
-                minWidth: 50,
-                flex: 0.6,
-
-                renderHeader: (params: any) => (
-                    <Box>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
-                )
-            },
-            {
                 field: 'tenChiNhanh',
+                sortable: false,
                 headerName: 'Tên chi nhánh',
                 minWidth: 140,
                 flex: 0.8,
@@ -153,12 +152,18 @@ class ChiNhanhScreen extends Component {
                 renderHeader: (params: any) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tenChiNhanh');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'diaChi',
+                sortable: false,
                 headerName: 'Địa chỉ',
                 minWidth: 180,
                 flex: 1.2,
@@ -178,12 +183,18 @@ class ChiNhanhScreen extends Component {
                 renderHeader: (params: any) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'diaChi');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'soDienThoai',
+                sortable: false,
                 headerName: 'Số điện thoại',
                 minWidth: 110,
                 flex: 0.8,
@@ -195,12 +206,18 @@ class ChiNhanhScreen extends Component {
                 renderHeader: (params: any) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'soDienThoai');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'ngayApDung',
+                sortable: false,
                 headerName: 'Ngày áp dụng',
                 minWidth: 130,
                 flex: 0.8,
@@ -220,12 +237,18 @@ class ChiNhanhScreen extends Component {
                 renderHeader: (params: any) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'ngayApDung');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'ngayHetHan',
+                sortable: false,
                 headerName: 'Ngày hết hạn',
                 minWidth: 130,
                 flex: 0.8,
@@ -245,7 +268,12 @@ class ChiNhanhScreen extends Component {
                 renderHeader: (params: any) => (
                     <Box>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'ngayHetHan');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },

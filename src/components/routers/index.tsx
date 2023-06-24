@@ -227,6 +227,31 @@ export const appRouters: AppRouteProps = {
                     component: LoadableComponent(() => import('../../pages/product/pageProductNew'))
                 },
                 {
+                    path: '/thu-chi',
+                    permission: '',
+                    title: 'Thu chi',
+                    icon: <ServicesIcon width="20px" />,
+                    iconActive: <ServiceActive width="20px" />,
+                    name: 'thuChi',
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [
+                        {
+                            path: '/so-quy',
+                            permission: '',
+                            title: 'Sổ quỹ',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: <ServiceActive width="20px" />,
+                            name: 'thuChi',
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/thu_chi/so_quy'))
+                        }
+                    ],
+                    component: null
+                },
+                {
                     path: '/employee',
                     permission: '',
                     title: 'Nhân viên',
@@ -368,7 +393,7 @@ export const appRouters: AppRouteProps = {
                     isLayout: false,
                     children: [
                         {
-                            path: '/profile',
+                            path: '/account/profile',
                             permission: 'Pages',
                             title: 'Profile',
                             name: 'profile',
@@ -377,7 +402,9 @@ export const appRouters: AppRouteProps = {
                             showInMenu: false,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(() => import('../../pages/employee'))
+                            component: LoadableComponent(
+                                () => import('../../pages/account/profile')
+                            )
                         }
                     ],
                     component: null
