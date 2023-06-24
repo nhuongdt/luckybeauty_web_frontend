@@ -179,6 +179,7 @@ class ChietKhauHoaDonScreen extends Component {
                 </Grid>
                 <Box>
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}

@@ -481,6 +481,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         backgroundColor: '#fff'
                     }}>
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         rows={this.state.rowTable}
                         columns={columns}

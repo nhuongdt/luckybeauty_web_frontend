@@ -714,41 +714,49 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                     container
                     md={8}
                     spacing={3}
-                    marginTop={CoditionLayout ? '-60px' : '-24px'}>
-                    {CoditionLayout && (
-                        <TextField
-                            fullWidth
-                            sx={{
-                                borderColor: '#CFD3D4!important',
-                                borderWidth: '1px!important',
-                                maxWidth: '55%',
-                                mr: '24px',
-                                boxShadow: ' 0px 20px 100px 0px #0000000D',
-
-                                marginLeft: 'auto',
-                                '& .MuiInputBase-root': {
-                                    bgcolor: '#fff'
-                                }
-                            }}
-                            size="small"
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            value={txtSearch}
-                            onChange={(event) => {
-                                setTxtSearch(event.target.value);
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    )}
-                    <Grid item md={CoditionLayout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
+                    height="fit-content"
+                    marginTop={CoditionLayout ? '-83px' : '-24px'}>
+                    <Grid
+                        item
+                        md={CoditionLayout ? 12 : 5}
+                        sx={{
+                            paddingLeft: '0!important',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}>
+                        {CoditionLayout && (
+                            <TextField
+                                fullWidth
+                                sx={{
+                                    borderColor: '#CFD3D4!important',
+                                    borderWidth: '1px!important',
+                                    maxWidth: '55%',
+                                    mr: '24px',
+                                    boxShadow: ' 0px 20px 100px 0px #0000000D',
+                                    maxHeight: '37px',
+                                    marginLeft: 'auto',
+                                    '& .MuiInputBase-root': {
+                                        bgcolor: '#fff'
+                                    }
+                                }}
+                                size="small"
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                value={txtSearch}
+                                onChange={(event) => {
+                                    setTxtSearch(event.target.value);
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        )}
                         <Box
                             sx={{
                                 backgroundColor: CoditionLayout ? 'transparent' : '#fff',
@@ -1080,7 +1088,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                 sx={{
                                     backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    maxHeight: CoditionLayout ? '30vh' : '77.5vh',
+                                    maxHeight:
+                                        CoditionLayout && innerHeight > 600
+                                            ? '47vh'
+                                            : CoditionLayout && innerHeight < 605
+                                            ? '32vh'
+                                            : '77.5vh',
                                     overflowX: 'hidden',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {
@@ -1225,7 +1238,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                     padding="12px"
                                     borderRadius="8px"
                                     border="1px solid #F2F2F2"
-                                    marginTop="24px"
+                                    marginTop="16px"
                                     key={index}>
                                     <Box
                                         display="flex"

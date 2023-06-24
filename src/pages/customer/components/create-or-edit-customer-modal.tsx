@@ -178,7 +178,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 backgroundColor: '#fff',
                                                 padding: '0',
                                                 fontSize: '16px',
-                                                borderRadius: '8px',
                                                 borderColor: '#E6E1E6'
                                             }}>
                                             <MenuItem value="">Lựa chọn</MenuItem>

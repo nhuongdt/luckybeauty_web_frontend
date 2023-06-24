@@ -417,6 +417,7 @@ class EmployeeHoliday extends Component {
                 </Grid>
                 <Box marginTop="24px" bgcolor="#fff">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         rows={this.state.listHoliday}
                         columns={columns}

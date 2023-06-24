@@ -18,7 +18,8 @@ class StoreDetail extends Component {
             soDienThoai: '',
             tenCongTy: '',
             twitter: '',
-            website: ''
+            website: '',
+            fileLogo: ''
         } as EditCuaHangDto
     };
     async getData() {
@@ -40,6 +41,21 @@ class StoreDetail extends Component {
             }
         });
     };
+
+    handleLogoChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            const fileLogo = URL.createObjectURL(file);
+
+            this.setState({
+                editCuaHang: {
+                    ...this.state.editCuaHang,
+                    fileLogo: fileLogo
+                }
+            });
+        }
+    };
     handSubmit = async () => {
         const result = await cuaHangService.Update(this.state.editCuaHang);
         result != null
@@ -52,8 +68,10 @@ class StoreDetail extends Component {
                   autoHideDuration: 3000
               });
     };
+
     render(): ReactNode {
         const { editCuaHang } = this.state;
+
         return (
             <Box bgcolor="#fff" padding="24px" borderRadius="8px">
                 <Typography variant="h2" fontSize="24px" fontWeight="700" color="#0C050A" mb="32px">
@@ -70,14 +88,28 @@ class StoreDetail extends Component {
                                 Logo cửa hàng
                             </Typography>
                             <Box position="relative" sx={{ textAlign: 'center', mt: '20px' }}>
-                                <img
-                                    style={{
-                                        width: '6.944444444444445vw',
-                                        height: '6.944444444444445vw'
-                                    }}
-                                    src={AddLogoIcon}
-                                />
+                                {editCuaHang.fileLogo ? (
+                                    <img
+                                        src={editCuaHang.fileLogo}
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'contain'
+                                        }}
+                                        alt="logo"
+                                    />
+                                ) : (
+                                    <img
+                                        style={{
+                                            width: '6.944444444444445vw',
+                                            height: '6.944444444444445vw'
+                                        }}
+                                        src={AddLogoIcon}
+                                        alt="default logo"
+                                    />
+                                )}
                                 <input
+                                    onChange={this.handleLogoChange}
                                     type="file"
                                     style={{
                                         position: 'absolute',

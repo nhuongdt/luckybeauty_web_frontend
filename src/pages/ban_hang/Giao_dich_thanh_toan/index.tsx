@@ -451,6 +451,7 @@ const GiaoDichThanhToan: React.FC = () => {
                     </Grid>
                     <Box marginTop="16px">
                         <DataGrid
+                            disableRowSelectionOnClick
                             autoHeight
                             columns={columns}
                             rows={pageDataHoaDon.items}
