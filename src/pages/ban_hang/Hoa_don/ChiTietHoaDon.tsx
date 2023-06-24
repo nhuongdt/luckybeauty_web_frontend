@@ -139,7 +139,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                 justifyContent: 'space-between',
                 minHeight: 'calc(100vh - 70px)'
             }}>
-            <ModalWarning open={openDialog} onClose={handleCloseDialog} />
+            <ModalWarning open={openDialog} onClose={handleCloseDialog} onOK={handleCloseDialog} />
             <Box>
                 <Grid
                     container
