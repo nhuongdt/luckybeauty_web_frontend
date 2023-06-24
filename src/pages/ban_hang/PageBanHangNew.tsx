@@ -19,7 +19,7 @@ import arrowIcon from '../../images/arrow_back.svg';
 import avatar from '../../images/avatar.png';
 import dotIcon from '../../images/dotssIcon.svg';
 // import { useReactToPrint } from 'react-to-print';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import { useReactToPrint } from 'react-to-print';
 
@@ -60,30 +60,38 @@ import { ReactComponent as UserIcon } from '../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
+
 const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
-    const componentRef = useRef(null);
+    const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [txtSearch, setTxtSearch] = useState('');
+    const isFirstRender = useRef(true);
+    const afterRender = useRef(false);
+    const [clickSSave, setClickSave] = useState(false);
+    const componentRef = useRef(null);
+    const [isPrint, setIsPrint] = useState(false); // todo check on/off print
+    const [idNhomHang, setIdNhomHang] = useState('');
+    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
+    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
+
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState([]);
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
-        new PageHoaDonDto({ idKhachHang: null, tenKhachHang: '' })
+        new PageHoaDonDto({
+            idKhachHang: null,
+            tenKhachHang: '',
+            idChiNhanh: chiNhanhCurrent.id
+        })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
-
-    const isFirstRender = useRef(true);
-    const afterRender = useRef(false);
-    const [clickSSave, setClickSave] = useState(false);
-    const [isPrint, setIsPrint] = useState(false); // todo check on/off print
-    const [idNhomHang, setIdNhomHang] = useState('');
-    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
         new PageHoaDonChiTietDto({ id: '', expanded: true })
     );
 
-    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
     );
@@ -109,6 +117,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         setAllNhanVien([...data.items]);
     };
 
+    const getInforChiNhanh_byID = async () => {
+        const data = await chiNhanhService.GetDetail(chiNhanhCurrent.id);
+        return data;
+    };
+
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
         await GetListNhanVien();
@@ -120,6 +133,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         if (isFirstRender.current) {
             isFirstRender.current = false; // avoid load again
         }
+        console.log('pageload');
         PageLoad();
     }, [customerChosed]);
 
@@ -189,8 +203,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                     soDienThoai: customerChosed.soDienThoai,
                     tongTichDiem: customerChosed.tongTichDiem
                 };
-                setHoaDon(dataHD);
-                dbDexie.hoaDon.add(dataHD);
+                await dbDexie.hoaDon.add(dataHD);
             } else {
                 // get hoadon + cthd
                 const hdctCache = data[0].hoaDonChiTiet ?? [];
@@ -201,7 +214,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                     return {
                         ...old,
                         // contentHtml: content,
-                        hoadon: data[0],
+                        hoadon: { ...data[0] },
                         khachhang: { ...customerChosed },
                         hoadonChiTiet: [...hdctCache],
                         chinhanh: {
@@ -270,10 +283,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
             return {
                 ...old,
                 // contentHtml: content,
-                hoadon: dataHD,
+                hoadon: { ...dataHD },
                 khachhang: { ...customerChosed },
                 hoadonChiTiet: [...hoaDonChiTiet],
                 chinhanh: {
+                    ...old.chinhanh,
                     tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
                     soDienThoai: '0973474985',
                     logo: logo
@@ -287,15 +301,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         const data = await dbDexie.hoaDon.where('id').equals(id).toArray();
 
         if (data.length > 0) {
-            await dbDexie.hoaDon
-                .where('id')
-                .equals(id)
-                .delete()
-                .then(function (deleteCount: any) {
-                    if (deleteCount > 0) {
-                        dbDexie.hoaDon.add(dataHD);
-                    }
-                });
+            const rowDelete = await dbDexie.hoaDon.where('id').equals(id).delete();
+            if (rowDelete > 0) {
+                await dbDexie.hoaDon.add(dataHD);
+            }
         }
     };
 
@@ -534,6 +543,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
 
         // save soquy (todo POS, ChuyenKhoan)
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+            idChiNhanh: chiNhanhCurrent.id,
             idLoaiChungTu: 11,
             ngayLapHoaDon: hoadon.ngayLapHoaDon,
             tongTienThu: hoadon.tongThanhToan
@@ -564,6 +574,22 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                 }
             };
         });
+
+        const chinhanh = await getInforChiNhanh_byID();
+        if (chinhanh !== null) {
+            setPropMauIn((old: any) => {
+                return {
+                    ...old,
+                    chinhanh: {
+                        ...old.chinhanh,
+                        tenChiNhanh: chinhanh?.tenChiNhanh,
+                        soDienThoai: chinhanh?.soDienThoai,
+                        logo: logo // todo logo
+                    }
+                };
+            });
+        }
+
         handlePrint();
 
         // reset after save
