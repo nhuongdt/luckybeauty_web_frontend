@@ -337,6 +337,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                 </Box>
                 <Box marginTop="24px" bgcolor="#fff" borderRadius="8px">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight={true}
                         columns={columns}
                         rows={this.state.listRole}

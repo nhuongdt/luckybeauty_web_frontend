@@ -354,6 +354,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     className="page-content "
                     sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={this.state.listTenant}

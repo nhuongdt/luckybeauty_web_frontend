@@ -27,7 +27,7 @@ import { DataGrid, GridColumnVisibilityModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
-
+import ExportToExcel from '../../../../components/ExportToExcel';
 class ChiNhanhScreen extends Component {
     state = {
         idChiNhanh: '',
@@ -392,6 +392,7 @@ class ChiNhanhScreen extends Component {
                 </Grid>
                 <div className="mt-2">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={this.state.listChiNhanh}

@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useState } from 'react';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import utils from '../../utils/utils';
-import moment from 'moment';
+import { format } from 'date-fns';
 import '../../App.css';
 
 export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: any) {
@@ -74,7 +74,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                         <span style={{ fontFamily: 'Tahoma' }}>
                             Ngày bán:{' '}
                             <span>
-                                {moment(props?.hoadon.ngayLapHoaDon).format('DD/MM/YYYY HH:mm')}
+                                {format(new Date(props?.hoadon.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
                             </span>
                         </span>
                     </span>

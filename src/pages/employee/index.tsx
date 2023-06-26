@@ -567,6 +567,7 @@ class EmployeeScreen extends React.Component {
 
                 <Box marginTop="24px" bgcolor="#fff">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
 import {
     Grid,
     Box,
@@ -26,7 +26,7 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-
+import CustomRowDetails from '../ban_hang/Hoa_don/ChiTietHoaDon';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -329,7 +329,7 @@ export default function PageProductNew() {
                     variant="body2"
                     color="#333233"
                     sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value}
+                    {params.value || ''}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -350,7 +350,7 @@ export default function PageProductNew() {
                         fontSize="12px"
                         variant="body2"
                         color="#333233"
-                        title={params.value}
+                        title={params.value || ''}
                         sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
                         {params.value}
                     </Typography>
@@ -385,7 +385,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex">
                     <Typography variant="body2" color="#333233" fontSize="12px">
-                        {Utils.formatNumber(params.value)}
+                        {Utils.formatNumber(params.value || '')}
                     </Typography>
                 </Box>
             ),
@@ -405,7 +405,7 @@ export default function PageProductNew() {
                 <Box display="flex">
                     <ClockIcon />
                     <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
-                        {params.value} phút
+                        {params.value || ''} phút
                     </Typography>
                 </Box>
             ),
@@ -432,7 +432,7 @@ export default function PageProductNew() {
                         backgroundColor: '#F1FAFF',
                         color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
                     }}>
-                    {params.value}
+                    {params.value || ''}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -521,7 +521,7 @@ export default function PageProductNew() {
                         <Button
                             size="small"
                             variant="outlined"
-                            startIcon={<UploadIcon />}
+                            startIcon={<DownIcon />}
                             className="btnNhapXuat btn-outline-hover"
                             sx={{ bgcolor: '#fff!important' }}>
                             Nhập
@@ -529,7 +529,7 @@ export default function PageProductNew() {
                         <Button
                             size="small"
                             variant="outlined"
-                            startIcon={<DownIcon />}
+                            startIcon={<UploadIcon />}
                             className="btnNhapXuat btn-outline-hover"
                             sx={{ bgcolor: '#fff!important' }}>
                             Xuất
@@ -568,10 +568,10 @@ export default function PageProductNew() {
                                 <Add
                                     className="button-container"
                                     sx={{
-                                        transition: '.4s',
                                         '&:hover': {
-                                            transform: 'rotate(90deg)'
+                                            bgcolor: 'rgba(124, 51, 103, 0.7) !important'
                                         },
+                                        transition: '.4s',
                                         height: '30px',
                                         cursor: 'pointer',
                                         width: '30px',
@@ -581,7 +581,22 @@ export default function PageProductNew() {
                                     onClick={() => showModalAddNhomHang()}
                                 />
                             </Box>
-                            <Box sx={{ overflow: 'auto', maxHeight: '400px', padding: '0px 24px' }}>
+                            <Box
+                                sx={{
+                                    overflow: 'auto',
+                                    maxHeight: '66vh',
+                                    padding: '0px 24px',
+                                    '&::-webkit-scrollbar': {
+                                        width: '7px'
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        bgcolor: 'rgba(0,0,0,0.1)',
+                                        borderRadius: '8px'
+                                    },
+                                    '&::-webkit-scrollbar-track': {
+                                        bgcolor: '#F2EBF0'
+                                    }
+                                }}>
                                 <AccordionNhomHangHoa
                                     dataNhomHang={treeNhomHangHoa}
                                     clickTreeItem={editNhomHangHoa}
@@ -598,6 +613,7 @@ export default function PageProductNew() {
                                 position: 'relative'
                             }}>
                             <DataGrid
+                                disableRowSelectionOnClick
                                 autoHeight
                                 rows={pageDataProduct.items}
                                 columns={columns}
@@ -646,6 +662,7 @@ export default function PageProductNew() {
                                 }}
                                 localeText={TextTranslate}
                             />
+                            {/* {selectedRow && <CustomRowDetails />} */}
 
                             <Grid
                                 container

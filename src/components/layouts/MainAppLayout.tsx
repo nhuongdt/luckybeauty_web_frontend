@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Header from '../Header';
 import AppSiderMenu from '../SiderMenu/index';
@@ -7,6 +7,8 @@ import LoginAlertDialog from '../AlertDialog/LoginAlert';
 
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
@@ -21,6 +23,11 @@ const isAuthenticated = (): boolean => {
     return false;
 };
 const MainAppLayout: React.FC = () => {
+    const [chinhanhCurrent, setChiNhanhCurrent] = React.useState<SuggestChiNhanhDto>({
+        id: '',
+        tenChiNhanh: ''
+    });
+
     const [open, setOpen] = React.useState(!isAuthenticated);
     const navigate = useNavigate();
     useEffect(() => {
@@ -58,6 +65,10 @@ const MainAppLayout: React.FC = () => {
             handleChildHoverChange(true);
         }
     }, []);
+
+    const changeChiNhanh = (item: SuggestChiNhanhDto) => {
+        setChiNhanhCurrent(item);
+    };
     return (
         <>
             <Container maxWidth={false} disableGutters={true}>
@@ -78,6 +89,7 @@ const MainAppLayout: React.FC = () => {
                         onClick={toggle}
                         isChildHovered={isChildHovered}
                         CookieSidebar={CookieSidebar}
+                        handleChangeChiNhanh={changeChiNhanh}
                     />
                     <Box
                         sx={{
@@ -86,7 +98,9 @@ const MainAppLayout: React.FC = () => {
                             minHeight: 'calc(100vh - 70px)',
                             bgcolor: 'rgba(248,248,248,1)'
                         }}>
-                        <Outlet />
+                        <ChiNhanhContext.Provider value={chinhanhCurrent}>
+                            <Outlet />
+                        </ChiNhanhContext.Provider>
                         <LoginAlertDialog open={open} confirmLogin={confirm} />
                     </Box>
                 </Box>

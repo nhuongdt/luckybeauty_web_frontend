@@ -13,7 +13,6 @@
     padding: 4px;
 }
 
-
 /*treeview nhom hanghoa*/
 
 .infor-cus .cusname {
@@ -49,10 +48,6 @@
     height: 45px;
 }
 
-.page-ban-hang .center .infor-dich-vu {
-    /* border: 1px solid red; */
-}
-
 .page-ban-hang .nvthuchien {
     border-radius: 4px;
     background-color: antiquewhite;
@@ -63,7 +58,6 @@
     float: right;
     font-weight: 500;
 }
-
 
 /*poppup checkin*/
 

@@ -430,6 +430,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             }
         ];
         const { createOrEditKhachHang } = this.state;
+
         return (
             <Box
                 className="customer-page"
@@ -533,6 +534,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         backgroundColor: '#fff'
                     }}>
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         rows={this.state.rowTable}
                         columns={columns}

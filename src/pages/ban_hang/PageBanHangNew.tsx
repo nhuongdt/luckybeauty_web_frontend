@@ -19,7 +19,7 @@ import arrowIcon from '../../images/arrow_back.svg';
 import avatar from '../../images/avatar.png';
 import dotIcon from '../../images/dotssIcon.svg';
 // import { useReactToPrint } from 'react-to-print';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import { useReactToPrint } from 'react-to-print';
 
@@ -60,30 +60,38 @@ import { ReactComponent as UserIcon } from '../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-const PageBanHang = ({ customerChosed }: any) => {
-    const componentRef = useRef(null);
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
+
+const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
+    const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [txtSearch, setTxtSearch] = useState('');
+    const isFirstRender = useRef(true);
+    const afterRender = useRef(false);
+    const [clickSSave, setClickSave] = useState(false);
+    const componentRef = useRef(null);
+    const [isPrint, setIsPrint] = useState(false); // todo check on/off print
+    const [idNhomHang, setIdNhomHang] = useState('');
+    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
+    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
+
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState([]);
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
-        new PageHoaDonDto({ idKhachHang: null, tenKhachHang: '' })
+        new PageHoaDonDto({
+            idKhachHang: null,
+            tenKhachHang: '',
+            idChiNhanh: chiNhanhCurrent.id
+        })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
-
-    const isFirstRender = useRef(true);
-    const afterRender = useRef(false);
-    const [clickSSave, setClickSave] = useState(false);
-    const [isPrint, setIsPrint] = useState(false); // todo check on/off print
-    const [idNhomHang, setIdNhomHang] = useState('');
-    const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
         new PageHoaDonChiTietDto({ id: '', expanded: true })
     );
 
-    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
         new PropToChildMauIn({ contentHtml: '' })
     );
@@ -109,6 +117,11 @@ const PageBanHang = ({ customerChosed }: any) => {
         setAllNhanVien([...data.items]);
     };
 
+    const getInforChiNhanh_byID = async () => {
+        const data = await chiNhanhService.GetDetail(chiNhanhCurrent.id);
+        return data;
+    };
+
     const PageLoad = async () => {
         await GetTreeNhomHangHoa();
         await GetListNhanVien();
@@ -120,6 +133,7 @@ const PageBanHang = ({ customerChosed }: any) => {
         if (isFirstRender.current) {
             isFirstRender.current = false; // avoid load again
         }
+        console.log('pageload');
         PageLoad();
     }, [customerChosed]);
 
@@ -189,8 +203,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                     soDienThoai: customerChosed.soDienThoai,
                     tongTichDiem: customerChosed.tongTichDiem
                 };
-                setHoaDon(dataHD);
-                dbDexie.hoaDon.add(dataHD);
+                await dbDexie.hoaDon.add(dataHD);
             } else {
                 // get hoadon + cthd
                 const hdctCache = data[0].hoaDonChiTiet ?? [];
@@ -201,7 +214,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                     return {
                         ...old,
                         // contentHtml: content,
-                        hoadon: data[0],
+                        hoadon: { ...data[0] },
                         khachhang: { ...customerChosed },
                         hoadonChiTiet: [...hdctCache],
                         chinhanh: {
@@ -270,10 +283,11 @@ const PageBanHang = ({ customerChosed }: any) => {
             return {
                 ...old,
                 // contentHtml: content,
-                hoadon: dataHD,
+                hoadon: { ...dataHD },
                 khachhang: { ...customerChosed },
                 hoadonChiTiet: [...hoaDonChiTiet],
                 chinhanh: {
+                    ...old.chinhanh,
                     tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
                     soDienThoai: '0973474985',
                     logo: logo
@@ -287,15 +301,10 @@ const PageBanHang = ({ customerChosed }: any) => {
         const data = await dbDexie.hoaDon.where('id').equals(id).toArray();
 
         if (data.length > 0) {
-            await dbDexie.hoaDon
-                .where('id')
-                .equals(id)
-                .delete()
-                .then(function (deleteCount: any) {
-                    if (deleteCount > 0) {
-                        dbDexie.hoaDon.add(dataHD);
-                    }
-                });
+            const rowDelete = await dbDexie.hoaDon.where('id').equals(id).delete();
+            if (rowDelete > 0) {
+                await dbDexie.hoaDon.add(dataHD);
+            }
         }
     };
 
@@ -534,6 +543,7 @@ const PageBanHang = ({ customerChosed }: any) => {
 
         // save soquy (todo POS, ChuyenKhoan)
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+            idChiNhanh: chiNhanhCurrent.id,
             idLoaiChungTu: 11,
             ngayLapHoaDon: hoadon.ngayLapHoaDon,
             tongTienThu: hoadon.tongThanhToan
@@ -564,6 +574,22 @@ const PageBanHang = ({ customerChosed }: any) => {
                 }
             };
         });
+
+        const chinhanh = await getInforChiNhanh_byID();
+        if (chinhanh !== null) {
+            setPropMauIn((old: any) => {
+                return {
+                    ...old,
+                    chinhanh: {
+                        ...old.chinhanh,
+                        tenChiNhanh: chinhanh?.tenChiNhanh,
+                        soDienThoai: chinhanh?.soDienThoai,
+                        logo: logo // todo logo
+                    }
+                };
+            });
+        }
+
         handlePrint();
 
         // reset after save
@@ -572,18 +598,6 @@ const PageBanHang = ({ customerChosed }: any) => {
         setHoaDonChiTiet([]);
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
         await RemoveCache();
-    };
-    // đổi layout
-
-    const [layout, setLayout] = useState(false);
-    const handleLayoutToggle = () => {
-        setLayout(!layout);
-        if (layout == true) {
-            Cookies.set('changed', 'true', { expires: 7 });
-        } else {
-            Cookies.set('changed', 'false');
-        }
-        console.log(Cookies.get('changed'));
     };
 
     // thêm 2 nút điều hướng cho phần cuộn ngang
@@ -651,7 +665,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                 resizeObserver2.disconnect();
             };
         }
-    }, [layout]);
+    }, [CoditionLayout]);
     useEffect(() => {
         const containerElement = containerRef.current;
         if (containerElement) {
@@ -664,14 +678,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                 resizeObserver.disconnect();
             };
         }
-    }, [layout]);
-    useEffect(() => {
-        if (Cookies.get('changed') === 'true') {
-            setLayout(false);
-        } else {
-            setLayout(true);
-        }
-    }, []);
+    }, [CoditionLayout]);
+
     return (
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
@@ -701,50 +709,65 @@ const PageBanHang = ({ customerChosed }: any) => {
                         paddingTop: '0!important'
                     }
                 }}>
-                <Grid item container md={8} spacing={3} marginTop={layout ? '-60px' : '-24px'}>
-                    {layout && (
-                        <TextField
-                            fullWidth
-                            sx={{
-                                borderColor: '#CFD3D4!important',
-                                borderWidth: '1px!important',
-                                maxWidth: '55%',
-                                mr: '24px',
-                                boxShadow: ' 0px 20px 100px 0px #0000000D',
-
-                                marginLeft: 'auto',
-                                '& .MuiInputBase-root': {
-                                    bgcolor: '#fff'
-                                }
-                            }}
-                            size="small"
-                            className="search-field"
-                            variant="outlined"
-                            type="search"
-                            placeholder="Tìm kiếm"
-                            value={txtSearch}
-                            onChange={(event) => {
-                                setTxtSearch(event.target.value);
-                            }}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchIcon />
-                                    </InputAdornment>
-                                )
-                            }}
-                        />
-                    )}
-                    <Grid item md={layout ? 12 : 5} sx={{ paddingLeft: '0!important' }}>
+                <Grid
+                    item
+                    container
+                    md={8}
+                    spacing={3}
+                    height="fit-content"
+                    marginTop={CoditionLayout ? '-83px' : '-24px'}>
+                    <Grid
+                        item
+                        md={CoditionLayout ? 12 : 5}
+                        sx={{
+                            paddingLeft: '0!important',
+                            display: 'flex',
+                            flexDirection: 'column'
+                        }}>
+                        {CoditionLayout && (
+                            <TextField
+                                fullWidth
+                                sx={{
+                                    borderColor: '#CFD3D4!important',
+                                    borderWidth: '1px!important',
+                                    maxWidth: '55%',
+                                    mr: '24px',
+                                    boxShadow: ' 0px 20px 100px 0px #0000000D',
+                                    maxHeight: '37px',
+                                    marginLeft: 'auto',
+                                    '& .MuiInputBase-root': {
+                                        bgcolor: '#fff'
+                                    }
+                                }}
+                                size="small"
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                value={txtSearch}
+                                onChange={(event) => {
+                                    setTxtSearch(event.target.value);
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                        )}
                         <Box
                             sx={{
-                                backgroundColor: layout ? 'transparent' : '#fff',
+                                backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                 borderRadius: '8px',
-                                boxShadow: layout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
+                                boxShadow: CoditionLayout
+                                    ? 'unset'
+                                    : ' 0px 20px 100px 0px #0000000D',
                                 padding: '16px 24px',
-                                height: layout ? 'unset' : '100vh',
+                                height: CoditionLayout ? 'unset' : '100vh',
                                 overflowX: 'hidden',
-                                maxHeight: layout ? 'unset' : '77.5vh',
+                                maxHeight: CoditionLayout ? 'unset' : '77.5vh',
                                 overflowY: 'auto',
                                 '&::-webkit-scrollbar': {
                                     width: '7px'
@@ -814,9 +837,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     ref={containerRef}
                                     onWheel={handleWheel}
                                     sx={{
-                                        display: layout ? 'flex' : 'block',
+                                        display: CoditionLayout ? 'flex' : 'block',
                                         columnGap: '12px',
-                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
                                         scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
@@ -841,8 +864,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 marginTop: '12px',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
-                                                minWidth: layout ? '200px' : 'unset',
-                                                maxWidth: layout ? '200px' : 'unset',
+                                                minWidth: CoditionLayout ? '200px' : 'unset',
+                                                maxWidth: CoditionLayout ? '200px' : 'unset',
                                                 position: 'relative',
                                                 '&::after': {
                                                     content: '""',
@@ -947,9 +970,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     onWheel={handleWheel2}
                                     ref={containerRef2}
                                     sx={{
-                                        display: layout ? 'flex' : 'block',
+                                        display: CoditionLayout ? 'flex' : 'block',
                                         columnGap: '12px',
-                                        flexWrap: layout ? 'nowrap' : 'wrap',
+                                        flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
                                         overflowX: 'auto',
                                         scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
@@ -971,8 +994,8 @@ const PageBanHang = ({ customerChosed }: any) => {
                                                 bgcolor: nhomHH.color,
                                                 borderRadius: '8px',
                                                 marginTop: '12px',
-                                                minWidth: layout ? '200px' : 'unset',
-                                                maxWidth: layout ? '200px' : 'unset',
+                                                minWidth: CoditionLayout ? '200px' : 'unset',
+                                                maxWidth: CoditionLayout ? '200px' : 'unset',
                                                 cursor: 'pointer',
                                                 transition: '.4s',
 
@@ -1024,9 +1047,9 @@ const PageBanHang = ({ customerChosed }: any) => {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item md={layout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                    <Grid item md={CoditionLayout ? 12 : 7} sx={{ marginTop: '-58px' }}>
                         <Box display="flex" flexDirection="column">
-                            {!layout && (
+                            {!CoditionLayout && (
                                 <TextField
                                     fullWidth
                                     sx={{
@@ -1063,9 +1086,14 @@ const PageBanHang = ({ customerChosed }: any) => {
                                 padding="16px"
                                 marginTop="16px"
                                 sx={{
-                                    backgroundColor: layout ? 'transparent' : '#fff',
+                                    backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    maxHeight: layout ? '30vh' : '77.5vh',
+                                    maxHeight:
+                                        CoditionLayout && innerHeight > 600
+                                            ? '47vh'
+                                            : CoditionLayout && innerHeight < 605
+                                            ? '32vh'
+                                            : '77.5vh',
                                     overflowX: 'hidden',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {
@@ -1092,7 +1120,10 @@ const PageBanHang = ({ customerChosed }: any) => {
 
                                         <Grid container spacing={1.5}>
                                             {nhom.hangHoas.map((item: any, index2: any) => (
-                                                <Grid item xs={layout ? 2.4 : 4} key={item.id}>
+                                                <Grid
+                                                    item
+                                                    xs={CoditionLayout ? 2.4 : 4}
+                                                    key={item.id}>
                                                     <Box
                                                         minHeight="104px"
                                                         padding="8px 12px 9px 12px"
@@ -1152,9 +1183,10 @@ const PageBanHang = ({ customerChosed }: any) => {
                             borderRadius: '8px',
                             overflow: 'hidden',
                             height: '100vh',
-                            maxHeight: '89vh',
+                            maxHeight: 'calc(100vh - 70px)',
 
                             padding: '16px',
+                            paddingBottom: '32px',
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between'
@@ -1176,7 +1208,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
-                                <Button sx={{ marginLeft: 'auto' }} onClick={handleLayoutToggle}>
+                                <Button sx={{ marginLeft: 'auto' }}>
                                     <img
                                         src={dotIcon}
                                         style={{
@@ -1206,7 +1238,7 @@ const PageBanHang = ({ customerChosed }: any) => {
                                     padding="12px"
                                     borderRadius="8px"
                                     border="1px solid #F2F2F2"
-                                    marginTop="24px"
+                                    marginTop="16px"
                                     key={index}>
                                     <Box
                                         display="flex"

@@ -9,7 +9,7 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import AutocompleteCustomer from '../../components/Autocomplete/Customer';
 
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
@@ -17,12 +17,15 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import KhachHangService from '../../services/khach-hang/khachHangService';
 import CheckinService from '../../services/check_in/CheckinService';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+
 import Utils from '../../utils/utils'; // func common
 
 import '../../App.css';
 import { Guid } from 'guid-typescript';
 
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
+    const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [errPhone, setErrPhone] = useState(false);
@@ -139,7 +142,8 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 };
             });
             const objCheckIn: KHCheckInDto = new KHCheckInDto({
-                idKhachHang: khCheckIn.id.toString()
+                idKhachHang: khCheckIn.id.toString(),
+                idChiNhanh: chiNhanhCurrent.id
             });
             // insert checkin
             const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
@@ -160,7 +164,8 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 return;
             }
             const objCheckIn: KHCheckInDto = new KHCheckInDto({
-                idKhachHang: newCus.id
+                idKhachHang: newCus.id,
+                idChiNhanh: chiNhanhCurrent.id
             });
             // insert checkin
             const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);

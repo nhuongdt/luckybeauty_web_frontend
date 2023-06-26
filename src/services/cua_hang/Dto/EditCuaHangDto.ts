@@ -10,4 +10,5 @@ export interface EditCuaHangDto {
     instagram: string;
     twitter: string;
     ghiChu: string;
+    fileLogo: string;
 }

@@ -1,14 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Tabs, Tab, Typography, Grid } from '@mui/material';
 import StoreDetail from './cua-hang/index';
 import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
 import Booking from './Booking';
+import Cookies from 'js-cookie';
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
     const handleTabChange = (event: any, newValue: number) => {
         setActiveTab(newValue);
+        switch (newValue) {
+            case 1:
+                Cookies.set('tabSetting', '1', { expires: 7 });
+                break;
+            case 2:
+                Cookies.set('tabSetting', '2');
+                break;
+            case 3:
+                Cookies.set('tabSetting', '3');
+                break;
+            case 5:
+                Cookies.set('tabSetting', '5');
+                break;
+            case 7:
+                Cookies.set('tabSetting', '7');
+                break;
+            case 8:
+                Cookies.set('tabSetting', '8');
+                break;
+            default:
+                Cookies.set('tabSetting', '1');
+                break;
+        }
     };
+    useEffect(() => {
+        const CookiesTab = Cookies.get('tabSetting');
+        CookiesTab === '1'
+            ? setActiveTab(1)
+            : CookiesTab === '2'
+            ? setActiveTab(2)
+            : CookiesTab === '3'
+            ? setActiveTab(3)
+            : CookiesTab === '5'
+            ? setActiveTab(5)
+            : CookiesTab === '7'
+            ? setActiveTab(7)
+            : CookiesTab === '8'
+            ? setActiveTab(8)
+            : undefined;
+    }, []);
     interface TabPanelProps {
         children?: React.ReactNode;
         value: number;
@@ -29,6 +69,7 @@ const SettingsNew: React.FC = () => {
     const handleTabClick = (tab: string) => {
         setSelectedTab(tab);
     };
+
     return (
         <>
             <Box padding="22px 2.2222222222222223vw">

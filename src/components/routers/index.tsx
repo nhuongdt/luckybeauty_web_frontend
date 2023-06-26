@@ -180,21 +180,21 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
-                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan')
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/index')
                             )
                         },
                         {
-                            path: '/hoa-don',
-                            permission: 'Pages.HoaDon',
-                            title: 'Hoá đơn',
-                            name: 'HoaDon',
+                            path: '/giao-dich-thanh-toan-new',
+                            permission: 'Pages.QuyHoaDon',
+                            title: 'Giao dịch thanh toán new',
+                            name: 'giaoDichThanhToanNew',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
                             children: [],
                             showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
-                                () => import('../../pages/ban_hang/Hoa_don')
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/indexTest')
                             )
                         }
                     ],

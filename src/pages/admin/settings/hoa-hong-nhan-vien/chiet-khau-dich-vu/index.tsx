@@ -29,6 +29,7 @@ import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong
 import { SuggestDonViQuiDoiDto } from '../../../../../services/suggests/dto/SuggestDonViQuiDoi';
 import Cookies from 'js-cookie';
 import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
+import ExportToExcel from '../../../../../components/ExportToExcel';
 class ChietKhauDichVuScreen extends Component {
     state = {
         visited: false,
@@ -429,6 +430,7 @@ class ChietKhauDichVuScreen extends Component {
                 </Grid>
                 <Box marginTop="8px">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}

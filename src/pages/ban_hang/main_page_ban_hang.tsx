@@ -7,7 +7,7 @@ import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import './style.css';
 import { Guid } from 'guid-typescript';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 export default function MainPageBanHang() {
     const [activeTab, setActiveTab] = useState(1);
 
@@ -38,6 +38,7 @@ export default function MainPageBanHang() {
         });
         setActiveTab(2);
     };
+    //ẩn thanh cuộn dọc của trình duyệt khi vào trang bán hàng
     useEffect(() => {
         activeTab === 2
             ? (document.documentElement.style.overflowY = 'hidden')
@@ -54,6 +55,25 @@ export default function MainPageBanHang() {
             handleTab(2);
         }
     }, []);
+    // Xử lý thay đổi giao diện của tab thanh toán
+    const [layout, setLayout] = useState(false);
+    const handleLayoutToggle = () => {
+        setLayout(!layout);
+        if (layout == true) {
+            Cookies.set('changed', 'true', { expires: 7 });
+        } else {
+            Cookies.set('changed', 'false');
+        }
+        console.log(Cookies.get('changed'));
+    };
+    useEffect(() => {
+        if (Cookies.get('changed') === 'true') {
+            setLayout(false);
+        } else {
+            setLayout(true);
+        }
+    }, []);
+
     return (
         <>
             <Grid container padding={2} columnSpacing={2} rowSpacing={2}>
@@ -120,6 +140,7 @@ export default function MainPageBanHang() {
                                         color: '#999699'
                                     }
                                 }}
+                                onClick={handleLayoutToggle}
                                 className="btn-outline-hover">
                                 <MoreHorizIcon />
                             </Button>
@@ -127,7 +148,9 @@ export default function MainPageBanHang() {
                     </Box>
                 </Grid>
                 {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
-                {activeTab === 2 && <PageBanHang customerChosed={cusChosing} />}
+                {activeTab === 2 && (
+                    <PageBanHang customerChosed={cusChosing} CoditionLayout={layout} />
+                )}
             </Grid>
         </>
     );

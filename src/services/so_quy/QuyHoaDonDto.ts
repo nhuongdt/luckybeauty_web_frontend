@@ -1,17 +1,15 @@
 import { Guid } from 'guid-typescript';
-import { truncate } from 'lodash';
 import QuyChiTietDto from './QuyChiTietDto';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 export default class QuyHoaDonDto {
     id = Guid.create().toString();
-    idChiNhanh?: string | null = null;
+    idChiNhanh?: string;
     idNhanVien?: string | null = null;
     idLoaiChungTu = 11;
     maHoaDon? = '';
-    tienThu = 0;
     tongTienThu = 0;
-    ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS');
+    ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS');
     trangThai? = 1;
 
     noiDungThu? = '';
@@ -27,22 +25,24 @@ export default class QuyHoaDonDto {
     tenChiNhanh? = '';
     tenNhanVien? = '';
     sTrangThai? = '';
+    sHinhThucThanhToan? = '';
 
     constructor({
         id = Guid.create().toString(),
         idLoaiChungTu = 11,
+        idChiNhanh = '',
         maHoaDon = '',
         idNhanVien = null,
-        ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
+        ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
         tongTienThu = 0,
         noiDungThu = '',
         hachToanKinhDoanh = true,
         thuPhiTienGui = 0,
-        diemThanhToan = 0,
-        tienThu = 0
+        diemThanhToan = 0
     }) {
         this.id = id;
         this.idLoaiChungTu = idLoaiChungTu;
+        this.idChiNhanh = idChiNhanh;
         this.maHoaDon = maHoaDon;
         this.idNhanVien = idNhanVien;
         this.ngayLapHoaDon = ngayLapHoaDon;
@@ -51,7 +51,6 @@ export default class QuyHoaDonDto {
         this.hachToanKinhDoanh = hachToanKinhDoanh;
         this.thuPhiTienGui = thuPhiTienGui;
         this.diemThanhToan = diemThanhToan;
-        this.tienThu = tienThu;
         this.quyHoaDon_ChiTiet = [];
 
         Object.defineProperties(this, {

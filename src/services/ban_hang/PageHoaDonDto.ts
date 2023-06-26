@@ -2,7 +2,7 @@ import { Guid } from 'guid-typescript';
 import { KhachHangItemDto } from '../khach-hang/dto/KhachHangItemDto';
 import HoaDonDto from './HoaDonDto';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
-import moment from 'moment';
+import { format } from 'date-fns';
 
 export default class PageHoaDonDto extends HoaDonDto {
     maKhachHang = '';
@@ -13,6 +13,9 @@ export default class PageHoaDonDto extends HoaDonDto {
     maNhanVien = '';
     tenNhanVien = '';
 
+    userName = ''; // user lap phieu
+    tenChiNhanh = '';
+
     daThanhToan? = 0;
     txtTrangThaiHD = 'Hoàn thành';
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
@@ -20,6 +23,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     constructor({
         id = Guid.create().toString(),
         idKhachHang = null,
+        idChiNhanh = '',
         maKhachHang = '',
         tenKhachHang = '',
         soDienThoai = '',
@@ -28,7 +32,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         maNhanVien = '',
         tenNhanVien = '',
         maHoaDon = '',
-        ngayLapHoaDon = moment(new Date()).format('YYYY-MM-DD HH:mm:ss.SSS'),
+        ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
         tongTienHang = 0,
         daThanhToan = 0,
         tongTienThue = 0
@@ -36,6 +40,7 @@ export default class PageHoaDonDto extends HoaDonDto {
         super({
             id: id,
             idKhachHang: idKhachHang,
+            idChiNhanh: idChiNhanh,
             maHoaDon: maHoaDon,
             ngayLapHoaDon: ngayLapHoaDon,
             tongTienHang: tongTienHang,
