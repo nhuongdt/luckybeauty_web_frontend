@@ -12,7 +12,9 @@ import {
     MenuItem,
     Select,
     TextField,
-    Typography
+    Typography,
+    Autocomplete,
+    InputAdornment
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
@@ -24,6 +26,8 @@ import AppConsts from '../../../lib/appconst';
 import datLichService from '../../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
+import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
+import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -73,17 +77,17 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
             idNhanVien: '',
             idDonViQuiDoi: ''
         };
-
+        const options = [{ tenKhachHang: 'Thêm mới', soDienThoai: 'add_new' }, ...suggestKhachHang];
         return (
             <div>
                 <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">
-                    <DialogTitle>
+                    <DialogTitle sx={{ borderBottom: '1px solid #E6E1E6' }}>
                         <Typography
                             variant="h3"
                             fontSize="24px"
                             color="rgb(51, 50, 51)"
                             fontWeight="700">
-                            {idLichHen ? 'Cập nhật lịch hẹn' : 'Thêm mới lịch hẹn'}
+                            {idLichHen ? 'Cập nhật lịch hẹn' : 'Thêm cuộc hẹn'}
                         </Typography>
                         <IconButton
                             aria-label="close"
@@ -91,19 +95,22 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                             sx={{
                                 position: 'absolute',
                                 right: 8,
-                                top: 8
+                                top: 8,
+                                '&:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                }
                             }}>
                             <CloseIcon />
                         </IconButton>
                     </DialogTitle>
-                    <DialogContent>
+                    <DialogContent sx={{ pr: '0', pb: '0' }}>
                         <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
                             {({ errors, touched, values, handleChange }) => (
                                 <Form>
-                                    <Grid container spacing={[8, 4]}>
-                                        <Grid item xs={5}>
+                                    <Grid container spacing={[8, 3]}>
+                                        <Grid item xs={5} sx={{ pr: '20px' }}>
                                             <FormGroup>
-                                                <Select
+                                                {/* <Select
                                                     size="small"
                                                     name="idKhachHang"
                                                     onChange={handleChange}>
@@ -123,11 +130,76 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             {item.tenKhachHang} - {item.soDienThoai}
                                                         </MenuItem>
                                                     ))}
-                                                </Select>
+                                                </Select> */}
+                                                <Autocomplete
+                                                    sx={{ pt: '24px' }}
+                                                    options={options.map((option) => {
+                                                        if (option.soDienThoai === 'add_new') {
+                                                            return 'Thêm mới';
+                                                        } else {
+                                                            return `${option.tenKhachHang} - ${option.soDienThoai}`;
+                                                        }
+                                                    })}
+                                                    size="small"
+                                                    fullWidth
+                                                    disablePortal
+                                                    onChange={handleChange}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Tìm tên"
+                                                            name="idKhachHang"
+                                                            InputProps={{
+                                                                ...params.InputProps,
+                                                                startAdornment: (
+                                                                    <>
+                                                                        {
+                                                                            params.InputProps
+                                                                                .startAdornment
+                                                                        }
+                                                                        <InputAdornment position="start">
+                                                                            <SearchIcon />
+                                                                        </InputAdornment>
+                                                                    </>
+                                                                )
+                                                            }}
+                                                        />
+                                                    )}
+                                                />
                                             </FormGroup>
+                                            <Box textAlign="center" mt="5vw">
+                                                <Box>
+                                                    <IconMore />
+                                                </Box>
+                                                <Box mt="2.7777777777777777vw">
+                                                    <Typography
+                                                        variant="body1"
+                                                        fontSize="20px"
+                                                        fontWeight="500"
+                                                        color="#000">
+                                                        Thêm khách hàng
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body1"
+                                                        color="#8B8D97"
+                                                        fontSize="14px"
+                                                        fontWeight="400"
+                                                        mt="12px">
+                                                        Sử dụng tìm kiếm để thêm khách hàng
+                                                    </Typography>
+                                                </Box>
+                                            </Box>
                                         </Grid>
-                                        <Grid item xs={7} rowSpacing={4}>
-                                            <Typography variant="subtitle1" fontSize="18px">
+                                        <Grid
+                                            item
+                                            xs={7}
+                                            rowSpacing={4}
+                                            sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
+                                            <Typography
+                                                variant="subtitle1"
+                                                fontSize="16px"
+                                                fontWeight="700"
+                                                pt="24px">
                                                 Chi tiết cuộc hẹn
                                             </Typography>
                                             <FormGroup className="mt-4 mb-1">
@@ -138,6 +210,11 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     Ngày
                                                 </Typography>
                                                 <TextField
+                                                    sx={{
+                                                        '& .MuiInputBase-root': {
+                                                            bgcolor: '#fff'
+                                                        }
+                                                    }}
                                                     type="date"
                                                     size="small"
                                                     name="startTime"
@@ -269,34 +346,46 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <DialogActions>
-                                        <Box
-                                            display="flex"
-                                            marginLeft="auto"
-                                            gap="8px"
-                                            sx={{
-                                                '& button': {
-                                                    textTransform: 'unset!important'
-                                                }
-                                            }}>
-                                            <Button
-                                                variant="outlined"
-                                                size="small"
-                                                sx={{
-                                                    borderColor: '#7C3367!important',
-                                                    color: '#7C3367'
-                                                }}
-                                                onClick={onCancel}>
-                                                Hủy
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                type="submit"
-                                                sx={{ backgroundColor: '#7C3367!important' }}>
-                                                Lưu
-                                            </Button>
-                                        </Box>
+                                    <DialogActions sx={{ pr: '0', pb: '24px' }}>
+                                        <Grid container>
+                                            <Grid item xs={5}></Grid>
+                                            <Grid
+                                                item
+                                                xs={7}
+                                                sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
+                                                <Box
+                                                    display="flex"
+                                                    justifyContent="end"
+                                                    gap="8px"
+                                                    sx={{
+                                                        '& button': {
+                                                            textTransform: 'unset!important'
+                                                        }
+                                                    }}>
+                                                    <Button
+                                                        className="btn-outline-hover"
+                                                        variant="outlined"
+                                                        size="small"
+                                                        sx={{
+                                                            borderColor: '#E6E1E6',
+                                                            color: '#7C3367'
+                                                        }}
+                                                        onClick={onCancel}>
+                                                        Hủy
+                                                    </Button>
+                                                    <Button
+                                                        className="btn-container-hover"
+                                                        variant="contained"
+                                                        size="small"
+                                                        type="submit"
+                                                        sx={{
+                                                            backgroundColor: '#7C3367!important'
+                                                        }}>
+                                                        Lưu
+                                                    </Button>
+                                                </Box>
+                                            </Grid>
+                                        </Grid>
                                     </DialogActions>
                                 </Form>
                             )}

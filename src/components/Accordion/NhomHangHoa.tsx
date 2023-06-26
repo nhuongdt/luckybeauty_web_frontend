@@ -72,7 +72,8 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                 textOverflow: 'ellipsis',
                                 display: '-webkit-box',
                                 WebkitBoxOrient: 'vertical',
-                                WebkitLineClamp: 1
+                                WebkitLineClamp: 1,
+                                paddingRight: '20px'
                             }}
                             onClick={() => handleClickTreeItem(false, item.id)}
                             title={item.tenNhomHang}>

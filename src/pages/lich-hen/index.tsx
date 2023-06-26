@@ -300,7 +300,7 @@ class LichHenScreen extends Component {
                                         </Button>
                                     </Tooltip>
                                     <Select
-                                        defaultValue="timeGridDay"
+                                        defaultValue="timeGridWeek"
                                         onChange={this.handleChangeViewCalendar}
                                         sx={{
                                             width: 'auto',
@@ -314,10 +314,8 @@ class LichHenScreen extends Component {
                                                 padding: '0'
                                             }
                                         }}>
-                                        <MenuItem value="dayGridMonth">Tháng</MenuItem>
                                         <MenuItem value="timeGridWeek">Tuần</MenuItem>
                                         <MenuItem value="timeGridDay">Ngày</MenuItem>
-                                        <MenuItem value="listWeek">Danh sách</MenuItem>
                                     </Select>
                                     <Select
                                         defaultValue="service"

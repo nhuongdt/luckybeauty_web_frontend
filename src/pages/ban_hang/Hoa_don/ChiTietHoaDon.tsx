@@ -50,7 +50,7 @@ const themOutlineInput = createTheme({
     }
 });
 
-const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
+const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
@@ -144,7 +144,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                 <Grid
                     container
                     sx={{
-                        mt: '16px',
                         boxShadow: '0px 4px 20px 0px #AAA9B81A',
                         borderRadius: '12px',
                         padding: '24px 24px 0px 24px',
@@ -395,4 +394,4 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
         </Box>
     );
 };
-export default ThongTinHoaDon;
+export default ThongTinHoaDonn;

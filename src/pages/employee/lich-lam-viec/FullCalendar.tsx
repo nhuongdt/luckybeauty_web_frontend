@@ -73,7 +73,7 @@ const Calendar: React.FC = () => {
             Sunday: '02:00 - 18:00'
         },
         {
-            name: 'Hà em',
+            name: 'Hà Thanh',
             totalTime: '63h',
             avatar: avatar,
             MonDay: '09:00 - 18:00',
@@ -109,7 +109,7 @@ const Calendar: React.FC = () => {
             Sunday: '09:00 - 18:00'
         },
         {
-            name: 'Tên của ',
+            name: 'Tên của ai thế',
             totalTime: '63h',
             avatar: avatar,
             MonDay: '09:00 - 10:00',
@@ -162,6 +162,42 @@ const Calendar: React.FC = () => {
     const handleCloseEdit = () => {
         setOpenEdit(false);
     };
+
+    const getCurrentDateInVietnamese = (): string => {
+        const daysOfWeek = [
+            'Chủ nhật',
+            'Thứ hai',
+            'Thứ ba',
+            'Thứ tư',
+            'Thứ năm',
+            'Thứ sáu',
+            'Thứ bảy'
+        ];
+        const monthsOfYear = [
+            'tháng 1',
+            'tháng 2',
+            'tháng 3',
+            'tháng 4',
+            'tháng 5',
+            'tháng 6',
+            'tháng 7',
+            'tháng 8',
+            'tháng 9',
+            'tháng 10',
+            'tháng 11',
+            'tháng 12'
+        ];
+
+        const currentDate = new Date();
+        const dayOfWeek = daysOfWeek[currentDate.getDay()];
+        const dayOfMonth = currentDate.getDate();
+        const month = monthsOfYear[currentDate.getMonth()];
+        const year = currentDate.getFullYear();
+
+        const formattedDate = `${dayOfWeek},  ${dayOfMonth} ${month}, năm ${year}`;
+        return formattedDate;
+    };
+
     return (
         <Box>
             <CustomEmployee
@@ -235,7 +271,7 @@ const Calendar: React.FC = () => {
                         Hôm nay
                     </Button>
                     <Typography variant="h3" color="#333233" fontSize="16px" fontWeight="700">
-                        Thứ 2, 27 tháng 3, 2023
+                        {getCurrentDateInVietnamese()}
                     </Typography>
                     <Button variant="outlined" sx={{ ml: '16px' }} className="btn-outline-hover">
                         <ChevronRightIcon />

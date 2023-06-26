@@ -1343,8 +1343,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                                         '& .remove-NV:hover img': {
                                                             filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
                                                         },
-                                                        flexGrow: '1',
-                                                        width: 'calc(50% - 69px)'
+                                                        flexGrow:
+                                                            ct.nhanVienThucHien.length % 2 === 0
+                                                                ? '1'
+                                                                : 'unset',
+
+                                                        width:
+                                                            ct.nhanVienThucHien.length % 2 === 0
+                                                                ? 'calc(50% - 69px)'
+                                                                : 'auto'
                                                     }}
                                                     key={index3}>
                                                     <Box
