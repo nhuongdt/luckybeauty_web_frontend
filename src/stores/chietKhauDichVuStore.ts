@@ -48,7 +48,12 @@ class ChietKhauDichVuStore {
         await chietKhauDichVuService.Delete(id);
     }
     async getAccordingByNhanVien(input: PagedRequestDto, idNhanVien: string) {
-        const result = await chietKhauDichVuService.GetAccordingByNhanVien(input, idNhanVien);
+        const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? undefined;
+        const result = await chietKhauDichVuService.GetAccordingByNhanVien(
+            input,
+            idNhanVien,
+            idChiNhanh
+        );
         this.listChietKhauDichVu = result;
     }
     async getAll(input: PagedRequestDto) {
