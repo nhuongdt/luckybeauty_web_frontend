@@ -39,10 +39,10 @@ interface CustomerScreenState {
     toggle: boolean;
     idkhachHang: string;
     rowPerPage: number;
-    pageSkipCount: number;
-    skipCount: number;
     currentPage: number;
     keyword: string;
+    sortBy: string;
+    sortType: string;
     totalItems: number;
     totalPage: number;
     isShowConfirmDelete: boolean;
@@ -61,10 +61,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             toggle: false,
             idkhachHang: '',
             rowPerPage: 10,
-            pageSkipCount: 0,
-            skipCount: 0,
             currentPage: 1,
             keyword: '',
+            sortBy: '',
+            sortType: 'desc',
             totalItems: 0,
             totalPage: 0,
             isShowConfirmDelete: false,
@@ -88,8 +88,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             maxResultCount: this.state.rowPerPage,
             skipCount: this.state.currentPage,
             loaiDoiTuong: 0,
-            sortBy: '',
-            sortType: 'desc',
+            sortBy: this.state.sortBy,
+            sortType: this.state.sortType,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
         });
         await this.setState({
@@ -147,7 +147,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         const result = await khachHangService.exportDanhSach({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
-            skipCount: this.state.skipCount,
+            skipCount: this.state.currentPage,
             loaiDoiTuong: 0,
             sortBy: '',
             sortType: 'desc'
@@ -155,15 +155,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         fileDowloadService.downloadTempFile(result);
     };
     handlePageChange = async (event: any, newPage: number) => {
-        const skip = newPage + 1;
-        await this.setState({ skipCount: skip, currentPage: newPage });
+        await this.setState({ currentPage: newPage });
         await this.getData();
     };
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await this.setState({
             rowPerPage: parseInt(event.target.value.toString(), 10),
-            currentPage: 1,
-            skipCount: 1
+            currentPage: 1
         });
         this.getData();
     };
@@ -202,11 +200,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         localStorage.setItem('visibilityColumn', JSON.stringify(column));
         this.setState({ visibilityColumn: column });
     };
-
+    onSort = async (sortType: string, sortBy: string) => {
+        const type = sortType === 'desc' ? 'asc' : 'desc';
+        await this.setState({
+            sortBy: sortBy,
+            sortType: type
+        });
+        this.getData();
+    };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
             {
                 field: 'tenKhachHang',
+                sortable: false,
                 headerName: 'Tên khách hàng',
                 minWidth: 185,
                 flex: 1,
@@ -238,48 +244,72 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tenKhachHang');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'soDienThoai',
+                sortable: false,
                 headerName: 'Số điện thoại',
                 minWidth: 114,
                 flex: 1,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'soDienThoai');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'tenNhomKhach',
+                sortable: false,
                 headerName: 'Nhóm khách',
                 minWidth: 112,
                 flex: 1,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tenNhomKhach');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'gioiTinh',
+                sortable: false,
                 headerName: 'Giới tính',
                 minWidth: 100,
                 flex: 0.8,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'gioiTinh');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'nhanVienPhuTrach',
+                sortable: false,
                 headerName: 'Nhân viên phục vụ',
                 minWidth: 185,
                 flex: 1,
@@ -292,19 +322,30 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             width: '100%'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'nhanVienPhuTrach');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'tongChiTieu',
+                sortable: false,
                 headerName: 'Tổng chi tiêu',
                 minWidth: 113,
                 flex: 1,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tongChiTieu');
+                            }}
+                        />
                     </Box>
                 ),
                 renderCell: (params) => (
@@ -315,6 +356,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             },
             {
                 field: 'cuocHenGanNhat',
+                sortable: false,
                 headerName: 'Cuộc hẹn gần đây',
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
@@ -327,12 +369,18 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'cuocHenGanNhat');
+                            }}
+                        />
                     </Box>
                 )
             },
             {
                 field: 'tenNguonKhach',
+                sortable: false,
                 headerName: 'Nguồn',
                 minWidth: 86,
                 flex: 1,
@@ -344,7 +392,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tenNguonKhach');
+                            }}
+                        />
                     </Box>
                 )
             },
@@ -412,7 +465,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         <IconButton
                                             type="button"
                                             onClick={() => {
-                                                this.setState({ skipCount: 1 });
+                                                this.setState({ currentPage: 1 });
                                                 this.getData();
                                             }}>
                                             <img src={SearchIcon} />

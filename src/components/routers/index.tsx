@@ -180,6 +180,20 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             component: LoadableComponent(
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/index')
+                            )
+                        },
+                        {
+                            path: '/giao-dich-thanh-toan-new',
+                            permission: 'Pages.QuyHoaDon',
+                            title: 'Giao dịch thanh toán new',
+                            name: 'giaoDichThanhToanNew',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Giao_dich_thanh_toan/indexTest')
                             )
                         }
@@ -211,6 +225,31 @@ export const appRouters: AppRouteProps = {
                     isLayout: false,
                     children: [],
                     component: LoadableComponent(() => import('../../pages/product/pageProductNew'))
+                },
+                {
+                    path: '/thu-chi',
+                    permission: '',
+                    title: 'Thu chi',
+                    icon: <ServicesIcon width="20px" />,
+                    iconActive: <ServiceActive width="20px" />,
+                    name: 'thuChi',
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [
+                        {
+                            path: '/so-quy',
+                            permission: '',
+                            title: 'Sổ quỹ',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: <ServiceActive width="20px" />,
+                            name: 'thuChi',
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/thu_chi/so_quy'))
+                        }
+                    ],
+                    component: null
                 },
                 {
                     path: '/employee',
@@ -354,7 +393,7 @@ export const appRouters: AppRouteProps = {
                     isLayout: false,
                     children: [
                         {
-                            path: '/profile',
+                            path: '/account/profile',
                             permission: 'Pages',
                             title: 'Profile',
                             name: 'profile',
@@ -363,7 +402,9 @@ export const appRouters: AppRouteProps = {
                             showInMenu: false,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(() => import('../../pages/employee'))
+                            component: LoadableComponent(
+                                () => import('../../pages/account/profile')
+                            )
                         }
                     ],
                     component: null

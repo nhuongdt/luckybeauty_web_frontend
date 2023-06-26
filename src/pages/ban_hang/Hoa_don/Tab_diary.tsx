@@ -82,7 +82,7 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box>{new Intl.NumberFormat('en-IN').format(params.value)}</Box>
+            renderCell: (params) => <Box>{new Intl.NumberFormat().format(params.value)}</Box>
         },
         {
             field: 'sTrangThai',

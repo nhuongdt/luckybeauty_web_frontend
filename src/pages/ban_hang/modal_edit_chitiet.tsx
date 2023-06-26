@@ -37,6 +37,8 @@ import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import Utils from '../../utils/utils'; // func common
 import AutocompleteProduct from '../../components/Autocomplete/Product';
 import { NumericFormat } from 'react-number-format';
+import { Guid } from 'guid-typescript';
+import HoaDonService from '../../services/ban_hang/HoaDonService';
 
 const themInputChietKhau = createTheme({
     components: {
@@ -65,14 +67,11 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
         } else {
             if (props?.item?.tienChietKhau === 0) {
                 setLaPhanTram('true');
-                setGtriCK(props?.item?.tienChietKhau);
             } else {
                 setLaPhanTram('false');
-                setGtriCK(props?.item?.ptChietKhau);
             }
+            setGtriCK(props?.item?.tienChietKhau);
         }
-        document.getElementById('txtChietKhau')?.focus();
-        console.log(1, document.getElementById('txtChietKhau'));
     }, [props?.item]);
 
     const changeChietKhau = (event: any) => {
@@ -129,12 +128,13 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
 }
 
 export default function ModalEditChiTietGioHang({
-    trigger,
+    isShow,
+    formType = 0, // 1.form banhang, 0.other
+    hoadonChiTiet,
+    dataNhanVien = [],
     handleSave,
-    dataNhanVien,
-    formType = 1 // 1.form banhang, 0.other
+    handleClose
 }: any) {
-    const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [popover, setPopover] = useState({
         anchorEl: null,
@@ -146,21 +146,24 @@ export default function ModalEditChiTietGioHang({
 
     const displayComponent = formType === 1 ? 'none' : '';
 
-    console.log('ModalEditChiTietGioHang ', trigger.item);
     React.useEffect(() => {
-        if (trigger.isShow) {
-            setIsShow(true);
-            setIsSave(false);
-            if (formType === 1) {
-                setLstCTHoaDon([trigger.item]);
-                setIdCTHD(trigger?.item?.id);
-            } else {
-                // get all cthd by IdHoaDon / or get cthd by this id
-                console.log('todo');
-            }
+        setIsSave(false);
+        setLstCTHoaDon(hoadonChiTiet);
+        // if (hoadonChiTiet?.length === 1) setIdCTHD(hoadonChiTiet[0]?.id);
+
+        if (formType === 0) {
+            setLstCTHoaDon(
+                hoadonChiTiet.map((item: PageHoaDonChiTietDto) => {
+                    return {
+                        ...item,
+                        expanded: true
+                    };
+                })
+            );
         }
-        return () => setIsShow(false); // chưa biết chỗ return này có mục đích gì, viết vậy thôi
-    }, [trigger]);
+
+        console.log('into _ModalEditChiTietGioHang');
+    }, [isShow]);
 
     const handleChangeGiaBan = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
         setLstCTHoaDon(
@@ -169,8 +172,8 @@ export default function ModalEditChiTietGioHang({
                     const giaBanNew = Utils.formatNumberToFloat(event.target.value);
                     let dongiaSauCK = item.donGiaSauCK;
                     let tienCK = item.tienChietKhau;
-                    if (item.pTChietKhau > 0) {
-                        tienCK = (item.pTChietKhau * giaBanNew) / 100;
+                    if (item.ptChietKhau > 0) {
+                        tienCK = (item.ptChietKhau * giaBanNew) / 100;
                         dongiaSauCK = giaBanNew - tienCK;
                     } else {
                         tienCK = 0; // reset tienCK if change dongia
@@ -198,8 +201,9 @@ export default function ModalEditChiTietGioHang({
         setPopover({
             anchorEl: event.currentTarget,
             open: true,
-            item: { id: item.id, ptChietKhau: item.pTChietKhau, tienChietKhau: item.tienChietKhau }
+            item: { id: item.id, ptChietKhau: item.ptChietKhau, tienChietKhau: item.tienChietKhau }
         });
+        setIdCTHD(item.id);
     };
     const hidePopChietKhau = () => {
         setPopover({
@@ -265,12 +269,11 @@ export default function ModalEditChiTietGioHang({
         );
     };
 
-    const choseProduct = (item: any) => {
-        // todo check id
-        if (item === null) {
+    const choseProduct = (productChosed: any, indexCT: any) => {
+        if (productChosed === null) {
             setLstCTHoaDon(
                 lstCTHoaDon.map((item: any, index: number) => {
-                    if (item.id === idCTHD) {
+                    if (index === indexCT) {
                         return {
                             ...item,
                             tenHangHoa: '',
@@ -286,17 +289,36 @@ export default function ModalEditChiTietGioHang({
             );
         } else {
             setLstCTHoaDon(
-                lstCTHoaDon.map((item: any, index: number) => {
-                    if (item.id === idCTHD) {
+                lstCTHoaDon.map((item: PageHoaDonChiTietDto, index: number) => {
+                    if (index === indexCT) {
+                        const ptChietKhau = item?.ptChietKhau ?? 0;
+                        let tienCK = item?.tienChietKhau ?? 0;
+                        let dongiasauCK = item?.donGiaSauCK ?? 0;
+                        if (ptChietKhau ?? 0 > 0) {
+                            tienCK = (ptChietKhau * productChosed.giaBan) / 100;
+                            dongiasauCK = productChosed.giaBan - tienCK;
+                        } else {
+                            if (tienCK > productChosed.giaBan) {
+                                tienCK = 0;
+                                dongiasauCK = productChosed.giaBan;
+                            } else {
+                                dongiasauCK = productChosed.giaBan - tienCK;
+                            }
+                        }
+
                         return {
                             ...item,
-                            idHangHoa: item.id,
-                            idDonViQuyDoi: item.idDonViQuyDoi,
-                            idNhomHangHoa: item.idNhomHangHoa,
-                            maHangHoa: item.maHangHoa,
-                            tenHangHoa: item.tenHangHoa,
-                            donGiaTruocCK: item.giaBan,
-                            thanhTienTruocCK: item.giaBan * item.soLuong
+                            idHangHoa: productChosed.idHangHoa,
+                            idDonViQuyDoi: productChosed.idDonViQuyDoi,
+                            idNhomHangHoa: productChosed.idNhomHangHoa,
+                            maHangHoa: productChosed.maHangHoa,
+                            tenHangHoa: productChosed.tenHangHoa,
+                            donGiaTruocCK: productChosed.giaBan,
+                            thanhTienTruocCK: productChosed.giaBan * item.soLuong,
+                            donGiaSauCK: dongiasauCK,
+                            thanhTienSauCK: dongiasauCK * item.soLuong,
+                            donGiaSauVAT: dongiasauCK,
+                            thanhTienSauVAT: dongiasauCK * item.soLuong
                         };
                     } else {
                         return item;
@@ -315,7 +337,7 @@ export default function ModalEditChiTietGioHang({
                         const dongiasauCK = item.donGiaTruocCK - tienCK;
                         return {
                             ...item,
-                            pTChietKhau: gtriCK,
+                            ptChietKhau: gtriCK,
                             tienChietKhau: tienCK,
                             donGiaSauCK: dongiasauCK,
                             donGiaSauVAT: dongiasauCK,
@@ -334,7 +356,7 @@ export default function ModalEditChiTietGioHang({
                         const dongiasauCK = item.donGiaTruocCK - gtriCK;
                         return {
                             ...item,
-                            pTChietKhau: 0,
+                            ptChietKhau: 0,
                             tienChietKhau: gtriCK,
                             donGiaSauCK: dongiasauCK,
                             donGiaSauVAT: dongiasauCK,
@@ -349,10 +371,37 @@ export default function ModalEditChiTietGioHang({
         }
     };
 
-    const agrreGioHang = () => {
-        setIsShow(false);
+    const xoaChiTietHoaDon = (item: PageHoaDonChiTietDto) => {
+        setLstCTHoaDon(lstCTHoaDon.filter((x: PageHoaDonChiTietDto) => x.id !== item.id));
+    };
+
+    const addNewChiTiet = () => {
+        const newID = Guid.create().toString();
+        const ctNew = new PageHoaDonChiTietDto({ id: newID, expanded: true });
+        setLstCTHoaDon([...lstCTHoaDon, ctNew]);
+        setIdCTHD(newID);
+    };
+
+    const closeModal = () => {
+        setIsSave(false);
+        handleClose();
+    };
+
+    const agrreGioHang = async () => {
         setIsSave(true);
-        handleSave(lstCTHoaDon[0]);
+        if (formType === 1) {
+            handleSave(lstCTHoaDon[0]); // object
+        } else {
+            // update Db
+            handleSave(lstCTHoaDon);
+
+            // assign again STT of cthd before save
+            const dataSave = [...lstCTHoaDon];
+            dataSave.map((x: PageHoaDonChiTietDto, index: number) => {
+                x.stt = index + 1;
+            });
+            await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
+        }
     };
 
     return (
@@ -362,25 +411,19 @@ export default function ModalEditChiTietGioHang({
                 handleClose={hidePopChietKhau}
                 handleChangeChietKhau={changeChietKhau}
             />
-            <Dialog
-                open={isShow}
-                onClose={() => {
-                    setIsShow(false);
-                    setIsSave(false);
-                }}
-                fullWidth
-                maxWidth="sm">
+            <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle className="dialog-title">Chỉnh sửa giỏ hàng</DialogTitle>
                 <DialogContent>
                     {/* 1 row */}
                     {lstCTHoaDon.map((ct: any, index: number) => (
-                        <Grid container key={index}>
+                        <Grid container key={index} paddingTop={2}>
                             <Grid
                                 item
                                 xs={formType === 1 ? 0 : 1}
                                 style={{ display: displayComponent }}>
                                 <Close
                                     sx={{ width: 40, height: 40, color: 'red', padding: '8px' }}
+                                    onClick={() => xoaChiTietHoaDon(ct)}
                                 />
                             </Grid>
                             <Grid item xs={formType === 1 ? 12 : 11}>
@@ -388,7 +431,9 @@ export default function ModalEditChiTietGioHang({
                                     <Grid item xs={12} sm={9} md={9} lg={9}>
                                         <div style={{ display: displayComponent }}>
                                             <AutocompleteProduct
-                                                handleChoseItem={choseProduct}
+                                                handleChoseItem={(item: any) =>
+                                                    choseProduct(item, index)
+                                                }
                                                 productChosed={ct}
                                             />
                                         </div>
@@ -410,8 +455,14 @@ export default function ModalEditChiTietGioHang({
                                                 }}>
                                                 {Utils.formatNumber(ct?.thanhTienSauVAT)}
                                             </Typography>
-                                            <ExpandMore sx={{ display: displayComponent }} />
-                                            <ExpandLess sx={{ display: displayComponent }} />
+                                            <ExpandMore
+                                                sx={{ display: ct?.expanded ? '' : 'none' }}
+                                            />
+                                            <ExpandLess
+                                                sx={{
+                                                    display: !ct?.expanded ? '' : 'none'
+                                                }}
+                                            />
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={7} sm={7} md={7} lg={7}>
@@ -442,11 +493,11 @@ export default function ModalEditChiTietGioHang({
                                                     }}>
                                                     <span>
                                                         -{' '}
-                                                        {ct.pTChietKhau > 0
-                                                            ? ct.pTChietKhau
+                                                        {ct.ptChietKhau > 0
+                                                            ? ct.ptChietKhau
                                                             : Utils.formatNumber(ct?.tienChietKhau)}
                                                     </span>
-                                                    <span>{ct.pTChietKhau > 0 ? '%' : 'đ'}</span>
+                                                    <span>{ct.ptChietKhau > 0 ? '%' : 'đ'}</span>
                                                 </Stack>
                                             </Stack>
 
@@ -563,31 +614,32 @@ export default function ModalEditChiTietGioHang({
                                         </Stack>
                                     </Grid>
                                 </Grid>
-
-                                <Stack paddingTop={2} style={{ display: displayComponent }}>
-                                    <Link color="#7c3367" sx={{ fontSize: '14px' }}>
-                                        <Add />
-                                        Thêm dịch vụ
-                                    </Link>
-                                </Stack>
                             </Grid>
                         </Grid>
                     ))}
+                    <Grid container paddingTop={2}>
+                        <Grid item xs={1} />
+                        <Grid item xs={11}>
+                            <Stack style={{ display: displayComponent }}>
+                                <Link
+                                    color="#7c3367"
+                                    sx={{ fontSize: '14px' }}
+                                    onClick={addNewChiTiet}>
+                                    <Add />
+                                    Thêm dịch vụ
+                                </Link>
+                            </Stack>
+                        </Grid>
+                    </Grid>
 
                     {/* end 1 row */}
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="outlined"
-                        className="button-outline"
-                        onClick={() => {
-                            setIsShow(false);
-                            setIsSave(false);
-                        }}>
+                    <Button variant="outlined" className="button-outline" onClick={closeModal}>
                         Hủy
                     </Button>
                     <Button variant="contained" className="button-container" onClick={agrreGioHang}>
-                        Lưu
+                        {formType == 1 ? 'Đồng ý' : 'Lưu'}
                     </Button>
                 </DialogActions>
             </Dialog>

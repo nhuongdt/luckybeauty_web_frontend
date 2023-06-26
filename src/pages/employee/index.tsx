@@ -41,6 +41,8 @@ class EmployeeScreen extends React.Component {
         maxResultCount: 10,
         skipCount: 0,
         filter: '',
+        sortBy: '',
+        sortType: 'desc',
         moreOpen: false,
         anchorEl: null,
         selectedRowId: null,
@@ -79,13 +81,13 @@ class EmployeeScreen extends React.Component {
         await this.getListNhanVien();
     }
     async getListNhanVien() {
-        const { filter, maxResultCount, currentPage } = this.state;
+        const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
         await NhanVienStore.getAll({
             maxResultCount: maxResultCount,
             skipCount: currentPage,
             filter: filter,
-            sortBy: '',
-            sortType: 'desc',
+            sortBy: sortBy,
+            sortType: sortType,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
         });
         this.setState({
@@ -187,10 +189,18 @@ class EmployeeScreen extends React.Component {
             idNhanSu: ''
         });
     };
-
+    onSort = async (sortType: string, sortBy: string) => {
+        const type = sortType === 'desc' ? 'asc' : 'desc';
+        await this.setState({
+            sortBy: sortBy,
+            sortType: type
+        });
+        this.getData();
+    };
     columns: GridColDef[] = [
         {
             field: 'tenNhanVien',
+            sortable: false,
             headerName: 'Tên nhân viên',
             minWidth: 171,
             flex: 1,
@@ -216,24 +226,36 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'tenNhanVien');
+                        }}
+                    />
                 </Box>
             )
         },
         {
             field: 'soDienThoai',
+            sortable: false,
             headerName: 'Số điện thoại',
             minWidth: 114,
             flex: 1,
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'soDienThoai');
+                        }}
+                    />{' '}
                 </Box>
             )
         },
         {
             field: 'ngaySinh',
+            sortable: false,
             headerName: 'Ngày sinh',
             minWidth: 112,
             flex: 1,
@@ -257,12 +279,18 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'ngaySinh');
+                        }}
+                    />
                 </Box>
             )
         },
         {
             field: 'gioiTinh',
+            sortable: false,
             headerName: 'Giới tính',
             minWidth: 60,
             renderCell: (params) => (
@@ -280,12 +308,18 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'gioiTinh');
+                        }}
+                    />
                 </Box>
             )
         },
         {
             field: 'diaChi',
+            sortable: false,
             headerName: 'Địa chỉ',
             minWidth: 130,
             flex: 1,
@@ -298,12 +332,18 @@ class EmployeeScreen extends React.Component {
                         overflow: 'hidden'
                     }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'diaChi');
+                        }}
+                    />
                 </Box>
             )
         },
         {
             field: 'tenChucVu',
+            sortable: false,
             headerName: 'Vị trí',
             minWidth: 113,
             flex: 1,
@@ -320,12 +360,18 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'tenChucVu');
+                        }}
+                    />
                 </Box>
             )
         },
         {
             field: 'ngayVaoLam',
+            sortable: false,
             headerName: 'Ngày tham gia',
             minWidth: 120,
             flex: 1,
@@ -345,12 +391,18 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'ngayVaoLam');
+                        }}
+                    />
                 </Box>
             )
         },
         {
             field: 'trangThai',
+            sortable: false,
             headerName: 'Trạng thái',
             minWidth: 116,
             flex: 1,
@@ -370,7 +422,12 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'trangThai');
+                        }}
+                    />
                 </Box>
             )
         },

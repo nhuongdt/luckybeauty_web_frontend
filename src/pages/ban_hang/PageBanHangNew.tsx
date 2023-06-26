@@ -47,7 +47,7 @@ import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
+import { PropToChildMauIn, PropModal, PropModal2 } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
@@ -101,9 +101,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
     );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [triggerModalEditGioHang, setTriggerModalEditGioHang] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
+    const [idCTHDChosing, setIdCTHDChosing] = useState('');
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
@@ -391,12 +390,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                     return {
                         ...x,
                         tienChietKhau:
-                            (x.pTChietKhau ?? 0) > 0
-                                ? (x.donGiaTruocCK * (x.pTChietKhau ?? 0)) / 100
+                            (x.ptChietKhau ?? 0) > 0
+                                ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100
                                 : x.tienChietKhau,
                         tienThue:
-                            (x.pTThue ?? 0) > 0
-                                ? ((x.donGiaSauCK ?? 0) * (x.pTThue ?? 0)) / 100
+                            (x.ptThue ?? 0) > 0
+                                ? ((x.donGiaSauCK ?? 0) * (x.ptThue ?? 0)) / 100
                                 : x.tienThue
                     };
                 } else {
@@ -442,17 +441,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
 
     // modal chitiet giohang
     const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
-        setTriggerModalEditGioHang((old) => {
-            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
-        });
+        setIsShowEditGioHang(true);
+        setIdCTHDChosing(item?.id);
     };
+
     const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
+        setIsShowEditGioHang(false);
         // assign ctdoing --> used to update hoadhong dichvu of nhanvien
         setCTHDDoing({
             ...cthdDoing,
             soLuong: ctUpdate.soLuong,
             donGiaTruocCK: ctUpdate.donGiaTruocCK,
-            pTChietKhau: ctUpdate.pTChietKhau,
+            ptChietKhau: ctUpdate.ptChietKhau,
             tienChietKhau: ctUpdate.tienChietKhau,
             donGiaSauCK: ctUpdate.donGiaSauCK,
             donGiaSauVAT: ctUpdate.donGiaSauVAT,
@@ -468,7 +468,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                         ...item,
                         soLuong: ctUpdate.soLuong,
                         donGiaTruocCK: ctUpdate.donGiaTruocCK,
-                        pTChietKhau: ctUpdate.pTChietKhau,
+                        ptChietKhau: ctUpdate.ptChietKhau,
                         tienChietKhau: ctUpdate.tienChietKhau,
                         donGiaSauCK: ctUpdate.donGiaSauCK,
                         donGiaSauVAT: ctUpdate.donGiaSauVAT,
@@ -532,7 +532,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
             return;
         }
 
-        const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
+        // assign again STT of cthd before save
+        const dataSave = { ...hoadon };
+        dataSave?.hoaDonChiTiet?.map((x: PageHoaDonChiTietDto, index: number) => {
+            x.stt = index + 1;
+        });
+        const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
         //checkout + insert tbl checkin_hoadon
         await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
@@ -551,7 +556,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         quyHD.quyHoaDon_ChiTiet = [
             new QuyChiTietDto({
                 idHoaDonLienQuan: hodaDonDB.id,
-                idKhachHang: hoadon.idKhachHang,
+                idKhachHang: hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang,
                 tienThu: hoadon.tongThanhToan
             })
         ];
@@ -684,9 +689,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang
-                trigger={triggerModalEditGioHang}
+                formType={1}
+                isShow={isShowEditGioHang}
+                hoadonChiTiet={hoaDonChiTiet.filter((x: any) => x.id === idCTHDChosing)}
                 dataNhanVien={allNhanVien}
                 handleSave={AgreeGioHang}
+                handleClose={() => setIsShowEditGioHang(false)}
             />
             <SnackbarAlert
                 showAlert={objAlert.show}

@@ -4,15 +4,16 @@ import { ClassInputNumber } from '../../services/dto/InputFormat';
 
 export default class HoaDonChiTietDto {
     id = Guid.create().toString();
+    stt = 0;
     idHoaDon = Guid.createEmpty().toString();
     idDonViQuyDoi? = null;
     soLuong = 1;
     donGiaTruocCK = 0;
-    pTChietKhau? = 0;
+    ptChietKhau? = 0;
     tienChietKhau? = 0;
     laPTChietKhau = true;
     thanhTienTruocCK? = 0;
-    pTThue? = 0;
+    ptThue? = 0;
     tienThue? = 0;
     ghiChu = '';
     trangThai? = 3; // 0.Xóa, 1.Tạm lưu, 2.Đang xử lý, 3.Hoàn thành
@@ -30,10 +31,10 @@ export default class HoaDonChiTietDto {
         idDonViQuyDoi = null,
         soLuong = 1,
         donGiaTruocCK = 0,
-        pTChietKhau = 0,
+        ptChietKhau = 0,
         tienChietKhau = 0,
         // laPTChietKhau
-        pTThue = 0,
+        ptThue = 0,
         tienThue = 0,
         ghiChu = '',
         trangThai = 3
@@ -43,11 +44,11 @@ export default class HoaDonChiTietDto {
         this.idDonViQuyDoi = idDonViQuyDoi;
         this.soLuong = soLuong;
         this.donGiaTruocCK = donGiaTruocCK;
-        this.pTChietKhau = pTChietKhau;
-        this.tienChietKhau = pTChietKhau > 0 ? (donGiaTruocCK * pTChietKhau) / 100 : tienChietKhau;
-        this.pTThue = pTThue;
+        this.ptChietKhau = ptChietKhau;
+        this.tienChietKhau = ptChietKhau > 0 ? (donGiaTruocCK * ptChietKhau) / 100 : tienChietKhau;
+        this.ptThue = ptThue;
         this.tienThue =
-            pTThue > 0 ? ((donGiaTruocCK - this.tienChietKhau) * pTThue) / 100 : tienThue;
+            ptThue > 0 ? ((donGiaTruocCK - this.tienChietKhau) * ptThue) / 100 : tienThue;
         this.ghiChu = ghiChu;
         this.trangThai = trangThai;
         this.nhanVienThucHien = [];
@@ -60,10 +61,10 @@ export default class HoaDonChiTietDto {
             },
             donGiaSauCK: {
                 get() {
-                    if (this.pTChietKhau ?? 0 > 0) {
+                    if (this.ptChietKhau ?? 0 > 0) {
                         return (
                             this.donGiaTruocCK -
-                            (this.donGiaTruocCK * (this.pTChietKhau ?? 0)) / 100
+                            (this.donGiaTruocCK * (this.ptChietKhau ?? 0)) / 100
                         );
                     }
                     return this.donGiaTruocCK - (this.tienChietKhau ?? 0);

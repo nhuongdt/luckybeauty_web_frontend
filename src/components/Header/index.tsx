@@ -249,7 +249,7 @@ const Header: React.FC<HeaderProps> = (
                             </MenuItem>
                             <MenuItem onClick={handleClose}>
                                 <Link
-                                    to="/profile"
+                                    to="/account/profile"
                                     style={{ textDecoration: 'none', listStyle: 'none' }}>
                                     <PortraitOutlinedIcon />
                                     <span> Profile </span>

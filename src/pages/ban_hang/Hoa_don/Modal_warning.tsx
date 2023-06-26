@@ -5,8 +5,9 @@ import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 interface DialogComponentProps {
     open: boolean;
     onClose: () => void;
+    onOK: () => void;
 }
-const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose }) => {
+const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose, onOK }) => {
     return (
         <Dialog open={open} onClose={onClose}>
             <Box
@@ -82,7 +83,7 @@ const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                 </Box>
                 <Box display="flex" gap="8px" marginTop="40px" justifyContent="end">
                     <Button
-                        onClick={onClose}
+                        onClick={onOK}
                         variant="contained"
                         sx={{
                             bgcolor: '#F1416C',

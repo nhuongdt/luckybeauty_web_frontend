@@ -35,6 +35,7 @@ class EmployeeHoliday extends Component {
         maxResultCount: 10,
         skipCount: 0,
         filter: '',
+        sortBy: '',
         moreOpen: false,
         anchorEl: null,
         selectedRowId: null,
@@ -51,7 +52,7 @@ class EmployeeHoliday extends Component {
         startIndex: 0,
         isShowConfirmDelete: false,
         sortColumn: null,
-        sortDirection: 'asc'
+        sortType: 'desc'
     };
     async componentDidMount() {
         this.getData();
@@ -130,32 +131,13 @@ class EmployeeHoliday extends Component {
         }
         this.Modal();
     };
-    handleSort = (property: keyof NgayNghiLeDto) => {
-        const { listHoliday, sortColumn, sortDirection } = this.state;
-
-        let newSortDirection = 'asc';
-        if (sortColumn === property && sortDirection === 'asc') {
-            newSortDirection = 'desc';
-        }
-
-        const sortedList = [...listHoliday].sort((a, b) => {
-            const valueA = a[property];
-            const valueB = b[property];
-
-            if (valueA < valueB) {
-                return newSortDirection === 'asc' ? -1 : 1;
-            }
-            if (valueA > valueB) {
-                return newSortDirection === 'asc' ? 1 : -1;
-            }
-            return 0;
+    onSort = async (sortType: string, sortBy: string) => {
+        const type = sortType === 'desc' ? 'asc' : 'desc';
+        await this.setState({
+            sortBy: sortBy,
+            sortType: type
         });
-
-        this.setState({
-            listHoliday: sortedList,
-            sortColumn: property,
-            sortDirection: newSortDirection
-        });
+        this.getData();
     };
     handleOpenMenu = (event: any, rowId: any) => {
         this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
@@ -204,6 +186,7 @@ class EmployeeHoliday extends Component {
         const columns: GridColDef[] = [
             {
                 field: 'tenNgayLe',
+                sortable: false,
                 headerName: 'Tên ngày lễ',
                 flex: 1,
                 renderHeader: (params) => (
@@ -215,13 +198,19 @@ class EmployeeHoliday extends Component {
                             textOverflow: 'ellipsis'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tenNgayLe');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'tuNgay',
                 headerName: 'Ngày bắt đầu',
+                sortable: false,
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
@@ -240,13 +229,19 @@ class EmployeeHoliday extends Component {
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tuNgay');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'denNgay',
                 headerName: 'Ngày kết thúc',
+                sortable: false,
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
@@ -265,13 +260,19 @@ class EmployeeHoliday extends Component {
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'denNgay');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'tongSoNgay',
                 headerName: 'Tổng số ngày',
+                sortable: false,
                 // width: 150,
                 flex: 1,
                 renderCell: (params) => (
@@ -295,7 +296,12 @@ class EmployeeHoliday extends Component {
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tongSoNgay');
+                            }}
+                        />{' '}
                     </Box>
                 )
             },
