@@ -6,4 +6,5 @@ export interface ChietKhauDichVuItemDto {
     hoaHongYeuCauThucHien: number;
     hoaHongTuVan: number;
     giaDichVu: number;
+    laPhanTram: boolean;
 }

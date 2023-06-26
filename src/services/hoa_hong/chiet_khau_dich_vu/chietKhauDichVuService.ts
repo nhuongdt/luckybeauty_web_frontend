@@ -24,12 +24,14 @@ class ChietKhauDichVuService {
     }
     public async GetAccordingByNhanVien(
         input: PagedRequestDto,
-        idNhanVien: string
+        idNhanVien: string,
+        idChiNhanh: string | undefined
     ): Promise<PagedResultDto<ChietKhauDichVuItemDto>> {
         const result = await http.get('api/services/app/ChietKhauDichVu/GetAccordingByNhanVien', {
             params: {
                 input,
-                idNhanVien
+                idNhanVien,
+                idChiNhanh
             }
         });
         return result.data.result;

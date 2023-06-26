@@ -53,9 +53,15 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
     };
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         const defaultExpand = this.getDefaultExpandPermission(this.props.permissionTree);
+        const permissions =
+            this.state.selectedPermissions.length === 0 ||
+            (this.state.selectedPermissions.length === 1 &&
+                this.state.selectedPermissions[0] == 'Pages')
+                ? this.props.formRef.grantedPermissions ?? ['Pages']
+                : this.state.selectedPermissions;
         this.setState({
             tabIndex: newValue,
-            selectedPermissions: this.props.formRef.grantedPermissions ?? ['Pages'],
+            selectedPermissions: permissions,
             expandedPermissions: defaultExpand
         });
     };
@@ -72,7 +78,6 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
     };
     handleSubmit = async (values: CreateOrEditRoleDto) => {
         const permission = this.state.selectedPermissions.filter((x) => x != '');
-        alert(JSON.stringify(permission));
         const createOrEdit = await roleService.createOrEdit({
             ...values,
             grantedPermissions: permission
