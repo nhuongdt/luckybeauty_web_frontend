@@ -172,8 +172,8 @@ export default function ModalEditChiTietGioHang({
                     const giaBanNew = Utils.formatNumberToFloat(event.target.value);
                     let dongiaSauCK = item.donGiaSauCK;
                     let tienCK = item.tienChietKhau;
-                    if (item.pTChietKhau > 0) {
-                        tienCK = (item.pTChietKhau * giaBanNew) / 100;
+                    if (item.ptChietKhau > 0) {
+                        tienCK = (item.ptChietKhau * giaBanNew) / 100;
                         dongiaSauCK = giaBanNew - tienCK;
                     } else {
                         tienCK = 0; // reset tienCK if change dongia
@@ -201,7 +201,7 @@ export default function ModalEditChiTietGioHang({
         setPopover({
             anchorEl: event.currentTarget,
             open: true,
-            item: { id: item.id, ptChietKhau: item.pTChietKhau, tienChietKhau: item.tienChietKhau }
+            item: { id: item.id, ptChietKhau: item.ptChietKhau, tienChietKhau: item.tienChietKhau }
         });
         setIdCTHD(item.id);
     };
@@ -291,7 +291,7 @@ export default function ModalEditChiTietGioHang({
             setLstCTHoaDon(
                 lstCTHoaDon.map((item: PageHoaDonChiTietDto, index: number) => {
                     if (index === indexCT) {
-                        const ptChietKhau = item?.pTChietKhau ?? 0;
+                        const ptChietKhau = item?.ptChietKhau ?? 0;
                         let tienCK = item?.tienChietKhau ?? 0;
                         let dongiasauCK = item?.donGiaSauCK ?? 0;
                         if (ptChietKhau ?? 0 > 0) {
@@ -337,7 +337,7 @@ export default function ModalEditChiTietGioHang({
                         const dongiasauCK = item.donGiaTruocCK - tienCK;
                         return {
                             ...item,
-                            pTChietKhau: gtriCK,
+                            ptChietKhau: gtriCK,
                             tienChietKhau: tienCK,
                             donGiaSauCK: dongiasauCK,
                             donGiaSauVAT: dongiasauCK,
@@ -356,7 +356,7 @@ export default function ModalEditChiTietGioHang({
                         const dongiasauCK = item.donGiaTruocCK - gtriCK;
                         return {
                             ...item,
-                            pTChietKhau: 0,
+                            ptChietKhau: 0,
                             tienChietKhau: gtriCK,
                             donGiaSauCK: dongiasauCK,
                             donGiaSauVAT: dongiasauCK,
@@ -393,7 +393,13 @@ export default function ModalEditChiTietGioHang({
             handleSave(lstCTHoaDon[0]); // object
         } else {
             // update Db
-            handleSave(lstCTHoaDon); // lst object
+            handleSave(lstCTHoaDon);
+
+            // assign again STT of cthd before save
+            const dataSave = [...lstCTHoaDon];
+            dataSave.map((x: PageHoaDonChiTietDto, index: number) => {
+                x.stt = index + 1;
+            });
             await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
         }
     };
@@ -487,11 +493,11 @@ export default function ModalEditChiTietGioHang({
                                                     }}>
                                                     <span>
                                                         -{' '}
-                                                        {ct.pTChietKhau > 0
-                                                            ? ct.pTChietKhau
+                                                        {ct.ptChietKhau > 0
+                                                            ? ct.ptChietKhau
                                                             : Utils.formatNumber(ct?.tienChietKhau)}
                                                     </span>
-                                                    <span>{ct.pTChietKhau > 0 ? '%' : 'đ'}</span>
+                                                    <span>{ct.ptChietKhau > 0 ? '%' : 'đ'}</span>
                                                 </Stack>
                                             </Stack>
 

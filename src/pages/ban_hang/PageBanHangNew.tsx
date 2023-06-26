@@ -390,12 +390,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                     return {
                         ...x,
                         tienChietKhau:
-                            (x.pTChietKhau ?? 0) > 0
-                                ? (x.donGiaTruocCK * (x.pTChietKhau ?? 0)) / 100
+                            (x.ptChietKhau ?? 0) > 0
+                                ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100
                                 : x.tienChietKhau,
                         tienThue:
-                            (x.pTThue ?? 0) > 0
-                                ? ((x.donGiaSauCK ?? 0) * (x.pTThue ?? 0)) / 100
+                            (x.ptThue ?? 0) > 0
+                                ? ((x.donGiaSauCK ?? 0) * (x.ptThue ?? 0)) / 100
                                 : x.tienThue
                     };
                 } else {
@@ -452,7 +452,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
             ...cthdDoing,
             soLuong: ctUpdate.soLuong,
             donGiaTruocCK: ctUpdate.donGiaTruocCK,
-            pTChietKhau: ctUpdate.pTChietKhau,
+            ptChietKhau: ctUpdate.ptChietKhau,
             tienChietKhau: ctUpdate.tienChietKhau,
             donGiaSauCK: ctUpdate.donGiaSauCK,
             donGiaSauVAT: ctUpdate.donGiaSauVAT,
@@ -468,7 +468,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                         ...item,
                         soLuong: ctUpdate.soLuong,
                         donGiaTruocCK: ctUpdate.donGiaTruocCK,
-                        pTChietKhau: ctUpdate.pTChietKhau,
+                        ptChietKhau: ctUpdate.ptChietKhau,
                         tienChietKhau: ctUpdate.tienChietKhau,
                         donGiaSauCK: ctUpdate.donGiaSauCK,
                         donGiaSauVAT: ctUpdate.donGiaSauVAT,
@@ -532,7 +532,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
             return;
         }
 
-        const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
+        // assign again STT of cthd before save
+        const dataSave = { ...hoadon };
+        dataSave?.hoaDonChiTiet?.map((x: PageHoaDonChiTietDto, index: number) => {
+            x.stt = index + 1;
+        });
+        const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
         //checkout + insert tbl checkin_hoadon
         await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
@@ -551,7 +556,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         quyHD.quyHoaDon_ChiTiet = [
             new QuyChiTietDto({
                 idHoaDonLienQuan: hodaDonDB.id,
-                idKhachHang: hoadon.idKhachHang,
+                idKhachHang: hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang,
                 tienThu: hoadon.tongThanhToan
             })
         ];
