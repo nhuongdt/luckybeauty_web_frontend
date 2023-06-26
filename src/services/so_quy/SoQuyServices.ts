@@ -15,7 +15,7 @@ class SoQuyServices {
         return result.data.result;
     };
     HuyPhieuThuChi_ofHoaDonLienQuan = async (idHoaDonLienQuan: string) => {
-        const result = await http.get(
+        const result = await http.post(
             `api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`
         );
         return result.data.result;

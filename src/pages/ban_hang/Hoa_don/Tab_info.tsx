@@ -2,6 +2,7 @@ import { Box, Grid, Typography } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
+import utils from '../../../utils/utils';
 
 export default function TabInfo({ hoadon, chitietHoaDon }: any) {
     const columns: GridColDef[] = [
@@ -45,8 +46,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                <Box title={new Intl.NumberFormat().format(params.value)}>
+                    {new Intl.NumberFormat().format(params.value)}
                 </Box>
             )
         },
@@ -64,9 +65,9 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
+                <Box title={new Intl.NumberFormat().format(params.value)}>
                     {' '}
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                    {new Intl.NumberFormat().format(params.value)}
                 </Box>
             )
         },
@@ -84,8 +85,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                <Box title={new Intl.NumberFormat().format(params.value)}>
+                    {new Intl.NumberFormat().format(params.value)}
                 </Box>
             )
         },
@@ -103,8 +104,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                <Box title={new Intl.NumberFormat().format(params.value)}>
+                    {new Intl.NumberFormat().format(params.value)}
                 </Box>
             )
         },
@@ -122,8 +123,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('en-IN').format(params.value)}>
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
+                <Box title={new Intl.NumberFormat().format(params.value)}>
+                    {new Intl.NumberFormat().format(params.value)}
                 </Box>
             )
         }
@@ -234,7 +235,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat('en-IN').format(hoadon?.tongTienHang)}
+                                    {new Intl.NumberFormat().format(hoadon?.tongTienHang)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -252,7 +253,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat('en-IN').format(hoadon?.tongGiamGiaHD)}
+                                    {new Intl.NumberFormat().format(hoadon?.tongGiamGiaHD)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -270,7 +271,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat('en-IN').format(hoadon?.tongThanhToan)}
+                                    {new Intl.NumberFormat().format(hoadon?.tongThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -288,7 +289,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat('en-IN').format(hoadon?.daThanhToan)}
+                                    {new Intl.NumberFormat().format(hoadon?.daThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} marginTop="28px">
@@ -306,7 +307,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="18px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat('en-IN').format(hoadon?.conNo)}
+                                    {new Intl.NumberFormat().format(hoadon?.conNo)}
                                 </Typography>
                             </Grid>
                         </Grid>

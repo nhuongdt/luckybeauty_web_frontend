@@ -47,7 +47,7 @@ class CheckinService {
             return;
         }
         const xx = await http
-            .put(
+            .post(
                 `api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`
             )
             .then((res: { data: { result: any } }) => {

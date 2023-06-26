@@ -47,7 +47,7 @@ import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
+import { PropToChildMauIn, PropModal, PropModal2 } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
@@ -101,9 +101,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
     );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [triggerModalEditGioHang, setTriggerModalEditGioHang] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
+    const [idCTHDChosing, setIdCTHDChosing] = useState('');
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
@@ -442,11 +441,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
 
     // modal chitiet giohang
     const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
-        setTriggerModalEditGioHang((old) => {
-            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
-        });
+        setIsShowEditGioHang(true);
+        setIdCTHDChosing(item?.id);
     };
+
     const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
+        setIsShowEditGioHang(false);
         // assign ctdoing --> used to update hoadhong dichvu of nhanvien
         setCTHDDoing({
             ...cthdDoing,
@@ -684,9 +684,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang
-                trigger={triggerModalEditGioHang}
+                formType={1}
+                isShow={isShowEditGioHang}
+                hoadonChiTiet={hoaDonChiTiet.filter((x: any) => x.id === idCTHDChosing)}
                 dataNhanVien={allNhanVien}
                 handleSave={AgreeGioHang}
+                handleClose={() => setIsShowEditGioHang(false)}
             />
             <SnackbarAlert
                 showAlert={objAlert.show}
