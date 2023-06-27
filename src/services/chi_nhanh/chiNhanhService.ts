@@ -1,3 +1,4 @@
+import utils from '../../utils/utils';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
@@ -24,6 +25,7 @@ class ChiNhanhService {
         return result.data.result;
     }
     public async GetDetail(id: string) {
+        if (utils.checkNull(id)) return;
         const result = await http.get(`api/services/app/ChiNhanh/GetChiNhanh?Id=${id}`);
         return result.data.result;
     }
