@@ -28,6 +28,10 @@ class SoQuyServices {
         });
         return response.data.result;
     }
+    async GetForEdit(idQuyHD: string): Promise<QuyHoaDonDto> {
+        const response = await http.get(`api/services/app/QuyHoaDon/GetAll?id=${idQuyHD}`);
+        return response.data.result;
+    }
 }
 
 export default new SoQuyServices();
