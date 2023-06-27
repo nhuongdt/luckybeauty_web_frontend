@@ -129,7 +129,11 @@ const Header: React.FC<HeaderProps> = (
                             fontSize="18px"
                             sx={{
                                 opacity: collapsed && !isChildHovered ? '0' : '1',
-                                transition: '.2s'
+                                transform:
+                                    collapsed && !isChildHovered
+                                        ? 'translateX(-40px)'
+                                        : 'translateX(0)',
+                                transition: '.4s'
                             }}>
                             Lucky Beauty
                         </Typography>

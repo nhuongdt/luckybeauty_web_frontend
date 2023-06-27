@@ -236,10 +236,12 @@ export default function PageBanHang({ customerChosed, idNhomHang }: any) {
                 console.log('customerChosed.idCheckIn ', customerChosed.idCheckIn, deleteCount);
             });
     };
-
+    const [showPayment, setShowPayment] = useState(false);
     const saveHoaDon = async () => {
+        //hiển thị trang phương thức thanh toán
+        setShowPayment(!showPayment);
+        // =================================
         setClickSave(true);
-
         const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
         setHoaDonChiTiet([]);
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
