@@ -19,6 +19,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import soQuyStore from '../../../stores/soQuyStore';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
+import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 class SoQuyScreen extends Component {
     state = {
         keyword: '',
@@ -80,6 +81,9 @@ class SoQuyScreen extends Component {
             });
             this.getAll();
         }
+    };
+    doActionRow = (action: any, rowItem: any) => {
+        this.setState({ selectedRowId: rowItem.id });
     };
     render(): ReactNode {
         const columns: GridColDef[] = [
@@ -252,12 +256,9 @@ class SoQuyScreen extends Component {
                 flex: 0.4,
                 disableColumnMenu: true,
                 renderCell: (params) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true">
-                        <MoreHorizIcon />
-                    </IconButton>
+                    <ActionViewEditDelete
+                    // handleAction={(action: any) => doActionRow(action, params.row)}
+                    />
                 ),
                 renderHeader: (params) => (
                     <Box sx={{ display: 'none' }}>
@@ -267,6 +268,7 @@ class SoQuyScreen extends Component {
                 )
             }
         ];
+
         return (
             <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
                 <Grid container justifyContent="space-between">
@@ -338,7 +340,8 @@ class SoQuyScreen extends Component {
                                     color: '#fff',
                                     fontSize: '14px'
                                 }}
-                                className="btn-container-hover">
+                                className="btn-container-hover"
+                                onClick={() => this.setState({ isShowModal: true })}>
                                 Lập phiếu
                             </Button>
                         </Box>
@@ -408,8 +411,7 @@ class SoQuyScreen extends Component {
                             console.log('đóng');
                         }}
                         visiable={this.state.isShowModal}
-                        title="Thêm mới"
-                        createOrEditSoQuyDto={soQuyStore.createOrEditSoQuyDto}
+                        idQuyHD={this.state.selectedRowId}
                     />
                     <CustomTablePagination
                         currentPage={this.state.skipCount}
