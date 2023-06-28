@@ -52,6 +52,9 @@ const Payments: React.FC<ChildComponent> = ({ onClick }) => {
     };
     const prevComponent = () => {
         setPayment((prevCount: number) => (prevCount <= 1 ? 1 : prevCount - 1));
+        if (Payment === 1) {
+            onClick();
+        }
     };
     return (
         <Box>
@@ -85,8 +88,8 @@ const Payments: React.FC<ChildComponent> = ({ onClick }) => {
                                     border="1px solid #CDC9CD"
                                     borderRadius="8px"
                                     sx={{
-                                        bgcolor: selectedItem === index ? ' #F2EBF0' : '#fff',
-                                        borderColor: selectedItem === index ? '#7C3367' : '#CDC9CD',
+                                        bgcolor: '#fff',
+                                        borderColor: '#CDC9CD',
                                         cursor: 'pointer',
                                         transition: '.4s',
                                         '&:hover': {
