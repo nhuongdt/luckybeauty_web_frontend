@@ -1,9 +1,3 @@
-import { Component, ReactNode } from 'react';
-import '../../employee/employee.css';
-import React from 'react';
-import { NgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/NgayNghiLeDto';
-import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
-import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
 import {
     Box,
     Button,
@@ -13,125 +7,77 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
+import { observer } from 'mobx-react';
+import { Component, ReactNode } from 'react';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import caLamViecStore from '../../../stores/caLamViecStore';
+import { TextTranslate } from '../../../components/TableLanguage';
 import AddIcon from '../../../images/add.svg';
 import SearchIcon from '../../../images/search-normal.svg';
 import DownloadIcon from '../../../images/download.svg';
 import UploadIcon from '../../../images/upload.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
-import AppConsts from '../../../lib/appconst';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
-import { TextTranslate } from '../../../components/TableLanguage';
-import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
-import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import { enqueueSnackbar } from 'notistack';
-class EmployeeHoliday extends Component {
+import abpCustom from '../../../components/abp-custom';
+class CaLamViecScreen extends Component {
     state = {
-        IdHoliday: '',
-        modalVisible: false,
-        maxResultCount: 10,
-        skipCount: 0,
         filter: '',
+        skipCount: 1,
+        maxResultCount: 10,
         sortBy: '',
-        moreOpen: false,
+        sortType: 'desc',
+        isShowModal: false,
         anchorEl: null,
         selectedRowId: null,
-        listHoliday: [] as NgayNghiLeDto[],
-        createOrEditNgayNghiLe: {
-            id: AppConsts.guidEmpty,
-            tenNgayLe: '',
-            tuNgay: new Date(),
-            denNgay: new Date()
-        } as CreateOrEditNgayNghiLeDto,
         totalCount: 0,
-        currentPage: 1,
-        totalPage: 1,
-        startIndex: 0,
-        isShowConfirmDelete: false,
-        sortColumn: null,
-        sortType: 'desc'
+        totalPage: 0
     };
-    async componentDidMount() {
+    componentDidMount(): void {
         this.getData();
-        this.getListHoliday();
     }
-    async getData() {
-        if (this.state.IdHoliday !== '') {
-            const holiday = await ngayNghiLeService.getForEdit(this.state.IdHoliday);
-            this.setState({ createOrEditNgayNghiLe: holiday });
-        }
-        //this.getListHoliday();
-    }
-    async getListHoliday() {
-        const data = await ngayNghiLeService.getAll({
+    getData = async () => {
+        await caLamViecStore.getAll({
             keyword: this.state.filter,
             maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.currentPage,
+            skipCount: this.state.skipCount,
             sortBy: this.state.sortBy,
             sortType: this.state.sortType
         });
-        await this.setState({
-            listHoliday: data.items,
-            totalCount: data.totalCount,
-            totalPage: Math.ceil(data.totalCount / this.state.maxResultCount)
+        this.setState({
+            totalCount: caLamViecStore.caLamViecs.totalCount,
+            totalPage: Math.ceil(caLamViecStore.caLamViecs.totalCount / this.state.maxResultCount)
         });
-    }
+    };
+    Modal = () => {
+        this.setState({
+            isShowModal: !this.state.isShowModal
+        });
+        // this.getData();
+        // this.getListHoliday();
+    };
+    createOrUpdateModalOpen = async (id: string) => {
+        this.setState({
+            selectedRowId: id
+        });
+        if (id !== '') {
+            await caLamViecStore.createCaLamViecDto();
+        } else {
+            await caLamViecStore.getForEdit(id);
+        }
+        this.Modal();
+    };
     handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
         await this.setState({
-            currentPage: value,
             skipCount: value
         });
-        this.getListHoliday();
     };
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
-            currentPage: 1,
             skipCount: 1
         });
-        this.getListHoliday();
-    };
-    handleChange = (event: any): void => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditNhanSu: {
-                ...this.state.createOrEditNgayNghiLe,
-                [name]: value
-            }
-        });
-    };
-    handleSearch = () => {
-        console.log('ok');
-    };
-    Modal = () => {
-        this.setState({
-            modalVisible: !this.state.modalVisible,
-            IdHoliday: ''
-        });
-        this.getData();
-        this.getListHoliday();
-    };
-    createOrUpdateModalOpen = async (id: string) => {
-        this.setState({
-            IdHoliday: id
-        });
-        if (id !== '') {
-            const holiday = await ngayNghiLeService.getForEdit(id);
-            this.setState({ createOrEditNgayNghiLe: holiday });
-        } else {
-            this.setState({
-                createOrEditNgayNghiLe: {
-                    id: AppConsts.guidEmpty,
-                    tenNgayLe: '',
-                    tuNgay: new Date(),
-                    denNgay: new Date()
-                }
-            });
-        }
-        this.Modal();
     };
     onSort = async (sortType: string, sortBy: string) => {
         const type = sortType === 'desc' ? 'asc' : 'desc';
@@ -139,57 +85,14 @@ class EmployeeHoliday extends Component {
             sortBy: sortBy,
             sortType: type
         });
-        this.getListHoliday();
+        this.getData();
     };
-    handleOpenMenu = (event: any, rowId: any) => {
-        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
-    };
-
-    handleCloseMenu = async () => {
-        await this.setState({ anchorEl: null, selectedRowId: null });
-        await this.getListHoliday();
-    };
-
-    handleView = () => {
-        // Handle View action
-        this.handleCloseMenu();
-    };
-    delete = async (id: string) => {
-        const deleteResult = await ngayNghiLeService.delete(id);
-        deleteResult != null
-            ? enqueueSnackbar('Xóa bản ghi thành công', {
-                  variant: 'success',
-                  autoHideDuration: 3000
-              })
-            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
-                  variant: 'error',
-                  autoHideDuration: 3000
-              });
-    };
-    onOkDelete = async () => {
-        await this.delete(this.state.selectedRowId ?? '');
-        this.showConfirmDelete();
-        await this.handleCloseMenu();
-    };
-    handleEdit = () => {
-        // Handle Edit action
-        this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
-        this.handleCloseMenu();
-    };
-
-    showConfirmDelete = () => {
-        // Handle Delete action
-        this.setState({
-            isShowConfirmDelete: !this.state.isShowConfirmDelete,
-            IdHoliday: ''
-        });
-    };
-    render() {
+    render(): ReactNode {
         const columns: GridColDef[] = [
             {
-                field: 'tenNgayLe',
+                field: 'maCa',
                 sortable: false,
-                headerName: 'Tên ngày lễ',
+                headerName: 'Mã ca',
                 flex: 1,
                 renderHeader: (params) => (
                     <Box
@@ -203,15 +106,45 @@ class EmployeeHoliday extends Component {
                         <IconSorting
                             className="custom-icon"
                             onClick={() => {
-                                this.onSort(this.state.sortType, 'tenNgayLe');
+                                this.onSort(this.state.sortType, 'maCa');
                             }}
                         />{' '}
                     </Box>
                 )
             },
             {
-                field: 'tuNgay',
-                headerName: 'Ngày bắt đầu',
+                field: 'tenCa',
+                headerName: 'Tên ca',
+                sortable: false,
+                // width: 200,
+                flex: 1,
+                renderCell: (params) => (
+                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography
+                            fontSize="12px"
+                            fontWeight="400"
+                            variant="h6"
+                            color="#333233"
+                            lineHeight="16px">
+                            params.value
+                        </Typography>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>
+                        {params.colDef.headerName}
+                        <IconSorting
+                            className="custom-icon"
+                            onClick={() => {
+                                this.onSort(this.state.sortType, 'tenCa');
+                            }}
+                        />{' '}
+                    </Box>
+                )
+            },
+            {
+                field: 'gioVao',
+                headerName: 'Giờ bắt đầu ca',
                 sortable: false,
                 // width: 200,
                 flex: 1,
@@ -224,7 +157,10 @@ class EmployeeHoliday extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB')}
+                            {new Date(params.value).toLocaleDateString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
                         </Typography>
                     </Box>
                 ),
@@ -234,20 +170,26 @@ class EmployeeHoliday extends Component {
                         <IconSorting
                             className="custom-icon"
                             onClick={() => {
-                                this.onSort(this.state.sortType, 'tuNgay');
+                                this.onSort(this.state.sortType, 'gioVao');
                             }}
                         />{' '}
                     </Box>
                 )
             },
             {
-                field: 'denNgay',
-                headerName: 'Ngày kết thúc',
+                field: 'gioRa',
+                headerName: 'Giờ hết ca',
                 sortable: false,
-                // width: 200,
+                // width: 150,
                 flex: 1,
                 renderCell: (params) => (
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            alignContent: 'center',
+                            textAlign: 'center'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="12px"
@@ -255,7 +197,10 @@ class EmployeeHoliday extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB')}
+                            {new Date(params.value).toLocaleDateString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
                         </Typography>
                     </Box>
                 ),
@@ -265,15 +210,15 @@ class EmployeeHoliday extends Component {
                         <IconSorting
                             className="custom-icon"
                             onClick={() => {
-                                this.onSort(this.state.sortType, 'denNgay');
+                                this.onSort(this.state.sortType, 'gioRa');
                             }}
                         />{' '}
                     </Box>
                 )
             },
             {
-                field: 'tongSoNgay',
-                headerName: 'Tổng số ngày',
+                field: 'tongGioCong',
+                headerName: 'Tổng thời gian',
                 sortable: false,
                 // width: 150,
                 flex: 1,
@@ -291,7 +236,7 @@ class EmployeeHoliday extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {params.value} ngày
+                            {params.value} giờ
                         </Typography>
                     </Box>
                 ),
@@ -301,35 +246,36 @@ class EmployeeHoliday extends Component {
                         <IconSorting
                             className="custom-icon"
                             onClick={() => {
-                                this.onSort(this.state.sortType, 'tongSoNgay');
+                                this.onSort(this.state.sortType, 'tongGioCong');
                             }}
                         />{' '}
                     </Box>
                 )
-            },
-            {
-                field: 'actions',
-                headerName: 'Hành động',
-                // width: 48,
-                flex: 0.3,
-                disableColumnMenu: true,
-
-                renderCell: (params) => (
-                    <IconButton
-                        aria-label="Actions"
-                        aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true"
-                        onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
-                        <MoreHorizIcon />
-                    </IconButton>
-                ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
-                )
             }
+            // },
+            // {
+            //     field: 'actions',
+            //     headerName: 'Hành động',
+            //     // width: 48,
+            //     flex: 0.3,
+            //     disableColumnMenu: true,
+
+            //     renderCell: (params) => (
+            //         <IconButton
+            //             aria-label="Actions"
+            //             aria-controls={`actions-menu-${params.row.id}`}
+            //             aria-haspopup="true"
+            //             onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
+            //             <MoreHorizIcon />
+            //         </IconButton>
+            //     ),
+            //     renderHeader: (params) => (
+            //         <Box sx={{ display: 'none' }}>
+            //             {params.colDef.headerName}
+            //             <IconSorting className="custom-icon" />{' '}
+            //         </Box>
+            //     )
+            // }
         ];
         return (
             <Box padding="22px 32px" className="thoi-gian-nghi-page">
@@ -350,7 +296,7 @@ class EmployeeHoliday extends Component {
                                 }}
                                 onKeyDown={(e) => {
                                     if (e.key == 'Enter') {
-                                        this.getListHoliday();
+                                        this.getData();
                                     }
                                 }}
                                 className="search-field"
@@ -362,7 +308,7 @@ class EmployeeHoliday extends Component {
                                         <IconButton
                                             type="button"
                                             onClick={() => {
-                                                this.getListHoliday();
+                                                this.getData();
                                             }}>
                                             <img src={SearchIcon} />
                                         </IconButton>
@@ -419,7 +365,7 @@ class EmployeeHoliday extends Component {
                                 backgroundColor: '#7C3367!important'
                             }}
                             className="btn-container-hover">
-                            Thêm ngày nghỉ
+                            Thêm ca làm việc
                         </Button>
                     </Grid>
                 </Grid>
@@ -427,7 +373,11 @@ class EmployeeHoliday extends Component {
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
-                        rows={this.state.listHoliday}
+                        rows={
+                            caLamViecStore.caLamViecs === undefined
+                                ? []
+                                : caLamViecStore.caLamViecs.items
+                        }
                         columns={columns}
                         checkboxSelection
                         sx={{
@@ -475,16 +425,16 @@ class EmployeeHoliday extends Component {
                         hideFooter
                         localeText={TextTranslate}
                     />
-                    <ActionMenuTable
+                    {/* <ActionMenuTable
                         selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
                         handleEdit={this.handleEdit}
                         handleDelete={this.showConfirmDelete}
-                    />
+                    /> */}
                     <CustomTablePagination
-                        currentPage={this.state.currentPage}
+                        currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={this.state.totalCount}
                         totalPage={this.state.totalPage}
@@ -492,7 +442,7 @@ class EmployeeHoliday extends Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
-                <ConfirmDelete
+                {/* <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
                     onCancel={this.showConfirmDelete}></ConfirmDelete>
@@ -502,9 +452,9 @@ class EmployeeHoliday extends Component {
                     onCancel={() => {
                         this.Modal();
                     }}
-                    createOrEditDto={this.state.createOrEditNgayNghiLe}></CreateOrEditThoiGianNghi>
+                    createOrEditDto={this.state.createOrEditNgayNghiLe}></CreateOrEditThoiGianNghi> */}
             </Box>
         );
     }
 }
-export default EmployeeHoliday;
+export default observer(CaLamViecScreen);

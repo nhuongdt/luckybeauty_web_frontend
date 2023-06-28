@@ -1,20 +1,36 @@
+import { useNavigate, Route, Navigate } from 'react-router-dom';
+import { isGranted } from '../../../lib/abpUtility';
+import { ReactNode } from 'react';
 import Cookies from 'js-cookie';
-import React, { FC } from 'react';
-import { Navigate, Route, RouterProps } from 'react-router-dom';
-//import { isGranted } from '../../../lib/abpUtility'
-const isAuthenticated = (): boolean => {
-    // Check if user is authenticated (e.g. valid token in local storage)
-    return localStorage.getItem('isLogin') !== null;
+
+type RouteProps = {
+    path: string;
+    name: string;
+    permission: string;
+    title: string;
+    icon: ReactNode;
+    iconActive: ReactNode;
+    children: RouteProps[];
+    showInMenu: boolean;
+    isLayout: boolean;
+    component: any;
 };
-const ProtectedRoute: FC<{ component: FC; path: string }> = ({ component: Component, path }) => {
-    const isLogin = () => {
-        return Cookies.get('userId');
-    };
+const ProtectedRoute = ({ path, component: Component, permission }: any) => {
+    const navigate = useNavigate();
 
     return (
         <Route
+            key={path}
             path={path}
-            element={isLogin() ? <Component /> : <Navigate replace to={'/login'} />}
+            element={
+                !Cookies.get('userId') ? (
+                    <Navigate to="/user/login" />
+                ) : permission && !isGranted(permission) ? (
+                    <Navigate to="/exception?type=401" />
+                ) : Component ? (
+                    <Component />
+                ) : null
+            }
         />
     );
 };

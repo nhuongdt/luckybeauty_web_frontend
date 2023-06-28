@@ -2,11 +2,7 @@
 import MainAppLayout from '../layouts/MainAppLayout';
 import AnonymousLayout from '../layouts/AnonymousLayout';
 import renderRoutes from './generate-routes';
-// icon
-import { BallotOutlined } from '@mui/icons-material';
-import { IoCalendarOutline, IoStorefrontOutline } from 'react-icons/io5';
-
-import { BsDot, BsPeople, BsPersonLock } from 'react-icons/bs';
+import { BsDot } from 'react-icons/bs';
 import LoadableComponent from '../Loadable';
 import { ReactNode } from 'react';
 import { ReactComponent as HomeIcon2 } from '../../images/home-2.svg';
@@ -32,7 +28,7 @@ type RenderRouteProps = {
     name: string;
     routes: RouteProps[];
 };
-type RouteProps = {
+export type RouteProps = {
     path: string;
     name: string;
     permission: string;
@@ -48,6 +44,81 @@ export type AppRouteProps = {
     mainRoutes: RenderRouteProps[];
 };
 
+export const userRouter: RouteProps[] = [
+    {
+        path: '/login',
+        name: 'login',
+        permission: '',
+        children: [],
+        title: 'Login',
+        iconActive: null,
+        icon: '',
+        component: LoadableComponent(() => import('../../pages/account/login/loginNew')),
+        isLayout: true,
+        showInMenu: false
+    },
+    {
+        path: '/register',
+        name: 'register',
+        permission: '',
+        children: [],
+        title: 'Register',
+        iconActive: null,
+        icon: null,
+        component: LoadableComponent(() => import('../../pages/account/register')),
+        isLayout: true,
+        showInMenu: false
+    },
+    {
+        path: '/forgot-password',
+        name: 'forgotPassword',
+        permission: '',
+        children: [],
+        title: 'Forgot password',
+        icon: null,
+        iconActive: null,
+        component: LoadableComponent(() => import('../../pages/account/Forgot_password')),
+        isLayout: true,
+        showInMenu: false
+    },
+    {
+        path: 'exception401',
+        permission: '',
+        title: 'exception',
+        name: 'exception',
+        showInMenu: false,
+        icon: null,
+        iconActive: null,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../pages/Exception/Exception401'))
+    },
+    {
+        path: '/exception404',
+        permission: '',
+        title: 'exception',
+        name: 'exception',
+        showInMenu: false,
+        icon: null,
+        iconActive: null,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../pages/Exception/Exception404'))
+    },
+    {
+        path: '/exception500',
+        permission: '',
+        title: 'exception',
+        name: 'exception',
+        showInMenu: false,
+        icon: null,
+        iconActive: null,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../pages/Exception/Exception500'))
+    }
+];
+
 export const appRouters: AppRouteProps = {
     mainRoutes: [
         {
@@ -55,66 +126,30 @@ export const appRouters: AppRouteProps = {
             name: 'AnonymousLayout',
             routes: [
                 {
-                    path: '/login',
-                    name: 'login',
+                    path: '/booking-online',
                     permission: '',
-                    children: [],
-                    title: 'Login',
-                    iconActive: null,
-                    icon: '',
-                    component: LoadableComponent(() => import('../../pages/account/login')),
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/',
-                    name: 'login',
-                    permission: '',
-                    children: [],
-                    title: 'Login',
-                    iconActive: null,
-                    icon: '',
-                    component: LoadableComponent(() => import('../../pages/account/login')),
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/register',
-                    name: 'register',
-                    permission: '',
-                    children: [],
-                    title: 'Register',
-                    iconActive: null,
-                    icon: null,
-                    component: LoadableComponent(() => import('../../pages/account/register')),
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/forgot-password',
-                    name: 'forgotPassword',
-                    permission: '',
-                    children: [],
-                    title: 'Forgot password',
+                    title: 'booking',
+                    name: 'booking',
                     icon: null,
                     iconActive: null,
-                    component: LoadableComponent(
-                        () => import('../../pages/account/Forgot_password')
-                    ),
-                    isLayout: true,
-                    showInMenu: false
-                },
-                {
-                    path: '/exception?:type',
-                    permission: '',
-                    title: 'exception',
-                    icon: null,
-                    iconActive: null,
-                    name: 'exception',
-                    showInMenu: false,
+                    children: [],
+                    showInMenu: true,
                     isLayout: false,
+                    component: LoadableComponent(() => import('../../pages/booking_online'))
+                },
+                {
+                    path: '/ban-hang',
+                    permission: '',
+                    title: 'Thu ngân',
+                    name: 'thungan',
+                    icon: null,
+                    iconActive: null,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/Exception'))
+                    showInMenu: true,
+                    isLayout: false,
+                    component: LoadableComponent(
+                        () => import('../../pages/ban_hang/main_page_ban_hang')
+                    )
                 }
             ]
         },
@@ -122,6 +157,18 @@ export const appRouters: AppRouteProps = {
             layout: MainAppLayout,
             name: 'MainAppLayout',
             routes: [
+                {
+                    path: '/',
+                    name: 'home',
+                    permission: '',
+                    title: 'Trang chủ',
+                    icon: null,
+                    iconActive: null,
+                    children: [],
+                    showInMenu: false,
+                    isLayout: false,
+                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
+                },
                 {
                     path: '/home',
                     name: 'dashboard',
@@ -165,9 +212,7 @@ export const appRouters: AppRouteProps = {
 
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(
-                                () => import('../../pages/ban_hang/main_page_ban_hang')
-                            )
+                            component: LoadableComponent(() => import('../../pages/ban_hang/index'))
                         },
                         {
                             path: '/giao-dich-thanh-toan',
@@ -299,6 +344,20 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             component: LoadableComponent(
                                 () => import('../../pages/employee/lich-lam-viec')
+                            )
+                        },
+                        {
+                            path: '/ca-lam-viec',
+                            permission: 'Pages.NhanSu_CaLamViec',
+                            title: 'Ca làm việc',
+                            name: 'caLamViec',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(
+                                () => import('../../pages/employee/ca-lam-viec')
                             )
                         }
                     ],

@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import LoginModel from '../../models/Login/loginModel';
 import qs from 'qs';
+import { RolePermission } from './dto/RolePermission';
 const http = axios.create({
     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
     timeout: 30000,
@@ -22,7 +23,7 @@ class LoginService {
 
         const tenantId = result.data.result['tenantId'] || 0;
 
-        Cookies.set('TenantId', tenantName ? tenantId : 'null', {
+        Cookies.set('Abp.TenantId', tenantName ? tenantId : 'null', {
             expires: isRemember === true ? 1 : undefined
         });
 
@@ -39,7 +40,7 @@ class LoginService {
             };
             console.log(loginModel);
             let result = false;
-            const tenantId = Cookies.get('TenantId');
+            const tenantId = Cookies.get('Abp.TenantId');
             if (tenantId?.toString() !== '0') {
                 const apiResult = await http.post('/api/TokenAuth/Authenticate', requestBody, {
                     headers: {
@@ -61,17 +62,17 @@ class LoginService {
                         Cookies.set('userId', apiResult.data.result['userId'], {
                             expires: loginModel.rememberMe ? 1 : undefined
                         });
-                        Cookies.set('isLogin', 'true', {
+                        Cookies.set('IdNhanVien', apiResult.data.result['idNhanVien'], {
                             expires: loginModel.rememberMe ? 1 : undefined
                         });
                         loginModel.rememberMe
-                            ? Cookies.set('remember', 'true', { expires: 1 })
-                            : Cookies.set('remember', 'false', { expires: 1 });
+                            ? Cookies.set('isRemberMe', 'true', { expires: 1 })
+                            : Cookies.set('isRemberMe', 'false');
+                        // await this.GetPermissionByUserId(
+                        //     apiResult.data.result['userId'],
+                        //     loginModel.rememberMe
+                        // );
                     }
-                    // this.GetChiNhanhByUserId(
-                    //     apiResult.data.result['userId'],
-                    //     loginModel.rememberMe
-                    // );
                 }
             }
             return result;
@@ -81,17 +82,14 @@ class LoginService {
             return false;
         }
     }
-
-    async GetChiNhanhByUserId(userId: number, isRemember: boolean) {
-        const result = await http.get(`api/services/app/chinhanh/getbyuserid?userid=${userId}`, {
-            headers: {
-                Authorization: 'Bearer ' + Cookies.get('accessToken')
-            }
-        });
-        Cookies.set('IdChiNhanh', result.data.result[0]['id'], {
+    async GetPermissionByUserId(userId: number, isRemember: boolean) {
+        const response = await http.post(
+            `api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`
+        );
+        //localStorage.setItem('permissions', JSON.stringify(response.data.result['permissions']));
+        Cookies.set('permissions', JSON.stringify(response.data.result['permissions']), {
             expires: isRemember === true ? 1 : undefined
         });
-        return result.data.result;
     }
 }
 export default new LoginService();

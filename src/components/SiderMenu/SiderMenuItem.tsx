@@ -7,7 +7,7 @@ import abpClient from '../abp-custom';
 import { ListItemIcon, Stack } from '@mui/material';
 const SiderMenuItem = (menuItem: any, lstPermission: string[], isCollapse: boolean) => {
     const location = useLocation();
-    if (abpClient.isGrandPermission(menuItem.permission, lstPermission)) {
+    if (abpClient.isGrandPermission(menuItem.permission)) {
         return (
             <ListItemButton
                 key={menuItem.path}

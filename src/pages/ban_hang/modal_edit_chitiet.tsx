@@ -487,7 +487,14 @@ export default function ModalEditChiTietGioHang({
                                             </Typography>
                                             <Stack direction="row" spacing={1}>
                                                 <Remove
-                                                    className="btnIcon"
+                                                    sx={{
+                                                        border: '1px solid #cccc',
+                                                        borderRadius: '4px',
+                                                        height: '40px',
+                                                        width: '40px',
+                                                        padding: '10px'
+                                                    }}
+                                                    //className="btnIcon"
                                                     onClick={() => giamSoLuong(ct.id)}
                                                 />
                                                 <TextField
@@ -498,7 +505,14 @@ export default function ModalEditChiTietGioHang({
                                                         handleChangeSoLuong(event, ct.id)
                                                     }></TextField>
                                                 <Add
-                                                    className="btnIcon"
+                                                    sx={{
+                                                        border: '1px solid #cccc',
+                                                        borderRadius: '4px',
+                                                        height: '40px',
+                                                        width: '40px',
+                                                        padding: '10px'
+                                                    }}
+                                                    //className="btnIcon"
                                                     onClick={() => tangSoLuong(ct.id)}
                                                 />
                                             </Stack>
@@ -579,14 +593,23 @@ export default function ModalEditChiTietGioHang({
                 <DialogActions>
                     <Button
                         variant="outlined"
-                        className="button-outline"
+                        sx={{
+                            color: '#7c3367',
+                            borderColor: '#7c3367',
+                            textTransform: 'capitalize'
+                        }}
+                        //className="button-outline"
                         onClick={() => {
                             setIsShow(false);
                             setIsSave(false);
                         }}>
                         Hủy
                     </Button>
-                    <Button variant="contained" className="button-container" onClick={agrreGioHang}>
+                    <Button
+                        variant="contained"
+                        //className="button-container"
+                        sx={{ background: '#7c3367', color: '#FFF', textTransform: 'capitalize' }}
+                        onClick={agrreGioHang}>
                         Lưu
                     </Button>
                 </DialogActions>

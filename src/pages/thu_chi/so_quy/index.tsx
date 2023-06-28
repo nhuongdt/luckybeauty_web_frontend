@@ -34,9 +34,11 @@ class SoQuyScreen extends Component {
         isShowModal: false,
         isShowConfirmDelete: false
     };
-    componentDidMount(): void {
+
+    componentDidMount() {
         this.getAll();
     }
+
     getAll = async () => {
         await soQuyStore.getAll({
             filter: this.state.keyword,
@@ -51,12 +53,14 @@ class SoQuyScreen extends Component {
             totalCount: soQuyStore.lstSoQuy.totalCount
         });
     };
+
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             skipCount: value
         });
         this.getAll();
     };
+
     onSort = async (sortType: string, sortBy: string) => {
         const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
@@ -65,6 +69,7 @@ class SoQuyScreen extends Component {
         });
         this.getAll();
     };
+
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
@@ -72,6 +77,7 @@ class SoQuyScreen extends Component {
         });
         this.getAll();
     };
+
     handleKeyDown = async (event: any) => {
         if (event.key === 'Enter') {
             await this.setState({
@@ -81,6 +87,7 @@ class SoQuyScreen extends Component {
             this.getAll();
         }
     };
+
     render(): ReactNode {
         const columns: GridColDef[] = [
             {
@@ -267,6 +274,7 @@ class SoQuyScreen extends Component {
                 )
             }
         ];
+        const { lstSoQuy } = soQuyStore;
         return (
             <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
                 <Grid container justifyContent="space-between">
@@ -346,28 +354,20 @@ class SoQuyScreen extends Component {
                 </Grid>
                 <Box marginTop="16px">
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
+                        rows={lstSoQuy === undefined ? [] : lstSoQuy.items}
                         columns={columns}
-                        rows={soQuyStore.lstSoQuy === undefined ? [] : soQuyStore.lstSoQuy.items}
-                        hideFooter
+                        checkboxSelection
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },
-                            '& .MuiDataGrid-columnHeadersInner': {
-                                backgroundColor: '#F2EBF0'
-                            },
-                            '& .MuiBox-root': {
-                                maxWidth: '100%',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
+                            '& .MuiDataGrid-cellContent': {
                                 fontSize: '12px'
                             },
-                            '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
-                                fontWeight: '700'
-                            },
-                            '& .MuiDataGrid-virtualScroller': {
-                                bgcolor: '#fff'
+                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                outline: 'none!important'
                             },
                             '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
                                 outline: 'none '
@@ -395,9 +395,10 @@ class SoQuyScreen extends Component {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: '#faf2f8'
                                 }
                         }}
+                        hideFooter
                         localeText={TextTranslate}
                     />
                     <CreateOrEditSoQuyDialog

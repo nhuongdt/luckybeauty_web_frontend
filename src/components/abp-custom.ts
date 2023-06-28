@@ -1,6 +1,9 @@
+import Cookies from 'js-cookie';
+
 class abpClient {
-    public isGrandPermission(permission: string, listPermission: string[]) {
-        if (listPermission.includes(permission) || permission === '') {
+    public isGrandPermission(permission: string) {
+        const permissions = Cookies.get('permissions') ?? [''];
+        if (permissions.includes(permission) || permission === '') {
             return true;
         }
         return false;

@@ -7,7 +7,7 @@ class SessionService {
     public async getCurrentLoginInformations(): Promise<GetCurrentLoginInformations> {
         const result = await http.get('api/services/app/Session/GetCurrentLoginInformations', {
             headers: {
-                'Abp.TenantId': Cookies.get('TenantId')
+                'Abp.TenantId': Cookies.get('Abp.TenantId')
             }
         });
 
