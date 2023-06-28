@@ -18,7 +18,7 @@ const SiderSubMenuItem = (MenuItem: any, lstPermission: string[], isCollapse: bo
         setOpen(!open);
     };
     const location = useLocation();
-    if (abpClient.isGrandPermission(MenuItem.permission, lstPermission)) {
+    if (abpClient.isGrandPermission(MenuItem.permission)) {
         return (
             <>
                 <ListItemButton

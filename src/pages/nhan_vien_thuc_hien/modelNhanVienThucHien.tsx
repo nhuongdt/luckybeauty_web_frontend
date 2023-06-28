@@ -265,13 +265,27 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                     }}>
                     <Button
                         variant="contained"
-                        className="button-container btn-container-hover"
+                        //className="button-container btn-container-hover"
+                        sx={{
+                            background: '#7c3367',
+                            textTransform: 'capitalize',
+                            color: '#fff',
+                            ':hover': { background: '#7c3376b3' }
+                        }}
                         onClick={onSave}>
                         Lưu
                     </Button>
                     <Button
                         variant="outlined"
-                        className="button-outline btn-outline-hover"
+                        sx={{
+                            borderColor: '#e6e1e6',
+                            textTransform: 'capitalize',
+                            color: ' #7c3367',
+                            ':hover': {
+                                borderColor: '#7c3367'
+                            }
+                        }}
+                        //className="button-outline btn-outline-hover"
                         onClick={() => setIsShow(false)}>
                         Hủy
                     </Button>

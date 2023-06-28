@@ -54,27 +54,11 @@ const Header: React.FC<HeaderProps> = (
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const defaultPermission: string[] = [];
-    const [lstPermission, setListPermission] = useState(defaultPermission);
     const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
     const [currentChiNhanh, setCurrentChiNhanh] = useState('');
     useEffect(() => {
         // Call API to get list of permissions here
-        // Example:
-        const userId = Cookies.get('userId');
-        const token = Cookies.get('accessToken');
-        const encryptedAccessToken = Cookies.get('encryptedAccessToken');
-        http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
-            headers: {
-                accept: 'text/plain',
-                Authorization: 'Bearer ' + token,
-                'X-XSRF-TOKEN': encryptedAccessToken
-            }
-        })
-            .then((response) => {
-                setListPermission(response.data.result['permissions']);
-            })
-            .catch((error) => console.log(error));
+
         const getChiNhanhs = async () => {
             const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
             if (listChiNhanh != null && listChiNhanh.length > 0) {
@@ -85,7 +69,7 @@ const Header: React.FC<HeaderProps> = (
                     const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
 
                     setCurrentChiNhanh(idChiNhanh);
-                    const remember = Cookies.get('remember');
+                    const remember = Cookies.get('isRemberMe');
                     Cookies.set('IdChiNhanh', idChiNhanh, {
                         expires: remember === 'true' ? 1 : undefined
                     });
@@ -105,7 +89,7 @@ const Header: React.FC<HeaderProps> = (
         const idChiNhanh = item.props.value;
         const tenChiNhanh = item.props.children;
         setCurrentChiNhanh(idChiNhanh);
-        const remember = Cookies.get('remember');
+        const remember = Cookies.get('isRemberMe');
         Cookies.set('IdChiNhanh', idChiNhanh, {
             expires: remember === 'true' ? 1 : undefined
         });
@@ -246,6 +230,7 @@ const Header: React.FC<HeaderProps> = (
                                         Object.keys(Cookies.get()).forEach((cookieName) => {
                                             Cookies.remove(cookieName);
                                         });
+                                        localStorage.removeItem('permissions');
                                     }}>
                                     <LogoutIcon />
                                     <span> Logout </span>

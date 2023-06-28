@@ -81,6 +81,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
         })
             .then((response) => {
                 setListPermission(response.data.result['permissions']);
+                Cookies.set('permissions', JSON.stringify(response.data.result['permissions']));
             })
             .catch((error) => console.log(error));
     }, []);

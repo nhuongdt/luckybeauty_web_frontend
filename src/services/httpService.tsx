@@ -61,27 +61,8 @@ http.interceptors.response.use(
             !!error.response.data.error &&
             !!error.response.data.error.message
         ) {
-            error.response.status == 500
+            error.response.status == 401
                 ? enqueueSnackbar(
-                      <>
-                          <div>
-                              <div>Lỗi</div>
-                              <span>
-                                  {error.response.data.error.message}:
-                                  {error.response.data.error.details}
-                              </span>
-                          </div>
-                      </>,
-                      {
-                          variant: 'error',
-                          anchorOrigin: {
-                              vertical: 'top',
-                              horizontal: 'center'
-                          },
-                          autoHideDuration: 3000
-                      }
-                  )
-                : enqueueSnackbar(
                       <>
                           <div>
                               <div>Lỗi</div>
@@ -104,6 +85,25 @@ http.interceptors.response.use(
                                   </IconButton>
                               </>
                           )
+                      }
+                  )
+                : enqueueSnackbar(
+                      <>
+                          <div>
+                              <div>Lỗi</div>
+                              <span>
+                                  {error.response.data.error.message}:
+                                  {error.response.data.error.details}
+                              </span>
+                          </div>
+                      </>,
+                      {
+                          variant: 'error',
+                          anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                          },
+                          autoHideDuration: 3000
                       }
                   );
         } else if (!error.response) {
