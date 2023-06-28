@@ -184,17 +184,6 @@ body .font-normal {
         Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* đổi dòng chữ rows per page của các bảng thành tiếng việt */
-
-.MuiTablePagination-selectLabel {
-    font-size: 0;
-}
-
-.MuiTablePagination-selectLabel::after {
-    content: 'Số hàng tối đa trên mỗi trang';
-    font-size: 14px;
-}
-
 /* error at TextField */
 
 .MuiFormHelperText {
@@ -225,6 +214,6 @@ body .font-normal {
 
 /* style datetime fullwith */
 
-.MuiFormControl-root.MuiTextField-root:not(.no-minWidth) {
+/* .MuiFormControl-root.MuiTextField-root:not(.no-minWidth) {
     width: 100% !important;
-}
+} */

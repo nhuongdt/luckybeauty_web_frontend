@@ -349,7 +349,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value}>
+                    <Box title={params.value} fontSize="12px">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )

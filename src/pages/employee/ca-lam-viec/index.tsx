@@ -282,7 +282,7 @@ class CaLamViecScreen extends Component {
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
-                            Quản lý thời gian nghỉ
+                            Ca làm việc
                         </Typography>
                         <Box className="form-search">
                             <TextField
