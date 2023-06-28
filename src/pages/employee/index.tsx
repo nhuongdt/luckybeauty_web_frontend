@@ -477,7 +477,10 @@ class EmployeeScreen extends React.Component {
                                 sx={{
                                     backgroundColor: '#FFFAFF',
                                     borderColor: '#CDC9CD',
-                                    height: '40px'
+                                    height: '40px',
+                                    '& .MuiInputBase-root': {
+                                        pl: '0'
+                                    }
                                 }}
                                 onChange={(e: any) => {
                                     this.setState({ filter: e.target.value });

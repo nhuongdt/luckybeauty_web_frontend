@@ -408,28 +408,71 @@ const GiaoDichThanhToan: React.FC = () => {
                                 />
                             </Box>
                         </Grid>
-                        <Grid item md="auto">
+                        <Grid item md={6}>
                             <Box
                                 sx={{
                                     display: 'flex',
                                     gap: '8px',
+                                    justifyContent: 'end',
                                     '& button': {
                                         height: '40px'
                                     }
                                 }}>
-                                <DatePickerCustom
-                                    defaultVal={paramSearch.fromDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, fromDate: newVal })
-                                    }
-                                />
-                                <DatePickerCustom
-                                    defaultVal={paramSearch.toDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, toDate: newVal })
-                                    }
-                                />
-
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        '& .MuiOutlinedInput-notchedOutline': {
+                                            border: 'none!important'
+                                        },
+                                        '& input': {
+                                            padding: '0!important'
+                                        },
+                                        border: '1px solid #CDC9CD',
+                                        padding: '7px 16px',
+                                        borderRadius: '4px',
+                                        transition: '.4s',
+                                        maxWidth: '251px',
+                                        '&:hover': {
+                                            borderColor: '#7C3367'
+                                        },
+                                        '& .MuiOutlinedInput-root': {
+                                            pr: '0'
+                                        },
+                                        '& button': {
+                                            position: 'absolute',
+                                            height: '100%',
+                                            width: '100%',
+                                            left: '0',
+                                            top: '0',
+                                            borderRadius: '0',
+                                            bgcolor: 'unset!important',
+                                            opacity: '0'
+                                        },
+                                        '& .date2 .MuiOutlinedInput-root': {
+                                            display: 'block'
+                                        },
+                                        '& .date2 input': {
+                                            textAlign: 'right'
+                                        }
+                                    }}>
+                                    <Box>
+                                        <DatePickerCustom
+                                            defaultVal={paramSearch.fromDate}
+                                            handleChangeDate={(newVal: string) =>
+                                                setParamSearch({ ...paramSearch, fromDate: newVal })
+                                            }
+                                        />
+                                    </Box>
+                                    <Box sx={{ textAlign: 'center', flexBasis: '30%' }}>-</Box>
+                                    <Box className="date2">
+                                        <DatePickerCustom
+                                            defaultVal={paramSearch.toDate}
+                                            handleChangeDate={(newVal: string) =>
+                                                setParamSearch({ ...paramSearch, toDate: newVal })
+                                            }
+                                        />
+                                    </Box>
+                                </Box>
                                 <Button
                                     variant="outlined"
                                     startIcon={<UploadIcon />}

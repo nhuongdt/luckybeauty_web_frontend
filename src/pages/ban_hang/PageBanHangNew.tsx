@@ -753,7 +753,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                         }
                                     }}
                                     size="small"
-                                    className="search-field"
+                                    className="search-field no-minWidth"
                                     variant="outlined"
                                     type="search"
                                     placeholder="Tìm kiếm"
