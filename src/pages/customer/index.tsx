@@ -148,11 +148,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
             skipCount: this.state.currentPage,
+            idChiNhanh: Cookies.get('IdChiNhanh'),
             loaiDoiTuong: 0,
             sortBy: '',
             sortType: 'desc'
         });
-        fileDowloadService.downloadTempFile(result);
+        const fileDown = new fileDowloadService();
+        fileDown.downloadTempFile(result);
     };
     handlePageChange = async (event: any, newPage: number) => {
         await this.setState({ currentPage: newPage });
