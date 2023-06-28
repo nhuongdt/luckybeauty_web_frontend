@@ -38,8 +38,25 @@ const Payments: React.FC<ChildComponent> = ({ onClick }) => {
     const HandleSelected = (index: number) => {
         setSelectedItem(index);
     };
+    const formatCurrency = (value: number) => {
+        const formatter = new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        });
+        return formatter.format(value);
+    };
 
-    const selectedPayment = PaymentsList[selectedItem];
+    const ProposePrice = [100000, 150000, 200000, 300000, 400000, 500000];
+    const [TienKhachTra, setTienKhachTra] = React.useState<number>(0);
+    const newValue = formatCurrency(TienKhachTra);
+    const HandleTienKhachTra = (index: number) => {
+        setTienKhachTra(ProposePrice[index]);
+    };
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTienKhachTra(parseInt(event.target.value));
+    };
+
     return (
         <Box>
             <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -96,30 +113,75 @@ const Payments: React.FC<ChildComponent> = ({ onClick }) => {
                 ))}
             </Grid>
             {selectedItem !== -1 && (
-                <Box>
-                    {PaymentsList.map((item, index) => (
-                        <Box key={index}>
-                            <Box>
+                <Box mt="24px">
+                    <Box>
+                        <Box>
+                            <Typography variant="h3" color="#000" fontSize="18px" fontWeight="700">
+                                {selectedItem === 0
+                                    ? 'Tiền mặt'
+                                    : selectedItem === 1
+                                    ? 'Thẻ ngân hàng'
+                                    : selectedItem === 2
+                                    ? 'Chuyển khoản'
+                                    : undefined}
+                            </Typography>
+                            <Box mt="12px">
                                 <Typography
-                                    variant="h3"
-                                    color="#000"
-                                    fontSize="18px"
-                                    fontWeight="700">
-                                    HIHI
+                                    variant="body1"
+                                    fontSize="14px"
+                                    fontWeight="400"
+                                    color="#666466">
+                                    Tiền khách trả
                                 </Typography>
-                                <Box>
-                                    <Typography
-                                        variant="body1"
-                                        fontSize="14px"
-                                        fontWeight="400"
-                                        color="#666466">
-                                        Tiền khách trả
-                                    </Typography>
-                                    <TextField fullWidth size="small" placeholder="đ" />
-                                </Box>
+
+                                <TextField
+                                    type="number"
+                                    value={TienKhachTra !== 0 ? TienKhachTra : ''}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    placeholder="đ"
+                                    sx={{
+                                        bgcolor: '#fff',
+                                        mt: '4px',
+                                        '& input': {
+                                            appearance: 'textfield',
+                                            paddingY: '13.5px'
+                                        },
+                                        '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button':
+                                            {
+                                                appearance: 'none'
+                                            }
+                                    }}
+                                />
                             </Box>
+                            <Grid container mt="24px" spacing="1.6vw">
+                                {ProposePrice.map((item, index) => (
+                                    <Grid item xs={2} key={index}>
+                                        <Box
+                                            onClick={() => HandleTienKhachTra(index)}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                height: '56px',
+                                                border: '1px solid #E6E1E6',
+                                                borderRadius: '8px',
+                                                fontSize: '16px',
+                                                color: '#333233',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                pl: '16px',
+                                                bgcolor: '#fff',
+                                                transition: '.4s',
+                                                '&:hover': {
+                                                    borderColor: '#7C3367'
+                                                }
+                                            }}>
+                                            {formatCurrency(item)}
+                                        </Box>
+                                    </Grid>
+                                ))}
+                            </Grid>
                         </Box>
-                    ))}
+                    </Box>
                 </Box>
             )}
         </Box>
