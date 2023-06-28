@@ -9,6 +9,7 @@ import {
     TextField,
     Typography
 } from '@mui/material';
+import React, { RefObject } from 'react';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
 import AddIcon from '../../../../images/add.svg';
@@ -23,12 +24,13 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../../lib/appconst';
-import { DataGrid, GridColumnVisibilityModel } from '@mui/x-data-grid';
+import { DataGrid, GridColumnVisibilityModel, GridColDef, GridApi } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
-import ExportToExcel from '../../../../components/ExportToExcel';
+
 class ChiNhanhScreen extends Component {
+    dataGridRef: RefObject<any> = React.createRef<GridApi>();
     state = {
         idChiNhanh: '',
         isShowModal: false,
@@ -40,11 +42,13 @@ class ChiNhanhScreen extends Component {
         totalCount: 0,
         totalPage: 0,
         createOrEditChiNhanhDto: {} as CreateOrEditChiNhanhDto,
-        listChiNhanh: [] as ChiNhanhDto[]
+        listChiNhanh: [] as ChiNhanhDto[],
+        hiddenColumns: []
     };
     async componentDidMount() {
         this.InitData();
     }
+
     async InitData() {
         const lstChiNhanh = await chiNhanhService.GetAll({
             keyword: this.state.filter,
@@ -113,8 +117,10 @@ class ChiNhanhScreen extends Component {
     };
 
     handleColumnVisibilityChange = () => {
-        this.setState({ hiddenColumns: true });
+        // console.log(this.dataGridRef.current.getVisibleColumns());
+        console.log('');
     };
+
     onSort = async (sortType: string, sortBy: string) => {
         const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
@@ -299,6 +305,7 @@ class ChiNhanhScreen extends Component {
                 )
             }
         ];
+
         return (
             <Box
                 className="customer-page"
@@ -445,6 +452,12 @@ class ChiNhanhScreen extends Component {
                         onColumnVisibilityModelChange={this.handleColumnVisibilityChange}
                         columnBuffer={0}
                         hideFooter
+                        ref={this.dataGridRef}
+                        columnVisibilityModel={
+                            {
+                                // Hide columns status and traderName, the other columns will remain visible
+                            }
+                        }
                         localeText={TextTranslate}
                     />
                     <CustomTablePagination

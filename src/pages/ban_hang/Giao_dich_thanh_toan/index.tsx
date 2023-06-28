@@ -31,11 +31,13 @@ import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
     const current = useContext(ChiNhanhContext);
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
@@ -148,11 +150,25 @@ const GiaoDichThanhToan: React.FC = () => {
             hoadonAfterChange.trangThai === 0 ||
             hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
         ) {
-            // remove if huyhoadon or change chinhanh
-            setPageDataHoaDon({
-                ...pageDataHoaDon,
-                items: pageDataHoaDon.items.filter((x: any) => x.id !== hoadonAfterChange.id)
-            });
+            if (hoadonAfterChange.trangThai === 0) {
+                setPageDataHoaDon({
+                    ...pageDataHoaDon,
+                    items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
+                        if (itemHD.id === hoadonAfterChange.id) {
+                            return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
+                        } else {
+                            return itemHD;
+                        }
+                    })
+                });
+                setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
+            } else {
+                // remove if huyhoadon or change chinhanh
+                setPageDataHoaDon({
+                    ...pageDataHoaDon,
+                    items: pageDataHoaDon.items.filter((x: any) => x.id !== hoadonAfterChange.id)
+                });
+            }
         } else {
             // update
             setPageDataHoaDon({
@@ -226,9 +242,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
-                </Box>
+                <Box title={params.value}>{new Intl.NumberFormat().format(params.value)}</Box>
             )
         },
         {
@@ -245,10 +259,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {' '}
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
-                </Box>
+                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
             )
         },
         {
@@ -265,10 +276,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {' '}
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
-                </Box>
+                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
             )
         },
         {
@@ -285,10 +293,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {' '}
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
-                </Box>
+                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
             )
         },
         {
@@ -305,10 +310,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {' '}
-                    {new Intl.NumberFormat('en-IN').format(params.value)}
-                </Box>
+                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
             )
         },
         {
@@ -350,6 +352,11 @@ const GiaoDichThanhToan: React.FC = () => {
 
     return (
         <>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             {idHoadonChosing !== '' ? (
                 <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
                     <ThongTinHoaDon

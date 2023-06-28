@@ -266,7 +266,7 @@ export default function PageProductNew() {
 
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
-            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
+            await ProductService.DeleteProduct_byIDHangHoa(rowHover?.idHangHoa ?? '');
             setObjAlert({
                 show: true,
                 type: 1,
@@ -292,7 +292,7 @@ export default function PageProductNew() {
     };
 
     const restoreProduct = async () => {
-        await ProductService.DeleteProduct_byIDHangHoa(rowHover?.id ?? '');
+        await ProductService.DeleteProduct_byIDHangHoa(rowHover?.idHangHoa ?? '');
         setObjAlert({
             show: true,
             type: 1,

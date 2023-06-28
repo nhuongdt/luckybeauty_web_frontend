@@ -17,7 +17,7 @@ class SoQuyServices {
         return result.data.result;
     };
     HuyPhieuThuChi_ofHoaDonLienQuan = async (idHoaDonLienQuan: string) => {
-        const result = await http.get(
+        const result = await http.post(
             `api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`
         );
         return result.data.result;
@@ -26,6 +26,10 @@ class SoQuyServices {
         const response = await http.get('api/services/app/QuyHoaDon/GetAll', {
             params: input
         });
+        return response.data.result;
+    }
+    async GetForEdit(idQuyHD: string): Promise<QuyHoaDonDto> {
+        const response = await http.get(`api/services/app/QuyHoaDon/GetAll?id=${idQuyHD}`);
         return response.data.result;
     }
 }

@@ -23,6 +23,8 @@ import { ReactComponent as EmployeeActive } from '../../images/employeeActive.sv
 import { ReactComponent as ReportActive } from '../../images/reportActive.svg';
 import { ReactComponent as SetingActive } from '../../images/settingActive.svg';
 import { ReactComponent as AdminActive } from '../../images/admin2.svg';
+import { ReactComponent as MoneyIcon } from '../../images/moneys.svg';
+import { ReactComponent as MoneyActive } from '../../images/moneysActive.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -275,8 +277,8 @@ export const appRouters: AppRouteProps = {
                     path: '/thu-chi',
                     permission: '',
                     title: 'Thu chi',
-                    icon: <ServicesIcon width="20px" />,
-                    iconActive: <ServiceActive width="20px" />,
+                    icon: <MoneyIcon width="20px" />,
+                    iconActive: <MoneyActive width="20px" />,
                     name: 'thuChi',
                     showInMenu: true,
                     isLayout: false,
@@ -286,7 +288,7 @@ export const appRouters: AppRouteProps = {
                             permission: '',
                             title: 'Sổ quỹ',
                             icon: <BsDot style={{ fontSize: 20 }} />,
-                            iconActive: <ServiceActive width="20px" />,
+                            iconActive: null,
                             name: 'thuChi',
                             showInMenu: true,
                             isLayout: false,

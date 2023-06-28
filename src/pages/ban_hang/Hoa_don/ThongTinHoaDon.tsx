@@ -56,6 +56,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
 
+    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
+    const [idCTHDChosing, setIdCTHDChosing] = useState('');
+
     const current = useContext(ChiNhanhContext);
     const allChiNhanh = useContext(ChiNhanhContextbyUser);
 
@@ -107,14 +110,62 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
         await SoQuyServices.HuyPhieuThuChi_ofHoaDonLienQuan(idHoaDon);
 
         // update state hoadon
+        const objUpdate = { ...hoadonChosed };
+        objUpdate.trangThai = 0;
         setHoaDonChosed({ ...hoadonChosed, trangThai: 0 });
-        setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
-        gotoBack();
+        handleGotoBack(objUpdate);
     };
 
-    // const showModalEditGioHang = () => {
+    const showModalEditGioHang = () => {
+        setIsShowEditGioHang(true);
+        setIdCTHDChosing('');
+        console.log('hoaadonC ', chitietHoaDon);
+    };
 
-    // };
+    const AgreeGioHang = async (lstCTAfter: PageHoaDonChiTietDto[]) => {
+        console.log('lstCTAfter ', lstCTAfter);
+        setIsShowEditGioHang(false);
+        setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật chi tiết hóa đơn thành công' });
+        setChiTietHoaDon([...lstCTAfter]);
+
+        // caculator TongTien
+        let tongTienHangChuaChietKhau = 0,
+            tongChietKhauHangHoa = 0,
+            tongTienHang = 0,
+            tongTienThue = 0,
+            tongTienHDSauVAT = 0,
+            tongThanhToan = 0;
+        for (let i = 0; i < lstCTAfter.length; i++) {
+            const ctFor = lstCTAfter[i];
+            tongTienHangChuaChietKhau += ctFor?.thanhTienTruocCK ?? 0;
+            tongChietKhauHangHoa += (ctFor?.soLuong ?? 0) * (ctFor?.tienChietKhau ?? 0);
+            tongTienHang += ctFor?.thanhTienSauCK ?? 0;
+            tongTienThue += (ctFor?.soLuong ?? 0) * (ctFor?.tienThue ?? 0);
+            tongTienHDSauVAT += ctFor?.thanhTienSauVAT ?? 0;
+        }
+        tongThanhToan = tongTienHDSauVAT - (hoadon?.tongGiamGiaHD ?? 0);
+
+        const objHDAfter = { ...hoadonChosed };
+        objHDAfter.tongTienHangChuaChietKhau = tongTienHangChuaChietKhau;
+        objHDAfter.tongChietKhauHangHoa = tongChietKhauHangHoa;
+        objHDAfter.tongTienHang = tongTienHang;
+        objHDAfter.tongTienThue = tongTienThue;
+        objHDAfter.tongTienHDSauVAT = tongTienHDSauVAT;
+        objHDAfter.tongThanhToan = tongThanhToan;
+
+        console.log('objHDAfter ', objHDAfter);
+        const data = await HoaDonService.Update_InforHoaDon(objHDAfter);
+        setHoaDonChosed({
+            ...hoadonChosed,
+            tongTienHangChuaChietKhau: tongTienHangChuaChietKhau,
+            tongChietKhauHangHoa: tongChietKhauHangHoa,
+            tongTienHang: tongTienHang,
+            tongTienThue: tongTienThue,
+            tongTienHDSauVAT: tongTienHDSauVAT,
+            tongThanhToan: tongThanhToan,
+            maHoaDon: data?.maHoaDon
+        });
+    };
     const updateHoaDon = async () => {
         const data = await HoaDonService.Update_InforHoaDon(hoadonChosed);
         setHoaDonChosed({ ...hoadonChosed, maHoaDon: data?.maHoaDon });
@@ -144,8 +195,17 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            {/* <ModalEditChiTietGioHang   trigger={chitietHoaDon}
-                handleSave={AgreeGioHang}/> */}
+            <ModalEditChiTietGioHang
+                formType={0}
+                isShow={isShowEditGioHang}
+                hoadonChiTiet={
+                    idCTHDChosing === ''
+                        ? chitietHoaDon
+                        : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)
+                }
+                handleSave={AgreeGioHang}
+                handleClose={() => setIsShowEditGioHang(false)}
+            />
 
             <Box
                 sx={{
@@ -229,7 +289,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     color="#3B4758"
                                     fontWeight="700"
                                     fontSize="24px">
-                                    {hoadon?.tenKhachHang}
+                                    {hoadonChosed?.tenKhachHang}
                                 </Typography>
                                 {/* <AutocompleteCustomer handleChoseItem={changeCustomer} /> */}
                                 <Box
@@ -242,7 +302,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         fontSize: '12px',
                                         height: 'fit-content'
                                     }}>
-                                    {hoadon?.txtTrangThaiHD}
+                                    {hoadonChosed?.txtTrangThaiHD}
                                 </Box>
                             </Box>
                             <Grid container>
@@ -315,7 +375,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         fontSize="14px"
                                         color="#333233"
                                         marginTop="2px">
-                                        {hoadon?.userName}
+                                        {hoadonChosed?.userName}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -354,7 +414,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                     </Grid>
                     <Box sx={{ mt: '40px' }}>
                         <TabPanel value={activeTab} index={0}>
-                            <TabInfo hoadon={hoadon} chitietHoaDon={chitietHoaDon} />
+                            <TabInfo hoadon={hoadonChosed} chitietHoaDon={chitietHoaDon} />
                         </TabPanel>
                         <TabPanel value={activeTab} index={1}>
                             <TabDiary idHoaDon={idHoaDon} />
@@ -383,7 +443,8 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                         <Button
                             variant="outlined"
                             sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
-                            className="btn-outline-hover">
+                            className="btn-outline-hover"
+                            onClick={showModalEditGioHang}>
                             Chỉnh sửa
                         </Button>
                         <Button

@@ -47,7 +47,7 @@ import utils from '../../utils/utils';
 import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
 import CheckinService from '../../services/check_in/CheckinService';
 import { ModelNhomHangHoa } from '../../services/product/dto';
-import { PropToChildMauIn, PropModal } from '../../utils/PropParentToChild';
+import { PropToChildMauIn, PropModal, PropModal2 } from '../../utils/PropParentToChild';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
 import NhanVienService from '../../services/nhan-vien/nhanVienService';
@@ -62,7 +62,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
-
+import Payments from './Payment';
 const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [txtSearch, setTxtSearch] = useState('');
@@ -101,9 +101,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
     );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [triggerModalEditGioHang, setTriggerModalEditGioHang] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
+    const [idCTHDChosing, setIdCTHDChosing] = useState('');
 
     const GetTreeNhomHangHoa = async () => {
         const list = await GroupProductService.GetTreeNhomHangHoa();
@@ -391,12 +390,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                     return {
                         ...x,
                         tienChietKhau:
-                            (x.pTChietKhau ?? 0) > 0
-                                ? (x.donGiaTruocCK * (x.pTChietKhau ?? 0)) / 100
+                            (x.ptChietKhau ?? 0) > 0
+                                ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100
                                 : x.tienChietKhau,
                         tienThue:
-                            (x.pTThue ?? 0) > 0
-                                ? ((x.donGiaSauCK ?? 0) * (x.pTThue ?? 0)) / 100
+                            (x.ptThue ?? 0) > 0
+                                ? ((x.donGiaSauCK ?? 0) * (x.ptThue ?? 0)) / 100
                                 : x.tienThue
                     };
                 } else {
@@ -442,17 +441,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
 
     // modal chitiet giohang
     const showPopChiTietGioHang = (item: HoaDonChiTietDto) => {
-        setTriggerModalEditGioHang((old) => {
-            return { ...old, isShow: true, isNew: true, item: item, id: item.id };
-        });
+        setIsShowEditGioHang(true);
+        setIdCTHDChosing(item?.id);
     };
+
     const AgreeGioHang = (ctUpdate: PageHoaDonChiTietDto) => {
+        setIsShowEditGioHang(false);
         // assign ctdoing --> used to update hoadhong dichvu of nhanvien
         setCTHDDoing({
             ...cthdDoing,
             soLuong: ctUpdate.soLuong,
             donGiaTruocCK: ctUpdate.donGiaTruocCK,
-            pTChietKhau: ctUpdate.pTChietKhau,
+            ptChietKhau: ctUpdate.ptChietKhau,
             tienChietKhau: ctUpdate.tienChietKhau,
             donGiaSauCK: ctUpdate.donGiaSauCK,
             donGiaSauVAT: ctUpdate.donGiaSauVAT,
@@ -468,7 +468,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                         ...item,
                         soLuong: ctUpdate.soLuong,
                         donGiaTruocCK: ctUpdate.donGiaTruocCK,
-                        pTChietKhau: ctUpdate.pTChietKhau,
+                        ptChietKhau: ctUpdate.ptChietKhau,
                         tienChietKhau: ctUpdate.tienChietKhau,
                         donGiaSauCK: ctUpdate.donGiaSauCK,
                         donGiaSauVAT: ctUpdate.donGiaSauVAT,
@@ -522,8 +522,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         }
         return true;
     };
-
+    const [showPayment, setShowPayment] = useState(false);
+    const ToPayment = () => {
+        setShowPayment(!showPayment);
+    };
     const saveHoaDon = async () => {
+        ToPayment();
         if (clickSSave) return; // avoid click douple
         setClickSave(true);
 
@@ -532,7 +536,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
             return;
         }
 
-        const hodaDonDB = await HoaDonService.CreateHoaDon(hoadon);
+        // assign again STT of cthd before save
+        const dataSave = { ...hoadon };
+        dataSave?.hoaDonChiTiet?.map((x: PageHoaDonChiTietDto, index: number) => {
+            x.stt = index + 1;
+        });
+        const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
         //checkout + insert tbl checkin_hoadon
         await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
@@ -551,7 +560,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         quyHD.quyHoaDon_ChiTiet = [
             new QuyChiTietDto({
                 idHoaDonLienQuan: hodaDonDB.id,
-                idKhachHang: hoadon.idKhachHang,
+                idKhachHang: hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang,
                 tienThu: hoadon.tongThanhToan
             })
         ];
@@ -684,9 +693,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         <>
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang
-                trigger={triggerModalEditGioHang}
+                formType={1}
+                isShow={isShowEditGioHang}
+                hoadonChiTiet={hoaDonChiTiet.filter((x: any) => x.id === idCTHDChosing)}
                 dataNhanVien={allNhanVien}
                 handleSave={AgreeGioHang}
+                handleClose={() => setIsShowEditGioHang(false)}
             />
             <SnackbarAlert
                 showAlert={objAlert.show}
@@ -709,357 +721,36 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                         paddingTop: '0!important'
                     }
                 }}>
-                <Grid
-                    item
-                    container
-                    md={8}
-                    spacing={3}
-                    height="fit-content"
-                    marginTop={CoditionLayout ? '-83px' : '-24px'}>
+                {!showPayment ? (
                     <Grid
                         item
-                        md={CoditionLayout ? 12 : 5}
-                        sx={{
-                            paddingLeft: '0!important',
-                            display: 'flex',
-                            flexDirection: 'column'
-                        }}>
-                        {CoditionLayout && (
-                            <TextField
-                                fullWidth
-                                sx={{
-                                    borderColor: '#CFD3D4!important',
-                                    borderWidth: '1px!important',
-                                    maxWidth: '55%',
-                                    mr: '24px',
-                                    boxShadow: ' 0px 20px 100px 0px #0000000D',
-                                    maxHeight: '37px',
-                                    marginLeft: 'auto',
-                                    '& .MuiInputBase-root': {
-                                        bgcolor: '#fff'
-                                    }
-                                }}
-                                size="small"
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                placeholder="Tìm kiếm"
-                                value={txtSearch}
-                                onChange={(event) => {
-                                    setTxtSearch(event.target.value);
-                                }}
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <SearchIcon />
-                                        </InputAdornment>
-                                    )
-                                }}
-                            />
-                        )}
-                        <Box
+                        container
+                        md={8}
+                        spacing={3}
+                        height="fit-content"
+                        marginTop={CoditionLayout ? '-83px' : '-24px'}>
+                        <Grid
+                            item
+                            md={CoditionLayout ? 12 : 5}
                             sx={{
-                                backgroundColor: CoditionLayout ? 'transparent' : '#fff',
-                                borderRadius: '8px',
-                                boxShadow: CoditionLayout
-                                    ? 'unset'
-                                    : ' 0px 20px 100px 0px #0000000D',
-                                padding: '16px 24px',
-                                height: CoditionLayout ? 'unset' : '100vh',
-                                overflowX: 'hidden',
-                                maxHeight: CoditionLayout ? 'unset' : '77.5vh',
-                                overflowY: 'auto',
-                                '&::-webkit-scrollbar': {
-                                    width: '7px'
-                                },
-                                '&::-webkit-scrollbar-thumb': {
-                                    bgcolor: 'rgba(0,0,0,0.1)',
-                                    borderRadius: '8px'
-                                },
-                                '&::-webkit-scrollbar-track': {
-                                    bgcolor: '#F2EBF0'
-                                }
+                                paddingLeft: '0!important',
+                                display: 'flex',
+                                flexDirection: 'column'
                             }}>
-                            <Box>
-                                <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center">
-                                    <Typography
-                                        variant="h3"
-                                        fontSize="18px"
-                                        color="#4C4B4C"
-                                        fontWeight="700"
-                                        onClick={() => choseLoaiHang(2)}>
-                                        Nhóm dịch vụ
-                                    </Typography>
-                                    {isScrollable && (
-                                        <Box
-                                            sx={{
-                                                '& button': {
-                                                    minWidth: 'unset',
-                                                    bgcolor: 'unset!important'
-                                                }
-                                            }}>
-                                            <Button
-                                                variant="text"
-                                                onClick={handlePrevClick}
-                                                sx={{
-                                                    '&:hover svg': {
-                                                        color: '#7C3367'
-                                                    }
-                                                }}>
-                                                <ArrowBackIosIcon
-                                                    sx={{
-                                                        color: '#CBADC2'
-                                                    }}
-                                                />
-                                            </Button>
-                                            <Button
-                                                variant="text"
-                                                onClick={handleNextClick}
-                                                sx={{
-                                                    '&:hover svg': {
-                                                        color: '#7C3367'
-                                                    }
-                                                }}>
-                                                <ArrowForwardIosIcon
-                                                    sx={{
-                                                        color: '#CBADC2'
-                                                    }}
-                                                />
-                                            </Button>
-                                        </Box>
-                                    )}
-                                </Box>
-                                <List
-                                    onScroll={handleScroll}
-                                    ref={containerRef}
-                                    onWheel={handleWheel}
-                                    sx={{
-                                        display: CoditionLayout ? 'flex' : 'block',
-                                        columnGap: '12px',
-                                        flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
-                                        overflowX: 'auto',
-                                        scrollBehavior: 'smooth',
-                                        '&::-webkit-scrollbar': {
-                                            width: '7px',
-                                            height: '7px'
-                                        },
-                                        '&::-webkit-scrollbar-thumb:horizontal': {
-                                            bgcolor: 'rgba(0,0,0,0.1)',
-                                            borderRadius: '8px'
-                                        }
-                                    }}>
-                                    {nhomDichVu.map((nhomDV, index) => (
-                                        <ListItem
-                                            key={index}
-                                            onClick={() => choseNhomDichVu(nhomDV)}
-                                            sx={{
-                                                gap: '6px',
-                                                padding: '10px',
-                                                overflow: 'hidden',
-                                                backgroundColor: nhomDV.color,
-                                                borderRadius: '8px',
-                                                marginTop: '12px',
-                                                cursor: 'pointer',
-                                                transition: '.4s',
-                                                minWidth: CoditionLayout ? '200px' : 'unset',
-                                                maxWidth: CoditionLayout ? '200px' : 'unset',
-                                                position: 'relative',
-                                                '&::after': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    height: '100%',
-                                                    width: '100%',
-                                                    left: '0',
-                                                    bottom: '0',
-                                                    backgroundColor: 'rgba(0,0,0,0.3)',
-                                                    zIndex: '0',
-                                                    opacity: '0',
-                                                    transition: '.4s'
-                                                },
-                                                '&:hover::after': {
-                                                    opacity: '1'
-                                                }
-                                            }}>
-                                            <ListItemIcon
-                                                sx={{
-                                                    minWidth: '0',
-                                                    position: 'relative',
-                                                    zIndex: '2'
-                                                }}>
-                                                <IconDv style={{ color: '#F1FAFF' }} />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                sx={{
-                                                    '& .MuiTypography-root': {
-                                                        color: '#F1FAFF',
-                                                        whiteSpace: 'nowrap',
-                                                        width: '100%',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        fontWeight: '700',
-                                                        position: 'relative',
-                                                        zIndex: '2'
-                                                    }
-                                                }}
-                                                title={nhomDV.tenNhomHang}>
-                                                {nhomDV.tenNhomHang}
-                                            </ListItemText>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Box>
-                            <Box sx={{ marginTop: '16px' }}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center'
-                                    }}>
-                                    <Typography
-                                        variant="h3"
-                                        fontSize="18px"
-                                        color="#4C4B4C"
-                                        fontWeight="700"
-                                        onClick={() => choseLoaiHang(1)}>
-                                        Sản phẩm
-                                    </Typography>
-                                    {isScrollable2 && (
-                                        <Box
-                                            sx={{
-                                                '& button': {
-                                                    minWidth: 'unset',
-                                                    bgcolor: 'unset!important'
-                                                }
-                                            }}>
-                                            <Button
-                                                variant="text"
-                                                onClick={handlePrevClick2}
-                                                sx={{
-                                                    '&:hover svg': {
-                                                        color: '#7C3367'
-                                                    }
-                                                }}>
-                                                <ArrowBackIosIcon
-                                                    sx={{
-                                                        color: '#CBADC2'
-                                                    }}
-                                                />
-                                            </Button>
-                                            <Button
-                                                variant="text"
-                                                onClick={handleNextClick2}
-                                                sx={{
-                                                    '&:hover svg': {
-                                                        color: '#7C3367'
-                                                    }
-                                                }}>
-                                                <ArrowForwardIosIcon
-                                                    sx={{
-                                                        color: '#CBADC2'
-                                                    }}
-                                                />
-                                            </Button>
-                                        </Box>
-                                    )}
-                                </Box>
-                                <List
-                                    onScroll={handleScroll2}
-                                    onWheel={handleWheel2}
-                                    ref={containerRef2}
-                                    sx={{
-                                        display: CoditionLayout ? 'flex' : 'block',
-                                        columnGap: '12px',
-                                        flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
-                                        overflowX: 'auto',
-                                        scrollBehavior: 'smooth',
-                                        '&::-webkit-scrollbar': {
-                                            width: '7px',
-                                            height: '7px'
-                                        },
-                                        '&::-webkit-scrollbar-thumb:horizontal': {
-                                            bgcolor: 'rgba(0,0,0,0.1)',
-                                            borderRadius: '8px'
-                                        }
-                                    }}>
-                                    {nhomHangHoa.map((nhomHH, index) => (
-                                        <ListItem
-                                            key={index}
-                                            sx={{
-                                                gap: '6px',
-                                                padding: '10px',
-                                                overflow: 'hidden',
-                                                bgcolor: nhomHH.color,
-                                                borderRadius: '8px',
-                                                marginTop: '12px',
-                                                minWidth: CoditionLayout ? '200px' : 'unset',
-                                                maxWidth: CoditionLayout ? '200px' : 'unset',
-                                                cursor: 'pointer',
-                                                transition: '.4s',
-
-                                                position: 'relative',
-                                                '&::after': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    height: '100%',
-                                                    width: '100%',
-                                                    left: '0',
-                                                    bottom: '0',
-                                                    backgroundColor: 'rgba(0,0,0,0.3)',
-                                                    zIndex: '0',
-                                                    opacity: '0',
-                                                    transition: '.4s'
-                                                },
-                                                '&:hover::after': {
-                                                    opacity: '1'
-                                                }
-                                            }}
-                                            onClick={() => choseNhomDichVu(nhomHH)}>
-                                            <ListItemIcon
-                                                sx={{
-                                                    minWidth: '0',
-                                                    position: 'relative',
-                                                    zIndex: '2'
-                                                }}>
-                                                <IconDv style={{ color: '#F1FAFF' }} />
-                                            </ListItemIcon>
-                                            <ListItemText
-                                                sx={{
-                                                    '& .MuiTypography-root': {
-                                                        color: '#F1FAFF',
-                                                        whiteSpace: 'nowrap',
-                                                        width: '100%',
-                                                        fontWeight: '700',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        position: 'relative',
-                                                        zIndex: '2'
-                                                    }
-                                                }}
-                                                title={nhomHH.tenNhomHang}>
-                                                {nhomHH.tenNhomHang}
-                                            </ListItemText>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            </Box>
-                        </Box>
-                    </Grid>
-                    <Grid item md={CoditionLayout ? 12 : 7} sx={{ marginTop: '-58px' }}>
-                        <Box display="flex" flexDirection="column">
-                            {!CoditionLayout && (
+                            {CoditionLayout && (
                                 <TextField
                                     fullWidth
                                     sx={{
-                                        backgroundColor: '#fff',
                                         borderColor: '#CFD3D4!important',
                                         borderWidth: '1px!important',
-
+                                        maxWidth: '55%',
+                                        mr: '24px',
                                         boxShadow: ' 0px 20px 100px 0px #0000000D',
-
-                                        margin: 'auto'
+                                        maxHeight: '37px',
+                                        marginLeft: 'auto',
+                                        '& .MuiInputBase-root': {
+                                            bgcolor: '#fff'
+                                        }
                                     }}
                                     size="small"
                                     className="search-field"
@@ -1080,21 +771,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                 />
                             )}
                             <Box
-                                display="flex"
-                                flexDirection="column"
-                                gap="24px"
-                                padding="16px"
-                                marginTop="16px"
                                 sx={{
                                     backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    maxHeight:
-                                        CoditionLayout && innerHeight > 600
-                                            ? '47vh'
-                                            : CoditionLayout && innerHeight < 605
-                                            ? '32vh'
-                                            : '77.5vh',
+                                    boxShadow: CoditionLayout
+                                        ? 'unset'
+                                        : ' 0px 20px 100px 0px #0000000D',
+                                    padding: '16px 24px',
+                                    height: CoditionLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
+                                    maxHeight: CoditionLayout ? 'unset' : '77.5vh',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {
                                         width: '7px'
@@ -1107,75 +793,407 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                         bgcolor: '#F2EBF0'
                                     }
                                 }}>
-                                {listProduct.map((nhom: any, index: any) => (
-                                    <Box key={index}>
+                                <Box>
+                                    <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        alignItems="center">
                                         <Typography
-                                            variant="h4"
-                                            fontSize="16px"
-                                            color="#000"
+                                            variant="h3"
+                                            fontSize="18px"
+                                            color="#4C4B4C"
                                             fontWeight="700"
-                                            marginBottom="16px">
-                                            {nhom.tenNhomHang}
+                                            onClick={() => choseLoaiHang(2)}>
+                                            Nhóm dịch vụ
                                         </Typography>
-
-                                        <Grid container spacing={1.5}>
-                                            {nhom.hangHoas.map((item: any, index2: any) => (
-                                                <Grid
-                                                    item
-                                                    xs={CoditionLayout ? 2.4 : 4}
-                                                    key={item.id}>
-                                                    <Box
-                                                        minHeight="104px"
-                                                        padding="8px 12px 9px 12px"
-                                                        display="flex"
-                                                        flexDirection="column"
-                                                        justifyContent="space-between"
-                                                        gap="16px"
-                                                        borderRadius="4px"
+                                        {isScrollable && (
+                                            <Box
+                                                sx={{
+                                                    '& button': {
+                                                        minWidth: 'unset',
+                                                        bgcolor: 'unset!important'
+                                                    }
+                                                }}>
+                                                <Button
+                                                    variant="text"
+                                                    onClick={handlePrevClick}
+                                                    sx={{
+                                                        '&:hover svg': {
+                                                            color: '#7C3367'
+                                                        }
+                                                    }}>
+                                                    <ArrowBackIosIcon
                                                         sx={{
-                                                            border: '1px solid transparent',
-                                                            cursor: 'pointer',
-                                                            transition: '.4s',
-                                                            backgroundColor: '#F2EBF0',
-                                                            '&:hover': {
-                                                                borderColor: '#7C3367'
-                                                            }
+                                                            color: '#CBADC2'
                                                         }}
-                                                        onClick={() => {
-                                                            choseChiTiet(item, index);
-                                                        }}>
-                                                        <Typography
-                                                            variant="h5"
-                                                            fontSize="12px"
-                                                            fontWeight="700"
-                                                            color="#333233"
-                                                            title={item.tenHangHoa}
-                                                            sx={{
-                                                                overflow: 'hidden',
-                                                                textOverflow: 'ellipsis',
-                                                                display: '-webkit-box',
-                                                                WebkitBoxOrient: 'vertical',
-                                                                WebkitLineClamp: 2,
-                                                                maxHeight: '32px'
-                                                            }}>
-                                                            {item.tenHangHoa}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body1"
-                                                            fontSize="14px"
-                                                            color="#333233">
-                                                            {utils.formatNumber(item.giaBan)}
-                                                        </Typography>
-                                                    </Box>
-                                                </Grid>
-                                            ))}
-                                        </Grid>
+                                                    />
+                                                </Button>
+                                                <Button
+                                                    variant="text"
+                                                    onClick={handleNextClick}
+                                                    sx={{
+                                                        '&:hover svg': {
+                                                            color: '#7C3367'
+                                                        }
+                                                    }}>
+                                                    <ArrowForwardIosIcon
+                                                        sx={{
+                                                            color: '#CBADC2'
+                                                        }}
+                                                    />
+                                                </Button>
+                                            </Box>
+                                        )}
                                     </Box>
-                                ))}
+                                    <List
+                                        onScroll={handleScroll}
+                                        ref={containerRef}
+                                        onWheel={handleWheel}
+                                        sx={{
+                                            display: CoditionLayout ? 'flex' : 'block',
+                                            columnGap: '12px',
+                                            flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
+                                            overflowX: 'auto',
+                                            scrollBehavior: 'smooth',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px',
+                                                height: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb:horizontal': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '8px'
+                                            }
+                                        }}>
+                                        {nhomDichVu.map((nhomDV, index) => (
+                                            <ListItem
+                                                key={index}
+                                                onClick={() => choseNhomDichVu(nhomDV)}
+                                                sx={{
+                                                    gap: '6px',
+                                                    padding: '10px',
+                                                    overflow: 'hidden',
+                                                    backgroundColor: nhomDV.color,
+                                                    borderRadius: '8px',
+                                                    marginTop: '12px',
+                                                    cursor: 'pointer',
+                                                    transition: '.4s',
+                                                    minWidth: CoditionLayout ? '200px' : 'unset',
+                                                    maxWidth: CoditionLayout ? '200px' : 'unset',
+                                                    position: 'relative',
+                                                    '&::after': {
+                                                        content: '""',
+                                                        position: 'absolute',
+                                                        height: '100%',
+                                                        width: '100%',
+                                                        left: '0',
+                                                        bottom: '0',
+                                                        backgroundColor: 'rgba(0,0,0,0.3)',
+                                                        zIndex: '0',
+                                                        opacity: '0',
+                                                        transition: '.4s'
+                                                    },
+                                                    '&:hover::after': {
+                                                        opacity: '1'
+                                                    }
+                                                }}>
+                                                <ListItemIcon
+                                                    sx={{
+                                                        minWidth: '0',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }}>
+                                                    <IconDv style={{ color: '#F1FAFF' }} />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    sx={{
+                                                        '& .MuiTypography-root': {
+                                                            color: '#F1FAFF',
+                                                            whiteSpace: 'nowrap',
+                                                            width: '100%',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            fontWeight: '700',
+                                                            position: 'relative',
+                                                            zIndex: '2'
+                                                        }
+                                                    }}
+                                                    title={nhomDV.tenNhomHang}>
+                                                    {nhomDV.tenNhomHang}
+                                                </ListItemText>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </Box>
+                                <Box sx={{ marginTop: '16px' }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center'
+                                        }}>
+                                        <Typography
+                                            variant="h3"
+                                            fontSize="18px"
+                                            color="#4C4B4C"
+                                            fontWeight="700"
+                                            onClick={() => choseLoaiHang(1)}>
+                                            Sản phẩm
+                                        </Typography>
+                                        {isScrollable2 && (
+                                            <Box
+                                                sx={{
+                                                    '& button': {
+                                                        minWidth: 'unset',
+                                                        bgcolor: 'unset!important'
+                                                    }
+                                                }}>
+                                                <Button
+                                                    variant="text"
+                                                    onClick={handlePrevClick2}
+                                                    sx={{
+                                                        '&:hover svg': {
+                                                            color: '#7C3367'
+                                                        }
+                                                    }}>
+                                                    <ArrowBackIosIcon
+                                                        sx={{
+                                                            color: '#CBADC2'
+                                                        }}
+                                                    />
+                                                </Button>
+                                                <Button
+                                                    variant="text"
+                                                    onClick={handleNextClick2}
+                                                    sx={{
+                                                        '&:hover svg': {
+                                                            color: '#7C3367'
+                                                        }
+                                                    }}>
+                                                    <ArrowForwardIosIcon
+                                                        sx={{
+                                                            color: '#CBADC2'
+                                                        }}
+                                                    />
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    </Box>
+                                    <List
+                                        onScroll={handleScroll2}
+                                        onWheel={handleWheel2}
+                                        ref={containerRef2}
+                                        sx={{
+                                            display: CoditionLayout ? 'flex' : 'block',
+                                            columnGap: '12px',
+                                            flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
+                                            overflowX: 'auto',
+                                            scrollBehavior: 'smooth',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px',
+                                                height: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb:horizontal': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '8px'
+                                            }
+                                        }}>
+                                        {nhomHangHoa.map((nhomHH, index) => (
+                                            <ListItem
+                                                key={index}
+                                                sx={{
+                                                    gap: '6px',
+                                                    padding: '10px',
+                                                    overflow: 'hidden',
+                                                    bgcolor: nhomHH.color,
+                                                    borderRadius: '8px',
+                                                    marginTop: '12px',
+                                                    minWidth: CoditionLayout ? '200px' : 'unset',
+                                                    maxWidth: CoditionLayout ? '200px' : 'unset',
+                                                    cursor: 'pointer',
+                                                    transition: '.4s',
+
+                                                    position: 'relative',
+                                                    '&::after': {
+                                                        content: '""',
+                                                        position: 'absolute',
+                                                        height: '100%',
+                                                        width: '100%',
+                                                        left: '0',
+                                                        bottom: '0',
+                                                        backgroundColor: 'rgba(0,0,0,0.3)',
+                                                        zIndex: '0',
+                                                        opacity: '0',
+                                                        transition: '.4s'
+                                                    },
+                                                    '&:hover::after': {
+                                                        opacity: '1'
+                                                    }
+                                                }}
+                                                onClick={() => choseNhomDichVu(nhomHH)}>
+                                                <ListItemIcon
+                                                    sx={{
+                                                        minWidth: '0',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }}>
+                                                    <IconDv style={{ color: '#F1FAFF' }} />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    sx={{
+                                                        '& .MuiTypography-root': {
+                                                            color: '#F1FAFF',
+                                                            whiteSpace: 'nowrap',
+                                                            width: '100%',
+                                                            fontWeight: '700',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            position: 'relative',
+                                                            zIndex: '2'
+                                                        }
+                                                    }}
+                                                    title={nhomHH.tenNhomHang}>
+                                                    {nhomHH.tenNhomHang}
+                                                </ListItemText>
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </Box>
                             </Box>
-                        </Box>
+                        </Grid>
+                        <Grid item md={CoditionLayout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                            <Box display="flex" flexDirection="column">
+                                {!CoditionLayout && (
+                                    <TextField
+                                        fullWidth
+                                        sx={{
+                                            backgroundColor: '#fff',
+                                            borderColor: '#CFD3D4!important',
+                                            borderWidth: '1px!important',
+
+                                            boxShadow: ' 0px 20px 100px 0px #0000000D',
+
+                                            margin: 'auto'
+                                        }}
+                                        size="small"
+                                        className="search-field"
+                                        variant="outlined"
+                                        type="search"
+                                        placeholder="Tìm kiếm"
+                                        value={txtSearch}
+                                        onChange={(event) => {
+                                            setTxtSearch(event.target.value);
+                                        }}
+                                        InputProps={{
+                                            startAdornment: (
+                                                <InputAdornment position="start">
+                                                    <SearchIcon />
+                                                </InputAdornment>
+                                            )
+                                        }}
+                                    />
+                                )}
+                                <Box
+                                    display="flex"
+                                    flexDirection="column"
+                                    gap="24px"
+                                    padding="16px"
+                                    marginTop="16px"
+                                    sx={{
+                                        backgroundColor: CoditionLayout ? 'transparent' : '#fff',
+                                        borderRadius: '8px',
+                                        maxHeight:
+                                            CoditionLayout && innerHeight > 600
+                                                ? '47vh'
+                                                : CoditionLayout && innerHeight < 605
+                                                ? '32vh'
+                                                : '77.5vh',
+                                        overflowX: 'hidden',
+                                        overflowY: 'auto',
+                                        '&::-webkit-scrollbar': {
+                                            width: '7px'
+                                        },
+                                        '&::-webkit-scrollbar-thumb': {
+                                            bgcolor: 'rgba(0,0,0,0.1)',
+                                            borderRadius: '8px'
+                                        },
+                                        '&::-webkit-scrollbar-track': {
+                                            bgcolor: '#F2EBF0'
+                                        }
+                                    }}>
+                                    {listProduct.map((nhom: any, index: any) => (
+                                        <Box key={index}>
+                                            <Typography
+                                                variant="h4"
+                                                fontSize="16px"
+                                                color="#000"
+                                                fontWeight="700"
+                                                marginBottom="16px">
+                                                {nhom.tenNhomHang}
+                                            </Typography>
+
+                                            <Grid container spacing={1.5}>
+                                                {nhom.hangHoas.map((item: any, index2: any) => (
+                                                    <Grid
+                                                        item
+                                                        xs={CoditionLayout ? 2.4 : 4}
+                                                        key={item.id}>
+                                                        <Box
+                                                            minHeight="104px"
+                                                            padding="8px 12px 9px 12px"
+                                                            display="flex"
+                                                            flexDirection="column"
+                                                            justifyContent="space-between"
+                                                            gap="16px"
+                                                            borderRadius="4px"
+                                                            sx={{
+                                                                border: '1px solid transparent',
+                                                                cursor: 'pointer',
+                                                                transition: '.4s',
+                                                                backgroundColor: '#F2EBF0',
+                                                                '&:hover': {
+                                                                    borderColor: '#7C3367'
+                                                                }
+                                                            }}
+                                                            onClick={() => {
+                                                                choseChiTiet(item, index);
+                                                            }}>
+                                                            <Typography
+                                                                variant="h5"
+                                                                fontSize="12px"
+                                                                fontWeight="700"
+                                                                color="#333233"
+                                                                title={item.tenHangHoa}
+                                                                sx={{
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    display: '-webkit-box',
+                                                                    WebkitBoxOrient: 'vertical',
+                                                                    WebkitLineClamp: 2,
+                                                                    maxHeight: '32px'
+                                                                }}>
+                                                                {item.tenHangHoa}
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                fontSize="14px"
+                                                                color="#333233">
+                                                                {utils.formatNumber(item.giaBan)}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Grid>
+                                                ))}
+                                            </Grid>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </Box>
+                        </Grid>
                     </Grid>
-                </Grid>
+                ) : (
+                    <Grid item md={8}>
+                        <Payments onClick={ToPayment} />
+                    </Grid>
+                )}
                 <Grid item md={4} sx={{ marginTop: '-74px', paddingRight: '0' }}>
                     <Box
                         sx={{
@@ -1343,8 +1361,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                                         '& .remove-NV:hover img': {
                                                             filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
                                                         },
-                                                        flexGrow: '1',
-                                                        width: 'calc(50% - 69px)'
+                                                        flexGrow:
+                                                            ct.nhanVienThucHien.length % 2 === 0
+                                                                ? '1'
+                                                                : 'unset',
+
+                                                        width:
+                                                            ct.nhanVienThucHien.length % 2 === 0
+                                                                ? 'calc(50% - 69px)'
+                                                                : 'auto'
                                                     }}
                                                     key={index3}>
                                                     <Box

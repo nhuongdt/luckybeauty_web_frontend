@@ -20,7 +20,6 @@ export default function AutocompleteProduct({ handleChoseItem, productChosed }: 
     const debounceDropDown = useRef(
         debounce(async (paramSearch: any) => {
             const data = await ProductService.Get_DMHangHoa(paramSearch);
-            console.log('iinto s', data.items);
             setlistProduct(data.items);
         }, 500)
     ).current;
