@@ -195,6 +195,12 @@ const LoginScreen: React.FC = () => {
                                                 onClick={() => {
                                                     setRemember(!remember);
                                                 }}
+                                                sx={{
+                                                    color: '#7C3367',
+                                                    '&.Mui-checked': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}
                                             />
                                         }
                                         label="Ghi nhớ"

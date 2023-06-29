@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Typography, Grid, IconButton, TextField } from '@mui/material';
 import { ReactComponent as ArrowLeft } from '../../images/arrow_back.svg';
 import { ReactComponent as TienMat } from '../../images/tien-mat.svg';
@@ -6,8 +6,10 @@ import { ReactComponent as NganHang } from '../../images/ngan-hang.svg';
 import { ReactComponent as ChuyenKhoan } from '../../images/chuyen-khoan.svg';
 interface ChildComponent {
     onClick: () => void;
+
+    onnextComponent: boolean;
 }
-const Payments: React.FC<ChildComponent> = ({ onClick }) => {
+const Payments: React.FC<ChildComponent> = ({ onClick, onnextComponent }) => {
     const PaymentsList = [
         {
             icon: TienMat,
@@ -56,6 +58,15 @@ const Payments: React.FC<ChildComponent> = ({ onClick }) => {
             onClick();
         }
     };
+    const [selectedTientip, setSelectedTienTip] = React.useState(-1);
+    const handleSelectedTientip = (index: number) => {
+        setSelectedTienTip(index);
+    };
+    useEffect(() => {
+        if (onnextComponent) {
+            nextComponent();
+        }
+    }, [onnextComponent]);
     return (
         <Box>
             <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -82,14 +93,15 @@ const Payments: React.FC<ChildComponent> = ({ onClick }) => {
                         {tientip.map((item, index) => (
                             <Grid item xs={3} key={index}>
                                 <Box
-                                    onClick={nextComponent}
+                                    onClick={() => handleSelectedTientip(index)}
                                     textAlign="center"
                                     padding="24px"
                                     border="1px solid #CDC9CD"
                                     borderRadius="8px"
                                     sx={{
-                                        bgcolor: '#fff',
-                                        borderColor: '#CDC9CD',
+                                        bgcolor: selectedTientip === index ? ' #F2EBF0' : '#fff',
+                                        borderColor:
+                                            selectedTientip === index ? '#7C3367' : '#CDC9CD',
                                         cursor: 'pointer',
                                         transition: '.4s',
                                         '&:hover': {

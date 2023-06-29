@@ -523,14 +523,26 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         }
         return true;
     };
-    const [tienTip, setTienTip] = useState(false);
+
     const [showPayment, setShowPayment] = useState(false);
     const ToPayment = () => {
         setShowPayment(!showPayment);
         onPaymentChild(!showPayment);
     };
+    const [onnextComponent, setOnnextComponent] = useState(false);
+    const handleCheckNext = () => {
+        setOnnextComponent(!onnextComponent);
+    };
+
+    const [CheckPaymentChild, setCheckPaymentChild] = useState<number>(0);
+    const handleCheckPayment = (value: number) => {
+        setCheckPaymentChild(value);
+    };
     const saveHoaDon = async () => {
-        ToPayment();
+        handleCheckNext();
+        if (onnextComponent) {
+            ToPayment();
+        }
         if (clickSSave) return; // avoid click douple
         setClickSave(true);
 
@@ -1196,7 +1208,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                     </Grid>
                 ) : (
                     <Grid item md={8} className="normal">
-                        <Payments onClick={ToPayment} />
+                        <Payments onClick={ToPayment} onnextComponent={onnextComponent} />
                     </Grid>
                 )}
                 <Grid item md={4} sx={{ paddingRight: '0' }}>

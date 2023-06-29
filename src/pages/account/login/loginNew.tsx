@@ -185,12 +185,26 @@ const LoginScreen: React.FC = () => {
                                         }}
                                     />
                                 </Grid>
-                                <Grid xs={12} item className="form-item_checkBox">
+                                <Grid
+                                    xs={12}
+                                    item
+                                    className="form-item_checkBox"
+                                    sx={{
+                                        '& .login-form-forgot:hover': {
+                                            color: '#7C3367'
+                                        }
+                                    }}>
                                     <FormControlLabel
                                         control={
                                             <Checkbox
                                                 {...formik.getFieldProps('remember')}
                                                 checked={formik.values.remember}
+                                                sx={{
+                                                    color: '#7C3367',
+                                                    '&.Mui-checked': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}
                                             />
                                         }
                                         label="Ghi nhớ"
@@ -210,7 +224,14 @@ const LoginScreen: React.FC = () => {
                                         Tổng đài hỗ trợ : <span>0247 303 9333 - 0936 363 069</span>
                                     </p>
                                 </Grid>
-                                <Grid xs={12} item>
+                                <Grid
+                                    xs={12}
+                                    item
+                                    sx={{
+                                        '& .text-register a:hover': {
+                                            color: '#7C3367'
+                                        }
+                                    }}>
                                     <p className="text-register">
                                         Bạn chưa có tài khoản?{' '}
                                         <Link className="a quenMk" to="/register">
