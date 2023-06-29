@@ -24,7 +24,6 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import Utils from '../../utils/utils';
 import AppConsts from '../../lib/appconst';
-import '../../App.css';
 
 export const GridColor = ({ handleChoseColor }: any) => {
     const [itemColor, setItemColor] = useState({});

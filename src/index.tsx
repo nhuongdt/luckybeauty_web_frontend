@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import './custom.css';
+import './App.css';
 import reportWebVitals from './reportWebVitals';
 import initializeStores from './stores/storeInitializer';
 import registerServiceWorker from './registerServiceWorker';

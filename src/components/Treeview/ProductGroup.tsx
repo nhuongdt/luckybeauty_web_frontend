@@ -3,7 +3,6 @@ import { Typography, Box, TextField, InputAdornment, Stack } from '@mui/material
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
 import TreeView from '@mui/lab/TreeView';
 import TreeItem from '@mui/lab/TreeItem';
-import '../../App.css';
 import { ModelNhomHangHoa } from '../../services/product/dto';
 //import { ThemeProvider, createTheme } from '@mui/material/styles';
 
