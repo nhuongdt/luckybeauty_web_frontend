@@ -343,7 +343,10 @@ class EmployeeHoliday extends Component {
                                 size="small"
                                 sx={{
                                     backgroundColor: '#FFFAFF',
-                                    borderColor: '#CDC9CD!important'
+                                    borderColor: '#CDC9CD!important',
+                                    '& .MuiInputBase-root': {
+                                        pl: '0'
+                                    }
                                 }}
                                 onChange={(e) => {
                                     this.setState({ filter: e.target.value });

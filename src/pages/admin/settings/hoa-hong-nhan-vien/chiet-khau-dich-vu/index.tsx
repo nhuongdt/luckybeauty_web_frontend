@@ -373,22 +373,24 @@ class ChietKhauDichVuScreen extends Component {
                             gap: '8px',
                             justifyContent: 'end'
                         }}>
-                        <TextField
-                            type="text"
-                            size="small"
-                            sx={{
-                                '& input': { bgcolor: '#fff' },
-                                '& .MuiInputBase-root': { pl: '0', bgcolor: '#fff' }
-                            }}
-                            placeholder="Tìm kiếm"
-                            InputProps={{
-                                startAdornment: (
-                                    <IconButton type="button" sx={{ bgcolor: '#fff' }}>
-                                        <img src={SearchIcon} />
-                                    </IconButton>
-                                )
-                            }}
-                        />
+                        <Box>
+                            <TextField
+                                type="text"
+                                size="small"
+                                sx={{
+                                    '& input': { bgcolor: '#fff' },
+                                    '& .MuiInputBase-root': { pl: '0', bgcolor: '#fff' }
+                                }}
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton type="button" sx={{ bgcolor: '#fff' }}>
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
+                                }}
+                            />
+                        </Box>
                         <Box
                             display="flex"
                             gap="8px"

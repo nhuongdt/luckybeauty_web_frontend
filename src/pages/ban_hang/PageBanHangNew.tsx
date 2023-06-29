@@ -63,7 +63,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
-const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
+import { tr } from 'date-fns/locale';
+const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [txtSearch, setTxtSearch] = useState('');
     const isFirstRender = useRef(true);
@@ -522,12 +523,26 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
         }
         return true;
     };
+
     const [showPayment, setShowPayment] = useState(false);
     const ToPayment = () => {
         setShowPayment(!showPayment);
+        onPaymentChild(!showPayment);
+    };
+    const [onnextComponent, setOnnextComponent] = useState(false);
+    const handleCheckNext = () => {
+        setOnnextComponent(!onnextComponent);
+    };
+
+    const [CheckPaymentChild, setCheckPaymentChild] = useState<number>(0);
+    const handleCheckPayment = (value: number) => {
+        setCheckPaymentChild(value);
     };
     const saveHoaDon = async () => {
-        ToPayment();
+        handleCheckNext();
+        if (onnextComponent) {
+            ToPayment();
+        }
         if (clickSSave) return; // avoid click douple
         setClickSave(true);
 
@@ -712,12 +727,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
             <Grid
                 container
                 spacing={3}
-                marginTop="21px"
+                marginTop={showPayment ? '0' : '21px'}
                 paddingLeft="16px"
                 paddingBottom="24px"
                 ml="0"
                 sx={{
-                    '& > div': {
+                    height: '100%',
+                    '& > div:not(.normal)': {
                         paddingTop: '0!important'
                     }
                 }}>
@@ -728,7 +744,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                         md={8}
                         spacing={3}
                         height="fit-content"
-                        marginTop={CoditionLayout ? '-83px' : '-24px'}>
+                        marginTop={CoditionLayout ? '-83px' : '-24px'}
+                        bgcolor="#F8F8F8">
                         <Grid
                             item
                             md={CoditionLayout ? 12 : 5}
@@ -753,7 +770,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                         }
                                     }}
                                     size="small"
-                                    className="search-field"
+                                    className="search-field no-minWidth"
                                     variant="outlined"
                                     type="search"
                                     placeholder="Tìm kiếm"
@@ -780,7 +797,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                     padding: '16px 24px',
                                     height: CoditionLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
-                                    maxHeight: CoditionLayout ? 'unset' : '77.5vh',
+                                    maxHeight: CoditionLayout ? 'unset' : '88.5vh',
                                     overflowY: 'auto',
                                     '&::-webkit-scrollbar': {
                                         width: '7px'
@@ -1103,10 +1120,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                                         borderRadius: '8px',
                                         maxHeight:
                                             CoditionLayout && innerHeight > 600
-                                                ? '47vh'
+                                                ? '56vh'
                                                 : CoditionLayout && innerHeight < 605
                                                 ? '32vh'
-                                                : '77.5vh',
+                                                : '88.5vh',
                                         overflowX: 'hidden',
                                         overflowY: 'auto',
                                         '&::-webkit-scrollbar': {
@@ -1190,20 +1207,20 @@ const PageBanHang = ({ customerChosed, CoditionLayout }: any) => {
                         </Grid>
                     </Grid>
                 ) : (
-                    <Grid item md={8}>
-                        <Payments onClick={ToPayment} />
+                    <Grid item md={8} className="normal">
+                        <Payments onClick={ToPayment} onnextComponent={onnextComponent} />
                     </Grid>
                 )}
-                <Grid item md={4} sx={{ marginTop: '-74px', paddingRight: '0' }}>
+                <Grid item md={4} sx={{ paddingRight: '0' }}>
                     <Box
                         sx={{
+                            mt: showPayment ? '0' : '-80px',
                             backgroundColor: '#fff',
                             borderRadius: '8px',
                             overflow: 'hidden',
                             height: '100vh',
-                            maxHeight: 'calc(100vh - 70px)',
-
                             padding: '16px',
+                            maxHeight: '100vh',
                             paddingBottom: '32px',
                             display: 'flex',
                             flexDirection: 'column',

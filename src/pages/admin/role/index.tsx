@@ -254,25 +254,27 @@ class RoleScreen extends React.Component<IRoleProps> {
                                         fontWeight="700">
                                         Danh sách vai trò
                                     </Typography>
-                                    <TextField
-                                        onChange={this.handleSearch}
-                                        size="small"
-                                        sx={{
-                                            borderColor: '#E6E1E6!important',
-                                            bgcolor: '#fff'
-                                        }}
-                                        placeholder="Tìm kiếm..."
-                                        InputProps={{
-                                            startAdornment: (
-                                                <SearchIcon
-                                                    style={{
-                                                        marginRight: '8px',
-                                                        color: 'gray'
-                                                    }}
-                                                />
-                                            )
-                                        }}
-                                    />
+                                    <Box>
+                                        <TextField
+                                            onChange={this.handleSearch}
+                                            size="small"
+                                            sx={{
+                                                borderColor: '#E6E1E6!important',
+                                                bgcolor: '#fff'
+                                            }}
+                                            placeholder="Tìm kiếm..."
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <SearchIcon
+                                                        style={{
+                                                            marginRight: '8px',
+                                                            color: 'gray'
+                                                        }}
+                                                    />
+                                                )
+                                            }}
+                                        />
+                                    </Box>
                                 </Box>
                             </div>
                         </Grid>

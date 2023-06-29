@@ -287,7 +287,10 @@ class SoQuyScreen extends Component {
                                 size="small"
                                 sx={{
                                     backgroundColor: '#FFFAFF',
-                                    borderColor: '#CDC9CD!important'
+                                    borderColor: '#CDC9CD!important',
+                                    '& .MuiInputBase-root': {
+                                        pl: '0'
+                                    }
                                 }}
                                 onChange={(e: any) => {
                                     this.setState({ keyword: e.target.value });

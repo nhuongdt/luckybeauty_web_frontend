@@ -12,7 +12,8 @@ import {
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import { DataGrid } from '@mui/x-data-grid';
 import userService from '../../../services/user/userService';
-import SearchIcon from '@mui/icons-material/Search';
+
+import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import AddIcon from '../../../images/add.svg';
 import DownloadIcon from '../../../images/download.svg';
 import UploadIcon from '../../../images/upload.svg';
@@ -308,16 +309,16 @@ class UserScreen extends AppComponentBase {
                         justifyContent="space-between"
                         alignItems="center"
                         rowGap="16px">
-                        <Grid item>
-                            <div>
-                                <Box display="flex" gap="10px" alignItems="center">
-                                    <Typography
-                                        variant="h1"
-                                        fontWeight="700"
-                                        fontSize="16px"
-                                        color="#333233">
-                                        Danh sách người dùng
-                                    </Typography>
+                        <Grid item xs="auto">
+                            <Box display="flex" gap="10px" alignItems="center">
+                                <Typography
+                                    variant="h1"
+                                    fontWeight="700"
+                                    fontSize="16px"
+                                    color="#333233">
+                                    Danh sách người dùng
+                                </Typography>
+                                <Box>
                                     <TextField
                                         onKeyDown={(e) => {
                                             if (e.key == 'Enter') {
@@ -346,9 +347,9 @@ class UserScreen extends AppComponentBase {
                                         }}
                                     />
                                 </Box>
-                            </div>
+                            </Box>
                         </Grid>
-                        <Grid item style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Grid item xs="auto" sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <div>
                                 <Box display="flex" alignItems="center">
                                     <Box display="flex" gap="8px">

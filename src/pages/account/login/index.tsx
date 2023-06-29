@@ -188,6 +188,12 @@ const LoginScreen: React.FC = () => {
                                             <Checkbox
                                                 {...formik.getFieldProps('remember')}
                                                 checked={formik.values.remember}
+                                                sx={{
+                                                    color: '#7C3367',
+                                                    '&.Mui-checked': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}
                                             />
                                         }
                                         label="Ghi nhớ"
