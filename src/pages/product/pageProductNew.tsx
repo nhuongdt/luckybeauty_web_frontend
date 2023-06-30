@@ -341,7 +341,6 @@ export default function PageProductNew() {
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
-            headerAlign: 'center',
             minWidth: 250,
             renderCell: (params) => (
                 <Box display="flex" width="100%">
@@ -377,8 +376,7 @@ export default function PageProductNew() {
         {
             field: 'giaBan',
             headerName: 'Giá bán',
-            headerAlign: 'center',
-            align: 'right',
+
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
@@ -418,7 +416,7 @@ export default function PageProductNew() {
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
-            headerAlign: 'center',
+
             minWidth: 130,
             flex: 1,
             renderCell: (params) => (

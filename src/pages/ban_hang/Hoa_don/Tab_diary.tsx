@@ -28,7 +28,7 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Link>{params.value}</Link>
+            renderCell: (params) => <Box>{params.value}</Box>
         },
         {
             field: 'ngayLapHoaDon',
@@ -72,8 +72,7 @@ export default function TabDiary({ idHoaDon }: any) {
         {
             field: 'tongTienThu',
             headerName: 'Tiền thu',
-            headerAlign: 'right',
-            align: 'right',
+
             minWidth: 100,
             flex: 1,
             renderHeader: (params) => (
@@ -102,6 +101,7 @@ export default function TabDiary({ idHoaDon }: any) {
     return (
         <Box>
             <DataGrid
+                disableRowSelectionOnClick
                 autoHeight
                 columns={columns}
                 rows={phieuThuChi}

@@ -364,10 +364,14 @@ class SoQuyScreen extends Component {
                         columns={columns}
                         checkboxSelection
                         sx={{
+                            '& .MuiDataGrid-columnHeaders': { bgcolor: '#F2EBF0' },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },
-                            '& .MuiDataGrid-cellContent': {
+                            '& .MuiDataGrid-columnHeaders .MuiBox-root ': {
+                                fontWeight: '700'
+                            },
+                            '& .MuiDataGrid-virtualScroller  .MuiBox-root ': {
                                 fontSize: '12px'
                             },
                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {

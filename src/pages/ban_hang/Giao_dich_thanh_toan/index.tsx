@@ -453,6 +453,9 @@ const GiaoDichThanhToan: React.FC = () => {
                                         },
                                         '& .date2 input': {
                                             textAlign: 'right'
+                                        },
+                                        '& .MuiFormControl-root': {
+                                            width: 'unset'
                                         }
                                     }}>
                                     <Box>

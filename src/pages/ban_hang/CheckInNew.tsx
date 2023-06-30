@@ -198,7 +198,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 size="small"
                                 sx={{
                                     backgroundColor: '#7C3367!important',
-                                    padding: '10px 16px!important',
+
                                     fontSize: '14px'
                                 }}
                                 startIcon={<Add />}

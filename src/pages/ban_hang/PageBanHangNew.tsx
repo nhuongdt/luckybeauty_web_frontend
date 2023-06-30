@@ -1303,7 +1303,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                 variant="body1"
                                                 fontSize="16px"
                                                 fontWeight="400"
-                                                sx={{ display: 'flex', gap: '8px' }}
+                                                sx={{
+                                                    display: 'flex',
+                                                    gap: '8px',
+                                                    cursor: 'pointer',
+                                                    transition: '.4s',
+                                                    '&:hover': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}
                                                 onClick={() => showPopChiTietGioHang(ct)}>
                                                 <span> {ct.soLuong + 'x'} </span>
                                                 <span> {Utils.formatNumber(ct.donGiaTruocCK)}</span>
