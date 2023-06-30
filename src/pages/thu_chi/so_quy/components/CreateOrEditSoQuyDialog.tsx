@@ -22,6 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { Formik, Form } from 'formik';
 import { Component, ReactNode, useEffect, useState, useRef } from 'react';
+import { NumericFormat } from 'react-number-format';
 import { CreateOrEditSoQuyDto } from '../../../../services/so_quy/Dto/CreateOrEditSoQuyDto';
 import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
 import QuyHoaDonDto from '../../../../services/so_quy/QuyHoaDonDto';
@@ -61,7 +62,7 @@ const CreateOrEditSoQuyDialog = ({
     const hinhThucThanhToan = [
         { id: 1, text: 'Tiền mặt' },
         { id: 2, text: 'POS' },
-        { id: 2, text: 'Chuyển khoản' }
+        { id: 3, text: 'Chuyển khoản' }
     ];
 
     const doiTuongNopTien = [
@@ -70,8 +71,10 @@ const CreateOrEditSoQuyDialog = ({
         { id: 4, text: 'Nhân viên' }
     ];
     const formRef = useRef();
-    const [quyHoaDon, setQuyHoaDon] = useState<QuyHoaDonDto>(new QuyHoaDonDto({ id: '' }));
-    const [chitietSoQuy, setChitietSoQuy] = useState<QuyChiTietDto>();
+    const [quyHoaDon, setQuyHoaDon] = useState<QuyHoaDonDto>(
+        new QuyHoaDonDto({ id: '', tongTienThu: 0 })
+    );
+    const [chitietSoQuy, setChitietSoQuy] = useState<QuyChiTietDto[]>();
 
     const getInforQuyHoaDon = async () => {
         const data = await SoQuyServices.GetForEdit(idQuyHD ?? '');
@@ -104,6 +107,10 @@ const CreateOrEditSoQuyDialog = ({
     //     const value = event.target.value;
     // };
 
+    const changNgayLapPhieu = (dt: any) => {
+        setQuyHoaDon({ ...quyHoaDon, ngayLapHoaDon: dt });
+    };
+
     return (
         <Dialog open={visiable} fullWidth maxWidth={'sm'}>
             <DialogTitle>
@@ -128,10 +135,17 @@ const CreateOrEditSoQuyDialog = ({
             </DialogTitle>
             <DialogContent>
                 <Formik
-                    initialValues={quyHoaDon}
+                    initialValues={{ tongTienThu: 0, idKhachHang: 0, loaiDoiTuong: 0 }}
                     validationSchema={yup.object().shape({
-                        tongTienThu: yup.string().required('Vui lòng nhập số tiền'),
-                        maNguoiNop: yup.string().required('Vui lòng chọn người nộp')
+                        tongTienThu: yup
+                            .number()
+                            .required('Vui lòng nhập số tiền')
+                            .moreThan(0, 'Tổng tiền phải > 0')
+                        // idKhachHang: yup.when('loaiDoiTuong', (loaiDoiTuong, schema) => {
+                        //     if (loaiDoiTuong == 0)
+                        //         return schema.required('Must enter email address');
+                        //     return schema;
+                        // })
                     })}
                     onSubmit={saveSoQuy}>
                     {({ values, handleChange, errors, touched }) => (
@@ -170,7 +184,9 @@ const CreateOrEditSoQuyDialog = ({
                                         <span className="modal-lable">Ngày </span>
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
-                                        <DateTimePickerCustom />
+                                        <DateTimePickerCustom
+                                            handleChangeDate={changNgayLapPhieu}
+                                        />
                                     </Grid>
 
                                     <Grid item xs={12} sm={6}>
@@ -182,13 +198,13 @@ const CreateOrEditSoQuyDialog = ({
                                     <Grid item xs={12} sm={6}>
                                         <Stack direction="column" rowGap={1}>
                                             <span className="modal-lable">Hình thức </span>
-                                            <SelectWithData data={hinhThucThanhToan} />
+                                            <SelectWithData data={hinhThucThanhToan} idChosed={1} />
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <Stack direction="column" rowGap={1}>
                                             <span className="modal-lable">Thu của </span>
-                                            <SelectWithData data={doiTuongNopTien} />
+                                            <SelectWithData data={doiTuongNopTien} idChosed={1} />
                                         </Stack>
                                     </Grid>
                                     <Grid
@@ -196,15 +212,20 @@ const CreateOrEditSoQuyDialog = ({
                                         xs={12}
                                         sm={6}
                                         pt={{ xs: 2, sm: '28px', lg: '28px' }}>
-                                        {/* <AutocompleteCustomer /> */}
+                                        <AutocompleteCustomer />
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <span className="modal-lable">Tiền thu </span>
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
-                                        <TextField
-                                            size="small"
+                                        <NumericFormat
                                             fullWidth
+                                            thousandSeparator
+                                            size="small"
+                                            name="tongTienThu"
+                                            value={quyHoaDon?.tongTienThu}
+                                            customInput={TextField}
+                                            onChange={handleChange}
                                             error={
                                                 touched.tongTienThu && Boolean(errors?.tongTienThu)
                                             }
@@ -215,7 +236,7 @@ const CreateOrEditSoQuyDialog = ({
                                         <span className="modal-lable">Tài khoản thu </span>
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
-                                        {/* <AutocompleteCustomer /> */}
+                                        <AutocompleteCustomer />
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <span className="modal-lable">Nội dung thu </span>
@@ -247,7 +268,8 @@ const CreateOrEditSoQuyDialog = ({
                                     <Button
                                         variant="outlined"
                                         sx={{ color: '#7C3367' }}
-                                        className="btn-outline-hover">
+                                        className="btn-outline-hover"
+                                        onClick={onClose}>
                                         Hủy
                                     </Button>
                                     <Button
