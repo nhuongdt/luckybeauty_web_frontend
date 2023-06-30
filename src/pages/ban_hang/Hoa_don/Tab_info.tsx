@@ -135,6 +135,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             <Grid container spacing={3}>
                 <Grid item xs={9}>
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={chitietHoaDon}
@@ -145,7 +146,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                             '& .MuiBox-root': {
                                 maxWidth: '100%',
                                 textOverflow: 'ellipsis',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                fontSize: '12px'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 bgcolor: '#F2EBF0'

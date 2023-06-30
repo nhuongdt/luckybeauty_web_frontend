@@ -211,9 +211,3 @@ body .font-normal {
 .inputEdit .MuiOutlinedInput-root {
     border-radius: 8px;
 }
-
-/* style datetime fullwith */
-
-/* .MuiFormControl-root.MuiTextField-root:not(.no-minWidth) {
-    width: 100% !important;
-} */

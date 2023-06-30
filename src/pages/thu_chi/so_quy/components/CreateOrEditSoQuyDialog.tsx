@@ -233,6 +233,9 @@ const CreateOrEditSoQuyDialog = ({
                                                         onChange={handleChange}
                                                         value="Phiếu thu"
                                                         name="acb"
+                                                        sx={{
+                                                            color: '#7C3367'
+                                                        }}
                                                     />
                                                 }
                                                 label="Hạch toán vào kết quả hoạt động kinh doanh"
