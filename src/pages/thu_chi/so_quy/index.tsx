@@ -407,10 +407,11 @@ class SoQuyScreen extends Component {
                     />
                     <CreateOrEditSoQuyDialog
                         onClose={() => {
-                            console.log('đóng');
+                            this.setState({ isShowModal: false });
                         }}
                         onOk={() => {
                             console.log('đóng');
+                            this.setState({ isShowModal: false });
                         }}
                         visiable={this.state.isShowModal}
                         idQuyHD={this.state.selectedRowId}
