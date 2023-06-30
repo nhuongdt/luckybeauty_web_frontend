@@ -181,7 +181,7 @@ body .font-normal {
 
 /* error at TextField */
 
-.MuiFormHelperText {
+.MuiFormHelperText-root.Mui-error {
     margin-left: 0px;
 }
 
