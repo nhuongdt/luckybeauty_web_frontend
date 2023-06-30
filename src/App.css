@@ -117,11 +117,6 @@ body .font-normal {
     padding: 3px 14px;
 }
 
-.MuiButtonBase-root {
-    /*default: 500*/
-    font-weight: 400;
-}
-
 .MuiDialogActions-root.MuiDialogActions-spacing {
     padding-right: 24px;
 }
@@ -142,8 +137,8 @@ body .font-normal {
 }
 
 .button-container {
-    background-color: #7c3367;
-    color: white;
+    background-color: #7c3367 !important;
+    color: white !important;
 }
 
 .button-outline {
@@ -154,19 +149,15 @@ body .font-normal {
 /* style text in button */
 
 .MuiButton-root {
-    text-transform: initial;
+    text-transform: initial !important;
+    font-weight: 400 !important;
 }
 
 /* button paging selected */
 
 .MuiPaginationItem-root.Mui-selected {
-    background-color: #7c3367;
-    color: white;
-}
-
-.MuiPaginationItem-root.Mui-selected:hover {
-    background-color: red;
-    color: white;
+    background-color: #7c3367 !important;
+    color: white !important;
 }
 
 .MuiTreeItem-content {
@@ -211,3 +202,9 @@ body .font-normal {
 .inputEdit .MuiOutlinedInput-root {
     border-radius: 8px;
 }
+
+/* style datetime fullwith */
+
+/* .MuiFormControl-root.MuiTextField-root:not(.no-minWidth) {
+    width: 100% !important;
+} */

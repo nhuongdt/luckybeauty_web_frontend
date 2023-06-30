@@ -21,7 +21,6 @@ import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../utils/utils'; // func common
 
-import '../../App.css';
 import { Guid } from 'guid-typescript';
 
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {

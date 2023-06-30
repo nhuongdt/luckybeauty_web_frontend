@@ -30,7 +30,8 @@ class CaLamViecStore {
         };
     }
     async getAll(input: PagedRequestDto) {
-        this.caLamViecs = await caLamViecService.getAll(input);
+        const result = await caLamViecService.getAll(input);
+        this.caLamViecs = result;
     }
     async getForEdit(id: string) {
         this.createOrEditDto = await caLamViecService.getForEdit(id);

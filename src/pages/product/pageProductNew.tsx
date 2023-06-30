@@ -42,7 +42,6 @@ import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
 
-import '../../App.css';
 import './style.css';
 
 export default function PageProductNew() {

@@ -4,15 +4,16 @@ import Cookies from 'js-cookie';
 import LoginModel from '../../models/Login/loginModel';
 import qs from 'qs';
 import { RolePermission } from './dto/RolePermission';
-const http = axios.create({
-    baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
-    timeout: 30000,
-    paramsSerializer: function (params) {
-        return qs.stringify(params, {
-            encode: false
-        });
-    }
-});
+import http from '../httpService';
+// const http = axios.create({
+//     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
+//     timeout: 30000,
+//     paramsSerializer: function (params) {
+//         return qs.stringify(params, {
+//             encode: false
+//         });
+//     }
+// });
 class LoginService {
     public async CheckTenant(tenantName: string, isRemember?: boolean) {
         const tenancy = tenantName || 'default';
@@ -68,10 +69,6 @@ class LoginService {
                         loginModel.rememberMe
                             ? Cookies.set('isRemberMe', 'true', { expires: 1 })
                             : Cookies.set('isRemberMe', 'false');
-                        // await this.GetPermissionByUserId(
-                        //     apiResult.data.result['userId'],
-                        //     loginModel.rememberMe
-                        // );
                     }
                 }
             }
@@ -86,7 +83,6 @@ class LoginService {
         const response = await http.post(
             `api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`
         );
-        //localStorage.setItem('permissions', JSON.stringify(response.data.result['permissions']));
         Cookies.set('permissions', JSON.stringify(response.data.result['permissions']), {
             expires: isRemember === true ? 1 : undefined
         });

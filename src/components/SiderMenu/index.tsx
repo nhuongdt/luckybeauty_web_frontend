@@ -66,24 +66,28 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
     const navigate = useNavigate();
     const location = useLocation();
     const itemMenus = convertMenuItemsToMenu(mainAppRoutes, lstPermission);
-    useEffect(() => {
-        // Call API to get list of permissions here
-        // Example:
+    const getPermissions = () => {
         const userId = Cookies.get('userId');
         const token = Cookies.get('accessToken');
         const encryptedAccessToken = Cookies.get('encryptedAccessToken');
-        http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
-            headers: {
-                accept: 'text/plain',
-                Authorization: 'Bearer ' + token,
-                'X-XSRF-TOKEN': encryptedAccessToken
-            }
-        })
-            .then((response) => {
-                setListPermission(response.data.result['permissions']);
-                Cookies.set('permissions', JSON.stringify(response.data.result['permissions']));
+        if (userId !== undefined && userId !== null && token !== undefined && token !== null) {
+            http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
+                headers: {
+                    accept: 'text/plain',
+                    Authorization: 'Bearer ' + token,
+                    'X-XSRF-TOKEN': encryptedAccessToken
+                }
             })
-            .catch((error) => console.log(error));
+                .then((response) => {
+                    setListPermission(response.data.result['permissions']);
+                    Cookies.set('permissions', JSON.stringify(response.data.result['permissions']));
+                })
+                .catch((error) => console.log(error));
+        }
+    };
+    useEffect(() => {
+        // Call API to get list of permissions here
+        getPermissions();
     }, []);
 
     const [open, setOpen] = useState<{ [key: number]: boolean }>({});

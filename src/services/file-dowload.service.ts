@@ -1,22 +1,27 @@
+import { makeAutoObservable } from 'mobx';
 import AppConsts from '../lib/appconst';
 // import { saveAs } from 'file-saver';
 import { FileDto, IFileDto } from './dto/FileDto';
 
 class FileDownloadService {
+    static downloadTempFile(result: IFileDto) {
+        throw new Error('Method not implemented.');
+    }
+    constructor() {
+        makeAutoObservable(this);
+    }
     downloadTempFile(file: IFileDto) {
-        try {
-            console.log(file);
-            if (!file || !file.fileType || !file.fileToken || !file.fileName) {
-                console.error('Invalid file object');
-                return;
-            }
-            const url = `${file.fileName}`;
-            console.log(url);
-            window.location.href = url; // TODO: This causes reloading of the same page in Firefox
-        } catch (error) {
-            console.error('Error downloading file:', error);
-        }
+        const url =
+            AppConsts.remoteServiceBaseUrl +
+            'File/DownloadTempFile?fileType=' +
+            file.fileType +
+            '&fileToken=' +
+            file.fileToken +
+            '&fileName=' +
+            file.fileName;
+        location.href = url; //TODO: This causes reloading of same page in Firefox
+        alert(url);
     }
 }
 
-export default new FileDownloadService();
+export default FileDownloadService;

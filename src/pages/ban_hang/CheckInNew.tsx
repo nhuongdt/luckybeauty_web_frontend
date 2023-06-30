@@ -22,7 +22,6 @@ import { PropModal } from '../../utils/PropParentToChild';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import CloseIcon from '@mui/icons-material/Close';
-import '../../App.css';
 import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';

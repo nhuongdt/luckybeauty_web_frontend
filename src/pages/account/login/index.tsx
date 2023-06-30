@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import {
     Grid,
-    Input,
-    Checkbox,
-    Avatar,
-    Box,
     TextField,
     FormControlLabel,
+    Checkbox,
     InputAdornment,
-    IconButton
+    IconButton,
+    Button
 } from '@mui/material';
 import './login.css';
 import LoginModel from '../../../models/Login/loginModel';
@@ -18,72 +18,60 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../../images/Lucky_beauty.jpg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { set } from 'lodash';
+
 const LoginScreen: React.FC = () => {
-    const handleShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
     const navigate = useNavigate();
     const loginModel = new LoginModel();
-    const [isLogin, setIsLogin] = useState(false);
-    const [tenant, setTenant] = useState('');
-    const [userName, setUserName] = useState('');
-    const [password, setPassword] = useState('');
-    const [remember, setRemember] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
-    const [errorUser, setErrorUser] = useState('');
-    const [errorPassword, setErrorPassword] = useState('');
-    const [errorTenant, setErrorTenant] = useState(false);
-    // useEffect(() => {
-    //     const accessToken = Cookies.get('accessToken');
-    //     setIsLogin(!!accessToken);
-    //     if (isLogin) {
-    //         navigate('/home');
-    //     }
-    // }, [isLogin, navigate]);
-    const handleLogin = async () => {
-        loginModel.tenancyName = tenant;
-        loginModel.userNameOrEmailAddress = userName;
-        loginModel.password = password;
-        loginModel.rememberMe = remember;
-        const checkTenant = await LoginService.CheckTenant(loginModel.tenancyName);
-        if (checkTenant.state !== 1) {
-            setErrorTenant(true);
-            setErrorUser('');
-            setErrorPassword('');
-        } else {
-            setErrorTenant(false);
-            if (userName != null && userName != '' && password != '' && password != null) {
-                const login = await LoginService.Login(loginModel);
-                setErrorUser(login ? '' : 'Tài khoản hoặc mật khẩu không đúng');
-                setErrorPassword(login ? '' : 'Tài khoản hoặc mật khẩu không đúng');
-                setIsLogin(login);
-                if (login === true) {
-                    window.location.href = '/';
-                    window.location.reload();
-                }
+    const formik = useFormik({
+        initialValues: {
+            tenant: '',
+            userNameOrEmail: '',
+            password: '',
+            remember: true
+        },
+        validationSchema: Yup.object({
+            tenant: Yup.string(),
+            userNameOrEmail: Yup.string().required('Tài khoản không được để trống.'),
+            password: Yup.string().required('Mật khẩu không được để trống.')
+        }),
+        onSubmit: async (values) => {
+            loginModel.tenancyName = values.tenant;
+            loginModel.userNameOrEmailAddress = values.userNameOrEmail;
+            loginModel.password = values.password;
+            loginModel.rememberMe = values.remember;
+
+            const checkTenant = await LoginService.CheckTenant(loginModel.tenancyName);
+            if (checkTenant.state !== 1) {
+                formik.setFieldError('tenant', 'Id cửa hàng không tồn tại hoặc hết hạn.');
             } else {
-                if (userName == null || userName == '') {
-                    setErrorUser('Tài khoản không được để trống');
-                    setErrorPassword('');
-                } else if (password == null || password == '') {
-                    setErrorPassword('Mật khẩu không được để trống');
-                    setErrorUser('');
+                const login = await LoginService.Login(loginModel);
+                if (login) {
+                    const userId = Cookies.get('userId') ?? '0';
+                    const remember = Cookies.get('isRememberMe') === 'true' ? true : false;
+                    await LoginService.GetPermissionByUserId(parseInt(userId, 0), remember);
+                    navigate('/home');
+                    window.location.reload();
                 } else {
-                    setErrorUser('Tài khoản không được để trống');
-                    setErrorPassword('Mật khẩu không được để trống');
+                    formik.setFieldError('userNameOrEmail', 'Tài khoản hoặc mật khẩu không đúng');
+                    formik.setFieldError('password', 'Tài khoản hoặc mật khẩu không đúng');
                 }
             }
         }
+    });
+
+    const handleShowPassword = () => {
+        setShowPassword(!showPassword);
     };
-    const handleKeyDown = (event: any) => {
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
-            handleLogin();
+            formik.handleSubmit();
         }
     };
 
     return (
-        <div className=" login-page">
+        <div className="login-page">
             <div className="logo-login">
                 <div className="logo-image">
                     <img src={logo} alt="Lucky Beauty" />
@@ -92,22 +80,20 @@ const LoginScreen: React.FC = () => {
             </div>
             <Grid container className="align-items-center justify-content-center mt-2 h-100">
                 <Grid xs={12}>
-                    <div className="login-page-inner ">
+                    <div className="login-page-inner">
                         <h1 className="login-label">Đăng nhập</h1>
-                        <form className="login-form">
+                        <form className="login-form" onSubmit={formik.handleSubmit}>
                             <Grid container>
                                 <span className="login-label">ID đăng nhập</span>
                                 <Grid xs={12} item className="form-item">
                                     <TextField
-                                        onChange={(value) => {
-                                            setTenant(value.target.value);
-                                        }}
-                                        error={errorTenant}
-                                        helperText={
-                                            errorTenant
-                                                ? 'Id cửa hàng không tồn tại hoặc hết hạn.'
-                                                : ''
+                                        {...formik.getFieldProps('tenant')}
+                                        error={
+                                            formik.touched.tenant && formik.errors.tenant
+                                                ? true
+                                                : false
                                         }
+                                        helperText={formik.touched.tenant && formik.errors.tenant}
                                         onKeyDown={handleKeyDown}
                                         variant="outlined"
                                         name="tenant"
@@ -119,18 +105,24 @@ const LoginScreen: React.FC = () => {
                                                     border: 'none!important'
                                                 }
                                             }
-                                        }}></TextField>
+                                        }}
+                                    />
                                 </Grid>
                                 <span className="login-label">Tên đăng nhập</span>
                                 <Grid xs={12} item className="form-item">
                                     <TextField
-                                        onChange={(value) => {
-                                            setUserName(value.target.value);
-                                        }}
+                                        {...formik.getFieldProps('userNameOrEmail')}
+                                        error={
+                                            formik.touched.userNameOrEmail &&
+                                            formik.errors.userNameOrEmail
+                                                ? true
+                                                : false
+                                        }
+                                        helperText={
+                                            formik.touched.userNameOrEmail &&
+                                            formik.errors.userNameOrEmail
+                                        }
                                         onKeyDown={handleKeyDown}
-                                        // label={<span className="login-label">Tên đăng nhập</span>}
-                                        error={errorUser == '' ? false : true}
-                                        helperText={errorUser}
                                         variant="outlined"
                                         name="userNameOrEmail"
                                         placeholder="Nhập email hoặc tên tài khoản"
@@ -138,34 +130,36 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border:
-                                                        errorUser == ''
-                                                            ? 'none!important'
-                                                            : '1px solid red!important'
+                                                    border: formik.errors.userNameOrEmail
+                                                        ? '1px solid red!important'
+                                                        : 'none!important'
                                                 }
                                             }
-                                        }}></TextField>
+                                        }}
+                                    />
                                 </Grid>
                                 <span className="login-label">Mật khẩu</span>
                                 <Grid xs={12} item className="form-item">
                                     <TextField
-                                        onChange={(value) => {
-                                            setPassword(value.target.value);
-                                        }}
+                                        {...formik.getFieldProps('password')}
                                         onKeyDown={handleKeyDown}
-                                        // label={<span className="login-label">Mật khẩu</span>}
-                                        error={errorPassword == '' ? false : true}
-                                        helperText={errorPassword}
-                                        name="password"
                                         variant="outlined"
+                                        name="password"
                                         placeholder="Nhập mật khẩu"
+                                        error={
+                                            formik.touched.password && formik.errors.password
+                                                ? true
+                                                : false
+                                        }
+                                        helperText={
+                                            formik.touched.password && formik.errors.password
+                                        }
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border:
-                                                        errorPassword == ''
-                                                            ? 'none!important'
-                                                            : '1px solid red!important'
+                                                    border: formik.errors.password
+                                                        ? '1px solid red!important'
+                                                        : 'none!important'
                                                 }
                                             },
                                             '& .MuiInputBase-root ': {
@@ -185,16 +179,15 @@ const LoginScreen: React.FC = () => {
                                                     </IconButton>
                                                 </InputAdornment>
                                             )
-                                        }}></TextField>
+                                        }}
+                                    />
                                 </Grid>
                                 <Grid xs={12} item className="form-item_checkBox">
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                defaultChecked={remember}
-                                                onClick={() => {
-                                                    setRemember(!remember);
-                                                }}
+                                                {...formik.getFieldProps('remember')}
+                                                checked={formik.values.remember}
                                                 sx={{
                                                     color: '#7C3367',
                                                     '&.Mui-checked': {
@@ -211,10 +204,7 @@ const LoginScreen: React.FC = () => {
                                 </Grid>
 
                                 <Grid xs={12} item>
-                                    <button
-                                        type="button"
-                                        className="btn-login"
-                                        onClick={handleLogin}>
+                                    <button type="submit" className="btn-login">
                                         <span className="text-login">Đăng nhập</span>
                                     </button>
                                 </Grid>

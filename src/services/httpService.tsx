@@ -16,7 +16,7 @@ const http = axios.create({
 
 http.interceptors.request.use(
     (config) => {
-        if (Cookies.get('accessToken') !== null || Cookies.get('accessToken') !== undefined) {
+        if (Cookies.get('accessToken') !== null && Cookies.get('accessToken') !== undefined) {
             config.headers.Authorization = 'Bearer ' + Cookies.get('accessToken');
         }
 

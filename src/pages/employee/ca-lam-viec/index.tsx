@@ -20,7 +20,12 @@ import UploadIcon from '../../../images/upload.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
-import abpCustom from '../../../components/abp-custom';
+import CreateOrEditCaLamViecDialog from './components/create-or-edit-ca-lam-viec-modal';
+import AppConsts from '../../../lib/appconst';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
+import { enqueueSnackbar } from 'notistack';
+import caLamViecService from '../../../services/nhan-vien/ca_lam_viec/caLamViecService';
 class CaLamViecScreen extends Component {
     state = {
         filter: '',
@@ -32,6 +37,7 @@ class CaLamViecScreen extends Component {
         anchorEl: null,
         selectedRowId: null,
         totalCount: 0,
+        isShowConfirmDelete: false,
         totalPage: 0
     };
     componentDidMount(): void {
@@ -46,8 +52,8 @@ class CaLamViecScreen extends Component {
             sortType: this.state.sortType
         });
         this.setState({
-            totalCount: caLamViecStore.caLamViecs.totalCount,
-            totalPage: Math.ceil(caLamViecStore.caLamViecs.totalCount / this.state.maxResultCount)
+            totalPage: Math.ceil(caLamViecStore.caLamViecs.totalCount / this.state.maxResultCount),
+            totalCount: caLamViecStore.caLamViecs.totalCount
         });
     };
     Modal = () => {
@@ -58,10 +64,7 @@ class CaLamViecScreen extends Component {
         // this.getListHoliday();
     };
     createOrUpdateModalOpen = async (id: string) => {
-        this.setState({
-            selectedRowId: id
-        });
-        if (id !== '') {
+        if (id === '') {
             await caLamViecStore.createCaLamViecDto();
         } else {
             await caLamViecStore.getForEdit(id);
@@ -77,6 +80,49 @@ class CaLamViecScreen extends Component {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
             skipCount: 1
+        });
+    };
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
+    };
+
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: null });
+        this.getData();
+    };
+
+    handleView = () => {
+        // Handle View action
+        this.handleCloseMenu();
+    };
+    delete = async (id: string) => {
+        const deleteResult = await caLamViecService.delete(id);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
+    };
+    onOkDelete = async () => {
+        await this.delete(this.state.selectedRowId ?? '');
+        this.showConfirmDelete();
+        await this.handleCloseMenu();
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
+        this.handleCloseMenu();
+    };
+
+    showConfirmDelete = () => {
+        // Handle Delete action
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete,
+            IdHoliday: ''
         });
     };
     onSort = async (sortType: string, sortBy: string) => {
@@ -126,7 +172,7 @@ class CaLamViecScreen extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            params.value
+                            {params.value}
                         </Typography>
                     </Box>
                 ),
@@ -157,10 +203,7 @@ class CaLamViecScreen extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
+                            {params.value}
                         </Typography>
                     </Box>
                 ),
@@ -197,10 +240,7 @@ class CaLamViecScreen extends Component {
                             variant="h6"
                             color="#333233"
                             lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('en-GB', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
+                            {params.value}
                         </Typography>
                     </Box>
                 ),
@@ -251,31 +291,30 @@ class CaLamViecScreen extends Component {
                         />{' '}
                     </Box>
                 )
-            }
-            // },
-            // {
-            //     field: 'actions',
-            //     headerName: 'Hành động',
-            //     // width: 48,
-            //     flex: 0.3,
-            //     disableColumnMenu: true,
+            },
+            {
+                field: 'actions',
+                headerName: 'Hành động',
+                // width: 48,
+                flex: 0.3,
+                disableColumnMenu: true,
 
-            //     renderCell: (params) => (
-            //         <IconButton
-            //             aria-label="Actions"
-            //             aria-controls={`actions-menu-${params.row.id}`}
-            //             aria-haspopup="true"
-            //             onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
-            //             <MoreHorizIcon />
-            //         </IconButton>
-            //     ),
-            //     renderHeader: (params) => (
-            //         <Box sx={{ display: 'none' }}>
-            //             {params.colDef.headerName}
-            //             <IconSorting className="custom-icon" />{' '}
-            //         </Box>
-            //     )
-            // }
+                renderCell: (params) => (
+                    <IconButton
+                        aria-label="Actions"
+                        aria-controls={`actions-menu-${params.row.id}`}
+                        aria-haspopup="true"
+                        onClick={(event) => this.handleOpenMenu(event, params.row.id)}>
+                        <MoreHorizIcon />
+                    </IconButton>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ display: 'none' }}>
+                        {params.colDef.headerName}
+                        <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                )
+            }
         ];
         return (
             <Box padding="22px 32px" className="thoi-gian-nghi-page">
@@ -425,14 +464,14 @@ class CaLamViecScreen extends Component {
                         hideFooter
                         localeText={TextTranslate}
                     />
-                    {/* <ActionMenuTable
+                    <ActionMenuTable
                         selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
                         handleEdit={this.handleEdit}
                         handleDelete={this.showConfirmDelete}
-                    /> */}
+                    />
                     <CustomTablePagination
                         currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
@@ -442,17 +481,22 @@ class CaLamViecScreen extends Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
-                {/* <ConfirmDelete
+                <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
                     onCancel={this.showConfirmDelete}></ConfirmDelete>
-                <CreateOrEditThoiGianNghi
-                    visible={this.state.modalVisible}
-                    title={this.state.IdHoliday == '' ? 'Thêm mới' : 'Cập nhật'}
+                <CreateOrEditCaLamViecDialog
+                    visible={this.state.isShowModal}
+                    title={
+                        caLamViecStore.createOrEditDto.id == AppConsts.guidEmpty ||
+                        caLamViecStore.createOrEditDto.id == ''
+                            ? 'Thêm mới'
+                            : 'Cập nhật'
+                    }
                     onCancel={() => {
                         this.Modal();
                     }}
-                    createOrEditDto={this.state.createOrEditNgayNghiLe}></CreateOrEditThoiGianNghi> */}
+                    createOrEditDto={caLamViecStore.createOrEditDto}></CreateOrEditCaLamViecDialog>
             </Box>
         );
     }

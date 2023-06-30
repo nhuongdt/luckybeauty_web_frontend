@@ -2,7 +2,6 @@ import { forwardRef, useEffect, useState } from 'react';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import utils from '../../utils/utils';
 import { format } from 'date-fns';
-import '../../App.css';
 
 export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: any) {
     const [tenKhachHang, setTenKhachHang] = useState('');

@@ -55,7 +55,7 @@ export const userRouter: RouteProps[] = [
         title: 'Login',
         iconActive: null,
         icon: '',
-        component: LoadableComponent(() => import('../../pages/account/login/loginNew')),
+        component: LoadableComponent(() => import('../../pages/account/login')),
         isLayout: true,
         showInMenu: false
     },

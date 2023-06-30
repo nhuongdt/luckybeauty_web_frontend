@@ -60,25 +60,30 @@ const Header: React.FC<HeaderProps> = (
         // Call API to get list of permissions here
 
         const getChiNhanhs = async () => {
-            const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
-            if (listChiNhanh != null && listChiNhanh.length > 0) {
-                setListChiNhanh(listChiNhanh);
+            if (Cookies.get('accessToken') !== null && Cookies.get('accessToken') !== undefined) {
+                const listChiNhanh = await chiNhanhService.GetChiNhanhByUser();
+                if (listChiNhanh != null && listChiNhanh.length > 0) {
+                    setListChiNhanh(listChiNhanh);
 
-                if (Cookies.get('IdChiNhanh') === undefined || Cookies.get('IdChiNhanh') === '') {
-                    const idChiNhanh = listChiNhanh[0].id;
-                    const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+                    if (
+                        Cookies.get('IdChiNhanh') === undefined ||
+                        Cookies.get('IdChiNhanh') === ''
+                    ) {
+                        const idChiNhanh = listChiNhanh[0].id;
+                        const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
 
-                    setCurrentChiNhanh(idChiNhanh);
-                    const remember = Cookies.get('isRemberMe');
-                    Cookies.set('IdChiNhanh', idChiNhanh, {
-                        expires: remember === 'true' ? 1 : undefined
-                    });
-                    handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
-                } else {
-                    const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
-                    setCurrentChiNhanh(idChiNhanh);
-                    // todo tenChiNhanh
-                    handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: '' });
+                        setCurrentChiNhanh(idChiNhanh);
+                        const remember = Cookies.get('isRemberMe');
+                        Cookies.set('IdChiNhanh', idChiNhanh, {
+                            expires: remember === 'true' ? 1 : undefined
+                        });
+                        handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
+                    } else {
+                        const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
+                        setCurrentChiNhanh(idChiNhanh);
+                        // todo tenChiNhanh
+                        handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: '' });
+                    }
                 }
             }
         };
