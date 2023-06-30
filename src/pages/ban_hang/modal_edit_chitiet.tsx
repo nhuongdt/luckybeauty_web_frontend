@@ -21,7 +21,8 @@ import {
     AccordionSummary,
     Box,
     AccordionDetails,
-    Link
+    Link,
+    IconButton
 } from '@mui/material';
 import {
     Percent,
@@ -98,16 +99,6 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
                     <Stack direction="column" spacing={1} padding={2} width={280}>
                         <Typography variant="body2">Chiết khấu</Typography>
                         <Stack direction="row" spacing={1}>
-                            <NumericFormat
-                                fullWidth
-                                id="txtChietKhau"
-                                value={gtriCK}
-                                size="small"
-                                thousandSeparator
-                                customInput={TextField}
-                                onChange={(event) => changeChietKhau(event)}
-                            />
-
                             <FormControlLabel
                                 value="true"
                                 control={<Radio size="small" checked={laPhanTram === 'true'} />}
@@ -441,7 +432,8 @@ export default function ModalEditChiTietGioHang({
                                     container
                                     spacing={2}
                                     sx={{
-                                        paddingY: '24px',
+                                        paddingTop: '24px',
+                                        paddingBottom: '0px',
                                         bgcolor: '#fff',
                                         margin: '0',
                                         width: '100%',
@@ -541,21 +533,30 @@ export default function ModalEditChiTietGioHang({
                                             </ThemeProvider>
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={5} sm={5} md={5} lg={5}>
+                                    <Grid
+                                        item
+                                        xs={5}
+                                        sm={5}
+                                        md={5}
+                                        lg={5}
+                                        sx={{ display: 'flex', gap: '16px' }}>
                                         <Stack direction="column" spacing={1}>
-                                            <Typography
-                                                sx={{ textAlign: 'center' }}
-                                                variant="body2">
-                                                Số lượng
-                                            </Typography>
-                                            <ExpandMore
-                                                sx={{ display: ct?.expanded ? '' : 'none' }}
+                                            <Typography variant="body2">Chiết khấu</Typography>
+                                            <NumericFormat
+                                                fullWidth
+                                                id="txtChietKhau"
+                                                // value={gtriCK}
+                                                size="small"
+                                                thousandSeparator
+                                                customInput={TextField}
+                                                onChange={(event) =>
+                                                    changeChietKhau(event.target.value)
+                                                }
                                             />
-                                            <ExpandLess
-                                                sx={{
-                                                    display: !ct?.expanded ? '' : 'none'
-                                                }}
-                                            />
+                                        </Stack>
+                                        <Stack direction="column" spacing={1}>
+                                            <Typography variant="body2">Số lượng</Typography>
+
                                             <Stack
                                                 direction="row"
                                                 sx={{
@@ -564,7 +565,8 @@ export default function ModalEditChiTietGioHang({
                                                         border: '1px solid #cccc',
                                                         transition: '.4s',
                                                         cursor: 'pointer',
-                                                        minWidth: 'unset',
+
+                                                        minWidth: '30px',
                                                         '& button:hover': {
                                                             borderColor: '#7C3367'
                                                         },
@@ -572,17 +574,18 @@ export default function ModalEditChiTietGioHang({
                                                     }
                                                 }}>
                                                 <Button
+                                                    className="btn-outline-hover"
                                                     sx={{
                                                         borderBottomRightRadius: 'unset!important',
                                                         borderTopRightRadius: 'unset!important'
-                                                    }}>
+                                                    }}
+                                                    onClick={() => giamSoLuong(ct.id)}>
                                                     <RemoveIcon
                                                         sx={{
                                                             fontSize: '16px',
                                                             color: '#4C4B4C'
                                                         }}
                                                         //className="btnIcon"
-                                                        onClick={() => giamSoLuong(ct.id)}
                                                     />
                                                 </Button>
                                                 <TextField
@@ -595,8 +598,10 @@ export default function ModalEditChiTietGioHang({
                                                                 WebkitAppearance: 'none'
                                                             },
                                                         '& .MuiOutlinedInput-root': {
-                                                            borderRadius: 'unset'
-                                                        }
+                                                            borderRadius: 'unset',
+                                                            borderX: 'unset'
+                                                        },
+                                                        bgcolor: '#F5F5F5'
                                                     }}
                                                     type="number"
                                                     inputProps={{ min: 0 }}
@@ -606,20 +611,35 @@ export default function ModalEditChiTietGioHang({
                                                     }
                                                 />
                                                 <Button
+                                                    className="btn-outline-hover"
                                                     sx={{
                                                         borderTopLeftRadius: '0!important',
                                                         borderBottomLeftRadius: '0!important'
-                                                    }}>
+                                                    }}
+                                                    onClick={() => tangSoLuong(ct.id)}>
                                                     <AddIcon
                                                         sx={{
                                                             fontSize: '16px',
                                                             color: '#4C4B4C'
                                                         }}
                                                         //className="btnIcon"
-                                                        onClick={() => tangSoLuong(ct.id)}
                                                     />
                                                 </Button>
                                             </Stack>
+                                            <IconButton
+                                                sx={{
+                                                    width: 'fit-content',
+                                                    marginLeft: 'auto!important'
+                                                }}>
+                                                <ExpandMore
+                                                    sx={{ display: ct?.expanded ? '' : 'none' }}
+                                                />
+                                                <ExpandLess
+                                                    sx={{
+                                                        display: !ct?.expanded ? '' : 'none'
+                                                    }}
+                                                />
+                                            </IconButton>
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} style={{ display: 'none' }}>
