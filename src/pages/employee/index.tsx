@@ -252,6 +252,11 @@ class EmployeeScreen extends React.Component {
                         }}
                     />{' '}
                 </Box>
+            ),
+            renderCell: (params) => (
+                <Box width="100%" textAlign="right" fontSize="12px">
+                    {params.value}
+                </Box>
             )
         },
         {
@@ -261,7 +266,13 @@ class EmployeeScreen extends React.Component {
             minWidth: 112,
             flex: 1,
             renderCell: (params) => (
-                <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Box
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%'
+                    }}>
                     {params.value != null ? (
                         <>
                             <DateIcon style={{ marginRight: 4 }} />
@@ -377,7 +388,13 @@ class EmployeeScreen extends React.Component {
             minWidth: 120,
             flex: 1,
             renderCell: (params) => (
-                <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Box
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%'
+                    }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
                         fontSize="12px"
@@ -416,7 +433,7 @@ class EmployeeScreen extends React.Component {
                     borderRadius="12px"
                     fontWeight="400"
                     color="#009EF7"
-                    sx={{ backgroundColor: '#F1FAFF' }}>
+                    sx={{ backgroundColor: '#F1FAFF', margin: 'auto' }}>
                     {params.value}
                 </Typography>
             ),

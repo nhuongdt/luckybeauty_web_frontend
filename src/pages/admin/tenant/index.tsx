@@ -223,7 +223,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             padding: '4px 8px',
                             borderRadius: '100px',
                             color: 'rgb(0, 158, 247)',
-                            bgcolor: 'rgb(241, 250, 255)'
+                            bgcolor: 'rgb(241, 250, 255)',
+                            margin: 'auto'
                         }}>
                         {params.value == true ? 'Hoạt động' : 'Ngừng hoạt động'}
                     </Box>

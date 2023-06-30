@@ -202,9 +202,15 @@ body .font-normal {
 .inputEdit .MuiOutlinedInput-root {
     border-radius: 8px;
 }
-
-/* style datetime fullwith */
-
-/* .MuiFormControl-root.MuiTextField-root:not(.no-minWidth) {
-    width: 100% !important;
-} */
+.MuiDataGrid-columnHeaderTitleContainerContent:not(
+        .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainerContent
+    ) {
+    width: 100%;
+}
+.MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root {
+    width: 100%;
+    text-align: center;
+}
+.MuiDataGrid-columnHeader:not(:last-child) {
+    border-right: 2px solid #fff !important;
+}

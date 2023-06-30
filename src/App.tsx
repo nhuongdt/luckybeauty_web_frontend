@@ -6,13 +6,11 @@ import { SnackbarProvider } from 'notistack';
 const App = () => {
     return (
         <div>
-            <StrictMode>
-                <BrowserRouter>{Routes}</BrowserRouter>
-                <SnackbarProvider
-                    maxSnack={3}
-                    anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
-                />
-            </StrictMode>
+            <BrowserRouter>{Routes}</BrowserRouter>
+            <SnackbarProvider
+                maxSnack={3}
+                anchorOrigin={{ horizontal: 'center', vertical: 'top' }}
+            />
         </div>
     );
 };

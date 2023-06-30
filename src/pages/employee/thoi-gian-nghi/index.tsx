@@ -216,7 +216,13 @@ class EmployeeHoliday extends Component {
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="12px"
@@ -247,7 +253,13 @@ class EmployeeHoliday extends Component {
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="12px"
@@ -260,7 +272,10 @@ class EmployeeHoliday extends Component {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '700'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -279,10 +294,8 @@ class EmployeeHoliday extends Component {
                 flex: 1,
                 renderCell: (params) => (
                     <Box
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            alignContent: 'center',
+                        sx={{
+                            width: '100%',
                             textAlign: 'center'
                         }}>
                         <Typography

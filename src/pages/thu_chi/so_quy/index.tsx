@@ -109,7 +109,11 @@ class SoQuyScreen extends Component {
                         />
                     </Box>
                 ),
-                renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+                renderCell: (params) => (
+                    <Box title={params.value} width="100%">
+                        {params.value}
+                    </Box>
+                )
             },
             {
                 field: 'maPhieu',
@@ -146,7 +150,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box title={params.value}>
+                    <Box title={params.value} width="100%" textAlign="center">
                         {new Date(params.value).toLocaleDateString('en-GB', {
                             day: '2-digit',
                             month: '2-digit',
@@ -192,7 +196,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box title={params.value}>
+                    <Box title={params.value} width="100%" textAlign="end">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -213,7 +217,11 @@ class SoQuyScreen extends Component {
                         />
                     </Box>
                 ),
-                renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+                renderCell: (params: any) => (
+                    <Box title={params.value} width="100%">
+                        {params.value}
+                    </Box>
+                )
             },
             {
                 field: 'trangThai',
@@ -248,7 +256,8 @@ class SoQuyScreen extends Component {
                                     ? '#50CD89'
                                     : params.value === 'Chưa thanh toán'
                                     ? '#FF9900'
-                                    : '#F1416C'
+                                    : '#F1416C',
+                            margin: 'auto'
                         }}
                         className="state-thanh-toan">
                         {params.value}

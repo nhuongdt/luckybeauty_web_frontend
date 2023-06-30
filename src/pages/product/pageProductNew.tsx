@@ -380,7 +380,7 @@ export default function PageProductNew() {
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
-                <Box display="flex">
+                <Box display="flex" justifyContent="end" width="100%">
                     <Typography variant="body2" color="#333233" fontSize="12px">
                         {Utils.formatNumber(params.value || '')}
                     </Typography>
@@ -399,7 +399,7 @@ export default function PageProductNew() {
             minWidth: 128,
             flex: 1,
             renderCell: (params) => (
-                <Box display="flex">
+                <Box display="flex" width="100%" justifyContent="center">
                     <ClockIcon />
                     <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
                         {params.value || ''} phút

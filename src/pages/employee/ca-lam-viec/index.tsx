@@ -195,7 +195,13 @@ class CaLamViecScreen extends Component {
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="12px"
@@ -227,11 +233,12 @@ class CaLamViecScreen extends Component {
                 flex: 1,
                 renderCell: (params) => (
                     <Box
-                        style={{
+                        sx={{
                             display: 'flex',
                             alignItems: 'center',
                             alignContent: 'center',
-                            textAlign: 'center'
+                            justifyContent: 'center',
+                            width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
@@ -264,11 +271,11 @@ class CaLamViecScreen extends Component {
                 flex: 1,
                 renderCell: (params) => (
                     <Box
-                        style={{
+                        sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            alignContent: 'center',
-                            textAlign: 'center'
+                            justifyContent: 'center',
+                            width: '100%'
                         }}>
                         <Typography
                             fontSize="12px"

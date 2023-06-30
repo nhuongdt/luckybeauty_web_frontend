@@ -53,7 +53,7 @@ const themInputChietKhau = createTheme({
         }
     }
 });
-
+const gtriCK2 = [0];
 export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: any) {
     const [laPhanTram, setLaPhanTram] = useState('true');
     const [gtriCK, setGtriCK] = useState(0);
@@ -74,6 +74,7 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
             }
             setGtriCK(props?.item?.tienChietKhau);
         }
+        gtriCK2[0] = gtriCK;
     }, [props?.item]);
 
     const changeChietKhau = (event: any) => {
@@ -99,6 +100,15 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
                     <Stack direction="column" spacing={1} padding={2} width={280}>
                         <Typography variant="body2">Chiết khấu</Typography>
                         <Stack direction="row" spacing={1}>
+                            <NumericFormat
+                                fullWidth
+                                id="txtChietKhau"
+                                value={gtriCK}
+                                size="small"
+                                thousandSeparator
+                                customInput={TextField}
+                                onChange={(event) => changeChietKhau(event.target.value)}
+                            />
                             <FormControlLabel
                                 value="true"
                                 control={<Radio size="small" checked={laPhanTram === 'true'} />}
@@ -395,7 +405,13 @@ export default function ModalEditChiTietGioHang({
             await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
         }
     };
+    const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false));
 
+    const toggleVisibility = (index: number) => {
+        const updatedVisibility = [...itemVisibility];
+        updatedVisibility[index] = !updatedVisibility[index];
+        setItemVisibility(updatedVisibility);
+    };
     return (
         <>
             <PopupChietKhau
@@ -409,8 +425,26 @@ export default function ModalEditChiTietGioHang({
                 fullWidth
                 maxWidth="md"
                 sx={{ paddingX: '24px' }}>
-                <DialogTitle className="dialog-title">Chỉnh sửa giỏ hàng</DialogTitle>
-
+                <DialogTitle className="dialog-title" fontSize="24px" fontWeight="700">
+                    Cập nhật hóa đơn
+                </DialogTitle>
+                <IconButton
+                    onClick={handleClose}
+                    sx={{
+                        position: 'absolute',
+                        right: '5px',
+                        top: '8px',
+                        width: 'fit-content',
+                        '& svg': {
+                            color: '#666466'
+                        },
+                        '&:hover svg': {
+                            color: 'red'
+                        }
+                    }}>
+                    {' '}
+                    <Close />
+                </IconButton>
                 <DialogContent sx={{ bgcolor: '#F9FAFC' }}>
                     <Typography
                         variant="h4"
@@ -426,7 +460,21 @@ export default function ModalEditChiTietGioHang({
                             container
                             key={index}
                             paddingTop={2}
-                            sx={{ position: 'relative', marginTop: '16px' }}>
+                            sx={{
+                                position: 'relative',
+                                marginTop: '16px',
+                                bgcolor: '#fff',
+                                borderRadius: '8px',
+                                '& input': {
+                                    fontSize: '14px!important'
+                                },
+                                '& .itemHidden': {
+                                    transition: 'max-height .6s, padding 0.4s',
+                                    overflow: 'hidden',
+                                    maxHeight: itemVisibility[index] ? '0px' : '135px',
+                                    paddingTop: itemVisibility[index] ? '0px' : '16px'
+                                }
+                            }}>
                             <Grid item xs={12}>
                                 <Grid
                                     container
@@ -447,6 +495,7 @@ export default function ModalEditChiTietGioHang({
                                                     choseProduct(item, index)
                                                 }
                                                 productChosed={ct}
+                                                sx={{ fontSize: '14px' }}
                                             />
                                         </div>
                                         <Typography
@@ -469,7 +518,7 @@ export default function ModalEditChiTietGioHang({
                                             </Typography>
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={7} sm={7} md={7} lg={7}>
+                                    <Grid item xs={7} sm={7} md={7} lg={7} className="itemHidden">
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
@@ -515,25 +564,12 @@ export default function ModalEditChiTietGioHang({
                                                     onChange={(event: any) =>
                                                         handleChangeGiaBan(event, ct.id)
                                                     }
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            <ToggleButton
-                                                                value="bold"
-                                                                aria-label="bold"
-                                                                size="small"
-                                                                title="Chiết khấu"
-                                                                onClick={(event) => {
-                                                                    showPopChietKhau(event, ct);
-                                                                }}>
-                                                                <MoreHoriz />
-                                                            </ToggleButton>
-                                                        )
-                                                    }}
                                                 />
                                             </ThemeProvider>
                                         </Stack>
                                     </Grid>
                                     <Grid
+                                        className="itemHidden"
                                         item
                                         xs={5}
                                         sm={5}
@@ -542,16 +578,17 @@ export default function ModalEditChiTietGioHang({
                                         sx={{ display: 'flex', gap: '16px' }}>
                                         <Stack direction="column" spacing={1}>
                                             <Typography variant="body2">Chiết khấu</Typography>
+
                                             <NumericFormat
                                                 fullWidth
-                                                id="txtChietKhau"
-                                                // value={gtriCK}
+                                                // ô này sẽ hiển thị giá trị của chiết khấu sau khi nhập xong ở trong poppup ví dụ: 100.000đ hoặc 30%
                                                 size="small"
+                                                defaultValue={0}
                                                 thousandSeparator
                                                 customInput={TextField}
-                                                onChange={(event) =>
-                                                    changeChietKhau(event.target.value)
-                                                }
+                                                onClick={(event: any) => {
+                                                    showPopChietKhau(event, ct);
+                                                }}
                                             />
                                         </Stack>
                                         <Stack direction="column" spacing={1}>
@@ -626,20 +663,6 @@ export default function ModalEditChiTietGioHang({
                                                     />
                                                 </Button>
                                             </Stack>
-                                            <IconButton
-                                                sx={{
-                                                    width: 'fit-content',
-                                                    marginLeft: 'auto!important'
-                                                }}>
-                                                <ExpandMore
-                                                    sx={{ display: ct?.expanded ? '' : 'none' }}
-                                                />
-                                                <ExpandLess
-                                                    sx={{
-                                                        display: !ct?.expanded ? '' : 'none'
-                                                    }}
-                                                />
-                                            </IconButton>
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} style={{ display: 'none' }}>
@@ -712,12 +735,33 @@ export default function ModalEditChiTietGioHang({
                                         onClick={() => xoaChiTietHoaDon(ct)}
                                     />
                                 </Grid>
+                                <Box sx={{ textAlign: 'right' }}>
+                                    <IconButton
+                                        onClick={() => toggleVisibility(index)}
+                                        sx={{
+                                            width: 'fit-content',
+                                            marginLeft: 'auto!important',
+                                            '&:hover svg': {
+                                                color: '#7C3367'
+                                            }
+                                        }}>
+                                        <ExpandMore
+                                            sx={{
+                                                display: itemVisibility[index] ? '' : 'none'
+                                            }}
+                                        />
+                                        <ExpandLess
+                                            sx={{
+                                                display: !itemVisibility[index] ? '' : 'none'
+                                            }}
+                                        />
+                                    </IconButton>
+                                </Box>
                             </Grid>
                         </Grid>
                     ))}
                     <Grid container paddingTop={2}>
-                        <Grid item xs={1} />
-                        <Grid item xs={11}>
+                        <Grid item xs={12}>
                             <Stack style={{ display: displayComponent }}>
                                 <Link
                                     color="#7c3367"
@@ -736,13 +780,11 @@ export default function ModalEditChiTietGioHang({
                     <Button
                         variant="outlined"
                         className="button-outline btn-outline-hover"
-                        onClick={closeModal}>
+                        onClick={closeModal}
+                        sx={{ color: '#965C85' }}>
                         Hủy
                     </Button>
-                    <Button
-                        variant="contained"
-                        className="button-container"
-                        onClick={agrreGioHang}></Button>
+
                     <Button
                         className="btn-container-hover"
                         variant="contained"
