@@ -8,6 +8,7 @@ import { CreateOrEditKhachHangDto } from './dto/CreateOrEditKhachHangDto';
 import { KhachHangDto } from './dto/KhachHangDto';
 import Utils from '../../utils/utils';
 import { FileDto, IFileDto } from '../dto/FileDto';
+import utils from '../../utils/utils';
 
 class KhachHangService {
     public async getAll(
@@ -24,6 +25,9 @@ class KhachHangService {
         console.log(1);
     }
     public async getKhachHang(id: string): Promise<CreateOrEditKhachHangDto> {
+        if (utils.checkNull(id)) {
+            return { id: '', maKhachHang: '', tenKhachHang: '' } as CreateOrEditKhachHangDto;
+        }
         const result = await http.get(`api/services/app/KhachHang/GetKhachHang?id=${id}`);
         return result.data.result;
     }

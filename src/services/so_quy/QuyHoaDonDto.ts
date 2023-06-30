@@ -19,6 +19,7 @@ export default class QuyHoaDonDto {
 
     quyHoaDon_ChiTiet?: QuyChiTietDto[];
 
+    loaiDoiTuong? = 1;
     sLoaiPhieu? = '';
     maNguoiNop? = '';
     tenNguoiNop? = '';
