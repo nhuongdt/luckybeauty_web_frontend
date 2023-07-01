@@ -33,7 +33,7 @@ import AutocompleteCustomer from '../../../../components/Autocomplete/Customer';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
 import { useFormik, useFormikContext } from 'formik';
-import { addDays, format } from 'date-fns';
+import { addDays, format, isDate, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
 import AppConsts from '../../../../lib/appconst';
 
@@ -92,7 +92,7 @@ const CreateOrEditSoQuyDialog = ({
         new QuyHoaDonDto({
             id: '',
             idLoaiChungTu: 11,
-            tongTienThu: '0',
+            tongTienThu: 0,
             idDoiTuongNopTien: null,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
@@ -122,20 +122,22 @@ const CreateOrEditSoQuyDialog = ({
 
     const validate = yup.object().shape({
         tongTienThu: yup
-            .string()
-            .notOneOf(['0'], 'Tổng tiền phải > 0')
+            .number()
+            .transform((value: any, originalValue: any) => {
+                return utils.formatNumberToFloat(originalValue);
+            })
+            .notOneOf([0], 'Tổng tiền phải > 0')
             .required('Vui lòng nhập số tiền'),
-        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền'),
-        ngayLapHoaDon: yup.string().matches(AppConsts.yyyyMMddHHmmRegex, 'Email không hợp lệ')
-    });
+        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền')
+        // ngayLapHoaDon: yup.string().transform((value: any, originalValue: any) => {
+        //     console.log('originalVal ', isDate(originalValue), value); // todo check ngaylap
+        //     const parsedDate = isDate(originalValue)
+        //         ? originalValue
+        //         : parse(originalValue, 'yyyy-MM-dd HH:mm', new Date());
 
-    const changNgayLapPhieu = (dt: any) => {
-        setQuyHoaDon({ ...quyHoaDon, ngayLapHoaDon: dt });
-    };
-    const changeDoituongnopTien = (item: any) => {
-        setIdDoiTuongNopTien(item?.id);
-        setQuyHoaDon({ ...quyHoaDon, idDoiTuongNopTien: item?.id });
-    };
+        //     return parsedDate;
+        // })
+    });
 
     return (
         <Dialog open={visiable} fullWidth maxWidth={'sm'}>
@@ -228,7 +230,17 @@ const CreateOrEditSoQuyDialog = ({
                                     <Grid item xs={12} sm={6}>
                                         <Stack direction="column" rowGap={1}>
                                             <span className="modal-lable">Mã phiếu </span>
-                                            <TextField size="small" fullWidth />
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                value={quyHoaDon.maHoaDon}
+                                                onChange={(e) =>
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        maHoaDon: e.target.value
+                                                    })
+                                                }
+                                            />
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
