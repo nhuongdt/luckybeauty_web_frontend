@@ -30,8 +30,12 @@ import SoQuyServices from '../../../../services/so_quy/SoQuyServices';
 import utils from '../../../../utils/utils';
 import DateTimePickerCustom from '../../../../components/DatetimePicker/DateTimePickerCustom';
 import AutocompleteCustomer from '../../../../components/Autocomplete/Customer';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
 import { useFormik, useFormikContext } from 'formik';
+import { addDays, format } from 'date-fns';
+import { id } from 'date-fns/locale';
+import AppConsts from '../../../../lib/appconst';
 
 interface SoQuyDialogProps {
     visiable: boolean;
@@ -53,6 +57,18 @@ interface SoQuyDialogProps {
 //         </span>
 //     );
 // };
+
+const themeDate = createTheme({
+    components: {
+        MuiFormControl: {
+            styleOverrides: {
+                root: {
+                    minWidth: '100%'
+                }
+            }
+        }
+    }
+});
 const CreateOrEditSoQuyDialog = ({
     visiable = false,
     idQuyHD = null,
@@ -71,44 +87,54 @@ const CreateOrEditSoQuyDialog = ({
         { id: 4, text: 'Nhân viên' }
     ];
     const formRef = useRef();
+    const [isSaving, setIsSaving] = useState(false);
     const [quyHoaDon, setQuyHoaDon] = useState<QuyHoaDonDto>(
-        new QuyHoaDonDto({ id: '', tongTienThu: 0 })
+        new QuyHoaDonDto({
+            id: '',
+            idLoaiChungTu: 11,
+            tongTienThu: '0',
+            idDoiTuongNopTien: null,
+            ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
+        })
     );
     const [chitietSoQuy, setChitietSoQuy] = useState<QuyChiTietDto[]>();
+    const [idDoiTuongNopTien, setIdDoiTuongNopTien] = useState<string | null>('');
 
     const getInforQuyHoaDon = async () => {
+        if (utils.checkNull(idQuyHD)) return;
         const data = await SoQuyServices.GetForEdit(idQuyHD ?? '');
         console.log(data);
-        if (data !== null) setQuyHoaDon(data);
+        if (data !== null) {
+            setQuyHoaDon(data);
+            if (data.quyHoaDon_ChiTiet != undefined)
+                setIdDoiTuongNopTien(data.quyHoaDon_ChiTiet[0]?.idKhachHang ?? '');
+        }
     };
     useEffect(() => {
         getInforQuyHoaDon();
     }, [idQuyHD]);
 
     const saveSoQuy = async () => {
-        console.log(666);
+        console.log(666, quyHoaDon);
+        setIsSaving(true);
         // const data = await SoQuyServices.CreateQuyHoaDon(quyHoaDon);
     };
 
-    // const formik = useFormik({
-    //     initialValues: {
-    //         quyHoaDon
-    //     },
-    //     validationSchema: yup.object({
-    //         tongTienThu: yup.string().required('Vui lòng nhập số tiền'),
-    //         maNguoiNop: yup.string().required('Vui lòng chọn người nộp')
-    //     }),
-    //     onSubmit: (values) => {
-    //         console.log('sau');
-    //     }
-    // });
-
-    // const handleChange = (event: any) => {
-    //     const value = event.target.value;
-    // };
+    const validate = yup.object().shape({
+        tongTienThu: yup
+            .string()
+            .notOneOf(['0'], 'Tổng tiền phải > 0')
+            .required('Vui lòng nhập số tiền'),
+        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền'),
+        ngayLapHoaDon: yup.string().matches(AppConsts.yyyyMMddHHmmRegex, 'Email không hợp lệ')
+    });
 
     const changNgayLapPhieu = (dt: any) => {
         setQuyHoaDon({ ...quyHoaDon, ngayLapHoaDon: dt });
+    };
+    const changeDoituongnopTien = (item: any) => {
+        setIdDoiTuongNopTien(item?.id);
+        setQuyHoaDon({ ...quyHoaDon, idDoiTuongNopTien: item?.id });
     };
 
     return (
@@ -134,22 +160,10 @@ const CreateOrEditSoQuyDialog = ({
                 </div>
             </DialogTitle>
             <DialogContent>
-                <Formik
-                    initialValues={{ tongTienThu: 0, idKhachHang: 0, loaiDoiTuong: 0 }}
-                    validationSchema={yup.object().shape({
-                        tongTienThu: yup
-                            .number()
-                            .required('Vui lòng nhập số tiền')
-                            .moreThan(0, 'Tổng tiền phải > 0')
-                        // idKhachHang: yup.when('loaiDoiTuong', (loaiDoiTuong, schema) => {
-                        //     if (loaiDoiTuong == 0)
-                        //         return schema.required('Must enter email address');
-                        //     return schema;
-                        // })
-                    })}
-                    onSubmit={saveSoQuy}>
-                    {({ values, handleChange, errors, touched }) => (
+                <Formik initialValues={quyHoaDon} validationSchema={validate} onSubmit={saveSoQuy}>
+                    {(formik) => (
                         <>
+                            {console.log(123, formik.values)}
                             <Form>
                                 <Grid container rowGap={1} columnSpacing={2}>
                                     <Grid item xs={12} sm={12} lg={12}>
@@ -158,10 +172,14 @@ const CreateOrEditSoQuyDialog = ({
                                             control={
                                                 <Radio
                                                     color="secondary"
-                                                    checked={quyHoaDon?.idLoaiChungTu === 11}
-                                                    onChange={handleChange}
-                                                    value="Phiếu thu"
-                                                    name="maPhieu"
+                                                    value={11}
+                                                    checked={quyHoaDon.idLoaiChungTu === 11}
+                                                    onChange={() =>
+                                                        setQuyHoaDon({
+                                                            ...quyHoaDon,
+                                                            idLoaiChungTu: 11
+                                                        })
+                                                    }
                                                 />
                                             }
                                             label="Phiếu thu"
@@ -171,10 +189,15 @@ const CreateOrEditSoQuyDialog = ({
                                             control={
                                                 <Radio
                                                     color="secondary"
+                                                    name="idLoaiChungTu"
+                                                    value={12}
                                                     checked={quyHoaDon.idLoaiChungTu === 12}
-                                                    onChange={handleChange}
-                                                    value="Phiếu chi"
-                                                    name="maPhieu"
+                                                    onChange={() =>
+                                                        setQuyHoaDon({
+                                                            ...quyHoaDon,
+                                                            idLoaiChungTu: 12
+                                                        })
+                                                    }
                                                 />
                                             }
                                             label="Phiếu chi"
@@ -184,9 +207,22 @@ const CreateOrEditSoQuyDialog = ({
                                         <span className="modal-lable">Ngày </span>
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
-                                        <DateTimePickerCustom
-                                            handleChangeDate={changNgayLapPhieu}
-                                        />
+                                        <ThemeProvider theme={themeDate}>
+                                            <DateTimePickerCustom
+                                                defaultVal={quyHoaDon.ngayLapHoaDon}
+                                                handleChangeDate={(dt: string) => {
+                                                    formik.setFieldValue('ngayLapHoaDon', dt);
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        ngayLapHoaDon: dt
+                                                    });
+                                                }}
+                                                helperText={
+                                                    formik.touched.idDoiTuongNopTien &&
+                                                    formik.errors.idDoiTuongNopTien
+                                                }
+                                            />
+                                        </ThemeProvider>
                                     </Grid>
 
                                     <Grid item xs={12} sm={6}>
@@ -212,7 +248,31 @@ const CreateOrEditSoQuyDialog = ({
                                         xs={12}
                                         sm={6}
                                         pt={{ xs: 2, sm: '28px', lg: '28px' }}>
-                                        <AutocompleteCustomer />
+                                        <AutocompleteCustomer
+                                            idChosed={idDoiTuongNopTien}
+                                            handleChoseItem={(item: any) => {
+                                                {
+                                                    formik.setFieldValue(
+                                                        'idDoiTuongNopTien',
+                                                        item?.id ?? null
+                                                    );
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        idDoiTuongNopTien: item?.id,
+                                                        maNguoiNop: item?.maKhachHang,
+                                                        tenNguoiNop: item?.tenKhachHang
+                                                    });
+                                                }
+                                            }}
+                                            error={
+                                                formik.touched.idDoiTuongNopTien &&
+                                                Boolean(formik.errors?.idDoiTuongNopTien)
+                                            }
+                                            helperText={
+                                                formik.touched.idDoiTuongNopTien &&
+                                                formik.errors.idDoiTuongNopTien
+                                            }
+                                        />
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <span className="modal-lable">Tiền thu </span>
@@ -223,13 +283,17 @@ const CreateOrEditSoQuyDialog = ({
                                             thousandSeparator
                                             size="small"
                                             name="tongTienThu"
-                                            value={quyHoaDon?.tongTienThu}
+                                            // value={formik.values.tongTienThu}
                                             customInput={TextField}
-                                            onChange={handleChange}
+                                            onChange={formik.handleChange}
                                             error={
-                                                touched.tongTienThu && Boolean(errors?.tongTienThu)
+                                                formik.touched?.tongTienThu &&
+                                                Boolean(formik.errors?.tongTienThu)
                                             }
-                                            helperText={touched.tongTienThu && errors.tongTienThu}
+                                            helperText={
+                                                formik.touched.tongTienThu &&
+                                                formik.errors.tongTienThu
+                                            }
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
@@ -250,10 +314,10 @@ const CreateOrEditSoQuyDialog = ({
                                                 value="end"
                                                 control={
                                                     <Checkbox
+                                                        name="ckHachToanKinhDoanh"
                                                         //checked={values.maPhieu === 'Phiếu thu'}
-                                                        onChange={handleChange}
+                                                        onChange={formik.handleChange}
                                                         value="Phiếu thu"
-                                                        name="acb"
                                                         sx={{
                                                             color: '#7C3367'
                                                         }}
@@ -276,7 +340,8 @@ const CreateOrEditSoQuyDialog = ({
                                         variant="contained"
                                         sx={{ bgcolor: '#7C3367' }}
                                         className="btn-container-hover"
-                                        type="submit">
+                                        type="submit"
+                                        disabled={formik.isSubmitting}>
                                         Lưu
                                     </Button>
                                 </DialogActions>
