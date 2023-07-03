@@ -63,9 +63,9 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
-import { tr } from 'date-fns/locale';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
+    const idChiNhanh = Cookies.get('IdChiNhanh');
     const [txtSearch, setTxtSearch] = useState('');
     const isFirstRender = useRef(true);
     const afterRender = useRef(false);
@@ -83,7 +83,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         new PageHoaDonDto({
             idKhachHang: null,
             tenKhachHang: '',
-            idChiNhanh: chiNhanhCurrent.id
+            idChiNhanh: chiNhanhCurrent.id == '' ? idChiNhanh : chiNhanhCurrent.id
         })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
@@ -118,7 +118,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     };
 
     const getInforChiNhanh_byID = async () => {
-        const data = await chiNhanhService.GetDetail(chiNhanhCurrent.id);
+        const idChinhanh = chiNhanhCurrent.id == '' ? idChiNhanh : chiNhanhCurrent.id;
+        const data = await chiNhanhService.GetDetail(idChinhanh ?? '');
         return data;
     };
 
@@ -204,6 +205,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                     tongTichDiem: customerChosed.tongTichDiem
                 };
                 await dbDexie.hoaDon.add(dataHD);
+                setHoaDon(dataHD);
             } else {
                 // get hoadon + cthd
                 const hdctCache = data[0].hoaDonChiTiet ?? [];
@@ -567,7 +569,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
         // save soquy (todo POS, ChuyenKhoan)
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
-            idChiNhanh: chiNhanhCurrent.id,
+            idChiNhanh: chiNhanhCurrent.id == '' ? idChiNhanh : chiNhanhCurrent.id,
             idLoaiChungTu: 11,
             ngayLapHoaDon: hoadon.ngayLapHoaDon,
             tongTienThu: hoadon.tongThanhToan
@@ -1293,7 +1295,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     overflow: 'hidden',
                                                     textOverflow: 'ellipsis'
                                                 }}
-                                                title={ct.tenHangHoa}>
+                                                title={ct.tenHangHoa}
+                                                onClick={() => showPopChiTietGioHang(ct)}>
                                                 {ct.tenHangHoa}
                                             </Typography>
                                         </Box>
