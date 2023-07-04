@@ -33,7 +33,7 @@ import { observer } from 'mobx-react';
 import khachHangStore from '../../stores/khachHangStore';
 import { enqueueSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
-
+import CustomerInfo from './components/CustomerInfo';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -51,6 +51,7 @@ interface CustomerScreenState {
     selectedRowId: any;
     createOrEditKhachHang: CreateOrEditKhachHangDto;
     visibilityColumn: any;
+    information: boolean;
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -72,7 +73,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             anchorEl: null,
             selectedRowId: null,
             createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
-            visibilityColumn: {}
+            visibilityColumn: {},
+            information: false
         };
     }
 
@@ -209,6 +211,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             sortType: type
         });
         this.getData();
+    };
+    handleOpenInfor = () => {
+        this.setState({ information: true });
+    };
+    handleCloseInfor = () => {
+        this.setState({ information: false });
     };
     render(): React.ReactNode {
         const columns: GridColDef[] = [
@@ -451,195 +459,221 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         const { createOrEditKhachHang } = this.state;
 
         return (
-            <Box
-                className="customer-page"
-                paddingLeft="2.2222222222222223vw"
-                paddingRight="2.2222222222222223vw"
-                paddingTop="1.5277777777777777vw">
-                <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
-                            Danh sách khách hàng
-                        </Typography>
-                        <Box className="form-search">
-                            <TextField
-                                sx={{
-                                    backgroundColor: '#FFFAFF',
-                                    borderColor: '#CDC9CD'
-                                }}
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                onChange={async (e) => {
-                                    await this.setState({ keyword: e.target.value });
-                                }}
-                                onKeyDown={(event) => {
-                                    if (event.key === 'Enter') {
-                                        this.getData();
-                                    }
-                                }}
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton
-                                            type="button"
-                                            onClick={() => {
-                                                this.setState({ currentPage: 1 });
+            <>
+                {this.state.information === false ? (
+                    <Box
+                        className="customer-page"
+                        paddingLeft="2.2222222222222223vw"
+                        paddingRight="2.2222222222222223vw"
+                        paddingTop="1.5277777777777777vw">
+                        <Grid container alignItems="center" justifyContent="space-between">
+                            <Grid
+                                item
+                                xs={12}
+                                md="auto"
+                                display="flex"
+                                alignItems="center"
+                                gap="12px">
+                                <Typography
+                                    color="#333233"
+                                    variant="h1"
+                                    fontSize="16px"
+                                    fontWeight="700">
+                                    Danh sách khách hàng
+                                </Typography>
+                                <Box className="form-search">
+                                    <TextField
+                                        sx={{
+                                            backgroundColor: '#FFFAFF',
+                                            borderColor: '#CDC9CD'
+                                        }}
+                                        className="search-field"
+                                        variant="outlined"
+                                        type="search"
+                                        onChange={async (e) => {
+                                            await this.setState({ keyword: e.target.value });
+                                        }}
+                                        onKeyDown={(event) => {
+                                            if (event.key === 'Enter') {
                                                 this.getData();
-                                            }}>
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
+                                            }
+                                        }}
+                                        placeholder="Tìm kiếm"
+                                        InputProps={{
+                                            startAdornment: (
+                                                <IconButton
+                                                    type="button"
+                                                    onClick={() => {
+                                                        this.setState({ currentPage: 1 });
+                                                        this.getData();
+                                                    }}>
+                                                    <img src={SearchIcon} />
+                                                </IconButton>
+                                            )
+                                        }}
+                                    />
+                                </Box>
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md="auto"
+                                item
+                                display="flex"
+                                gap="8px"
+                                justifyContent="end">
+                                <ButtonGroup
+                                    variant="contained"
+                                    sx={{ gap: '8px' }}
+                                    className="rounded-4px resize-height">
+                                    <Button
+                                        className="border-color btn-outline-hover"
+                                        variant="outlined"
+                                        startIcon={<img src={DownloadIcon} />}
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            color: '#666466',
+                                            bgcolor: '#fff!important'
+                                        }}>
+                                        Nhập
+                                    </Button>
+                                    <Button
+                                        className="border-color btn-outline-hover"
+                                        variant="outlined"
+                                        onClick={() => {
+                                            this.exportToExcel();
+                                        }}
+                                        startIcon={<img src={UploadIcon} />}
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            color: '#666466',
+                                            padding: '10px 16px',
+                                            borderColor: '#E6E1E6',
+                                            bgcolor: '#fff!important'
+                                        }}>
+                                        Xuất
+                                    </Button>
+                                    <Button
+                                        className="bg-main btn-container-hover"
+                                        onClick={() => {
+                                            this.createOrUpdateModalOpen('');
+                                        }}
+                                        variant="contained"
+                                        startIcon={<img src={AddIcon} />}
+                                        sx={{
+                                            textTransform: 'capitalize',
+                                            fontWeight: '400',
+                                            minWidth: '173px'
+                                        }}>
+                                        Thêm khách hàng
+                                    </Button>
+                                </ButtonGroup>
+                            </Grid>
+                        </Grid>
+                        <div
+                            className="customer-page_row-2"
+                            style={{
+                                width: '100%',
+                                marginTop: '24px',
+                                backgroundColor: '#fff'
+                            }}>
+                            <DataGrid
+                                disableRowSelectionOnClick
+                                autoHeight
+                                rows={this.state.rowTable}
+                                columns={columns}
+                                onRowClick={this.handleOpenInfor}
+                                hideFooter
+                                onColumnVisibilityModelChange={this.toggleColumnVisibility}
+                                columnVisibilityModel={this.state.visibilityColumn}
+                                checkboxSelection
+                                sx={{
+                                    '& .MuiDataGrid-iconButtonContainer': {
+                                        display: 'none'
+                                    },
+                                    '& .MuiDataGrid-cellContent': {
+                                        fontSize: '12px'
+                                    },
+                                    '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                        outline: 'none!important'
+                                    },
+                                    '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
+                                        {
+                                            outline: 'none '
+                                        },
+                                    '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                        color: '#7C3367'
+                                    },
+                                    '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                        fill: '#7C3367'
+                                    },
+                                    '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                        {
+                                            fill: '#000'
+                                        },
+                                    '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                        {
+                                            fill: '#000'
+                                        },
+                                    '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                        color: '#7C3367!important'
+                                    },
+                                    '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                        {
+                                            outline: 'none'
+                                        },
+                                    '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                        {
+                                            bgcolor: '#f2ebf0'
+                                        }
                                 }}
+                                localeText={TextTranslate}
                             />
-                        </Box>
-                    </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <ButtonGroup
-                            variant="contained"
-                            sx={{ gap: '8px' }}
-                            className="rounded-4px resize-height">
-                            <Button
-                                className="border-color btn-outline-hover"
-                                variant="outlined"
-                                startIcon={<img src={DownloadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    bgcolor: '#fff!important'
-                                }}>
-                                Nhập
-                            </Button>
-                            <Button
-                                className="border-color btn-outline-hover"
-                                variant="outlined"
-                                onClick={() => {
-                                    this.exportToExcel();
-                                }}
-                                startIcon={<img src={UploadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    padding: '10px 16px',
-                                    borderColor: '#E6E1E6',
-                                    bgcolor: '#fff!important'
-                                }}>
-                                Xuất
-                            </Button>
-                            <Button
-                                className="bg-main btn-container-hover"
-                                onClick={() => {
-                                    this.createOrUpdateModalOpen('');
-                                }}
-                                variant="contained"
-                                startIcon={<img src={AddIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    minWidth: '173px'
-                                }}>
-                                Thêm khách hàng
-                            </Button>
-                        </ButtonGroup>
-                    </Grid>
-                </Grid>
-                <div
-                    className="customer-page_row-2"
-                    style={{
-                        width: '100%',
-                        marginTop: '24px',
-                        backgroundColor: '#fff'
-                    }}>
-                    <DataGrid
-                        disableRowSelectionOnClick
-                        autoHeight
-                        rows={this.state.rowTable}
-                        columns={columns}
-                        hideFooter
-                        onColumnVisibilityModelChange={this.toggleColumnVisibility}
-                        columnVisibilityModel={this.state.visibilityColumn}
-                        checkboxSelection
-                        sx={{
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-cellContent': {
-                                fontSize: '12px'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: '#f2ebf0'
+                            <ActionMenuTable
+                                selectedRowId={this.state.selectedRowId}
+                                anchorEl={this.state.anchorEl}
+                                closeMenu={this.handleCloseMenu}
+                                handleView={this.handleView}
+                                handleEdit={this.handleEdit}
+                                handleDelete={this.showConfirmDelete}
+                            />
+                            <CustomTablePagination
+                                currentPage={this.state.currentPage}
+                                rowPerPage={this.state.rowPerPage}
+                                totalRecord={this.state.totalItems}
+                                totalPage={this.state.totalPage}
+                                handlePerPageChange={this.handlePerPageChange}
+                                handlePageChange={this.handlePageChange}
+                            />
+                            <CreateOrEditCustomerDialog
+                                visible={this.state.toggle}
+                                onCancel={this.handleToggle}
+                                onOk={this.handleSubmit}
+                                handleChange={this.handleChange}
+                                title={
+                                    this.state.idkhachHang == ''
+                                        ? 'Thêm mới khách hàng'
+                                        : 'Cập nhật thông tin khách hàng'
                                 }
-                        }}
-                        localeText={TextTranslate}
-                    />
-                    <ActionMenuTable
-                        selectedRowId={this.state.selectedRowId}
-                        anchorEl={this.state.anchorEl}
-                        closeMenu={this.handleCloseMenu}
-                        handleView={this.handleView}
-                        handleEdit={this.handleEdit}
-                        handleDelete={this.showConfirmDelete}
-                    />
-                    <CustomTablePagination
-                        currentPage={this.state.currentPage}
-                        rowPerPage={this.state.rowPerPage}
-                        totalRecord={this.state.totalItems}
-                        totalPage={this.state.totalPage}
-                        handlePerPageChange={this.handlePerPageChange}
-                        handlePageChange={this.handlePageChange}
-                    />
-                    <CreateOrEditCustomerDialog
-                        visible={this.state.toggle}
-                        onCancel={this.handleToggle}
-                        onOk={this.handleSubmit}
-                        handleChange={this.handleChange}
-                        title={
-                            this.state.idkhachHang == ''
-                                ? 'Thêm mới khách hàng'
-                                : 'Cập nhật thông tin khách hàng'
-                        }
-                        formRef={createOrEditKhachHang}
-                    />
-                </div>
-                <div
-                    className={this.state.toggle ? 'show customer-overlay' : 'customer-overlay'}
-                    onClick={this.handleToggle}></div>
+                                formRef={createOrEditKhachHang}
+                            />
+                        </div>
+                        <div
+                            className={
+                                this.state.toggle ? 'show customer-overlay' : 'customer-overlay'
+                            }
+                            onClick={this.handleToggle}></div>
 
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.showConfirmDelete}></ConfirmDelete>
-            </Box>
+                        <ConfirmDelete
+                            isShow={this.state.isShowConfirmDelete}
+                            onOk={this.onOkDelete}
+                            onCancel={this.showConfirmDelete}></ConfirmDelete>
+                    </Box>
+                ) : (
+                    <CustomerInfo onClose={this.handleCloseInfor} />
+                )}
+            </>
         );
     }
 }
