@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { Box, Typography, Grid, IconButton, TextField } from '@mui/material';
-import { ReactComponent as ArrowLeft } from '../../images/arrow_back.svg';
-import { ReactComponent as TienMat } from '../../images/tien-mat.svg';
-import { ReactComponent as NganHang } from '../../images/ngan-hang.svg';
-import { ReactComponent as ChuyenKhoan } from '../../images/chuyen-khoan.svg';
+import { ReactComponent as ArrowLeft } from '../../../images/arrow_back.svg';
+import { ReactComponent as TienMat } from '../../../images/tien-mat.svg';
+import { ReactComponent as NganHang } from '../../../images/ngan-hang.svg';
+import { ReactComponent as ChuyenKhoan } from '../../../images/chuyen-khoan.svg';
 interface ChildComponent {
     onClick: () => void;
 

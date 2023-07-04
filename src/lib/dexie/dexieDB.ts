@@ -4,7 +4,6 @@ import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 
 export class SubClassDexie extends Dexie {
-    hoaDonChiTiet!: Table<HoaDonChiTietDto>;
     hoaDon!: Table<PageHoaDonDto>;
     khachCheckIn!: Table<PageKhachHangCheckInDto>;
 
@@ -12,7 +11,6 @@ export class SubClassDexie extends Dexie {
         super('DBTest');
         this.version(1).stores({
             hoaDon: '&id, idKhachHang',
-            hoaDonChiTiet: '&id, idHoaDon,idDonViQuyDoi,soLuong, thanhTien',
             khachCheckIn: '&idCheckIn, idKhachHang'
         });
     }

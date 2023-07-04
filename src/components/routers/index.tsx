@@ -150,7 +150,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(
-                        () => import('../../pages/ban_hang/main_page_ban_hang')
+                        () => import('../../pages/ban_hang/thu_ngan/main_page_ban_hang')
                     )
                 }
             ]
@@ -214,7 +214,9 @@ export const appRouters: AppRouteProps = {
 
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/ban_hang/index'))
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/thu_ngan/index')
+                            )
                         },
                         {
                             path: '/giao-dich-thanh-toan',
@@ -390,7 +392,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/users',
                             permission: 'Pages.Administration.Users',
-                            title: 'Users',
+                            title: 'Người dùng',
                             name: 'user',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
@@ -402,7 +404,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/roles',
                             permission: 'Pages.Administration.Roles',
-                            title: 'Roles',
+                            title: 'Vai trò',
                             name: 'role',
                             iconActive: null,
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -414,7 +416,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/tenants',
                             permission: 'Pages.Tenants',
-                            title: 'Tenants',
+                            title: 'Tenant',
                             name: 'tenant',
                             iconActive: null,
                             icon: <BsDot style={{ fontSize: 20 }} />,

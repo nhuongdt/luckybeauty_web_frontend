@@ -9,7 +9,12 @@ import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/Pa
 import Utils from '../../utils/utils'; // func common
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 
-export default function AutocompleteCustomer({ idChosed, handleChoseItem }: any) {
+export default function AutocompleteCustomer({
+    idChosed,
+    handleChoseItem,
+    helperText = '',
+    err = false
+}: any) {
     const [listCustomer, setListCustomer] = useState([]);
     const [cusChosed, setCusChosed] = useState<CreateOrEditKhachHangDto>();
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
@@ -64,7 +69,9 @@ export default function AutocompleteCustomer({ idChosed, handleChoseItem }: any)
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={listCustomer}
                 getOptionLabel={(option: any) => (option.tenKhachHang ? option.tenKhachHang : '')}
-                renderInput={(params) => <TextField {...params} label="Tìm kiếm" />}
+                renderInput={(params) => (
+                    <TextField {...params} label="Tìm kiếm" helperText={helperText} error={err} />
+                )}
                 renderOption={(props, option) => {
                     return (
                         <li {...props}>

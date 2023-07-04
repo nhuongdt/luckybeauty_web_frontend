@@ -25,7 +25,7 @@ class SuggestService {
 
     public async SuggestCaLamViec(): Promise<SuggestCaLamViecDto[]> {
         try {
-            const result = await http.post('api/services/app/Suggest/SuggestCaLamViec');
+            const result = await http.post('api/services/app/Suggest/SuggestCaLamViecs');
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while suggesting CaLamViec:', error);
