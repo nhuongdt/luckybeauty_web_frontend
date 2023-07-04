@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = (
                         const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
 
                         setCurrentChiNhanh(idChiNhanh);
-                        const remember = Cookies.get('isRemberMe');
+                        const remember = Cookies.get('isRememberMe');
                         Cookies.set('IdChiNhanh', idChiNhanh, {
                             expires: remember === 'true' ? 1 : undefined
                         });
@@ -94,11 +94,11 @@ const Header: React.FC<HeaderProps> = (
         const idChiNhanh = item.props.value;
         const tenChiNhanh = item.props.children;
         setCurrentChiNhanh(idChiNhanh);
-        const remember = Cookies.get('isRemberMe');
+        const remember = Cookies.get('isRememberMe');
         Cookies.set('IdChiNhanh', idChiNhanh, {
             expires: remember === 'true' ? 1 : undefined
         });
-        // window.location.reload();
+        window.location.reload();
         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
     };
 
@@ -195,13 +195,24 @@ const Header: React.FC<HeaderProps> = (
                         <Badge>
                             <Button
                                 sx={{
-                                    minWidth: 'unset!important'
+                                    bgcolor: 'transparent!important',
+                                    minWidth: 'unset!important',
+                                    '&:hover img': {
+                                        filter: ' brightness(0) saturate(100%) invert(26%) sepia(17%) saturate(1943%) hue-rotate(265deg) brightness(100%) contrast(95%)'
+                                    }
                                 }}>
                                 <img src={MessageIcon} alt="Message" />
                             </Button>
                         </Badge>
                         <Badge color="error">
-                            <Button sx={{ minWidth: 'unset!important' }}>
+                            <Button
+                                sx={{
+                                    bgcolor: 'transparent!important',
+                                    minWidth: 'unset!important',
+                                    '&:hover img': {
+                                        filter: ' brightness(0) saturate(100%) invert(26%) sepia(17%) saturate(1943%) hue-rotate(265deg) brightness(100%) contrast(95%)'
+                                    }
+                                }}>
                                 <img src={NotificationIcon} alt="notification" />
                             </Button>
                         </Badge>
@@ -238,7 +249,7 @@ const Header: React.FC<HeaderProps> = (
                                         localStorage.removeItem('permissions');
                                     }}>
                                     <LogoutIcon />
-                                    <span> Logout </span>
+                                    <span> Đăng xuất </span>
                                 </Link>
                             </MenuItem>
                             <MenuItem onClick={handleClose}>

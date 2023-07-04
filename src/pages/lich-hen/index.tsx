@@ -23,6 +23,7 @@ import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQ
 import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
+import ThemThoiGianChan from './components/ThoiGianChan';
 class LichHenScreen extends Component {
     calendarRef: RefObject<FullCalendar> = React.createRef();
     state = {
@@ -33,7 +34,8 @@ class LichHenScreen extends Component {
         idBooking: '',
         suggestNhanVien: [] as SuggestNhanSuDto[],
         suggestKhachHang: [] as SuggestKhachHangDto[],
-        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
+        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[],
+        openThoiGianChan: false
     };
     async componentDidMount() {
         this.getData();
@@ -128,7 +130,12 @@ class LichHenScreen extends Component {
         await this.getData();
         this.setState({ modalVisible: false });
     };
-
+    handleOpenThoiGianChan = () => {
+        this.setState({ openThoiGianChan: true });
+    };
+    handleCloseThoiGianChan = () => {
+        this.setState({ openThoiGianChan: false });
+    };
     render(): ReactNode {
         return (
             <Box sx={{ height: '100%', padding: '0 2.2222222222222223vw' }}>
@@ -169,6 +176,7 @@ class LichHenScreen extends Component {
                                         <SettingIcon color="#231F20" />
                                     </Button>
                                     <Button
+                                        onClick={this.handleOpenThoiGianChan}
                                         className="btn-outline-hover"
                                         variant="outlined"
                                         startIcon={
@@ -381,6 +389,10 @@ class LichHenScreen extends Component {
                     suggestNhanVien={this.state.suggestNhanVien}
                     suggestDichVu={this.state.suggestDonViQuiDoi}
                     suggestKhachHang={this.state.suggestKhachHang}></CreateOrEditLichHenModal>
+                <ThemThoiGianChan
+                    open={this.state.openThoiGianChan}
+                    onClose={this.handleCloseThoiGianChan}
+                />
             </Box>
         );
     }

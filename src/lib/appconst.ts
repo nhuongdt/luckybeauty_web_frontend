@@ -43,7 +43,16 @@ const AppConsts = {
     },
     emailRegex: emailRegex,
     phoneRegex: phoneRegex,
-    yyyyMMddHHmmRegex: yyyyMMddHHmmRegex
+    yyyyMMddHHmmRegex: yyyyMMddHHmmRegex,
+    dayOfWeek: {
+        monday: 'Monday',
+        tuesday: 'Tuesday',
+        wednesday: 'Wednesday',
+        thursday: 'Thursday',
+        friday: 'Friday',
+        saturday: 'Saturday',
+        sunday: 'Sunday'
+    }
 };
 
 export default AppConsts;

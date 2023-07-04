@@ -77,7 +77,10 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
             idNhanVien: '',
             idDonViQuiDoi: ''
         };
-        const options = [{ tenKhachHang: 'Thêm mới', soDienThoai: 'add_new' }, ...suggestKhachHang];
+        const options = [
+            { tenKhachHang: 'Thêm mới', soDienThoai: 'add_new', id: '' },
+            ...suggestKhachHang
+        ];
         return (
             <div>
                 <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">
@@ -105,68 +108,48 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                     </DialogTitle>
                     <DialogContent sx={{ pr: '0', pb: '0' }}>
                         <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-                            {({ errors, touched, values, handleChange }) => (
+                            {({ errors, touched, values, handleChange, setFieldValue }) => (
                                 <Form>
                                     <Grid container spacing={[8, 3]}>
                                         <Grid item xs={5} sx={{ pr: '20px' }}>
-                                            <FormGroup>
-                                                {/* <Select
-                                                    size="small"
-                                                    name="idKhachHang"
-                                                    onChange={handleChange}>
-                                                    <MenuItem>
-                                                        <Button>
-                                                            <span
-                                                                style={{
-                                                                    marginLeft: '10px',
-                                                                    textAlign: 'center'
-                                                                }}>
-                                                                Thêm khách hàng mới
-                                                            </span>
-                                                        </Button>
-                                                    </MenuItem>
-                                                    {suggestKhachHang.map((item) => (
-                                                        <MenuItem key={item.id} value={item.id}>
-                                                            {item.tenKhachHang} - {item.soDienThoai}
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select> */}
-                                                <Autocomplete
-                                                    sx={{ pt: '24px' }}
-                                                    options={options.map((option) => {
-                                                        if (option.soDienThoai === 'add_new') {
-                                                            return 'Thêm mới';
-                                                        } else {
-                                                            return `${option.tenKhachHang} - ${option.soDienThoai}`;
-                                                        }
-                                                    })}
-                                                    size="small"
-                                                    fullWidth
-                                                    disablePortal
-                                                    onChange={handleChange}
-                                                    renderInput={(params) => (
-                                                        <TextField
-                                                            {...params}
-                                                            placeholder="Tìm tên"
-                                                            name="idKhachHang"
-                                                            InputProps={{
-                                                                ...params.InputProps,
-                                                                startAdornment: (
-                                                                    <>
-                                                                        {
-                                                                            params.InputProps
-                                                                                .startAdornment
-                                                                        }
-                                                                        <InputAdornment position="start">
-                                                                            <SearchIcon />
-                                                                        </InputAdornment>
-                                                                    </>
-                                                                )
-                                                            }}
-                                                        />
-                                                    )}
-                                                />
-                                            </FormGroup>
+                                            {/* <FormGroup> */}
+                                            <Autocomplete
+                                                sx={{ pt: '24px' }}
+                                                options={options}
+                                                getOptionLabel={(option) =>
+                                                    `${option.tenKhachHang} (${option.soDienThoai})`
+                                                }
+                                                size="small"
+                                                fullWidth
+                                                disablePortal
+                                                onChange={(event, value) => {
+                                                    setFieldValue(
+                                                        'idKhachHang',
+                                                        value ? value.id : ''
+                                                    ); // Cập nhật giá trị id trong Formik
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        placeholder="Tìm tên"
+                                                        InputProps={{
+                                                            ...params.InputProps,
+                                                            startAdornment: (
+                                                                <>
+                                                                    {
+                                                                        params.InputProps
+                                                                            .startAdornment
+                                                                    }
+                                                                    <InputAdornment position="start">
+                                                                        <SearchIcon />
+                                                                    </InputAdornment>
+                                                                </>
+                                                            )
+                                                        }}
+                                                    />
+                                                )}
+                                            />
+                                            {/* </FormGroup> */}
                                             <Box textAlign="center" mt="5vw">
                                                 <Box>
                                                     <IconMore />
@@ -230,20 +213,27 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             fontSize="14px">
                                                             Dịch vụ
                                                         </Typography>
-                                                        <Select
-                                                            fullWidth
+                                                        <Autocomplete
+                                                            options={suggestDichVu}
+                                                            getOptionLabel={(option) =>
+                                                                `${option.tenDonVi}`
+                                                            }
                                                             size="small"
-                                                            name="idDonViQuiDoi"
-                                                            value={values.idDonViQuiDoi}
-                                                            onChange={handleChange}>
-                                                            {suggestDichVu.map((item) => (
-                                                                <MenuItem
-                                                                    key={item.id}
-                                                                    value={item.id}>
-                                                                    {item.tenDonVi}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
+                                                            fullWidth
+                                                            disablePortal
+                                                            onChange={(event, value) => {
+                                                                setFieldValue(
+                                                                    'idDonViQuiDoi',
+                                                                    value ? value.id : ''
+                                                                ); // Cập nhật giá trị id trong Formik
+                                                            }}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    placeholder="Nhập tên dịch vụ"
+                                                                />
+                                                            )}
+                                                        />
                                                     </FormGroup>
                                                 </Grid>
                                                 <Grid item xs={4}>
@@ -272,20 +262,27 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             fontSize="14px">
                                                             Nhân viên
                                                         </Typography>
-                                                        <Select
-                                                            fullWidth
+                                                        <Autocomplete
+                                                            options={suggestNhanVien}
+                                                            getOptionLabel={(option) =>
+                                                                `${option.tenNhanVien}`
+                                                            }
                                                             size="small"
-                                                            name="idNhanVien"
-                                                            value={values.idNhanVien}
-                                                            onChange={handleChange}>
-                                                            {suggestNhanVien.map((item) => (
-                                                                <MenuItem
-                                                                    key={item.id}
-                                                                    value={item.id}>
-                                                                    {item.tenNhanVien}
-                                                                </MenuItem>
-                                                            ))}
-                                                        </Select>
+                                                            fullWidth
+                                                            disablePortal
+                                                            onChange={(event, value) => {
+                                                                setFieldValue(
+                                                                    'idNhanVien',
+                                                                    value ? value.id : ''
+                                                                ); // Cập nhật giá trị id trong Formik
+                                                            }}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    placeholder="Nhập tên nhân viên"
+                                                                />
+                                                            )}
+                                                        />
                                                     </FormGroup>
                                                 </Grid>
                                                 <Grid item xs={4}>

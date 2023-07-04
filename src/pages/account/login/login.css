@@ -239,10 +239,13 @@
 
 @media (max-width: 576px) {
     .login-page {
-        padding-left: 24px;
-        padding-right: 24px;
+        padding-left: 16px;
+        padding-right: 16px;
     }
     .logo-login {
-        padding-left: 24px;
+        padding-left: 16px;
+    }
+    .css-1oqqzyl-MuiContainer-root {
+        padding: 0 !important;
     }
 }

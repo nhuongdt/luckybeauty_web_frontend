@@ -392,7 +392,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/users',
                             permission: 'Pages.Administration.Users',
-                            title: 'Users',
+                            title: 'Người dùng',
                             name: 'user',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
@@ -404,7 +404,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/roles',
                             permission: 'Pages.Administration.Roles',
-                            title: 'Roles',
+                            title: 'Vai trò',
                             name: 'role',
                             iconActive: null,
                             icon: <BsDot style={{ fontSize: 20 }} />,
@@ -416,7 +416,7 @@ export const appRouters: AppRouteProps = {
                         {
                             path: '/tenants',
                             permission: 'Pages.Tenants',
-                            title: 'Tenants',
+                            title: 'Tenant',
                             name: 'tenant',
                             iconActive: null,
                             icon: <BsDot style={{ fontSize: 20 }} />,
