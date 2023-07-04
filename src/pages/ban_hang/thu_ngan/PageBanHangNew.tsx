@@ -88,7 +88,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
-        new PageHoaDonChiTietDto({ id: '', expanded: true })
+        new PageHoaDonChiTietDto({ id: '', expanded: false })
     );
 
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
@@ -326,7 +326,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             idNhomHangHoa: item.idNhomHangHoa,
             idHangHoa: item.id,
             soLuong: 1,
-            expanded: true
+            expanded: false
         });
         console.log('newCT ', newCT);
 
