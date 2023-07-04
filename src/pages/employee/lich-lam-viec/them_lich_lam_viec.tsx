@@ -10,13 +10,16 @@ import {
     MenuItem,
     SelectChangeEvent,
     Checkbox,
-    FormControlLabel
+    FormControlLabel,
+    ToggleButtonGroup,
+    ToggleButton
 } from '@mui/material';
 
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendarMenu.svg';
 import { ReactComponent as ClockIcon } from '../../../images/clock.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
+import AppConsts from '../../../lib/appconst';
 
 interface DialogComponentProps {
     open: boolean;
@@ -32,7 +35,10 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDate(event.target.value);
     };
-
+    const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const handleDayToggle = (event: React.MouseEvent<HTMLElement>, newDays: string[]) => {
+        setSelectedDays(newDays);
+    };
     const TimeControl = [
         {
             day: 'Thứ 2',
@@ -213,6 +219,106 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                         </Box>
                     </Grid>
                     <Grid item xs={8}>
+                        <Grid item alignContent={'center'} alignItems={'center'}>
+                            <ToggleButtonGroup
+                                fullWidth
+                                size="small"
+                                orientation="horizontal"
+                                value={selectedDays}
+                                onChange={handleDayToggle}>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.monday}
+                                    aria-label="Monday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.monday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    T2
+                                </ToggleButton>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.tuesday}
+                                    aria-label="Tuesday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.tuesday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    T3
+                                </ToggleButton>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.wednesday}
+                                    aria-label="Wednesday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.wednesday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    T4
+                                </ToggleButton>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.thursday}
+                                    aria-label="Thursday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.thursday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    T5
+                                </ToggleButton>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.friday}
+                                    aria-label="Friday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.friday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    T6
+                                </ToggleButton>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.saturday}
+                                    aria-label="Saturday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.saturday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    T7
+                                </ToggleButton>
+                                <ToggleButton
+                                    value={AppConsts.dayOfWeek.sunday}
+                                    aria-label="Sunday"
+                                    style={
+                                        selectedDays.includes(AppConsts.dayOfWeek.sunday)
+                                            ? {
+                                                  backgroundColor: '#4CB050',
+                                                  color: '#FFFFFF'
+                                              }
+                                            : {}
+                                    }>
+                                    CN
+                                </ToggleButton>
+                            </ToggleButtonGroup>
+                        </Grid>
                         <Box
                             sx={{
                                 border: '1px solid #E6E1E6',
@@ -273,6 +379,7 @@ const ThemLich: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                                     </Grid>
                                 </Grid>
                             </Grid>
+
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                 {TimeControl.map((item) => (
                                     <Box key={item.day}>

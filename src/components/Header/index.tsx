@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = (
                         const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
 
                         setCurrentChiNhanh(idChiNhanh);
-                        const remember = Cookies.get('isRemberMe');
+                        const remember = Cookies.get('isRememberMe');
                         Cookies.set('IdChiNhanh', idChiNhanh, {
                             expires: remember === 'true' ? 1 : undefined
                         });
@@ -94,11 +94,11 @@ const Header: React.FC<HeaderProps> = (
         const idChiNhanh = item.props.value;
         const tenChiNhanh = item.props.children;
         setCurrentChiNhanh(idChiNhanh);
-        const remember = Cookies.get('isRemberMe');
+        const remember = Cookies.get('isRememberMe');
         Cookies.set('IdChiNhanh', idChiNhanh, {
             expires: remember === 'true' ? 1 : undefined
         });
-        // window.location.reload();
+        window.location.reload();
         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
     };
 

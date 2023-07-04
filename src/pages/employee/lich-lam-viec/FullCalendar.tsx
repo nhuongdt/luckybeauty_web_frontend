@@ -16,7 +16,6 @@ import {
     MenuItem,
     ButtonGroup
 } from '@mui/material';
-import avatar from '../../../images/avatar.png';
 import { ReactComponent as EditIcon } from '../../../images/edit-2.svg';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -27,12 +26,41 @@ import CustomEmployee from './DialogCustom';
 import ThemLich from './them_lich_lam_viec';
 import Delete from './deleteAlert';
 import Edit from './editNhanVien';
+import { LichLamViecNhanVienDto } from '../../../services/nhan-vien/lich_lam_viec/dto/LichLamViecNhanVienDto';
+import Cookies from 'js-cookie';
+import lichLamViecStore from '../../../stores/lichLamViecStore';
+import { observer } from 'mobx-react';
+import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
+import SuggestService from '../../../services/suggests/SuggestService';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import CreateOeEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
 const Calendar: React.FC = () => {
     const [weekDates, setWeekDates] = useState<any[]>([]);
-
+    const [data, setData] = useState<LichLamViecNhanVienDto[]>([]);
+    const [filter, setFilter] = useState('');
+    const [skipCount, setSkipCount] = useState(1);
+    const [dateFrom, setDateFrom] = useState(new Date());
+    const [maxResultCount, setMaxResultCount] = useState(10);
+    const [dateSelected, setDateSelected] = useState<Date>(new Date());
+    const [dateView, setDateView] = useState('');
+    const [suggestNhanVien, setSuggestNhanVien] = useState<SuggestNhanSuDto[]>([]);
+    const [idNhanVien, setIdNhanVien] = useState('');
+    const [totalPage, setTotalPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     useEffect(() => {
-        const today = new Date();
-        const firstDayOfWeek = new Date(today.setDate(today.getDate() - today.getDay() + 1));
+        getCurrentDateInVietnamese(new Date());
+        getWeekDate(new Date());
+        getData();
+        getSuggestNhanVien();
+    }, []);
+    const getSuggestNhanVien = async () => {
+        const result = await SuggestService.SuggestNhanSu();
+        setSuggestNhanVien(result);
+    };
+    const getWeekDate = (dateCurrent: Date) => {
+        const firstDayOfWeek = new Date(
+            dateCurrent.setDate(dateCurrent.getDate() - dateCurrent.getDay() + 1)
+        );
 
         const dates = [];
         for (let i = 0; i < 7; i++) {
@@ -43,8 +71,22 @@ const Calendar: React.FC = () => {
         }
 
         setWeekDates(dates);
-    }, []);
-
+    };
+    const getData = async () => {
+        setData([]);
+        await lichLamViecStore.getLichLamViecNhanVienWeek({
+            dateFrom: dateFrom,
+            dateTo: dateFrom,
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            keyword: filter,
+            skipCount: skipCount,
+            maxResultCount: maxResultCount,
+            idNhanVien: employ == '' ? undefined : employ
+        });
+        setData(lichLamViecStore.listLichLamViec.items);
+        setTotalCount(lichLamViecStore.listLichLamViec.totalCount);
+        setTotalPage(Math.ceil(lichLamViecStore.listLichLamViec.totalCount / maxResultCount));
+    };
     const formatDate = (date: Date): JSX.Element => {
         const day = date.toLocaleDateString('vi', { weekday: 'long' });
         const month = date.toLocaleDateString('vi', { month: 'long' });
@@ -58,72 +100,11 @@ const Calendar: React.FC = () => {
             </>
         );
     };
-
-    const datas = [
-        {
-            name: 'Hà Nguyễn',
-            totalTime: '63h',
-            avatar: avatar,
-            MonDay: '04:00 - 18:00',
-            Tuesday: '00:00 - 18:00',
-            Wednesday: '10:00 - 18:00',
-            Thursday: '19:00 - 18:00',
-            Friday: '09:00 - 18:00',
-            Saturday: '03:00 - 18:00',
-            Sunday: '02:00 - 18:00'
-        },
-        {
-            name: 'Hà Thanh',
-            totalTime: '63h',
-            avatar: avatar,
-            MonDay: '09:00 - 18:00',
-            Tuesday: '09:00 - 18:00',
-            Wednesday: '09:00 - 18:00',
-            Thursday: '09:00 - 18:00',
-            Friday: '09:00 - 18:00',
-            Saturday: '09:00 - 18:00',
-            Sunday: '09:00 - 18:00'
-        },
-        {
-            name: 'Tên gì trông hay ',
-            totalTime: '63h',
-            avatar: avatar,
-            MonDay: '09:00 - 18:00',
-            Tuesday: '09:00 - 18:00',
-            Wednesday: '09:00 - 18:00',
-            Thursday: '09:00 - 18:00',
-            Friday: '09:00 - 18:00',
-            Saturday: '09:00 - 18:00',
-            Sunday: '09:00 - 18:00'
-        },
-        {
-            name: 'Tài',
-            totalTime: '63h',
-            avatar: avatar,
-            MonDay: '09:00 - 17:00',
-            Tuesday: '09:00 - 8:00',
-            Wednesday: '09:00 - 10:00',
-            Thursday: '09:00 - 15:00',
-            Friday: '09:00 - 18:00',
-            Saturday: '09:00 - 18:00',
-            Sunday: '09:00 - 18:00'
-        },
-        {
-            name: 'Tên của ai thế',
-            totalTime: '63h',
-            avatar: avatar,
-            MonDay: '09:00 - 10:00',
-            Tuesday: '09:00 - 3:00',
-            Wednesday: '09:00 - 18:00',
-            Thursday: '09:00 - 8:00',
-            Friday: '09:00 - 18:00',
-            Saturday: '09:00 - 18:00',
-            Sunday: '09:00 - 18:00'
-        }
-    ];
     const [employ, setEmploy] = useState('');
     const changeEmploy = (event: SelectChangeEvent) => {
         setEmploy(event.target.value);
+        lichLamViecStore.updateIdNhanVien(event.target.value);
+        getData();
     };
     const [value, setValue] = useState('');
     const changeValue = (event: SelectChangeEvent) => {
@@ -163,7 +144,7 @@ const Calendar: React.FC = () => {
         setOpenEdit(false);
     };
 
-    const getCurrentDateInVietnamese = (): string => {
+    const getCurrentDateInVietnamese = (date: Date) => {
         const daysOfWeek = [
             'Chủ nhật',
             'Thứ hai',
@@ -188,16 +169,46 @@ const Calendar: React.FC = () => {
             'tháng 12'
         ];
 
-        const currentDate = new Date();
-        const dayOfWeek = daysOfWeek[currentDate.getDay()];
-        const dayOfMonth = currentDate.getDate();
-        const month = monthsOfYear[currentDate.getMonth()];
-        const year = currentDate.getFullYear();
+        const dayOfWeek = daysOfWeek[date.getDay()];
+        const dayOfMonth = date.getDate();
+        const month = monthsOfYear[date.getMonth()];
+        const year = date.getFullYear();
 
         const formattedDate = `${dayOfWeek},  ${dayOfMonth} ${month}, năm ${year}`;
-        return formattedDate;
+        setDateView(formattedDate);
     };
-
+    const prevWeek = async () => {
+        const newDate = new Date(dateSelected);
+        newDate.setDate(newDate.getDate() - 7);
+        lichLamViecStore.updateDate(newDate);
+        setDateSelected(newDate);
+        getCurrentDateInVietnamese(newDate);
+        getWeekDate(newDate);
+    };
+    const nextWeek = async () => {
+        const newDate = new Date(dateSelected);
+        newDate.setDate(newDate.getDate() + 7);
+        lichLamViecStore.updateDate(newDate);
+        setDateSelected(newDate);
+        getCurrentDateInVietnamese(newDate);
+        getWeekDate(newDate);
+    };
+    const toDayClick = async () => {
+        const newDate = new Date();
+        lichLamViecStore.updateDate(newDate);
+        setDateSelected(new Date(newDate));
+        getCurrentDateInVietnamese(newDate);
+        getWeekDate(newDate);
+    };
+    const handlePageChange = async (event: any, value: number) => {
+        lichLamViecStore.updatePageChange(value);
+        getData();
+    };
+    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        lichLamViecStore.updatePageChange(1);
+        lichLamViecStore.updatePerPageChange(parseInt(event.target.value.toString(), 10));
+        getData();
+    };
     return (
         <Box>
             <CustomEmployee
@@ -212,7 +223,12 @@ const Calendar: React.FC = () => {
             />
             <Edit open={openEdit} onClose={handleCloseEdit} />
             <Delete open={openDelete} onClose={handleCloseDelete} />
-            <ThemLich open={openDialog} onClose={handleCloseDialog} />
+            {/* <ThemLich open={openDialog} onClose={handleCloseDialog} /> */}
+            <CreateOeEditLichLamViecModal
+                idNhanVien={idNhanVien}
+                open={openDialog}
+                onClose={handleCloseDialog}
+            />
             <Box mb="16px" display="flex" justifyContent="space-between">
                 <Box>
                     <Select
@@ -232,10 +248,13 @@ const Calendar: React.FC = () => {
                         }}
                         IconComponent={() => <ArrowDown />}>
                         <MenuItem value="">Tất cả nhân viên</MenuItem>
-                        <MenuItem value="Tài">Đinh Tuấn Tài</MenuItem>
-                        <MenuItem value="vân">Đinh Thị vân anh</MenuItem>
-                        <MenuItem value="Anh">Đinh Thị Phương Anh</MenuItem>
-                        <MenuItem value="Dương">Đinh Tuấn Dương</MenuItem>
+                        {suggestNhanVien.map((item) => {
+                            return (
+                                <MenuItem value={item.id} key={item.id}>
+                                    {item.tenNhanVien}
+                                </MenuItem>
+                            );
+                        })}
                     </Select>
                 </Box>
                 <Box
@@ -252,12 +271,23 @@ const Calendar: React.FC = () => {
                         },
                         alignItems: 'center'
                     }}>
-                    <Button variant="outlined" sx={{ mr: '16px' }} className="btn-outline-hover">
+                    <Button
+                        variant="outlined"
+                        sx={{ mr: '16px' }}
+                        onClick={() => {
+                            prevWeek();
+                            getData();
+                        }}
+                        className="btn-outline-hover">
                         <ChevronLeftIcon />
                     </Button>
                     <Button
                         className="btn-to-day"
                         variant="text"
+                        onClick={() => {
+                            toDayClick();
+                            getData();
+                        }}
                         sx={{
                             color: '#7C3367!important',
                             fontSize: '16px!important',
@@ -271,9 +301,16 @@ const Calendar: React.FC = () => {
                         Hôm nay
                     </Button>
                     <Typography variant="h3" color="#333233" fontSize="16px" fontWeight="700">
-                        {getCurrentDateInVietnamese()}
+                        {dateView}
                     </Typography>
-                    <Button variant="outlined" sx={{ ml: '16px' }} className="btn-outline-hover">
+                    <Button
+                        variant="outlined"
+                        sx={{ ml: '16px' }}
+                        className="btn-outline-hover"
+                        onClick={() => {
+                            nextWeek();
+                            getData();
+                        }}>
                         <ChevronRightIcon />
                     </Button>
                 </Box>
@@ -326,7 +363,7 @@ const Calendar: React.FC = () => {
                 </Box>
             </Box>
             <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
-                <Table>
+                <Table size="small">
                     <TableHead>
                         <TableRow
                             sx={{
@@ -358,31 +395,35 @@ const Calendar: React.FC = () => {
                                 padding: '4px 4px 20px 4px'
                             }
                         }}>
-                        {datas.map((item) => (
-                            <TableRow key={item.name.replace(/\s/g, '')}>
+                        {data.map((item) => (
+                            <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
                                 <TableCell sx={{ border: '0!important' }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                         <Avatar
                                             sx={{ width: 32, height: 32 }}
                                             src={item.avatar}
-                                            alt={item.name}
+                                            alt={item.tenNhanVien}
                                         />
                                         <Box>
                                             <Typography
                                                 fontSize="14px"
                                                 color="#4C4B4C"
                                                 variant="body1">
-                                                {item.name}
+                                                {item.tenNhanVien}
                                             </Typography>
                                             <Typography
                                                 fontSize="12px"
                                                 color="#999699"
                                                 variant="body1">
-                                                {item.totalTime}
+                                                {item.tongThoiGian}h
                                             </Typography>
                                         </Box>
                                         <Button
-                                            onClick={handleOpenCustom}
+                                            onClick={(e) => {
+                                                handleOpenCustom(e);
+                                                setIdNhanVien(item.idNhanVien);
+                                                setSelectedId(item.id);
+                                            }}
                                             variant="text"
                                             sx={{
                                                 minWidth: 'unset',
@@ -396,33 +437,69 @@ const Calendar: React.FC = () => {
                                     </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.MonDay}</Box>
+                                    <Box className="custom-time">
+                                        {item.monday == '' || item.monday == null
+                                            ? 'Trống'
+                                            : item.monday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.Tuesday}</Box>
+                                    <Box className="custom-time">
+                                        {item.tuesday == '' || item.tuesday == null
+                                            ? 'Trống'
+                                            : item.tuesday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.Wednesday}</Box>
+                                    <Box className="custom-time">
+                                        {item.wednesday == '' || item.wednesday == null
+                                            ? 'Trống'
+                                            : item.wednesday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.Thursday}</Box>
+                                    <Box className="custom-time">
+                                        {item.thursday == '' || item.thursday == null
+                                            ? 'Trống'
+                                            : item.thursday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.Friday}</Box>
+                                    <Box className="custom-time">
+                                        {item.friday == '' || item.friday == null
+                                            ? 'Trống'
+                                            : item.friday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.Saturday}</Box>
+                                    <Box className="custom-time">
+                                        {item.saturday == '' || item.saturday == null
+                                            ? 'Trống'
+                                            : item.saturday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.Sunday}</Box>
+                                    <Box className="custom-time">
+                                        {item.sunday == '' || item.sunday == null
+                                            ? 'Trống'
+                                            : item.sunday}
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
+            <CustomTablePagination
+                currentPage={lichLamViecStore.skipCount}
+                rowPerPage={lichLamViecStore.maxResultCount}
+                totalRecord={lichLamViecStore.totalCount}
+                totalPage={lichLamViecStore.totalPage}
+                handlePerPageChange={handlePerPageChange}
+                handlePageChange={handlePageChange}
+            />
         </Box>
     );
 };
 
-export default Calendar;
+export default observer(Calendar);

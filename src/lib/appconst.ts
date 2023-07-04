@@ -41,7 +41,16 @@ const AppConsts = {
         tongChiTieu: true
     },
     emailRegex: emailRegex,
-    phoneRegex: phoneRegex
+    phoneRegex: phoneRegex,
+    dayOfWeek: {
+        monday: 'Monday',
+        tuesday: 'Tuesday',
+        wednesday: 'Wednesday',
+        thursday: 'Thursday',
+        friday: 'Friday',
+        saturday: 'Saturday',
+        sunday: 'Sunday'
+    }
 };
 
 export default AppConsts;
