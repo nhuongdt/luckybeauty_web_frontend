@@ -6,7 +6,7 @@ const BanHangNewTab = () => {
 
     useEffect(() => {
         if (!isOpenedRef.current) {
-            window.open('/ban-hang', '_blank');
+            window.open('./ban-hang', '_blank');
             isOpenedRef.current = true;
         }
     }, []);

@@ -150,7 +150,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     component: LoadableComponent(
-                        () => import('../../pages/ban_hang/main_page_ban_hang')
+                        () => import('../../pages/ban_hang/thu_ngan/main_page_ban_hang')
                     )
                 }
             ]
@@ -214,7 +214,9 @@ export const appRouters: AppRouteProps = {
 
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/ban_hang/index'))
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/thu_ngan/index')
+                            )
                         },
                         {
                             path: '/giao-dich-thanh-toan',

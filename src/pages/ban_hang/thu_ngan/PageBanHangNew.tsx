@@ -14,54 +14,52 @@ import {
     ListItemText,
     InputAdornment
 } from '@mui/material';
-import closeIcon from '../../images/closeSmall.svg';
-import arrowIcon from '../../images/arrow_back.svg';
-import avatar from '../../images/avatar.png';
-import dotIcon from '../../images/dotssIcon.svg';
+import closeIcon from '../../../images/closeSmall.svg';
+import avatar from '../../../images/avatar.png';
+import dotIcon from '../../../images/dotssIcon.svg';
 // import { useReactToPrint } from 'react-to-print';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import { useReactToPrint } from 'react-to-print';
 
-import { InHoaDon } from '../../components/Print/InHoaDon';
-import { MauInHoaDon } from '../../components/Print/MauInHoaDon';
+import { MauInHoaDon } from '../../../components/Print/MauInHoaDon';
 
-import ProductService from '../../services/product/ProductService';
-import GroupProductService from '../../services/product/GroupProductService';
+import ProductService from '../../../services/product/ProductService';
+import GroupProductService from '../../../services/product/GroupProductService';
 
-import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
-import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
-import HoaDonService from '../../services/ban_hang/HoaDonService';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
+import HoaDonService from '../../../services/ban_hang/HoaDonService';
 
-import SoQuyServices from '../../services/so_quy/SoQuyServices';
-import QuyHoaDonDto from '../../services/so_quy/QuyHoaDonDto';
-import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import SoQuyServices from '../../../services/so_quy/SoQuyServices';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
-import { dbDexie } from '../../lib/dexie/dexieDB';
+import { dbDexie } from '../../../lib/dexie/dexieDB';
 
-import Utils from '../../utils/utils';
-import HoaDonChiTietDto from '../../services/ban_hang/HoaDonChiTietDto';
-import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
+import Utils from '../../../utils/utils';
+import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
+import NhanSuItemDto from '../../../services/nhan-vien/dto/nhanSuItemDto';
 import { Guid } from 'guid-typescript';
-import utils from '../../utils/utils';
-import QuyChiTietDto from '../../services/so_quy/QuyChiTietDto';
-import CheckinService from '../../services/check_in/CheckinService';
-import { ModelNhomHangHoa } from '../../services/product/dto';
-import { PropToChildMauIn, PropModal, PropModal2 } from '../../utils/PropParentToChild';
-import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
+import utils from '../../../utils/utils';
+import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+import CheckinService from '../../../services/check_in/CheckinService';
+import { ModelNhomHangHoa } from '../../../services/product/dto';
+import { PropToChildMauIn, PropModal, PropModal2 } from '../../../utils/PropParentToChild';
+import ModelNhanVienThucHien from '../../nhan_vien_thuc_hien/modelNhanVienThucHien';
 import ModalEditChiTietGioHang from './modal_edit_chitiet';
-import NhanVienService from '../../services/nhan-vien/nhanVienService';
+import NhanVienService from '../../../services/nhan-vien/nhanVienService';
 import Cookies from 'js-cookie';
-import logo from '../../images/Lucky_beauty.jpg';
-import { ReactComponent as IconDv } from '../../images/icon-DV.svg';
-import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
-import { ReactComponent as DeleteIcon } from '../../images/trash.svg';
-import { ReactComponent as UserIcon } from '../../images/user.svg';
-import { ReactComponent as VoucherIcon } from '../../images/voucherIcon.svg';
+import logo from '../../../images/Lucky_beauty.jpg';
+import { ReactComponent as IconDv } from '../../../images/icon-DV.svg';
+import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
+import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';
+import { ReactComponent as UserIcon } from '../../../images/user.svg';
+import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
-import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
+import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
