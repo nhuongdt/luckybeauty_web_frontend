@@ -397,8 +397,19 @@ const Calendar: React.FC = () => {
                         }}>
                         {data.map((item) => (
                             <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
-                                <TableCell sx={{ border: '0!important' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <TableCell
+                                    sx={{
+                                        border: '0!important',
+
+                                        width: '20%'
+                                    }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px'
+                                        }}
+                                        title={item.tenNhanVien}>
                                         <Avatar
                                             sx={{ width: 32, height: 32 }}
                                             src={item.avatar}
@@ -408,7 +419,11 @@ const Calendar: React.FC = () => {
                                             <Typography
                                                 fontSize="14px"
                                                 color="#4C4B4C"
-                                                variant="body1">
+                                                variant="body1"
+                                                whiteSpace="nowrap"
+                                                textOverflow="ellipsis"
+                                                overflow="hidden"
+                                                maxWidth="170px">
                                                 {item.tenNhanVien}
                                             </Typography>
                                             <Typography

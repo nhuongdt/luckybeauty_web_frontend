@@ -213,7 +213,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.getData();
     };
     handleOpenInfor = () => {
+        // if (params.column.field !== 'actions') {
         this.setState({ information: true });
+
+        //}
     };
     handleCloseInfor = () => {
         this.setState({ information: false });
@@ -583,7 +586,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 autoHeight
                                 rows={this.state.rowTable}
                                 columns={columns}
-                                onRowClick={this.handleOpenInfor}
+                                onRowClick={() => this.handleOpenInfor}
                                 hideFooter
                                 onColumnVisibilityModelChange={this.toggleColumnVisibility}
                                 columnVisibilityModel={this.state.visibilityColumn}
