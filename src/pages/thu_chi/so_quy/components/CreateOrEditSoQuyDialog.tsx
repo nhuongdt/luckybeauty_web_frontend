@@ -244,13 +244,27 @@ const CreateOrEditSoQuyDialog = ({
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Stack direction="column" rowGap={1}>
+                                        <Stack
+                                            direction="column"
+                                            rowGap={1}
+                                            sx={{
+                                                '& legend': {
+                                                    display: 'none'
+                                                }
+                                            }}>
                                             <span className="modal-lable">Hình thức </span>
                                             <SelectWithData data={hinhThucThanhToan} idChosed={1} />
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Stack direction="column" rowGap={1}>
+                                        <Stack
+                                            direction="column"
+                                            rowGap={1}
+                                            sx={{
+                                                '& legend': {
+                                                    display: 'none'
+                                                }
+                                            }}>
                                             <span className="modal-lable">Thu của </span>
                                             <SelectWithData data={doiTuongNopTien} idChosed={1} />
                                         </Stack>
@@ -331,7 +345,7 @@ const CreateOrEditSoQuyDialog = ({
                                                         onChange={formik.handleChange}
                                                         value="Phiếu thu"
                                                         sx={{
-                                                            color: '#7C3367'
+                                                            color: '#7C3367!important'
                                                         }}
                                                     />
                                                 }
