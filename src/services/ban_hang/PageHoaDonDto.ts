@@ -17,6 +17,7 @@ export default class PageHoaDonDto extends HoaDonDto {
     tenChiNhanh = '';
 
     daThanhToan? = 0;
+    conNo? = 0;
     txtTrangThaiHD = 'Hoàn thành';
     hoaDonChiTiet?: PageHoaDonChiTietDto[];
 
