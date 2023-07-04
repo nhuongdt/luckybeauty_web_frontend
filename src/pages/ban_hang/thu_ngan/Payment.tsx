@@ -5,11 +5,11 @@ import { ReactComponent as TienMat } from '../../../images/tien-mat.svg';
 import { ReactComponent as NganHang } from '../../../images/ngan-hang.svg';
 import { ReactComponent as ChuyenKhoan } from '../../../images/chuyen-khoan.svg';
 interface ChildComponent {
-    onClick: () => void;
-
-    onnextComponent: boolean;
+    handleClickPrev: () => void;
+    formShow?: number;
+    tongPhaiTra?: number;
 }
-const Payments: React.FC<ChildComponent> = ({ onClick, onnextComponent }) => {
+const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPhaiTra = 0 }) => {
     const PaymentsList = [
         {
             icon: TienMat,
@@ -48,30 +48,15 @@ const Payments: React.FC<ChildComponent> = ({ onClick, onnextComponent }) => {
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTienKhachTra(parseInt(event.target.value));
     };
-    const [Payment, setPayment] = React.useState<number>(1);
-    const nextComponent = () => {
-        setPayment((prevCount: number) => (prevCount >= 2 ? 2 : prevCount + 1));
-    };
-    const prevComponent = () => {
-        setPayment((prevCount: number) => (prevCount <= 1 ? 1 : prevCount - 1));
-        if (Payment === 1) {
-            onClick();
-        }
-    };
     const [selectedTientip, setSelectedTienTip] = React.useState(-1);
     const handleSelectedTientip = (index: number) => {
         setSelectedTienTip(index);
     };
-    useEffect(() => {
-        if (onnextComponent) {
-            nextComponent();
-        }
-    }, [onnextComponent]);
     return (
         <Box>
             <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <IconButton
-                    onClick={prevComponent}
+                    onClick={handleClickPrev}
                     sx={{
                         '& svg': {
                             width: '18px',
@@ -84,11 +69,11 @@ const Payments: React.FC<ChildComponent> = ({ onClick, onnextComponent }) => {
                     <ArrowLeft />
                 </IconButton>
                 <Typography variant="h3" fontSize="18px" color="#000" fontWeight="700">
-                    {Payment === 1 ? 'Tiền tip' : 'Hình thức thanh toán'}
+                    {formShow === 1 ? 'Tiền tip' : 'Hình thức thanh toán'}
                 </Typography>
             </Box>
             <Box>
-                {Payment === 1 ? (
+                {formShow === 1 ? (
                     <Grid container spacing="1.6vw" mt="-8px">
                         {tientip.map((item, index) => (
                             <Grid item xs={3} key={index}>

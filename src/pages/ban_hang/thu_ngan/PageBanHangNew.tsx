@@ -524,32 +524,41 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         return true;
     };
 
+    const [hasTip, setHasTip] = useState(false); // mac dinh cua hang khong co Tip
+    const [formShow, setFormShow] = useState(0);
     const [showPayment, setShowPayment] = useState(false);
-    const ToPayment = () => {
-        setShowPayment(!showPayment);
-        onPaymentChild(!showPayment);
-    };
-    const [onnextComponent, setOnnextComponent] = useState(false);
-    const handleCheckNext = () => {
-        setOnnextComponent(!onnextComponent);
-    };
 
-    const [CheckPaymentChild, setCheckPaymentChild] = useState<number>(0);
-    const handleCheckPayment = (value: number) => {
-        setCheckPaymentChild(value);
-    };
-    const saveHoaDon = async () => {
-        handleCheckNext();
-        if (onnextComponent) {
-            ToPayment();
+    const onPrevPayment = () => {
+        let formPrev = formShow - 1;
+        if (!hasTip) {
+            formPrev = formPrev - 1;
         }
-        if (clickSSave) return; // avoid click douple
-        setClickSave(true);
+        setFormShow(formPrev);
+        setShowPayment(formPrev > 0);
+        onPaymentChild(formPrev > 0);
+    };
 
+    const handleCheckNext = () => {
+        let formNext = formShow + 1;
+        if (!hasTip) {
+            formNext += 1;
+        }
+        setFormShow(formNext);
+        setShowPayment(true);
+        onPaymentChild(true);
+        if (formNext < 3) return false;
+        return true;
+    };
+
+    // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
+    const saveHoaDon = async () => {
         const check = await checkSave();
         if (!check) {
             return;
         }
+
+        const nextIsSave = handleCheckNext();
+        if (!nextIsSave) return;
 
         // assign again STT of cthd before save
         const dataSave = { ...hoadon };
@@ -618,6 +627,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
         // reset after save
         setClickSave(false);
+        setFormShow(0);
+        setShowPayment(false);
 
         setHoaDonChiTiet([]);
         setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
@@ -1208,7 +1219,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                     </Grid>
                 ) : (
                     <Grid item md={8} className="normal">
-                        <Payments onClick={ToPayment} onnextComponent={onnextComponent} />
+                        <Payments handleClickPrev={onPrevPayment} formShow={formShow} />
                     </Grid>
                 )}
                 <Grid item md={4} sx={{ paddingRight: '0' }}>
