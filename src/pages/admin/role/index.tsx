@@ -200,6 +200,11 @@ class RoleScreen extends React.Component<IRoleProps> {
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box width="100%" textAlign="center">
+                        {params.value}
+                    </Box>
                 )
             },
             {

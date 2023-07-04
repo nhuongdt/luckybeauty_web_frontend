@@ -28,7 +28,11 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Link>{params.value}</Link>
+            renderCell: (params) => (
+                <Box width="100%" textAlign="center">
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'ngayLapHoaDon',
@@ -41,7 +45,11 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
+            renderCell: (params) => (
+                <Box textAlign="center" width="100%">
+                    {format(new Date(params.value), 'dd/MM/yyyy HH:mm')}
+                </Box>
+            )
         },
         {
             field: 'sLoaiPhieu',
@@ -54,7 +62,11 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box>{params.value}</Box>
+            renderCell: (params) => (
+                <Box textAlign="center" width="100%">
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'sHinhThucThanhToan',
@@ -67,22 +79,29 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box>{params.value}</Box>
+            renderCell: (params) => (
+                <Box textAlign="center" width="100%">
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'tongTienThu',
             headerName: 'Tiền thu',
-            headerAlign: 'right',
-            align: 'right',
+
             minWidth: 100,
             flex: 1,
             renderHeader: (params) => (
-                <Box>
+                <Box textAlign="center" width="100%">
                     {params.colDef.headerName}
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box>{new Intl.NumberFormat().format(params.value)}</Box>
+            renderCell: (params) => (
+                <Box textAlign="center" width="100%">
+                    {new Intl.NumberFormat().format(params.value)}
+                </Box>
+            )
         },
         {
             field: 'sTrangThai',
@@ -95,13 +114,25 @@ export default function TabDiary({ idHoaDon }: any) {
                     <IconSorting />
                 </Box>
             ),
-            renderCell: (params) => <Box>{params.value}</Box>
+            renderCell: (params) => (
+                <Box
+                    margin="auto"
+                    sx={{
+                        padding: '4px',
+                        borderRadius: '100px',
+                        color: '#0DA678',
+                        bgcolor: '#CAFBEC'
+                    }}>
+                    {params.value}
+                </Box>
+            )
         }
     ];
 
     return (
         <Box>
             <DataGrid
+                disableRowSelectionOnClick
                 autoHeight
                 columns={columns}
                 rows={phieuThuChi}

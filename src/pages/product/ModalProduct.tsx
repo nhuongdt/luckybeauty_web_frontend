@@ -27,7 +27,6 @@ import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
 import ProductService from '../../services/product/ProductService';
 import Utils from '../../utils/utils';
-import '../../App.css';
 import './style.css';
 import AppConsts from '../../lib/appconst';
 
@@ -228,7 +227,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 <Typography>Thông tin chi tiết</Typography>
                             </Box>
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">Mã {product.tenLoaiHangHoa}</Typography>
+                                <span className="modal-lable">
+                                    Mã {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                </span>
 
                                 <TextField
                                     variant="outlined"
@@ -255,9 +256,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">
+                                <span className="modal-lable">
                                     Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                </Typography>
+                                </span>
                                 <TextField
                                     variant="outlined"
                                     size="small"
@@ -280,9 +281,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">
+                                <span className="modal-lable">
                                     Nhóm {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                </Typography>
+                                </span>
+
                                 <Autocomplete
                                     size="small"
                                     fullWidth

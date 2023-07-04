@@ -217,7 +217,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 sortable: false,
                 headerName: 'Tên khách hàng',
                 minWidth: 185,
-                flex: 1,
+                flex: 1.2,
                 renderCell: (params) => (
                     <Box
                         style={{
@@ -271,6 +271,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             }}
                         />
                     </Box>
+                ),
+                renderCell: (params) => (
+                    <Box textAlign="right" width="100%" fontSize="12px">
+                        {params.value}
+                    </Box>
                 )
             },
             {
@@ -307,6 +312,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             }}
                         />
                     </Box>
+                ),
+                renderCell: (params) => (
+                    <Box textAlign="center" width="100%" fontSize="12px">
+                        {params.value}
+                    </Box>
                 )
             },
             {
@@ -340,7 +350,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 minWidth: 113,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box sx={{ fontWeight: '700', textAlign: 'right' }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -351,7 +361,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value} fontSize="12px">
+                    <Box title={params.value} fontSize="12px" textAlign="right" width="100%">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -361,7 +371,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 sortable: false,
                 headerName: 'Cuộc hẹn gần đây',
                 renderCell: (params) => (
-                    <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '12px' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            fontSize: '12px',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Box>
@@ -369,7 +386,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 minWidth: 128,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box sx={{ fontWeight: '700', width: '100%', textAlign: 'center' }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"

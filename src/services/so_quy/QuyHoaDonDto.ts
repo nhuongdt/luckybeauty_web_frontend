@@ -1,6 +1,6 @@
 import { Guid } from 'guid-typescript';
 import QuyChiTietDto from './QuyChiTietDto';
-import { format } from 'date-fns';
+import { format, add, addDays } from 'date-fns';
 
 export default class QuyHoaDonDto {
     id = Guid.create().toString();
@@ -19,6 +19,8 @@ export default class QuyHoaDonDto {
 
     quyHoaDon_ChiTiet?: QuyChiTietDto[];
 
+    idDoiTuongNopTien?: string | null = null;
+    loaiDoiTuong? = 1;
     sLoaiPhieu? = '';
     maNguoiNop? = '';
     tenNguoiNop? = '';
@@ -33,6 +35,7 @@ export default class QuyHoaDonDto {
         idChiNhanh = '',
         maHoaDon = '',
         idNhanVien = null,
+        idDoiTuongNopTien = null,
         ngayLapHoaDon = format(new Date(), 'yyyy-MM-dd HH:mm:ss.SSS'),
         tongTienThu = 0,
         noiDungThu = '',
@@ -45,6 +48,7 @@ export default class QuyHoaDonDto {
         this.idChiNhanh = idChiNhanh;
         this.maHoaDon = maHoaDon;
         this.idNhanVien = idNhanVien;
+        this.idDoiTuongNopTien = idDoiTuongNopTien;
         this.ngayLapHoaDon = ngayLapHoaDon;
         this.tongTienThu = tongTienThu;
         this.noiDungThu = noiDungThu;

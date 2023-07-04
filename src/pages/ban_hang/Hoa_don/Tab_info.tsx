@@ -23,7 +23,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
             minWidth: 150,
-            flex: 1,
+            flex: 1.2,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -38,7 +38,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'center',
             align: 'center',
             minWidth: 80,
-            flex: 0.9,
+            flex: 0.5,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -57,7 +57,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 90,
-            flex: 1,
+            flex: 0.6,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -77,7 +77,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 1,
+            flex: 0.6,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -96,7 +96,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -115,7 +115,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -135,6 +135,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             <Grid container spacing={3}>
                 <Grid item xs={9}>
                     <DataGrid
+                        disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={chitietHoaDon}
@@ -145,7 +146,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                             '& .MuiBox-root': {
                                 maxWidth: '100%',
                                 textOverflow: 'ellipsis',
-                                overflow: 'hidden'
+                                overflow: 'hidden',
+                                fontSize: '12px'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 bgcolor: '#F2EBF0'

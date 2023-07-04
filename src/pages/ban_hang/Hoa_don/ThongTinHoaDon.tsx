@@ -28,7 +28,7 @@ import {
     ChiNhanhContextbyUser
 } from '../../../services/chi_nhanh/ChiNhanhContext';
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
-import ModalEditChiTietGioHang from '../modal_edit_chitiet';
+import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 
 import { format } from 'date-fns';
@@ -229,6 +229,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                         <Grid item xs="auto">
                             <Box display="flex" gap="8px">
                                 <Button
+                                    className="btn-outline-hover"
                                     startIcon={<InIcon />}
                                     variant="outlined"
                                     sx={{
@@ -239,6 +240,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     In
                                 </Button>
                                 <Button
+                                    className="btn-outline-hover"
                                     startIcon={<UploadIcon />}
                                     variant="outlined"
                                     sx={{
@@ -249,6 +251,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     Xuất
                                 </Button>
                                 <Button
+                                    className="btn-container-hover"
                                     variant="contained"
                                     sx={{
                                         bgcolor: '#7C3367!important',
@@ -282,7 +285,17 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                 <img width={100} src={Avatar} alt="avatar" />
                             </Box>
                         </Grid>
-                        <Grid item xs={10.5}>
+                        <Grid
+                            item
+                            xs={10.5}
+                            sx={{
+                                '& .MuiFormLabel-root, & legend': {
+                                    display: 'none'
+                                },
+                                '& input': {
+                                    height: '100%'
+                                }
+                            }}>
                             <Box display="flex" gap="23px" mb="12px">
                                 <Typography
                                     variant="h4"
@@ -305,7 +318,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     {hoadonChosed?.txtTrangThaiHD}
                                 </Box>
                             </Box>
-                            <Grid container>
+                            <Grid
+                                container
+                                sx={{
+                                    '& .MuiFormControl-root': {
+                                        width: '100%'
+                                    }
+                                }}
+                                spacing="2.7vw">
                                 <Grid item xs={3}>
                                     <Typography
                                         variant="h5"
@@ -316,6 +336,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         Mã hóa đơn
                                     </Typography>
                                     <TextField
+                                        fullWidth
                                         size="small"
                                         className="inputEdit"
                                         onChange={(event: any) =>
@@ -361,7 +382,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         />
                                     </ThemeProvider>
                                 </Grid>
-                                <Grid item xs={3} sx={{ textAlign: 'right' }}>
+                                <Grid item xs={3}>
                                     <Typography
                                         variant="h5"
                                         fontSize="12px"
@@ -370,13 +391,25 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         height={24}>
                                         User lập phiếu
                                     </Typography>
-                                    <Typography
+                                    {/* <Typography
                                         variant="body1"
                                         fontSize="14px"
                                         color="#333233"
                                         marginTop="2px">
                                         {hoadonChosed?.userName}
-                                    </Typography>
+                                    </Typography> */}
+                                    <TextField
+                                        disabled
+                                        sx={{
+                                            '& .MuiInputBase-root': { borderRadius: '8px' },
+                                            '& .Mui-disabled': {
+                                                color: '#333233',
+                                                WebkitTextFillColor: 'unset'
+                                            }
+                                        }}
+                                        size="small"
+                                        value={hoadonChosed?.userName}
+                                    />
                                 </Grid>
                             </Grid>
                         </Grid>

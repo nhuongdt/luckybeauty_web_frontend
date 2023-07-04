@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Grid, ButtonGroup, Button, Box } from '@mui/material';
-import CheckInNew from './CheckInNew';
+import CheckInNew from '../../check_in/CheckInNew';
 import PageBanHang from './PageBanHangNew';
 import Cookies from 'js-cookie';
-import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
-import './style.css';
+import { PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
+import '../style.css';
 import { Guid } from 'guid-typescript';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';

@@ -341,7 +341,8 @@ const GiaoDichThanhToan: React.FC = () => {
                                 ? '#50CD89'
                                 : params.row.trangThai === 1
                                 ? '#FF9900'
-                                : '#F1416C'
+                                : '#F1416C',
+                        margin: 'auto'
                     }}
                     className="state-thanh-toan">
                     {params.value}
@@ -453,6 +454,9 @@ const GiaoDichThanhToan: React.FC = () => {
                                         },
                                         '& .date2 input': {
                                             textAlign: 'right'
+                                        },
+                                        '& .MuiFormControl-root': {
+                                            width: 'unset'
                                         }
                                     }}>
                                     <Box>

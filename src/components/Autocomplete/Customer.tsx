@@ -7,10 +7,16 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 import Utils from '../../utils/utils'; // func common
+import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 
-export default function AutocompleteCustomer({ handleChoseItem }: any) {
-    // const [listCustomer, setListCustomer] = useState<KhachHangItemDto[]>([]);
+export default function AutocompleteCustomer({
+    idChosed,
+    handleChoseItem,
+    helperText = '',
+    err = false
+}: any) {
     const [listCustomer, setListCustomer] = useState([]);
+    const [cusChosed, setCusChosed] = useState<CreateOrEditKhachHangDto>();
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
         loaiDoiTuong: 1,
@@ -20,6 +26,11 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
         sortType: ''
     });
 
+    const getInforCustomerbyID = async () => {
+        const data = await khachHangService.getKhachHang(idChosed);
+        setCusChosed(data);
+    };
+
     const debounceDropDown = useRef(
         debounce(async (paramSearch: any) => {
             const data = await khachHangService.jqAutoCustomer(paramSearch);
@@ -28,12 +39,12 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
     ).current;
 
     React.useEffect(() => {
-        // if (Utils.checkNull(paramSearch.keyword)) {
-        //     setListCustomer(listCustomer ? listCustomer : []);
-        //     return undefined;
-        // }
         debounceDropDown(paramSearch);
     }, [paramSearch.keyword]);
+
+    React.useEffect(() => {
+        getInforCustomerbyID();
+    }, [idChosed]);
 
     const choseItem = (item: any) => {
         handleChoseItem(item);
@@ -58,7 +69,9 @@ export default function AutocompleteCustomer({ handleChoseItem }: any) {
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={listCustomer}
                 getOptionLabel={(option: any) => (option.tenKhachHang ? option.tenKhachHang : '')}
-                renderInput={(params) => <TextField {...params} label="Tìm kiếm" />}
+                renderInput={(params) => (
+                    <TextField {...params} label="Tìm kiếm" helperText={helperText} error={err} />
+                )}
                 renderOption={(props, option) => {
                     return (
                         <li {...props}>

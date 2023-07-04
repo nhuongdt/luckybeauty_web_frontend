@@ -246,6 +246,12 @@
     border-width: 1px !important;
     border-color: #7c3367 !important;
 }
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary
+    .MuiOutlinedInput-notchedOutline {
+    -webkit-transition: '.4s';
+    -o-transition: '.4s';
+    transition: '.4s';
+}
 .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary:hover
     .MuiOutlinedInput-notchedOutline {
     border-color: #7c3367 !important;

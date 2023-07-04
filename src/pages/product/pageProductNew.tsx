@@ -42,7 +42,6 @@ import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
 
-import '../../App.css';
 import './style.css';
 
 export default function PageProductNew() {
@@ -342,7 +341,6 @@ export default function PageProductNew() {
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
-            headerAlign: 'center',
             minWidth: 250,
             renderCell: (params) => (
                 <Box display="flex" width="100%">
@@ -378,12 +376,11 @@ export default function PageProductNew() {
         {
             field: 'giaBan',
             headerName: 'Giá bán',
-            headerAlign: 'center',
-            align: 'right',
+
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
-                <Box display="flex">
+                <Box display="flex" justifyContent="end" width="100%">
                     <Typography variant="body2" color="#333233" fontSize="12px">
                         {Utils.formatNumber(params.value || '')}
                     </Typography>
@@ -402,7 +399,7 @@ export default function PageProductNew() {
             minWidth: 128,
             flex: 1,
             renderCell: (params) => (
-                <Box display="flex">
+                <Box display="flex" width="100%" justifyContent="center">
                     <ClockIcon />
                     <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
                         {params.value || ''} phút
@@ -419,7 +416,7 @@ export default function PageProductNew() {
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
-            headerAlign: 'center',
+
             minWidth: 130,
             flex: 1,
             renderCell: (params) => (

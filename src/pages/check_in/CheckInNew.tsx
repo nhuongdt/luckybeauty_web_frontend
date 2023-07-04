@@ -17,12 +17,11 @@ import utils from '../../utils/utils';
 
 import { Add, Menu, CalendarMonth, MoreHoriz, QueryBuilder, Search } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import ModalAddCustomerCheckIn from '../check_in/modal_add_cus_checkin';
+import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
 import { PropModal } from '../../utils/PropParentToChild';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import CloseIcon from '@mui/icons-material/Close';
-import '../../App.css';
 import { Guid } from 'guid-typescript';
 import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';
@@ -199,7 +198,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 size="small"
                                 sx={{
                                     backgroundColor: '#7C3367!important',
-                                    padding: '10px 16px!important',
+
                                     fontSize: '14px'
                                 }}
                                 startIcon={<Add />}

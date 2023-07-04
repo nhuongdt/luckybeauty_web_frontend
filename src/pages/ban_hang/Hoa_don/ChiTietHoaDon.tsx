@@ -30,7 +30,7 @@ import {
     ChiNhanhContextbyUser
 } from '../../../services/chi_nhanh/ChiNhanhContext';
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
-import ModalEditChiTietGioHang from '../modal_edit_chitiet';
+import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 
 import { format } from 'date-fns';

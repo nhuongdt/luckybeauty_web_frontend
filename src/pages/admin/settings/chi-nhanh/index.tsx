@@ -145,7 +145,7 @@ class ChiNhanhScreen extends Component {
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -156,7 +156,7 @@ class ChiNhanhScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params: any) => (
-                    <Box>
+                    <Box fontWeight="700">
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -176,7 +176,7 @@ class ChiNhanhScreen extends Component {
                 renderCell: (params: any) => (
                     <Typography
                         variant="caption"
-                        fontSize="14px"
+                        fontSize="12px"
                         title={params.value}
                         sx={{
                             textOverflow: 'ellipsis',
@@ -187,7 +187,7 @@ class ChiNhanhScreen extends Component {
                     </Typography>
                 ),
                 renderHeader: (params: any) => (
-                    <Box>
+                    <Box fontWeight="700">
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -205,12 +205,17 @@ class ChiNhanhScreen extends Component {
                 minWidth: 110,
                 flex: 0.8,
                 renderCell: (params: any) => (
-                    <Typography variant="caption" fontSize="14px" title={params.value}>
+                    <Typography
+                        width="100%"
+                        textAlign="right"
+                        variant="caption"
+                        fontSize="12px"
+                        title={params.value}>
                         {params.value}
                     </Typography>
                 ),
                 renderHeader: (params: any) => (
-                    <Box>
+                    <Box fontWeight="700">
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -228,10 +233,16 @@ class ChiNhanhScreen extends Component {
                 minWidth: 130,
                 flex: 0.8,
                 renderCell: (params: any) => (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             variant="h6"
                             fontWeight="400"
                             color="#333233"
@@ -259,10 +270,16 @@ class ChiNhanhScreen extends Component {
                 minWidth: 130,
                 flex: 0.8,
                 renderCell: (params: any) => (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="14px"
+                            fontSize="12px"
                             variant="h6"
                             fontWeight="400"
                             color="#333233"

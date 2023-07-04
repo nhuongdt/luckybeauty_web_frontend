@@ -255,7 +255,13 @@ class UserScreen extends AppComponentBase {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            width: '100%',
+                            justifyContent: 'center'
+                        }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="12px"
