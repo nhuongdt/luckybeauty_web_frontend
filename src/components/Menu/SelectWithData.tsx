@@ -11,10 +11,9 @@ export default function SelectWithData({ idChosed, data, handleChange }: any) {
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={idChosed}
-                    label="Age"
-                    onChange={handleChange}>
+                    label="Age">
                     {data.map((item: any, index: number) => (
-                        <MenuItem key={index} value={item.id}>
+                        <MenuItem key={index} value={item.id} onClick={() => changeItem(item)}>
                             {item.text}
                         </MenuItem>
                     ))}
