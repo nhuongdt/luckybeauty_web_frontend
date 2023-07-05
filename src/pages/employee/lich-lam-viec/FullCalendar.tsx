@@ -36,7 +36,6 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import CreateOeEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
 const Calendar: React.FC = () => {
     const [weekDates, setWeekDates] = useState<any[]>([]);
-    const [data, setData] = useState<LichLamViecNhanVienDto[]>([]);
     const [filter, setFilter] = useState('');
     const [skipCount, setSkipCount] = useState(1);
     const [dateFrom, setDateFrom] = useState(new Date());
@@ -45,8 +44,6 @@ const Calendar: React.FC = () => {
     const [dateView, setDateView] = useState('');
     const [suggestNhanVien, setSuggestNhanVien] = useState<SuggestNhanSuDto[]>([]);
     const [idNhanVien, setIdNhanVien] = useState('');
-    const [totalPage, setTotalPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
     useEffect(() => {
         getCurrentDateInVietnamese(new Date());
         getWeekDate(new Date());
@@ -73,7 +70,6 @@ const Calendar: React.FC = () => {
         setWeekDates(dates);
     };
     const getData = async () => {
-        setData([]);
         await lichLamViecStore.getLichLamViecNhanVienWeek({
             dateFrom: dateFrom,
             dateTo: dateFrom,
@@ -83,9 +79,6 @@ const Calendar: React.FC = () => {
             maxResultCount: maxResultCount,
             idNhanVien: employ == '' ? undefined : employ
         });
-        setData(lichLamViecStore.listLichLamViec.items);
-        setTotalCount(lichLamViecStore.listLichLamViec.totalCount);
-        setTotalPage(Math.ceil(lichLamViecStore.listLichLamViec.totalCount / maxResultCount));
     };
     const formatDate = (date: Date): JSX.Element => {
         const day = date.toLocaleDateString('vi', { weekday: 'long' });
@@ -180,7 +173,7 @@ const Calendar: React.FC = () => {
     const prevWeek = async () => {
         const newDate = new Date(dateSelected);
         newDate.setDate(newDate.getDate() - 7);
-        lichLamViecStore.updateDate(newDate);
+        await lichLamViecStore.updateDate(newDate);
         setDateSelected(newDate);
         getCurrentDateInVietnamese(newDate);
         getWeekDate(newDate);
@@ -188,25 +181,25 @@ const Calendar: React.FC = () => {
     const nextWeek = async () => {
         const newDate = new Date(dateSelected);
         newDate.setDate(newDate.getDate() + 7);
-        lichLamViecStore.updateDate(newDate);
+        await lichLamViecStore.updateDate(newDate);
         setDateSelected(newDate);
         getCurrentDateInVietnamese(newDate);
         getWeekDate(newDate);
     };
     const toDayClick = async () => {
         const newDate = new Date();
-        lichLamViecStore.updateDate(newDate);
+        await lichLamViecStore.updateDate(newDate);
         setDateSelected(new Date(newDate));
         getCurrentDateInVietnamese(newDate);
         getWeekDate(newDate);
     };
     const handlePageChange = async (event: any, value: number) => {
-        lichLamViecStore.updatePageChange(value);
+        await lichLamViecStore.updatePageChange(value);
         getData();
     };
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
-        lichLamViecStore.updatePageChange(1);
-        lichLamViecStore.updatePerPageChange(parseInt(event.target.value.toString(), 10));
+        await lichLamViecStore.updatePageChange(1);
+        await lichLamViecStore.updatePerPageChange(parseInt(event.target.value.toString(), 10));
         getData();
     };
     return (
@@ -395,113 +388,105 @@ const Calendar: React.FC = () => {
                                 padding: '4px 4px 20px 4px'
                             }
                         }}>
-                        {data.map((item) => (
-                            <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
-                                <TableCell
-                                    sx={{
-                                        border: '0!important',
-
-                                        width: '20%'
-                                    }}>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '5px'
-                                        }}
-                                        title={item.tenNhanVien}>
-                                        <Avatar
-                                            sx={{ width: 32, height: 32 }}
-                                            src={item.avatar}
-                                            alt={item.tenNhanVien}
-                                        />
-                                        <Box>
-                                            <Typography
-                                                fontSize="14px"
-                                                color="#4C4B4C"
-                                                variant="body1"
-                                                whiteSpace="nowrap"
-                                                textOverflow="ellipsis"
-                                                overflow="hidden"
-                                                maxWidth="170px">
-                                                {item.tenNhanVien}
-                                            </Typography>
-                                            <Typography
-                                                fontSize="12px"
-                                                color="#999699"
-                                                variant="body1">
-                                                {item.tongThoiGian}h
-                                            </Typography>
-                                        </Box>
-                                        <Button
-                                            onClick={(e) => {
-                                                handleOpenCustom(e);
-                                                setIdNhanVien(item.idNhanVien);
-                                                setSelectedId(item.id);
-                                            }}
-                                            variant="text"
+                        {lichLamViecStore.listLichLamViec &&
+                            lichLamViecStore.listLichLamViec.items &&
+                            lichLamViecStore.listLichLamViec.items.map((item) => (
+                                <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
+                                    <TableCell sx={{ border: '0!important' }}>
+                                        <Box
                                             sx={{
-                                                minWidth: 'unset',
-                                                ml: 'auto',
-                                                '&:hover svg': {
-                                                    filter: 'brightness(0) saturate(100%) invert(23%) sepia(23%) saturate(1797%) hue-rotate(267deg) brightness(103%) contrast(88%)'
-                                                }
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '5px'
                                             }}>
-                                            <EditIcon />
-                                        </Button>
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.monday == '' || item.monday == null
-                                            ? 'Trống'
-                                            : item.monday}
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.tuesday == '' || item.tuesday == null
-                                            ? 'Trống'
-                                            : item.tuesday}
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.wednesday == '' || item.wednesday == null
-                                            ? 'Trống'
-                                            : item.wednesday}
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.thursday == '' || item.thursday == null
-                                            ? 'Trống'
-                                            : item.thursday}
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.friday == '' || item.friday == null
-                                            ? 'Trống'
-                                            : item.friday}
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.saturday == '' || item.saturday == null
-                                            ? 'Trống'
-                                            : item.saturday}
-                                    </Box>
-                                </TableCell>
-                                <TableCell className="bodder-inline">
-                                    <Box className="custom-time">
-                                        {item.sunday == '' || item.sunday == null
-                                            ? 'Trống'
-                                            : item.sunday}
-                                    </Box>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                            <Avatar
+                                                sx={{ width: 32, height: 32 }}
+                                                src={item.avatar}
+                                                alt={item.tenNhanVien}
+                                            />
+                                            <Box>
+                                                <Typography
+                                                    fontSize="14px"
+                                                    color="#4C4B4C"
+                                                    variant="body1">
+                                                    {item.tenNhanVien}
+                                                </Typography>
+                                                <Typography
+                                                    fontSize="12px"
+                                                    color="#999699"
+                                                    variant="body1">
+                                                    {item.tongThoiGian}h
+                                                </Typography>
+                                            </Box>
+                                            <Button
+                                                onClick={(e) => {
+                                                    handleOpenCustom(e);
+                                                    setIdNhanVien(item.idNhanVien);
+                                                    setSelectedId(item.id);
+                                                }}
+                                                variant="text"
+                                                sx={{
+                                                    minWidth: 'unset',
+                                                    ml: 'auto',
+                                                    '&:hover svg': {
+                                                        filter: 'brightness(0) saturate(100%) invert(23%) sepia(23%) saturate(1797%) hue-rotate(267deg) brightness(103%) contrast(88%)'
+                                                    }
+                                                }}>
+                                                <EditIcon />
+                                            </Button>
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.monday === '' || item.monday === null
+                                                ? 'Trống'
+                                                : item.monday}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.tuesday === '' || item.tuesday === null
+                                                ? 'Trống'
+                                                : item.tuesday}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.wednesday === '' || item.wednesday === null
+                                                ? 'Trống'
+                                                : item.wednesday}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.thursday === '' || item.thursday === null
+                                                ? 'Trống'
+                                                : item.thursday}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.friday === '' || item.friday === null
+                                                ? 'Trống'
+                                                : item.friday}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.saturday === '' || item.saturday === null
+                                                ? 'Trống'
+                                                : item.saturday}
+                                        </Box>
+                                    </TableCell>
+                                    <TableCell className="bodder-inline">
+                                        <Box className="custom-time">
+                                            {item.sunday === '' || item.sunday === null
+                                                ? 'Trống'
+                                                : item.sunday}
+                                        </Box>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>

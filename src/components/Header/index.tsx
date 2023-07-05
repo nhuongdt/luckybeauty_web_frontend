@@ -98,7 +98,7 @@ const Header: React.FC<HeaderProps> = (
         Cookies.set('IdChiNhanh', idChiNhanh, {
             expires: remember === 'true' ? 1 : undefined
         });
-        window.location.reload();
+        //window.location.reload();
         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
     };
 

@@ -7,6 +7,7 @@ import { PagedFilterAndSortedRequest } from '../services/dto/pagedFilterAndSorte
 import { action, makeObservable, observable } from 'mobx';
 import AppConsts from '../lib/appconst';
 import { PagedNhanSuRequestDto } from '../services/nhan-vien/dto/PagedNhanSuRequestDto';
+import Cookies from 'js-cookie';
 
 class NhanVienStore {
     listNhanVien!: PagedResultDto<NhanSuItemDto>;
@@ -26,7 +27,7 @@ class NhanVienStore {
     async createOrEdit(createOrEditNhanSuInput: CreateOrUpdateNhanSuDto) {
         const result = await NhanVienService.createOrEdit(createOrEditNhanSuInput);
         this.listNhanVien.items.push(result);
-        await this.createNhanVien(createOrEditNhanSuInput.idChiNhanh ?? '');
+        await this.createNhanVien();
     }
     async delete(id: string) {
         await NhanVienService.delete(id);
@@ -45,7 +46,7 @@ class NhanVienStore {
         const result = await NhanVienService.getNhanSu(id);
         this.createEditNhanVien = result;
     }
-    async createNhanVien(idChiNhanh: string) {
+    async createNhanVien() {
         this.createEditNhanVien = {
             id: AppConsts.guidEmpty,
             maNhanVien: '',
@@ -62,7 +63,7 @@ class NhanVienStore {
             noiCap: '',
             avatar: '',
             idChucVu: '',
-            idChiNhanh: idChiNhanh,
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
             ghiChu: ''
         };
     }

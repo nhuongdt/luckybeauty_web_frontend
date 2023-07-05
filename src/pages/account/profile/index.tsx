@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    CircularProgress,
     FormGroup,
     Grid,
     IconButton,
@@ -29,10 +30,14 @@ class ProfileScreen extends Component {
     }
 
     getData = async () => {
-        await UserStore.getForUpdateProfile();
+        try {
+            await UserStore.getForUpdateProfile();
+        } catch (error) {
+            console.error('Error fetching profile data:', error);
+        }
     };
     render(): ReactNode {
-        const initProfileValues = UserStore.profileDto;
+        const { profileDto } = UserStore;
         const initChangePasswordValues = {
             currentPassword: '',
             newPassword: '',
@@ -68,6 +73,9 @@ class ProfileScreen extends Component {
                 </Typography>
             );
         };
+        if (!profileDto) {
+            return <CircularProgress />; // Replace Spinner with your loading component
+        }
         return (
             <Box
                 paddingLeft="2.2222222222222223vw"
@@ -108,7 +116,7 @@ class ProfileScreen extends Component {
                                 </Typography>
                                 <Box paddingRight={5}>
                                     <Formik
-                                        initialValues={UserStore.profileDto}
+                                        initialValues={profileDto}
                                         validationSchema={profileSchema}
                                         onSubmit={async (values) => {
                                             const createOrEdit = await userService.updateProfile(

@@ -193,7 +193,7 @@ export const appRouters: AppRouteProps = {
                     iconActive: <LichActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/lich-hen'))
+                    component: LoadableComponent(() => import('../../pages/lich-hen/indexNew'))
                 },
                 {
                     path: '/ban-hangs',
