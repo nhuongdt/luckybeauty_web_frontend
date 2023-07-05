@@ -309,8 +309,18 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     sx={{
                                         padding: '2px 3px',
                                         borderRadius: '100px',
-                                        color: '#0DA678',
-                                        bgcolor: '#CAFBEC',
+                                        color:
+                                            hoadonChosed?.trangThai === 3
+                                                ? '#50CD89'
+                                                : hoadonChosed?.trangThai === 1
+                                                ? '#FF9900'
+                                                : '#F1416C',
+                                        bgcolor:
+                                            hoadonChosed?.trangThai === 3
+                                                ? '#E8FFF3'
+                                                : hoadonChosed?.trangThai === 1
+                                                ? '#FFF8DD'
+                                                : '#FFF5F8',
                                         width: 'fit-content',
                                         fontSize: '12px',
                                         height: 'fit-content'

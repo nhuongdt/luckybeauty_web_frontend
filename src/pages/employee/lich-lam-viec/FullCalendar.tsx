@@ -388,8 +388,7 @@ const Calendar: React.FC = () => {
                                 padding: '4px 4px 20px 4px'
                             }
                         }}>
-                        {lichLamViecStore &&
-                            lichLamViecStore.listLichLamViec &&
+                        {lichLamViecStore.listLichLamViec &&
                             lichLamViecStore.listLichLamViec.items &&
                             lichLamViecStore.listLichLamViec.items.map((item) => (
                                 <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>

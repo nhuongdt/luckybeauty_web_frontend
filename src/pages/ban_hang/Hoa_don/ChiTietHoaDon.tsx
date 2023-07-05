@@ -171,19 +171,29 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     color="#3B4758"
                                     fontWeight="700"
                                     fontSize="24px">
-                                    Đinh Tuấn Tài
+                                    {hoadonChosed?.tenKhachHang}
                                 </Typography>
                                 <Box
                                     sx={{
                                         padding: '2px 3px',
                                         borderRadius: '100px',
-                                        color: '#0DA678',
-                                        bgcolor: '#CAFBEC',
+                                        color:
+                                            hoadonChosed?.trangThai === 3
+                                                ? '#50CD89'
+                                                : hoadonChosed?.trangThai === 1
+                                                ? '#FF9900'
+                                                : '#F1416C',
+                                        bgcolor:
+                                            hoadonChosed?.trangThai === 3
+                                                ? '#E8FFF3'
+                                                : hoadonChosed?.trangThai === 1
+                                                ? '#FFF8DD'
+                                                : '#FFF5F8',
                                         width: 'fit-content',
                                         fontSize: '12px',
                                         height: 'fit-content'
                                     }}>
-                                    Hoàn thành
+                                    {hoadonChosed?.txtTrangThaiHD}
                                 </Box>
                             </Box>
                             <Box display="flex" gap="8px">
@@ -218,7 +228,7 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                             </Box>
                         </Box>
                         <Grid container spacing={2}>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Box>
                                     <Typography
                                         variant="h5"
@@ -242,7 +252,7 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     />
                                 </Box>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Box>
                                     <Typography
                                         variant="h5"
@@ -256,14 +266,13 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         <DateTimePickerCustom
                                             fullWidth
                                             className="inputEdit"
-                                            // defaultVal={hoadonChosed?.ngayLapHoaDon}
-                                            defaultVal=""
+                                            defaultVal={hoadonChosed?.ngayLapHoaDon}
                                             handleChangeDate={changeNgayLapHoaDon}
                                         />
                                     </ThemeProvider>
                                 </Box>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Box>
                                     <Typography
                                         variant="h5"
@@ -273,34 +282,16 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         height={24}>
                                         Chi nhánh
                                     </Typography>
-                                    {/* <TextField
-                                        size="small"
-                                        className="inputEdit"
-                                        value={hoadonChosed?.tenChiNhanh || 'Chi '}
-                                    /> */}
-                                    <Select
-                                        sx={{
-                                            borderRadius: '8px',
-                                            fontSize: '14px',
-                                            pr: '20px',
-                                            '& [aria-expanded="true"] ~ svg': {
-                                                transform: 'rotate(180deg)'
-                                            },
-                                            '& svg': {
-                                                width: '20px'
-                                            }
-                                        }}
-                                        size="small"
-                                        defaultValue={1}
-                                        fullWidth
-                                        IconComponent={() => <ArrowDown />}>
-                                        <MenuItem value={1}>Chi nhánh 1</MenuItem>
-                                        <MenuItem value={2}>Chi nhánh 2</MenuItem>
-                                        <MenuItem value={3}>Chi nhánh 3</MenuItem>
-                                    </Select>
+                                    <ThemeProvider theme={themOutlineInput}>
+                                        <AutocompleteChiNhanh
+                                            dataChiNhanh={allChiNhanh}
+                                            idChosed={hoadonChosed?.idChiNhanh}
+                                            handleChoseItem={changeChiNhanh}
+                                        />
+                                    </ThemeProvider>
                                 </Box>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            <Grid item xs={3}>
                                 <Box>
                                     <Typography
                                         variant="h5"
@@ -308,17 +299,17 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         color="#999699"
                                         fontWeight="400"
                                         height={24}>
-                                        Người tạo
+                                        User lập phiếu
                                     </Typography>
                                     <TextField
                                         fullWidth
                                         size="small"
                                         className="inputEdit"
-                                        value={'0911290'}
+                                        value={hoadonChosed?.userName}
                                     />
                                 </Box>
                             </Grid>
-                            <Grid item xs={2.4}>
+                            {/* <Grid item xs={3}>
                                 <Box>
                                     <Typography
                                         variant="h5"
@@ -335,7 +326,7 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                         defaultValue="Tài đẹp trai"
                                     />
                                 </Box>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
                     </Grid>
                     <Grid xs={12} item>
