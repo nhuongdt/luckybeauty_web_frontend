@@ -23,6 +23,8 @@ import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQ
 import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import AppConsts from '../../lib/appconst';
 class LichHenScreen extends Component {
     calendarRef: RefObject<FullCalendar> = React.createRef();
     state = {
@@ -30,12 +32,29 @@ class LichHenScreen extends Component {
         viewDate: format(new Date(), 'EEEE, dd MMMM ,yyyy', { locale: vi }),
         modalVisible: false,
         events: [],
+        connection: null as HubConnection | null,
         idBooking: '',
         suggestNhanVien: [] as SuggestNhanSuDto[],
         suggestKhachHang: [] as SuggestKhachHangDto[],
         suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
     };
     async componentDidMount() {
+        const connection = new HubConnectionBuilder()
+            .withUrl('https://localhost:44311/booking-hub') // Specify the URL of your SignalR hub
+            .build();
+        connection.on('ReceiveAllBookings', (res) => {
+            console.log(res);
+        });
+        await connection
+            .start()
+            .then(() => {
+                console.log('SignalR connected');
+            })
+            .catch((error) => {
+                console.error('Error starting SignalR connection:', error);
+            });
+        await connection.invoke('SendAllBookings', Cookies.get('IdChiNhanh'));
+        this.setState({ connection: connection });
         this.getData();
         const suggestNhanViens = await SuggestService.SuggestNhanSu();
         const suggestKhachHangs = await SuggestService.SuggestKhachHang();
@@ -47,23 +66,23 @@ class LichHenScreen extends Component {
         });
     }
     async getData() {
-        const idChiNhanh = Cookies.get('IdChiNhanh');
-        const appointments = await bookingServices.getAllBooking({ idChiNhanh: idChiNhanh ?? '' });
-        const lstEvent: any[] = [];
-        appointments.map((event) => {
-            lstEvent.push({
-                id: event.id,
-                title: event.noiDung,
-                start: event.startTime,
-                end: event.endTime,
-                color: event.color !== '' && event.color != null ? event.color : '#F1FAFF',
-                textColor: event.color !== '' && event.color != null ? event.color : '#009EF7',
-                borderColor: event.color !== '' && event.color != null ? event.color : '#009EF7'
-            });
-        });
-        this.setState({
-            events: lstEvent
-        });
+        // const idChiNhanh = Cookies.get('IdChiNhanh');
+        // const appointments = await bookingServices.getAllBooking({ idChiNhanh: idChiNhanh ?? '' });
+        // const lstEvent: any[] = [];
+        // appointments.map((event) => {
+        //     lstEvent.push({
+        //         id: event.id,
+        //         title: event.noiDung,
+        //         start: event.startTime,
+        //         end: event.endTime,
+        //         color: event.color !== '' && event.color != null ? event.color : '#F1FAFF',
+        //         textColor: event.color !== '' && event.color != null ? event.color : '#009EF7',
+        //         borderColor: event.color !== '' && event.color != null ? event.color : '#009EF7'
+        //     });
+        // });
+        // this.setState({
+        //     events: lstEvent
+        // });
     }
     // handleChangeViewCalendar = (value: { value: string; label: React.ReactNode }) => {
     //     const calendarApi = this.calendarRef.current?.getApi();

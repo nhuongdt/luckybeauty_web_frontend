@@ -7,14 +7,12 @@ import { CreateOrEditSoQuyDto } from '../services/so_quy/Dto/CreateOrEditSoQuyDt
 
 class SoQuyStore {
     lstSoQuy!: PagedResultDto<GetAllQuyHoaDonItemDto>;
-    createOrEditSoQuyDto: CreateOrEditSoQuyDto = {
-        id: '',
-        maPhieu: ''
-    };
+    createOrEditSoQuyDto!: CreateOrEditSoQuyDto;
     constructor() {
         makeAutoObservable(this);
     }
     async getAll(input: PagedQuyHoaDonRequestDto) {
+        //this.lstSoQuy = { items: [], totalCount: 0, totalPage: 0 };
         const response = await SoQuyServices.getAll(input);
         this.lstSoQuy = response;
     }

@@ -21,13 +21,11 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import Cookies from 'js-cookie';
-import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
 class SoQuyScreen extends Component {
     state = {
         keyword: '',
         skipCount: 1,
         maxResultCount: 10,
-        data: [] as GetAllQuyHoaDonItemDto[],
         sortBy: '',
         sortType: 'desc',
         totalPage: 0,
@@ -44,7 +42,6 @@ class SoQuyScreen extends Component {
     }
 
     getAll = async () => {
-        this.setState({ data: [] });
         await soQuyStore.getAll({
             filter: this.state.keyword,
             maxResultCount: this.state.maxResultCount,
@@ -54,7 +51,6 @@ class SoQuyScreen extends Component {
             sortType: this.state.sortType
         });
         this.setState({
-            data: soQuyStore.lstSoQuy.items,
             totalPage: Math.ceil(soQuyStore.lstSoQuy.totalCount / this.state.maxResultCount),
             totalCount: soQuyStore.lstSoQuy.totalCount
         });
@@ -374,7 +370,7 @@ class SoQuyScreen extends Component {
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
-                        rows={this.state.data}
+                        rows={lstSoQuy === undefined ? [] : lstSoQuy.items}
                         columns={columns}
                         checkboxSelection
                         sx={{

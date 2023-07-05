@@ -153,8 +153,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             sortBy: '',
             sortType: 'desc'
         });
-        const fileDown = new fileDowloadService();
-        fileDown.downloadTempFile(result);
+        fileDowloadService.downloadTempFile(result);
     };
     handlePageChange = async (event: any, newPage: number) => {
         await this.setState({ currentPage: newPage });
