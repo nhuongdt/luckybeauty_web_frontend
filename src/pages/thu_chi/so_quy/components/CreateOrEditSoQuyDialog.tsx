@@ -16,12 +16,14 @@ import {
     Grid,
     Radio,
     TextField,
-    Stack
+    Stack,
+    Autocomplete,
+    ListItem
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { Formik, Form } from 'formik';
-import { Component, ReactNode, useEffect, useState, useRef } from 'react';
+import { Component, ReactNode, useEffect, useState, useRef, useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import { CreateOrEditSoQuyDto } from '../../../../services/so_quy/Dto/CreateOrEditSoQuyDto';
 import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
@@ -36,11 +38,17 @@ import { useFormik, useFormikContext } from 'formik';
 import { addDays, format, isDate, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
 import AppConsts from '../../../../lib/appconst';
+import { Guid } from 'guid-typescript';
+import { ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import Cookies from 'js-cookie';
+import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
+import NhanSuItemDto from '../../../../services/nhan-vien/dto/nhanSuItemDto';
+import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 
 interface SoQuyDialogProps {
     visiable: boolean;
     onClose: () => void;
-    onOk: () => void;
+    onOk: (dataSave: any, type: number) => void;
     idQuyHD: string | null;
 }
 // const LableForm = (text: string) => {
@@ -83,22 +91,25 @@ const CreateOrEditSoQuyDialog = ({
 
     const doiTuongNopTien = [
         { id: 1, text: 'Khách hàng' },
-        { id: 2, text: 'POS' },
-        { id: 4, text: 'Nhân viên' }
+        // { id: 2, text: 'Nhà cung cấp' },
+        { id: 3, text: 'Nhân viên' }
     ];
     const formRef = useRef();
     const [isSaving, setIsSaving] = useState(false);
+    const chinhanh = useContext(ChiNhanhContext);
+    const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+
     const [quyHoaDon, setQuyHoaDon] = useState<QuyHoaDonDto>(
         new QuyHoaDonDto({
-            id: '',
+            id: Guid.create().toString(),
+            idChiNhanh: chinhanh.id,
             idLoaiChungTu: 11,
             tongTienThu: 0,
             idDoiTuongNopTien: null,
+            hinhThucThanhToan: 1,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm')
         })
     );
-    const [chitietSoQuy, setChitietSoQuy] = useState<QuyChiTietDto[]>();
-    const [idDoiTuongNopTien, setIdDoiTuongNopTien] = useState<string | null>('');
 
     const getInforQuyHoaDon = async () => {
         if (utils.checkNull(idQuyHD)) return;
@@ -106,19 +117,85 @@ const CreateOrEditSoQuyDialog = ({
         console.log(data);
         if (data !== null) {
             setQuyHoaDon(data);
-            if (data.quyHoaDon_ChiTiet != undefined)
-                setIdDoiTuongNopTien(data.quyHoaDon_ChiTiet[0]?.idKhachHang ?? '');
         }
     };
+    const GetListNhanVien = async () => {
+        const data = await nhanVienService.search('', { skipCount: 0, maxResultCount: 100 });
+        console.log('âlNV ', data);
+        setAllNhanVien(data.items);
+    };
+
+    const PageLoad = () => {
+        GetListNhanVien();
+    };
+
     useEffect(() => {
-        getInforQuyHoaDon();
-    }, [idQuyHD]);
+        PageLoad();
+    }, []);
+    useEffect(() => {
+        if (utils.checkNull(idQuyHD)) {
+            // insert
+            setQuyHoaDon({
+                ...quyHoaDon,
+                id: Guid.create().toString(),
+                idChiNhanh: chinhanh.id,
+                idLoaiChungTu: 11,
+                tongTienThu: 0,
+                idDoiTuongNopTien: null,
+                maHoaDon: '',
+                loaiDoiTuong: 1,
+                ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm'),
+                noiDungThu: '',
+                hinhThucThanhToan: 1,
+                idKhoanThuChi: null,
+                hachToanKinhDoanh: true
+            });
+        } else {
+            // update
+            getInforQuyHoaDon();
+        }
+    }, [visiable]);
+
+    const checkSave = async () => {
+        // check ma xexists
+        return true;
+    };
 
     const saveSoQuy = async () => {
-        console.log(666, quyHoaDon);
         setIsSaving(true);
-        // const data = await SoQuyServices.CreateQuyHoaDon(quyHoaDon);
+        const quyCT = new QuyChiTietDto({
+            idKhachHang: (quyHoaDon.loaiDoiTuong == 3 ? null : quyHoaDon.idDoiTuongNopTien) as null,
+            hinhThucThanhToan: quyHoaDon.hinhThucThanhToan,
+            tienThu: quyHoaDon.tongTienThu,
+            idNhanVien: (quyHoaDon.loaiDoiTuong == 3 ? quyHoaDon.idDoiTuongNopTien : null) as null,
+            idKhoanThuChi: quyHoaDon.idKhoanThuChi as null
+        });
+        const myData = { ...quyHoaDon };
+        myData.quyHoaDon_ChiTiet = [quyCT];
+        const data = await SoQuyServices.CreateQuyHoaDon(myData);
+        quyHoaDon.id = data.id;
+        quyHoaDon.maHoaDon = data.maHoaDon;
+        quyHoaDon.txtTrangThai = 'Đã thanh toán';
+        console.log('data ', quyHoaDon);
+
+        onOk(quyHoaDon, 1);
     };
+
+    useEffect(() => {
+        setQuyHoaDon({
+            ...quyHoaDon,
+            loaiPhieu: quyHoaDon.idLoaiChungTu === 11 ? 'Phiếu thu' : 'Phiếu chi'
+        });
+    }, [quyHoaDon.idLoaiChungTu]);
+
+    useEffect(() => {
+        setQuyHoaDon({
+            ...quyHoaDon,
+            sHinhThucThanhToan: hinhThucThanhToan.filter(
+                (x: any) => x.id === quyHoaDon.hinhThucThanhToan
+            )[0]?.text
+        });
+    }, [quyHoaDon.hinhThucThanhToan]);
 
     const validate = yup.object().shape({
         tongTienThu: yup
@@ -253,7 +330,16 @@ const CreateOrEditSoQuyDialog = ({
                                                 }
                                             }}>
                                             <span className="modal-lable">Hình thức </span>
-                                            <SelectWithData data={hinhThucThanhToan} idChosed={1} />
+                                            <SelectWithData
+                                                data={hinhThucThanhToan}
+                                                idChosed={quyHoaDon?.hinhThucThanhToan}
+                                                handleChange={(item: any) =>
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        hinhThucThanhToan: item.id
+                                                    })
+                                                }
+                                            />
                                         </Stack>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -266,7 +352,16 @@ const CreateOrEditSoQuyDialog = ({
                                                 }
                                             }}>
                                             <span className="modal-lable">Thu của </span>
-                                            <SelectWithData data={doiTuongNopTien} idChosed={1} />
+                                            <SelectWithData
+                                                data={doiTuongNopTien}
+                                                idChosed={quyHoaDon?.loaiDoiTuong}
+                                                handleChange={(item: any) =>
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        loaiDoiTuong: item.id
+                                                    })
+                                                }
+                                            />
                                         </Stack>
                                     </Grid>
                                     <Grid
@@ -274,31 +369,66 @@ const CreateOrEditSoQuyDialog = ({
                                         xs={12}
                                         sm={6}
                                         pt={{ xs: 2, sm: '28px', lg: '28px' }}>
-                                        <AutocompleteCustomer
-                                            idChosed={idDoiTuongNopTien}
-                                            handleChoseItem={(item: any) => {
-                                                {
-                                                    formik.setFieldValue(
-                                                        'idDoiTuongNopTien',
-                                                        item?.id ?? null
-                                                    );
-                                                    setQuyHoaDon({
-                                                        ...quyHoaDon,
-                                                        idDoiTuongNopTien: item?.id,
-                                                        maNguoiNop: item?.maKhachHang,
-                                                        tenNguoiNop: item?.tenKhachHang
-                                                    });
-                                                }
-                                            }}
-                                            error={
-                                                formik.touched.idDoiTuongNopTien &&
-                                                Boolean(formik.errors?.idDoiTuongNopTien)
-                                            }
-                                            helperText={
-                                                formik.touched.idDoiTuongNopTien &&
-                                                formik.errors.idDoiTuongNopTien
-                                            }
-                                        />
+                                        {quyHoaDon.loaiDoiTuong !== 3 && (
+                                            <>
+                                                <AutocompleteCustomer
+                                                    idChosed={quyHoaDon?.idDoiTuongNopTien}
+                                                    handleChoseItem={(item: any) => {
+                                                        {
+                                                            formik.setFieldValue(
+                                                                'idDoiTuongNopTien',
+                                                                item?.id ?? null
+                                                            );
+                                                            setQuyHoaDon({
+                                                                ...quyHoaDon,
+                                                                idDoiTuongNopTien: item?.id,
+                                                                maNguoiNop: item?.maKhachHang,
+                                                                tenNguoiNop: item?.tenKhachHang
+                                                            });
+                                                        }
+                                                    }}
+                                                    error={
+                                                        formik.touched.idDoiTuongNopTien &&
+                                                        Boolean(formik.errors?.idDoiTuongNopTien)
+                                                    }
+                                                    helperText={
+                                                        formik.touched.idDoiTuongNopTien &&
+                                                        formik.errors.idDoiTuongNopTien
+                                                    }
+                                                />
+                                            </>
+                                        )}
+                                        {quyHoaDon.loaiDoiTuong === 3 && (
+                                            <>
+                                                <AutocompleteNhanVien
+                                                    value={quyHoaDon?.idDoiTuongNopTien}
+                                                    dataNhanVien={allNhanVien}
+                                                    handleChoseItem={(item: any) => {
+                                                        {
+                                                            console.log('item ', item);
+                                                            formik.setFieldValue(
+                                                                'idDoiTuongNopTien',
+                                                                item?.id ?? null
+                                                            );
+                                                            setQuyHoaDon({
+                                                                ...quyHoaDon,
+                                                                idDoiTuongNopTien: item?.id,
+                                                                maNguoiNop: item?.maNhanVien,
+                                                                tenNguoiNop: item?.tenNhanVien
+                                                            });
+                                                        }
+                                                    }}
+                                                    error={
+                                                        formik.touched.idDoiTuongNopTien &&
+                                                        Boolean(formik.errors?.idDoiTuongNopTien)
+                                                    }
+                                                    helperText={
+                                                        formik.touched.idDoiTuongNopTien &&
+                                                        formik.errors.idDoiTuongNopTien
+                                                    }
+                                                />
+                                            </>
+                                        )}
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <span className="modal-lable">Tiền thu </span>
@@ -311,7 +441,15 @@ const CreateOrEditSoQuyDialog = ({
                                             name="tongTienThu"
                                             // value={formik.values.tongTienThu}
                                             customInput={TextField}
-                                            onChange={formik.handleChange}
+                                            onChange={(e: any) => {
+                                                formik.setFieldValue('tongTienThu', e.target.value);
+                                                setQuyHoaDon({
+                                                    ...quyHoaDon,
+                                                    tongTienThu: utils.formatNumberToFloat(
+                                                        e.target.value
+                                                    )
+                                                });
+                                            }}
                                             error={
                                                 formik.touched?.tongTienThu &&
                                                 Boolean(formik.errors?.tongTienThu)
@@ -332,7 +470,18 @@ const CreateOrEditSoQuyDialog = ({
                                         <span className="modal-lable">Nội dung thu </span>
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
-                                        <TextField size="small" multiline rows={3} fullWidth />
+                                        <TextField
+                                            size="small"
+                                            multiline
+                                            rows={3}
+                                            fullWidth
+                                            onChange={(e: any) =>
+                                                setQuyHoaDon({
+                                                    ...quyHoaDon,
+                                                    noiDungThu: e.target.value
+                                                })
+                                            }
+                                        />
                                     </Grid>
                                     <Grid item xs={12} sm={12}>
                                         <FormGroup>
@@ -341,9 +490,16 @@ const CreateOrEditSoQuyDialog = ({
                                                 control={
                                                     <Checkbox
                                                         name="ckHachToanKinhDoanh"
-                                                        //checked={values.maPhieu === 'Phiếu thu'}
-                                                        onChange={formik.handleChange}
-                                                        value="Phiếu thu"
+                                                        checked={
+                                                            quyHoaDon.hachToanKinhDoanh === true
+                                                        }
+                                                        onChange={(e: any) => {
+                                                            setQuyHoaDon({
+                                                                ...quyHoaDon,
+                                                                hachToanKinhDoanh: e.target.checked
+                                                            });
+                                                        }}
+                                                        value="true"
                                                         sx={{
                                                             color: '#7C3367!important'
                                                         }}
