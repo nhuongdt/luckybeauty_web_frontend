@@ -97,7 +97,7 @@ const MainAppLayout: React.FC = () => {
                             border: 'solid 0.1rem #e6e1e6',
                             marginTop: '70px',
                             minHeight: 'calc(100vh - 70px)',
-                            height: 'calc(100vh - 70px)',
+
                             bgcolor: 'rgba(248,248,248,1)'
                         }}>
                         <ChiNhanhContext.Provider value={chinhanhCurrent}>
