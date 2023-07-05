@@ -20,13 +20,16 @@ export default class QuyHoaDonDto {
     quyHoaDon_ChiTiet?: QuyChiTietDto[];
 
     idDoiTuongNopTien?: string | null = null;
-    loaiDoiTuong? = 1;
-    sLoaiPhieu? = '';
+    loaiDoiTuong? = 1; // khachhang
+    hinhThucThanhToan? = 1; // tienmat
+    idKhoanThuChi?: string | null = null;
+
+    loaiPhieu? = '';
     maNguoiNop? = '';
     tenNguoiNop? = '';
     tenChiNhanh? = '';
     tenNhanVien? = '';
-    sTrangThai? = '';
+    txtTrangThai? = '';
     sHinhThucThanhToan? = '';
 
     constructor({
@@ -41,7 +44,9 @@ export default class QuyHoaDonDto {
         noiDungThu = '',
         hachToanKinhDoanh = true,
         thuPhiTienGui = 0,
-        diemThanhToan = 0
+        diemThanhToan = 0,
+        hinhThucThanhToan = 1,
+        idKhoanThuChi = null
     }) {
         this.id = id;
         this.idLoaiChungTu = idLoaiChungTu;
@@ -55,10 +60,12 @@ export default class QuyHoaDonDto {
         this.hachToanKinhDoanh = hachToanKinhDoanh;
         this.thuPhiTienGui = thuPhiTienGui;
         this.diemThanhToan = diemThanhToan;
+        this.hinhThucThanhToan = hinhThucThanhToan;
+        this.idKhoanThuChi = idKhoanThuChi;
         this.quyHoaDon_ChiTiet = [];
 
         Object.defineProperties(this, {
-            sLoaiPhieu: {
+            loaiPhieu: {
                 get() {
                     let txt = '';
                     switch (this.idLoaiChungTu) {
@@ -72,7 +79,7 @@ export default class QuyHoaDonDto {
                     return txt;
                 }
             },
-            sTrangThai: {
+            txtTrangThai: {
                 get() {
                     let txt = '';
                     switch (this.trangThai) {
@@ -81,6 +88,26 @@ export default class QuyHoaDonDto {
                             break;
                         case 0:
                             txt = 'Đã hủy';
+                            break;
+                    }
+                    return txt;
+                }
+            },
+            sHinhThucThanhToan: {
+                get() {
+                    let txt = '';
+                    switch (this.hinhThucThanhToan) {
+                        case 1:
+                            txt = 'Tiền mặt';
+                            break;
+                        case 2:
+                            txt = 'Pos';
+                            break;
+                        case 3:
+                            txt = 'Chuyển khoản';
+                            break;
+                        case 4:
+                            txt = 'Thẻ giá trị';
                             break;
                     }
                     return txt;
