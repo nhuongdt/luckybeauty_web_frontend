@@ -53,7 +53,6 @@ const themInputChietKhau = createTheme({
         }
     }
 });
-const gtriCK2 = [0];
 export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: any) {
     const [laPhanTram, setLaPhanTram] = useState('true');
     const [gtriCK, setGtriCK] = useState(0);
@@ -74,16 +73,37 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
             }
             setGtriCK(props?.item?.tienChietKhau);
         }
-        gtriCK2[0] = gtriCK;
     }, [props?.item]);
 
-    const changeChietKhau = (event: any) => {
-        handleChangeChietKhau(laPhanTram, Utils.formatNumberToFloat(event.target.value));
+    const changeChietKhau = (val: any) => {
+        let valNew = Utils.formatNumberToFloat(val);
+        if (laPhanTram === 'true') {
+            if (valNew > 100) valNew = 100;
+        }
+        setGtriCK(valNew);
+        handleChangeChietKhau(laPhanTram, valNew);
     };
 
     const handleChangeLoaiChietKhau = (event: any) => {
-        setLaPhanTram(event.target.value);
-        handleChangeChietKhau(event.target.value, Utils.formatNumberToFloat(gtriCK));
+        const laPhanTramNew = event.target.value;
+        const giaBan = props?.item?.donGiaTruocCK ?? 0;
+        const gtriCKOld = gtriCK;
+
+        let ckNew = gtriCK;
+        if (laPhanTram === 'true') {
+            if (laPhanTramNew === 'false') {
+                // % to vnd
+                ckNew = (gtriCKOld * giaBan) / 100;
+            }
+        } else {
+            if (laPhanTramNew === 'true') {
+                // vnd to %
+                ckNew = giaBan > 0 ? (gtriCKOld / giaBan) * 100 : 0;
+            }
+        }
+        setGtriCK(ckNew);
+        setLaPhanTram(laPhanTramNew);
+        handleChangeChietKhau(event.target.value, Utils.formatNumberToFloat(ckNew));
     };
 
     return (
@@ -107,6 +127,11 @@ export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: an
                                 size="small"
                                 thousandSeparator
                                 customInput={TextField}
+                                isAllowed={(values) => {
+                                    const floatValue = values.floatValue;
+                                    if (laPhanTram === 'true') return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                    return true;
+                                }}
                                 onChange={(event) => changeChietKhau(event.target.value)}
                             />
                             <FormControlLabel
@@ -141,7 +166,7 @@ export default function ModalEditChiTietGioHang({
     const [popover, setPopover] = useState({
         anchorEl: null,
         open: false,
-        item: { id: '', ptChietKhau: 0, tienChietKhau: 0 }
+        item: { id: '', ptChietKhau: 0, tienChietKhau: 0, donGiaTruocCK: 0 }
     });
     const [idCTHD, setIdCTHD] = useState('');
     const [lstCTHoaDon, setLstCTHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
@@ -151,7 +176,6 @@ export default function ModalEditChiTietGioHang({
     React.useEffect(() => {
         setIsSave(false);
         setLstCTHoaDon(hoadonChiTiet);
-        // if (hoadonChiTiet?.length === 1) setIdCTHD(hoadonChiTiet[0]?.id);
 
         if (formType === 0) {
             setLstCTHoaDon(
@@ -203,7 +227,12 @@ export default function ModalEditChiTietGioHang({
         setPopover({
             anchorEl: event.currentTarget,
             open: true,
-            item: { id: item.id, ptChietKhau: item.ptChietKhau, tienChietKhau: item.tienChietKhau }
+            item: {
+                id: item.id,
+                ptChietKhau: item.ptChietKhau,
+                tienChietKhau: item.tienChietKhau,
+                donGiaTruocCK: item.donGiaTruocCK
+            }
         });
         setIdCTHD(item.id);
     };
@@ -211,7 +240,7 @@ export default function ModalEditChiTietGioHang({
         setPopover({
             anchorEl: null,
             open: false,
-            item: { id: '', ptChietKhau: 0, tienChietKhau: 0 }
+            item: { id: '', ptChietKhau: 0, tienChietKhau: 0, donGiaTruocCK: 0 }
         });
     };
 
@@ -542,7 +571,7 @@ export default function ModalEditChiTietGioHang({
                                                         textAlign: 'right',
                                                         float: 'right',
                                                         color: 'red',
-                                                        display: ct?.tienChietKhau > 0 ? '' : 'none'
+                                                        display: 'none'
                                                     }}>
                                                     <span>
                                                         -{' '}
@@ -579,16 +608,19 @@ export default function ModalEditChiTietGioHang({
                                         <Stack direction="column" spacing={1}>
                                             <Typography variant="body2">Chiết khấu</Typography>
 
-                                            <NumericFormat
+                                            <TextField
                                                 fullWidth
-                                                // ô này sẽ hiển thị giá trị của chiết khấu sau khi nhập xong ở trong poppup ví dụ: 100.000đ hoặc 30%
                                                 size="small"
-                                                defaultValue={0}
-                                                thousandSeparator
-                                                customInput={TextField}
                                                 onClick={(event: any) => {
                                                     showPopChietKhau(event, ct);
                                                 }}
+                                                value={
+                                                    ct.ptChietKhau > 0
+                                                        ? ct?.ptChietKhau.toString().concat(' %')
+                                                        : Utils.formatNumber(ct?.tienChietKhau)
+                                                              .toString()
+                                                              .concat(' đ')
+                                                }
                                             />
                                         </Stack>
                                         <Stack direction="column" spacing={1}>
@@ -718,6 +750,7 @@ export default function ModalEditChiTietGioHang({
                                         </Stack>
                                     </Grid>
                                     <Close
+                                        style={{ display: displayComponent }}
                                         sx={{
                                             position: 'absolute',
                                             right: '12px',
@@ -747,12 +780,18 @@ export default function ModalEditChiTietGioHang({
                                         }}>
                                         <ExpandMore
                                             sx={{
-                                                display: itemVisibility[index] ? '' : 'none'
+                                                display:
+                                                    formType !== 1 && itemVisibility[index]
+                                                        ? ''
+                                                        : 'none'
                                             }}
                                         />
                                         <ExpandLess
                                             sx={{
-                                                display: !itemVisibility[index] ? '' : 'none'
+                                                display:
+                                                    formType !== 1 && !itemVisibility[index]
+                                                        ? ''
+                                                        : 'none'
                                             }}
                                         />
                                     </IconButton>
