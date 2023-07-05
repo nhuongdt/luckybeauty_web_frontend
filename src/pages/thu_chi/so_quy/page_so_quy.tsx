@@ -29,6 +29,8 @@ import utils from '../../../utils/utils';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { Add } from '@mui/icons-material';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -132,6 +134,38 @@ const PageSoQuy = ({ xx }: any) => {
                     mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${itemSQ?.maHoaDon ?? ' '} không?`
                 })
             );
+        }
+    };
+
+    const saveSoQuy = (dataSave: any, type: number) => {
+        setisShowModal(false);
+        switch (type) {
+            case 1: // insert
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    items: [dataSave, ...pageDataSoQuy.items],
+                    totalCount: pageDataSoQuy.totalCount + 1,
+                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount, paramSearch.pageSize)
+                });
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Thêm ' + dataSave.loaiPhieu + ' thành công'
+                });
+                break;
+            case 2:
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    items: [dataSave, ...pageDataSoQuy.items],
+                    totalCount: pageDataSoQuy.totalCount + 1,
+                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount, paramSearch.pageSize)
+                });
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật ' + dataSave.loaiPhieu + ' thành công'
+                });
+                break;
         }
     };
 
@@ -257,7 +291,7 @@ const PageSoQuy = ({ xx }: any) => {
             )
         },
         {
-            field: 'phuongThucTT',
+            field: 'sHinhThucThanhToan',
             sortable: false,
             headerName: 'Hình thức',
             minWidth: 118,
@@ -267,7 +301,7 @@ const PageSoQuy = ({ xx }: any) => {
                     {params.colDef.headerName}
                     <IconSorting
                         onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'phuongThucTT' });
+                            setParamSearch({ ...paramSearch, columnSort: 'sHinhThucThanhToan' });
                         }}
                     />
                 </Box>
@@ -341,6 +375,27 @@ const PageSoQuy = ({ xx }: any) => {
 
     return (
         <>
+            <CreateOrEditSoQuyDialog
+                onClose={() => {
+                    setisShowModal(false);
+                }}
+                onOk={saveSoQuy}
+                visiable={isShowModal}
+                idQuyHD={selectedRowId}
+            />
+            {/* <ConfirmDelete
+                isShow={inforDeleteProduct.show}
+                title={inforDeleteProduct.title}
+                mes={inforDeleteProduct.mes}
+                onOk={deleteProduct}
+                onCancel={() =>
+                    setInforDeleteProduct({ ...inforDeleteProduct, show: false })
+                }></ConfirmDelete> */}
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
                 <Grid container justifyContent="space-between">
                     <Grid item md="auto" display="flex" alignItems="center" gap="10px">
@@ -477,16 +532,7 @@ const PageSoQuy = ({ xx }: any) => {
                         hideFooter
                         localeText={TextTranslate}
                     />
-                    <CreateOrEditSoQuyDialog
-                        onClose={() => {
-                            setisShowModal(false);
-                        }}
-                        onOk={() => {
-                            setisShowModal(false);
-                        }}
-                        visiable={isShowModal}
-                        idQuyHD={selectedRowId}
-                    />
+
                     <CustomTablePagination
                         currentPage={paramSearch.currentPage ?? 0}
                         rowPerPage={paramSearch.pageSize ?? 10}
