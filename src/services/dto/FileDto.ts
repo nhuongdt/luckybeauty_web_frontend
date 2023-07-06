@@ -1,6 +1,6 @@
 export class FileDto implements IFileDto {
     fileName!: string;
-    fileType?: string;
+    fileType!: string;
     fileToken!: string;
 
     constructor(data?: IFileDto) {
@@ -35,6 +35,11 @@ export class FileDto implements IFileDto {
 
 export interface IFileDto {
     fileName: string;
-    fileType?: string;
+    fileType: string;
     fileToken: string;
+}
+
+export interface FileUpload {
+    file: string;
+    type: string;
 }

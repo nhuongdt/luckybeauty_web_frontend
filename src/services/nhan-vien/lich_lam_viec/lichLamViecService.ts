@@ -1,3 +1,4 @@
+import { FileUpload } from '../../dto/FileDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
 import { CreateOrEditLichLamViecDto } from './dto/CreateOrEditLichLamViecDto';
@@ -15,8 +16,12 @@ class LichLamViecService {
         return response.data.result;
     }
     public async createOrEditLichLamViec(input: CreateOrEditLichLamViecDto): Promise<boolean> {
-        const response = await http.post('api/services/app/LichLamViec/CReateOrEdit', input);
+        const response = await http.post('api/services/app/LichLamViec/CreateOrEdit', input);
         return response.data.success;
+    }
+    public async inportLichLamViec(input: FileUpload) {
+        const result = await http.post(`api/services/app/NhanSu/Delete`);
+        return result.data.result;
     }
 }
 export default new LichLamViecService();

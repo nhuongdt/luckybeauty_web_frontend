@@ -90,6 +90,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     initialValues={initValues}
                     validationSchema={rules}
                     onSubmit={async (values) => {
+                        values.tenNhanVien = values.ho + ' ' + values.tenLot;
                         const createOrEdit = await nhanVienService.createOrEdit(values);
                         console.log(createOrEdit);
                         createOrEdit != null

@@ -360,37 +360,6 @@ class UserScreen extends AppComponentBase {
                                 <Box display="flex" alignItems="center">
                                     <Box display="flex" gap="8px">
                                         <Button
-                                            variant="outlined"
-                                            size="small"
-                                            startIcon={<img src={DownloadIcon} />}
-                                            sx={{
-                                                height: '40px',
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                fontWeight: '400',
-                                                borderColor: '#E6E1E6!important',
-                                                color: '#666466',
-                                                backgroundColor: '#fff!important'
-                                            }}>
-                                            Nhập
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            className="btn-export"
-                                            size="small"
-                                            startIcon={<img src={UploadIcon} />}
-                                            sx={{
-                                                height: '40px',
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                fontWeight: '400',
-                                                borderColor: '#E6E1E6!important',
-                                                color: '#666466',
-                                                backgroundColor: '#fff!important'
-                                            }}>
-                                            Xuất
-                                        </Button>
-                                        <Button
                                             variant="contained"
                                             startIcon={<img src={AddIcon} />}
                                             size="small"

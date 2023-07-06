@@ -288,38 +288,6 @@ class RoleScreen extends React.Component<IRoleProps> {
                                 <Box>
                                     <Box display="flex" alignItems="center" gap="8px">
                                         <Button
-                                            variant="outlined"
-                                            size="small"
-                                            startIcon={<img src={DownloadIcon} />}
-                                            sx={{
-                                                height: '40px',
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                fontWeight: '400',
-                                                borderColor: '#E6E1E6',
-                                                color: '#666466',
-                                                backgroundColor: '#fff!important'
-                                            }}
-                                            className="btn-outline-hover">
-                                            Nhập
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            size="small"
-                                            startIcon={<img src={UploadIcon} />}
-                                            sx={{
-                                                height: '40px',
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                fontWeight: '400',
-                                                borderColor: '#E6E1E6',
-                                                color: '#666466',
-                                                backgroundColor: '#fff!important'
-                                            }}
-                                            className="btn-outline-hover">
-                                            Xuất
-                                        </Button>
-                                        <Button
                                             variant="contained"
                                             startIcon={<img src={AddIcon} />}
                                             size="small"

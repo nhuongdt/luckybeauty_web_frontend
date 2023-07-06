@@ -34,11 +34,15 @@ import { enqueueSnackbar } from 'notistack';
 import nhanVienStore from '../../stores/nhanVienStore';
 import { Cookie } from '@mui/icons-material';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { FileUpload } from '../../services/dto/FileDto';
+import fileDowloadService from '../../services/file-dowload.service';
+import uploadFileService from '../../services/uploadFileService';
+import nhanVienService from '../../services/nhan-vien/nhanVienService';
+import ImportExcel from '../../components/ImportComponent';
 class EmployeeScreen extends React.Component {
     static contextType = ChiNhanhContext;
     state = {
         idNhanSu: '',
-        idChiNhanh: '',
         avatarFile: '',
         modalVisible: false,
         maxResultCount: 10,
@@ -47,6 +51,7 @@ class EmployeeScreen extends React.Component {
         sortBy: '',
         sortType: 'desc',
         moreOpen: false,
+        importShow: false,
         anchorEl: null,
         selectedRowId: null,
         suggestChucVu: [] as SuggestChucVuDto[],
@@ -57,7 +62,6 @@ class EmployeeScreen extends React.Component {
         isShowConfirmDelete: false
     };
     async componentDidMount() {
-        const idChiNhanh = Cookies.get('IdChiNhanh');
         await this.getData();
     }
 
@@ -83,14 +87,14 @@ class EmployeeScreen extends React.Component {
         await this.getListNhanVien();
     }
     async getListNhanVien() {
-        const { filter, maxResultCount, currentPage, sortBy, sortType, idChiNhanh } = this.state;
+        const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
         await NhanVienStore.getAll({
             maxResultCount: maxResultCount,
             skipCount: currentPage,
             filter: filter,
             sortBy: sortBy,
             sortType: sortType,
-            idChiNhanh: idChiNhanh ?? ''
+            idChiNhanh: Cookies.get('IdChiNhanh')
         });
         this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
@@ -190,6 +194,37 @@ class EmployeeScreen extends React.Component {
             isShowConfirmDelete: !this.state.isShowConfirmDelete,
             idNhanSu: ''
         });
+    };
+    exportToExcel = async () => {
+        const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
+        const result = await nhanVienService.exportDanhSachNhanVien({
+            maxResultCount: maxResultCount,
+            skipCount: currentPage,
+            filter: filter,
+            sortBy: sortBy,
+            sortType: sortType,
+            idChiNhanh: Cookies.get('IdChiNhanh')
+        });
+        fileDowloadService.downloadExportFile(result);
+    };
+    onImportShow = () => {
+        this.setState({
+            importShow: !this.state.importShow
+        });
+        this.getData();
+    };
+    handleImportData = async (input: FileUpload) => {
+        const result = await nhanVienService.inportNhanVien(input);
+        enqueueSnackbar(result.message, {
+            variant: result.status == 'success' ? 'success' : result.status,
+            autoHideDuration: 3000
+        });
+    };
+    downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate(
+            'NhanVien_ImportTemplate.xlsx'
+        );
+        fileDowloadService.downloadExportFile(result);
     };
     onSort = async (sortType: string, sortBy: string) => {
         const type = sortType === 'desc' ? 'asc' : 'desc';
@@ -540,9 +575,9 @@ class EmployeeScreen extends React.Component {
                                 color: '#666466',
                                 height: '40px',
                                 padding: '10px 16px',
-
                                 borderRadius: '4px!important'
                             }}
+                            onClick={this.onImportShow}
                             className="btn-outline-hover">
                             Nhập
                         </Button>
@@ -559,6 +594,7 @@ class EmployeeScreen extends React.Component {
                                 height: '40px',
                                 borderRadius: '4px!important'
                             }}
+                            onClick={this.exportToExcel}
                             className="btn-outline-hover">
                             Xuất
                         </Button>
@@ -657,6 +693,12 @@ class EmployeeScreen extends React.Component {
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}
                     onCancel={this.handleDelete}></ConfirmDelete>
+                <ImportExcel
+                    isOpen={this.state.importShow}
+                    onClose={this.onImportShow}
+                    downloadImportTemplate={this.downloadImportTemplate}
+                    importFile={this.handleImportData}
+                />
                 <CreateOrEditNhanVienDialog
                     visible={this.state.modalVisible}
                     onCancel={() => {

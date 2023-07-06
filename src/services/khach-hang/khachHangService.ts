@@ -7,8 +7,9 @@ import http from '../httpService';
 import { CreateOrEditKhachHangDto } from './dto/CreateOrEditKhachHangDto';
 import { KhachHangDto } from './dto/KhachHangDto';
 import Utils from '../../utils/utils';
-import { FileDto, IFileDto } from '../dto/FileDto';
+import { FileDto, FileUpload, IFileDto } from '../dto/FileDto';
 import utils from '../../utils/utils';
+import { ExecuteResultDto } from '../dto/ExecuteResultDto';
 
 class KhachHangService {
     public async getAll(
@@ -51,6 +52,10 @@ class KhachHangService {
             `api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`
         );
         return result.data.result;
+    }
+    async importKhachHang(input: FileUpload) {
+        const response = await http.post('api/services/app/KhachHang/ImportExcel', input);
+        return response.data.result;
     }
 }
 export default new KhachHangService();
