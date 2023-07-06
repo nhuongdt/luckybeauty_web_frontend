@@ -31,6 +31,7 @@ export default class QuyHoaDonDto {
     tenNhanVien? = '';
     txtTrangThai? = '';
     sHinhThucThanhToan? = '';
+    tenKhoanThuChi? = '';
 
     constructor({
         id = Guid.create().toString(),

@@ -31,6 +31,7 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { Add } from '@mui/icons-material';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -38,7 +39,7 @@ const PageSoQuy = ({ xx }: any) => {
     const chinhanh = useContext(ChiNhanhContext);
     const [isShowModal, setisShowModal] = useState(false);
     const [selectedRowId, setSelectedRowId] = useState('');
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>({
+    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
         type: 1,
@@ -48,6 +49,8 @@ const PageSoQuy = ({ xx }: any) => {
     const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
         textSearch: '',
         currentPage: 1,
+        columnSort: 'ngayLapHoaDon',
+        typeSort: 'desc',
         idChiNhanhs: chinhanh.id === '' ? [] : [chinhanh.id],
         fromDate: format(today, 'yyyy-MM-01'),
         toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
@@ -88,7 +91,9 @@ const PageSoQuy = ({ xx }: any) => {
         paramSearch.pageSize,
         paramSearch.fromDate,
         paramSearch.toDate,
-        paramSearch.idChiNhanhs
+        paramSearch.idChiNhanhs,
+        paramSearch.columnSort,
+        paramSearch.typeSort
     ]);
 
     const handleKeyDownTextSearch = (event: any) => {
@@ -123,21 +128,45 @@ const PageSoQuy = ({ xx }: any) => {
     };
 
     const doActionRow = (action: number, itemSQ: GetAllQuyHoaDonItemDto) => {
+        setSelectedRowId(itemSQ?.id);
         if (action < 2) {
-            setSelectedRowId(itemSQ?.id);
             setisShowModal(true);
         } else {
-            setInforDeleteProduct(
+            setinforDelete(
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${itemSQ?.maHoaDon ?? ' '} không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${itemSQ?.loaiPhieu ?? ' '}  ${
+                        itemSQ?.maHoaDon ?? ' '
+                    } không?`
                 })
             );
         }
     };
 
-    const saveSoQuy = (dataSave: any, type: number) => {
+    const deleteProduct = async (dataSave: any) => {
+        await SoQuyServices.DeleteSoQuy(selectedRowId);
+        setPageDataSoQuy({
+            ...pageDataSoQuy,
+            items: pageDataSoQuy.items.filter((x: any) => x.id !== selectedRowId),
+            totalCount: pageDataSoQuy.totalCount - 1,
+            totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - 1, paramSearch.pageSize)
+        });
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Hủy thành công'
+        });
+        setinforDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+    };
+
+    const saveSoQuy = async (dataSave: any, type: number) => {
         setisShowModal(false);
         switch (type) {
             case 1: // insert
@@ -145,7 +174,10 @@ const PageSoQuy = ({ xx }: any) => {
                     ...pageDataSoQuy,
                     items: [dataSave, ...pageDataSoQuy.items],
                     totalCount: pageDataSoQuy.totalCount + 1,
-                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount, paramSearch.pageSize)
+                    totalPage: utils.getTotalPage(
+                        pageDataSoQuy.totalCount + 1,
+                        paramSearch.pageSize
+                    )
                 });
                 setObjAlert({
                     show: true,
@@ -156,15 +188,37 @@ const PageSoQuy = ({ xx }: any) => {
             case 2:
                 setPageDataSoQuy({
                     ...pageDataSoQuy,
-                    items: [dataSave, ...pageDataSoQuy.items],
-                    totalCount: pageDataSoQuy.totalCount + 1,
-                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount, paramSearch.pageSize)
+                    items: pageDataSoQuy.items.map((item: any) => {
+                        if (item.id === selectedRowId) {
+                            return {
+                                ...item,
+                                maHoaDon: dataSave.maHoaDon,
+                                ngayLapHoaDon: dataSave.ngayLapHoaDon,
+                                idLoaiChungTu: dataSave.idLoaiChungTu,
+                                loaiPhieu: dataSave.loaiPhieu,
+                                hinhThucThanhToan: dataSave.hinhThucThanhToan,
+                                sHinhThucThanhToan: dataSave.sHinhThucThanhToan,
+                                tongTienThu: dataSave.tongTienThu,
+                                maNguoiNop: dataSave.maNguoiNop,
+                                tenNguoiNop: dataSave.tenNguoiNop,
+                                idKhoanThuChi: dataSave.idKhoanThuChi,
+                                tenKhoanThuChi: dataSave.tenKhoanThuChi,
+                                txtTrangThai: dataSave.txtTrangThai,
+                                trangThai: dataSave.trangThai
+                            };
+                        } else {
+                            return item;
+                        }
+                    })
                 });
                 setObjAlert({
                     show: true,
                     type: 1,
                     mes: 'Cập nhật ' + dataSave.loaiPhieu + ' thành công'
                 });
+                break;
+            case 3:
+                await deleteProduct(dataSave);
                 break;
         }
     };
@@ -233,7 +287,7 @@ const PageSoQuy = ({ xx }: any) => {
             )
         },
         {
-            field: 'loaiThuChi',
+            field: 'tenKhoanThuChi',
             sortable: false,
             headerName: 'Loại thu chi',
             minWidth: 118,
@@ -243,7 +297,7 @@ const PageSoQuy = ({ xx }: any) => {
                     {params.colDef.headerName}
                     <IconSorting
                         onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'loaiThuChi' });
+                            setParamSearch({ ...paramSearch, columnSort: 'tenKhoanThuChi' });
                         }}
                     />
                 </Box>
@@ -383,14 +437,12 @@ const PageSoQuy = ({ xx }: any) => {
                 visiable={isShowModal}
                 idQuyHD={selectedRowId}
             />
-            {/* <ConfirmDelete
-                isShow={inforDeleteProduct.show}
-                title={inforDeleteProduct.title}
-                mes={inforDeleteProduct.mes}
+            <ConfirmDelete
+                isShow={inforDelete.show}
+                title={inforDelete.title}
+                mes={inforDelete.mes}
                 onOk={deleteProduct}
-                onCancel={() =>
-                    setInforDeleteProduct({ ...inforDeleteProduct, show: false })
-                }></ConfirmDelete> */}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -473,7 +525,10 @@ const PageSoQuy = ({ xx }: any) => {
                                     fontSize: '14px'
                                 }}
                                 className="btn-container-hover"
-                                onClick={() => setisShowModal(true)}>
+                                onClick={() => {
+                                    setisShowModal(true);
+                                    setSelectedRowId('');
+                                }}>
                                 Lập phiếu
                             </Button>
                         </Box>
