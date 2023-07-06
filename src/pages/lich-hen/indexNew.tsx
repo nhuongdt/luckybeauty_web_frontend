@@ -123,7 +123,7 @@ const LichHen: React.FC = () => {
                 container
                 justifyContent="space-between"
                 alignItems="center"
-                sx={{ paddingTop: '1.5277777777777777vw' }}>
+                sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
                 <Grid item>
                     <Select
                         defaultValue="Tất cả nhân viên"

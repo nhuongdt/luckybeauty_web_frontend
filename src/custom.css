@@ -256,3 +256,14 @@
     .MuiOutlinedInput-notchedOutline {
     border-color: #7c3367 !important;
 }
+.MuiDataGrid-menuIcon {
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    right: 0;
+}
+.MuiDataGrid-columnSeparator {
+    display: none !important;
+}

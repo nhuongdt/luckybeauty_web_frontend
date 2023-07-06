@@ -284,7 +284,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box textAlign="right" width="100%" fontSize="12px">
+                    <Box textAlign="center" width="100%" fontSize="12px">
                         {params.value}
                     </Box>
                 )
@@ -372,7 +372,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value} fontSize="12px" textAlign="right" width="100%">
+                    <Box title={params.value} fontSize="12px" textAlign="center" width="100%">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -394,10 +394,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Box>
                 ),
-                minWidth: 128,
+                minWidth: 160,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700', width: '100%', textAlign: 'center' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '700',
+                            width: '100%',
+                            textAlign: 'center',
+                            '& svg': {
+                                width: '16px',
+                                height: '16px'
+                            }
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
