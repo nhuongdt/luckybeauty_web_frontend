@@ -3,11 +3,10 @@ import { Autocomplete, Grid, TextField, Typography, Box } from '@mui/material';
 import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
 import { useState, useRef } from 'react';
 import { debounce } from '@mui/material/utils';
-import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
-import Utils from '../../utils/utils'; // func common
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import utils from '../../utils/utils';
 
 export default function AutocompleteCustomer({
     idChosed,
@@ -16,7 +15,7 @@ export default function AutocompleteCustomer({
     err = false
 }: any) {
     const [listCustomer, setListCustomer] = useState([]);
-    const [cusChosed, setCusChosed] = useState<CreateOrEditKhachHangDto>();
+    const [cusChosed, setCusChosed] = useState<CreateOrEditKhachHangDto | null>(null);
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
         loaiDoiTuong: 1,
@@ -27,8 +26,12 @@ export default function AutocompleteCustomer({
     });
 
     const getInforCustomerbyID = async () => {
-        const data = await khachHangService.getKhachHang(idChosed);
-        setCusChosed(data);
+        if (!utils.checkNull(idChosed)) {
+            const data = await khachHangService.getKhachHang(idChosed);
+            setCusChosed(data);
+        } else {
+            setCusChosed(() => null);
+        }
     };
 
     const debounceDropDown = useRef(
@@ -61,7 +64,10 @@ export default function AutocompleteCustomer({
                 disablePortal
                 autoComplete
                 multiple={false}
-                onChange={(event: any, newValue: KhachHangItemDto | null) => choseItem(newValue)}
+                value={cusChosed}
+                onChange={(event: any, newValue: CreateOrEditKhachHangDto | null) =>
+                    choseItem(newValue)
+                }
                 onInputChange={(event, newInputValue) => {
                     handleInputChange(newInputValue);
                 }}
