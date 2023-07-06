@@ -143,10 +143,7 @@ class CaLamViecScreen extends Component {
                 renderHeader: (params) => (
                     <Box
                         sx={{
-                            fontWeight: '700',
-                            overflow: 'hidden',
-                            width: '100%',
-                            textOverflow: 'ellipsis'
+                            fontWeight: '700'
                         }}>
                         {params.colDef.headerName}
                         <IconSorting
@@ -155,6 +152,19 @@ class CaLamViecScreen extends Component {
                                 this.onSort(this.state.sortType, 'maCa');
                             }}
                         />{' '}
+                    </Box>
+                ),
+                renderCell: (params) => (
+                    <Box
+                        sx={{
+                            overflow: 'hidden',
+                            width: '100%',
+                            textOverflow: 'ellipsis',
+                            fontSize: '12px',
+                            textAlign: 'center'
+                        }}
+                        title={params.value}>
+                        {params.value}
                     </Box>
                 )
             },
@@ -165,13 +175,16 @@ class CaLamViecScreen extends Component {
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
-                    <Box style={{ display: 'flex', alignItems: 'center' }}>
+                    <Box style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         <Typography
                             fontSize="12px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
-                            lineHeight="16px">
+                            lineHeight="16px"
+                            textAlign="center"
+                            width="100%"
+                            title={params.value}>
                             {params.value}
                         </Typography>
                     </Box>
@@ -208,7 +221,8 @@ class CaLamViecScreen extends Component {
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
-                            lineHeight="16px">
+                            lineHeight="16px"
+                            title={params.value}>
                             {params.value}
                         </Typography>
                     </Box>
@@ -246,7 +260,8 @@ class CaLamViecScreen extends Component {
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
-                            lineHeight="16px">
+                            lineHeight="16px"
+                            title={params.value}>
                             {params.value}
                         </Typography>
                     </Box>

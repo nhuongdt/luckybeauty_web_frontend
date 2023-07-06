@@ -202,7 +202,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box width="100%" textAlign="center">
+                    <Box width="100%" textAlign="center" fontSize="12px">
                         {params.value}
                     </Box>
                 )
@@ -216,6 +216,19 @@ class RoleScreen extends React.Component<IRoleProps> {
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        sx={{
+                            fontSize: '12px',
+                            width: '100%',
+
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                        }}
+                        title={params.value}>
+                        {params.value}
                     </Box>
                 )
             },

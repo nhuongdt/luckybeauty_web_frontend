@@ -115,7 +115,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value} width="100%">
+                    <Box title={params.value} width="100%" textAlign="center">
                         {params.value}
                     </Box>
                 )
@@ -136,7 +136,11 @@ class SoQuyScreen extends Component {
                         />
                     </Box>
                 ),
-                renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+                renderCell: (params) => (
+                    <Box title={params.value} textAlign="center" width="100%">
+                        {params.value}
+                    </Box>
+                )
             },
             {
                 field: 'thoiGianTao',
@@ -201,7 +205,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box title={params.value} width="100%" textAlign="end">
+                    <Box title={params.value} width="100%" textAlign="center">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -223,7 +227,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box title={params.value} width="100%">
+                    <Box title={params.value} width="100%" textAlign="center">
                         {params.value}
                     </Box>
                 )

@@ -181,7 +181,8 @@ class ChiNhanhScreen extends Component {
                         sx={{
                             textOverflow: 'ellipsis',
                             width: '100%',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            textAlign: 'center'
                         }}>
                         {params.value}
                     </Typography>
@@ -207,7 +208,7 @@ class ChiNhanhScreen extends Component {
                 renderCell: (params: any) => (
                     <Typography
                         width="100%"
-                        textAlign="right"
+                        textAlign="center"
                         variant="caption"
                         fontSize="12px"
                         title={params.value}>

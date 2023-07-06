@@ -255,7 +255,7 @@ class EmployeeScreen extends React.Component {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box width="100%" textAlign="right" fontSize="12px">
+                <Box width="100%" textAlign="center" fontSize="12px">
                     {params.value}
                 </Box>
             )
@@ -307,7 +307,13 @@ class EmployeeScreen extends React.Component {
             headerName: 'Giới tính',
             minWidth: 60,
             renderCell: (params) => (
-                <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        width: '100%'
+                    }}>
                     <Typography
                         fontSize="12px"
                         fontWeight="400"
@@ -339,10 +345,7 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box
                     sx={{
-                        fontWeight: '700',
-                        width: '100%',
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden'
+                        fontWeight: '700'
                     }}>
                     {params.colDef.headerName}
                     <IconSorting
@@ -351,6 +354,19 @@ class EmployeeScreen extends React.Component {
                             this.onSort(this.state.sortType, 'diaChi');
                         }}
                     />
+                </Box>
+            ),
+            renderCell: (params) => (
+                <Box
+                    sx={{
+                        width: '100%',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        fontSize: '12px',
+                        textAlign: 'center'
+                    }}
+                    title={params.value}>
+                    {params.value}
                 </Box>
             )
         },
@@ -366,7 +382,8 @@ class EmployeeScreen extends React.Component {
                     fontWeight="400"
                     variant="h6"
                     color="#333233"
-                    lineHeight="16px">
+                    lineHeight="16px"
+                    sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
                 </Typography>
             ),

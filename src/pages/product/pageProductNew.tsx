@@ -520,7 +520,7 @@ export default function PageProductNew() {
                             variant="outlined"
                             startIcon={<DownIcon />}
                             className="btnNhapXuat btn-outline-hover"
-                            sx={{ bgcolor: '#fff!important' }}>
+                            sx={{ bgcolor: '#fff!important', color: '#666466' }}>
                             Nhập
                         </Button>
                         <Button
@@ -528,7 +528,7 @@ export default function PageProductNew() {
                             variant="outlined"
                             startIcon={<UploadIcon />}
                             className="btnNhapXuat btn-outline-hover"
-                            sx={{ bgcolor: '#fff!important' }}>
+                            sx={{ bgcolor: '#fff!important', color: '#666466' }}>
                             Xuất
                         </Button>
                         <Button
