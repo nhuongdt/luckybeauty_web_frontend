@@ -6,17 +6,13 @@ import { GetAllUserOutput } from '../../services/user/dto/getAllUserOutput';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 
 export default function AutocompleteNhanVien({ handleChoseItem, idChosed, dataNhanVien }: any) {
-    const [itemChosed, setItemChosed] = useState<NhanSuItemDto>({
-        id: '',
-        maNhanVien: '',
-        tenNhanVien: ''
-    } as NhanSuItemDto);
+    const [itemChosed, setItemChosed] = useState<NhanSuItemDto | null>(null);
     React.useEffect(() => {
         const item = dataNhanVien.filter((x: NhanSuItemDto) => x.id == idChosed);
         if (item.length > 0) {
             setItemChosed(item[0]);
         } else {
-            setItemChosed({ id: '', maNhanVien: '', tenNhanVien: '' } as NhanSuItemDto);
+            setItemChosed(null);
         }
     }, [idChosed]);
 
