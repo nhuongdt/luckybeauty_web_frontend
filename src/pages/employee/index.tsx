@@ -33,7 +33,9 @@ import './employee.css';
 import { enqueueSnackbar } from 'notistack';
 import nhanVienStore from '../../stores/nhanVienStore';
 import { Cookie } from '@mui/icons-material';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 class EmployeeScreen extends React.Component {
+    static contextType = ChiNhanhContext;
     state = {
         idNhanSu: '',
         idChiNhanh: '',
@@ -56,7 +58,6 @@ class EmployeeScreen extends React.Component {
     };
     async componentDidMount() {
         const idChiNhanh = Cookies.get('IdChiNhanh');
-        await this.setState({ idChiNhanh: idChiNhanh });
         await this.getData();
     }
 
@@ -82,14 +83,14 @@ class EmployeeScreen extends React.Component {
         await this.getListNhanVien();
     }
     async getListNhanVien() {
-        const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
+        const { filter, maxResultCount, currentPage, sortBy, sortType, idChiNhanh } = this.state;
         await NhanVienStore.getAll({
             maxResultCount: maxResultCount,
             skipCount: currentPage,
             filter: filter,
             sortBy: sortBy,
             sortType: sortType,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
+            idChiNhanh: idChiNhanh ?? ''
         });
         this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
@@ -117,7 +118,7 @@ class EmployeeScreen extends React.Component {
 
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
-            await NhanVienStore.createNhanVien(this.state.idChiNhanh);
+            await NhanVienStore.createNhanVien();
             await this.setState({
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });

@@ -1,3 +1,4 @@
+import { RequestFromToDto } from '../dto/ParamSearchDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
 import QuyHoaDonDto from '../so_quy/QuyHoaDonDto';
@@ -22,14 +23,14 @@ class SoQuyServices {
         );
         return result.data.result;
     };
-    async getAll(input: PagedQuyHoaDonRequestDto): Promise<PagedResultDto<GetAllQuyHoaDonItemDto>> {
+    async getAll(input: RequestFromToDto): Promise<PagedResultDto<GetAllQuyHoaDonItemDto>> {
         const response = await http.get('api/services/app/QuyHoaDon/GetAll', {
             params: input
         });
         return response.data.result;
     }
     async GetForEdit(idQuyHD: string): Promise<QuyHoaDonDto> {
-        const response = await http.get(`api/services/app/QuyHoaDon/GetAll?id=${idQuyHD}`);
+        const response = await http.get(`api/services/app/QuyHoaDon/GetForEdit?id=${idQuyHD}`);
         return response.data.result;
     }
 }

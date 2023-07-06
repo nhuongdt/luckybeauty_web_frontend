@@ -4,9 +4,6 @@ import AppConsts from '../lib/appconst';
 import { FileDto, IFileDto } from './dto/FileDto';
 
 class FileDownloadService {
-    static downloadTempFile(result: IFileDto) {
-        throw new Error('Method not implemented.');
-    }
     constructor() {
         makeAutoObservable(this);
     }
@@ -20,8 +17,8 @@ class FileDownloadService {
             '&fileName=' +
             file.fileName;
         location.href = url; //TODO: This causes reloading of same page in Firefox
-        alert(url);
+        // alert(url);
     }
 }
 
-export default FileDownloadService;
+export default new FileDownloadService();

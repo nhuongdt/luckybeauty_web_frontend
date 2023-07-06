@@ -45,19 +45,19 @@ class SoQuyScreen extends Component {
 
     getAll = async () => {
         this.setState({ data: [] });
-        await soQuyStore.getAll({
-            filter: this.state.keyword,
-            maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-            sortBy: this.state.sortBy,
-            sortType: this.state.sortType
-        });
-        this.setState({
-            data: soQuyStore.lstSoQuy.items,
-            totalPage: Math.ceil(soQuyStore.lstSoQuy.totalCount / this.state.maxResultCount),
-            totalCount: soQuyStore.lstSoQuy.totalCount
-        });
+        // await soQuyStore.getAll({
+        //     filter: this.state.keyword,
+        //     maxResultCount: this.state.maxResultCount,
+        //     skipCount: this.state.skipCount,
+        //     idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+        //     sortBy: this.state.sortBy,
+        //     sortType: this.state.sortType
+        // });
+        // this.setState({
+        //     data: soQuyStore.lstSoQuy.items,
+        //     totalPage: Math.ceil(soQuyStore.lstSoQuy.totalCount / this.state.maxResultCount),
+        //     totalCount: soQuyStore.lstSoQuy.totalCount
+        // });
     };
 
     handlePageChange = async (event: any, value: any) => {

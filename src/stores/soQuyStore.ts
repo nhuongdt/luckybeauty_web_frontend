@@ -4,6 +4,7 @@ import { GetAllQuyHoaDonItemDto } from '../services/so_quy/Dto/QuyHoaDonViewItem
 import { PagedQuyHoaDonRequestDto } from '../services/so_quy/Dto/PagedQuyHoaDonRequest';
 import SoQuyServices from '../services/so_quy/SoQuyServices';
 import { CreateOrEditSoQuyDto } from '../services/so_quy/Dto/CreateOrEditSoQuyDto';
+import { RequestFromToDto } from '../services/dto/ParamSearchDto';
 
 class SoQuyStore {
     lstSoQuy!: PagedResultDto<GetAllQuyHoaDonItemDto>;
@@ -14,7 +15,7 @@ class SoQuyStore {
     constructor() {
         makeAutoObservable(this);
     }
-    async getAll(input: PagedQuyHoaDonRequestDto) {
+    async getAll(input: RequestFromToDto) {
         const response = await SoQuyServices.getAll(input);
         this.lstSoQuy = response;
     }

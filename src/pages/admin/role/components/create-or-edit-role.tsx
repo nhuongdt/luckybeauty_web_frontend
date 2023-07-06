@@ -375,6 +375,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             <TextField
                                                 size="small"
                                                 fullWidth
+                                                type="text"
                                                 placeholder="Tìm kiếm..."
                                                 sx={{
                                                     paddingTop: 1,

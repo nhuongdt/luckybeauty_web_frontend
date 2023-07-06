@@ -17,21 +17,7 @@ class UserStore {
 
     roles: GetRoles[] = [];
 
-    profileDto: ProfileDto = {
-        avatar: '',
-        cccd: '',
-        emailAddress: '',
-        gioiTinh: 0,
-        id: 0,
-        name: '',
-        ngayCap: '',
-        ngaySinh: '',
-        noiCap: '',
-        password: '',
-        phoneNumber: '',
-        surname: '',
-        userName: ''
-    };
+    profileDto!: ProfileDto;
 
     constructor() {
         makeAutoObservable(this);
