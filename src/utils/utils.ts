@@ -129,6 +129,12 @@ class Utils {
             ?.join('')
             ?.toUpperCase();
     };
+    FirstChar_UpperCase = function (str = '') {
+        if (str) {
+            return str.replace(/\w/, (c) => c.toUpperCase());
+        }
+        return '';
+    };
     Remove_LastComma = (str: string | null | undefined) => {
         if (str !== null && str !== undefined && str.length > 1) {
             return str.replace(/(^[,\s]+)|([,\s]+$)/g, '');
@@ -143,7 +149,7 @@ class Utils {
         if (objVal === undefined || objVal === null) {
             return 0;
         } else {
-            const value = parseFloat(objVal.toString().replace(/,/g, ''));
+            const value = parseFloat(objVal.toString().replace('.', '').replace(',', '.'));
             if (isNaN(value)) {
                 return 0;
             } else {
