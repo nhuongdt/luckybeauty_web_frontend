@@ -41,7 +41,7 @@ import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
-
+import { ReactComponent as SeasrchIcon } from '../../images/search-normal.svg';
 import './style.css';
 
 export default function PageProductNew() {
@@ -493,12 +493,22 @@ export default function PageProductNew() {
                             <TextField
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#FFFAFF'
+                                    backgroundColor: '#fff',
+                                    '& input': {
+                                        paddingLeft: '16px'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                        paddingLeft: '0'
+                                    }
                                 }}
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: <Search onClick={hanClickIconSearch} />
+                                    startAdornment: (
+                                        <IconButton onClick={hanClickIconSearch}>
+                                            <SeasrchIcon />
+                                        </IconButton>
+                                    )
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {

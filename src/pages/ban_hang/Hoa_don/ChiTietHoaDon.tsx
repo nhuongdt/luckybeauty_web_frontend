@@ -8,7 +8,8 @@ import {
     Tab,
     TextField,
     Select,
-    MenuItem
+    MenuItem,
+    Dialog
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
@@ -50,7 +51,7 @@ const themOutlineInput = createTheme({
     }
 });
 
-const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
+const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
@@ -132,7 +133,10 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
         );
     };
     return (
-        <Box
+        <Dialog
+            open={open}
+            onClose={onClose}
+            fullScreen
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -382,7 +386,7 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                 {/* <ModalEditChiTietGioHang   trigger={chitietHoaDon}
                 handleSave={AgreeGioHang}/> */}
             </>
-        </Box>
+        </Dialog>
     );
 };
 export default ThongTinHoaDonn;

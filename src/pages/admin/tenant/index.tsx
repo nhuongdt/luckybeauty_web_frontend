@@ -12,7 +12,7 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import AppComponentBase from '../../../components/AppComponentBase';
 import tenantService from '../../../services/tenant/tenantService';
-import SearchIcon from '@mui/icons-material/Search';
+
 import '../../../custom.css';
 import AddIcon from '../../../images/add.svg';
 import DownloadIcon from '../../../images/download.svg';
@@ -21,6 +21,7 @@ import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
+import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';

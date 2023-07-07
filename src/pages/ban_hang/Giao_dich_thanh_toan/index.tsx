@@ -183,7 +183,14 @@ const GiaoDichThanhToan: React.FC = () => {
             });
         }
     };
-
+    const [openDetail, setOpenDetail] = useState(false);
+    const handleOpenDetail = () => {
+        setOpenDetail(true);
+        console.log(openDetail);
+    };
+    const handleCloseDetail = () => {
+        setOpenDetail(false);
+    };
     const columns: GridColDef[] = [
         {
             field: 'maHoaDon',
@@ -219,6 +226,7 @@ const GiaoDichThanhToan: React.FC = () => {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
             minWidth: 118,
+            align: 'center',
             flex: 1,
             renderHeader: (params: any) => (
                 <Box title={params.value}>
@@ -231,8 +239,8 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
-            headerAlign: 'right',
-            align: 'right',
+            headerAlign: 'center',
+            align: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -248,8 +256,8 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tongGiamGiaHD',
             headerName: 'Tổng giảm giá',
-            headerAlign: 'right',
-            align: 'right',
+            headerAlign: 'center',
+            align: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -265,8 +273,8 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tongThanhToan',
             headerName: 'Tổng phải trả',
-            headerAlign: 'right',
-            align: 'right',
+            headerAlign: 'center',
+            align: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -293,7 +301,10 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
+                <Box title={params.value} textAlign="center" width="100%">
+                    {' '}
+                    {new Intl.NumberFormat().format(params.value)}
+                </Box>
             )
         },
         {
@@ -310,7 +321,10 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
+                <Box title={params.value} textAlign="center" width="100%">
+                    {' '}
+                    {new Intl.NumberFormat().format(params.value)}
+                </Box>
             )
         },
         {
@@ -353,19 +367,20 @@ const GiaoDichThanhToan: React.FC = () => {
 
     return (
         <>
+            <ThongTinHoaDon
+                idHoaDon={idHoadonChosing}
+                hoadon={hoadon}
+                open={openDetail}
+                CloseDetail={handleCloseDetail}
+            />
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             {idHoadonChosing !== '' ? (
-                <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
-                    <ThongTinHoaDon
-                        idHoaDon={idHoadonChosing}
-                        hoadon={hoadon}
-                        handleGotoBack={childGotoBack}
-                    />
-                </ChiNhanhContextbyUser.Provider>
+                <ChiNhanhContextbyUser.Provider
+                    value={allChiNhanh}></ChiNhanhContextbyUser.Provider>
             ) : (
                 <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
                     <Grid container justifyContent="space-between">
@@ -381,7 +396,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 <TextField
                                     size="small"
                                     sx={{
-                                        backgroundColor: '#FFFAFF',
+                                        backgroundColor: '#fff',
                                         borderColor: '#CDC9CD!important'
                                     }}
                                     className="search-field"
@@ -414,10 +429,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 sx={{
                                     display: 'flex',
                                     gap: '8px',
-                                    justifyContent: 'end',
-                                    '& button': {
-                                        height: '40px'
-                                    }
+                                    justifyContent: 'end'
                                 }}>
                                 <Box
                                     sx={{
@@ -432,7 +444,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                         padding: '7px 16px',
                                         borderRadius: '4px',
                                         transition: '.4s',
-                                        maxWidth: '251px',
+                                        maxWidth: '300px',
                                         '&:hover': {
                                             borderColor: '#7C3367'
                                         },
@@ -440,17 +452,21 @@ const GiaoDichThanhToan: React.FC = () => {
                                             pr: '0'
                                         },
                                         '& button': {
-                                            position: 'absolute',
-                                            height: '100%',
-                                            width: '100%',
-                                            left: '0',
-                                            top: '0',
-                                            borderRadius: '0',
-                                            bgcolor: 'unset!important',
-                                            opacity: '0'
+                                            // position: 'absolute',
+                                            // height: '100%',
+                                            // width: '100%',
+                                            // left: '0',
+                                            // top: '0',
+                                            // borderRadius: '0',
+                                            // bgcolor: 'unset!important',
+                                            // opacity: '0'
+                                            padding: '0',
+                                            margin: '0'
                                         },
-                                        '& .date2 .MuiOutlinedInput-root': {
-                                            display: 'block'
+                                        '&  .MuiOutlinedInput-root': {
+                                            display: 'flex',
+                                            flexDirection: 'row-reverse',
+                                            gap: '10px'
                                         },
                                         '& .date2 input': {
                                             textAlign: 'right'
@@ -511,7 +527,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             rows={pageDataHoaDon.items}
                             hideFooter
                             checkboxSelection
-                            onRowClick={(row) => choseRow(row)}
+                            onRowClick={handleOpenDetail}
                             sx={{
                                 '& .MuiDataGrid-iconButtonContainer': {
                                     display: 'none'

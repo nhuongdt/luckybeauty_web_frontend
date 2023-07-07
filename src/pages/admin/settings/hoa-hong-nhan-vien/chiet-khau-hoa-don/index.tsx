@@ -110,8 +110,9 @@ class ChietKhauHoaDonScreen extends Component {
                 headerName: 'Hoa hồng',
                 minWidth: 112,
                 flex: 1,
+                align: 'center',
                 renderHeader: (params) => (
-                    <Box>
+                    <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
                         <IconSorting
                             onClick={() => {
@@ -128,7 +129,7 @@ class ChietKhauHoaDonScreen extends Component {
                 minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box>
+                    <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
                         <IconSorting
                             onClick={() => {
@@ -144,7 +145,7 @@ class ChietKhauHoaDonScreen extends Component {
                 minWidth: 150,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box>
+                    <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
                         <IconSorting />
                     </Box>
@@ -165,7 +166,8 @@ class ChietKhauHoaDonScreen extends Component {
                                     backgroundColor: '#FFFAFF',
                                     borderColor: '#CDC9CD',
                                     '& .MuiInputBase-root': {
-                                        height: '32px'
+                                        height: '32px',
+                                        fontSize: '14px'
                                     }
                                 }}
                                 onChange={(e) => {

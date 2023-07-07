@@ -495,8 +495,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 <Box className="form-search">
                                     <TextField
                                         sx={{
-                                            backgroundColor: '#FFFAFF',
-                                            borderColor: '#CDC9CD'
+                                            backgroundColor: '#fff',
+                                            borderColor: '#CDC9CD',
+                                            '& .MuiOutlinedInput-root': {
+                                                paddingLeft: '0'
+                                            }
                                         }}
                                         className="search-field"
                                         variant="outlined"

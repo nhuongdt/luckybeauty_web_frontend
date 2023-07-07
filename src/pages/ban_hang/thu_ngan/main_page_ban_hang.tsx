@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Grid, ButtonGroup, Button, Box } from '@mui/material';
 import CheckInNew from '../../check_in/CheckInNew';
-import PageBanHang from './PageBanHangNew';
+import PageBanHang from './PageBanHangTest';
 import Cookies from 'js-cookie';
 import { PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import '../style.css';
@@ -77,6 +77,12 @@ export default function MainPageBanHang() {
     const handleShow = (value: boolean) => {
         setPaymentChild(value);
     };
+    const [htmlValue, setHtmlValue] = useState<any>();
+
+    const handleHtmlValue = (value: any) => {
+        setHtmlValue(value);
+    };
+
     return (
         <>
             <Grid
@@ -87,7 +93,7 @@ export default function MainPageBanHang() {
                 bgcolor="#f8f8f8"
                 pr={activeTab === 1 ? '16px' : '0'}>
                 {!PaymentChild ? (
-                    <Grid item xs={12} sm={6} md={4} lg={3} xl={3}>
+                    <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                         <Box display="flex" gap="12px">
                             <ButtonGroup
                                 sx={{
@@ -156,11 +162,13 @@ export default function MainPageBanHang() {
                                 </Button>
                             )}
                         </Box>
+                        {activeTab === 2 ? htmlValue : undefined}
                     </Grid>
                 ) : undefined}
                 {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
                 {activeTab === 2 && (
                     <PageBanHang
+                        setHtmlElement={handleHtmlValue}
                         customerChosed={cusChosing}
                         CoditionLayout={layout}
                         onPaymentChild={handleShow}

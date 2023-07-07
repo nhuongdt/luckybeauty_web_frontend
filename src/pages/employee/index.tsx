@@ -511,7 +511,7 @@ class EmployeeScreen extends React.Component {
                         <Box className="form-search">
                             <TextField
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
+                                    backgroundColor: '#fff',
                                     borderColor: '#CDC9CD',
                                     height: '40px',
                                     '& .MuiInputBase-root': {

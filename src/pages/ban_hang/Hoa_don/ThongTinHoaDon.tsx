@@ -8,7 +8,8 @@ import {
     Tab,
     TextField,
     Select,
-    MenuItem
+    MenuItem,
+    Dialog
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
@@ -30,12 +31,12 @@ import {
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
 import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
-
 import { format } from 'date-fns';
 import { Stack } from '@mui/system';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
+import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
 
 const themOutlineInput = createTheme({
     components: {
@@ -49,7 +50,7 @@ const themOutlineInput = createTheme({
     }
 });
 
-const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
+const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
@@ -189,7 +190,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
         );
     };
     return (
-        <>
+        <Dialog open={open} onClose={CloseDetail} maxWidth="lg" fullWidth>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -219,15 +220,19 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item xs="auto">
                             <Typography
-                                variant="h1"
-                                fontSize="16px"
+                                variant="h2"
+                                fontSize="24px"
                                 fontWeight="700"
                                 color="#333233">
                                 Hóa đơn
                             </Typography>
+                            <Typography variant="body1" fontSize="24px" color="#333233">
+                                Trôi đi trôi êm đềm
+                                <printIcon />
+                            </Typography>
                         </Grid>
                         <Grid item xs="auto">
-                            <Box display="flex" gap="8px">
+                            {/* <Box display="flex" gap="8px">
                                 <Button
                                     className="btn-outline-hover"
                                     startIcon={<InIcon />}
@@ -259,7 +264,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                                     }}>
                                     Sao chép
                                 </Button>
-                            </Box>
+                            </Box> */}
                         </Grid>
                     </Grid>
                     <Grid
@@ -513,7 +518,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack }: any) => {
                     </Box>
                 </Box>
             </Box>
-        </>
+        </Dialog>
     );
 };
 export default ThongTinHoaDon;
