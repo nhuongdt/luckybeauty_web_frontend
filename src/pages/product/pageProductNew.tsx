@@ -256,7 +256,9 @@ export default function PageProductNew() {
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowItem?.maHangHoa ?? ' '} không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${
+                        rowItem?.maHangHoa ?? ' '
+                    } không?`
                 })
             );
         }
@@ -382,7 +384,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex" justifyContent="end" width="100%">
                     <Typography variant="body2" color="#333233" fontSize="12px">
-                        {Utils.formatNumber(params.value || '')}
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Typography>
                 </Box>
             ),
