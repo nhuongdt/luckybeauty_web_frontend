@@ -58,19 +58,34 @@ class ImportExcel extends Component<ImportProps> {
         if (fileUpload === undefined || fileUpload.file === '' || fileUpload.type === '') {
             this.setState({ error: 'File import không được để trống.' });
         } else {
-            this.props.importFile(fileUpload); // Pass fileUpload data to the parent component
+            this.props.importFile(fileUpload);
+            this.setState({
+                error: '',
+                filePath: '',
+                fileUpload: {
+                    file: '',
+                    type: ''
+                }
+            }); // Pass fileUpload data to the parent component
         }
     };
     render(): ReactNode {
         return (
-            <Dialog open={this.props.isOpen} onClose={this.props.onClose}>
+            <Dialog
+                open={this.props.isOpen}
+                onClose={() => {
+                    this.props.onClose();
+                    this.setState({
+                        error: '',
+                        filePath: '',
+                        fileUpload: {
+                            file: '',
+                            type: ''
+                        }
+                    });
+                }}>
                 <DialogTitle>
-                    <Typography
-                        variant="h3"
-                        fontSize="24px"
-                        color="#333233"
-                        fontWeight="700"
-                        mb={3}>
+                    <Typography variant="h6" fontSize="18px" color="#333233" fontWeight="600">
                         Import dữ liệu
                     </Typography>
                     <Button
@@ -124,7 +139,19 @@ class ImportExcel extends Component<ImportProps> {
                         onClick={this.props.downloadImportTemplate}>
                         Download File mẫu
                     </button>
-                    <button className="btn btn-outline-secondary mr-2" onClick={this.props.onClose}>
+                    <button
+                        className="btn btn-outline-secondary mr-2"
+                        onClick={() => {
+                            this.props.onClose();
+                            this.setState({
+                                error: '',
+                                filePath: '',
+                                fileUpload: {
+                                    file: '',
+                                    type: ''
+                                }
+                            });
+                        }}>
                         Hủy bỏ
                     </button>
                 </DialogActions>

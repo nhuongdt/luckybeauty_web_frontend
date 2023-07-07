@@ -39,6 +39,7 @@ import fileDowloadService from '../../services/file-dowload.service';
 import uploadFileService from '../../services/uploadFileService';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import ImportExcel from '../../components/ImportComponent';
+import abpCustom from '../../components/abp-custom';
 class EmployeeScreen extends React.Component {
     static contextType = ChiNhanhContext;
     state = {
@@ -567,6 +568,7 @@ class EmployeeScreen extends React.Component {
                         <Button
                             variant="outlined"
                             size="small"
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Import')}
                             startIcon={<img src={DownloadIcon} />}
                             sx={{
                                 backgroundColor: '#fff!important',
@@ -584,6 +586,7 @@ class EmployeeScreen extends React.Component {
                         <Button
                             variant="outlined"
                             size="small"
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Export')}
                             startIcon={<img src={UploadIcon} />}
                             sx={{
                                 backgroundColor: '#fff!important',
@@ -603,6 +606,7 @@ class EmployeeScreen extends React.Component {
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
                             <Button
                                 size="small"
+                                hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Create')}
                                 onClick={() => {
                                     this.createOrUpdateModalOpen('');
                                 }}

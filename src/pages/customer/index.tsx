@@ -37,6 +37,7 @@ import CustomerInfo from './components/CustomerInfo';
 import ImportExcel from '../../components/ImportComponent';
 import { FileUpload } from '../../services/dto/FileDto';
 import uploadFileService from '../../services/uploadFileService';
+import abpCustom from '../../components/abp-custom';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -554,6 +555,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     className="rounded-4px resize-height">
                                     <Button
                                         className="border-color btn-outline-hover"
+                                        hidden={
+                                            !abpCustom.isGrandPermission('Pages.KhachHang.Import')
+                                        }
                                         variant="outlined"
                                         onClick={this.onImportShow}
                                         startIcon={<img src={DownloadIcon} />}
@@ -568,6 +572,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     <Button
                                         className="border-color btn-outline-hover"
                                         variant="outlined"
+                                        hidden={
+                                            !abpCustom.isGrandPermission('Pages.KhachHang.Export')
+                                        }
                                         onClick={() => {
                                             this.exportToExcel();
                                         }}
@@ -584,6 +591,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Button>
                                     <Button
                                         className="bg-main btn-container-hover"
+                                        hidden={
+                                            !abpCustom.isGrandPermission('Pages.KhachHang.Create')
+                                        }
                                         onClick={() => {
                                             this.createOrUpdateModalOpen('');
                                         }}
