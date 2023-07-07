@@ -22,7 +22,8 @@ import {
     Box,
     AccordionDetails,
     Link,
-    IconButton
+    IconButton,
+    ButtonGroup
 } from '@mui/material';
 import {
     Percent,
@@ -42,6 +43,7 @@ import { Guid } from 'guid-typescript';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
+import { width } from '@mui/system';
 const themInputChietKhau = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -359,7 +361,30 @@ export default function ModalEditChiTietGioHang({
         }
     };
 
-    const changeChietKhau = (laPTram = 'true', gtriCK = 0) => {
+    const handleChangeLoaiChietKhau = (event: any) => {
+        const laPhanTramNew = event.target.value;
+        // const giaBan = props?.item?.donGiaTruocCK ?? 0;
+        // const gtriCKOld = gtriCK;
+
+        // let ckNew = gtriCK;
+        // if (laPhanTram === 'true') {
+        //     if (laPhanTramNew === 'false') {
+        //         // % to vnd
+        //         ckNew = (gtriCKOld * giaBan) / 100;
+        //     }
+        // } else {
+        //     if (laPhanTramNew === 'true') {
+        //         // vnd to %
+        //         ckNew = giaBan > 0 ? (gtriCKOld / giaBan) * 100 : 0;
+        //     }
+        // }
+        // setGtriCK(ckNew);
+        // setLaPhanTram(laPhanTramNew);
+        // handleChangeChietKhau(event.target.value, Utils.formatNumberToFloat(ckNew));
+    };
+
+    const changeChietKhau = (gtriCK: any, idCTHD: string) => {
+        const laPTram = 'true';
         if (laPTram === 'true') {
             setLstCTHoaDon(
                 lstCTHoaDon.map((item: any, index: number) => {
@@ -443,80 +468,23 @@ export default function ModalEditChiTietGioHang({
     };
     return (
         <>
-            <PopupChietKhau
-                props={popover}
-                handleClose={hidePopChietKhau}
-                handleChangeChietKhau={changeChietKhau}
-            />
-            <Dialog
-                open={isShow}
-                onClose={handleClose}
-                fullWidth
-                maxWidth="md"
-                sx={{ paddingX: '24px' }}>
-                <DialogTitle className="dialog-title" fontSize="24px" fontWeight="700">
-                    Cập nhật hóa đơn
-                </DialogTitle>
-                <IconButton
-                    onClick={handleClose}
-                    sx={{
-                        position: 'absolute',
-                        right: '5px',
-                        top: '8px',
-                        width: 'fit-content',
-                        '& svg': {
-                            color: '#666466'
-                        },
-                        '&:hover svg': {
-                            color: 'red'
-                        }
-                    }}>
-                    {' '}
-                    <Close />
-                </IconButton>
-                <DialogContent sx={{ bgcolor: '#F9FAFC' }}>
-                    <Typography
-                        variant="h4"
-                        color="#666466"
-                        fontSize="16px"
-                        fontWeight="700"
-                        mt="24px">
-                        Chi tiết hóa đơn
-                    </Typography>
+            <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
+                <DialogTitle className="dialog-title">Chỉnh sửa giỏ hàng</DialogTitle>
+                <DialogContent>
                     {/* 1 row */}
                     {lstCTHoaDon.map((ct: any, index: number) => (
-                        <Grid
-                            container
-                            key={index}
-                            paddingTop={2}
-                            sx={{
-                                position: 'relative',
-                                marginTop: '16px',
-                                bgcolor: '#fff',
-                                borderRadius: '8px',
-                                '& input': {
-                                    fontSize: '14px!important'
-                                },
-                                '& .itemHidden': {
-                                    transition: 'max-height .6s, padding 0.4s',
-                                    overflow: 'hidden',
-                                    maxHeight: itemVisibility[index] ? '0px' : '135px',
-                                    paddingTop: itemVisibility[index] ? '0px' : '16px'
-                                }
-                            }}>
-                            <Grid item xs={12}>
-                                <Grid
-                                    container
-                                    spacing={2}
-                                    sx={{
-                                        paddingTop: '24px',
-                                        paddingBottom: '0px',
-                                        bgcolor: '#fff',
-                                        margin: '0',
-                                        width: '100%',
-                                        borderRadius: '8px',
-                                        paddingRight: '12px'
-                                    }}>
+                        <Grid container key={index} paddingTop={2}>
+                            <Grid
+                                item
+                                xs={formType === 1 ? 0 : 1}
+                                style={{ display: displayComponent }}>
+                                <Close
+                                    sx={{ width: 40, height: 40, color: 'red', padding: '8px' }}
+                                    onClick={() => xoaChiTietHoaDon(ct)}
+                                />
+                            </Grid>
+                            <Grid item xs={formType === 1 ? 12 : 11}>
+                                <Grid container spacing={2}>
                                     <Grid item xs={12} sm={9} md={9} lg={9}>
                                         <div style={{ display: displayComponent }}>
                                             <AutocompleteProduct
@@ -524,7 +492,6 @@ export default function ModalEditChiTietGioHang({
                                                     choseProduct(item, index)
                                                 }
                                                 productChosed={ct}
-                                                sx={{ fontSize: '14px' }}
                                             />
                                         </div>
                                         <Typography
@@ -547,11 +514,61 @@ export default function ModalEditChiTietGioHang({
                                             </Typography>
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={7} sm={7} md={7} lg={7} className="itemHidden">
+                                    <Grid item xs={12} sm={7} md={7} lg={7}>
+                                        <Stack direction="column" spacing={1}>
+                                            <Typography variant="body2">Giá bán</Typography>
+
+                                            <NumericFormat
+                                                size="small"
+                                                fullWidth
+                                                value={ct.donGiaTruocCK}
+                                                thousandSeparator
+                                                customInput={TextField}
+                                                onChange={(event: any) =>
+                                                    handleChangeGiaBan(event, ct.id)
+                                                }
+                                            />
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} sm={5} md={5} lg={5}>
+                                        <Stack direction="column" spacing={1}>
+                                            <Typography
+                                                sx={{
+                                                    textAlign: {
+                                                        lg: 'center',
+                                                        md: 'center',
+                                                        xs: 'left'
+                                                    }
+                                                }}
+                                                variant="body2">
+                                                Số lượng
+                                            </Typography>
+                                            <Stack direction="row" spacing={1}>
+                                                <Remove
+                                                    className="btnIcon"
+                                                    onClick={() => giamSoLuong(ct.id)}
+                                                />
+                                                <TextField
+                                                    size="small"
+                                                    fullWidth
+                                                    value={ct.soLuong}
+                                                    onChange={(event: any) =>
+                                                        handleChangeSoLuong(event, ct.id)
+                                                    }></TextField>
+                                                <Add
+                                                    className="btnIcon"
+                                                    onClick={() => tangSoLuong(ct.id)}
+                                                />
+                                            </Stack>
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={7} lg={7}>
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
-                                                    <Typography variant="body2">Giá bán</Typography>
+                                                    <Typography variant="body2">
+                                                        Chiết khấu
+                                                    </Typography>
                                                     <span
                                                         style={{
                                                             fontSize: '10px',
@@ -571,7 +588,7 @@ export default function ModalEditChiTietGioHang({
                                                         textAlign: 'right',
                                                         float: 'right',
                                                         color: 'red',
-                                                        display: 'none'
+                                                        display: ct?.tienChietKhau > 0 ? '' : 'none'
                                                     }}>
                                                     <span>
                                                         -{' '}
@@ -583,224 +600,34 @@ export default function ModalEditChiTietGioHang({
                                                 </Stack>
                                             </Stack>
 
-                                            <ThemeProvider theme={themInputChietKhau}>
-                                                <NumericFormat
-                                                    size="small"
-                                                    fullWidth
-                                                    value={ct.donGiaTruocCK}
-                                                    thousandSeparator
-                                                    customInput={TextField}
-                                                    onChange={(event: any) =>
-                                                        handleChangeGiaBan(event, ct.id)
-                                                    }
-                                                />
-                                            </ThemeProvider>
-                                        </Stack>
-                                    </Grid>
-                                    <Grid
-                                        className="itemHidden"
-                                        item
-                                        xs={5}
-                                        sm={5}
-                                        md={5}
-                                        lg={5}
-                                        sx={{ display: 'flex', gap: '16px' }}>
-                                        <Stack direction="column" spacing={1}>
-                                            <Typography variant="body2">Chiết khấu</Typography>
-
-                                            <TextField
-                                                fullWidth
+                                            <NumericFormat
                                                 size="small"
-                                                onClick={(event: any) => {
-                                                    showPopChietKhau(event, ct);
-                                                }}
-                                                value={
-                                                    ct.ptChietKhau > 0
-                                                        ? ct?.ptChietKhau.toString().concat(' %')
-                                                        : Utils.formatNumber(ct?.tienChietKhau)
-                                                              .toString()
-                                                              .concat(' đ')
+                                                fullWidth
+                                                value={ct.donGiaTruocCK}
+                                                thousandSeparator
+                                                customInput={TextField}
+                                                onChange={(event: any) =>
+                                                    changeChietKhau(event.target.value, ct.id)
                                                 }
                                             />
                                         </Stack>
-                                        <Stack direction="column" spacing={1}>
-                                            <Typography variant="body2">Số lượng</Typography>
-
-                                            <Stack
-                                                direction="row"
-                                                sx={{
-                                                    '& button': {
-                                                        padding: '0',
-                                                        border: '1px solid #cccc',
-                                                        transition: '.4s',
-                                                        cursor: 'pointer',
-
-                                                        minWidth: '30px',
-                                                        '& button:hover': {
-                                                            borderColor: '#7C3367'
-                                                        },
-                                                        borderRadius: '4px'
-                                                    }
-                                                }}>
-                                                <Button
-                                                    className="btn-outline-hover"
-                                                    sx={{
-                                                        borderBottomRightRadius: 'unset!important',
-                                                        borderTopRightRadius: 'unset!important'
-                                                    }}
-                                                    onClick={() => giamSoLuong(ct.id)}>
-                                                    <RemoveIcon
-                                                        sx={{
-                                                            fontSize: '16px',
-                                                            color: '#4C4B4C'
-                                                        }}
-                                                        //className="btnIcon"
-                                                    />
-                                                </Button>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    sx={{
-                                                        maxWidth: '54px',
-                                                        'input::-webkit-outer-spin-button,input::-webkit-inner-spin-button':
-                                                            {
-                                                                WebkitAppearance: 'none'
-                                                            },
-                                                        '& .MuiOutlinedInput-root': {
-                                                            borderRadius: 'unset',
-                                                            borderX: 'unset'
-                                                        },
-                                                        bgcolor: '#F5F5F5'
-                                                    }}
-                                                    type="number"
-                                                    inputProps={{ min: 0 }}
-                                                    value={ct.soLuong}
-                                                    onChange={(event: any) =>
-                                                        handleChangeSoLuong(event, ct.id)
-                                                    }
-                                                />
-                                                <Button
-                                                    className="btn-outline-hover"
-                                                    sx={{
-                                                        borderTopLeftRadius: '0!important',
-                                                        borderBottomLeftRadius: '0!important'
-                                                    }}
-                                                    onClick={() => tangSoLuong(ct.id)}>
-                                                    <AddIcon
-                                                        sx={{
-                                                            fontSize: '16px',
-                                                            color: '#4C4B4C'
-                                                        }}
-                                                        //className="btnIcon"
-                                                    />
-                                                </Button>
-                                            </Stack>
-                                        </Stack>
                                     </Grid>
-                                    <Grid item xs={12} style={{ display: 'none' }}>
-                                        <Stack direction="column" spacing={1}>
-                                            <Typography variant="body2">Nhân viên </Typography>
-                                            <Autocomplete
-                                                size="small"
-                                                fullWidth
-                                                multiple
-                                                isOptionEqualToValue={(option, value) =>
-                                                    option.id === value.id
-                                                }
-                                                options={dataNhanVien}
-                                                getOptionLabel={(option: any) =>
-                                                    option.tenNhanVien ? option.tenNhanVien : ''
-                                                }
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        placeholder="Chọn nhân viên"
-                                                    />
-                                                )}
-                                                renderOption={(props, option) => {
-                                                    return (
-                                                        <li {...props}>
-                                                            <Grid container alignItems="center">
-                                                                <Grid
-                                                                    item
-                                                                    sx={{
-                                                                        display: 'flex',
-                                                                        width: 44
-                                                                    }}>
-                                                                    <Avatar />
-                                                                </Grid>
-                                                                <Grid
-                                                                    item
-                                                                    sx={{
-                                                                        width: 'calc(100% - 44px)',
-                                                                        wordWrap: 'break-word'
-                                                                    }}>
-                                                                    <Typography
-                                                                        style={{
-                                                                            fontSize: '14px'
-                                                                        }}>
-                                                                        {option.tenNhanVien}
-                                                                    </Typography>
-                                                                </Grid>
-                                                            </Grid>
-                                                        </li>
-                                                    );
-                                                }}
-                                            />
-                                        </Stack>
+                                    <Grid item xs={12} md={5} lg={5}>
+                                        <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
+                                            <Button
+                                                style={{ borderColor: '#cccc', color: '#7c3367' }}>
+                                                %
+                                            </Button>
+                                            <Button className="button-outline">đ</Button>
+                                        </ButtonGroup>
                                     </Grid>
-                                    <Close
-                                        style={{ display: displayComponent }}
-                                        sx={{
-                                            position: 'absolute',
-                                            right: '12px',
-                                            top: '12px',
-                                            width: 30,
-                                            height: 30,
-                                            color: '#666466',
-                                            padding: '8px',
-                                            cursor: 'pointer',
-                                            transition: '.4s',
-                                            '&:hover': {
-                                                color: 'red'
-                                            }
-                                        }}
-                                        onClick={() => xoaChiTietHoaDon(ct)}
-                                    />
                                 </Grid>
-                                <Box sx={{ textAlign: 'right' }}>
-                                    <IconButton
-                                        onClick={() => toggleVisibility(index)}
-                                        sx={{
-                                            width: 'fit-content',
-                                            marginLeft: 'auto!important',
-                                            '&:hover svg': {
-                                                color: '#7C3367'
-                                            }
-                                        }}>
-                                        <ExpandMore
-                                            sx={{
-                                                display:
-                                                    formType !== 1 && itemVisibility[index]
-                                                        ? ''
-                                                        : 'none'
-                                            }}
-                                        />
-                                        <ExpandLess
-                                            sx={{
-                                                display:
-                                                    formType !== 1 && !itemVisibility[index]
-                                                        ? ''
-                                                        : 'none'
-                                            }}
-                                        />
-                                    </IconButton>
-                                </Box>
                             </Grid>
                         </Grid>
                     ))}
                     <Grid container paddingTop={2}>
-                        <Grid item xs={12}>
+                        <Grid item xs={1} />
+                        <Grid item xs={11}>
                             <Stack style={{ display: displayComponent }}>
                                 <Link
                                     color="#7c3367"
@@ -816,19 +643,10 @@ export default function ModalEditChiTietGioHang({
                     {/* end 1 row */}
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="outlined"
-                        className="button-outline btn-outline-hover"
-                        onClick={closeModal}
-                        sx={{ color: '#965C85' }}>
+                    <Button variant="outlined" className="button-outline" onClick={closeModal}>
                         Hủy
                     </Button>
-
-                    <Button
-                        className="btn-container-hover"
-                        variant="contained"
-                        sx={{ background: '#7c3367', color: '#FFF', textTransform: 'capitalize' }}
-                        onClick={agrreGioHang}>
+                    <Button variant="contained" className="button-container" onClick={agrreGioHang}>
                         {formType == 1 ? 'Đồng ý' : 'Lưu'}
                     </Button>
                 </DialogActions>
