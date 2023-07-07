@@ -376,7 +376,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                         color: '#999699',
                                         fontWeight: '400',
                                         display: 'block',
-                                        marginBottom: '5px'
+                                        marginBottom: '5px',
+                                        cursor: 'pointer'
+                                    },
+                                    '& label': {
+                                        display: 'block'
                                     }
                                 }}
                                 spacing="2.7vw">
@@ -399,28 +403,33 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <label htmlFor=":r16m:" className="label">
-                                        Ngày lập
+                                    <label>
+                                        <Box component="span" className="label">
+                                            Ngày lập
+                                        </Box>
+                                        <ThemeProvider theme={themOutlineInput}>
+                                            <DateTimePickerCustom
+                                                className="inputEdit"
+                                                defaultVal={hoadonChosed?.ngayLapHoaDon}
+                                                handleChangeDate={changeNgayLapHoaDon}
+                                            />
+                                        </ThemeProvider>
                                     </label>
-                                    <ThemeProvider theme={themOutlineInput}>
-                                        <DateTimePickerCustom
-                                            className="inputEdit"
-                                            defaultVal={hoadonChosed?.ngayLapHoaDon}
-                                            handleChangeDate={changeNgayLapHoaDon}
-                                        />
-                                    </ThemeProvider>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <label htmlFor=":r16o:" className="label">
-                                        Chi nhánh
+                                    <label>
+                                        <Box className="label" display="block" component="span">
+                                            {' '}
+                                            Chi nhánh
+                                        </Box>
+                                        <ThemeProvider theme={themOutlineInput}>
+                                            <AutocompleteChiNhanh
+                                                dataChiNhanh={allChiNhanh}
+                                                idChosed={hoadonChosed?.idChiNhanh}
+                                                handleChoseItem={changeChiNhanh}
+                                            />
+                                        </ThemeProvider>
                                     </label>
-                                    <ThemeProvider theme={themOutlineInput}>
-                                        <AutocompleteChiNhanh
-                                            dataChiNhanh={allChiNhanh}
-                                            idChosed={hoadonChosed?.idChiNhanh}
-                                            handleChoseItem={changeChiNhanh}
-                                        />
-                                    </ThemeProvider>
                                 </Grid>
                                 <Grid item xs={3}>
                                     <label htmlFor="nguoi-lap-phieu" className="label">
