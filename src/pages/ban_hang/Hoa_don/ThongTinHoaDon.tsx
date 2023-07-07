@@ -9,7 +9,8 @@ import {
     TextField,
     Select,
     MenuItem,
-    Dialog
+    Dialog,
+    IconButton
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
@@ -36,8 +37,9 @@ import { Stack } from '@mui/system';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
-import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
-
+import { ReactComponent as PrintIcon } from '../../../images/printer-title.svg';
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
+import { ReactComponent as PencilIcon } from '../../../images/pencil-fiiled.svg';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -213,13 +215,24 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    minHeight: 'calc(100vh - 70px)'
+                    bgcolor: '#F9FAFC'
                 }}>
                 <ModalWarning open={openDialog} onClose={handleCloseDialog} onOK={huyHoaDon} />
-                <Box padding="16px 2.2222222222222223vw ">
+                <Box padding="24px">
                     <Grid container justifyContent="space-between" alignItems="center">
-                        <Grid item xs="auto">
+                        <Grid
+                            item
+                            xs="auto"
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '5px',
+                                '& svg': {
+                                    marginLeft: '5px'
+                                }
+                            }}>
                             <Typography
+                                sx={{ display: 'flex', alignItems: 'center' }}
                                 variant="h2"
                                 fontSize="24px"
                                 fontWeight="700"
@@ -228,7 +241,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                             </Typography>
                             <Typography variant="body1" fontSize="24px" color="#333233">
                                 Trôi đi trôi êm đềm
-                                <printIcon />
+                                <PrintIcon />
                             </Typography>
                         </Grid>
                         <Grid item xs="auto">
@@ -265,6 +278,15 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     Sao chép
                                 </Button>
                             </Box> */}
+                            <IconButton
+                                onClick={CloseDetail}
+                                sx={{
+                                    '&:hover svg': {
+                                        filter: 'brightness(0) saturate(100%) invert(17%) sepia(93%) saturate(3085%) hue-rotate(355deg) brightness(97%) contrast(95%)'
+                                    }
+                                }}>
+                                <CloseIcon />
+                            </IconButton>
                         </Grid>
                     </Grid>
                     <Grid
@@ -301,15 +323,26 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     height: '100%'
                                 }
                             }}>
-                            <Box display="flex" gap="23px" mb="12px">
+                            <Box display="flex" mb="12px">
                                 <Typography
                                     variant="h4"
                                     color="#3B4758"
                                     fontWeight="700"
                                     fontSize="24px">
                                     {hoadonChosed?.tenKhachHang}
+                                    Đinh Tuấn Tài
                                 </Typography>
-                                {/* <AutocompleteCustomer handleChoseItem={changeCustomer} /> */}
+                                <IconButton
+                                    sx={{
+                                        margin: '0 23px 0 11px',
+                                        padding: '0',
+                                        '&:hover': {
+                                            filter: 'brightness(0) saturate(100%) invert(26%) sepia(18%) saturate(1859%) hue-rotate(265deg) brightness(96%) contrast(93%)'
+                                        }
+                                    }}>
+                                    <PencilIcon />
+                                </IconButton>
+
                                 <Box
                                     sx={{
                                         padding: '2px 3px',
@@ -338,19 +371,22 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                 sx={{
                                     '& .MuiFormControl-root': {
                                         width: '100%'
+                                    },
+                                    '& .label': {
+                                        fontSize: '12px',
+                                        color: '#999699',
+                                        fontWeight: '400',
+                                        display: 'block',
+                                        marginBottom: '5px'
                                     }
                                 }}
                                 spacing="2.7vw">
                                 <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
+                                    <label htmlFor="ma-hoa-don" className="label">
                                         Mã hóa đơn
-                                    </Typography>
+                                    </label>
                                     <TextField
+                                        id="ma-hoa-don"
                                         fullWidth
                                         size="small"
                                         className="inputEdit"
@@ -364,14 +400,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
+                                    <label htmlFor=":r16m:" className="label">
                                         Ngày lập
-                                    </Typography>
+                                    </label>
                                     <ThemeProvider theme={themOutlineInput}>
                                         <DateTimePickerCustom
                                             className="inputEdit"
@@ -381,14 +412,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     </ThemeProvider>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
+                                    <label htmlFor=":r16o:" className="label">
                                         Chi nhánh
-                                    </Typography>
+                                    </label>
                                     <ThemeProvider theme={themOutlineInput}>
                                         <AutocompleteChiNhanh
                                             dataChiNhanh={allChiNhanh}
@@ -398,23 +424,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     </ThemeProvider>
                                 </Grid>
                                 <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
-                                        User lập phiếu
-                                    </Typography>
-                                    {/* <Typography
-                                        variant="body1"
-                                        fontSize="14px"
-                                        color="#333233"
-                                        marginTop="2px">
-                                        {hoadonChosed?.userName}
-                                    </Typography> */}
+                                    <label htmlFor="nguoi-lap-phieu" className="label">
+                                        Ngày lập
+                                    </label>
                                     <TextField
-                                        disabled
+                                        id="nguoi-lap-phieu"
                                         sx={{
                                             '& .MuiInputBase-root': { borderRadius: '8px' },
                                             '& .Mui-disabled': {
@@ -475,19 +489,15 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                         width: '100%',
                         padding: '24px 32px',
                         display: 'flex',
-                        justifyContent: 'space-between'
+                        justifyContent: 'end'
                     }}>
-                    <Box>
-                        <Button
-                            startIcon={<ArrowIcon />}
-                            variant="outlined"
-                            sx={{ color: '#3B4758', borderColor: '#3B4758' }}
-                            className="btn-outline-hover"
-                            onClick={gotoBack}>
-                            Quay trở lại
-                        </Button>
-                    </Box>
                     <Box display="flex" gap="8px">
+                        <Button
+                            variant="outlined"
+                            sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                            className="btn-outline-hover">
+                            Sao chép
+                        </Button>
                         <Button
                             variant="outlined"
                             sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
