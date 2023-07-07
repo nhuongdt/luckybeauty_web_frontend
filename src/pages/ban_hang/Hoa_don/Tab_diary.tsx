@@ -6,6 +6,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import { format } from 'date-fns';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import utils from '../../../utils/utils';
 
 export default function TabDiary({ idHoaDon }: any) {
     const [phieuThuChi, setPhieuThuChi] = useState<QuyHoaDonDto[]>([]);
@@ -14,7 +15,9 @@ export default function TabDiary({ idHoaDon }: any) {
         setPhieuThuChi(data);
     };
     useEffect(() => {
-        GetNhatKyThanhToan();
+        if (!utils.checkNull(idHoaDon)) {
+            GetNhatKyThanhToan();
+        }
     }, [idHoaDon]);
     const columns: GridColDef[] = [
         {
@@ -99,7 +102,7 @@ export default function TabDiary({ idHoaDon }: any) {
             ),
             renderCell: (params) => (
                 <Box textAlign="center" width="100%">
-                    {new Intl.NumberFormat().format(params.value)}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
