@@ -330,7 +330,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                     fontWeight="700"
                                     fontSize="24px">
                                     {hoadonChosed?.tenKhachHang}
-                                    Đinh Tuấn Tài
                                 </Typography>
                                 <IconButton
                                     sx={{
