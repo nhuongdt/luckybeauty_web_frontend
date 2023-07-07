@@ -1,4 +1,5 @@
 import utils from '../../utils/utils';
+import { ExecuteResultDto } from '../dto/ExecuteResultDto';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
@@ -12,11 +13,11 @@ class ChiNhanhService {
         });
         return result.data.result;
     }
-    public async CreateOrEdit(input: CreateOrEditChiNhanhDto): Promise<ChiNhanhDto> {
+    public async CreateOrEdit(input: CreateOrEditChiNhanhDto): Promise<ExecuteResultDto> {
         const result = await http.post('api/services/app/ChiNhanh/CreateOrEditChiNhanh', input);
         return result.data.result;
     }
-    public async Delete(id: string) {
+    public async Delete(id: string): Promise<ExecuteResultDto> {
         const result = await http.post(`api/services/app/ChiNhanh/DeleteChiNhanh?Id=${id}`);
         return result.data.result;
     }

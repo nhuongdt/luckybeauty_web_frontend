@@ -33,7 +33,7 @@ class ActionMenuTable extends Component<MenuProps> {
                         width="64px"
                         fontWeight="400"
                         marginRight="8px">
-                        View
+                        Xem
                     </Typography>
                     <InfoIcon sx={{ color: '#009EF7' }} />
                 </MenuItem>
@@ -46,7 +46,7 @@ class ActionMenuTable extends Component<MenuProps> {
                         width="64px"
                         fontWeight="400"
                         marginRight="8px">
-                        Edit
+                        Sửa
                     </Typography>
                     <EditIcon sx={{ color: '#009EF7' }} />
                 </MenuItem>
@@ -59,7 +59,7 @@ class ActionMenuTable extends Component<MenuProps> {
                         width="64px"
                         fontWeight="400"
                         marginRight="8px">
-                        Delete
+                        Xóa
                     </Typography>
                     <DeleteForeverIcon sx={{ color: '#F1416C' }} />
                 </MenuItem>

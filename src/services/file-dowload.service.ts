@@ -7,7 +7,7 @@ class FileDownloadService {
     constructor() {
         makeAutoObservable(this);
     }
-    downloadTempFile(file: IFileDto) {
+    downloadExportFile(file: IFileDto) {
         const url =
             AppConsts.remoteServiceBaseUrl +
             'File/DownloadTempFile?fileType=' +

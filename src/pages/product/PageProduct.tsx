@@ -685,7 +685,7 @@ export default function PageProduct() {
                                                     {Utils.formatNumber(row.giaBan)}
                                                 </TableCell>
                                                 <TableCell sx={{ width: 1 / 10 }} align="center">
-                                                    0
+                                                    {row.soPhutThucHien}
                                                 </TableCell>
                                                 <TableCell sx={{ width: 1 / 6 }} align="left">
                                                     {row.txtTrangThaiHang}

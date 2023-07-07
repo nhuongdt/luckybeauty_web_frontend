@@ -31,6 +31,8 @@ import './style.css';
 import AppConsts from '../../lib/appconst';
 
 import StyleOveride from '../../StyleOveride';
+import { Guid } from 'guid-typescript';
+import utils from '../../utils/utils';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -106,7 +108,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         setProduct((itemOlds) => {
             return {
                 ...itemOlds,
-                giaBan: Utils.formatNumber(event.target.value)
+                giaBan: event.target.value
             };
         });
     };
@@ -141,7 +143,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (!Utils.checkNull(product.maHangHoa ?? '')) {
             const exists = await ProductService.CheckExistsMaHangHoa(
                 product.maHangHoa ?? '',
-                product.idDonViQuyDoi ?? AppConsts.guidEmpty
+                product.idDonViQuyDoi ?? Guid.EMPTY
             );
             if (exists) {
                 setErrMaHangHoa(true);
@@ -163,6 +165,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             return;
         }
         const objNew = { ...product };
+        objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
         objNew.tenHangHoa_KhongDau = Utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
@@ -310,7 +313,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         size="small"
                                         fullWidth
                                         value={product.giaBan}
-                                        thousandSeparator
+                                        thousandSeparator={'.'}
+                                        decimalSeparator={','}
                                         customInput={TextField}
                                         onChange={(event) => editGiaBan(event)}
                                     />

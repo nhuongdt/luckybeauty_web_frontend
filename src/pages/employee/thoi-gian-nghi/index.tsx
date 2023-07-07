@@ -28,6 +28,9 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
+import { FileUpload } from '../../../services/dto/FileDto';
+import uploadFileService from '../../../services/uploadFileService';
+import fileDowloadService from '../../../services/file-dowload.service';
 class EmployeeHoliday extends Component {
     state = {
         IdHoliday: '',
@@ -37,6 +40,7 @@ class EmployeeHoliday extends Component {
         filter: '',
         sortBy: '',
         moreOpen: false,
+        importShow: false,
         anchorEl: null,
         selectedRowId: null,
         listHoliday: [] as NgayNghiLeDto[],
@@ -183,6 +187,25 @@ class EmployeeHoliday extends Component {
             isShowConfirmDelete: !this.state.isShowConfirmDelete,
             IdHoliday: ''
         });
+    };
+    onImportShow = () => {
+        this.setState({
+            importShow: !this.state.importShow
+        });
+        this.getData();
+    };
+    handleImportData = async (input: FileUpload) => {
+        // const result = await ngayNghiLeService.getAll(input);
+        // enqueueSnackbar(result.message, {
+        //     variant: result.status == 'success' ? 'success' : 'error',
+        //     autoHideDuration: 3000
+        // });
+    };
+    downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate(
+            'KhachHang_ImportTemplate.xlsx'
+        );
+        fileDowloadService.downloadExportFile(result);
     };
     render() {
         const columns: GridColDef[] = [

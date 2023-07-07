@@ -1,3 +1,4 @@
+import { FileUpload, IFileDto } from '../dto/FileDto';
 import { PagedFilterAndSortedRequest } from '../dto/pagedFilterAndSortedRequest';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
@@ -33,6 +34,14 @@ class NhanVienService {
     }
     public async delete(id: string): Promise<NhanSuDto> {
         const result = await http.post(`api/services/app/NhanSu/Delete?id=${id}`);
+        return result.data.result;
+    }
+    public async exportDanhSachNhanVien(input: PagedNhanSuRequestDto): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/NhanSu/ExportDanhSach`, input);
+        return response.data.result;
+    }
+    public async inportNhanVien(input: FileUpload) {
+        const result = await http.post(`api/services/app/NhanSu/ImportExcel`, input);
         return result.data.result;
     }
 }
