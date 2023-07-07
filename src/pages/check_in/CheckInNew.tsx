@@ -145,7 +145,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
-            <Grid item xs={12} sm={6} md={8} lg={9} xl={9}>
+            <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
                 <Grid container justifyContent="end">
                     <Grid item xs={12}>
                         <Stack
