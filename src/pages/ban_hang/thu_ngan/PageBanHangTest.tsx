@@ -61,6 +61,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
+import nhanVienService from '../../../services/nhan-vien/nhanVienService';
+import { PagedNhanSuRequestDto } from '../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlElement }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -111,7 +113,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
     const nhomHangHoa = allNhomHangHoa.filter((x) => x.laNhomHangHoa);
 
     const GetListNhanVien = async () => {
-        const data = await NhanVienService.search('', { skipCount: 0, maxResultCount: 100 });
+        const data = await nhanVienService.getAll({
+            skipCount: 0,
+            maxResultCount: 100
+        } as PagedNhanSuRequestDto);
         setAllNhanVien([...data.items]);
     };
 
