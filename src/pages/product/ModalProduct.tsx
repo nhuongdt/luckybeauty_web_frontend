@@ -31,6 +31,7 @@ import './style.css';
 import AppConsts from '../../lib/appconst';
 
 import StyleOveride from '../../StyleOveride';
+import { Guid } from 'guid-typescript';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -141,7 +142,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (!Utils.checkNull(product.maHangHoa ?? '')) {
             const exists = await ProductService.CheckExistsMaHangHoa(
                 product.maHangHoa ?? '',
-                product.idDonViQuyDoi ?? AppConsts.guidEmpty
+                product.idDonViQuyDoi ?? Guid.EMPTY
             );
             if (exists) {
                 setErrMaHangHoa(true);

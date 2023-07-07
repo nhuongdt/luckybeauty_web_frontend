@@ -217,10 +217,7 @@ class EmployeeHoliday extends Component {
                 renderHeader: (params) => (
                     <Box
                         sx={{
-                            fontWeight: '700',
-                            overflow: 'hidden',
-                            width: '100%',
-                            textOverflow: 'ellipsis'
+                            fontWeight: '700'
                         }}>
                         {params.colDef.headerName}
                         <IconSorting
@@ -229,6 +226,18 @@ class EmployeeHoliday extends Component {
                                 this.onSort(this.state.sortType, 'tenNgayLe');
                             }}
                         />{' '}
+                    </Box>
+                ),
+                renderCell: (params) => (
+                    <Box
+                        sx={{
+                            overflow: 'hidden',
+                            width: '100%',
+                            textOverflow: 'ellipsis',
+                            fontSize: '12px',
+                            textAlign: 'center'
+                        }}>
+                        {params.value}
                     </Box>
                 )
             },

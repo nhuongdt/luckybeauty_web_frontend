@@ -21,11 +21,13 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import Cookies from 'js-cookie';
+import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
 class SoQuyScreen extends Component {
     state = {
         keyword: '',
         skipCount: 1,
         maxResultCount: 10,
+        data: [] as GetAllQuyHoaDonItemDto[],
         sortBy: '',
         sortType: 'desc',
         totalPage: 0,
@@ -42,18 +44,20 @@ class SoQuyScreen extends Component {
     }
 
     getAll = async () => {
-        await soQuyStore.getAll({
-            filter: this.state.keyword,
-            maxResultCount: this.state.maxResultCount,
-            skipCount: this.state.skipCount,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-            sortBy: this.state.sortBy,
-            sortType: this.state.sortType
-        });
-        this.setState({
-            totalPage: Math.ceil(soQuyStore.lstSoQuy.totalCount / this.state.maxResultCount),
-            totalCount: soQuyStore.lstSoQuy.totalCount
-        });
+        this.setState({ data: [] });
+        // await soQuyStore.getAll({
+        //     filter: this.state.keyword,
+        //     maxResultCount: this.state.maxResultCount,
+        //     skipCount: this.state.skipCount,
+        //     idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+        //     sortBy: this.state.sortBy,
+        //     sortType: this.state.sortType
+        // });
+        // this.setState({
+        //     data: soQuyStore.lstSoQuy.items,
+        //     totalPage: Math.ceil(soQuyStore.lstSoQuy.totalCount / this.state.maxResultCount),
+        //     totalCount: soQuyStore.lstSoQuy.totalCount
+        // });
     };
 
     handlePageChange = async (event: any, value: any) => {
@@ -111,7 +115,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value} width="100%">
+                    <Box title={params.value} width="100%" textAlign="center">
                         {params.value}
                     </Box>
                 )
@@ -132,7 +136,11 @@ class SoQuyScreen extends Component {
                         />
                     </Box>
                 ),
-                renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+                renderCell: (params) => (
+                    <Box title={params.value} textAlign="center" width="100%">
+                        {params.value}
+                    </Box>
+                )
             },
             {
                 field: 'thoiGianTao',
@@ -197,7 +205,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box title={params.value} width="100%" textAlign="end">
+                    <Box title={params.value} width="100%" textAlign="center">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -219,7 +227,7 @@ class SoQuyScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box title={params.value} width="100%">
+                    <Box title={params.value} width="100%" textAlign="center">
                         {params.value}
                     </Box>
                 )
@@ -370,7 +378,7 @@ class SoQuyScreen extends Component {
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
-                        rows={lstSoQuy === undefined ? [] : lstSoQuy.items}
+                        rows={this.state.data}
                         columns={columns}
                         checkboxSelection
                         sx={{

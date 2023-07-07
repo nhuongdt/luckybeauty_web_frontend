@@ -195,6 +195,19 @@ class UserScreen extends AppComponentBase {
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        sx={{
+                            fontSize: '12px',
+                            width: '100%',
+                            textAlign: 'center',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                        }}
+                        title={params.value}>
+                        {params.value}
+                    </Box>
                 )
             },
             {
@@ -210,6 +223,19 @@ class UserScreen extends AppComponentBase {
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        sx={{
+                            fontSize: '12px',
+                            width: '100%',
+                            textAlign: 'center',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                        }}
+                        title={params.value}>
+                        {params.value}
+                    </Box>
                 )
             },
             {
@@ -221,6 +247,19 @@ class UserScreen extends AppComponentBase {
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        sx={{
+                            fontSize: '12px',
+                            width: '100%',
+                            textAlign: 'center',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                        }}
+                        title={params.value}>
+                        {params.value}
                     </Box>
                 )
             },
@@ -240,6 +279,19 @@ class UserScreen extends AppComponentBase {
                         title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
+                    </Box>
+                ),
+                renderCell: (params: any) => (
+                    <Box
+                        sx={{
+                            fontSize: '12px',
+                            width: '100%',
+                            textAlign: 'center',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                        }}
+                        title={params.value}>
+                        {params.value}
                     </Box>
                 )
             },

@@ -2,10 +2,12 @@ export interface GetAllQuyHoaDonItemDto {
     id: string;
     idChiNhanh: string;
     loaiPhieu: string;
-    maPhieu: string;
+    maHoaDon: string;
     thoiGianTao: string;
     loaiThuChi: string;
     tongTienThu: number;
     hinhThucThanhToan: string;
+    phuongThucTT: string;
     trangThai: string;
+    ngayLapHoaDon: string;
 }

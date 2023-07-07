@@ -343,7 +343,7 @@ class ChietKhauDichVuScreen extends Component {
                         alignItems: 'center',
                         paddingX: '8px'
                     }}>
-                    <Grid item xs={5}>
+                    <Grid item xs={3}>
                         <FormControl size="small">
                             <Select
                                 defaultValue={
@@ -366,7 +366,7 @@ class ChietKhauDichVuScreen extends Component {
 
                     <Grid
                         item
-                        xs={7}
+                        xs={9}
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
