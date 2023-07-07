@@ -228,7 +228,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                             </Typography>
                             <Typography variant="body1" fontSize="24px" color="#333233">
                                 Trôi đi trôi êm đềm
-                                <printIcon />
                             </Typography>
                         </Grid>
                         <Grid item xs="auto">
