@@ -1,4 +1,5 @@
-import { FileUpload, IFileDto } from '../dto/FileDto';
+import { IFileDto } from '../dto/FileDto';
+import { FileUpload } from '../dto/FileUpload';
 import { PagedFilterAndSortedRequest } from '../dto/pagedFilterAndSortedRequest';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';

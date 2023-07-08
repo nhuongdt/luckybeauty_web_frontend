@@ -5,6 +5,7 @@ import { Guid } from 'guid-typescript';
 import { HoaDonRequestDto } from '../dto/ParamSearchDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import utils from '../../utils/utils';
+import { IFileDto } from '../dto/FileDto';
 class HoaDonService {
     CreateHoaDon = async (input: any) => {
         if (input.idKhachHang === '' || input.idKhachHang === Guid.EMPTY.toString()) {
@@ -67,6 +68,10 @@ class HoaDonService {
             return [];
         }
         const result = await http.post(`api/services/app/HoaDon/DeleteHoaDon?id=${idHoaDon}`);
+        return result.data.result;
+    };
+    ExportToExcel = async (input: HoaDonRequestDto): Promise<IFileDto> => {
+        const result = await http.post('api/services/app/HoaDon/ExportDanhSach', input);
         return result.data.result;
     };
 }

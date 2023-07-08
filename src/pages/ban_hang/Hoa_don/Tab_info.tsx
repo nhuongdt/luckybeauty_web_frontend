@@ -6,24 +6,24 @@ import utils from '../../../utils/utils';
 
 export default function TabInfo({ hoadon, chitietHoaDon }: any) {
     const columns: GridColDef[] = [
-        {
-            field: 'maHangHoa',
-            headerName: 'Mã hàng',
-            minWidth: 50,
-            flex: 0.8,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
-            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
-        },
+        // {
+        //     field: 'maHangHoa',
+        //     headerName: 'Mã hàng',
+        //     minWidth: 50,
+        //     flex: 0.8,
+        //     renderHeader: (params) => (
+        //         <Box>
+        //             {params.colDef.headerName}
+        //             <IconSorting />
+        //         </Box>
+        //     ),
+        //     renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+        // },
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
-            minWidth: 150,
-            flex: 1.2,
+            // minWidth: 150,
+            flex: 5,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -38,7 +38,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'center',
             align: 'center',
             minWidth: 80,
-            flex: 0.5,
+            flex: 2,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -46,38 +46,38 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat().format(params.value)}>
-                    {new Intl.NumberFormat().format(params.value)}
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
-        {
-            field: 'donGiaTruocCK',
-            headerName: 'Đơn giá',
-            headerAlign: 'right',
-            align: 'right',
-            minWidth: 90,
-            flex: 0.6,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
-            renderCell: (params) => (
-                <Box title={new Intl.NumberFormat().format(params.value)}>
-                    {' '}
-                    {new Intl.NumberFormat().format(params.value)}
-                </Box>
-            )
-        },
+        // {
+        //     field: 'donGiaTruocCK',
+        //     headerName: 'Đơn giá',
+        //     headerAlign: 'right',
+        //     align: 'right',
+        //     minWidth: 90,
+        //     flex: 0.6,
+        //     renderHeader: (params) => (
+        //         <Box>
+        //             {params.colDef.headerName}
+        //             <IconSorting />
+        //         </Box>
+        //     ),
+        //     renderCell: (params) => (
+        //         <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+        //             {' '}
+        //             {new Intl.NumberFormat('vi-VN').format(params.value)}
+        //         </Box>
+        //     )
+        // },
         {
             field: 'tienChietKhau',
             headerName: 'Chiết khấu',
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 0.6,
+            flex: 2,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -85,8 +85,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat().format(params.value)}>
-                    {new Intl.NumberFormat().format(params.value)}
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -96,7 +96,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 0.8,
+            flex: 2,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -104,8 +104,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat().format(params.value)}>
-                    {new Intl.NumberFormat().format(params.value)}
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -115,7 +115,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 0.8,
+            flex: 2,
             renderHeader: (params) => (
                 <Box>
                     {params.colDef.headerName}
@@ -123,8 +123,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat().format(params.value)}>
-                    {new Intl.NumberFormat().format(params.value)}
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         }
@@ -237,7 +237,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat().format(hoadon?.tongTienHang)}
+                                    {new Intl.NumberFormat('vi-VN').format(hoadon?.tongTienHang)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -255,7 +255,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat().format(hoadon?.tongGiamGiaHD)}
+                                    {new Intl.NumberFormat('vi-VN').format(hoadon?.tongGiamGiaHD)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -273,7 +273,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat().format(hoadon?.tongThanhToan)}
+                                    {new Intl.NumberFormat('vi-VN').format(hoadon?.tongThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
@@ -291,7 +291,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="14px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat().format(hoadon?.daThanhToan)}
+                                    {new Intl.NumberFormat('vi-VN').format(hoadon?.daThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} marginTop="28px">
@@ -309,7 +309,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                     fontSize="18px"
                                     fontWeight="700"
                                     color="#3B4758">
-                                    {new Intl.NumberFormat().format(hoadon?.conNo)}
+                                    {new Intl.NumberFormat('vi-VN').format(hoadon?.conNo)}
                                 </Typography>
                             </Grid>
                         </Grid>

@@ -1,3 +1,6 @@
+import { ExecuteResultDto } from '../../dto/ExecuteResultDto';
+import { IFileDto } from '../../dto/FileDto';
+import { FileUpload } from '../../dto/FileUpload';
 import { PagedRequestDto } from '../../dto/pagedRequestDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
@@ -23,6 +26,14 @@ class CaLamViecService {
     }
     async ceateOrEdit(input: CreateOrEditCaLamViecDto): Promise<CaLamViecDto> {
         const response = await http.post(`api/services/app/CaLamViec/CreateOrEdit`, input);
+        return response.data.result;
+    }
+    async exportToExcel(input: PagedRequestDto): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/CaLamViec/ExportToExcel`, input);
+        return response.data.result;
+    }
+    async importExcel(input: FileUpload) {
+        const response = await http.post(`api/services/app/CaLamViec/ImportExcel`, input);
         return response.data.result;
     }
 }

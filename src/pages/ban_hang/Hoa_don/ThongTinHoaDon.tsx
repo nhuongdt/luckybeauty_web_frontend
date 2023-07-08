@@ -9,9 +9,11 @@ import {
     TextField,
     Select,
     MenuItem,
-    Dialog
+    Dialog,
+    Link
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
 import Avatar from '../../../images/xinh.png';
@@ -37,6 +39,7 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
+import utils from '../../../utils/utils';
 
 const themOutlineInput = createTheme({
     components: {
@@ -50,7 +53,7 @@ const themOutlineInput = createTheme({
     }
 });
 
-const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }: any) => {
+const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
@@ -63,18 +66,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
     const current = useContext(ChiNhanhContext);
     const allChiNhanh = useContext(ChiNhanhContextbyUser);
 
-    // todo change chinhanh --> back to list
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-    };
-
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-    };
-
     const GetChiTietHoaDon_byIdHoaDon = async () => {
-        const data = await HoaDonService.GetChiTietHoaDon_byIdHoaDon(idHoaDon);
-        setChiTietHoaDon(data);
+        if (!utils.checkNull(idHoaDon)) {
+            const data = await HoaDonService.GetChiTietHoaDon_byIdHoaDon(idHoaDon);
+            setChiTietHoaDon(data);
+        }
     };
 
     useEffect(() => {
@@ -94,8 +90,8 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
     };
 
     const gotoBack = () => {
-        // nếu cập nhật hóa đơn --> pass thông tin hóa đơn đã cập nhật
-        handleGotoBack(hoadonChosed);
+        // chi dong hoadon thoi
+        handleGotoBack(null);
     };
 
     const checkSave = async () => {
@@ -171,6 +167,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
         const data = await HoaDonService.Update_InforHoaDon(hoadonChosed);
         setHoaDonChosed({ ...hoadonChosed, maHoaDon: data?.maHoaDon });
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật thông tin hóa đơn thành công' });
+        handleGotoBack(hoadonChosed);
     };
 
     const [activeTab, setActiveTab] = useState(0);
@@ -190,7 +187,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
         );
     };
     return (
-        <Dialog open={open} onClose={CloseDetail} maxWidth="lg" fullWidth>
+        <Dialog open={open} onClose={gotoBack} maxWidth="lg" fullWidth>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -215,20 +212,31 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                     justifyContent: 'space-between',
                     minHeight: 'calc(100vh - 70px)'
                 }}>
-                <ModalWarning open={openDialog} onClose={handleCloseDialog} onOK={huyHoaDon} />
+                <ModalWarning
+                    open={openDialog}
+                    onClose={() => setOpenDialog(false)}
+                    onOK={huyHoaDon}
+                />
                 <Box padding="16px 2.2222222222222223vw ">
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item xs="auto">
-                            <Typography
-                                variant="h2"
-                                fontSize="24px"
-                                fontWeight="700"
-                                color="#333233">
-                                Hóa đơn
-                            </Typography>
-                            <Typography variant="body1" fontSize="24px" color="#333233">
-                                Trôi đi trôi êm đềm
-                            </Typography>
+                            <Stack gap={1} direction="row">
+                                <span
+                                    style={{
+                                        fontSize: '24px',
+                                        fontWeight: '700',
+                                        color: '#333233'
+                                    }}>
+                                    Hóa đơn
+                                </span>
+                                <span
+                                    style={{
+                                        fontSize: '24px',
+                                        color: '#999699'
+                                    }}>
+                                    {hoadonChosed?.maHoaDon}
+                                </span>
+                            </Stack>
                         </Grid>
                         <Grid item xs="auto">
                             {/* <Box display="flex" gap="8px">
@@ -301,14 +309,17 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                 }
                             }}>
                             <Box display="flex" gap="23px" mb="12px">
-                                <Typography
-                                    variant="h4"
-                                    color="#3B4758"
-                                    fontWeight="700"
-                                    fontSize="24px">
-                                    {hoadonChosed?.tenKhachHang}
-                                </Typography>
-                                {/* <AutocompleteCustomer handleChoseItem={changeCustomer} /> */}
+                                <Stack direction="row" gap={1}>
+                                    <Typography
+                                        variant="h4"
+                                        color="#3B4758"
+                                        fontWeight="700"
+                                        fontSize="24px">
+                                        {hoadonChosed?.tenKhachHang}
+                                    </Typography>
+                                    <ModeEditIcon style={{ color: '#999699' }} />
+                                </Stack>
+
                                 <Box
                                     sx={{
                                         padding: '2px 3px',
@@ -396,35 +407,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                                         />
                                     </ThemeProvider>
                                 </Grid>
-                                <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
-                                        User lập phiếu
-                                    </Typography>
-                                    {/* <Typography
-                                        variant="body1"
-                                        fontSize="14px"
-                                        color="#333233"
-                                        marginTop="2px">
-                                        {hoadonChosed?.userName}
-                                    </Typography> */}
-                                    <TextField
-                                        disabled
-                                        sx={{
-                                            '& .MuiInputBase-root': { borderRadius: '8px' },
-                                            '& .Mui-disabled': {
-                                                color: '#333233',
-                                                WebkitTextFillColor: 'unset'
-                                            }
-                                        }}
-                                        size="small"
-                                        value={hoadonChosed?.userName}
-                                    />
-                                </Grid>
                             </Grid>
                         </Grid>
                         <Grid xs={12} item>
@@ -501,19 +483,21 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, CloseDetail }:
                             onClick={updateHoaDon}>
                             Lưu
                         </Button>
-                        <Button
-                            onClick={handleOpenDialog}
-                            variant="contained"
-                            sx={{
-                                transition: '.4s',
-                                bgcolor: '#FF316A!important',
-                                color: '#fff',
-                                '&:hover': {
-                                    bgcolor: 'red!important'
-                                }
-                            }}>
-                            Hủy bỏ
-                        </Button>
+                        {hoadonChosed?.trangThai !== 0 && (
+                            <Button
+                                onClick={() => setOpenDialog(true)}
+                                variant="contained"
+                                sx={{
+                                    transition: '.4s',
+                                    bgcolor: '#FF316A!important',
+                                    color: '#fff',
+                                    '&:hover': {
+                                        bgcolor: 'red!important'
+                                    }
+                                }}>
+                                Hủy bỏ
+                            </Button>
+                        )}
                     </Box>
                 </Box>
             </Box>
