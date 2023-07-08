@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import {
+    Autocomplete,
     Box,
     Button,
     ButtonGroup,
@@ -21,6 +22,8 @@ import rules from './create-or-edit-customer.validate';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
+import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
+import { SuggestNguonKhachDto } from '../../../services/suggests/dto/SuggestNguonKhachDto';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
@@ -28,6 +31,8 @@ export interface ICreateOrEditCustomerProps {
     onOk: () => void;
     handleChange: (event: any) => void;
     formRef: CreateOrEditKhachHangDto;
+    suggestNhomKhach: SuggestNhomKhachDto[];
+    suggestNguonKhach: SuggestNguonKhachDto[];
 }
 class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     state = {
@@ -35,7 +40,16 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         errorTenKhach: false
     };
     render(): ReactNode {
-        const { visible, onCancel, title, onOk, formRef, handleChange } = this.props;
+        const {
+            visible,
+            onCancel,
+            title,
+            onOk,
+            formRef,
+            handleChange,
+            suggestNguonKhach,
+            suggestNhomKhach
+        } = this.props;
         const initValues: CreateOrEditKhachHangDto = formRef;
         return (
             <div className={visible ? 'show poppup-add' : 'poppup-add'}>
@@ -44,6 +58,8 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                 <Formik
                     initialValues={initValues}
                     onSubmit={async (values) => {
+                        formRef.idNhomKhach = values.idNhomKhach;
+                        formRef.idNguonKhach = values.idNguonKhach;
                         const isValidPhoneNumber = AppConsts.phoneRegex.test(formRef.soDienThoai);
                         console.log(isValidPhoneNumber);
                         if (isValidPhoneNumber == false) {
@@ -72,7 +88,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             onOk();
                         }
                     }}>
-                    {() => (
+                    {({ setFieldValue }) => (
                         <Form>
                             <Box
                                 className="form-add"
@@ -128,7 +144,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 ) : null
                                             }
                                             sx={{ fontSize: '16px' }}></TextField>
-                                        <small className="text-danger"></small>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
@@ -184,6 +199,55 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             <MenuItem value="false">Nữ</MenuItem>
                                             <MenuItem value="true">Nam</MenuItem>
                                         </Select>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                            Nhóm khách
+                                        </Typography>
+                                        <Autocomplete
+                                            options={suggestNhomKhach}
+                                            getOptionLabel={(option) => `${option.tenNhomKhach}`}
+                                            size="small"
+                                            fullWidth
+                                            disablePortal
+                                            onChange={(event, value) => {
+                                                setFieldValue(
+                                                    'idNhomKhach',
+                                                    value ? value.id : undefined
+                                                );
+                                                // Cập nhật giá trị id trong Formik
+                                            }}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    placeholder="Nhập nhóm khách"
+                                                />
+                                            )}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                            Nguồn khách
+                                        </Typography>
+                                        <Autocomplete
+                                            options={suggestNguonKhach}
+                                            getOptionLabel={(option) => `${option.tenNguonKhach}`}
+                                            size="small"
+                                            fullWidth
+                                            disablePortal
+                                            onChange={(event, value) => {
+                                                setFieldValue(
+                                                    'idNguonKhach',
+                                                    value ? value.id : undefined
+                                                ); // Cập nhật giá trị id trong Formik
+                                            }}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    placeholder="Nhập nguồn khách"
+                                                />
+                                            )}
+                                        />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography color="#4C4B4C" variant="subtitle2">

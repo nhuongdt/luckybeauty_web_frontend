@@ -2,6 +2,8 @@ import http from '../httpService';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import { ModelHangHoaDto, PagedProductSearchDto } from './dto';
 import Utils from '../../utils/utils';
+import { IFileDto } from '../dto/FileDto';
+import { FileUpload } from '../dto/FileUpload';
 
 class ProductService {
     CheckExistsMaHangHoa = async (maHangHoa: string, id?: string) => {
@@ -35,6 +37,15 @@ class ProductService {
             });
         return xx;
     };
+
+    ExportToExcel = async (input: PagedProductSearchDto): Promise<IFileDto> => {
+        const response = await http.post('api/services/app/HangHoa/ExportToExcel', input);
+        return response.data.result;
+    };
+    async importHangHoa(input: FileUpload) {
+        const response = await http.post('api/services/app/HangHoa/ImportExcel', input);
+        return response.data.result;
+    }
     CreateOrEditProduct = async (input: ModelHangHoaDto) => {
         const xx = await http
             .post(`api/services/app/HangHoa/CreateOrEdit`, input)

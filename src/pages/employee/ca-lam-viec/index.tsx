@@ -26,6 +26,10 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import { enqueueSnackbar } from 'notistack';
 import caLamViecService from '../../../services/nhan-vien/ca_lam_viec/caLamViecService';
+import { FileUpload } from '../../../services/dto/FileUpload';
+import fileDowloadService from '../../../services/file-dowload.service';
+import uploadFileService from '../../../services/uploadFileService';
+import ImportExcel from '../../../components/ImportComponent';
 class CaLamViecScreen extends Component {
     state = {
         filter: '',
@@ -34,6 +38,7 @@ class CaLamViecScreen extends Component {
         sortBy: '',
         sortType: 'desc',
         isShowModal: false,
+        importShow: false,
         anchorEl: null,
         selectedRowId: null,
         totalCount: 0,
@@ -132,6 +137,35 @@ class CaLamViecScreen extends Component {
             sortType: type
         });
         this.getData();
+    };
+    exportToExcel = async () => {
+        const result = await caLamViecService.exportToExcel({
+            keyword: this.state.filter,
+            maxResultCount: this.state.maxResultCount,
+            skipCount: this.state.skipCount,
+            sortBy: this.state.sortBy,
+            sortType: this.state.sortType
+        });
+        fileDowloadService.downloadExportFile(result);
+    };
+    onImportShow = () => {
+        this.setState({
+            importShow: !this.state.importShow
+        });
+        this.getData();
+    };
+    handleImportData = async (input: FileUpload) => {
+        const result = await caLamViecService.importExcel(input);
+        enqueueSnackbar(result.message, {
+            variant: result.status == 'success' ? 'success' : result.status,
+            autoHideDuration: 3000
+        });
+    };
+    downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate(
+            'CaLamViec_ImportTemplate.xlsx'
+        );
+        fileDowloadService.downloadExportFile(result);
     };
     render(): ReactNode {
         const columns: GridColDef[] = [
@@ -381,6 +415,7 @@ class CaLamViecScreen extends Component {
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
+                            onClick={this.onImportShow}
                             variant="outlined"
                             startIcon={<img src={DownloadIcon} />}
                             sx={{
@@ -396,6 +431,7 @@ class CaLamViecScreen extends Component {
                         </Button>
                         <Button
                             size="small"
+                            onClick={this.exportToExcel}
                             variant="outlined"
                             startIcon={<img src={UploadIcon} />}
                             sx={{
@@ -503,6 +539,12 @@ class CaLamViecScreen extends Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
+                <ImportExcel
+                    isOpen={this.state.importShow}
+                    onClose={this.onImportShow}
+                    downloadImportTemplate={this.downloadImportTemplate}
+                    importFile={this.handleImportData}
+                />
                 <ConfirmDelete
                     isShow={this.state.isShowConfirmDelete}
                     onOk={this.onOkDelete}

@@ -1,6 +1,7 @@
 import { Component, ReactNode } from 'react';
 import { CreateOrUpdateNhanSuDto } from '../../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import {
+    Autocomplete,
     Box,
     Button,
     ButtonGroup,
@@ -109,7 +110,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                               });
                         onOk();
                     }}>
-                    {({ handleChange, errors, values }) => (
+                    {({ handleChange, errors, values, setFieldValue, setFieldError }) => (
                         <Form>
                             <Box display="flex" justifyContent="space-between" paddingRight="24px">
                                 <Grid
@@ -231,6 +232,33 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
+                                            Vị trí
+                                        </Typography>
+                                        <Autocomplete
+                                            options={suggestChucVu}
+                                            getOptionLabel={(option) => `${option.tenChucVu}`}
+                                            size="small"
+                                            fullWidth
+                                            disablePortal
+                                            onChange={(event, value) => {
+                                                setFieldValue(
+                                                    'idChucVu',
+                                                    value ? value.idChucVu : ''
+                                                ); // Cập nhật giá trị id trong Formik
+                                            }}
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    placeholder="Nhập tên vị trí"
+                                                />
+                                            )}
+                                        />
+                                        {errors.idChucVu && (
+                                            <small className="text-danger">{errors.idChucVu}</small>
+                                        )}
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Typography color="#4C4B4C" variant="subtitle2">
                                             Ghi chú
                                         </Typography>
                                         <TextareaAutosize
@@ -255,7 +283,15 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             position="relative"
                                             paddingTop="5.0403vh"
                                             style={{ textAlign: 'center', borderColor: '#FFFAFF' }}>
-                                            <img src={this.state.avatarFile} />
+                                            <img
+                                                hidden={
+                                                    this.state.avatarFile == undefined ||
+                                                    this.state.avatarFile == ''
+                                                }
+                                                src={this.state.avatarFile}
+                                                width={'220px'}
+                                                height={'200px'}
+                                            />
                                             <TextField
                                                 onChange={this.onSelectAvatarFile}
                                                 type="file"
@@ -280,6 +316,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 }}
                                             />
                                             <Box
+                                                hidden={
+                                                    this.state.avatarFile != undefined &&
+                                                    this.state.avatarFile != ''
+                                                }
                                                 style={{
                                                     display: 'flex',
                                                     marginTop: '34px',
@@ -288,7 +328,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 <img src={fileSmallIcon} />
                                                 <Typography>Tải ảnh lên</Typography>
                                             </Box>
-                                            <Box style={{ color: '#999699', marginTop: '13px' }}>
+                                            <Box
+                                                style={{ color: '#999699', marginTop: '13px' }}
+                                                hidden={
+                                                    this.state.avatarFile != undefined &&
+                                                    this.state.avatarFile != ''
+                                                }>
                                                 File định dạng{' '}
                                                 <Typography style={{ color: '#333233' }}>
                                                     jpeg, png

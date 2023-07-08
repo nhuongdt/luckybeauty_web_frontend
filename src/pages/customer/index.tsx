@@ -35,9 +35,12 @@ import { enqueueSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 import CustomerInfo from './components/CustomerInfo';
 import ImportExcel from '../../components/ImportComponent';
-import { FileUpload } from '../../services/dto/FileDto';
+import { FileUpload } from '../../services/dto/FileUpload';
 import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
+import { SuggestNguonKhachDto } from '../../services/suggests/dto/SuggestNguonKhachDto';
+import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
+import SuggestService from '../../services/suggests/SuggestService';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -55,6 +58,8 @@ interface CustomerScreenState {
     anchorEl: any;
     selectedRowId: any;
     createOrEditKhachHang: CreateOrEditKhachHangDto;
+    suggestNguonKhach: SuggestNguonKhachDto[];
+    suggestNhomKhach: SuggestNhomKhachDto[];
     visibilityColumn: any;
     information: boolean;
 }
@@ -79,6 +84,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             anchorEl: null,
             selectedRowId: null,
             createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
+            suggestNguonKhach: [] as SuggestNguonKhachDto[],
+            suggestNhomKhach: [] as SuggestNhomKhachDto[],
             visibilityColumn: {},
             information: false
         };
@@ -86,10 +93,18 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
 
     componentDidMount(): void {
         this.getData();
+        this.getSuggest();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
         this.setState({ visibilityColumn: visibilityColumn });
     }
-
+    async getSuggest() {
+        const nguonKhach = await SuggestService.SuggestNguonKhach();
+        const nhomKhach = await SuggestService.SuggestNhomKhach();
+        this.setState({
+            suggestNguonKhach: nguonKhach,
+            suggestNhomKhach: nhomKhach
+        });
+    }
     async getData() {
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
@@ -356,30 +371,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
-                field: 'nhanVienPhuTrach',
-                sortable: false,
-                headerName: 'Nhân viên phục vụ',
-                minWidth: 185,
-                flex: 1,
-                renderHeader: (params) => (
-                    <Box
-                        sx={{
-                            fontWeight: '700',
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            width: '100%'
-                        }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'nhanVienPhuTrach');
-                            }}
-                        />
-                    </Box>
-                )
-            },
-            {
                 field: 'tongChiTieu',
                 sortable: false,
                 headerName: 'Tổng chi tiêu',
@@ -443,29 +434,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
-                field: 'tenNguonKhach',
-                sortable: false,
-                headerName: 'Nguồn',
-                minWidth: 86,
-                flex: 1,
-                renderCell: (params) => (
-                    <div className={params.field === 'tenNguonKhach' ? 'last-column' : ''}>
-                        {params.value}
-                    </div>
-                ),
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenNguonKhach');
-                            }}
-                        />
-                    </Box>
-                )
-            },
-            {
                 field: 'actions',
                 headerName: 'Hành động',
                 maxWidth: 48,
@@ -493,7 +461,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             }
         ];
-        const { createOrEditKhachHang } = this.state;
+        const { createOrEditKhachHang, suggestNguonKhach, suggestNhomKhach } = this.state;
 
         return (
             <>
@@ -704,6 +672,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         : 'Cập nhật thông tin khách hàng'
                                 }
                                 formRef={createOrEditKhachHang}
+                                suggestNguonKhach={suggestNguonKhach}
+                                suggestNhomKhach={suggestNhomKhach}
                             />
                         </div>
                         <div

@@ -11,7 +11,7 @@ import {
     Pagination,
     IconButton
 } from '@mui/material';
-import { Add, FileDownload, FileUpload, Search } from '@mui/icons-material';
+import { Add, FileDownload, Search } from '@mui/icons-material';
 
 import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
@@ -43,6 +43,11 @@ import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
 
 import './style.css';
+import fileDowloadService from '../../services/file-dowload.service';
+import { enqueueSnackbar } from 'notistack';
+import uploadFileService from '../../services/uploadFileService';
+import { FileUpload } from '../../services/dto/FileUpload';
+import ImportExcel from '../../components/ImportComponent';
 
 export default function PageProductNew() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -57,7 +62,7 @@ export default function PageProductNew() {
     const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
-
+    const [isShowImport, setShowImport] = useState<boolean>(false);
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
 
@@ -314,7 +319,27 @@ export default function PageProductNew() {
             };
         });
     };
-
+    const exportToExcel = async () => {
+        const result = await ProductService.ExportToExcel(filterPageProduct);
+        fileDowloadService.downloadExportFile(result);
+    };
+    const onImportShow = () => {
+        setShowImport(!isShowImport);
+        GetListHangHoa();
+    };
+    const handleImportData = async (input: FileUpload) => {
+        const result = await ProductService.importHangHoa(input);
+        enqueueSnackbar(result.message, {
+            variant: result.status == 'success' ? 'success' : result.status,
+            autoHideDuration: 3000
+        });
+    };
+    const downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate(
+            'HangHoa_DichVu_ImportTemplate.xlsx'
+        );
+        fileDowloadService.downloadExportFile(result);
+    };
     const columns: GridColDef[] = [
         {
             field: 'maHangHoa',
@@ -479,6 +504,12 @@ export default function PageProductNew() {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+            <ImportExcel
+                isOpen={isShowImport}
+                onClose={onImportShow}
+                downloadImportTemplate={downloadImportTemplate}
+                importFile={handleImportData}
+            />
             <Grid
                 container
                 className="dich-vu-page"
@@ -517,6 +548,7 @@ export default function PageProductNew() {
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
+                            onClick={onImportShow}
                             variant="outlined"
                             startIcon={<DownIcon />}
                             className="btnNhapXuat btn-outline-hover"
@@ -525,6 +557,7 @@ export default function PageProductNew() {
                         </Button>
                         <Button
                             size="small"
+                            onClick={exportToExcel}
                             variant="outlined"
                             startIcon={<UploadIcon />}
                             className="btnNhapXuat btn-outline-hover"

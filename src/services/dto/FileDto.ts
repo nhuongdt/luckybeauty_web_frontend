@@ -38,8 +38,3 @@ export interface IFileDto {
     fileType: string;
     fileToken: string;
 }
-
-export interface FileUpload {
-    file: string;
-    type: string;
-}

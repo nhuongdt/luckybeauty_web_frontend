@@ -34,7 +34,7 @@ import { enqueueSnackbar } from 'notistack';
 import nhanVienStore from '../../stores/nhanVienStore';
 import { Cookie } from '@mui/icons-material';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
-import { FileUpload } from '../../services/dto/FileDto';
+import { FileUpload } from '../../services/dto/FileUpload';
 import fileDowloadService from '../../services/file-dowload.service';
 import uploadFileService from '../../services/uploadFileService';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
