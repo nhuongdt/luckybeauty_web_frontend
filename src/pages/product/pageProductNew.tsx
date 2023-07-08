@@ -41,7 +41,7 @@ import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
 import AppConsts from '../../lib/appconst';
-
+import { ReactComponent as SeasrchIcon } from '../../images/search-normal.svg';
 import './style.css';
 import fileDowloadService from '../../services/file-dowload.service';
 import { enqueueSnackbar } from 'notistack';
@@ -261,7 +261,9 @@ export default function PageProductNew() {
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa dịch vụ  ${rowItem?.maHangHoa ?? ' '} không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${
+                        rowItem?.maHangHoa ?? ' '
+                    } không?`
                 })
             );
         }
@@ -407,7 +409,7 @@ export default function PageProductNew() {
             renderCell: (params) => (
                 <Box display="flex" justifyContent="end" width="100%">
                     <Typography variant="body2" color="#333233" fontSize="12px">
-                        {Utils.formatNumber(params.value || '')}
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Typography>
                 </Box>
             ),
@@ -524,12 +526,22 @@ export default function PageProductNew() {
                             <TextField
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#FFFAFF'
+                                    backgroundColor: '#fff',
+                                    '& input': {
+                                        paddingLeft: '16px'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                        paddingLeft: '0'
+                                    }
                                 }}
                                 variant="outlined"
                                 placeholder="Tìm kiếm"
                                 InputProps={{
-                                    startAdornment: <Search onClick={hanClickIconSearch} />
+                                    startAdornment: (
+                                        <IconButton onClick={hanClickIconSearch}>
+                                            <SeasrchIcon />
+                                        </IconButton>
+                                    )
                                 }}
                                 onChange={(event) =>
                                     setFilterPageProduct((itemOlds: any) => {

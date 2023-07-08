@@ -108,11 +108,11 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPha
                     <Box>
                         <Grid container spacing={3} mt="-8px">
                             {PaymentsList.map((item, index) => (
-                                <Grid item key={index} md={3}>
+                                <Grid item key={index} md={3} sm={4} xs={12}>
                                     <Box
                                         onClick={() => HandleSelected(index)}
                                         textAlign="center"
-                                        padding="24px"
+                                        padding={{ md: 2, sm: '24px 10px', lg: 3, xs: 1 }}
                                         border="1px solid #CDC9CD"
                                         borderRadius="8px"
                                         sx={{

@@ -383,7 +383,7 @@ class CaLamViecScreen extends Component {
                             <TextField
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
+                                    backgroundColor: '#fff',
                                     borderColor: '#CDC9CD!important'
                                 }}
                                 onChange={(e) => {

@@ -38,6 +38,7 @@ import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import { TrendingUpTwoTone } from '@mui/icons-material';
+import { PagedNhanSuRequestDto } from '../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 
 interface SoQuyDialogProps {
     visiable: boolean;
@@ -143,7 +144,10 @@ const CreateOrEditSoQuyDialog = ({
         }
     };
     const GetListNhanVien = async () => {
-        const data = await nhanVienService.search('', { skipCount: 0, maxResultCount: 100 });
+        const data = await nhanVienService.getAll({
+            skipCount: 0,
+            maxResultCount: 100
+        } as PagedNhanSuRequestDto);
         setAllNhanVien(data.items);
     };
 
@@ -185,35 +189,45 @@ const CreateOrEditSoQuyDialog = ({
 
     const saveSoQuy = async () => {
         const myData = { ...quyHoaDon };
-        // assign again ctquy
-        myData.quyHoaDon_ChiTiet = quyHoaDon.quyHoaDon_ChiTiet?.map((x: any) => {
-            return {
-                id: x.id,
-                idQuyHoaDon: x.idQuyHoaDon,
-                idKhachHang: (quyHoaDon.loaiDoiTuong == 3
-                    ? null
-                    : quyHoaDon.idDoiTuongNopTien) as null,
+        const idKhachHang = (
+            quyHoaDon.loaiDoiTuong == 3 ? null : quyHoaDon.idDoiTuongNopTien
+        ) as null;
+        const idNhanVien = (
+            quyHoaDon.loaiDoiTuong == 3 ? quyHoaDon.idDoiTuongNopTien : null
+        ) as null;
+
+        if (utils.checkNull(idQuyHD)) {
+            const quyCT = new QuyChiTietDto({
+                idKhachHang: idKhachHang,
                 hinhThucThanhToan: quyHoaDon.hinhThucThanhToan,
                 tienThu: quyHoaDon.tongTienThu,
-                idNhanVien: (quyHoaDon.loaiDoiTuong == 3
-                    ? quyHoaDon.idDoiTuongNopTien
-                    : null) as null,
-                idKhoanThuChi: quyHoaDon.idKhoanThuChi as null,
-                diemThanhToan: x.diemThanhToan,
-                chiPhiNganHang: x.chiPhiNganHang,
-                idTaiKhoanNganHang: x.idTaiKhoanNganHang,
-                laPTChiPhiNganHang: x.laPTChiPhiNganHang,
-                thuPhiTienGui: x.thuPhiTienGui
-            } as QuyChiTietDto;
-        });
-        console.log('myData', myData);
-        if (utils.checkNull(idQuyHD)) {
+                idNhanVien: idNhanVien,
+                idKhoanThuChi: quyHoaDon.idKhoanThuChi as null
+            });
+            myData.quyHoaDon_ChiTiet = [quyCT];
             const data = await SoQuyServices.CreateQuyHoaDon(myData);
             quyHoaDon.id = data.id;
             quyHoaDon.maHoaDon = data.maHoaDon;
             quyHoaDon.txtTrangThai = 'Đã thanh toán';
             onOk(quyHoaDon, 1);
         } else {
+            // assign again ctquy
+            myData.quyHoaDon_ChiTiet = quyHoaDon.quyHoaDon_ChiTiet?.map((x: any) => {
+                return {
+                    id: x.id,
+                    idQuyHoaDon: x.idQuyHoaDon,
+                    idKhachHang: idKhachHang,
+                    hinhThucThanhToan: quyHoaDon.hinhThucThanhToan,
+                    tienThu: quyHoaDon.tongTienThu,
+                    idNhanVien: idNhanVien,
+                    idKhoanThuChi: quyHoaDon.idKhoanThuChi as null,
+                    diemThanhToan: x.diemThanhToan,
+                    chiPhiNganHang: x.chiPhiNganHang,
+                    idTaiKhoanNganHang: x.idTaiKhoanNganHang,
+                    laPTChiPhiNganHang: x.laPTChiPhiNganHang,
+                    thuPhiTienGui: x.thuPhiTienGui
+                } as QuyChiTietDto;
+            });
             const data = await SoQuyServices.UpdateQuyHoaDon(myData);
             quyHoaDon.id = data.id;
             quyHoaDon.maHoaDon = data.maHoaDon;
