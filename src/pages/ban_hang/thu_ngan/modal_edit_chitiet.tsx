@@ -55,106 +55,6 @@ const themInputChietKhau = createTheme({
         }
     }
 });
-export function PopupChietKhau({ props, handleClose, handleChangeChietKhau }: any) {
-    const [laPhanTram, setLaPhanTram] = useState('true');
-    const [gtriCK, setGtriCK] = useState(0);
-    const textInput = useRef<HTMLInputElement>(null);
-    useEffect(() => {
-        textInput.current?.focus();
-    }, []);
-
-    React.useEffect(() => {
-        if (props?.item?.ptChietKhau > 0) {
-            setLaPhanTram('true');
-            setGtriCK(props?.item?.ptChietKhau);
-        } else {
-            if (props?.item?.tienChietKhau === 0) {
-                setLaPhanTram('true');
-            } else {
-                setLaPhanTram('false');
-            }
-            setGtriCK(props?.item?.tienChietKhau);
-        }
-    }, [props?.item]);
-
-    const changeChietKhau = (val: any) => {
-        let valNew = Utils.formatNumberToFloat(val);
-        if (laPhanTram === 'true') {
-            if (valNew > 100) valNew = 100;
-        }
-        setGtriCK(valNew);
-        handleChangeChietKhau(laPhanTram, valNew);
-    };
-
-    const handleChangeLoaiChietKhau = (event: any) => {
-        const laPhanTramNew = event.target.value;
-        const giaBan = props?.item?.donGiaTruocCK ?? 0;
-        const gtriCKOld = gtriCK;
-
-        let ckNew = gtriCK;
-        if (laPhanTram === 'true') {
-            if (laPhanTramNew === 'false') {
-                // % to vnd
-                ckNew = (gtriCKOld * giaBan) / 100;
-            }
-        } else {
-            if (laPhanTramNew === 'true') {
-                // vnd to %
-                ckNew = giaBan > 0 ? (gtriCKOld / giaBan) * 100 : 0;
-            }
-        }
-        setGtriCK(ckNew);
-        setLaPhanTram(laPhanTramNew);
-        handleChangeChietKhau(event.target.value, Utils.formatNumberToFloat(ckNew));
-    };
-
-    return (
-        <>
-            <Popover
-                open={props.open}
-                anchorEl={props.anchorEl}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left'
-                }}>
-                <Box>
-                    <Stack direction="column" spacing={1} padding={2} width={280}>
-                        <Typography variant="body2">Chiết khấu</Typography>
-                        <Stack direction="row" spacing={1}>
-                            <NumericFormat
-                                fullWidth
-                                id="txtChietKhau"
-                                value={gtriCK}
-                                size="small"
-                                thousandSeparator
-                                customInput={TextField}
-                                isAllowed={(values) => {
-                                    const floatValue = values.floatValue;
-                                    if (laPhanTram === 'true') return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
-                                    return true;
-                                }}
-                                onChange={(event) => changeChietKhau(event.target.value)}
-                            />
-                            <FormControlLabel
-                                value="true"
-                                control={<Radio size="small" checked={laPhanTram === 'true'} />}
-                                label="%"
-                                onChange={(event) => handleChangeLoaiChietKhau(event)}
-                            />
-                            <FormControlLabel
-                                value="false"
-                                control={<Radio size="small" checked={laPhanTram === 'false'} />}
-                                label="đ"
-                                onChange={(event) => handleChangeLoaiChietKhau(event)}
-                            />
-                        </Stack>
-                    </Stack>
-                </Box>
-            </Popover>
-        </>
-    );
-}
 
 export default function ModalEditChiTietGioHang({
     isShow,
@@ -223,27 +123,6 @@ export default function ModalEditChiTietGioHang({
                 }
             })
         );
-    };
-
-    const showPopChietKhau = (event: any, item: any) => {
-        setPopover({
-            anchorEl: event.currentTarget,
-            open: true,
-            item: {
-                id: item.id,
-                ptChietKhau: item.ptChietKhau,
-                tienChietKhau: item.tienChietKhau,
-                donGiaTruocCK: item.donGiaTruocCK
-            }
-        });
-        setIdCTHD(item.id);
-    };
-    const hidePopChietKhau = () => {
-        setPopover({
-            anchorEl: null,
-            open: false,
-            item: { id: '', ptChietKhau: 0, tienChietKhau: 0, donGiaTruocCK: 0 }
-        });
     };
 
     const handleChangeSoLuong = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
@@ -361,70 +240,70 @@ export default function ModalEditChiTietGioHang({
         }
     };
 
-    const handleChangeLoaiChietKhau = (event: any) => {
-        const laPhanTramNew = event.target.value;
-        // const giaBan = props?.item?.donGiaTruocCK ?? 0;
-        // const gtriCKOld = gtriCK;
+    const changeLoaiChietKhau = (laPhanTramNew: boolean, idCTHD: string) => {
+        setLstCTHoaDon(
+            lstCTHoaDon.map((item: PageHoaDonChiTietDto) => {
+                if (item.id === idCTHD) {
+                    const laPhanTramOld = item?.laPTChietKhau;
+                    const giaBan = item?.donGiaTruocCK ?? 0;
 
-        // let ckNew = gtriCK;
-        // if (laPhanTram === 'true') {
-        //     if (laPhanTramNew === 'false') {
-        //         // % to vnd
-        //         ckNew = (gtriCKOld * giaBan) / 100;
-        //     }
-        // } else {
-        //     if (laPhanTramNew === 'true') {
-        //         // vnd to %
-        //         ckNew = giaBan > 0 ? (gtriCKOld / giaBan) * 100 : 0;
-        //     }
-        // }
-        // setGtriCK(ckNew);
-        // setLaPhanTram(laPhanTramNew);
-        // handleChangeChietKhau(event.target.value, Utils.formatNumberToFloat(ckNew));
+                    let ptCKNew = 0,
+                        tienCKNew = item?.tienChietKhau ?? 0;
+                    if (laPhanTramOld) {
+                        if (!laPhanTramNew) {
+                            // % to vnd
+                            tienCKNew = ((item?.ptChietKhau ?? 0) * giaBan) / 100;
+                        }
+                    } else {
+                        if (laPhanTramNew) {
+                            // vnd to %
+                            ptCKNew = giaBan > 0 ? ((item?.tienChietKhau ?? 0) / giaBan) * 100 : 0;
+                        }
+                    }
+                    const dongiasauCK = giaBan - tienCKNew;
+                    return {
+                        ...item,
+                        laPTChietKhau: laPhanTramNew,
+                        ptChietKhau: ptCKNew,
+                        tienChietKhau: tienCKNew,
+                        donGiaSauCK: dongiasauCK,
+                        thanhTienSauCK: dongiasauCK * item.soLuong,
+                        donGiaSauVAT: dongiasauCK,
+                        thanhTienSauVAT: dongiasauCK * item.soLuong
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
     };
 
-    const changeChietKhau = (gtriCK: any, idCTHD: string) => {
-        const laPTram = 'true';
-        if (laPTram === 'true') {
-            setLstCTHoaDon(
-                lstCTHoaDon.map((item: any, index: number) => {
-                    if (item.id === idCTHD) {
-                        const tienCK = (gtriCK * item.donGiaTruocCK) / 100;
-                        const dongiasauCK = item.donGiaTruocCK - tienCK;
-                        return {
-                            ...item,
-                            ptChietKhau: gtriCK,
-                            tienChietKhau: tienCK,
-                            donGiaSauCK: dongiasauCK,
-                            donGiaSauVAT: dongiasauCK,
-                            thanhTienSauCK: dongiasauCK * item.soLuong,
-                            thanhTienSauVAT: dongiasauCK * item.soLuong
-                        };
-                    } else {
-                        return item;
+    const changeGtriChietKhau = (gtriCK: any, idCTHD: string) => {
+        const gtriCKNew = Utils.formatNumberToFloat(gtriCK);
+        setLstCTHoaDon(
+            lstCTHoaDon.map((item: PageHoaDonChiTietDto) => {
+                if (item.id === idCTHD) {
+                    const laPtram = item.laPTChietKhau;
+                    let tienCK = gtriCKNew;
+                    if (laPtram) {
+                        tienCK = (gtriCKNew * item.donGiaTruocCK) / 100;
                     }
-                })
-            );
-        } else {
-            setLstCTHoaDon(
-                lstCTHoaDon.map((item: any, index: number) => {
-                    if (item.id === idCTHD) {
-                        const dongiasauCK = item.donGiaTruocCK - gtriCK;
-                        return {
-                            ...item,
-                            ptChietKhau: 0,
-                            tienChietKhau: gtriCK,
-                            donGiaSauCK: dongiasauCK,
-                            donGiaSauVAT: dongiasauCK,
-                            thanhTienSauCK: dongiasauCK * item.soLuong,
-                            thanhTienSauVAT: dongiasauCK * item.soLuong
-                        };
-                    } else {
-                        return item;
-                    }
-                })
-            );
-        }
+
+                    const dongiasauCK = item.donGiaTruocCK - tienCK;
+                    return {
+                        ...item,
+                        ptChietKhau: laPtram ? gtriCKNew : 0,
+                        tienChietKhau: tienCK,
+                        donGiaSauCK: dongiasauCK,
+                        donGiaSauVAT: dongiasauCK,
+                        thanhTienSauCK: dongiasauCK * item.soLuong,
+                        thanhTienSauVAT: dongiasauCK * item.soLuong
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
     };
 
     const xoaChiTietHoaDon = (item: PageHoaDonChiTietDto) => {
@@ -473,7 +352,13 @@ export default function ModalEditChiTietGioHang({
                 <DialogContent>
                     {/* 1 row */}
                     {lstCTHoaDon.map((ct: any, index: number) => (
-                        <Grid container key={index} paddingTop={2}>
+                        <Grid
+                            container
+                            key={index}
+                            padding={2.5}
+                            border={1}
+                            borderColor="#cccc"
+                            borderRadius={1}>
                             <Grid
                                 item
                                 xs={formType === 1 ? 0 : 1}
@@ -510,7 +395,9 @@ export default function ModalEditChiTietGioHang({
                                                     textAlign: 'right',
                                                     color: '#7c3367'
                                                 }}>
-                                                {Utils.formatNumber(ct?.thanhTienSauVAT)}
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    ct?.thanhTienSauVAT
+                                                )}
                                             </Typography>
                                         </Stack>
                                     </Grid>
@@ -522,7 +409,8 @@ export default function ModalEditChiTietGioHang({
                                                 size="small"
                                                 fullWidth
                                                 value={ct.donGiaTruocCK}
-                                                thousandSeparator
+                                                decimalSeparator=","
+                                                thousandSeparator="."
                                                 customInput={TextField}
                                                 onChange={(event: any) =>
                                                     handleChangeGiaBan(event, ct.id)
@@ -562,7 +450,81 @@ export default function ModalEditChiTietGioHang({
                                             </Stack>
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={12} md={7} lg={7}>
+                                    <Grid item xs={12} md={7} lg={7} sm={7}>
+                                        <Stack direction="column" spacing={1}>
+                                            <Stack direction="row" justifyContent="space-between">
+                                                <Stack direction="row" spacing={1}>
+                                                    <Typography variant="body2">
+                                                        Chiết khấu
+                                                    </Typography>
+                                                    <span
+                                                        style={{
+                                                            fontSize: '10px',
+                                                            textAlign: 'right',
+                                                            float: 'right',
+                                                            color: 'red',
+                                                            display: 'none'
+                                                        }}>
+                                                        -{Utils.formatNumber(ct?.tienChietKhau)}
+                                                    </span>
+                                                </Stack>
+                                                <Stack
+                                                    direction="row"
+                                                    spacing="4px"
+                                                    style={{
+                                                        fontSize: '10px',
+                                                        textAlign: 'right',
+                                                        float: 'right',
+                                                        color: 'red',
+                                                        display: ct?.tienChietKhau > 0 ? '' : 'none'
+                                                    }}>
+                                                    -
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        ct?.tienChietKhau
+                                                    )}
+                                                </Stack>
+                                            </Stack>
+
+                                            <NumericFormat
+                                                size="small"
+                                                fullWidth
+                                                value={
+                                                    ct.ptChietKhau > 0
+                                                        ? ct.ptChietKhau
+                                                        : ct.tienChietKhau
+                                                }
+                                                decimalSeparator=","
+                                                thousandSeparator="."
+                                                customInput={TextField}
+                                                onChange={(event: any) =>
+                                                    changeGtriChietKhau(event.target.value, ct.id)
+                                                }
+                                            />
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={12} md={5} lg={5} sm={5}>
+                                        <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
+                                            <Button
+                                                className={
+                                                    ct.laPTChietKhau
+                                                        ? 'button-outline'
+                                                        : 'button-not-active'
+                                                }
+                                                onClick={() => changeLoaiChietKhau(true, ct.id)}>
+                                                %
+                                            </Button>
+                                            <Button
+                                                className={
+                                                    !ct.laPTChietKhau
+                                                        ? 'button-outline'
+                                                        : 'button-not-active'
+                                                }
+                                                onClick={() => changeLoaiChietKhau(false, ct.id)}>
+                                                đ
+                                            </Button>
+                                        </ButtonGroup>
+                                    </Grid>
+                                    <Grid item xs={12} sm={12} md={12} lg={12}>
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
@@ -591,35 +553,48 @@ export default function ModalEditChiTietGioHang({
                                                         display: ct?.tienChietKhau > 0 ? '' : 'none'
                                                     }}>
                                                     <span>
-                                                        -{' '}
-                                                        {ct.ptChietKhau > 0
-                                                            ? ct.ptChietKhau
-                                                            : Utils.formatNumber(ct?.tienChietKhau)}
+                                                        -
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            ct?.tienChietKhau
+                                                        )}
                                                     </span>
-                                                    <span>{ct.ptChietKhau > 0 ? '%' : 'đ'}</span>
                                                 </Stack>
                                             </Stack>
 
                                             <NumericFormat
                                                 size="small"
                                                 fullWidth
-                                                value={ct.donGiaTruocCK}
-                                                thousandSeparator
+                                                value={
+                                                    ct.ptChietKhau > 0
+                                                        ? ct.ptChietKhau
+                                                        : ct.tienChietKhau
+                                                }
+                                                decimalSeparator=","
+                                                thousandSeparator="."
                                                 customInput={TextField}
                                                 onChange={(event: any) =>
-                                                    changeChietKhau(event.target.value, ct.id)
+                                                    changeGtriChietKhau(event.target.value, ct.id)
                                                 }
                                             />
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={12} md={5} lg={5}>
-                                        <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
-                                            <Button
-                                                style={{ borderColor: '#cccc', color: '#7c3367' }}>
-                                                %
-                                            </Button>
-                                            <Button className="button-outline">đ</Button>
-                                        </ButtonGroup>
+                                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                                        <FormControlLabel
+                                            value="true"
+                                            control={
+                                                <Radio size="small" checked={ct.laPTChietKhau} />
+                                            }
+                                            label="%"
+                                            onChange={() => changeLoaiChietKhau(true, ct.id)}
+                                        />
+                                        <FormControlLabel
+                                            value="false"
+                                            control={
+                                                <Radio size="small" checked={!ct.laPTChietKhau} />
+                                            }
+                                            label="đ"
+                                            onChange={() => changeLoaiChietKhau(false, ct.id)}
+                                        />
                                     </Grid>
                                 </Grid>
                             </Grid>
