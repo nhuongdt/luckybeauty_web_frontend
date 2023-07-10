@@ -9,9 +9,14 @@ import {
     TableRow,
     Paper,
     Typography,
-    Avatar
+    Avatar,
+    Menu,
+    MenuItem
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AvatarDemo from '../../../images/xinh.png';
+import CreateOeEditLichLamViecModal from '../../employee/lich-lam-viec/create-or-edit-lich-lam-viec-modal';
+import Edit from '../../employee/lich-lam-viec/editNhanVien';
 const TabDay: React.FC = () => {
     const NhanViens = [
         {
@@ -40,7 +45,7 @@ const TabDay: React.FC = () => {
             avatar: AvatarDemo
         },
         {
-            name: 'Trang Nguyễn',
+            name: 'Đây là một cái tên rất dài dài dài dài dài dàis',
             position: 'Ý tưởng',
             Avatar: AvatarDemo
         },
@@ -67,22 +72,22 @@ const TabDay: React.FC = () => {
     ];
     const Clients = [
         {
-            startTime: '10:06',
-            endTime: '15:09',
+            startTime: '10:00',
+            endTime: '15:00',
             name: 'Trang Nguyễn',
             service: 'Cắt móng',
             color: '#50CD89'
         },
         {
-            startTime: '9:06',
-            endTime: '13:09',
+            startTime: '8:00',
+            endTime: '13:00',
             name: 'Gà trống',
             service: 'Cắt móng',
             color: '#009EF7'
         },
         {
-            startTime: '10:06',
-            endTime: '12:09',
+            startTime: '10:00',
+            endTime: '12:00',
             name: 'Tài Đinh',
             service: 'Cắt móng',
             color: '#50CD89'
@@ -109,8 +114,45 @@ const TabDay: React.FC = () => {
             }
         };
     }, []);
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // Phần tử neo dấu cho Menu
+    const [selectedIndex, setSelectedIndex] = useState<number | null>(null); // Chỉ mục item được chọn
+
+    const handleItemClick = (
+        index: number,
+        event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    ) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedIndex(index);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+        setSelectedIndex(null);
+    };
+    const [openEdit, setModal] = useState(false);
+    const handleOpenEdit = () => {
+        setModal(true);
+    };
+    const handleCloseEdit = () => {
+        setModal(false);
+    };
+    const [OpenEditLich, setOpenEditLich] = useState(false);
+    const handleOpenEditLich = () => {
+        setOpenEditLich(true);
+    };
+    const handleCloseEditLich = () => {
+        setOpenEditLich(false);
+    };
+
     return (
         <Box>
+            <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
+            <CreateOeEditLichLamViecModal
+                open={OpenEditLich}
+                onClose={handleCloseEditLich}
+                idNhanVien="hihi"
+            />
             <TableContainer
                 sx={{
                     maxHeight: 'calc(95vh - 200px)',
@@ -131,21 +173,63 @@ const TabDay: React.FC = () => {
                         <TableRow
                             sx={{ whiteSpace: 'nowrap', overflow: 'auto', overflowY: 'hidden' }}>
                             <TableCell sx={{ opacity: '0', pointerEvent: 'none' }}>
-                                <Box>hi</Box>
+                                <Box>n</Box>
                             </TableCell>
                             {NhanViens.map((item, index) => (
-                                <TableCell key={index}>
-                                    <Box sx={{ display: 'flex', gap: '8px' }}>
+                                <TableCell
+                                    key={index}
+                                    sx={{
+                                        position: 'relative',
+                                        minWidth: '147px',
+                                        maxWidth: '147px',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'normal'
+                                    }}>
+                                    <Box
+                                        onClick={(event) => handleItemClick(index, event)}
+                                        aria-controls="menu"
+                                        aria-haspopup="true"
+                                        sx={{
+                                            display: 'flex',
+                                            gap: '8px',
+                                            '&:hover .arrowDown': {
+                                                opacity: '1',
+                                                transform: 'rotate(0)'
+                                            },
+                                            cursor: 'pointer'
+                                        }}>
                                         <Box>
                                             <Box>
                                                 <Avatar src={item.avatar} alt={item.name} />
                                             </Box>
+                                            <ExpandMoreIcon
+                                                className="arrowDown"
+                                                sx={{
+                                                    color: '#666466',
+                                                    position: 'absolute',
+                                                    right: '0',
+                                                    bottom: '0',
+                                                    transform:
+                                                        selectedIndex === index
+                                                            ? 'rotate(0deg)'
+                                                            : 'rotate(180deg)',
+                                                    opacity: selectedIndex === index ? '1' : '0',
+                                                    transition: '.4s'
+                                                }}
+                                            />
                                         </Box>
                                         <Box>
                                             <Typography
                                                 variant="body1"
+                                                fontSize="12px"
                                                 color="#333F48"
-                                                fontWeight="700">
+                                                fontWeight="700"
+                                                sx={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: '2',
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden'
+                                                }}>
                                                 {item.name}
                                             </Typography>
                                             <Typography
@@ -180,117 +264,105 @@ const TabDay: React.FC = () => {
                                             paddingTop: '8px',
                                             paddingBottom: '50px',
                                             textAlign: 'right',
-                                            border: '0',
-                                            width: '70px'
+                                            border: '0'
                                         }}>
                                         {timeLabel}
                                     </TableCell>
-                                    {NhanViens2.map((item1, dateIndex) => {
-                                        const matchingData = Clients.filter((item: any) => {
+                                    {NhanViens2.map((item1, index) => {
+                                        const matchingData = Clients.filter((item) => {
                                             item.name === item1.name &&
-                                                parseInt(item.startTime.split(':')[0], 10) === hour;
+                                                item.startTime === timeLabel;
                                         });
 
                                         return (
                                             <TableCell
-                                                key={dateIndex}
+                                                key={index}
                                                 sx={{
                                                     padding: '4px',
-                                                    position: 'relative',
-                                                    width: `${100 / NhanViens2.length}%`
+                                                    position: 'relative'
                                                 }}>
                                                 <Box>
-                                                    {matchingData.map(
-                                                        (item: any, itemIndex: number) => {
-                                                            console.log(item.startTime);
-                                                            const startTimeHours = parseInt(
-                                                                item.startTime.split(':')[0],
-                                                                10
-                                                            );
-                                                            const startTimeMinutes = parseInt(
-                                                                item.startTime.split(':')[1],
-                                                                10
-                                                            );
-                                                            const endTimeHours = parseInt(
-                                                                item.endTime.split(':')[0],
-                                                                10
-                                                            );
-                                                            const endTimeMinutes = parseInt(
-                                                                item.endTime.split(':')[1],
-                                                                10
-                                                            );
-                                                            console.log(startTimeHours);
-                                                            const durationHours =
-                                                                endTimeHours - startTimeHours;
-                                                            const durationMinutes =
-                                                                endTimeMinutes - startTimeMinutes;
+                                                    {matchingData.map((item, itemIndex: number) => {
+                                                        const startTimeHours = parseInt(
+                                                            item.startTime.split(':')[0],
+                                                            10
+                                                        );
+                                                        const startTimeMinutes = parseInt(
+                                                            item.startTime.split(':')[1],
+                                                            10
+                                                        );
+                                                        const endTimeHours = parseInt(
+                                                            item.endTime.split(':')[0],
+                                                            10
+                                                        );
+                                                        const endTimeMinutes = parseInt(
+                                                            item.endTime.split(':')[1],
+                                                            10
+                                                        );
 
-                                                            const duration =
-                                                                durationHours * 60 +
-                                                                durationMinutes;
-                                                            const cellHeight = `${
-                                                                duration * 1.25
-                                                            }px`;
+                                                        const durationHours =
+                                                            endTimeHours - startTimeHours;
+                                                        const durationMinutes =
+                                                            endTimeMinutes - startTimeMinutes;
 
-                                                            const startMinutesFrom7AM =
-                                                                (startTimeHours - 7) * 60 +
-                                                                startTimeMinutes;
-                                                            const topPosition = `${
-                                                                startMinutesFrom7AM * 1.25
-                                                            }px`;
+                                                        const duration =
+                                                            durationHours * 60 + durationMinutes;
+                                                        const cellHeight = `${duration * 1.25}px`;
 
-                                                            return (
-                                                                <Box
-                                                                    key={itemIndex}
-                                                                    bgcolor={item.color + '1a'}
-                                                                    title={
-                                                                        'Nhân viên thực hiện: ' +
-                                                                        item.employee
-                                                                    }
-                                                                    position="absolute"
-                                                                    height={cellHeight}
-                                                                    whiteSpace="nowrap"
-                                                                    overflow="hidden"
-                                                                    zIndex="1"
-                                                                    padding="8px 8px 16px 8px"
-                                                                    borderRadius="4px"
-                                                                    borderLeft={`6px solid ${item.color}`}
-                                                                    width={`${
-                                                                        100 / matchingData.length
-                                                                    }%`}
-                                                                    top={topPosition}
-                                                                    left={`${
-                                                                        (itemIndex /
-                                                                            matchingData.length) *
-                                                                        100
-                                                                    }%`}>
-                                                                    <Box>
-                                                                        <Typography
-                                                                            variant="body1"
-                                                                            color={item.color}
-                                                                            fontSize="12px">
-                                                                            {item.startTime +
-                                                                                ' - ' +
-                                                                                item.endTime}
-                                                                        </Typography>
-                                                                    </Box>
+                                                        const startMinutesFrom7AM =
+                                                            (startTimeHours - 7) * 60 +
+                                                            startTimeMinutes;
+                                                        const topPosition = `${
+                                                            startMinutesFrom7AM * 1.25
+                                                        }px`;
+
+                                                        return (
+                                                            <Box
+                                                                key={itemIndex}
+                                                                bgcolor={item.color + '1a'}
+                                                                position="absolute"
+                                                                height={cellHeight}
+                                                                whiteSpace="nowrap"
+                                                                overflow="hidden"
+                                                                zIndex="1"
+                                                                padding="8px 8px 16px 8px"
+                                                                borderRadius="4px"
+                                                                borderLeft={`6px solid ${item.color}`}
+                                                                width={`${
+                                                                    100 / matchingData.length
+                                                                }%`}
+                                                                top={topPosition}
+                                                                left={`${
+                                                                    (itemIndex /
+                                                                        matchingData.length) *
+                                                                    100
+                                                                }%`}>
+                                                                <Box>
                                                                     <Typography
                                                                         variant="body1"
                                                                         color={item.color}
-                                                                        fontWeight="700"
                                                                         fontSize="12px">
-                                                                        {item.name}
-                                                                    </Typography>
-                                                                    <Typography
-                                                                        color={item.color}
-                                                                        variant="body1"
-                                                                        fontSize="12px">
-                                                                        {item.service}
+                                                                        {item.startTime +
+                                                                            ' - ' +
+                                                                            item.endTime}
                                                                     </Typography>
                                                                 </Box>
-                                                            );
-                                                        }
-                                                    )}
+                                                                <Typography
+                                                                    variant="body1"
+                                                                    color={item.color}
+                                                                    fontWeight="700"
+                                                                    fontSize="12px">
+                                                                    {item.name}
+                                                                </Typography>
+                                                                <Typography
+                                                                    color={item.color}
+                                                                    variant="body1"
+                                                                    fontSize="12px">
+                                                                    {item.service}
+                                                                </Typography>
+                                                            </Box>
+                                                        );
+                                                    })}
                                                 </Box>
                                             </TableCell>
                                         );
@@ -301,6 +373,12 @@ const TabDay: React.FC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleCloseMenu}>
+                <MenuItem onClick={() => undefined}>Thêm thời gian bị chặn</MenuItem>
+                <MenuItem onClick={() => undefined}>Chỉnh sửa thời gian nghỉ</MenuItem>
+                <MenuItem onClick={() => undefined}>Thêm thời gian nghỉ</MenuItem>
+                <MenuItem onClick={handleOpenEdit}>Chỉnh sửa</MenuItem>
+            </Menu>
         </Box>
     );
 };

@@ -5,6 +5,7 @@ import { Routes } from './components/routers';
 import { SnackbarProvider, MaterialDesignContent } from 'notistack';
 import { ReactComponent as SuccessIcon } from './images/success.svg';
 import styled from 'styled-components';
+
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     '&.notistack-MuiContent-success': {
         backgroundColor: '#E8FFF3',
@@ -19,6 +20,7 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
         color: '#F1416C'
     }
 }));
+
 const App = () => {
     return (
         <div>

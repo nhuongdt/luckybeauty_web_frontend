@@ -44,6 +44,8 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { width } from '@mui/system';
+import ProductService from '../../../services/product/ProductService';
+import ModalSearchProduct from '../../product/modal_search_product';
 const themInputChietKhau = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -60,7 +62,6 @@ export default function ModalEditChiTietGioHang({
     isShow,
     formType = 0, // 1.form banhang, 0.other
     hoadonChiTiet,
-    dataNhanVien = [],
     handleSave,
     handleClose
 }: any) {
@@ -73,7 +74,8 @@ export default function ModalEditChiTietGioHang({
     const [idCTHD, setIdCTHD] = useState('');
     const [lstCTHoaDon, setLstCTHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
     const displayComponent = formType === 1 ? 'none' : '';
-    const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false));
+    const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false)); //expaned cthd
+    const [showModalSeachProduct, setShowModalSeachProduct] = useState(false);
 
     const toggleVisibility = (index: number) => {
         const updatedVisibility = [...itemVisibility];
@@ -103,7 +105,7 @@ export default function ModalEditChiTietGioHang({
 
     const handleChangeGiaBan = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
         setLstCTHoaDon(
-            lstCTHoaDon.map((item: any, index: number) => {
+            lstCTHoaDon.map((item: any) => {
                 if (item.id === id) {
                     const giaBanNew = Utils.formatNumberToFloat(event.target.value);
                     let dongiaSauCK = item.donGiaSauCK;
@@ -154,7 +156,7 @@ export default function ModalEditChiTietGioHang({
 
     const tangSoLuong = (id: string) => {
         setLstCTHoaDon(
-            lstCTHoaDon.map((item: any, index: number) => {
+            lstCTHoaDon.map((item: any) => {
                 if (item.id === id) {
                     const sluongNew = item.soLuong + 1;
                     return {
@@ -318,11 +320,41 @@ export default function ModalEditChiTietGioHang({
         setLstCTHoaDon(lstCTHoaDon.filter((x: PageHoaDonChiTietDto) => x.id !== item.id));
     };
 
-    const addNewChiTiet = () => {
-        const newID = Guid.create().toString();
-        const ctNew = new PageHoaDonChiTietDto({ id: newID, expanded: true });
-        setLstCTHoaDon([...lstCTHoaDon, ctNew]);
-        setIdCTHD(newID);
+    const addNewChiTiet = (item: any) => {
+        const ctNew = new PageHoaDonChiTietDto({
+            maHangHoa: item.mahangHoa,
+            tenHangHoa: item.tenHangHoa,
+            idDonViQuyDoi: item.idDonViQuyDoi,
+            idHangHoa: item.idHangHoa,
+            idNhomHangHoa: item.idNhomHangHoa,
+            giaBan: item.giaBan
+        });
+        const checkCT = lstCTHoaDon.filter(
+            (x: PageHoaDonChiTietDto) => x.idDonViQuyDoi === item.idDonViQuyDoi
+        );
+        console.log('checkCT ', checkCT);
+        if (checkCT.length === 0) {
+            // unshift
+            setLstCTHoaDon([ctNew, ...lstCTHoaDon]);
+        } else {
+            const sluongNew = checkCT[0].soLuong + 1;
+            // don't remove: keep id at db
+            setLstCTHoaDon(
+                lstCTHoaDon.map((itemCT: PageHoaDonChiTietDto) => {
+                    if (itemCT.id === checkCT[0].id) {
+                        return {
+                            ...itemCT,
+                            soLuong: sluongNew,
+                            thanhTienSauCK: (itemCT.donGiaSauCK ?? 0) * sluongNew,
+                            thanhTienSauVAT: (itemCT.donGiaSauVAT ?? 0) * sluongNew
+                        };
+                    } else {
+                        return itemCT;
+                    }
+                })
+            );
+        }
+        setShowModalSeachProduct(false);
     };
 
     const closeModal = () => {
@@ -349,6 +381,11 @@ export default function ModalEditChiTietGioHang({
 
     return (
         <>
+            <ModalSearchProduct
+                isShow={showModalSeachProduct}
+                handlClose={() => setShowModalSeachProduct(false)}
+                handleChoseProduct={addNewChiTiet}
+            />
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle className="dialog-title">Chỉnh sửa giỏ hàng</DialogTitle>
                 <DialogContent>
@@ -668,7 +705,7 @@ export default function ModalEditChiTietGioHang({
                                 <Link
                                     color="#7c3367"
                                     sx={{ fontSize: '14px' }}
-                                    onClick={addNewChiTiet}>
+                                    onClick={() => setShowModalSeachProduct(true)}>
                                     <Add />
                                     Thêm dịch vụ
                                 </Link>

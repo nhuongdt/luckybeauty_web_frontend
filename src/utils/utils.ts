@@ -149,7 +149,7 @@ class Utils {
         if (objVal === undefined || objVal === null) {
             return 0;
         } else {
-            const value = parseFloat(objVal.toString().replace('.', '').replace(',', '.'));
+            const value = parseFloat(objVal.toString().replaceAll('.', '').replace(',', '.'));
             if (isNaN(value)) {
                 return 0;
             } else {

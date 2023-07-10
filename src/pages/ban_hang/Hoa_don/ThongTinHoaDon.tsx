@@ -40,6 +40,7 @@ import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
 import utils from '../../../utils/utils';
+import ProductService from '../../../services/product/ProductService';
 
 const themOutlineInput = createTheme({
     components: {
@@ -62,6 +63,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
 
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
+    const [typeAction, setTypeAction] = useState(0); // 1.update, 2.delete, 0. khong lam gi
 
     const current = useContext(ChiNhanhContext);
     const allChiNhanh = useContext(ChiNhanhContextbyUser);
@@ -76,6 +78,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     useEffect(() => {
         GetChiTietHoaDon_byIdHoaDon();
         setHoaDonChosed(hoadon);
+        setTypeAction(0);
     }, [idHoaDon]);
 
     const changeNgayLapHoaDon = (value: any) => {
@@ -91,7 +94,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
 
     const gotoBack = () => {
         // chi dong hoadon thoi
-        handleGotoBack(null);
+        handleGotoBack(hoadonChosed, typeAction);
     };
 
     const checkSave = async () => {
@@ -110,17 +113,17 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         const objUpdate = { ...hoadonChosed };
         objUpdate.trangThai = 0;
         setHoaDonChosed({ ...hoadonChosed, trangThai: 0 });
-        handleGotoBack(objUpdate);
+        setTypeAction(1);
+        handleGotoBack(objUpdate, 2);
     };
 
     const showModalEditGioHang = () => {
         setIsShowEditGioHang(true);
         setIdCTHDChosing('');
-        console.log('hoaadonC ', chitietHoaDon);
     };
 
     const AgreeGioHang = async (lstCTAfter: PageHoaDonChiTietDto[]) => {
-        console.log('lstCTAfter ', lstCTAfter);
+        setTypeAction(1);
         setIsShowEditGioHang(false);
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật chi tiết hóa đơn thành công' });
         setChiTietHoaDon([...lstCTAfter]);
@@ -160,14 +163,15 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             tongTienThue: tongTienThue,
             tongTienHDSauVAT: tongTienHDSauVAT,
             tongThanhToan: tongThanhToan,
-            maHoaDon: data?.maHoaDon
+            maHoaDon: data?.maHoaDon,
+            conNo: tongThanhToan - (hoadonChosed?.daThanhToan ?? 0)
         });
     };
     const updateHoaDon = async () => {
         const data = await HoaDonService.Update_InforHoaDon(hoadonChosed);
         setHoaDonChosed({ ...hoadonChosed, maHoaDon: data?.maHoaDon });
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật thông tin hóa đơn thành công' });
-        handleGotoBack(hoadonChosed);
+        handleGotoBack(hoadonChosed, 1);
     };
 
     const [activeTab, setActiveTab] = useState(0);

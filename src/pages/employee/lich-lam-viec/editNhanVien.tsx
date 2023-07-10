@@ -8,8 +8,9 @@ import AddIcon from '@mui/icons-material/Add';
 interface DialogComponentProps {
     open: boolean;
     onClose: () => void;
+    openEditLich: () => void;
 }
-const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
+const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) => {
     return (
         <Dialog
             open={open}
@@ -22,7 +23,7 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
             <Box sx={{ padding: '28px 24px', width: '100vw', maxWidth: '680px' }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" mb="24px">
                     <Typography fontSize="24px" color="#4C4B4C" fontWeight="700" variant="h2">
-                        Hà Đinh
+                        Ca làm việc của Hà Đinh ngày 15/07/2023
                     </Typography>
                     <Button
                         sx={{
@@ -45,7 +46,13 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                             mb="8px">
                             Thời gian bắt đầu
                         </Typography>
-                        <TextField id="startTime" defaultValue="9:00" size="small" fullWidth />
+                        <TextField
+                            type="time"
+                            id="startTime"
+                            defaultValue="09:00"
+                            size="small"
+                            fullWidth
+                        />
                     </Grid>
                     <Grid item xs={5.5}>
                         <Typography
@@ -56,7 +63,13 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                             mb="8px">
                             Thời gian kết thúc
                         </Typography>
-                        <TextField id="endTime" defaultValue="20:00" size="small" fullWidth />
+                        <TextField
+                            type="time"
+                            id="endTime"
+                            defaultValue="10:00"
+                            size="small"
+                            fullWidth
+                        />
                     </Grid>
                     <Grid item xs={1} sx={{ p: '0!important', display: 'flex' }}>
                         <Button
@@ -77,10 +90,7 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                         sx={{
                             paddingX: '5px',
                             borderColor: '#965C85!important',
-                            transition: '.4s',
-                            '&:hover': {
-                                transform: 'rotate(90deg)'
-                            }
+                            transition: '.4s'
                         }}>
                         <AddIcon sx={{ color: '#4C4B4C' }} />
                     </Button>
@@ -94,6 +104,15 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                         }}>
                         Thêm ca làm việc
                     </Button>
+                </Box>
+                <Box sx={{ color: '#4C4B4C', fontSize: '12px', marginTop: '24px' }}>
+                    Để đặt ca làm việc thường xuyên, đi tới{' '}
+                    <Box
+                        component="span"
+                        sx={{ color: '#7C3367', cursor: 'pointer' }}
+                        onClick={openEditLich}>
+                        Lịch làm việc
+                    </Box>{' '}
                 </Box>
                 <Box
                     sx={{

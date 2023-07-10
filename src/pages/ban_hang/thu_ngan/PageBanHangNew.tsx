@@ -37,7 +37,6 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
 import { dbDexie } from '../../../lib/dexie/dexieDB';
 
-import Utils from '../../../utils/utils';
 import HoaDonChiTietDto from '../../../services/ban_hang/HoaDonChiTietDto';
 import NhanSuItemDto from '../../../services/nhan-vien/dto/nhanSuItemDto';
 import { Guid } from 'guid-typescript';
@@ -83,7 +82,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         new PageHoaDonDto({
             idKhachHang: null,
             tenKhachHang: '',
-            idChiNhanh: chiNhanhCurrent.id == '' ? idChiNhanh : chiNhanhCurrent.id
+            idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id
         })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
@@ -121,7 +120,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     };
 
     const getInforChiNhanh_byID = async () => {
-        const idChinhanh = chiNhanhCurrent.id == '' ? idChiNhanh : chiNhanhCurrent.id;
+        const idChinhanh = utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id;
         const data = await chiNhanhService.GetDetail(idChinhanh ?? '');
         return data;
     };
@@ -201,6 +200,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             if (data.length === 0) {
                 const dataHD: PageHoaDonDto = {
                     ...hoadon,
+                    idChiNhanh: utils.checkNull(chiNhanhCurrent.id)
+                        ? idChiNhanh
+                        : chiNhanhCurrent.id,
                     idKhachHang: customerChosed.idKhachHang,
                     maKhachHang: customerChosed.maKhachHang,
                     tenKhachHang: customerChosed.tenKhachHang,
@@ -581,7 +583,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
         // save soquy (todo POS, ChuyenKhoan)
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
-            idChiNhanh: chiNhanhCurrent.id == '' ? idChiNhanh : chiNhanhCurrent.id,
+            idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id,
             idLoaiChungTu: 11,
             ngayLapHoaDon: hoadon.ngayLapHoaDon,
             tongTienThu: hoadon.tongThanhToan
@@ -727,7 +729,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                 formType={1}
                 isShow={isShowEditGioHang}
                 hoadonChiTiet={hoaDonChiTiet.filter((x: any) => x.id === idCTHDChosing)}
-                dataNhanVien={allNhanVien}
                 handleSave={AgreeGioHang}
                 handleClose={() => setIsShowEditGioHang(false)}
             />

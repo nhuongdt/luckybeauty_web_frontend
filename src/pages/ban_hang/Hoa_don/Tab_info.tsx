@@ -51,26 +51,26 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             )
         },
-        // {
-        //     field: 'donGiaTruocCK',
-        //     headerName: 'Đơn giá',
-        //     headerAlign: 'right',
-        //     align: 'right',
-        //     minWidth: 90,
-        //     flex: 0.6,
-        //     renderHeader: (params) => (
-        //         <Box>
-        //             {params.colDef.headerName}
-        //             <IconSorting />
-        //         </Box>
-        //     ),
-        //     renderCell: (params) => (
-        //         <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-        //             {' '}
-        //             {new Intl.NumberFormat('vi-VN').format(params.value)}
-        //         </Box>
-        //     )
-        // },
+        {
+            field: 'donGiaTruocCK',
+            headerName: 'Đơn giá',
+            headerAlign: 'right',
+            align: 'right',
+            minWidth: 90,
+            flex: 0.6,
+            renderHeader: (params) => (
+                <Box>
+                    {params.colDef.headerName}
+                    <IconSorting />
+                </Box>
+            ),
+            renderCell: (params) => (
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {' '}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
+            )
+        },
         {
             field: 'tienChietKhau',
             headerName: 'Chiết khấu',
@@ -90,25 +90,25 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                 </Box>
             )
         },
-        {
-            field: 'donGiaSauCK',
-            headerName: 'Giá bán',
-            headerAlign: 'right',
-            align: 'right',
-            minWidth: 100,
-            flex: 2,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
-            renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
-        },
+        // {
+        //     field: 'donGiaSauCK',
+        //     headerName: 'Giá bán',
+        //     headerAlign: 'right',
+        //     align: 'right',
+        //     minWidth: 100,
+        //     flex: 2,
+        //     renderHeader: (params) => (
+        //         <Box>
+        //             {params.colDef.headerName}
+        //             <IconSorting />
+        //         </Box>
+        //     ),
+        //     renderCell: (params) => (
+        //         <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+        //             {new Intl.NumberFormat('vi-VN').format(params.value)}
+        //         </Box>
+        //     )
+        // },
         {
             field: 'thanhTienSauCK',
             headerName: 'Thành tiền',

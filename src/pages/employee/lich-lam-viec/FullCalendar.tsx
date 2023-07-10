@@ -214,7 +214,7 @@ const Calendar: React.FC = () => {
                 handleCloseDialog={handleCloseDialog}
                 handleOpenEdit={handleOpenEdit}
             />
-            <Edit open={openEdit} onClose={handleCloseEdit} />
+            <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={() => undefined} />
             <Delete open={openDelete} onClose={handleCloseDelete} />
             {/* <ThemLich open={openDialog} onClose={handleCloseDialog} /> */}
             <CreateOeEditLichLamViecModal
