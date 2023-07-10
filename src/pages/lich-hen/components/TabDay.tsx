@@ -111,7 +111,21 @@ const TabDay: React.FC = () => {
     }, []);
     return (
         <Box>
-            <TableContainer sx={{ maxHeight: 'calc(95vh - 200px)' }}>
+            <TableContainer
+                sx={{
+                    maxHeight: 'calc(95vh - 200px)',
+                    '&::-webkit-scrollbar': {
+                        width: '10px',
+                        height: '10px'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        borderRadius: '16px'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'rgba(124, 51, 103, 0.2)',
+                        borderRadius: '8px'
+                    }
+                }}>
                 <Table sx={{ width: '100%', overflow: 'auto' }}>
                     <TableHead>
                         <TableRow
