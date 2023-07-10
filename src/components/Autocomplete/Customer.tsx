@@ -7,6 +7,7 @@ import khachHangService from '../../services/khach-hang/khachHangService';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import utils from '../../utils/utils';
+import { Guid } from 'guid-typescript';
 
 export default function AutocompleteCustomer({
     idChosed,
@@ -26,7 +27,7 @@ export default function AutocompleteCustomer({
     });
 
     const getInforCustomerbyID = async () => {
-        if (!utils.checkNull(idChosed)) {
+        if (!utils.checkNull(idChosed) && idChosed !== Guid.EMPTY) {
             const data = await khachHangService.getKhachHang(idChosed);
             setCusChosed(data);
         } else {

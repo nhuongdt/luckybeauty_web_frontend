@@ -469,34 +469,46 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                         </Button>
                     </Box>
                     <Box display="flex" gap="8px">
-                        <Button
-                            variant="outlined"
-                            sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
-                            className="btn-outline-hover"
-                            onClick={showModalEditGioHang}>
-                            Chỉnh sửa
-                        </Button>
-                        <Button
-                            variant="contained"
-                            sx={{ bgcolor: '#7C3367!important', color: '#fff' }}
-                            className="btn-container-hover"
-                            onClick={updateHoaDon}>
-                            Lưu
-                        </Button>
-                        {hoadonChosed?.trangThai !== 0 && (
+                        {hoadonChosed?.trangThai === 0 && (
                             <Button
-                                onClick={() => setOpenDialog(true)}
-                                variant="contained"
-                                sx={{
-                                    transition: '.4s',
-                                    bgcolor: '#FF316A!important',
-                                    color: '#fff',
-                                    '&:hover': {
-                                        bgcolor: 'red!important'
-                                    }
-                                }}>
-                                Hủy bỏ
+                                variant="outlined"
+                                sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                                className="btn-outline-hover"
+                                onClick={gotoBack}>
+                                Đóng
                             </Button>
+                        )}
+                        {hoadonChosed?.trangThai !== 0 && (
+                            <>
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                                    className="btn-outline-hover"
+                                    onClick={showModalEditGioHang}>
+                                    Chỉnh sửa
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    sx={{ bgcolor: '#7C3367!important', color: '#fff' }}
+                                    className="btn-container-hover"
+                                    onClick={updateHoaDon}>
+                                    Lưu
+                                </Button>
+
+                                <Button
+                                    onClick={() => setOpenDialog(true)}
+                                    variant="contained"
+                                    sx={{
+                                        transition: '.4s',
+                                        bgcolor: '#FF316A!important',
+                                        color: '#fff',
+                                        '&:hover': {
+                                            bgcolor: 'red!important'
+                                        }
+                                    }}>
+                                    Hủy bỏ
+                                </Button>
+                            </>
                         )}
                     </Box>
                 </Box>

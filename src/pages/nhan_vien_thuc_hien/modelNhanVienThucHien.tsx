@@ -28,6 +28,8 @@ import NhanVienThucHienDto from '../../services/nhan_vien_thuc_hien/NhanVienThuc
 import HoaHongDichVuServices from '../../services/nhan_vien_thuc_hien/HoaHongDichVuServices';
 import { ReactComponent as CheckIcon } from '../../images/checkIcon.svg';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import nhanVienService from '../../services/nhan-vien/nhanVienService';
+import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
@@ -53,7 +55,11 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     };
 
     const GetListNhanVien = async () => {
-        const data = await NhanVienService.search(txtSearch, { skipCount: 0, maxResultCount: 100 });
+        const data = await nhanVienService.getAll({
+            filter: txtSearch,
+            skipCount: 0,
+            maxResultCount: 100
+        } as PagedNhanSuRequestDto);
         const arrNV = [...data.items];
         arrNV.map((x: any) => {
             x['isChosed'] = false;

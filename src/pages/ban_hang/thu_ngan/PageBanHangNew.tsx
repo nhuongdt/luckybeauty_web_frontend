@@ -61,6 +61,8 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
+import { PagedNhanSuRequestDto } from '../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
+import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -111,7 +113,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     const nhomHangHoa = allNhomHangHoa.filter((x) => x.laNhomHangHoa);
 
     const GetListNhanVien = async () => {
-        const data = await NhanVienService.search('', { skipCount: 0, maxResultCount: 100 });
+        const data = await nhanVienService.getAll({
+            skipCount: 0,
+            maxResultCount: 100
+        } as PagedNhanSuRequestDto);
         setAllNhanVien([...data.items]);
     };
 
@@ -1205,7 +1210,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                                 variant="body1"
                                                                 fontSize="14px"
                                                                 color="#333233">
-                                                                {utils.formatNumber(item.giaBan)}
+                                                                {Intl.NumberFormat('vi-VN').format(
+                                                                    item.giaBan
+                                                                )}
                                                             </Typography>
                                                         </Box>
                                                     </Grid>
@@ -1326,7 +1333,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                 }}
                                                 onClick={() => showPopChiTietGioHang(ct)}>
                                                 <span> {ct.soLuong + 'x'} </span>
-                                                <span> {Utils.formatNumber(ct.donGiaTruocCK)}</span>
+                                                <span>
+                                                    {Intl.NumberFormat('vi-VN').format(
+                                                        ct.donGiaTruocCK
+                                                    )}
+                                                </span>
                                             </Typography>
                                             <Box
                                                 sx={{
@@ -1490,7 +1501,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             variant="caption"
                                             fontSize="12px"
                                             color="#3B4758">
-                                            {Utils.formatNumber(hoadon.tongTienHangChuaChietKhau)}
+                                            {Intl.NumberFormat('vi-VN').format(
+                                                hoadon?.tongTienHangChuaChietKhau
+                                            )}
                                         </Typography>
                                     </Box>
                                     <Box display="flex" justifyContent="space-between">
@@ -1501,7 +1514,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             variant="caption"
                                             fontSize="12px"
                                             color="#3B4758">
-                                            {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                            {Intl.NumberFormat('vi-VN').format(
+                                                hoadon?.tongChietKhauHangHoa
+                                            )}
                                         </Typography>
                                     </Box>
                                     <Box
@@ -1516,7 +1531,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             variant="caption"
                                             fontSize="12px"
                                             color="#3B4758">
-                                            {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
+                                            {Intl.NumberFormat('vi-VN').format(
+                                                hoadon?.tongChietKhauHangHoa
+                                            )}
                                         </Typography>
                                     </Box>
                                     <Box
@@ -1536,7 +1553,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             fontWeight="700"
                                             fontSize="16px"
                                             color="#3B4758">
-                                            {Utils.formatNumber(hoadon.tongThanhToan)}
+                                            {Intl.NumberFormat('vi-VN').format(
+                                                hoadon?.tongThanhToan
+                                            )}
                                         </Typography>
                                     </Box>
                                 </Box>

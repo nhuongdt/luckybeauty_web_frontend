@@ -23,6 +23,7 @@ class SoQuyServices {
         return result.data.result;
     };
     GetNhatKyThanhToan_ofHoaDon = async (idHoaDonLienQuan: string): Promise<QuyHoaDonDto[]> => {
+        if (utils.checkNull(idHoaDonLienQuan)) return [];
         const result = await http.get(
             `api/services/app/QuyHoaDon/GetNhatKyThanhToan_ofHoaDon?idHoaDonLienQuan=${idHoaDonLienQuan}`
         );
