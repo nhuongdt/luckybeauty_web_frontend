@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AvatarDemo from '../../../images/xinh.png';
+import CreateOeEditLichLamViecModal from '../../employee/lich-lam-viec/create-or-edit-lich-lam-viec-modal';
+import Edit from '../../employee/lich-lam-viec/editNhanVien';
 const TabDay: React.FC = () => {
     const NhanViens = [
         {
@@ -128,8 +130,29 @@ const TabDay: React.FC = () => {
         setAnchorEl(null);
         setSelectedIndex(null);
     };
+    const [openEdit, setModal] = useState(false);
+    const handleOpenEdit = () => {
+        setModal(true);
+    };
+    const handleCloseEdit = () => {
+        setModal(false);
+    };
+    const [OpenEditLich, setOpenEditLich] = useState(false);
+    const handleOpenEditLich = () => {
+        setOpenEditLich(true);
+    };
+    const handleCloseEditLich = () => {
+        setOpenEditLich(false);
+    };
+
     return (
         <Box>
+            <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
+            <CreateOeEditLichLamViecModal
+                open={OpenEditLich}
+                onClose={handleCloseEditLich}
+                idNhanVien="hihi"
+            />
             <TableContainer
                 sx={{
                     maxHeight: 'calc(95vh - 200px)',
@@ -354,7 +377,7 @@ const TabDay: React.FC = () => {
                 <MenuItem onClick={() => undefined}>Thêm thời gian bị chặn</MenuItem>
                 <MenuItem onClick={() => undefined}>Chỉnh sửa thời gian nghỉ</MenuItem>
                 <MenuItem onClick={() => undefined}>Thêm thời gian nghỉ</MenuItem>
-                <MenuItem onClick={() => undefined}>Chỉnh sửa</MenuItem>
+                <MenuItem onClick={handleOpenEdit}>Chỉnh sửa</MenuItem>
             </Menu>
         </Box>
     );

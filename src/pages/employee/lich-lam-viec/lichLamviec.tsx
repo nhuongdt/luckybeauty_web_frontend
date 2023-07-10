@@ -265,7 +265,11 @@ class Calendar extends Component {
                     handleCloseDialog={this.handleDialogClose}
                     handleOpenEdit={this.handleEditOpen}
                 />
-                <Edit open={this.state.openEdit} onClose={this.handleEditClose} />
+                <Edit
+                    open={this.state.openEdit}
+                    onClose={this.handleEditClose}
+                    openEditLich={() => undefined}
+                />
                 <Delete open={this.state.openDelete} onClose={this.handleDeleteClose} />
                 <ThemLich open={this.state.openDialog} onClose={this.handleDialogClose} />
                 <Box mb="16px" display="flex" justifyContent="space-between">

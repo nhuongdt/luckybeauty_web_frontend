@@ -236,7 +236,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 </Button>
                 <DialogContent>
                     <Grid container>
-                        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
+                        {/* <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
                             <FormGroup>
                                 <FormControlLabel
                                     control={
@@ -271,7 +271,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     label="Là nhóm hàng hóa"
                                 />
                             </FormGroup>
-                        </Grid>
+                        </Grid> */}
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
                             <Typography variant="body2">
                                 Tên {groupProduct.sLoaiNhomHang}{' '}
