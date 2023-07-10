@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 var abp = abp || {};
 (function () {
     /* Application paths *****************************************/

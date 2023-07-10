@@ -18,7 +18,6 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../../images/Lucky_beauty.jpg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();
@@ -46,7 +45,7 @@ const LoginScreen: React.FC = () => {
                 formik.setFieldError('tenant', 'Id cửa hàng không tồn tại hoặc hết hạn.');
             } else {
                 const login = await LoginService.Login(loginModel);
-                if (login) {
+                if (login === true) {
                     const userId = Cookies.get('userId') ?? '0';
                     const remember = Cookies.get('isRememberMe') === 'true' ? true : false;
                     await LoginService.GetPermissionByUserId(parseInt(userId, 0), remember);

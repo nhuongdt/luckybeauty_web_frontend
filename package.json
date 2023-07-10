@@ -37,7 +37,7 @@
         "@types/recharts": "^1.8.24",
         "@types/sass": "^1.45.0",
         "@types/sass-loader": "^8.0.5",
-        "abp-web-resources": "^5.7.0",
+        "abp-web-resources": "^5.8.0",
         "axios": "^1.4.0",
         "bootstrap": "^5.2.3",
         "date-fns": "^2.30.0",

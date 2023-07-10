@@ -1,19 +1,10 @@
-import { Api, Cookie } from '@mui/icons-material';
+import '../../lib/abp.js';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import LoginModel from '../../models/Login/loginModel';
 import qs from 'qs';
 import { RolePermission } from './dto/RolePermission';
 import http from '../httpService';
-// const http = axios.create({
-//     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
-//     timeout: 30000,
-//     paramsSerializer: function (params) {
-//         return qs.stringify(params, {
-//             encode: false
-//         });
-//     }
-// });
 class LoginService {
     public async CheckTenant(tenantName: string, isRemember?: boolean) {
         const tenancy = tenantName || 'default';
@@ -39,7 +30,6 @@ class LoginService {
                 password: loginModel.password,
                 rememberClient: loginModel.rememberMe
             };
-            console.log(loginModel);
             let result = false;
             const tenantId = Cookies.get('Abp.TenantId');
             if (tenantId?.toString() !== '0') {
@@ -94,9 +84,15 @@ class LoginService {
             Cookies.get('isRememberMe')?.toString() == 'true'
                 ? new Date(new Date().getTime() + 1000 * 86400)
                 : undefined;
-        Cookies.set('permissions', JSON.stringify(response.data.result['permissions']), {
-            expires: tokenExpireDate
-        });
+        // Cookies.set('permissions', response.data.result['permissions'], {
+        //     expires: tokenExpireDate
+        // });
+        const item = {
+            value: response.data.result['permissions'],
+            expiry: tokenExpireDate
+        };
+        localStorage.setItem('permissions', JSON.stringify(item));
+        return response.data.result;
     }
 }
 export default new LoginService();

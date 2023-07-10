@@ -246,7 +246,7 @@ const Header: React.FC<HeaderProps> = (
                                         Object.keys(Cookies.get()).forEach((cookieName) => {
                                             Cookies.remove(cookieName);
                                         });
-                                        localStorage.removeItem('permissions');
+                                        localStorage.clear();
                                     }}>
                                     <LogoutIcon />
                                     <span> Đăng xuất </span>
