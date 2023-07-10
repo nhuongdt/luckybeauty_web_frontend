@@ -12,11 +12,17 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
-const TabWeek: React.FC = () => {
+import datLichService from '../../../services/dat-lich/datLichService';
+import Cookies from 'js-cookie';
+import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
+const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
+    dateQuery,
+    data
+}) => {
     const [weekDates, setWeekDates] = useState<any[]>([]);
 
     useEffect(() => {
-        getWeekDate(new Date());
+        getWeekDate(dateQuery);
     }, []);
     const getWeekDate = (dateCurrent: Date) => {
         const firstDayOfWeek = new Date(
@@ -44,100 +50,6 @@ const TabWeek: React.FC = () => {
             </>
         );
     };
-
-    const Data = [
-        {
-            startTime: format(new Date().setHours(7), 'HH:mm a'),
-            endTime: format(new Date().setHours(8), 'HH:mm a'),
-            client: 'Đinh Tuấn Tài 5',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#F1416C',
-            date: 'Thứ năm'
-        },
-        {
-            startTime: format(new Date().setHours(8, 10), 'HH:mm a'),
-            endTime: format(new Date().setHours(9, 40), 'HH:mm a'),
-            client: 'Đinh Tuấn Tài 7',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#50CD89',
-            date: 'Thứ bảy'
-        },
-        {
-            startTime: format(new Date().setHours(9, 40), 'HH:mm a'),
-            endTime: format(new Date().setHours(1, 5), 'HH:mm p'),
-            client: 'Đinh Tuấn Tài 4',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#FF9900',
-            date: 'Thứ tư'
-        },
-        {
-            startTime: format(new Date().setHours(7), 'HH:mm a'),
-            endTime: format(new Date().setHours(9, 30), 'HH:mm a'),
-            client: 'Đinh Tuấn Tài 2',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#50CD89',
-            date: 'Thứ hai'
-        },
-        {
-            startTime: format(new Date().setHours(11, 30), 'HH:mm a'),
-            endTime: format(new Date().setHours(12), 'HH:mm a'),
-            client: 'Đinh Tuấn Tài 3',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#009EF7',
-            date: 'Thứ ba'
-        },
-        {
-            startTime: format(new Date().setHours(9, 50), 'HH:mm a', { locale: vi }),
-            endTime: format(new Date().setHours(12, 30), 'HH:mm a'),
-            client: 'Đinh Tuấn Tài cn',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#009EF7',
-            date: 'Chủ nhật'
-        },
-        {
-            startTime: format(new Date().setHours(9, 30), 'HH:mm a'),
-            endTime: format(new Date().setHours(12, 30), 'HH:mm p'),
-            client: 'Đinh Tuấn Tài 6',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#50CD89',
-            date: 'Thứ sáu'
-        },
-
-        {
-            startTime: format(new Date().setHours(9, 30), 'HH:mm a', { locale: vi }),
-            endTime: format(new Date().setHours(12), 'HH:mm p', { locale: vi }),
-            client: 'Đinh Tuấn Tài 6',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#50CD89',
-            date: 'Thứ sáu'
-        },
-        {
-            startTime: format(new Date().setHours(7, 17), 'HH:mm p', { locale: vi }),
-            endTime: format(new Date().setHours(8), 'HH:mm p', { locale: vi }),
-            client: 'Đinh Tuấn Tài 6.2',
-            employee: 'Tài Đinh Tuấ',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#50CD89',
-            date: 'Thứ sáu'
-        },
-        {
-            startTime: format(new Date().setHours(7, 38), 'HH:mm a', { locale: vi }),
-            endTime: format(new Date().setHours(9, 50), 'HH:mm p', { locale: vi }),
-            client: 'Đinh Tuấn Tài 6.3',
-            employee: 'Tài Đinh Tuấn',
-            service: 'Cắt tóc, uốn phồng',
-            color: '#50CD89',
-            date: 'Thứ sáu'
-        }
-    ];
     const weekDates2 = ['Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy', 'Chủ nhật'];
     // Tạo mảng 2 chiều để lưu trữ dữ liệu cho mỗi ngày trong tuần
     const weekData: any[][] = Array(7)
@@ -145,8 +57,8 @@ const TabWeek: React.FC = () => {
         .map(() => []);
 
     // Đưa dữ liệu vào mảng 2 chiều theo ngày
-    Data.map((item) => {
-        const dateIndex = weekDates2.findIndex((date) => date === item.date);
+    data.map((item) => {
+        const dateIndex = weekDates2.findIndex((date) => date === item.dayOfWeek);
         if (dateIndex !== -1) {
             weekData[dateIndex] = [...weekData[dateIndex], item];
         }
@@ -211,9 +123,9 @@ const TabWeek: React.FC = () => {
                                         {timeLabel}
                                     </TableCell>
                                     {weekDates2.map((date, dateIndex) => {
-                                        const matchingData = Data.filter(
+                                        const matchingData = data.filter(
                                             (item) =>
-                                                item.date === date &&
+                                                item.dayOfWeek === date &&
                                                 parseInt(item.startTime.split(':')[0], 10) === hour
                                         );
 
@@ -326,13 +238,13 @@ const TabWeek: React.FC = () => {
                                                                     color={item.color}
                                                                     fontWeight="700"
                                                                     fontSize="12px">
-                                                                    {item.client}
+                                                                    {item.customer}
                                                                 </Typography>
                                                                 <Typography
                                                                     color={item.color}
                                                                     variant="body1"
                                                                     fontSize="12px">
-                                                                    {item.service}
+                                                                    {item.services}
                                                                 </Typography>
                                                             </Box>
                                                         );
