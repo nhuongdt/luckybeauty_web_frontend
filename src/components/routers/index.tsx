@@ -277,7 +277,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: '/thu-chi',
-                    permission: '',
+                    permission: 'Pages.QuyHoaDon',
                     title: 'Thu chi',
                     icon: <MoneyIcon width="20px" />,
                     iconActive: <MoneyActive width="20px" />,
@@ -287,7 +287,7 @@ export const appRouters: AppRouteProps = {
                     children: [
                         {
                             path: '/so-quy',
-                            permission: '',
+                            permission: 'Pages.QuyHoaDon',
                             title: 'Sổ quỹ',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
@@ -304,7 +304,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: '/employee',
-                    permission: '',
+                    permission: 'Pages.NhanSu',
                     title: 'Nhân viên',
                     name: 'nhanvien',
                     icon: <EmployeeIcon width="20px" />,

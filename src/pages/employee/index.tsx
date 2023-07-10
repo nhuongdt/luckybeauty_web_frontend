@@ -623,7 +623,7 @@ class EmployeeScreen extends React.Component {
                             sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
                             <Button
                                 size="small"
-                                hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Create')}
+                                hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Create')}
                                 onClick={() => {
                                     this.createOrUpdateModalOpen('');
                                 }}
@@ -699,6 +699,7 @@ class EmployeeScreen extends React.Component {
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
                         handleEdit={this.handleEdit}
+                        permissionEdit="Pages.NhanSu.Edit"
                         handleDelete={this.handleDelete}
                     />
                     <CustomTablePagination

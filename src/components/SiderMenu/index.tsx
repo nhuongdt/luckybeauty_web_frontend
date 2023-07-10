@@ -81,10 +81,14 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                 .then((response) => {
                     setListPermission(response.data.result['permissions']);
                     //Cookies.set('permissions', JSON.stringify(response.data.result['permissions']));
+                    const item = {
+                        value: response.data.result['permissions']
+                    };
+                    localStorage.setItem('permissions', JSON.stringify(item));
                 })
                 .catch((error) => console.log(error));
         }
-        // const permissions = Cookies.get('permissions') ?? [''];
+        // const permissions = JSON.parse(localStorage.getItem('permissions') || '[]') || [];
         // setListPermission(Array.isArray(permissions) ? permissions : [permissions]);
     };
     useEffect(() => {
