@@ -296,7 +296,17 @@ const Header: React.FC<HeaderProps> = (
                             MenuListProps={{
                                 'aria-labelledby': 'btnThongBao'
                             }}
-                            sx={{ '& ul': { width: '400px' } }}>
+                            sx={{
+                                '& ul': { width: '400px' },
+                                '& li:first-child,& li:last-child': {
+                                    cursor: 'auto!important',
+                                    bgcolor: 'transparent!important'
+                                },
+                                '& li:first-child > .MuiTouchRipple-root,& li:last-child > .MuiTouchRipple-root':
+                                    {
+                                        display: 'none'
+                                    }
+                            }}>
                             <MenuItem>
                                 <Box
                                     sx={{
@@ -410,6 +420,13 @@ const Header: React.FC<HeaderProps> = (
                             sx={{
                                 '& ul': {
                                     width: '400px'
+                                },
+                                '& li': {
+                                    bgcolor: 'transparent!important',
+                                    cursor: 'auto!important'
+                                },
+                                '& li > .MuiTouchRipple-root': {
+                                    display: 'none'
                                 }
                             }}>
                             <MenuItem>
