@@ -5,16 +5,13 @@ import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
 import { ChiNhanhDto } from '../../services/chi_nhanh/Dto/chiNhanhDto';
 
 export default function AutocompleteChiNhanh({ handleChoseItem, idChosed, dataChiNhanh }: any) {
-    const [itemChosed, setItemChosed] = useState<ChiNhanhDto>({
-        id: '',
-        tenChiNhanh: ''
-    } as ChiNhanhDto);
+    const [itemChosed, setItemChosed] = useState<ChiNhanhDto | null>(null);
     React.useEffect(() => {
         const item = dataChiNhanh.filter((x: ChiNhanhDto) => x.id == idChosed);
         if (item.length > 0) {
             setItemChosed(item[0]);
         } else {
-            setItemChosed({ id: '', tenChiNhanh: '' } as ChiNhanhDto);
+            setItemChosed(null);
         }
     }, [idChosed]);
 

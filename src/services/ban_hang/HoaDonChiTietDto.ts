@@ -33,7 +33,7 @@ export default class HoaDonChiTietDto {
         donGiaTruocCK = 0,
         ptChietKhau = 0,
         tienChietKhau = 0,
-        // laPTChietKhau
+        laPTChietKhau = true,
         ptThue = 0,
         tienThue = 0,
         ghiChu = '',
@@ -45,6 +45,7 @@ export default class HoaDonChiTietDto {
         this.soLuong = soLuong;
         this.donGiaTruocCK = donGiaTruocCK;
         this.ptChietKhau = ptChietKhau;
+        this.laPTChietKhau = laPTChietKhau;
         this.tienChietKhau = ptChietKhau > 0 ? (donGiaTruocCK * ptChietKhau) / 100 : tienChietKhau;
         this.ptThue = ptThue;
         this.tienThue =
