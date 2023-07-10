@@ -172,14 +172,14 @@ export default function TabDiary({ idHoaDon }: any) {
                     '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
                         fill: '#7C3367'
                     },
-                    '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
-                        {
-                            fill: '#000'
-                        },
-                    '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
-                        {
-                            fill: '#000'
-                        },
+                    // '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                    //     {
+                    //         fill: '#000'
+                    //     },
+                    // '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                    //     {
+                    //         fill: '#000'
+                    //     },
                     '& .Mui-checked, &.MuiCheckbox-indeterminate': {
                         color: '#7C3367!important'
                     },

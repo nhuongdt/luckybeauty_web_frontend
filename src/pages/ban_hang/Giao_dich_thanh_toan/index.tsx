@@ -147,27 +147,13 @@ const GiaoDichThanhToan: React.FC = () => {
         setOpenDetail(true);
     };
 
-    const childGotoBack = (hoadonAfterChange: PageHoaDonDto | null) => {
+    const childGotoBack = (hoadonAfterChange: PageHoaDonDto, typeAction = 0) => {
         setOpenDetail(false);
         setIdHoadonChosing('');
-        if (hoadonAfterChange !== null) {
-            if (
-                hoadonAfterChange.trangThai === 0 ||
-                hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
-            ) {
-                if (hoadonAfterChange.trangThai === 0) {
-                    setPageDataHoaDon({
-                        ...pageDataHoaDon,
-                        items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
-                            if (itemHD.id === hoadonAfterChange.id) {
-                                return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
-                            } else {
-                                return itemHD;
-                            }
-                        })
-                    });
-                    setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
-                } else {
+
+        switch (typeAction) {
+            case 1: // update
+                if (hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh) {
                     // remove if huyhoadon or change chinhanh
                     setPageDataHoaDon({
                         ...pageDataHoaDon,
@@ -175,21 +161,75 @@ const GiaoDichThanhToan: React.FC = () => {
                             (x: any) => x.id !== hoadonAfterChange.id
                         )
                     });
+                } else {
+                    setPageDataHoaDon({
+                        ...pageDataHoaDon,
+                        items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto) => {
+                            if (itemHD.id === hoadonAfterChange.id) {
+                                return hoadonAfterChange;
+                            } else {
+                                return itemHD;
+                            }
+                        })
+                    });
                 }
-            } else {
-                // update
+                break;
+            case 2: // delete
                 setPageDataHoaDon({
                     ...pageDataHoaDon,
-                    items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
+                    items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto) => {
                         if (itemHD.id === hoadonAfterChange.id) {
-                            return hoadonAfterChange;
+                            return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
                         } else {
                             return itemHD;
                         }
                     })
                 });
-            }
+                setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
+                break;
+            default:
+                break;
         }
+        // if (hoadonAfterChange !== null) {
+        //     if (
+        //         hoadonAfterChange.trangThai === 0 ||
+        //         hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
+        //     ) {
+        //         if (hoadonAfterChange.trangThai === 0) {
+        //             setPageDataHoaDon({
+        //                 ...pageDataHoaDon,
+        //                 items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
+        //                     if (itemHD.id === hoadonAfterChange.id) {
+        //                         return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
+        //                     } else {
+        //                         return itemHD;
+        //                     }
+        //                 })
+        //             });
+        //             setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
+        //         } else {
+        //             // remove if huyhoadon or change chinhanh
+        //             setPageDataHoaDon({
+        //                 ...pageDataHoaDon,
+        //                 items: pageDataHoaDon.items.filter(
+        //                     (x: any) => x.id !== hoadonAfterChange.id
+        //                 )
+        //             });
+        //         }
+        //     } else {
+        //         // update
+        //         setPageDataHoaDon({
+        //             ...pageDataHoaDon,
+        //             items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
+        //                 if (itemHD.id === hoadonAfterChange.id) {
+        //                     return hoadonAfterChange;
+        //                 } else {
+        //                     return itemHD;
+        //                 }
+        //             })
+        //         });
+        //     }
+        // }
     };
 
     const columns: GridColDef[] = [
@@ -560,14 +600,14 @@ const GiaoDichThanhToan: React.FC = () => {
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
                                 fill: '#7C3367'
                             },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
-                                {
-                                    fill: '#000'
-                                },
+                            // '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                            //     {
+                            //         fill: '#000'
+                            //     },
+                            // '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                            //     {
+                            //         fill: '#000'
+                            //     },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
                                 color: '#7C3367!important'
                             },
