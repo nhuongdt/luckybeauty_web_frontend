@@ -9,9 +9,7 @@ export interface KhachHangItemDto {
     diaChi: string;
     tenNhomKhach?: string;
     gioiTinh?: string;
-    nhanVienPhuTrach?: string;
     tongChiTieu?: number;
     cuocHenGanNhat: Date;
-    tenNguonKhach?: string;
     tongTichDiem: number;
 }

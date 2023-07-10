@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import avatar from '../../images/user.png';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LogoutIcon from '@mui/icons-material/Logout';
+
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {
     Grid,
@@ -15,7 +15,11 @@ import {
     Button,
     Badge,
     Avatar,
-    SelectChangeEvent
+    IconButton,
+    SelectChangeEvent,
+    Checkbox,
+    FormGroup,
+    FormControlLabel
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
@@ -31,7 +35,14 @@ import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
 import PortraitOutlinedIcon from '@mui/icons-material/PortraitOutlined';
-import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
+import { ReactComponent as ProfileIcon } from '../../images/profile-circle.svg';
+import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
+import { ReactComponent as LogoutIcon } from '../../images/logoutInner.svg';
+import { ReactComponent as RestartIcon } from '../../images/restart_alt.svg';
+import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
+import CakeIcon from '../../images/cake.svg';
+import avatarThongBao from '../../images/xinh.png';
+
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -47,13 +58,30 @@ const Header: React.FC<HeaderProps> = (
 ) => {
     const { onClick } = props;
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [ThongBaoAnchorEl, setThongBaoAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [settingThongBao, setSettingThongBao] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+    const openThongBao = Boolean(ThongBaoAnchorEl);
+    const openSettingThongBao = Boolean(settingThongBao);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
+    };
+    const handleThongBaoClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setThongBaoAnchorEl(event.currentTarget);
+    };
+    const handleSettingClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setSettingThongBao(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const handleCloseThongBao = () => {
+        setThongBaoAnchorEl(null);
+    };
+    const CloseSettingThongBao = () => {
+        setSettingThongBao(null);
+    };
+
     const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
     const [currentChiNhanh, setCurrentChiNhanh] = useState('');
     useEffect(() => {
@@ -101,7 +129,36 @@ const Header: React.FC<HeaderProps> = (
         //window.location.reload();
         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
     };
-
+    const dataThongBao = [
+        {
+            title: '2 khách hàng sinh nhật hôm nay',
+            description: 'Khách hàng Lương Tuệ Nhi và Hồng có sinh nhật hôm nay.',
+            image: CakeIcon,
+            time: '30min'
+        },
+        {
+            title: 'Phan Thị Quỳnh',
+            description: 'Đã đặt lịch uốn tóc với Tài Đinh',
+            image: avatarThongBao,
+            time: '1day'
+        },
+        {
+            title: 'Lê Nữ Quỳnh Nho',
+            description: 'Đã thanh toán hóa đơn',
+            image: avatarThongBao,
+            time: '8h'
+        }
+    ];
+    const dataSettingThongBao = [
+        {
+            title: 'Lịch hẹn',
+            option: ['Lịch hẹn mới', 'Cập nhật lịch hẹn']
+        },
+        {
+            title: 'Hoạt động',
+            option: ['Sản phẩm', 'Sinh nhật khách hàng', 'Khách Đánh giá']
+        }
+    ];
     return (
         <Box
             display="flex"
@@ -192,9 +249,10 @@ const Header: React.FC<HeaderProps> = (
                                 })}
                             </Select>
                         </Box>
-                        <Badge>
+                        <Badge sx={{ marginRight: '10px' }}>
                             <Button
                                 sx={{
+                                    padding: '0',
                                     bgcolor: 'transparent!important',
                                     minWidth: 'unset!important',
                                     '&:hover img': {
@@ -204,9 +262,23 @@ const Header: React.FC<HeaderProps> = (
                                 <img src={MessageIcon} alt="Message" />
                             </Button>
                         </Badge>
-                        <Badge color="error">
+                        <Badge
+                            color="error"
+                            variant="dot"
+                            sx={{
+                                '& .MuiBadge-dot.MuiBadge-badge': {
+                                    top: '5px!important',
+                                    right: '5px!important'
+                                }
+                            }}>
                             <Button
+                                id="btnThongBao"
+                                onClick={handleThongBaoClick}
+                                aria-controls={openThongBao ? 'thongBao' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={openThongBao ? 'true' : undefined}
                                 sx={{
+                                    padding: '0',
                                     bgcolor: 'transparent!important',
                                     minWidth: 'unset!important',
                                     '&:hover img': {
@@ -216,6 +288,225 @@ const Header: React.FC<HeaderProps> = (
                                 <img src={NotificationIcon} alt="notification" />
                             </Button>
                         </Badge>
+                        <Menu
+                            open={openThongBao}
+                            id="thongBao"
+                            anchorEl={ThongBaoAnchorEl}
+                            onClose={handleCloseThongBao}
+                            MenuListProps={{
+                                'aria-labelledby': 'btnThongBao'
+                            }}
+                            sx={{ '& ul': { width: '400px' } }}>
+                            <MenuItem>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        width: '100%',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        padding: '18px 0',
+                                        borderBottom: '1px solid #F2F2F2'
+                                    }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            gap: '3px',
+                                            aignItems: 'center'
+                                        }}>
+                                        <Typography
+                                            variant="body1"
+                                            color="#4C4B4C"
+                                            fontWeight="700">
+                                            Thông báo
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                width: '16px',
+                                                height: '16px',
+                                                borderRadius: '50%',
+                                                bgcolor: '#F1416C',
+                                                color: '#fff',
+                                                fontSize: '12px',
+                                                textAlign: 'center',
+                                                lineHeight: '16px',
+                                                margin: 'auto'
+                                            }}>
+                                            4
+                                        </Box>
+                                    </Box>
+                                    <IconButton
+                                        onClick={handleSettingClick}
+                                        sx={{
+                                            '&:hover svg': {
+                                                filter: 'brightness(0) saturate(100%) invert(25%) sepia(19%) saturate(3488%) hue-rotate(276deg) brightness(86%) contrast(84%)'
+                                            }
+                                        }}>
+                                        <SettingIcon />
+                                    </IconButton>
+                                </Box>
+                            </MenuItem>
+                            {dataThongBao.map((item, index) => (
+                                <MenuItem
+                                    key={index}
+                                    onClick={handleCloseThongBao}
+                                    sx={{ whiteSpace: 'normal' }}>
+                                    <Box
+                                        sx={{
+                                            width: '100%',
+                                            display: 'flex',
+
+                                            gap: '10px',
+                                            paddingY: '16px',
+                                            borderBottom: '1px solid #F2F2F2'
+                                        }}>
+                                        <Box
+                                            sx={{
+                                                '& img': {
+                                                    height: '32px',
+                                                    width: '32px',
+                                                    borderRadius: index === 0 ? '0' : '50%'
+                                                }
+                                            }}>
+                                            <img src={item.image} alt="image" />
+                                        </Box>
+                                        <Box sx={{ maxWidth: '75%' }}>
+                                            <Typography
+                                                variant="body1"
+                                                fontSize="14px"
+                                                fontWeight="500"
+                                                color="#4C4B4C">
+                                                {item.title}
+                                            </Typography>
+                                            <Typography
+                                                variant="body1"
+                                                color="#666466"
+                                                fontSize="14px">
+                                                {item.description}
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            sx={{
+                                                marginLeft: 'auto',
+                                                fontSize: '10px',
+                                                color: '#666466',
+                                                fontWeight: '300'
+                                            }}>
+                                            {item.time}
+                                        </Box>
+                                    </Box>
+                                </MenuItem>
+                            ))}
+                            <MenuItem>
+                                <Button variant="text" sx={{ color: '#319DFF', margin: 'auto' }}>
+                                    Xem tất cả
+                                </Button>
+                            </MenuItem>
+                        </Menu>
+                        <Menu
+                            id="setting-thongbao"
+                            anchorEl={settingThongBao}
+                            open={openSettingThongBao}
+                            onClose={CloseSettingThongBao}
+                            sx={{
+                                '& ul': {
+                                    width: '400px'
+                                }
+                            }}>
+                            <MenuItem>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        width: '100%',
+                                        '& button:hover svg': {
+                                            filter: 'brightness(0) saturate(100%) invert(25%) sepia(19%) saturate(3488%) hue-rotate(276deg) brightness(86%) contrast(84%)'
+                                        }
+                                    }}>
+                                    <Typography
+                                        color="#4C4B4C"
+                                        variant="body1"
+                                        fontSize="16px"
+                                        fontWeight="700">
+                                        Thiết lập thông báo
+                                    </Typography>
+                                    <Box>
+                                        <IconButton>
+                                            <RestartIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={CloseSettingThongBao}
+                                            sx={{
+                                                '& svg': {
+                                                    width: '16px',
+                                                    height: '16px'
+                                                }
+                                            }}>
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
+                            </MenuItem>
+                            {dataSettingThongBao.map((item, index) => (
+                                <MenuItem key={index}>
+                                    <Box>
+                                        <Typography
+                                            variant="body1"
+                                            fontSize="12px"
+                                            fontWeight="500"
+                                            color="#4C4B4C">
+                                            {item.title}
+                                        </Typography>
+                                        <FormGroup>
+                                            {item.option.map((label, indexChild) => (
+                                                <FormControlLabel
+                                                    sx={{
+                                                        '& .Mui-checked': {
+                                                            color: '#7C3367!important'
+                                                        }
+                                                    }}
+                                                    key={indexChild}
+                                                    control={<Checkbox />}
+                                                    label={
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontSize="12px"
+                                                            fontWeight="400"
+                                                            color="#333233">
+                                                            {' '}
+                                                            {label}
+                                                        </Typography>
+                                                    }
+                                                />
+                                            ))}
+                                        </FormGroup>
+                                    </Box>
+                                </MenuItem>
+                            ))}
+                            <MenuItem>
+                                <Box sx={{ display: 'flex', width: '100%', gap: '20px' }}>
+                                    <Button
+                                        variant="outlined"
+                                        fullWidth
+                                        sx={{
+                                            color: '#CDC9CD',
+                                            borderColor: '#CDC9CD',
+                                            bgcolor: '#fff'
+                                        }}
+                                        className="btn-outline-hover">
+                                        Đặt lại
+                                    </Button>
+                                    <Button
+                                        onClick={CloseSettingThongBao}
+                                        variant="contained"
+                                        fullWidth
+                                        className="btn-container-hover"
+                                        sx={{ color: '#fff', bgcolor: '#7C3367' }}>
+                                        Áp dụng
+                                    </Button>
+                                </Box>
+                            </MenuItem>
+                        </Menu>
                         <div style={{ marginLeft: '32px', marginRight: 8 }}>
                             <div className="store-name">Nail Spa</div>
                             <div className="branch-name">Hà nội</div>
@@ -237,8 +528,72 @@ const Header: React.FC<HeaderProps> = (
                             onClose={handleClose}
                             MenuListProps={{
                                 'aria-labelledby': 'btnAuthor'
+                            }}
+                            sx={{
+                                '& .typo': {
+                                    color: '#4C4B4C',
+                                    fontSize: '14px',
+                                    fontWeight: '400',
+                                    bgcolor: 'transparent',
+                                    border: '0'
+                                },
+                                '& a': {
+                                    display: 'flex',
+                                    gap: '16px'
+                                },
+                                '& .hover:hover button': {
+                                    color: '#7C3367'
+                                },
+                                '& .hover:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(25%) sepia(19%) saturate(3488%) hue-rotate(276deg) brightness(86%) contrast(84%)'
+                                }
                             }}>
-                            <MenuItem onClick={handleClose}>
+                            <MenuItem>
+                                <Box sx={{ display: 'flex', gap: '12px' }}>
+                                    <Avatar
+                                        src={avatar}
+                                        alt="avatar"
+                                        sx={{ width: 40, height: 40 }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            '& h2': {
+                                                fontWeight: '700',
+                                                color: '#333233',
+                                                fontSize: '16px',
+                                                marginBottom: '0'
+                                            },
+                                            '& p': {
+                                                color: '#666466',
+                                                fontSize: '12px'
+                                            }
+                                        }}>
+                                        <Box component="h2">Nail salon</Box>
+                                        <Box component="p">nailsalon@mail.com</Box>
+                                    </Box>
+                                </Box>
+                            </MenuItem>
+                            <MenuItem onClick={handleClose} className="hover">
+                                <Link
+                                    to="/account/profile"
+                                    style={{ textDecoration: 'none', listStyle: 'none' }}>
+                                    <ProfileIcon />
+                                    <Box component="button" className="typo">
+                                        {' '}
+                                        Hồ sơ{' '}
+                                    </Box>
+                                </Link>
+                            </MenuItem>
+                            <MenuItem className="hover">
+                                <Box component="a" sx={{ textDecoration: 'none' }}>
+                                    <SettingIcon />
+                                    <Box component="button" className="typo">
+                                        Cài đặt
+                                    </Box>
+                                </Box>
+                            </MenuItem>
+
+                            <MenuItem onClick={handleClose} className="hover">
                                 <Link
                                     to="/login"
                                     style={{ textDecoration: 'none', listStyle: 'none' }}
@@ -249,15 +604,10 @@ const Header: React.FC<HeaderProps> = (
                                         localStorage.removeItem('permissions');
                                     }}>
                                     <LogoutIcon />
-                                    <span> Đăng xuất </span>
-                                </Link>
-                            </MenuItem>
-                            <MenuItem onClick={handleClose}>
-                                <Link
-                                    to="/account/profile"
-                                    style={{ textDecoration: 'none', listStyle: 'none' }}>
-                                    <PortraitOutlinedIcon />
-                                    <span> Profile </span>
+                                    <Box component="button" className="typo">
+                                        {' '}
+                                        Đăng xuất{' '}
+                                    </Box>
                                 </Link>
                             </MenuItem>
                         </Menu>

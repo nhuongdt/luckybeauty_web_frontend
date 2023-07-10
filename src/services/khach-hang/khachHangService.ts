@@ -7,9 +7,10 @@ import http from '../httpService';
 import { CreateOrEditKhachHangDto } from './dto/CreateOrEditKhachHangDto';
 import { KhachHangDto } from './dto/KhachHangDto';
 import Utils from '../../utils/utils';
-import { FileDto, FileUpload, IFileDto } from '../dto/FileDto';
+import { FileDto, IFileDto } from '../dto/FileDto';
 import utils from '../../utils/utils';
 import { ExecuteResultDto } from '../dto/ExecuteResultDto';
+import { FileUpload } from '../dto/FileUpload';
 
 class KhachHangService {
     public async getAll(

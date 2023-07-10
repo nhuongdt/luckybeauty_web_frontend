@@ -28,7 +28,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
-import { FileUpload } from '../../../services/dto/FileDto';
+import { FileUpload } from '../../../services/dto/FileUpload';
 import uploadFileService from '../../../services/uploadFileService';
 import fileDowloadService from '../../../services/file-dowload.service';
 class EmployeeHoliday extends Component {
@@ -188,6 +188,16 @@ class EmployeeHoliday extends Component {
             IdHoliday: ''
         });
     };
+    exportToExcel = async () => {
+        const result = await ngayNghiLeService.exportToExcel({
+            keyword: this.state.filter,
+            maxResultCount: this.state.maxResultCount,
+            skipCount: this.state.currentPage,
+            sortBy: this.state.sortBy,
+            sortType: this.state.sortType
+        });
+        fileDowloadService.downloadExportFile(result);
+    };
     onImportShow = () => {
         this.setState({
             importShow: !this.state.importShow
@@ -195,16 +205,14 @@ class EmployeeHoliday extends Component {
         this.getData();
     };
     handleImportData = async (input: FileUpload) => {
-        // const result = await ngayNghiLeService.getAll(input);
-        // enqueueSnackbar(result.message, {
-        //     variant: result.status == 'success' ? 'success' : 'error',
-        //     autoHideDuration: 3000
-        // });
+        const result = await ngayNghiLeService.importExcel(input);
+        enqueueSnackbar(result.message, {
+            variant: result.status == 'success' ? 'success' : 'error',
+            autoHideDuration: 3000
+        });
     };
     downloadImportTemplate = async () => {
-        const result = await uploadFileService.downloadImportTemplate(
-            'KhachHang_ImportTemplate.xlsx'
-        );
+        const result = await uploadFileService.downloadImportTemplate('NghiLe_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
     render() {
@@ -422,6 +430,7 @@ class EmployeeHoliday extends Component {
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
+                            onClick={this.onImportShow}
                             variant="outlined"
                             startIcon={<img src={DownloadIcon} />}
                             sx={{
@@ -437,6 +446,7 @@ class EmployeeHoliday extends Component {
                         </Button>
                         <Button
                             size="small"
+                            onClick={this.exportToExcel}
                             variant="outlined"
                             startIcon={<img src={UploadIcon} />}
                             sx={{

@@ -1,4 +1,4 @@
-import { FileUpload } from '../../dto/FileDto';
+import { FileUpload } from '../../dto/FileUpload';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
 import { CreateOrEditLichLamViecDto } from './dto/CreateOrEditLichLamViecDto';

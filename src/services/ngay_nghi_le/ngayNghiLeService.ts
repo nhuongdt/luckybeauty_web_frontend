@@ -1,3 +1,6 @@
+import { ExecuteResultDto } from '../dto/ExecuteResultDto';
+import { IFileDto } from '../dto/FileDto';
+import { FileUpload } from '../dto/FileUpload';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
@@ -19,6 +22,14 @@ class NgayNghiLeService {
     public async createOrEdit(input: CreateOrEditNgayNghiLeDto): Promise<NgayNghiLeDto> {
         const result = await http.post(`api/services/app/NgayNghiLe/CreateOrEdit`, input);
         return result.data.result;
+    }
+    async exportToExcel(input: PagedRequestDto): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/NgayNghiLe/ExportToExcel`, input);
+        return response.data.result;
+    }
+    async importExcel(input: FileUpload) {
+        const response = await http.post(`api/services/app/NgayNghiLe/ImportExcel`, input);
+        return response.data.result;
     }
 }
 export default new NgayNghiLeService();

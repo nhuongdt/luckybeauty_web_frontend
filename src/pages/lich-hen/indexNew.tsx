@@ -21,6 +21,7 @@ import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import { ReactComponent as ShapeIcon } from '../../images/Shape.svg';
 import { ReactComponent as ShapeIcon2 } from '../../images/Shape2.svg';
+import TabDay from './components/TabDay';
 import TabWeek from './components/TabWeek';
 const LichHen: React.FC = () => {
     const [dateView, setDateView] = useState('');
@@ -59,7 +60,10 @@ const LichHen: React.FC = () => {
         const formattedDate = `${dayOfWeek},  ${dayOfMonth} ${month}, năm ${year}`;
         setDateView(formattedDate);
     };
-
+    const [TabLichHen, setTabLichHen] = useState('Tuần');
+    const handleChangeTab = (event: SelectChangeEvent<string>) => {
+        setTabLichHen(event.target.value as string);
+    };
     return (
         <Box
             sx={{
@@ -196,8 +200,9 @@ const LichHen: React.FC = () => {
                         </Button>
                     </ButtonGroup>
                     <Select
-                        defaultValue="Tuần"
                         size="small"
+                        value={TabLichHen}
+                        onChange={handleChangeTab}
                         sx={{
                             bgcolor: '#fff',
                             '& .MuiSelect-select': { paddingY: '5.5px' },
@@ -221,7 +226,7 @@ const LichHen: React.FC = () => {
                     </Select>
                 </Grid>
             </Grid>
-            <TabWeek />
+            {TabLichHen === 'Tuần' ? <TabWeek /> : TabLichHen === 'Ngày' ? <TabDay /> : undefined}
         </Box>
     );
 };

@@ -7,6 +7,7 @@ import { PagedQuyHoaDonRequestDto } from './Dto/PagedQuyHoaDonRequest';
 import { GetAllQuyHoaDonItemDto } from './Dto/QuyHoaDonViewItemDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
+import { IFileDto } from '../dto/FileDto';
 
 class SoQuyServices {
     CreateQuyHoaDon = async (input: any) => {
@@ -39,6 +40,11 @@ class SoQuyServices {
         const response = await http.get('api/services/app/QuyHoaDon/GetAll', {
             params: input
         });
+        return response.data.result;
+    }
+
+    async ExportToExcel(input: RequestFromToDto): Promise<IFileDto> {
+        const response = await http.post('api/services/app/QuyHoaDon/ExportToExcel', input);
         return response.data.result;
     }
     async GetForEdit(idQuyHD: string): Promise<QuyHoaDonDto> {

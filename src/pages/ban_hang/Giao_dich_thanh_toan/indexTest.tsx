@@ -41,6 +41,7 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import fileDowloadService from '../../../services/file-dowload.service';
 
 interface TableRowData {
     id: number;
@@ -159,6 +160,10 @@ const GiaoDichThanhToanTest: React.FC = () => {
             setSelectedRows((prevSelectedRows) => prevSelectedRows.filter((id) => id !== rowId));
         }
     };
+    const exportToExcel = async () => {
+        const data = await HoaDonService.ExportToExcel(paramSearch);
+        fileDowloadService.downloadExportFile(data);
+    };
     return (
         <>
             <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
@@ -228,6 +233,7 @@ const GiaoDichThanhToanTest: React.FC = () => {
 
                                 <Button
                                     variant="outlined"
+                                    onClick={exportToExcel}
                                     startIcon={<UploadIcon />}
                                     sx={{
                                         borderColor: '#CDC9CD!important',

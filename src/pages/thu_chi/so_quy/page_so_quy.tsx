@@ -32,6 +32,7 @@ import { Add } from '@mui/icons-material';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import fileDowloadService from '../../../services/file-dowload.service';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -112,7 +113,10 @@ const PageSoQuy = ({ xx }: any) => {
             GetListSoQuy();
         }
     };
-
+    const exportToExcel = async () => {
+        const data = await SoQuyServices.ExportToExcel(paramSearch);
+        fileDowloadService.downloadExportFile(data);
+    };
     const handleChangePage = (event: any, value: number) => {
         setParamSearch({
             ...paramSearch,
@@ -506,6 +510,7 @@ const PageSoQuy = ({ xx }: any) => {
 
                             <Button
                                 variant="outlined"
+                                onClick={exportToExcel}
                                 startIcon={<UploadIcon />}
                                 sx={{
                                     borderColor: '#CDC9CD!important',

@@ -9,7 +9,7 @@ import {
     DialogTitle,
     Typography
 } from '@mui/material';
-import { FileDto, FileUpload } from '../../services/dto/FileDto';
+import { FileUpload } from '../../services/dto/FileUpload';
 interface ImportProps {
     isOpen: boolean;
     downloadImportTemplate: () => void;
