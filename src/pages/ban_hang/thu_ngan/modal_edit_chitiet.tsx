@@ -72,8 +72,14 @@ export default function ModalEditChiTietGioHang({
     });
     const [idCTHD, setIdCTHD] = useState('');
     const [lstCTHoaDon, setLstCTHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
-
     const displayComponent = formType === 1 ? 'none' : '';
+    const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false));
+
+    const toggleVisibility = (index: number) => {
+        const updatedVisibility = [...itemVisibility];
+        updatedVisibility[index] = !updatedVisibility[index];
+        setItemVisibility(updatedVisibility);
+    };
 
     React.useEffect(() => {
         setIsSave(false);
@@ -88,6 +94,8 @@ export default function ModalEditChiTietGioHang({
                     };
                 })
             );
+        } else {
+            setItemVisibility([true]);
         }
 
         console.log('into _ModalEditChiTietGioHang');
@@ -338,13 +346,7 @@ export default function ModalEditChiTietGioHang({
             await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
         }
     };
-    const [itemVisibility, setItemVisibility] = useState<boolean[]>(lstCTHoaDon.map(() => false));
 
-    const toggleVisibility = (index: number) => {
-        const updatedVisibility = [...itemVisibility];
-        updatedVisibility[index] = !updatedVisibility[index];
-        setItemVisibility(updatedVisibility);
-    };
     return (
         <>
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
@@ -356,38 +358,45 @@ export default function ModalEditChiTietGioHang({
                             container
                             key={index}
                             padding={2.5}
+                            paddingLeft={formType === 1 ? '20px' : '10px'}
                             border={1}
                             borderColor="#cccc"
-                            borderRadius={1}>
+                            borderRadius={1}
+                            marginBottom={formType === 1 ? 0 : '10px'}>
                             <Grid
                                 item
-                                xs={formType === 1 ? 0 : 1}
+                                xs={formType === 1 ? 0 : 2}
+                                sm={formType === 1 ? 0 : 1}
+                                md={formType === 1 ? 0 : 1}
+                                lg={formType === 1 ? 0 : 1}
                                 style={{ display: displayComponent }}>
                                 <Close
                                     sx={{ width: 40, height: 40, color: 'red', padding: '8px' }}
                                     onClick={() => xoaChiTietHoaDon(ct)}
                                 />
                             </Grid>
-                            <Grid item xs={formType === 1 ? 12 : 11}>
+                            <Grid
+                                item
+                                xs={formType === 1 ? 12 : 10}
+                                sm={formType === 1 ? 12 : 11}
+                                md={formType === 1 ? 12 : 11}
+                                lg={formType === 1 ? 12 : 11}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={9} md={9} lg={9}>
-                                        <div style={{ display: displayComponent }}>
-                                            <AutocompleteProduct
-                                                handleChoseItem={(item: any) =>
-                                                    choseProduct(item, index)
-                                                }
-                                                productChosed={ct}
-                                            />
-                                        </div>
                                         <Typography
                                             style={{
                                                 fontWeight: 600,
-                                                display: formType === 1 ? '' : 'none'
+                                                display: formType === 3 ? 'none' : ''
                                             }}>
                                             {ct?.tenHangHoa}
                                         </Typography>
                                     </Grid>
-                                    <Grid item xs={12} sm={3} md={3} lg={3}>
+                                    <Grid
+                                        item
+                                        xs={formType === 1 ? 12 : 10}
+                                        sm={formType === 1 ? 3 : 1}
+                                        md={formType === 1 ? 3 : 2}
+                                        lg={formType === 1 ? 3 : 2}>
                                         <Stack direction="row" spacing={1} justifyContent="end">
                                             <Typography
                                                 style={{
@@ -401,6 +410,30 @@ export default function ModalEditChiTietGioHang({
                                             </Typography>
                                         </Stack>
                                     </Grid>
+                                    {/* // man hinh thu ngan: khong hien icon toogle  */}
+                                    {formType !== 1 && (
+                                        <Grid item xs={2} sm={1} md={1} lg={1}>
+                                            <Box onClick={() => toggleVisibility(index)}>
+                                                <ExpandMore
+                                                    sx={{
+                                                        display:
+                                                            formType !== 1 && !itemVisibility[index]
+                                                                ? ''
+                                                                : 'none'
+                                                    }}
+                                                />
+                                                <ExpandLess
+                                                    sx={{
+                                                        display:
+                                                            formType !== 1 && itemVisibility[index]
+                                                                ? ''
+                                                                : 'none'
+                                                    }}
+                                                />
+                                            </Box>
+                                        </Grid>
+                                    )}
+
                                     <Grid item xs={12} sm={7} md={7} lg={7}>
                                         <Stack direction="column" spacing={1}>
                                             <Typography variant="body2">Giá bán</Typography>
@@ -450,7 +483,15 @@ export default function ModalEditChiTietGioHang({
                                             </Stack>
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={12} md={7} lg={7} sm={7}>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        md={7}
+                                        lg={7}
+                                        sm={7}
+                                        sx={{
+                                            display: itemVisibility[index] ? '' : 'none'
+                                        }}>
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
@@ -502,7 +543,15 @@ export default function ModalEditChiTietGioHang({
                                             />
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={12} md={5} lg={5} sm={5}>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        md={5}
+                                        lg={5}
+                                        sm={5}
+                                        sx={{
+                                            display: itemVisibility[index] ? '' : 'none'
+                                        }}>
                                         <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
                                             <Button
                                                 className={
@@ -524,7 +573,13 @@ export default function ModalEditChiTietGioHang({
                                             </Button>
                                         </ButtonGroup>
                                     </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                        style={{ display: 'none' }}>
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
@@ -578,7 +633,13 @@ export default function ModalEditChiTietGioHang({
                                             />
                                         </Stack>
                                     </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12}>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                        style={{ display: 'none' }}>
                                         <FormControlLabel
                                             value="true"
                                             control={

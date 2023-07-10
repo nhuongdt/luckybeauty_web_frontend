@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Grid, ButtonGroup, Button, Box } from '@mui/material';
 import CheckInNew from '../../check_in/CheckInNew';
-import PageBanHang from './PageBanHangTest';
+import PageBanHang from './PageBanHangNew';
 import Cookies from 'js-cookie';
 import { PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import '../style.css';

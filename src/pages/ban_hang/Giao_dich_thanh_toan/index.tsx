@@ -138,59 +138,60 @@ const GiaoDichThanhToan: React.FC = () => {
         });
     };
 
+    const [openDetail, setOpenDetail] = useState(false);
+
     const choseRow = (param: any) => {
         console.log('into');
         setIdHoadonChosing(param.id);
         setHoaDon(param.row);
+        setOpenDetail(true);
     };
 
-    const childGotoBack = (hoadonAfterChange: PageHoaDonDto) => {
+    const childGotoBack = (hoadonAfterChange: PageHoaDonDto | null) => {
+        setOpenDetail(false);
         setIdHoadonChosing('');
-        if (
-            hoadonAfterChange.trangThai === 0 ||
-            hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
-        ) {
-            if (hoadonAfterChange.trangThai === 0) {
+        if (hoadonAfterChange !== null) {
+            if (
+                hoadonAfterChange.trangThai === 0 ||
+                hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
+            ) {
+                if (hoadonAfterChange.trangThai === 0) {
+                    setPageDataHoaDon({
+                        ...pageDataHoaDon,
+                        items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
+                            if (itemHD.id === hoadonAfterChange.id) {
+                                return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
+                            } else {
+                                return itemHD;
+                            }
+                        })
+                    });
+                    setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
+                } else {
+                    // remove if huyhoadon or change chinhanh
+                    setPageDataHoaDon({
+                        ...pageDataHoaDon,
+                        items: pageDataHoaDon.items.filter(
+                            (x: any) => x.id !== hoadonAfterChange.id
+                        )
+                    });
+                }
+            } else {
+                // update
                 setPageDataHoaDon({
                     ...pageDataHoaDon,
                     items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
                         if (itemHD.id === hoadonAfterChange.id) {
-                            return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
+                            return hoadonAfterChange;
                         } else {
                             return itemHD;
                         }
                     })
                 });
-                setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
-            } else {
-                // remove if huyhoadon or change chinhanh
-                setPageDataHoaDon({
-                    ...pageDataHoaDon,
-                    items: pageDataHoaDon.items.filter((x: any) => x.id !== hoadonAfterChange.id)
-                });
             }
-        } else {
-            // update
-            setPageDataHoaDon({
-                ...pageDataHoaDon,
-                items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
-                    if (itemHD.id === hoadonAfterChange.id) {
-                        return hoadonAfterChange;
-                    } else {
-                        return itemHD;
-                    }
-                })
-            });
         }
     };
-    const [openDetail, setOpenDetail] = useState(false);
-    const handleOpenDetail = () => {
-        setOpenDetail(true);
-        console.log(openDetail);
-    };
-    const handleCloseDetail = () => {
-        setOpenDetail(false);
-    };
+
     const columns: GridColDef[] = [
         {
             field: 'maHoaDon',
@@ -226,7 +227,6 @@ const GiaoDichThanhToan: React.FC = () => {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
             minWidth: 118,
-            align: 'center',
             flex: 1,
             renderHeader: (params: any) => (
                 <Box title={params.value}>
@@ -240,7 +240,7 @@ const GiaoDichThanhToan: React.FC = () => {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
             headerAlign: 'center',
-            align: 'center',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -250,31 +250,36 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>{new Intl.NumberFormat().format(params.value)}</Box>
-            )
-        },
-        {
-            field: 'tongGiamGiaHD',
-            headerName: 'Tổng giảm giá',
-            headerAlign: 'center',
-            align: 'center',
-            minWidth: 118,
-            flex: 1,
-            renderHeader: (params: any) => (
                 <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
             )
         },
+        // {
+        //     field: 'tongGiamGiaHD',
+        //     headerName: 'Tổng giảm giá', // bỏ bớt cột cho gọn
+        //     headerAlign: 'center',
+        //     align: 'center',
+        //     minWidth: 118,
+        //     flex: 1,
+        //     renderHeader: (params: any) => (
+        //         <Box title={params.value}>
+        //             {params.colDef.headerName}
+        //             <IconSorting />{' '}
+        //         </Box>
+        //     ),
+        //     renderCell: (params: any) => (
+        //         <Box title={params.value}>
+        //             {' '}
+        //             {new Intl.NumberFormat('vi-VN').format(params.value)}
+        //         </Box>
+        //     )
+        // },
         {
             field: 'tongThanhToan',
             headerName: 'Tổng phải trả',
             headerAlign: 'center',
-            align: 'center',
+            align: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
@@ -284,13 +289,16 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}> {new Intl.NumberFormat().format(params.value)}</Box>
+                <Box title={params.value}>
+                    {' '}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
             )
         },
         {
             field: 'daThanhToan',
             headerName: 'Khách đã trả',
-            headerAlign: 'right',
+            headerAlign: 'center',
             align: 'right',
             minWidth: 118,
             flex: 1,
@@ -303,7 +311,7 @@ const GiaoDichThanhToan: React.FC = () => {
             renderCell: (params: any) => (
                 <Box title={params.value} textAlign="center" width="100%">
                     {' '}
-                    {new Intl.NumberFormat().format(params.value)}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -323,7 +331,7 @@ const GiaoDichThanhToan: React.FC = () => {
             renderCell: (params: any) => (
                 <Box title={params.value} textAlign="center" width="100%">
                     {' '}
-                    {new Intl.NumberFormat().format(params.value)}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -367,228 +375,223 @@ const GiaoDichThanhToan: React.FC = () => {
 
     return (
         <>
-            <ThongTinHoaDon
-                idHoaDon={idHoadonChosing}
-                hoadon={hoadon}
-                open={openDetail}
-                CloseDetail={handleCloseDetail}
-            />
+            <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
+                <ThongTinHoaDon
+                    idHoaDon={idHoadonChosing}
+                    hoadon={hoadon}
+                    open={openDetail}
+                    handleGotoBack={childGotoBack}
+                />
+            </ChiNhanhContextbyUser.Provider>
+
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            {idHoadonChosing !== '' ? (
-                <ChiNhanhContextbyUser.Provider
-                    value={allChiNhanh}></ChiNhanhContextbyUser.Provider>
-            ) : (
-                <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
-                    <Grid container justifyContent="space-between">
-                        <Grid item md="auto" display="flex" alignItems="center" gap="10px">
-                            <Typography
-                                color="#333233"
-                                variant="h1"
-                                fontSize="16px"
-                                fontWeight="700">
-                                Giao dịch thanh toán
-                            </Typography>
-                            <Box className="form-search">
-                                <TextField
-                                    size="small"
-                                    sx={{
-                                        backgroundColor: '#fff',
-                                        borderColor: '#CDC9CD!important'
-                                    }}
-                                    className="search-field"
-                                    variant="outlined"
-                                    type="search"
-                                    placeholder="Tìm kiếm"
-                                    InputProps={{
-                                        startAdornment: (
-                                            <IconButton type="button">
-                                                <img src={SearchIcon} />
-                                            </IconButton>
-                                        )
-                                    }}
-                                    onChange={(event) =>
-                                        setParamSearch((itemOlds: any) => {
-                                            return {
-                                                ...itemOlds,
-                                                textSearch: event.target.value
-                                            };
-                                        })
-                                    }
-                                    onKeyDown={(event) => {
-                                        handleKeyDownTextSearch(event);
-                                    }}
-                                />
-                            </Box>
-                        </Grid>
-                        <Grid item md={6}>
+
+            <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
+                <Grid container justifyContent="space-between">
+                    <Grid item md="auto" display="flex" alignItems="center" gap="10px">
+                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
+                            Giao dịch thanh toán
+                        </Typography>
+                        <Box className="form-search">
+                            <TextField
+                                size="small"
+                                sx={{
+                                    backgroundColor: '#fff',
+                                    borderColor: '#CDC9CD!important'
+                                }}
+                                className="search-field"
+                                variant="outlined"
+                                type="search"
+                                placeholder="Tìm kiếm"
+                                InputProps={{
+                                    startAdornment: (
+                                        <IconButton type="button">
+                                            <img src={SearchIcon} />
+                                        </IconButton>
+                                    )
+                                }}
+                                onChange={(event) =>
+                                    setParamSearch((itemOlds: any) => {
+                                        return {
+                                            ...itemOlds,
+                                            textSearch: event.target.value
+                                        };
+                                    })
+                                }
+                                onKeyDown={(event) => {
+                                    handleKeyDownTextSearch(event);
+                                }}
+                            />
+                        </Box>
+                    </Grid>
+                    <Grid item md={6}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                gap: '8px',
+                                justifyContent: 'end'
+                            }}>
                             <Box
                                 sx={{
                                     display: 'flex',
-                                    gap: '8px',
-                                    justifyContent: 'end'
-                                }}>
-                                <Box
-                                    sx={{
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none!important'
+                                    },
+                                    '& input': {
+                                        padding: '0!important'
+                                    },
+                                    border: '1px solid #CDC9CD',
+                                    padding: '7px 16px',
+                                    borderRadius: '4px',
+                                    transition: '.4s',
+                                    maxWidth: '300px',
+                                    '&:hover': {
+                                        borderColor: '#7C3367'
+                                    },
+                                    '& .MuiOutlinedInput-root': {
+                                        pr: '0'
+                                    },
+                                    '& button': {
+                                        // position: 'absolute',
+                                        // height: '100%',
+                                        // width: '100%',
+                                        // left: '0',
+                                        // top: '0',
+                                        // borderRadius: '0',
+                                        // bgcolor: 'unset!important',
+                                        // opacity: '0'
+                                        padding: '0',
+                                        margin: '0'
+                                    },
+                                    '&  .MuiOutlinedInput-root': {
                                         display: 'flex',
-                                        '& .MuiOutlinedInput-notchedOutline': {
-                                            border: 'none!important'
-                                        },
-                                        '& input': {
-                                            padding: '0!important'
-                                        },
-                                        border: '1px solid #CDC9CD',
-                                        padding: '7px 16px',
-                                        borderRadius: '4px',
-                                        transition: '.4s',
-                                        maxWidth: '300px',
-                                        '&:hover': {
-                                            borderColor: '#7C3367'
-                                        },
-                                        '& .MuiOutlinedInput-root': {
-                                            pr: '0'
-                                        },
-                                        '& button': {
-                                            // position: 'absolute',
-                                            // height: '100%',
-                                            // width: '100%',
-                                            // left: '0',
-                                            // top: '0',
-                                            // borderRadius: '0',
-                                            // bgcolor: 'unset!important',
-                                            // opacity: '0'
-                                            padding: '0',
-                                            margin: '0'
-                                        },
-                                        '&  .MuiOutlinedInput-root': {
-                                            display: 'flex',
-                                            flexDirection: 'row-reverse',
-                                            gap: '10px'
-                                        },
-                                        '& .date2 input': {
-                                            textAlign: 'right'
-                                        },
-                                        '& .MuiFormControl-root': {
-                                            width: 'unset'
-                                        }
-                                    }}>
-                                    <Box>
-                                        <DatePickerCustom
-                                            defaultVal={paramSearch.fromDate}
-                                            handleChangeDate={(newVal: string) =>
-                                                setParamSearch({ ...paramSearch, fromDate: newVal })
-                                            }
-                                        />
-                                    </Box>
-                                    <Box sx={{ textAlign: 'center', flexBasis: '30%' }}>-</Box>
-                                    <Box className="date2">
-                                        <DatePickerCustom
-                                            defaultVal={paramSearch.toDate}
-                                            handleChangeDate={(newVal: string) =>
-                                                setParamSearch({ ...paramSearch, toDate: newVal })
-                                            }
-                                        />
-                                    </Box>
-                                </Box>
-                                <Button
-                                    variant="outlined"
-                                    startIcon={<UploadIcon />}
-                                    sx={{
-                                        borderColor: '#CDC9CD!important',
-                                        bgcolor: '#fff!important',
-                                        color: '#333233',
-                                        fontSize: '14px'
-                                    }}
-                                    className="btn-outline-hover">
-                                    Xuất{' '}
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    startIcon={<FilterIcon />}
-                                    sx={{
-                                        bgcolor: '#7C3367!important',
-                                        color: '#fff',
-                                        fontSize: '14px'
-                                    }}
-                                    className="btn-container-hover">
-                                    Bộ lọc{' '}
-                                </Button>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    <Box marginTop="16px">
-                        <DataGrid
-                            disableRowSelectionOnClick
-                            autoHeight
-                            columns={columns}
-                            rows={pageDataHoaDon.items}
-                            hideFooter
-                            checkboxSelection
-                            onRowClick={handleOpenDetail}
-                            sx={{
-                                '& .MuiDataGrid-iconButtonContainer': {
-                                    display: 'none'
-                                },
-                                '& .MuiDataGrid-columnHeadersInner': {
-                                    backgroundColor: '#F2EBF0'
-                                },
-                                '& .MuiBox-root': {
-                                    maxWidth: '100%',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    fontSize: '12px'
-                                },
-                                '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
-                                    fontWeight: '700'
-                                },
-                                '& .MuiDataGrid-virtualScroller': {
-                                    bgcolor: '#fff'
-                                },
-                                '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                    outline: 'none '
-                                },
-                                '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                    color: '#7C3367'
-                                },
-                                '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                    fill: '#7C3367'
-                                },
-                                '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
-                                    {
-                                        fill: '#000'
+                                        flexDirection: 'row-reverse',
+                                        gap: '10px'
                                     },
-                                '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
-                                    {
-                                        fill: '#000'
+                                    '& .date2 input': {
+                                        textAlign: 'right'
                                     },
-                                '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                    color: '#7C3367!important'
-                                },
-                                '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                    {
-                                        outline: 'none'
-                                    },
-                                '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                    {
-                                        bgcolor: '#f2ebf0'
+                                    '& .MuiFormControl-root': {
+                                        width: 'unset'
                                     }
-                            }}
-                            localeText={TextTranslate}
-                        />
-                        <CustomTablePagination
-                            currentPage={paramSearch.currentPage ?? 1}
-                            rowPerPage={paramSearch.pageSize ?? 10}
-                            totalRecord={pageDataHoaDon.totalCount}
-                            totalPage={pageDataHoaDon.totalPage}
-                            handlePerPageChange={handlePerPageChange}
-                            handlePageChange={handleChangePage}
-                        />
-                    </Box>
+                                }}>
+                                <Box>
+                                    <DatePickerCustom
+                                        defaultVal={paramSearch.fromDate}
+                                        handleChangeDate={(newVal: string) =>
+                                            setParamSearch({ ...paramSearch, fromDate: newVal })
+                                        }
+                                    />
+                                </Box>
+                                <Box sx={{ textAlign: 'center', flexBasis: '30%' }}>-</Box>
+                                <Box className="date2">
+                                    <DatePickerCustom
+                                        defaultVal={paramSearch.toDate}
+                                        handleChangeDate={(newVal: string) =>
+                                            setParamSearch({ ...paramSearch, toDate: newVal })
+                                        }
+                                    />
+                                </Box>
+                            </Box>
+                            <Button
+                                variant="outlined"
+                                startIcon={<UploadIcon />}
+                                sx={{
+                                    borderColor: '#CDC9CD!important',
+                                    bgcolor: '#fff!important',
+                                    color: '#333233',
+                                    fontSize: '14px'
+                                }}
+                                className="btn-outline-hover">
+                                Xuất{' '}
+                            </Button>
+                            <Button
+                                variant="contained"
+                                startIcon={<FilterIcon />}
+                                sx={{
+                                    bgcolor: '#7C3367!important',
+                                    color: '#fff',
+                                    fontSize: '14px'
+                                }}
+                                className="btn-container-hover">
+                                Bộ lọc{' '}
+                            </Button>
+                        </Box>
+                    </Grid>
+                </Grid>
+                <Box marginTop="16px">
+                    <DataGrid
+                        disableRowSelectionOnClick
+                        autoHeight
+                        columns={columns}
+                        rows={pageDataHoaDon.items}
+                        hideFooter
+                        checkboxSelection
+                        onRowClick={(item: any) => choseRow(item)}
+                        sx={{
+                            '& .MuiDataGrid-iconButtonContainer': {
+                                display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeadersInner': {
+                                backgroundColor: '#F2EBF0'
+                            },
+                            '& .MuiBox-root': {
+                                maxWidth: '100%',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                fontSize: '12px'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
+                                fontWeight: '700'
+                            },
+                            '& .MuiDataGrid-virtualScroller': {
+                                bgcolor: '#fff'
+                            },
+                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                                outline: 'none '
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                color: '#7C3367'
+                            },
+                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                                fill: '#7C3367'
+                            },
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                                {
+                                    fill: '#000'
+                                },
+                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                color: '#7C3367!important'
+                            },
+                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                {
+                                    outline: 'none'
+                                },
+                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                {
+                                    bgcolor: '#f2ebf0'
+                                }
+                        }}
+                        localeText={TextTranslate}
+                    />
+                    <CustomTablePagination
+                        currentPage={paramSearch.currentPage ?? 1}
+                        rowPerPage={paramSearch.pageSize ?? 10}
+                        totalRecord={pageDataHoaDon.totalCount}
+                        totalPage={pageDataHoaDon.totalPage}
+                        handlePerPageChange={handlePerPageChange}
+                        handlePageChange={handleChangePage}
+                    />
                 </Box>
-            )}
+            </Box>
         </>
     );
 };

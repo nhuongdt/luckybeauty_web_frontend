@@ -199,7 +199,10 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 <DialogContent sx={{ overflow: 'visible' }}>
                     <Grid container columnSpacing={6}>
                         <Grid item xs={12} sm={5} md={5} lg={5}>
-                            <AutocompleteCustomer handleChoseItem={changeCustomer} />
+                            <AutocompleteCustomer
+                                handleChoseItem={changeCustomer}
+                                idChosed={newCus?.id}
+                            />
                             {isSave && errCheckIn && (
                                 <Typography
                                     variant="body2"
