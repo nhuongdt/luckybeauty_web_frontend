@@ -155,6 +155,7 @@ const TabDay: React.FC = () => {
             />
             <TableContainer
                 sx={{
+                    bgcolor: '#fff',
                     maxHeight: 'calc(95vh - 200px)',
                     '&::-webkit-scrollbar': {
                         width: '10px',
@@ -168,7 +169,7 @@ const TabDay: React.FC = () => {
                         borderRadius: '8px'
                     }
                 }}>
-                <Table sx={{ width: '100%', overflow: 'auto' }}>
+                <Table sx={{ width: '100%', overflow: 'auto' }} stickyHeader>
                     <TableHead>
                         <TableRow
                             sx={{ whiteSpace: 'nowrap', overflow: 'auto', overflowY: 'hidden' }}>

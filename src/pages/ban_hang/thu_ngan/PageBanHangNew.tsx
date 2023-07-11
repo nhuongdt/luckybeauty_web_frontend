@@ -866,7 +866,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                 onClick={() => choseNhomDichVu(nhomDV)}
                                                 sx={{
                                                     gap: '6px',
-                                                    padding: '10px',
+                                                    padding: '8px 10px ',
                                                     overflow: 'hidden',
                                                     backgroundColor: nhomDV.color,
                                                     borderRadius: '8px',
@@ -906,9 +906,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                             color: '#F1FAFF',
                                                             whiteSpace: 'nowrap',
                                                             width: '100%',
+                                                            fontSize: '14px',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
-                                                            fontWeight: '700',
+                                                            fontWeight: '600',
                                                             position: 'relative',
                                                             zIndex: '2'
                                                         }

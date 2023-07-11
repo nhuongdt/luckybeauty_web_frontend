@@ -23,6 +23,12 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
 
     useEffect(() => {
         getWeekDate(dateQuery);
+        const HTML = document.documentElement;
+        HTML.style.overflowY = 'hidden';
+
+        return () => {
+            HTML.style.overflowY = 'auto';
+        };
     }, []);
     const getWeekDate = (dateCurrent: Date) => {
         const firstDayOfWeek = new Date(
@@ -63,23 +69,38 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
             weekData[dateIndex] = [...weekData[dateIndex], item];
         }
     });
-
     return (
         <Box>
             <TableContainer
                 component={Paper}
-                sx={{ boxShadow: 'none', width: '100%', paddingRight: '40px' }}>
-                <Table sx={{ width: '100%' }}>
-                    <TableHead component="div" sx={{ width: '100%' }}>
+                sx={{
+                    boxShadow: 'none',
+                    width: '100%',
+                    paddingRight: '40px',
+                    maxHeight: innerHeight > 768 ? '70vh' : '64vh',
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                        width: '10px',
+                        height: '10px'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                        borderRadius: '16px'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'rgba(124, 51, 103, 0.2)',
+                        borderRadius: '8px'
+                    }
+                }}>
+                <Table sx={{ width: '100%' }} stickyHeader>
+                    <TableHead sx={{ width: '100%' }}>
                         <TableRow>
                             <TableCell
                                 sx={{
-                                    opacity: '0',
                                     pointerEvents: 'none',
                                     borderBottom: '0',
                                     width: '70px'
                                 }}>
-                                <Box>00:00</Box>
+                                <Box sx={{ opacity: '0' }}>00:00</Box>
                             </TableCell>
                             {weekDates.map((date, index) => (
                                 <TableCell
@@ -94,7 +115,6 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                         </TableRow>
                     </TableHead>
                     <TableBody
-                        component="div"
                         sx={{
                             '& .MuiTableCell-body:not(:first-child)': {
                                 borderLeft: '1px solid rgba(224, 224, 224, 1)'
@@ -156,25 +176,6 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                             10
                                                         );
 
-                                                        const formattedStartTime = format(
-                                                            new Date().setHours(
-                                                                startTimeHours,
-                                                                startTimeMinutes
-                                                            ),
-                                                            'HH:mm'
-                                                        );
-                                                        const formattedEndTime = format(
-                                                            new Date().setHours(
-                                                                endTimeHours,
-                                                                endTimeMinutes
-                                                            ),
-                                                            'HH:mm'
-                                                        );
-                                                        console.log(
-                                                            formattedStartTime +
-                                                                ' - ' +
-                                                                formattedEndTime
-                                                        );
                                                         const durationHours =
                                                             endTimeHours - startTimeHours;
                                                         const durationMinutes =
@@ -184,11 +185,8 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                             durationHours * 60 + durationMinutes;
                                                         const cellHeight = `${duration * 1.25}px`;
 
-                                                        const startMinutesFrom7AM =
-                                                            (startTimeHours - 7) * 60 +
-                                                            startTimeMinutes;
                                                         const topPosition = `${
-                                                            startMinutesFrom7AM * 1.25
+                                                            (startTimeMinutes / 60) * 75
                                                         }px`;
 
                                                         return (
