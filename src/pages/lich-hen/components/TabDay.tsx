@@ -17,6 +17,12 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AvatarDemo from '../../../images/xinh.png';
 import CreateOeEditLichLamViecModal from '../../employee/lich-lam-viec/create-or-edit-lich-lam-viec-modal';
 import Edit from '../../employee/lich-lam-viec/editNhanVien';
+import { ReactComponent as ClockBlue } from '../../../images/clock-blue.svg';
+import { ReactComponent as ClockPink } from '../../../images/clock-pink.svg';
+import { ReactComponent as ClockGreen } from '../../../images/clock-green.svg';
+import { ReactComponent as ClockOrange } from '../../../images/clock-orange.svg';
+import { ReactComponent as ClockViolet } from '../../../images/clock-violet.svg';
+
 const TabDay: React.FC = () => {
     const NhanViens = [
         {
@@ -25,12 +31,12 @@ const TabDay: React.FC = () => {
             avatar: AvatarDemo
         },
         {
-            name: 'Trang Nguyễn',
+            name: 'Trang nè',
             position: 'Ý tưởng',
             Avatar: AvatarDemo
         },
         {
-            name: 'Tài Đinh',
+            name: 'Đẹp trai',
             position: 'Kỹ thuật',
             avatar: AvatarDemo
         },
@@ -50,7 +56,7 @@ const TabDay: React.FC = () => {
             Avatar: AvatarDemo
         },
         {
-            name: 'Trang Nguyễn',
+            name: 'Anh Mạnh',
             position: 'Ý tưởng',
             Avatar: AvatarDemo
         },
@@ -60,37 +66,133 @@ const TabDay: React.FC = () => {
             Avatar: AvatarDemo
         },
         {
-            name: 'Trang Nguyễn',
+            name: 'Chị Nhì',
             position: 'Ý tưởng',
             Avatar: AvatarDemo
         },
         {
-            name: 'Trang Nguyễn',
+            name: 'Trang nè',
             position: 'Ý tưởng',
             Avatar: AvatarDemo
         }
     ];
+
+    const color = [
+        {
+            color: '#009EF7',
+            background: '#F1FAFF', //Đang phục vụ
+            icon: <ClockBlue />
+        },
+        {
+            color: '#F1416C',
+            background: '#FFF5F8', // Huỷ
+            icon: <ClockPink />
+        },
+        {
+            color: '#FF9900',
+            background: '#FFF8DD', //Chưa xác nhận
+            icon: <ClockOrange />
+        },
+        {
+            color: '#50CD89',
+            background: '#E8FFF3', //Hoàn thành
+            icon: <ClockGreen />
+        },
+        {
+            color: '#7C3367',
+            background: '#E5D6E1', // Đã xác nhận
+            icon: <ClockViolet />
+        }
+    ];
+
     const Clients = [
         {
             startTime: '10:00',
             endTime: '15:00',
-            name: 'Trang Nguyễn',
+            name: 'Đào Mai Chang',
+            nameEmployee: 'Trang Nguyễn',
             service: 'Cắt móng',
-            color: '#50CD89'
+            color: color[0].color,
+            background: color[0].background,
+            icon: color[0].icon
         },
         {
             startTime: '8:00',
             endTime: '13:00',
-            name: 'Gà trống',
+            name: 'Bùi Thị Duyên',
+            nameEmployee: 'Đẹp trai',
             service: 'Cắt móng',
-            color: '#009EF7'
+            color: color[1].color,
+            background: color[1].background,
+            icon: color[1].icon
         },
         {
-            startTime: '10:00',
-            endTime: '12:00',
-            name: 'Tài Đinh',
+            startTime: '7:20',
+            endTime: '20:00',
+            name: 'Nguyễn Hà Vy',
+            nameEmployee: 'Trang nè',
             service: 'Cắt móng',
-            color: '#50CD89'
+            color: color[2].color,
+            background: color[2].background,
+            icon: color[2].icon
+        },
+        {
+            startTime: '9:00',
+            endTime: '17:00',
+            name: 'Đinh Thị Huyền',
+            nameEmployee: 'Anh Mạnh',
+            service: 'Anh yêu em',
+            color: color[3].color,
+            background: color[3].background,
+            icon: color[3].icon
+        },
+        {
+            startTime: '7:55',
+            endTime: '8:33',
+            name: 'Nguyễn Hoàng Giang',
+            nameEmployee: 'Chị Nhì',
+            service: 'Abc',
+            color: color[4].color,
+            background: color[4].background,
+            icon: color[4].icon
+        },
+        {
+            startTime: '7:50',
+            endTime: '8:33',
+            nameEmployee: 'Tài Đinh',
+            service: 'Anh yêu em',
+            color: color[1].color,
+            background: color[1].background,
+            icon: color[1].icon
+        },
+        {
+            startTime: '7:50',
+            endTime: '8:33',
+            nameEmployee: 'Tài Đinh',
+            service: 'Anh yêu em',
+            color: color[4].color,
+            background: color[4].background,
+            icon: color[4].icon
+        },
+        {
+            startTime: '7:55',
+            name: 'Phan Thị Quỳnh',
+            endTime: '8:33',
+            nameEmployee: 'Tài Đinh',
+            service: 'Anh yêu em',
+            color: color[3].color,
+            background: color[3].background,
+            icon: color[3].icon
+        },
+        {
+            startTime: '7:25',
+            name: 'Phạm Thùy Anh',
+            endTime: '8:33',
+            nameEmployee: 'Tài Đinh',
+            service: 'Anh yêu em',
+            color: color[0].color,
+            background: color[0].background,
+            icon: color[0].icon
         }
     ];
     const NhanViens2 = NhanViens;
@@ -106,11 +208,11 @@ const TabDay: React.FC = () => {
     useEffect(() => {
         const htmlElement = document.querySelector('html');
         if (htmlElement) {
-            htmlElement.style.overflow = 'hidden';
+            htmlElement.style.overflowY = 'hidden';
         }
         return () => {
             if (htmlElement) {
-                htmlElement.style.overflow = 'unset';
+                htmlElement.style.overflowY = 'unset';
             }
         };
     }, []);
@@ -144,14 +246,20 @@ const TabDay: React.FC = () => {
     const handleCloseEditLich = () => {
         setOpenEditLich(false);
     };
-
+    const [openModal, setOpenModal] = useState(false);
+    const handleOpenModal = () => {
+        setOpenModal(true);
+    };
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
     return (
         <Box>
             <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
             <CreateOeEditLichLamViecModal
                 open={OpenEditLich}
                 onClose={handleCloseEditLich}
-                idNhanVien="hihi"
+                idNhanVien="demo"
             />
             <TableContainer
                 sx={{
@@ -169,8 +277,8 @@ const TabDay: React.FC = () => {
                         borderRadius: '8px'
                     }
                 }}>
-                <Table sx={{ width: '100%', overflow: 'auto' }} stickyHeader>
-                    <TableHead>
+                <Table sx={{ width: '100%', overflow: 'auto' }}>
+                    <TableHead sx={{ position: 'sticky', top: '0', zIndex: 5, bgcolor: '#fff' }}>
                         <TableRow
                             sx={{ whiteSpace: 'nowrap', overflow: 'auto', overflowY: 'hidden' }}>
                             <TableCell sx={{ opacity: '0', pointerEvent: 'none' }}>
@@ -270,10 +378,11 @@ const TabDay: React.FC = () => {
                                         {timeLabel}
                                     </TableCell>
                                     {NhanViens2.map((item1, index) => {
-                                        const matchingData = Clients.filter((item) => {
-                                            item.name === item1.name &&
-                                                item.startTime === timeLabel;
-                                        });
+                                        const matchingData = Clients.filter(
+                                            (item) =>
+                                                item.nameEmployee === item1.name &&
+                                                parseInt(item.startTime.split(':')[0], 10) === hour
+                                        );
 
                                         return (
                                             <TableCell
@@ -282,7 +391,20 @@ const TabDay: React.FC = () => {
                                                     padding: '4px',
                                                     position: 'relative'
                                                 }}>
-                                                <Box>
+                                                <Box
+                                                    sx={{
+                                                        '&::after': {
+                                                            content: "''",
+                                                            position: 'absolute',
+                                                            top: '50%',
+                                                            left: '0',
+                                                            transform: 'translateY(-50%)',
+                                                            width: '100%',
+                                                            pointerEvent: 'none',
+                                                            zIndex: '0',
+                                                            borderTop: '1px dashed #CDC9CD'
+                                                        }
+                                                    }}>
                                                     {matchingData.map((item, itemIndex: number) => {
                                                         const startTimeHours = parseInt(
                                                             item.startTime.split(':')[0],
@@ -310,17 +432,14 @@ const TabDay: React.FC = () => {
                                                             durationHours * 60 + durationMinutes;
                                                         const cellHeight = `${duration * 1.25}px`;
 
-                                                        const startMinutesFrom7AM =
-                                                            (startTimeHours - 7) * 60 +
-                                                            startTimeMinutes;
                                                         const topPosition = `${
-                                                            startMinutesFrom7AM * 1.25
+                                                            (startTimeMinutes / 60) * 75.16
                                                         }px`;
 
                                                         return (
                                                             <Box
                                                                 key={itemIndex}
-                                                                bgcolor={item.color + '1a'}
+                                                                bgcolor={item.background}
                                                                 position="absolute"
                                                                 height={cellHeight}
                                                                 whiteSpace="nowrap"
@@ -338,7 +457,11 @@ const TabDay: React.FC = () => {
                                                                         matchingData.length) *
                                                                     100
                                                                 }%`}>
-                                                                <Box>
+                                                                <Box
+                                                                    sx={{
+                                                                        display: 'flex',
+                                                                        gap: '6px'
+                                                                    }}>
                                                                     <Typography
                                                                         variant="body1"
                                                                         color={item.color}
@@ -347,6 +470,7 @@ const TabDay: React.FC = () => {
                                                                             ' - ' +
                                                                             item.endTime}
                                                                     </Typography>
+                                                                    {item.icon}
                                                                 </Box>
                                                                 <Typography
                                                                     variant="body1"

@@ -157,7 +157,20 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                     position: 'relative',
                                                     width: `${100 / weekDates2.length}%`
                                                 }}>
-                                                <Box>
+                                                <Box
+                                                    sx={{
+                                                        '&::after': {
+                                                            content: "''",
+                                                            position: 'absolute',
+                                                            top: '50%',
+                                                            left: '0',
+                                                            transform: 'translateY(-50%)',
+                                                            width: '100%',
+                                                            pointerEvent: 'none',
+                                                            zIndex: '0',
+                                                            borderTop: '1px dashed #CDC9CD'
+                                                        }
+                                                    }}>
                                                     {matchingData.map((item, itemIndex) => {
                                                         const startTimeHours = parseInt(
                                                             item.startTime.split(':')[0],
@@ -186,7 +199,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                         const cellHeight = `${duration * 1.25}px`;
 
                                                         const topPosition = `${
-                                                            (startTimeMinutes / 60) * 75
+                                                            (startTimeMinutes / 60) * 75.16
                                                         }px`;
 
                                                         return (

@@ -924,7 +924,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                 key={index}
                                                 sx={{
                                                     gap: '6px',
-                                                    padding: '10px',
+                                                    padding: '8px 10px',
                                                     overflow: 'hidden',
                                                     bgcolor: nhomHH.color,
                                                     borderRadius: '8px',
@@ -966,7 +966,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                             color: '#F1FAFF',
                                                             whiteSpace: 'nowrap',
                                                             width: '100%',
-                                                            fontWeight: '700',
+                                                            fontWeight: '600',
+                                                            fontSize: '14px',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
                                                             position: 'relative',
