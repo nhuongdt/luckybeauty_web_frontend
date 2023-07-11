@@ -648,13 +648,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
     const handleNextClick = () => {
         if (containerRef.current) {
-            containerRef.current.scrollLeft += 100;
+            containerRef.current.scrollLeft += 150;
         }
     };
 
     const handlePrevClick = () => {
         if (containerRef.current) {
-            containerRef.current.scrollLeft -= 100;
+            containerRef.current.scrollLeft -= 150;
         }
     };
     const handleScroll = () => {
@@ -670,44 +670,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         }
     };
 
-    // nhóm hàng hóa cũng tương tự nhóm dịch vụ
-    const containerRef2 = useRef<HTMLUListElement>(null);
-    const [isScrollable2, setIsScrollable2] = useState<boolean>(false);
-
-    const handleNextClick2 = () => {
-        if (containerRef2.current) {
-            containerRef2.current.scrollLeft += 100;
-        }
-    };
-
-    const handlePrevClick2 = () => {
-        if (containerRef2.current) {
-            containerRef2.current.scrollLeft -= 100;
-        }
-    };
-    const handleScroll2 = () => {
-        if (containerRef2.current) {
-            setIsScrollable2(containerRef2.current.scrollWidth > containerRef2.current.clientWidth);
-        }
-    };
-    const handleWheel2 = (event: React.WheelEvent<HTMLUListElement>) => {
-        if (containerRef2.current) {
-            containerRef2.current.scrollLeft += event.deltaY;
-        }
-    };
-
-    useEffect(() => {
-        const containerElement2 = containerRef2.current;
-        if (containerElement2) {
-            handleScroll2();
-
-            const resizeObserver2 = new ResizeObserver(handleScroll2);
-            resizeObserver2.observe(containerElement2);
-            return () => {
-                resizeObserver2.disconnect();
-            };
-        }
-    }, [CoditionLayout]);
     useEffect(() => {
         const containerElement = containerRef.current;
         if (containerElement) {
@@ -765,7 +727,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                         bgcolor="#F8F8F8">
                         <Grid
                             item
-                            md={CoditionLayout ? 12 : 5}
+                            md={CoditionLayout ? 12 : 4}
                             sx={{
                                 paddingLeft: '0!important',
                                 display: 'flex',
@@ -956,81 +918,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                 </ListItemText>
                                             </ListItem>
                                         ))}
-                                    </List>
-                                </Box>
-                                <Box sx={{ marginTop: '16px' }}>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            alignItems: 'center'
-                                        }}>
-                                        <Typography
-                                            variant="h3"
-                                            fontSize="18px"
-                                            color="#4C4B4C"
-                                            fontWeight="700"
-                                            onClick={() => choseLoaiHang(1)}>
-                                            Sản phẩm
-                                        </Typography>
-                                        {isScrollable2 && (
-                                            <Box
-                                                sx={{
-                                                    '& button': {
-                                                        minWidth: 'unset',
-                                                        bgcolor: 'unset!important'
-                                                    }
-                                                }}>
-                                                <Button
-                                                    variant="text"
-                                                    onClick={handlePrevClick2}
-                                                    sx={{
-                                                        '&:hover svg': {
-                                                            color: '#7C3367'
-                                                        }
-                                                    }}>
-                                                    <ArrowBackIosIcon
-                                                        sx={{
-                                                            color: '#CBADC2'
-                                                        }}
-                                                    />
-                                                </Button>
-                                                <Button
-                                                    variant="text"
-                                                    onClick={handleNextClick2}
-                                                    sx={{
-                                                        '&:hover svg': {
-                                                            color: '#7C3367'
-                                                        }
-                                                    }}>
-                                                    <ArrowForwardIosIcon
-                                                        sx={{
-                                                            color: '#CBADC2'
-                                                        }}
-                                                    />
-                                                </Button>
-                                            </Box>
-                                        )}
-                                    </Box>
-                                    <List
-                                        onScroll={handleScroll2}
-                                        onWheel={handleWheel2}
-                                        ref={containerRef2}
-                                        sx={{
-                                            display: CoditionLayout ? 'flex' : 'block',
-                                            columnGap: '12px',
-                                            flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
-                                            overflowX: 'auto',
-                                            scrollBehavior: 'smooth',
-                                            '&::-webkit-scrollbar': {
-                                                width: '7px',
-                                                height: '7px'
-                                            },
-                                            '&::-webkit-scrollbar-thumb:horizontal': {
-                                                bgcolor: 'rgba(0,0,0,0.1)',
-                                                borderRadius: '8px'
-                                            }
-                                        }}>
                                         {nhomHangHoa.map((nhomHH, index) => (
                                             <ListItem
                                                 key={index}
@@ -1094,7 +981,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item md={CoditionLayout ? 12 : 7} sx={{ marginTop: '-58px' }}>
+                        <Grid item md={CoditionLayout ? 12 : 8} sx={{ marginTop: '-58px' }}>
                             <Box display="flex" flexDirection="column">
                                 {!CoditionLayout && (
                                     <TextField
@@ -1137,7 +1024,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         borderRadius: '8px',
                                         maxHeight:
                                             CoditionLayout && innerHeight > 600
-                                                ? '56vh'
+                                                ? '74vh'
                                                 : CoditionLayout && innerHeight < 605
                                                 ? '32vh'
                                                 : '88.5vh',

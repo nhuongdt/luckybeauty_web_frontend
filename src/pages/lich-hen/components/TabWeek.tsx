@@ -156,13 +156,6 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                             10
                                                         );
 
-                                                        // console.log(
-                                                        //     endTimeHours +
-                                                        //         'giờ' +
-                                                        //         ' , ' +
-                                                        //         endTimeMinutes +
-                                                        //         'phút'
-                                                        // );
                                                         const formattedStartTime = format(
                                                             new Date().setHours(
                                                                 startTimeHours,

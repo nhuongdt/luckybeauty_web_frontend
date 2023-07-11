@@ -110,6 +110,7 @@ const LichHen: React.FC = () => {
     const handleChangeTab = (event: SelectChangeEvent<string>) => {
         setTabLichHen(event.target.value as string);
     };
+    console.log(data);
     return (
         <Box
             sx={{
