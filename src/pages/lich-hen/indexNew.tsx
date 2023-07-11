@@ -23,6 +23,7 @@ import { ReactComponent as ShapeIcon } from '../../images/Shape.svg';
 import { ReactComponent as ShapeIcon2 } from '../../images/Shape2.svg';
 import TabDay from './components/TabDay';
 import TabWeek from './components/TabWeek';
+import TabMonth from './components/TabMonth';
 import { BookingGetAllItemDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
 import datLichService from '../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
@@ -280,6 +281,8 @@ const LichHen: React.FC = () => {
                 <TabWeek dateQuery={selectedDate} data={data} />
             ) : TabLichHen === 'Ngày' ? (
                 <TabDay />
+            ) : TabLichHen === 'Tháng' ? (
+                <TabMonth />
             ) : undefined}
         </Box>
     );
