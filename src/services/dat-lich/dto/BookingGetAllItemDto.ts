@@ -7,4 +7,5 @@ export interface BookingGetAllItemDto {
     services: string;
     dayOfWeek: string;
     color: string;
+    bookingDate: string;
 }

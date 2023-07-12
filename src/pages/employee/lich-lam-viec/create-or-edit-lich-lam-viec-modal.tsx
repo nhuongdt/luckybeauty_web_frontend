@@ -54,8 +54,10 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
     }, []);
     const getSuggestCaLamViec = async () => {
         const result = await SuggestService.SuggestCaLamViec();
-        setIdCaLamViec(result[0].id);
-        setSuggestCaLamViec(result);
+        if (result) {
+            setIdCaLamViec(result[0].id);
+            setSuggestCaLamViec(result);
+        }
     };
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDate(event.target.value);
