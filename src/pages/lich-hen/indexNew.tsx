@@ -13,7 +13,8 @@ import {
     Select,
     SelectChangeEvent,
     MenuItem,
-    ButtonGroup
+    ButtonGroup,
+    Switch
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -109,9 +110,29 @@ const LichHen: React.FC = () => {
     };
     const [TabLichHen, setTabLichHen] = useState('Tuần');
     const handleChangeTab = (event: SelectChangeEvent<string>) => {
-        setTabLichHen(event.target.value as string);
-    };
+        const newValue = event.target.value as string;
+        setTabLichHen(newValue);
 
+        if (newValue === 'Tuần') {
+            Cookies.set('Tab-lich-hen', 'Tuần', { expires: 7 });
+        } else if (newValue === 'Ngày') {
+            Cookies.set('Tab-lich-hen', 'Ngày');
+        } else if (newValue === 'Tháng') {
+            Cookies.set('Tab-lich-hen', 'Tháng');
+        }
+    };
+    useEffect(() => {
+        const CheckTab = Cookies.get('Tab-lich-hen');
+        if (CheckTab === 'Tuần') {
+            setTabLichHen('Tuần');
+        } else if (CheckTab === 'Ngày') {
+            setTabLichHen('Ngày');
+        } else if (CheckTab === 'Tháng') {
+            setTabLichHen('Tháng');
+        } else {
+            undefined;
+        }
+    }, []);
     return (
         <Box
             sx={{

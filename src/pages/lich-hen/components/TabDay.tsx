@@ -246,13 +246,7 @@ const TabDay: React.FC = () => {
     const handleCloseEditLich = () => {
         setOpenEditLich(false);
     };
-    const [openModal, setOpenModal] = useState(false);
-    const handleOpenModal = () => {
-        setOpenModal(true);
-    };
-    const handleCloseModal = () => {
-        setOpenModal(false);
-    };
+
     return (
         <Box>
             <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
