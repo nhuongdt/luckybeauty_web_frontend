@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Box,
     Grid,
     Typography,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     Button,
     Select,
     SelectChangeEvent,
@@ -26,55 +20,82 @@ import TabDay from './components/TabDay';
 import TabWeek from './components/TabWeek';
 import TabMonth from './components/TabMonth';
 import { BookingGetAllItemDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
-import datLichService from '../../services/dat-lich/datLichService';
-import Cookies from 'js-cookie';
+import { HubConnectionBuilder } from '@microsoft/signalr';
+import bookingStore from '../../stores/bookingStore';
+import AppConsts from '../../lib/appconst';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 const LichHen: React.FC = () => {
+    const chinhanh = useContext(ChiNhanhContext);
+    useEffect(() => {
+        const connection = new HubConnectionBuilder()
+            .withUrl(AppConsts.remoteServiceBaseUrl + 'bookingHub')
+            .withAutomaticReconnect()
+            .build();
+
+        connection
+            .start()
+            .then(() => {
+                console.log('SignalR connected');
+            })
+            .catch((error) => {
+                console.error('SignalR connection error: ', error);
+            });
+
+        connection.on('BookingDataUpdated', (data: BookingGetAllItemDto[]) => {
+            // Handle received data
+            console.log(data);
+            setData(data);
+        });
+
+        return () => {
+            connection.stop();
+        };
+    }, []);
+
     const [dateView, setDateView] = useState('');
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [data, setData] = useState<BookingGetAllItemDto[]>([]);
-    const getData = async (curentDate: Date) => {
-        const data = await datLichService.getAllBooking({
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-            date: curentDate
-        });
-        setData(data);
+    const getData = async () => {
+        await bookingStore.getData();
+        setData(bookingStore.listBooking);
     };
-    const handlePreviousWeek = () => {
-        const datePreviousWeek = new Date(selectedDate);
-        if (TabLichHen === 'Tuần') {
+    const handlePreviousWeek = async () => {
+        const datePreviousWeek = new Date(bookingStore.selectedDate);
+        if (bookingStore.typeView === 'week') {
             datePreviousWeek.setDate(datePreviousWeek.getDate() - 7);
-        } else if (TabLichHen === 'Tháng') {
-            datePreviousWeek.setDate(datePreviousWeek.getMonth() - 1);
+        } else if (bookingStore.typeView === 'month') {
+            datePreviousWeek.setMonth(datePreviousWeek.getMonth() - 1);
         } else {
             datePreviousWeek.setDate(datePreviousWeek.getDate() - 1);
         }
+        await bookingStore.onChangeDate(datePreviousWeek);
         setSelectedDate(datePreviousWeek);
         getCurrentDateInVietnamese(datePreviousWeek);
-        getData(datePreviousWeek);
     };
-    const handleNextWeek = () => {
-        const dateNextWeek = new Date(selectedDate);
-        if (TabLichHen === 'Tuần') {
+
+    const handleNextWeek = async () => {
+        const dateNextWeek = new Date(bookingStore.selectedDate);
+        if (bookingStore.typeView === 'week') {
             dateNextWeek.setDate(dateNextWeek.getDate() + 7);
-        } else if (TabLichHen === 'Tháng') {
-            dateNextWeek.setDate(dateNextWeek.getMonth() + 1);
+        } else if (bookingStore.typeView === 'month') {
+            dateNextWeek.setMonth(dateNextWeek.getMonth() + 1);
         } else {
             dateNextWeek.setDate(dateNextWeek.getDate() + 1);
         }
+        await bookingStore.onChangeDate(dateNextWeek);
         setSelectedDate(dateNextWeek);
         getCurrentDateInVietnamese(dateNextWeek);
-        getData(dateNextWeek);
     };
-    const toDayClick = () => {
+    const toDayClick = async () => {
         const newDate = new Date();
+        await bookingStore.onChangeDate(newDate);
         setSelectedDate(newDate);
         getCurrentDateInVietnamese(newDate);
-        getData(newDate);
     };
     useEffect(() => {
         getCurrentDateInVietnamese(new Date());
-        getData(new Date());
-    }, []);
+        getData();
+    }, [chinhanh.id]);
 
     const getCurrentDateInVietnamese = (date: Date) => {
         const daysOfWeek = [
@@ -108,10 +129,19 @@ const LichHen: React.FC = () => {
         const formattedDate = `${dayOfWeek},  ${dayOfMonth} ${month}, năm ${year}`;
         setDateView(formattedDate);
     };
+<<<<<<< HEAD
     const [TabLichHen, setTabLichHen] = useState('Tuần');
     const handleChangeTab = (event: SelectChangeEvent<string>) => {
         const newValue = event.target.value as string;
         setTabLichHen(newValue);
+=======
+    const [TabLichHen, setTabLichHen] = useState('week');
+
+    const handleChangeTab = async (event: SelectChangeEvent<string>) => {
+        setTabLichHen(event.target.value as string);
+        await bookingStore.onChangeTypeView(event.target.value as string);
+    };
+>>>>>>> e0128d6b0705f6dc3664d3b33cd323c831ee80de
 
         if (newValue === 'Tuần') {
             Cookies.set('Tab-lich-hen', 'Tuần', { expires: 7 });
@@ -274,15 +304,17 @@ const LichHen: React.FC = () => {
                     <Select
                         size="small"
                         value={TabLichHen}
-                        onChange={handleChangeTab}
+                        onChange={(e) => {
+                            handleChangeTab(e);
+                        }}
                         sx={{
                             bgcolor: '#fff',
                             '& .MuiSelect-select': { paddingY: '5.5px' },
                             fontSize: '14px'
                         }}>
-                        <MenuItem value="Tuần">Tuần</MenuItem>
-                        <MenuItem value="Ngày">Ngày</MenuItem>
-                        <MenuItem value="Tháng">Tháng</MenuItem>
+                        <MenuItem value="week">Tuần</MenuItem>
+                        <MenuItem value="day">Ngày</MenuItem>
+                        <MenuItem value="month">Tháng</MenuItem>
                     </Select>
                     <Select
                         defaultValue="Dịch vụ"
@@ -298,9 +330,9 @@ const LichHen: React.FC = () => {
                     </Select>
                 </Grid>
             </Grid>
-            {TabLichHen === 'Tuần' ? (
+            {TabLichHen === 'week' ? (
                 <TabWeek dateQuery={selectedDate} data={data} />
-            ) : TabLichHen === 'Ngày' ? (
+            ) : TabLichHen === 'day' ? (
                 <TabDay />
             ) : TabLichHen === 'Tháng' ? (
                 <TabMonth />

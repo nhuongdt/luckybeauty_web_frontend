@@ -33,13 +33,14 @@ import './employee.css';
 import { enqueueSnackbar } from 'notistack';
 import nhanVienStore from '../../stores/nhanVienStore';
 import { Cookie } from '@mui/icons-material';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { FileUpload } from '../../services/dto/FileUpload';
 import fileDowloadService from '../../services/file-dowload.service';
 import uploadFileService from '../../services/uploadFileService';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import ImportExcel from '../../components/ImportComponent';
 import abpCustom from '../../components/abp-custom';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 class EmployeeScreen extends React.Component {
     static contextType = ChiNhanhContext;
     state = {
@@ -60,12 +61,23 @@ class EmployeeScreen extends React.Component {
         currentPage: 1,
         totalPage: 1,
         totalCount: 0,
-        isShowConfirmDelete: false
+        isShowConfirmDelete: false,
+        idChiNhanh: Cookies.get('IdChiNhanh')
     };
     async componentDidMount() {
         await this.getData();
     }
+    componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
+        const chiNhanhContext = this.context as SuggestChiNhanhDto;
 
+        if (this.state.idChiNhanh !== chiNhanhContext.id) {
+            // ChiNhanhContext has changed, update the component
+            this.setState({
+                idChiNhanh: chiNhanhContext.id
+            });
+            this.getData();
+        }
+    }
     resetData() {
         this.setState({
             idNhanSu: '',
@@ -81,21 +93,24 @@ class EmployeeScreen extends React.Component {
         });
     }
     async getData() {
+        const chiNhanhContext = this.context as SuggestChiNhanhDto;
         const suggestChucVus = await SuggestService.SuggestChucVu();
         this.setState({
-            suggestChucVu: suggestChucVus
+            suggestChucVu: suggestChucVus,
+            idChiNhanh: chiNhanhContext.id
         });
         await this.getListNhanVien();
     }
     async getListNhanVien() {
         const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
+        const chiNhanhContext = this.context as SuggestChiNhanhDto;
         await NhanVienStore.getAll({
             maxResultCount: maxResultCount,
             skipCount: currentPage,
             filter: filter,
             sortBy: sortBy,
             sortType: sortType,
-            idChiNhanh: Cookies.get('IdChiNhanh')
+            idChiNhanh: chiNhanhContext.id
         });
         this.setState({
             totalPage: Math.ceil(NhanVienStore.listNhanVien.totalCount / maxResultCount),
@@ -532,7 +547,6 @@ class EmployeeScreen extends React.Component {
     ];
     public render() {
         const { listNhanVien } = NhanVienStore;
-
         return (
             <Box
                 className="list-nhan-vien"

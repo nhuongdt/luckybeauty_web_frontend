@@ -1,4 +1,6 @@
 export interface PagedBookingResultRequestDto {
     idChiNhanh: string;
-    date: Date;
+    dateSelected: Date;
+    typeView: string;
+    idNhanVien?: string;
 }

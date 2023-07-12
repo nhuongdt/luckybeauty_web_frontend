@@ -33,8 +33,10 @@ import { observer } from 'mobx-react';
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-
+import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNhanhDto';
 class Calendar extends Component {
+    static contextType = ChiNhanhContext;
     state = {
         weekDates: [],
         data: [] as LichLamViecNhanVienDto[],
@@ -47,6 +49,7 @@ class Calendar extends Component {
         suggestNhanVien: [] as SuggestNhanSuDto[],
         idNhanVien: '',
         idLichLamViec: '',
+        idChiNhanh: Cookies.get('IdChiNhanh'),
         totalPage: 0,
         totalCount: 0,
         anchorEl: null,
@@ -64,7 +67,16 @@ class Calendar extends Component {
         this.getData();
         this.getSuggestNhanVien();
     }
-
+    componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
+        const chiNhanhContext = this.context as SuggestChiNhanhDto;
+        if (this.state.idChiNhanh !== chiNhanhContext.id) {
+            // ChiNhanhContext has changed, update the component
+            this.setState({
+                idChiNhanh: chiNhanhContext.id
+            });
+            this.getData();
+        }
+    }
     getSuggestNhanVien = async () => {
         const result = await SuggestService.SuggestNhanSu();
         this.setState({ suggestNhanVien: result });
@@ -87,10 +99,11 @@ class Calendar extends Component {
     };
 
     getData = async () => {
+        const chiNhanhContext = this.context as SuggestChiNhanhDto;
         await lichLamViecStore.getLichLamViecNhanVienWeek({
             dateFrom: this.state.dateFrom,
             dateTo: this.state.dateFrom,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            idChiNhanh: chiNhanhContext.id,
             keyword: this.state.filter,
             skipCount: this.state.skipCount,
             maxResultCount: this.state.maxResultCount,
@@ -100,7 +113,8 @@ class Calendar extends Component {
         this.setState({
             data: lichLamViecStore.listLichLamViec.items,
             totalPage: lichLamViecStore.listLichLamViec.totalPage,
-            totalCount: lichLamViecStore.listLichLamViec.totalCount
+            totalCount: lichLamViecStore.listLichLamViec.totalCount,
+            idChiNhanh: chiNhanhContext.id
         });
     };
 
