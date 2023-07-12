@@ -98,7 +98,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             laNhomHangHoa: true
         })
     );
-    const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({}));
+    const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa | null>(null);
 
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
@@ -119,19 +119,25 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             if (nhom.length > 0) {
                 setNhomGoc(nhom[0]);
             } else {
-                setNhomGoc(new ModelNhomHangHoa({}));
+                setNhomGoc(null);
             }
         } else {
             setGroupProduct(new ModelNhomHangHoa({ color: '#FF979C' }));
-            setNhomGoc(new ModelNhomHangHoa({}));
+            setNhomGoc(null);
         }
     };
 
     const handleChangeNhomGoc = (item: any) => {
+        if (item == null) {
+            setNhomGoc(null);
+        } else {
+            setNhomGoc(
+                new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang })
+            );
+        }
         setGroupProduct((old: any) => {
             return { ...old, idParent: item?.id ?? null };
         });
-        setNhomGoc(new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang }));
     };
 
     useEffect(() => {
@@ -143,7 +149,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         setWasClickSave(false);
         const arr = [...dataNhomHang];
         setDataNhomHangFilter(arr.filter((x: any) => x.id !== null && x.id !== ''));
-        console.log('trigger dataNhom ', arr);
     }, [trigger, dataNhomHang]); // assign again dataNhomHang after save
 
     function changeColor(colorNew: string) {
@@ -188,7 +193,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             });
         } else {
             GroupProductService.UpdateNhomHangHoa(groupProduct).then((data) => {
-                objNew.id = data.id;
                 handleSave(objNew);
             });
         }
