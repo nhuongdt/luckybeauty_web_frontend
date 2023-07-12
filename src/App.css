@@ -209,6 +209,13 @@ body .font-normal {
     font-size: 14px;
 }
 
+
+/* text input */
+
+.MuiOutlinedInput-input {
+    font-size: 14px!important;
+}
+
 .inputEdit .MuiOutlinedInput-root {
     border-radius: 8px;
 }
