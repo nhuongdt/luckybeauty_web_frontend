@@ -22,8 +22,12 @@ class Exception404 extends React.Component<any, any> {
                         <h1 className={'errorTitle'}>404</h1>
                     </Grid>
                     <Grid item>
+                        <h4 className={'errorDescription'}>Không tìm thấy trang</h4>
+                    </Grid>
+                    <Grid item>
                         <h5 className={'errorDescription'}>
-                            Sorry, the page you visited does not exist
+                            Trang bạn muốn truy cập có thể đã bị xóa, đổi tên hoặc địa chỉ của trang
+                            không đúng. Xin vui lòng thử lại.
                         </h5>
                     </Grid>
                     <Grid item textAlign={'center'}>
@@ -33,7 +37,7 @@ class Exception404 extends React.Component<any, any> {
                                 to={{
                                     pathname: '/'
                                 }}>
-                                Back to Home
+                                Về trang chủ
                             </Link>
                         </Button>
                     </Grid>

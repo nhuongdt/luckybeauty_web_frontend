@@ -23,7 +23,7 @@ class Exception401 extends React.Component<any, any> {
                     </Grid>
                     <Grid item>
                         <h5 className={'errorDescription'}>
-                            Sorry, you don`t have access to this page
+                            Xin lỗi, Bạn không có quyền truy cập trang này!
                         </h5>
                     </Grid>
                     <Grid item textAlign={'center'}>
@@ -33,7 +33,7 @@ class Exception401 extends React.Component<any, any> {
                                 to={{
                                     pathname: '/'
                                 }}>
-                                Back to Home
+                                Về trang chủ
                             </Link>
                         </Button>
                     </Grid>
