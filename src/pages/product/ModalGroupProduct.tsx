@@ -33,7 +33,6 @@ export const GridColor = ({ handleChoseColor }: any) => {
         '#FF7597',
         '#FF5677',
         '#DCAFFF',
-        //
         '#7F75BE',
         '#5654A8',
         '#78CEFF',
@@ -94,7 +93,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [groupProduct, setGroupProduct] = useState<ModelNhomHangHoa>(
         new ModelNhomHangHoa({
             id: AppConsts.guidEmpty,
-            color: 'red',
+            color: '#FF979C',
             tenNhomHang: '',
             laNhomHangHoa: true
         })
@@ -123,7 +122,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 setNhomGoc(new ModelNhomHangHoa({}));
             }
         } else {
-            setGroupProduct(new ModelNhomHangHoa({ color: 'red' }));
+            setGroupProduct(new ModelNhomHangHoa({ color: '#FF979C' }));
             setNhomGoc(new ModelNhomHangHoa({}));
         }
     };
@@ -273,10 +272,10 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </FormGroup>
                         </Grid> */}
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Typography variant="body2">
+                            <span className="modal-lable">
                                 Tên {groupProduct.sLoaiNhomHang}{' '}
                                 <span style={{ color: 'red' }}>*</span>
-                            </Typography>
+                            </span>
 
                             <TextField
                                 variant="outlined"
@@ -298,7 +297,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Typography variant="body2">Nhóm gốc</Typography>
+                            <span className="modal-lable">Nhóm gốc</span>
 
                             <Autocomplete
                                 size="small"
@@ -317,7 +316,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             />
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Typography variant="body2">Màu sắc</Typography>
+                            <span className="modal-lable">Màu sắc</span>
                             <TextField
                                 size="small"
                                 onClick={() => setColorToggle(!colorToggle)}
@@ -336,8 +335,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             {colorToggle && <GridColor handleChoseColor={changeColor} />}
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Typography variant="body2">Mô tả</Typography>
-
+                            <span className="modal-lable">Mô tả</span>
                             <TextField
                                 variant="outlined"
                                 fullWidth
@@ -354,15 +352,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            color: '#965C85'
-                        }}
-                        onClick={() => setIsShow(false)}
-                        className="btn-outline-hover">
-                        Hủy
-                    </Button>
                     <Button
                         variant="contained"
                         sx={{ bgcolor: 'red', display: isNew ? 'none' : '' }}
@@ -385,6 +374,15 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         onClick={saveNhomHangHoa}
                         className="btn-container-hover">
                         Lưu
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            color: '#965C85'
+                        }}
+                        onClick={() => setIsShow(false)}
+                        className="btn-outline-hover">
+                        Hủy
                     </Button>
                 </DialogActions>
             </Dialog>

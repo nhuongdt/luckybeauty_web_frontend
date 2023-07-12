@@ -191,7 +191,6 @@ export default function PageProductNew() {
 
     function saveProduct(objNew: ModelHangHoaDto, type = 1) {
         // 1.insert, 2.update, 3.delete, 4.khoiphuc
-        console.log('saveProduct ', objNew);
         const sLoai = objNew.tenLoaiHangHoa?.toLocaleLowerCase();
         switch (type) {
             case 1:
