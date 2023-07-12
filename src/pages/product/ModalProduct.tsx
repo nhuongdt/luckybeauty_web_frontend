@@ -226,10 +226,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 <DialogContent>
                     <Grid container>
                         <Grid item xs={12} md={8} sm={8} lg={8}>
-                            <Box sx={{ height: 50 }}>
+                            <Box sx={{ height: 50 }} style={{ display: 'none' }}>
                                 <Typography>Thông tin chi tiết</Typography>
                             </Box>
-                            <Grid item sx={{ pb: 2 }}>
+                            <Grid item sx={{ pb: 2 }} style={{ display: 'none' }}>
                                 <span className="modal-lable">
                                     Mã {product.tenLoaiHangHoa?.toLocaleLowerCase()}
                                 </span>
@@ -306,9 +306,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     )}
                                 />
                             </Grid>
-                            <Grid container sx={{ pb: 2 }}>
-                                <Grid item xs={12} sm={6} md={6} lg={6} sx={{ pr: 4 }}>
-                                    <Typography variant="body2">Giá</Typography>
+                            <Grid container sx={{ pb: 2 }} spacing={2}>
+                                <Grid item xs={12} sm={6} md={6} lg={6}>
+                                    <span className="modal-lable">Giá bán</span>
                                     <NumericFormat
                                         size="small"
                                         fullWidth
@@ -319,9 +319,14 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         onChange={(event) => editGiaBan(event)}
                                     />
                                 </Grid>
-                                <Grid item xs={12} sm={6} md={6} lg={6} sx={{ PluginArray: 4 }}>
-                                    <Typography variant="body2">Số phút</Typography>
-
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={6}
+                                    md={6}
+                                    lg={6}
+                                    pt={{ xs: 2, md: 0, lg: 0, sm: 0 }}>
+                                    <span className="modal-lable">Số phút</span>
                                     <TextField
                                         variant="outlined"
                                         size="small"
@@ -342,7 +347,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </Grid>
 
                             <Grid item sx={{ pb: 2 }}>
-                                <Typography variant="body2">Ghi chú</Typography>
+                                <span className="modal-lable">Ghi chú</span>
                                 <TextField
                                     variant="outlined"
                                     fullWidth
@@ -359,7 +364,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     }
                                 />
                             </Grid>
-                            <Grid item>
+                            <Grid item style={{ display: 'none' }}>
                                 <FormGroup>
                                     <FormControlLabel
                                         control={
@@ -396,7 +401,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         <Grid item xs={12} md={4} sm={4} lg={4}>
                             <Box
                                 display="grid"
-                                sx={{ border: '2px dashed #cccc', p: 5, ml: 4 }}
+                                ml={{ xs: 0, sm: 4, md: 4, lg: 4 }}
+                                sx={{ border: '2px dashed #cccc', p: 5 }}
                                 className="text-center">
                                 <Box>
                                     <InsertDriveFileIcon className="icon-size" />
@@ -415,13 +421,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        variant="outlined"
-                        sx={{ color: '#7C3367' }}
-                        onClick={() => setOpen(false)}
-                        className="btn-outline-hover">
-                        Hủy
-                    </Button>
                     <Button
                         variant="contained"
                         sx={{
@@ -469,6 +468,13 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         onClick={saveProduct}
                         className="btn-container-hover">
                         Lưu
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{ color: '#7C3367' }}
+                        onClick={() => setOpen(false)}
+                        className="btn-outline-hover">
+                        Hủy
                     </Button>
                 </DialogActions>
             </Dialog>
