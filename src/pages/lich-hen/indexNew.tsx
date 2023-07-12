@@ -24,6 +24,7 @@ import { HubConnectionBuilder } from '@microsoft/signalr';
 import bookingStore from '../../stores/bookingStore';
 import AppConsts from '../../lib/appconst';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import Cookies from 'js-cookie';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     useEffect(() => {
@@ -129,36 +130,30 @@ const LichHen: React.FC = () => {
         const formattedDate = `${dayOfWeek},  ${dayOfMonth} ${month}, năm ${year}`;
         setDateView(formattedDate);
     };
-<<<<<<< HEAD
-    const [TabLichHen, setTabLichHen] = useState('Tuần');
-    const handleChangeTab = (event: SelectChangeEvent<string>) => {
-        const newValue = event.target.value as string;
-        setTabLichHen(newValue);
-=======
+
     const [TabLichHen, setTabLichHen] = useState('week');
 
     const handleChangeTab = async (event: SelectChangeEvent<string>) => {
-        setTabLichHen(event.target.value as string);
+        const newValue = event.target.value as string;
+        setTabLichHen(newValue);
         await bookingStore.onChangeTypeView(event.target.value as string);
-    };
->>>>>>> e0128d6b0705f6dc3664d3b33cd323c831ee80de
-
-        if (newValue === 'Tuần') {
-            Cookies.set('Tab-lich-hen', 'Tuần', { expires: 7 });
-        } else if (newValue === 'Ngày') {
-            Cookies.set('Tab-lich-hen', 'Ngày');
-        } else if (newValue === 'Tháng') {
-            Cookies.set('Tab-lich-hen', 'Tháng');
+        if (newValue === 'week') {
+            Cookies.set('Tab-lich-hen', 'week', { expires: 7 });
+        } else if (newValue === 'day') {
+            Cookies.set('Tab-lich-hen', 'day');
+        } else if (newValue === 'month') {
+            Cookies.set('Tab-lich-hen', 'month');
         }
     };
+
     useEffect(() => {
         const CheckTab = Cookies.get('Tab-lich-hen');
-        if (CheckTab === 'Tuần') {
-            setTabLichHen('Tuần');
-        } else if (CheckTab === 'Ngày') {
-            setTabLichHen('Ngày');
-        } else if (CheckTab === 'Tháng') {
-            setTabLichHen('Tháng');
+        if (CheckTab === 'week') {
+            setTabLichHen('week');
+        } else if (CheckTab === 'day') {
+            setTabLichHen('day');
+        } else if (CheckTab === 'month') {
+            setTabLichHen('month');
         } else {
             undefined;
         }
@@ -334,7 +329,7 @@ const LichHen: React.FC = () => {
                 <TabWeek dateQuery={selectedDate} data={data} />
             ) : TabLichHen === 'day' ? (
                 <TabDay />
-            ) : TabLichHen === 'Tháng' ? (
+            ) : TabLichHen === 'month' ? (
                 <TabMonth />
             ) : undefined}
         </Box>
