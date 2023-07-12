@@ -137,11 +137,11 @@ const LichHen: React.FC = () => {
         const newValue = event.target.value as string;
         setTabLichHen(newValue);
         await bookingStore.onChangeTypeView(event.target.value as string);
-        if (newValue === 'Tuần') {
+        if (newValue === 'week') {
             Cookies.set('Tab-lich-hen', 'week', { expires: 7 });
-        } else if (newValue === 'Ngày') {
+        } else if (newValue === 'day') {
             Cookies.set('Tab-lich-hen', 'day');
-        } else if (newValue === 'Tháng') {
+        } else if (newValue === 'month') {
             Cookies.set('Tab-lich-hen', 'month');
         }
     };
