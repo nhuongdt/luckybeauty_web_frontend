@@ -25,8 +25,18 @@ import bookingStore from '../../stores/bookingStore';
 import AppConsts from '../../lib/appconst';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
+import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
+import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
+import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
+import SuggestService from '../../services/suggests/SuggestService';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [idBooking, setIdBooking] = useState<string>('');
+    const [suggestNhanVien, setSuggestNhanVien] = useState<SuggestNhanSuDto[]>([]);
+    const [suggestKhachHang, setSuggestKhachHang] = useState<SuggestKhachHangDto[]>([]);
+    const [suggestDonViQuiDoi, setSuggestDonViQuiDoi] = useState<SuggestDonViQuiDoiDto[]>([]);
     useEffect(() => {
         const connection = new HubConnectionBuilder()
             .withUrl(AppConsts.remoteServiceBaseUrl + 'bookingHub')
@@ -59,6 +69,12 @@ const LichHen: React.FC = () => {
     const getData = async () => {
         await bookingStore.getData();
         setData(bookingStore.listBooking);
+        const suggestNhanViens = await SuggestService.SuggestNhanSu();
+        const suggestKhachHangs = await SuggestService.SuggestKhachHang();
+        const suggestDichVus = await SuggestService.SuggestDonViQuiDoi();
+        setSuggestDonViQuiDoi(suggestDichVus);
+        setSuggestKhachHang(suggestKhachHangs);
+        setSuggestNhanVien(suggestNhanViens);
     };
     const handlePreviousWeek = async () => {
         const datePreviousWeek = new Date(bookingStore.selectedDate);
@@ -97,7 +113,10 @@ const LichHen: React.FC = () => {
         getCurrentDateInVietnamese(new Date());
         getData();
     }, [chinhanh.id]);
-
+    const handleSubmit = async () => {
+        await getData();
+        setModalVisible(!modalVisible);
+    };
     const getCurrentDateInVietnamese = (date: Date) => {
         const daysOfWeek = [
             'Chủ nhật',
@@ -145,7 +164,13 @@ const LichHen: React.FC = () => {
             Cookies.set('Tab-lich-hen', 'month');
         }
     };
-
+    const Modal = () => {
+        setModalVisible(!modalVisible);
+    };
+    const handleCreateUpdateShow = (idLichHen: string) => {
+        setIdBooking(idLichHen);
+        Modal();
+    };
     useEffect(() => {
         const CheckTab = Cookies.get('Tab-lich-hen');
         if (CheckTab === 'week') {
@@ -211,6 +236,9 @@ const LichHen: React.FC = () => {
                     <Button
                         startIcon={<AddIcon />}
                         variant="contained"
+                        onClick={() => {
+                            handleCreateUpdateShow('');
+                        }}
                         className="btn-container-hover"
                         sx={{ bgcolor: '#7C3367' }}>
                         Thêm cuộc hẹn
@@ -330,8 +358,18 @@ const LichHen: React.FC = () => {
             ) : TabLichHen === 'day' ? (
                 <TabDay />
             ) : TabLichHen === 'month' ? (
-                <TabMonth />
+                <TabMonth dateQuery={selectedDate} data={data} />
             ) : undefined}
+            <CreateOrEditLichHenModal
+                visible={modalVisible}
+                onCancel={() => {
+                    setModalVisible(!modalVisible);
+                }}
+                onOk={handleSubmit}
+                idLichHen={idBooking}
+                suggestNhanVien={suggestNhanVien}
+                suggestDichVu={suggestDonViQuiDoi}
+                suggestKhachHang={suggestKhachHang}></CreateOrEditLichHenModal>
         </Box>
     );
 };

@@ -26,13 +26,16 @@ import { ReactComponent as ClockPink } from '../../../images/clock-pink.svg';
 import { ReactComponent as ClockGreen } from '../../../images/clock-green.svg';
 import { ReactComponent as ClockOrange } from '../../../images/clock-orange.svg';
 import { ReactComponent as ClockViolet } from '../../../images/clock-violet.svg';
-const TabMonth: React.FC = () => {
-    const currentMonth = new Date();
-    const startDate = startOfMonth(currentMonth);
-    const endDate = endOfMonth(currentMonth);
+import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
+const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
+    data,
+    dateQuery
+}) => {
+    const startDate = startOfMonth(dateQuery);
+    const endDate = endOfMonth(dateQuery);
     const weeksInMonth = eachWeekOfInterval({ start: startDate, end: endDate });
 
-    const weekDays = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'];
+    const weekDays = ['Thứ hai', 'Thứ ba', 'Thứ tư', 'Thứ năm', 'Thứ sáu', 'Thứ bảy', 'Chủ nhật'];
     React.useEffect(() => {
         const HTML = document.documentElement;
         HTML.style.overflowY = 'hidden';
@@ -66,62 +69,6 @@ const TabMonth: React.FC = () => {
             color: '#7C3367',
             background: '#E5D6E1', // Đã xác nhận
             icon: <ClockViolet />
-        }
-    ];
-    const data = [
-        {
-            day: 'Thứ 2',
-            date: '3',
-            client: 'Vy',
-            service: 'Cut tok',
-            startTime: '6:00',
-            color: color[2].color,
-            bg: color[2].background
-        },
-        {
-            day: 'Thứ 2',
-            date: '3',
-            client: 'Quynh',
-            service: 'Tẩm quất',
-            startTime: '7:00',
-            color: color[0].color,
-            bg: color[0].background
-        },
-        {
-            day: 'Thứ 2',
-            date: '3',
-            client: 'Chị Chi',
-            service: 'Mát xa',
-            startTime: '8:38',
-            color: color[1].color,
-            bg: color[1].background
-        },
-        {
-            day: 'Thứ 2',
-            date: '3',
-            client: 'Chị Linh',
-            service: 'Cạo gió',
-            startTime: '8:38',
-            color: color[3].color,
-            bg: color[3].background
-        },
-        {
-            day: 'Thứ 7',
-            date: '15',
-            client: 'Chị Nhì',
-            service: 'Gội đầu',
-            startTime: '8:38',
-            color: color[3].color,
-            bg: color[3].background
-        },
-        {
-            day: 'Thứ 6',
-            date: '7',
-            client: 'Chị Nhường',
-            service: 'Sơn móng',
-            startTime: '0:38',
-            color: color[0].color,
-            bg: color[0].background
         }
     ];
 
@@ -165,22 +112,24 @@ const TabMonth: React.FC = () => {
                 <TableBody>
                     {weeksInMonth.map((weekStartDate) => (
                         <TableRow key={weekStartDate.getTime()}>
-                            {weekDays.map((ngay, index) => {
+                            {weekDays.map((ngay: string, index: number) => {
                                 const currentDate = new Date(weekStartDate);
                                 currentDate.setDate(weekStartDate.getDate() + index + 1);
-
                                 const matchingData = data.filter(
-                                    (item: any) =>
-                                        item.date === format(currentDate, 'd') && item.day === ngay
+                                    (item) =>
+                                        item.dayOfWeek === ngay &&
+                                        format(new Date(item.bookingDate), 'd') ==
+                                            format(currentDate, 'd')
                                 );
+
                                 return (
                                     <TableCell
                                         key={currentDate.getTime()}
                                         sx={{
                                             padding: '0',
-                                            border: '0',
+                                            border: '1px solid #e0e0e0',
                                             position: 'relative',
-                                            height: '190px',
+                                            height: '150px',
                                             width: 1 / weekDays.length
                                         }}>
                                         <Box
@@ -200,26 +149,24 @@ const TabMonth: React.FC = () => {
                                             {format(currentDate, 'd')}
                                         </Box>
                                         {Array.isArray(matchingData) && matchingData.length > 0
-                                            ? matchingData.map((item: any, itemIndex: number) => (
+                                            ? matchingData.map((item, itemIndex: number) => (
                                                   <Box
                                                       key={itemIndex}
                                                       sx={{
-                                                          bgcolor: item.bg,
+                                                          bgcolor: item.color + '1a',
                                                           padding: item ? '4px 12px' : '',
                                                           width: 'fit-content',
                                                           borderRadius: '4px',
                                                           marginTop: itemIndex != 0 ? '2px' : '0opx'
                                                       }}>
-                                                      {' '}
                                                       <Typography
                                                           variant="body1"
                                                           fontSize="12px"
                                                           whiteSpace="nowrap"
                                                           color={item.color}>
-                                                          {' '}
                                                           <b> {item.startTime} </b>
-                                                          {item.service + ':'}
-                                                          {item.client}
+                                                          {item.customer + ':'}
+                                                          {item.employee}
                                                       </Typography>
                                                   </Box>
                                               ))
