@@ -266,6 +266,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                     direction="row"
                     spacing={1}
                     sx={{
+                        marginTop: '30px',
                         background: '#fff',
                         justifyContent: 'center'
                     }}>

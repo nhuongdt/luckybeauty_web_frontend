@@ -495,19 +495,27 @@ const PageSoQuy = ({ xx }: any) => {
                                     height: '40px'
                                 }
                             }}>
-                            <DatePickerCustom
-                                defaultVal={paramSearch.fromDate}
-                                handleChangeDate={(newVal: string) =>
-                                    setParamSearch({ ...paramSearch, fromDate: newVal })
-                                }
-                            />
-                            <DatePickerCustom
-                                defaultVal={paramSearch.toDate}
-                                handleChangeDate={(newVal: string) =>
-                                    setParamSearch({ ...paramSearch, toDate: newVal })
-                                }
-                            />
-
+                            <Box
+                                sx={{
+                                    border: '1px solid #E6E1E6',
+                                    borderRadius: '8px',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none'
+                                    }
+                                }}>
+                                <DatePickerCustom
+                                    defaultVal={paramSearch.fromDate}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, fromDate: newVal })
+                                    }
+                                />
+                                <DatePickerCustom
+                                    defaultVal={paramSearch.toDate}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, toDate: newVal })
+                                    }
+                                />
+                            </Box>
                             <Button
                                 variant="outlined"
                                 onClick={exportToExcel}

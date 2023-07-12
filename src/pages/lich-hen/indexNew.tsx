@@ -17,6 +17,7 @@ import { ReactComponent as ShapeIcon } from '../../images/Shape.svg';
 import { ReactComponent as ShapeIcon2 } from '../../images/Shape2.svg';
 import TabDay from './components/TabDay';
 import TabWeek from './components/TabWeek';
+import TabMonth from './components/TabMonth';
 import { BookingGetAllItemDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import bookingStore from '../../stores/bookingStore';
@@ -133,6 +134,7 @@ const LichHen: React.FC = () => {
         setTabLichHen(event.target.value as string);
         await bookingStore.onChangeTypeView(event.target.value as string);
     };
+
     return (
         <Box
             sx={{
@@ -304,6 +306,8 @@ const LichHen: React.FC = () => {
                 <TabWeek dateQuery={selectedDate} data={data} />
             ) : TabLichHen === 'day' ? (
                 <TabDay />
+            ) : TabLichHen === 'Tháng' ? (
+                <TabMonth />
             ) : undefined}
         </Box>
     );
