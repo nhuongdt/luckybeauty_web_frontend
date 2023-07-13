@@ -44,7 +44,7 @@
 
 .poppup-add input {
     border-radius: 8px;
-    border: 1px solid #e6e1e6;
+
     outline: none;
 }
 
@@ -139,7 +139,7 @@
     left: 50%;
     background: #ffffff;
     padding: 28px 24px;
-    padding-bottom: 5vw;
+
     width: calc(100vw - 48px);
     max-width: 1024px;
     opacity: 0;
@@ -223,4 +223,15 @@
 .MuiTablePagination-displayedRows,
 .MuiTablePagination-selectLabel {
     margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .form-add {
+        flex-direction: column;
+    }
+    .poppup-add {
+        height: calc(100vh - 48px);
+        overflow: auto;
+        padding-bottom: 0;
+    }
 }

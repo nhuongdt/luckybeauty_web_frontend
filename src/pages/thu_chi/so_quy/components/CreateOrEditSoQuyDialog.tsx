@@ -14,7 +14,8 @@ import {
     Stack,
     debounce
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+
+import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { Formik, Form } from 'formik';
 import { useEffect, useState, useRef, useContext } from 'react';
@@ -286,7 +287,9 @@ const CreateOrEditSoQuyDialog = ({
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onClose}>
                 <DialogTitle>
                     <div className="row">
-                        <Box className="col-8" sx={{ float: 'left' }}>
+                        <Box
+                            className="col-8"
+                            sx={{ float: 'left', fontSize: '24px', fontWeight: '700' }}>
                             {utils.checkNull(idQuyHD) ? 'Thêm mới' : 'Cập nhật'} sổ quỹ
                         </Box>
                         <Box
@@ -304,7 +307,7 @@ const CreateOrEditSoQuyDialog = ({
                         </Box>
                     </div>
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ paddingBottom: '0' }}>
                     <Formik
                         initialValues={quyHoaDon}
                         validationSchema={validate}
@@ -600,14 +603,23 @@ const CreateOrEditSoQuyDialog = ({
                                             </FormGroup>
                                         </Grid>
                                     </Grid>
-                                    <DialogActions>
+                                    <DialogActions
+                                        sx={{
+                                            paddingRight: '0!important',
+                                            position: 'sticky',
+                                            bottom: '0',
+                                            bgcolor: '#fff',
+                                            left: '0'
+                                        }}>
                                         <Button
-                                            variant="outlined"
-                                            sx={{ color: '#7C3367' }}
-                                            className="btn-outline-hover"
-                                            onClick={onClose}>
-                                            Hủy
+                                            variant="contained"
+                                            sx={{ bgcolor: '#7C3367' }}
+                                            className="btn-container-hover"
+                                            type="submit"
+                                            disabled={formik.isSubmitting}>
+                                            Lưu
                                         </Button>
+
                                         {!utils.checkNull(idQuyHD) && (
                                             <>
                                                 <Button
@@ -633,12 +645,11 @@ const CreateOrEditSoQuyDialog = ({
                                         )}
 
                                         <Button
-                                            variant="contained"
-                                            sx={{ bgcolor: '#7C3367' }}
-                                            className="btn-container-hover"
-                                            type="submit"
-                                            disabled={formik.isSubmitting}>
-                                            Lưu
+                                            variant="outlined"
+                                            sx={{ color: '#7C3367' }}
+                                            className="btn-outline-hover"
+                                            onClick={onClose}>
+                                            Hủy
                                         </Button>
                                     </DialogActions>
                                 </Form>
