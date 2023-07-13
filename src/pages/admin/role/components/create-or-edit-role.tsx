@@ -372,7 +372,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             </FormGroup>
                                         </TabPanel>
                                         <TabPanel value="2" sx={{ padding: '0' }}>
-                                            <TextField
+                                            {/* <TextField
                                                 size="small"
                                                 fullWidth
                                                 type="text"
@@ -380,7 +380,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 sx={{
                                                     paddingTop: 1,
                                                     paddingBottom: 2
-                                                }}></TextField>
+                                                }}></TextField> */}
                                             <FormGroup
                                                 sx={{
                                                     '& .MuiFormControlLabel-root': {

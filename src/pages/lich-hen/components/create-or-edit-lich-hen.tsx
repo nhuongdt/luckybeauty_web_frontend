@@ -21,7 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Formik, Form } from 'formik';
 import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDonViQuiDoi';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
-import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
+import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import AppConsts from '../../../lib/appconst';
 import datLichService from '../../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
@@ -34,7 +34,7 @@ interface ICreateOrEditProps {
     idLichHen: string;
     suggestDichVu: SuggestDonViQuiDoiDto[];
     suggestKhachHang: SuggestKhachHangDto[];
-    suggestNhanVien: SuggestNhanSuDto[];
+    suggestNhanVien: SuggestNhanVienDichVuDto[];
     onOk: () => void;
 }
 
@@ -265,7 +265,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         <Autocomplete
                                                             options={suggestNhanVien}
                                                             getOptionLabel={(option) =>
-                                                                `${option.tenNhanVien}`
+                                                                `${option.tenNhanVien}` +
+                                                                '-' +
+                                                                `${option.soDienThoai}`
                                                             }
                                                             size="small"
                                                             fullWidth
