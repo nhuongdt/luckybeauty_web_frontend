@@ -17,7 +17,8 @@ import {
     InputAdornment
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
+
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
 import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDonViQuiDoi';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
@@ -111,7 +112,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                             {({ errors, touched, values, handleChange, setFieldValue }) => (
                                 <Form>
                                     <Grid container spacing={[8, 3]}>
-                                        <Grid item xs={5} sx={{ pr: '20px' }}>
+                                        <Grid item xs={12} sm={5} sx={{ pr: '20px' }}>
                                             {/* <FormGroup> */}
                                             <Autocomplete
                                                 sx={{ pt: '24px' }}
@@ -150,7 +151,10 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 )}
                                             />
                                             {/* </FormGroup> */}
-                                            <Box textAlign="center" mt="5vw">
+                                            <Box
+                                                textAlign="center"
+                                                mt="5vw"
+                                                display={innerWidth < 600 ? 'none' : 'block'}>
                                                 <Box>
                                                     <IconMore />
                                                 </Box>
@@ -175,14 +179,15 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         </Grid>
                                         <Grid
                                             item
-                                            xs={7}
+                                            xs={12}
+                                            sm={7}
                                             rowSpacing={4}
                                             sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
                                             <Typography
                                                 variant="subtitle1"
                                                 fontSize="16px"
                                                 fontWeight="700"
-                                                pt="24px">
+                                                pt={innerWidth < 600 ? '0' : '24px'}>
                                                 Chi tiết cuộc hẹn
                                             </Typography>
                                             <FormGroup className="mt-4 mb-1">
@@ -265,9 +270,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         <Autocomplete
                                                             options={suggestNhanVien}
                                                             getOptionLabel={(option) =>
-                                                                `${option.tenNhanVien}` +
-                                                                '-' +
-                                                                `${option.soDienThoai}`
+                                                                `${option.tenNhanVien}`
                                                             }
                                                             size="small"
                                                             fullWidth
@@ -345,13 +348,17 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <DialogActions sx={{ pr: '0', pb: '24px' }}>
+                                    <DialogActions
+                                        sx={{
+                                            pr: '0',
+                                            pb: '24px',
+                                            position: 'sticky',
+                                            bgcolor: '#fff',
+                                            bottom: '0',
+                                            left: '0'
+                                        }}>
                                         <Grid container>
-                                            <Grid item xs={5}></Grid>
-                                            <Grid
-                                                item
-                                                xs={7}
-                                                sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
+                                            <Grid item xs={12} sx={{ bgcolor: '#F9FAFC' }}>
                                                 <Box
                                                     display="flex"
                                                     justifyContent="end"
@@ -362,6 +369,16 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         }
                                                     }}>
                                                     <Button
+                                                        className="btn-container-hover"
+                                                        variant="contained"
+                                                        size="small"
+                                                        type="submit"
+                                                        sx={{
+                                                            backgroundColor: '#7C3367!important'
+                                                        }}>
+                                                        Lưu
+                                                    </Button>
+                                                    <Button
                                                         className="btn-outline-hover"
                                                         variant="outlined"
                                                         size="small"
@@ -371,16 +388,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         }}
                                                         onClick={onCancel}>
                                                         Hủy
-                                                    </Button>
-                                                    <Button
-                                                        className="btn-container-hover"
-                                                        variant="contained"
-                                                        size="small"
-                                                        type="submit"
-                                                        sx={{
-                                                            backgroundColor: '#7C3367!important'
-                                                        }}>
-                                                        Lưu
                                                     </Button>
                                                 </Box>
                                             </Grid>
