@@ -250,11 +250,11 @@ const TabDay: React.FC = () => {
     return (
         <Box>
             <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
-            <CreateOeEditLichLamViecModal
+            {/* <CreateOeEditLichLamViecModal
                 open={OpenEditLich}
                 onClose={handleCloseEditLich}
                 idNhanVien="demo"
-            />
+            /> */}
             <TableContainer
                 sx={{
                     bgcolor: '#fff',
@@ -433,7 +433,7 @@ const TabDay: React.FC = () => {
                                                         return (
                                                             <Box
                                                                 key={itemIndex}
-                                                                bgcolor={item.background}
+                                                                bgcolor={item.color + '1a'}
                                                                 position="absolute"
                                                                 height={cellHeight}
                                                                 whiteSpace="nowrap"

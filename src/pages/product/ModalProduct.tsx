@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState, useImperativeHandle, forwardRef, useRef } from 'react';
-import { ThemeProvider } from '@mui/material/styles';
+import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
 import {
     Dialog,
@@ -26,11 +25,8 @@ import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
 import ProductService from '../../services/product/ProductService';
-import Utils from '../../utils/utils';
 import './style.css';
-import AppConsts from '../../lib/appconst';
 
-import StyleOveride from '../../StyleOveride';
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
 
@@ -44,9 +40,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [errTenHangHoa, setErrTenHangHoa] = useState(false);
     const [errMaHangHoa, setErrMaHangHoa] = useState(false);
 
-    const [nhomChosed, setNhomChosed] = useState<ModelNhomHangHoa>(
-        new ModelNhomHangHoa({ id: '' })
-    );
+    const [nhomChosed, setNhomChosed] = useState<ModelNhomHangHoa | null>(null);
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
@@ -68,7 +62,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             if (nhom.length > 0) {
                 setNhomChosed(nhom[0]);
             } else {
-                setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+                setNhomChosed(null);
             }
         } else {
             setProduct(new ModelHangHoaDto());
@@ -85,10 +79,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         };
                     });
                 } else {
-                    setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+                    setNhomChosed(null);
                 }
             } else {
-                setNhomChosed(new ModelNhomHangHoa({ id: '' }));
+                setNhomChosed(null);
             }
         }
     };
@@ -118,14 +112,17 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 ...itemOlds,
                 idNhomHangHoa: item?.id ?? null,
                 tenNhomHang: item?.tenNhomHang,
-                laHangHoa: item?.laNhomHangHoa,
+                laHangHoa: item?.laNhomHangHoa ?? false,
                 idLoaiHangHoa: item?.laNhomHangHoa ? 1 : 2,
                 tenLoaiHangHoa: item?.laNhomHangHoa ? 'hàng hóa' : 'dịch vụ'
             };
         });
-        setNhomChosed(
-            new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang })
-        );
+
+        if (item == null) setNhomChosed(null);
+        else
+            setNhomChosed(
+                new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang })
+            );
         setWasClickSave(false);
     };
 
@@ -136,11 +133,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     };
 
     const CheckSave = async () => {
-        if (Utils.checkNull(product.tenHangHoa ?? '')) {
+        if (utils.checkNull(product.tenHangHoa ?? '')) {
             setErrTenHangHoa(true);
             return false;
         }
-        if (!Utils.checkNull(product.maHangHoa ?? '')) {
+        if (!utils.checkNull(product.maHangHoa ?? '')) {
             const exists = await ProductService.CheckExistsMaHangHoa(
                 product.maHangHoa ?? '',
                 product.idDonViQuyDoi ?? Guid.EMPTY
@@ -154,7 +151,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     };
 
     async function saveProduct() {
-        console.log('ok');
         setWasClickSave(true);
 
         if (wasClickSave) {
@@ -166,7 +162,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         }
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
-        objNew.tenHangHoa_KhongDau = Utils.strToEnglish(objNew.tenHangHoa ?? '');
+        objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
 
@@ -442,33 +438,38 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         }}>
                         Khôi phục
                     </Button>
-                    <Button
-                        variant="contained"
-                        sx={{
-                            bgcolor: 'red',
-                            display: isNew || product.trangThai === 0 ? 'none' : ''
-                        }}
-                        onClick={() => {
-                            setInforDeleteProduct(
-                                new PropConfirmOKCancel({
-                                    show: true,
-                                    title: 'Xác nhận xóa',
-                                    mes: `Bạn có chắc chắn muốn xóa ${product.tenHangHoa}  ${
-                                        product?.tenLoaiHangHoa ?? ' '
-                                    } không?`
-                                })
-                            );
-                            setActionProduct(3);
-                        }}>
-                        Xóa
-                    </Button>
-                    <Button
-                        variant="contained"
-                        sx={{ bgcolor: '#7C3367' }}
-                        onClick={saveProduct}
-                        className="btn-container-hover">
-                        Lưu
-                    </Button>
+                    {!(product.trangThai === 0 || isNew) && (
+                        <Button
+                            variant="contained"
+                            sx={{
+                                bgcolor: 'red'
+                            }}
+                            onClick={() => {
+                                setInforDeleteProduct(
+                                    new PropConfirmOKCancel({
+                                        show: true,
+                                        title: 'Xác nhận xóa',
+                                        mes: `Bạn có chắc chắn muốn xóa ${product.tenHangHoa}  ${
+                                            product?.tenLoaiHangHoa ?? ' '
+                                        } không?`
+                                    })
+                                );
+                                setActionProduct(3);
+                            }}>
+                            Xóa
+                        </Button>
+                    )}
+
+                    {product.trangThai !== 0 && (
+                        <Button
+                            variant="contained"
+                            sx={{ bgcolor: '#7C3367' }}
+                            onClick={saveProduct}
+                            className="btn-container-hover">
+                            Lưu
+                        </Button>
+                    )}
+
                     <Button
                         variant="outlined"
                         sx={{ color: '#7C3367' }}
