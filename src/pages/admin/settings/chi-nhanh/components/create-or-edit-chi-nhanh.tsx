@@ -11,7 +11,8 @@ import {
     Typography
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+
+import { ReactComponent as CloseIcon } from '../../../../../images/close-square.svg';
 import { CreateOrEditChiNhanhDto } from '../../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import { Form, Formik } from 'formik';
 import chiNhanhService from '../../../../../services/chi_nhanh/chiNhanhService';
@@ -42,7 +43,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                 filter: ' brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
                             }
                         }}>
-                        <CloseOutlinedIcon />
+                        <CloseIcon />
                     </IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
@@ -55,7 +56,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                         {({ handleChange, values, errors }) => (
                             <Form>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Mã chi nhánh
                                         </Typography>
@@ -68,7 +69,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Tên chi nhánh
                                         </Typography>
@@ -81,7 +82,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Số điện thoại
                                         </Typography>
@@ -94,7 +95,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Địa chỉ
                                         </Typography>
@@ -107,7 +108,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Ngày áp dụng
                                         </Typography>
@@ -120,7 +121,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Ngày hết hạn
                                         </Typography>
@@ -149,7 +150,14 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                 </Grid>
-                                <DialogActions>
+                                <DialogActions
+                                    sx={{
+                                        paddingRight: '0!important',
+                                        position: 'sticky',
+                                        bottom: '0',
+                                        left: '0',
+                                        bgcolor: '#fff'
+                                    }}>
                                     <ButtonGroup
                                         sx={{
                                             height: '32px',

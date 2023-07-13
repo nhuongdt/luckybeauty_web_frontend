@@ -13,11 +13,12 @@ import {
     Radio,
     FormControlLabel,
     Checkbox,
+    Box,
     MenuItem,
     ListItemText
 } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import CloseIcon from '@mui/icons-material/Close';
+import { ReactComponent as CloseIcon } from '../../../../../../images/close-square.svg';
 import { Component, ReactNode } from 'react';
 import { CreateOrEditChietKhauHoaDonDto } from '../../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
 import { Form, Formik } from 'formik';
@@ -61,8 +62,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         const { title, onClose, onSave, visited, formRef } = this.props;
         const initValues: CreateOrEditChietKhauHoaDonDto = formRef;
         return (
-            <Dialog open={visited} fullWidth maxWidth="md">
-                <DialogTitle>
+            <Dialog open={visited} fullWidth maxWidth="md" onClose={onClose}>
+                <DialogTitle sx={{ fontSize: '24px', fontWeight: '700' }}>
                     {title}
                     {onClose ? (
                         <IconButton
@@ -71,7 +72,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                             sx={{
                                 position: 'absolute',
                                 right: 8,
-                                top: 8
+                                top: 8,
+                                '&:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                                }
                             }}>
                             <CloseIcon />
                         </IconButton>
@@ -101,7 +105,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                         {({ handleChange, errors, values }) => (
                             <Form>
                                 <Grid container spacing={4} rowSpacing={2}>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Chứng từ áp dụng
                                         </Typography>
@@ -118,6 +122,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             {loaiChungTu.map((name) => (
                                                 <MenuItem key={name} value={name}>
                                                     <Checkbox
+                                                        sx={{ color: '#7C3367!important' }}
                                                         checked={values.chungTuApDung.includes(
                                                             name
                                                         )}
@@ -127,7 +132,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             ))}
                                         </Select>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Loại chiết khấu
                                         </Typography>
@@ -138,17 +143,23 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             sx={{ display: 'flex', flexDirection: 'row' }}>
                                             <FormControlLabel
                                                 value={1}
-                                                control={<Radio />}
+                                                control={
+                                                    <Radio sx={{ color: '#7C3367!important' }} />
+                                                }
                                                 label="Theo % thực thu"
                                             />
                                             <FormControlLabel
                                                 value={2}
-                                                control={<Radio />}
+                                                control={
+                                                    <Radio sx={{ color: '#7C3367!important' }} />
+                                                }
                                                 label=" Theo % doanh thu"
                                             />
                                             <FormControlLabel
                                                 value={3}
-                                                control={<Radio />}
+                                                control={
+                                                    <Radio sx={{ color: '#7C3367!important' }} />
+                                                }
                                                 label="Theo VNĐ"
                                             />
                                         </RadioGroup>
@@ -166,26 +177,29 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                 </Grid>
-                                <DialogActions>
-                                    <ButtonGroup
+                                <DialogActions sx={{ paddingRight: '0' }}>
+                                    <Box
                                         sx={{
-                                            height: '32px',
+                                            display: 'flex',
+                                            gap: '8px',
                                             bottom: '24px',
                                             right: '50px'
                                         }}>
                                         <Button
+                                            className="btn-container-hover"
                                             variant="contained"
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 color: '#fff',
-                                                backgroundColor: '#B085A4',
+                                                backgroundColor: '#7C3367',
                                                 border: 'none'
                                             }}
                                             type="submit">
                                             Lưu
                                         </Button>
                                         <Button
+                                            className="btn-outline-hover"
                                             variant="outlined"
                                             onClick={onClose}
                                             sx={{
@@ -196,7 +210,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             }}>
                                             Hủy
                                         </Button>
-                                    </ButtonGroup>
+                                    </Box>
                                 </DialogActions>
                             </Form>
                         )}

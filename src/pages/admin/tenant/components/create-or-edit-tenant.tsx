@@ -13,7 +13,8 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+
+import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { Form, Formik } from 'formik';
 import CreateTenantInput from '../../../../services/tenant/dto/createTenantInput';
 import tenantService from '../../../../services/tenant/tenantService';
@@ -93,7 +94,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                             }}>
                             <CloseIcon />
                         </IconButton>
-                        <DialogContent>
+                        <DialogContent sx={{ padding: '0!important' }}>
                             <Formik
                                 initialValues={initialValues}
                                 validationSchema={rules}
@@ -272,7 +273,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 />
                                             </FormGroup>
                                         </Box>
-                                        <DialogActions>
+                                        <DialogActions sx={{ paddingRight: '0!important' }}>
                                             <Button
                                                 variant="outlined"
                                                 size="small"

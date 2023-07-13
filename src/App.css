@@ -56,7 +56,6 @@ body .font-normal {
     font-size: 18px;
 }
 
-
 /* .MuiDialogActions-root {
     padding-right: 20px;
 } */
@@ -88,11 +87,11 @@ body .font-normal {
 }
 
 .btnIcon {
-    width: 40px!important;
-    height: 40px!important;
-    border-radius: 4px!important;
-    border: 1px solid #cccc!important;
-    padding: 10px!important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 4px !important;
+    border: 1px solid #cccc !important;
+    padding: 10px !important;
 }
 
 .btnIconText {
@@ -127,7 +126,6 @@ body .font-normal {
     margin-bottom: 0;
 }
 
-
 /* style main button*/
 
 .btnNhapXuat {
@@ -144,15 +142,14 @@ body .font-normal {
 }
 
 .button-outline {
-    color: #7c3367!important;
-    border-color: #7c3367!important;
+    color: #7c3367 !important;
+    border-color: #7c3367 !important;
 }
 
 .button-not-active {
-    color: #cccc!important;
-    border-color: #cccc!important;
+    color: #cccc !important;
+    border-color: #cccc !important;
 }
-
 
 /* style text in button */
 
@@ -160,7 +157,6 @@ body .font-normal {
     text-transform: initial !important;
     font-weight: 400 !important;
 }
-
 
 /* button paging selected */
 
@@ -178,11 +174,12 @@ body .font-normal {
 }
 
 .modal-lable {
-    font-size: 14px;
-    font-weight: 500;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+        Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
-
 
 /* error at TextField */
 
@@ -209,18 +206,19 @@ body .font-normal {
     font-size: 14px;
 }
 
-
 /* text input */
 
 .MuiOutlinedInput-input {
-    font-size: 14px!important;
+    font-size: 14px !important;
 }
 
 .inputEdit .MuiOutlinedInput-root {
     border-radius: 8px;
 }
 
-.MuiDataGrid-columnHeaderTitleContainerContent:not( .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainerContent) {
+.MuiDataGrid-columnHeaderTitleContainerContent:not(
+        .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainerContent
+    ) {
     width: 100%;
 }
 
@@ -230,5 +228,5 @@ body .font-normal {
 }
 
 .MuiRadio-root.Mui-checked {
-    color: #7c3367!important;
+    color: #7c3367 !important;
 }
