@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box,
     Table,
@@ -7,75 +7,33 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
     Typography,
     Avatar,
     Menu,
     MenuItem
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AvatarDemo from '../../../images/xinh.png';
-import CreateOeEditLichLamViecModal from '../../employee/lich-lam-viec/create-or-edit-lich-lam-viec-modal';
 import Edit from '../../employee/lich-lam-viec/editNhanVien';
 import { ReactComponent as ClockBlue } from '../../../images/clock-blue.svg';
 import { ReactComponent as ClockPink } from '../../../images/clock-pink.svg';
 import { ReactComponent as ClockGreen } from '../../../images/clock-green.svg';
 import { ReactComponent as ClockOrange } from '../../../images/clock-orange.svg';
 import { ReactComponent as ClockViolet } from '../../../images/clock-violet.svg';
+import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
+import SuggestService from '../../../services/suggests/SuggestService';
+import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
 
-const TabDay: React.FC = () => {
-    const NhanViens = [
-        {
-            name: 'Tài Đinh',
-            position: 'Kỹ thuật',
-            avatar: AvatarDemo
-        },
-        {
-            name: 'Trang nè',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        },
-        {
-            name: 'Đẹp trai',
-            position: 'Kỹ thuật',
-            avatar: AvatarDemo
-        },
-        {
-            name: 'Trang Nguyễn',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        },
-        {
-            name: 'Tài Đinh',
-            position: 'Kỹ thuật',
-            avatar: AvatarDemo
-        },
-        {
-            name: 'Đây là một cái tên rất dài dài dài dài dài dàis',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        },
-        {
-            name: 'Anh Mạnh',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        },
-        {
-            name: 'Trang Nguyễn',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        },
-        {
-            name: 'Chị Nhì',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        },
-        {
-            name: 'Trang nè',
-            position: 'Ý tưởng',
-            Avatar: AvatarDemo
-        }
-    ];
+const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
+    const [nhanViens, setNhanViens] = useState<SuggestNhanVienDichVuDto[]>([]);
+
+    useEffect(() => {
+        getNhanVien();
+    }, []);
+
+    const getNhanVien = async () => {
+        const allNhanVien = await SuggestService.SuggestNhanVienLamDichVu();
+        setNhanViens(allNhanVien);
+    };
 
     const color = [
         {
@@ -105,106 +63,17 @@ const TabDay: React.FC = () => {
         }
     ];
 
-    const Clients = [
-        {
-            startTime: '10:00',
-            endTime: '15:00',
-            name: 'Đào Mai Chang',
-            nameEmployee: 'Trang Nguyễn',
-            service: 'Cắt móng',
-            color: color[0].color,
-            background: color[0].background,
-            icon: color[0].icon
-        },
-        {
-            startTime: '8:00',
-            endTime: '13:00',
-            name: 'Bùi Thị Duyên',
-            nameEmployee: 'Đẹp trai',
-            service: 'Cắt móng',
-            color: color[1].color,
-            background: color[1].background,
-            icon: color[1].icon
-        },
-        {
-            startTime: '7:20',
-            endTime: '20:00',
-            name: 'Nguyễn Hà Vy',
-            nameEmployee: 'Trang nè',
-            service: 'Cắt móng',
-            color: color[2].color,
-            background: color[2].background,
-            icon: color[2].icon
-        },
-        {
-            startTime: '9:00',
-            endTime: '17:00',
-            name: 'Đinh Thị Huyền',
-            nameEmployee: 'Anh Mạnh',
-            service: 'Anh yêu em',
-            color: color[3].color,
-            background: color[3].background,
-            icon: color[3].icon
-        },
-        {
-            startTime: '7:55',
-            endTime: '8:33',
-            name: 'Nguyễn Hoàng Giang',
-            nameEmployee: 'Chị Nhì',
-            service: 'Abc',
-            color: color[4].color,
-            background: color[4].background,
-            icon: color[4].icon
-        },
-        {
-            startTime: '7:50',
-            endTime: '8:33',
-            nameEmployee: 'Tài Đinh',
-            service: 'Anh yêu em',
-            color: color[1].color,
-            background: color[1].background,
-            icon: color[1].icon
-        },
-        {
-            startTime: '7:50',
-            endTime: '8:33',
-            nameEmployee: 'Tài Đinh',
-            service: 'Anh yêu em',
-            color: color[4].color,
-            background: color[4].background,
-            icon: color[4].icon
-        },
-        {
-            startTime: '7:55',
-            name: 'Phan Thị Quỳnh',
-            endTime: '8:33',
-            nameEmployee: 'Tài Đinh',
-            service: 'Anh yêu em',
-            color: color[3].color,
-            background: color[3].background,
-            icon: color[3].icon
-        },
-        {
-            startTime: '7:25',
-            name: 'Phạm Thùy Anh',
-            endTime: '8:33',
-            nameEmployee: 'Tài Đinh',
-            service: 'Anh yêu em',
-            color: color[0].color,
-            background: color[0].background,
-            icon: color[0].icon
-        }
-    ];
-    const NhanViens2 = NhanViens;
+    const NhanViens2 = nhanViens;
     const Mang2Chieu: any[][] = Array(7)
         .fill([])
         .map(() => []);
-    Clients.map((item) => {
-        const dateIndex = NhanViens2.findIndex((item) => item.name === item.name);
+    data.map((item) => {
+        const dateIndex = NhanViens2.findIndex((nv) => item.sourceId === nv.id);
         if (dateIndex !== -1) {
             Mang2Chieu[dateIndex] = [...Mang2Chieu[dateIndex], item];
         }
     });
+
     useEffect(() => {
         const htmlElement = document.querySelector('html');
         if (htmlElement) {
@@ -232,6 +101,7 @@ const TabDay: React.FC = () => {
         setAnchorEl(null);
         setSelectedIndex(null);
     };
+
     const [openEdit, setModal] = useState(false);
     const handleOpenEdit = () => {
         setModal(true);
@@ -239,6 +109,7 @@ const TabDay: React.FC = () => {
     const handleCloseEdit = () => {
         setModal(false);
     };
+
     const [OpenEditLich, setOpenEditLich] = useState(false);
     const handleOpenEditLich = () => {
         setOpenEditLich(true);
@@ -250,11 +121,7 @@ const TabDay: React.FC = () => {
     return (
         <Box>
             <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
-            {/* <CreateOeEditLichLamViecModal
-                open={OpenEditLich}
-                onClose={handleCloseEditLich}
-                idNhanVien="demo"
-            /> */}
+
             <TableContainer
                 sx={{
                     bgcolor: '#fff',
@@ -278,7 +145,7 @@ const TabDay: React.FC = () => {
                             <TableCell sx={{ opacity: '0', pointerEvent: 'none' }}>
                                 <Box>n</Box>
                             </TableCell>
-                            {NhanViens.map((item, index) => (
+                            {nhanViens.map((item, index) => (
                                 <TableCell
                                     key={index}
                                     sx={{
@@ -303,7 +170,7 @@ const TabDay: React.FC = () => {
                                         }}>
                                         <Box>
                                             <Box>
-                                                <Avatar src={item.avatar} alt={item.name} />
+                                                <Avatar src={item.avatar} alt={item.tenNhanVien} />
                                             </Box>
                                             <ExpandMoreIcon
                                                 className="arrowDown"
@@ -333,13 +200,13 @@ const TabDay: React.FC = () => {
                                                     WebkitBoxOrient: 'vertical',
                                                     overflow: 'hidden'
                                                 }}>
-                                                {item.name}
+                                                {item.tenNhanVien}
                                             </Typography>
                                             <Typography
                                                 variant="body1"
                                                 color="#70797F"
                                                 fontSize="12px">
-                                                {item.position}
+                                                {item.chucVu}
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -350,7 +217,7 @@ const TabDay: React.FC = () => {
                     <TableBody
                         sx={{
                             '& .MuiTableCell-root:not(:first-child)': {
-                                borderLeft: '1px solid  rgba(224, 224, 224, 1)'
+                                borderLeft: '1px solid rgba(224, 224, 224, 1)'
                             }
                         }}>
                         {Array.from({ length: 14 }, (_, index) => {
@@ -372,9 +239,9 @@ const TabDay: React.FC = () => {
                                         {timeLabel}
                                     </TableCell>
                                     {NhanViens2.map((item1, index) => {
-                                        const matchingData = Clients.filter(
+                                        const matchingData = data.filter(
                                             (item) =>
-                                                item.nameEmployee === item1.name &&
+                                                item.sourceId === item1.id &&
                                                 parseInt(item.startTime.split(':')[0], 10) === hour
                                         );
 
@@ -464,20 +331,20 @@ const TabDay: React.FC = () => {
                                                                             ' - ' +
                                                                             item.endTime}
                                                                     </Typography>
-                                                                    {item.icon}
+                                                                    {/* {item.icon} */}
                                                                 </Box>
                                                                 <Typography
                                                                     variant="body1"
                                                                     color={item.color}
                                                                     fontWeight="700"
                                                                     fontSize="12px">
-                                                                    {item.name}
+                                                                    {item.employee}
                                                                 </Typography>
                                                                 <Typography
                                                                     color={item.color}
                                                                     variant="body1"
                                                                     fontSize="12px">
-                                                                    {item.service}
+                                                                    {item.services}
                                                                 </Typography>
                                                             </Box>
                                                         );
@@ -501,4 +368,5 @@ const TabDay: React.FC = () => {
         </Box>
     );
 };
+
 export default TabDay;

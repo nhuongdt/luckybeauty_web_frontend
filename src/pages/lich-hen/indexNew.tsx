@@ -389,7 +389,7 @@ const LichHen: React.FC = () => {
             {TabLichHen === 'week' ? (
                 <TabWeek dateQuery={selectedDate} data={data} />
             ) : TabLichHen === 'day' ? (
-                <TabDay />
+                <TabDay data={data} />
             ) : TabLichHen === 'month' ? (
                 <TabMonth dateQuery={selectedDate} data={data} />
             ) : undefined}
