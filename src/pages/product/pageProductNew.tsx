@@ -26,7 +26,6 @@ import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { OptionPage } from '../../components/Pagination/OptionPage';
 import { LabelDisplayedRows } from '../../components/Pagination/LabelDisplayedRows';
 import ActionViewEditDelete from '../../components/Menu/ActionViewEditDelete';
-import CustomRowDetails from '../ban_hang/Hoa_don/ChiTietHoaDon';
 import { ModalNhomHangHoa } from './ModalGroupProduct';
 import { ModalHangHoa } from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
@@ -92,18 +91,19 @@ export default function PageProductNew() {
     };
 
     const GetListNhomHangHoa = async () => {
+        // used to modal hanghoa
         const list = await GroupProductService.GetDM_NhomHangHoa();
         setLstProductGroup(list.items);
     };
 
     const GetTreeNhomHangHoa = async () => {
+        // used to tree at menu left
         const list = await GroupProductService.GetTreeNhomHangHoa();
         const obj = new ModelNhomHangHoa({
             id: '',
             tenNhomHang: 'Tất cả',
             color: '#7C3367'
         });
-        console.log('tree ', list.items);
         setTreeNhomHangHoa([obj, ...list.items]);
     };
 
@@ -164,11 +164,15 @@ export default function PageProductNew() {
     };
 
     function saveNhomHang(objNew: ModelNhomHangHoa, isDelete = false) {
+        console.log('objNew ', objNew);
         if (isDelete) {
             setObjAlert({
                 show: true,
                 type: 1,
                 mes: 'Xóa ' + objNew.sLoaiNhomHang + ' thành công'
+            });
+            setLstProductGroup((old: ModelNhomHangHoa[]) => {
+                return old.filter((x: ModelNhomHangHoa) => x.id !== objNew.id);
             });
         } else {
             if (triggerModalNhomHang.isNew) {
@@ -177,14 +181,34 @@ export default function PageProductNew() {
                     type: 1,
                     mes: 'Thêm ' + objNew.sLoaiNhomHang + ' thành công'
                 });
+                setLstProductGroup([objNew, ...lstProductGroup]);
             } else {
                 setObjAlert({
                     show: true,
                     type: 1,
                     mes: 'Cập nhật ' + objNew.sLoaiNhomHang + ' thành công'
                 });
+                setLstProductGroup(
+                    lstProductGroup.map((item: ModelNhomHangHoa) => {
+                        console.log('item ', item.id, objNew.id);
+                        if (item.id === objNew.id) {
+                            return {
+                                ...item,
+                                color: objNew.color,
+                                tenNhomHang: objNew.tenNhomHang,
+                                tenNhomHang_KhongDau: objNew.tenNhomHang_KhongDau,
+                                laNhomHangHoa: objNew.laNhomHangHoa,
+                                sLoaiNhomHang: objNew.sLoaiNhomHang,
+                                idParent: objNew.idParent
+                            };
+                        } else {
+                            return item;
+                        }
+                    })
+                );
             }
         }
+        setTriggerModalNhomHang({ ...triggerModalNhomHang, isShow: false });
 
         GetTreeNhomHangHoa();
     }

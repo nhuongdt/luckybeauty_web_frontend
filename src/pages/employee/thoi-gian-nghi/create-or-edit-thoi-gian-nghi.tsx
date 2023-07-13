@@ -61,7 +61,9 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <div className="row">
-                        <Box className="col-8" sx={{ float: 'left' }}>
+                        <Box
+                            className="col-8"
+                            sx={{ float: 'left', fontSize: '24px', fontWeight: '700' }}>
                             {title}
                         </Box>
                         <Box
@@ -85,7 +87,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                             <Form>
                                 <Field as={TextField} type="text" name="id" hidden />
                                 <FormGroup>
-                                    <FormLabel>Tên ngày lễ</FormLabel>
+                                    <FormLabel className="modal-lable">Tên ngày lễ</FormLabel>
                                     <TextField
                                         className="mt-2"
                                         value={values.tenNgayLe}
@@ -102,9 +104,9 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     spacing={2}
                                     alignItems="center"
                                     className="mt-2">
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <FormLabel>Từ ngày</FormLabel>
+                                            <FormLabel className="modal-lable">Từ ngày</FormLabel>
                                             <TextField
                                                 className="mt-2"
                                                 type="date"
@@ -116,9 +118,9 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                             />
                                         </FormGroup>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <FormLabel>Đến ngày</FormLabel>
+                                            <FormLabel className="modal-lable">Đến ngày</FormLabel>
                                             <TextField
                                                 type="date"
                                                 className="mt-2"
@@ -131,7 +133,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         </FormGroup>
                                     </Grid>
                                 </Grid>
-                                <DialogActions>
+                                <DialogActions sx={{ paddingRight: '0!important' }}>
                                     <Button
                                         sx={{ bgcolor: '#7C3367!important' }}
                                         variant="contained"

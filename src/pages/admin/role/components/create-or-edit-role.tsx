@@ -21,7 +21,8 @@ import {
     Typography
 } from '@mui/material';
 import { Form, Formik } from 'formik';
-import CloseIcon from '@mui/icons-material/Close';
+
+import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -307,7 +308,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 marginTop: '16px'
                                             }}>
                                             <FormGroup>
-                                                <label htmlFor="name">
+                                                <label htmlFor="name" className="modal-lable">
                                                     Tên vai trò
                                                     <span
                                                         style={{
@@ -318,6 +319,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     </span>
                                                 </label>
                                                 <TextField
+                                                    className="mt-2"
                                                     fullWidth
                                                     size="small"
                                                     id="name"
@@ -333,7 +335,9 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 )}
                                             </FormGroup>
                                             <FormGroup>
-                                                <label htmlFor="displayName">
+                                                <label
+                                                    htmlFor="displayName"
+                                                    className="modal-lable">
                                                     Tên hiển thị
                                                     <span
                                                         style={{
@@ -344,6 +348,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     </span>
                                                 </label>
                                                 <TextField
+                                                    className="mt-2"
                                                     fullWidth
                                                     size="small"
                                                     id="displayName"
@@ -359,8 +364,13 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 )}
                                             </FormGroup>
                                             <FormGroup>
-                                                <label htmlFor="description">Mô tả</label>
+                                                <label
+                                                    htmlFor="description"
+                                                    className="modal-lable">
+                                                    Mô tả
+                                                </label>
                                                 <TextField
+                                                    className="mt-2"
                                                     fullWidth
                                                     size="small"
                                                     id="description"
@@ -396,7 +406,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             </FormGroup>
                                         </TabPanel>
                                     </TabContext>
-                                    <DialogActions>
+                                    <DialogActions sx={{ paddingRight: '0!important' }}>
                                         <Box
                                             display="flex"
                                             width="fit-content"
