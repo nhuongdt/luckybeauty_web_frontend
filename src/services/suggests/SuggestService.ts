@@ -134,13 +134,19 @@ class SuggestService {
             return [];
         }
     }
-    public async SuggestNhanVienLamDichVu(): Promise<SuggestNhanVienDichVuDto[]> {
+    public async SuggestNhanVienLamDichVu(
+        idNhanVien?: string
+    ): Promise<SuggestNhanVienDichVuDto[]> {
         try {
-            const result = await http.post(
-                `api/services/app/Suggest/SuggestNhanVienThucHienDichVu?idChiNhanh=${Cookies.get(
-                    'IdChiNhanh'
-                )}`
-            );
+            let apiUrl = `api/services/app/Suggest/SuggestNhanVienThucHienDichVu?idChiNhanh=${Cookies.get(
+                'IdChiNhanh'
+            )}`;
+
+            if (idNhanVien && idNhanVien !== '') {
+                apiUrl += `&idNhanVien=${idNhanVien}`;
+            }
+
+            const result = await http.post(apiUrl);
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while suggesting ChucVus:', error);

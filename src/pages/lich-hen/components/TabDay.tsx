@@ -22,16 +22,18 @@ import { ReactComponent as ClockViolet } from '../../../images/clock-violet.svg'
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
+import { observer } from 'mobx-react';
+import bookingStore from '../../../stores/bookingStore';
 
 const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
     const [nhanViens, setNhanViens] = useState<SuggestNhanVienDichVuDto[]>([]);
 
     useEffect(() => {
         getNhanVien();
-    }, []);
+    }, [bookingStore.idNhanVien]);
 
     const getNhanVien = async () => {
-        const allNhanVien = await SuggestService.SuggestNhanVienLamDichVu();
+        const allNhanVien = await SuggestService.SuggestNhanVienLamDichVu(bookingStore.idNhanVien);
         setNhanViens(allNhanVien);
     };
 
@@ -369,4 +371,4 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
     );
 };
 
-export default TabDay;
+export default observer(TabDay);
