@@ -11,6 +11,8 @@ import { SuggestLoaiKhachDto } from './dto/SuggestLoaiKhachDto';
 import { SuggestKhachHangDto } from './dto/SuggestKhachHangDto';
 import { SuggestNhanSuDto } from './dto/SuggestNhanSuDto';
 import { SuggestChucVuDto } from './dto/SuggestChucVuDto';
+import { SuggestNhanVienDichVuDto } from './dto/SuggestNhanVienDichVuDto';
+import Cookies from 'js-cookie';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
@@ -126,6 +128,25 @@ class SuggestService {
     public async SuggestChucVu(): Promise<SuggestChucVuDto[]> {
         try {
             const result = await http.post('api/services/app/Suggest/SuggestChucVus');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting ChucVus:', error);
+            return [];
+        }
+    }
+    public async SuggestNhanVienLamDichVu(
+        idNhanVien?: string
+    ): Promise<SuggestNhanVienDichVuDto[]> {
+        try {
+            let apiUrl = `api/services/app/Suggest/SuggestNhanVienThucHienDichVu?idChiNhanh=${Cookies.get(
+                'IdChiNhanh'
+            )}`;
+
+            if (idNhanVien && idNhanVien !== '') {
+                apiUrl += `&idNhanVien=${idNhanVien}`;
+            }
+
+            const result = await http.post(apiUrl);
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while suggesting ChucVus:', error);

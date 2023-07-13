@@ -22,7 +22,7 @@ import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
 import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDonViQuiDoi';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
-import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
+import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import AppConsts from '../../../lib/appconst';
 import datLichService from '../../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
@@ -35,7 +35,7 @@ interface ICreateOrEditProps {
     idLichHen: string;
     suggestDichVu: SuggestDonViQuiDoiDto[];
     suggestKhachHang: SuggestKhachHangDto[];
-    suggestNhanVien: SuggestNhanSuDto[];
+    suggestNhanVien: SuggestNhanVienDichVuDto[];
     onOk: () => void;
 }
 
@@ -209,107 +209,101 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     value={values.startTime}
                                                     onChange={handleChange}></TextField>
                                             </FormGroup>
-                                            <Box sx={{ bgcolor: '#fff' }}>
-                                                <Grid
-                                                    container
-                                                    item
-                                                    spacing={2}
-                                                    sx={{ bgcolor: '#fff' }}>
-                                                    <Grid item xs={12} sm={6} md={8}>
-                                                        <FormGroup className="mt-2 mb-1">
-                                                            <Typography
-                                                                variant="body1"
-                                                                className="mb-2"
-                                                                fontSize="14px">
-                                                                Dịch vụ
-                                                            </Typography>
-                                                            <Autocomplete
-                                                                options={suggestDichVu}
-                                                                getOptionLabel={(option) =>
-                                                                    `${option.tenDonVi}`
-                                                                }
-                                                                size="small"
-                                                                fullWidth
-                                                                disablePortal
-                                                                onChange={(event, value) => {
-                                                                    setFieldValue(
-                                                                        'idDonViQuiDoi',
-                                                                        value ? value.id : ''
-                                                                    ); // Cập nhật giá trị id trong Formik
-                                                                }}
-                                                                renderInput={(params) => (
-                                                                    <TextField
-                                                                        {...params}
-                                                                        placeholder="Nhập tên dịch vụ"
-                                                                    />
-                                                                )}
-                                                            />
-                                                        </FormGroup>
-                                                    </Grid>
-                                                    <Grid item xs={12} sm={6} md={4}>
-                                                        <FormGroup className="mt-2 mb-1">
-                                                            <Typography
-                                                                variant="body1"
-                                                                className="mb-1"
-                                                                fontSize="14px">
-                                                                Thời gian bắt đầu
-                                                            </Typography>
-                                                            <TextField
-                                                                type="time"
-                                                                size="small"
-                                                                name="startHours"
-                                                                value={values.startHours}
-                                                                onChange={handleChange}></TextField>
-                                                        </FormGroup>
-                                                    </Grid>
+                                            <Grid container item spacing={2}>
+                                                <Grid item xs={8}>
+                                                    <FormGroup className="mt-2 mb-1">
+                                                        <Typography
+                                                            variant="body1"
+                                                            className="mb-2"
+                                                            fontSize="14px">
+                                                            Dịch vụ
+                                                        </Typography>
+                                                        <Autocomplete
+                                                            options={suggestDichVu}
+                                                            getOptionLabel={(option) =>
+                                                                `${option.tenDonVi}`
+                                                            }
+                                                            size="small"
+                                                            fullWidth
+                                                            disablePortal
+                                                            onChange={(event, value) => {
+                                                                setFieldValue(
+                                                                    'idDonViQuiDoi',
+                                                                    value ? value.id : ''
+                                                                ); // Cập nhật giá trị id trong Formik
+                                                            }}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    placeholder="Nhập tên dịch vụ"
+                                                                />
+                                                            )}
+                                                        />
+                                                    </FormGroup>
                                                 </Grid>
-                                                <Grid container item spacing={[4, 2]}>
-                                                    <Grid item xs={12} sm={6} md={8}>
-                                                        <FormGroup className="mt-2 mb-1">
-                                                            <Typography
-                                                                variant="body1"
-                                                                className="mb-1"
-                                                                fontSize="14px">
-                                                                Nhân viên
-                                                            </Typography>
-                                                            <Autocomplete
-                                                                options={suggestNhanVien}
-                                                                getOptionLabel={(option) =>
-                                                                    `${option.tenNhanVien}`
-                                                                }
-                                                                size="small"
-                                                                fullWidth
-                                                                disablePortal
-                                                                onChange={(event, value) => {
-                                                                    setFieldValue(
-                                                                        'idNhanVien',
-                                                                        value ? value.id : ''
-                                                                    ); // Cập nhật giá trị id trong Formik
-                                                                }}
-                                                                renderInput={(params) => (
-                                                                    <TextField
-                                                                        {...params}
-                                                                        placeholder="Nhập tên nhân viên"
-                                                                    />
-                                                                )}
-                                                            />
-                                                        </FormGroup>
-                                                    </Grid>
-                                                    <Grid item xs={12} sm={6} md={4}>
-                                                        <FormGroup className="mt-2 mb-1">
-                                                            <Typography
-                                                                variant="body1"
-                                                                className="mb-1"
-                                                                fontSize="14px">
-                                                                Thời gian làm
-                                                            </Typography>
-                                                            <TextField
-                                                                type="number"
-                                                                size="small"></TextField>
-                                                        </FormGroup>
-                                                    </Grid>
+                                                <Grid item xs={4}>
+                                                    <FormGroup className="mt-2 mb-1">
+                                                        <Typography
+                                                            variant="body1"
+                                                            className="mb-1"
+                                                            fontSize="14px">
+                                                            Thời gian bắt đầu
+                                                        </Typography>
+                                                        <TextField
+                                                            type="time"
+                                                            size="small"
+                                                            name="startHours"
+                                                            value={values.startHours}
+                                                            onChange={handleChange}></TextField>
+                                                    </FormGroup>
                                                 </Grid>
-                                            </Box>
+                                            </Grid>
+                                            <Grid container item spacing={[4, 2]}>
+                                                <Grid item xs={8}>
+                                                    <FormGroup className="mt-2 mb-1">
+                                                        <Typography
+                                                            variant="body1"
+                                                            className="mb-1"
+                                                            fontSize="14px">
+                                                            Nhân viên
+                                                        </Typography>
+                                                        <Autocomplete
+                                                            options={suggestNhanVien}
+                                                            getOptionLabel={(option) =>
+                                                                `${option.tenNhanVien}`
+                                                            }
+                                                            size="small"
+                                                            fullWidth
+                                                            disablePortal
+                                                            onChange={(event, value) => {
+                                                                setFieldValue(
+                                                                    'idNhanVien',
+                                                                    value ? value.id : ''
+                                                                ); // Cập nhật giá trị id trong Formik
+                                                            }}
+                                                            renderInput={(params) => (
+                                                                <TextField
+                                                                    {...params}
+                                                                    placeholder="Nhập tên nhân viên"
+                                                                />
+                                                            )}
+                                                        />
+                                                    </FormGroup>
+                                                </Grid>
+                                                <Grid item xs={4}>
+                                                    <FormGroup className="mt-2 mb-1">
+                                                        <Typography
+                                                            variant="body1"
+                                                            className="mb-1"
+                                                            fontSize="14px">
+                                                            Thời gian làm
+                                                        </Typography>
+                                                        <TextField
+                                                            type="number"
+                                                            size="small"></TextField>
+                                                    </FormGroup>
+                                                </Grid>
+                                            </Grid>
                                             <Grid item>
                                                 <FormGroup className="mt-2 mb-1">
                                                     <Typography

@@ -1,9 +1,6 @@
-import Cookies from 'js-cookie';
-
 class abpClient {
     public isGrandPermission(permission: string) {
         const permissions = JSON.parse(localStorage.getItem('permissions') || '[]') || [];
-        //alert(JSON.stringify(permissions));
         if (
             Array.isArray(permissions.value) &&
             (permissions.value.includes(permission) || permission === '')
