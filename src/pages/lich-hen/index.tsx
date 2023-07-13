@@ -23,6 +23,7 @@ import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQ
 import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
+import abpCustom from '../../components/abp-custom';
 class LichHenScreen extends Component {
     calendarRef: RefObject<FullCalendar> = React.createRef();
     state = {
@@ -195,6 +196,9 @@ class LichHenScreen extends Component {
                                     </Button>
                                     <Button
                                         variant="contained"
+                                        hidden={
+                                            !abpCustom.isGrandPermission('Pages.Booking.Create')
+                                        }
                                         startIcon={<img src={AddIcon} />}
                                         sx={{
                                             textTransform: 'unset!important',

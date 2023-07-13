@@ -32,6 +32,7 @@ import { HoaDonRequestDto } from '../../../services/dto/ParamSearchDto';
 import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import fileDowloadService from '../../../services/file-dowload.service';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -231,7 +232,10 @@ const GiaoDichThanhToan: React.FC = () => {
         //     }
         // }
     };
-
+    const exportToExcel = async () => {
+        const data = await HoaDonService.ExportToExcel(paramSearch);
+        fileDowloadService.downloadExportFile(data);
+    };
     const columns: GridColDef[] = [
         {
             field: 'maHoaDon',
@@ -539,6 +543,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             </Box>
                             <Button
                                 variant="outlined"
+                                onClick={exportToExcel}
                                 startIcon={<UploadIcon />}
                                 sx={{
                                     borderColor: '#CDC9CD!important',

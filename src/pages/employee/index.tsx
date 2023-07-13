@@ -712,9 +712,11 @@ class EmployeeScreen extends React.Component {
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
+                        permissionView=""
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.NhanSu.Edit"
                         handleDelete={this.handleDelete}
+                        permissionDelete="Pages.NhanSu.Delete"
                     />
                     <CustomTablePagination
                         currentPage={this.state.currentPage}

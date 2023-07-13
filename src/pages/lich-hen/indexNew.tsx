@@ -34,6 +34,7 @@ import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNha
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
 import SuggestService from '../../services/suggests/SuggestService';
+import abpCustom from '../../components/abp-custom';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
@@ -238,6 +239,7 @@ const LichHen: React.FC = () => {
                         Thêm thời gian chặn
                     </Button>
                     <Button
+                        hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
                         startIcon={<AddIcon />}
                         variant="contained"
                         onClick={() => {

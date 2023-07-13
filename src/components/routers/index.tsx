@@ -231,20 +231,6 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/ban_hang/Giao_dich_thanh_toan/index')
                             )
-                        },
-                        {
-                            path: '/giao-dich-thanh-toan-new',
-                            permission: 'Pages.QuyHoaDon',
-                            title: 'Giao dịch thanh toán new',
-                            name: 'giaoDichThanhToanNew',
-                            icon: <BsDot style={{ fontSize: 20 }} />,
-                            iconActive: null,
-                            children: [],
-                            showInMenu: true,
-                            isLayout: false,
-                            component: LoadableComponent(
-                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/indexTest')
-                            )
                         }
                     ],
                     showInMenu: true,
