@@ -17,7 +17,8 @@ import {
     InputAdornment
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
+
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
 import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDonViQuiDoi';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
@@ -111,7 +112,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                             {({ errors, touched, values, handleChange, setFieldValue }) => (
                                 <Form>
                                     <Grid container spacing={[8, 3]}>
-                                        <Grid item xs={5} sx={{ pr: '20px' }}>
+                                        <Grid item xs={12} sm={5} sx={{ pr: '20px' }}>
                                             {/* <FormGroup> */}
                                             <Autocomplete
                                                 sx={{ pt: '24px' }}
@@ -150,7 +151,10 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 )}
                                             />
                                             {/* </FormGroup> */}
-                                            <Box textAlign="center" mt="5vw">
+                                            <Box
+                                                textAlign="center"
+                                                mt="5vw"
+                                                display={innerWidth < 600 ? 'none' : 'block'}>
                                                 <Box>
                                                     <IconMore />
                                                 </Box>
@@ -175,14 +179,15 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         </Grid>
                                         <Grid
                                             item
-                                            xs={7}
+                                            xs={12}
+                                            sm={7}
                                             rowSpacing={4}
                                             sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
                                             <Typography
                                                 variant="subtitle1"
                                                 fontSize="16px"
                                                 fontWeight="700"
-                                                pt="24px">
+                                                pt={innerWidth < 600 ? '0' : '24px'}>
                                                 Chi tiết cuộc hẹn
                                             </Typography>
                                             <FormGroup className="mt-4 mb-1">
@@ -204,101 +209,107 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     value={values.startTime}
                                                     onChange={handleChange}></TextField>
                                             </FormGroup>
-                                            <Grid container item spacing={2}>
-                                                <Grid item xs={8}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-2"
-                                                            fontSize="14px">
-                                                            Dịch vụ
-                                                        </Typography>
-                                                        <Autocomplete
-                                                            options={suggestDichVu}
-                                                            getOptionLabel={(option) =>
-                                                                `${option.tenDonVi}`
-                                                            }
-                                                            size="small"
-                                                            fullWidth
-                                                            disablePortal
-                                                            onChange={(event, value) => {
-                                                                setFieldValue(
-                                                                    'idDonViQuiDoi',
-                                                                    value ? value.id : ''
-                                                                ); // Cập nhật giá trị id trong Formik
-                                                            }}
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params}
-                                                                    placeholder="Nhập tên dịch vụ"
-                                                                />
-                                                            )}
-                                                        />
-                                                    </FormGroup>
+                                            <Box sx={{ bgcolor: '#fff' }}>
+                                                <Grid
+                                                    container
+                                                    item
+                                                    spacing={2}
+                                                    sx={{ bgcolor: '#fff' }}>
+                                                    <Grid item xs={12} sm={6} md={8}>
+                                                        <FormGroup className="mt-2 mb-1">
+                                                            <Typography
+                                                                variant="body1"
+                                                                className="mb-2"
+                                                                fontSize="14px">
+                                                                Dịch vụ
+                                                            </Typography>
+                                                            <Autocomplete
+                                                                options={suggestDichVu}
+                                                                getOptionLabel={(option) =>
+                                                                    `${option.tenDonVi}`
+                                                                }
+                                                                size="small"
+                                                                fullWidth
+                                                                disablePortal
+                                                                onChange={(event, value) => {
+                                                                    setFieldValue(
+                                                                        'idDonViQuiDoi',
+                                                                        value ? value.id : ''
+                                                                    ); // Cập nhật giá trị id trong Formik
+                                                                }}
+                                                                renderInput={(params) => (
+                                                                    <TextField
+                                                                        {...params}
+                                                                        placeholder="Nhập tên dịch vụ"
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </FormGroup>
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={6} md={4}>
+                                                        <FormGroup className="mt-2 mb-1">
+                                                            <Typography
+                                                                variant="body1"
+                                                                className="mb-1"
+                                                                fontSize="14px">
+                                                                Thời gian bắt đầu
+                                                            </Typography>
+                                                            <TextField
+                                                                type="time"
+                                                                size="small"
+                                                                name="startHours"
+                                                                value={values.startHours}
+                                                                onChange={handleChange}></TextField>
+                                                        </FormGroup>
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid item xs={4}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-1"
-                                                            fontSize="14px">
-                                                            Thời gian bắt đầu
-                                                        </Typography>
-                                                        <TextField
-                                                            type="time"
-                                                            size="small"
-                                                            name="startHours"
-                                                            value={values.startHours}
-                                                            onChange={handleChange}></TextField>
-                                                    </FormGroup>
+                                                <Grid container item spacing={[4, 2]}>
+                                                    <Grid item xs={12} sm={6} md={8}>
+                                                        <FormGroup className="mt-2 mb-1">
+                                                            <Typography
+                                                                variant="body1"
+                                                                className="mb-1"
+                                                                fontSize="14px">
+                                                                Nhân viên
+                                                            </Typography>
+                                                            <Autocomplete
+                                                                options={suggestNhanVien}
+                                                                getOptionLabel={(option) =>
+                                                                    `${option.tenNhanVien}`
+                                                                }
+                                                                size="small"
+                                                                fullWidth
+                                                                disablePortal
+                                                                onChange={(event, value) => {
+                                                                    setFieldValue(
+                                                                        'idNhanVien',
+                                                                        value ? value.id : ''
+                                                                    ); // Cập nhật giá trị id trong Formik
+                                                                }}
+                                                                renderInput={(params) => (
+                                                                    <TextField
+                                                                        {...params}
+                                                                        placeholder="Nhập tên nhân viên"
+                                                                    />
+                                                                )}
+                                                            />
+                                                        </FormGroup>
+                                                    </Grid>
+                                                    <Grid item xs={12} sm={6} md={4}>
+                                                        <FormGroup className="mt-2 mb-1">
+                                                            <Typography
+                                                                variant="body1"
+                                                                className="mb-1"
+                                                                fontSize="14px">
+                                                                Thời gian làm
+                                                            </Typography>
+                                                            <TextField
+                                                                type="number"
+                                                                size="small"></TextField>
+                                                        </FormGroup>
+                                                    </Grid>
                                                 </Grid>
-                                            </Grid>
-                                            <Grid container item spacing={[4, 2]}>
-                                                <Grid item xs={8}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-1"
-                                                            fontSize="14px">
-                                                            Nhân viên
-                                                        </Typography>
-                                                        <Autocomplete
-                                                            options={suggestNhanVien}
-                                                            getOptionLabel={(option) =>
-                                                                `${option.tenNhanVien}`
-                                                            }
-                                                            size="small"
-                                                            fullWidth
-                                                            disablePortal
-                                                            onChange={(event, value) => {
-                                                                setFieldValue(
-                                                                    'idNhanVien',
-                                                                    value ? value.id : ''
-                                                                ); // Cập nhật giá trị id trong Formik
-                                                            }}
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params}
-                                                                    placeholder="Nhập tên nhân viên"
-                                                                />
-                                                            )}
-                                                        />
-                                                    </FormGroup>
-                                                </Grid>
-                                                <Grid item xs={4}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-1"
-                                                            fontSize="14px">
-                                                            Thời gian làm
-                                                        </Typography>
-                                                        <TextField
-                                                            type="number"
-                                                            size="small"></TextField>
-                                                    </FormGroup>
-                                                </Grid>
-                                            </Grid>
+                                            </Box>
                                             <Grid item>
                                                 <FormGroup className="mt-2 mb-1">
                                                     <Typography
@@ -343,13 +354,17 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             </Grid>
                                         </Grid>
                                     </Grid>
-                                    <DialogActions sx={{ pr: '0', pb: '24px' }}>
+                                    <DialogActions
+                                        sx={{
+                                            pr: '0',
+                                            pb: '24px',
+                                            position: 'sticky',
+                                            bgcolor: '#fff',
+                                            bottom: '0',
+                                            left: '0'
+                                        }}>
                                         <Grid container>
-                                            <Grid item xs={5}></Grid>
-                                            <Grid
-                                                item
-                                                xs={7}
-                                                sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
+                                            <Grid item xs={12} sx={{ bgcolor: '#F9FAFC' }}>
                                                 <Box
                                                     display="flex"
                                                     justifyContent="end"
@@ -360,6 +375,16 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         }
                                                     }}>
                                                     <Button
+                                                        className="btn-container-hover"
+                                                        variant="contained"
+                                                        size="small"
+                                                        type="submit"
+                                                        sx={{
+                                                            backgroundColor: '#7C3367!important'
+                                                        }}>
+                                                        Lưu
+                                                    </Button>
+                                                    <Button
                                                         className="btn-outline-hover"
                                                         variant="outlined"
                                                         size="small"
@@ -369,16 +394,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         }}
                                                         onClick={onCancel}>
                                                         Hủy
-                                                    </Button>
-                                                    <Button
-                                                        className="btn-container-hover"
-                                                        variant="contained"
-                                                        size="small"
-                                                        type="submit"
-                                                        sx={{
-                                                            backgroundColor: '#7C3367!important'
-                                                        }}>
-                                                        Lưu
                                                     </Button>
                                                 </Box>
                                             </Grid>
