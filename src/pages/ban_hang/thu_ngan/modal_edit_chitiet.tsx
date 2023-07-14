@@ -522,7 +522,7 @@ export default function ModalEditChiTietGioHang({
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={12}
+                                        xs={6}
                                         md={7}
                                         lg={7}
                                         sm={7}
@@ -582,7 +582,7 @@ export default function ModalEditChiTietGioHang({
                                     </Grid>
                                     <Grid
                                         item
-                                        xs={12}
+                                        xs={6}
                                         md={5}
                                         lg={5}
                                         sm={5}
@@ -716,11 +716,11 @@ export default function ModalEditChiTietGioHang({
                     {/* end 1 row */}
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" className="button-outline" onClick={closeModal}>
-                        Hủy
-                    </Button>
                     <Button variant="contained" className="button-container" onClick={agrreGioHang}>
                         {formType == 1 ? 'Đồng ý' : 'Lưu'}
+                    </Button>
+                    <Button variant="outlined" className="button-outline" onClick={closeModal}>
+                        Hủy
                     </Button>
                 </DialogActions>
             </Dialog>

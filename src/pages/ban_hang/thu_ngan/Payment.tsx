@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid, IconButton, TextField } from '@mui/material';
 import { ReactComponent as ArrowLeft } from '../../../images/arrow_back.svg';
 import { ReactComponent as TienMat } from '../../../images/tien-mat.svg';
@@ -10,71 +10,276 @@ import Card1 from '../../../images/card1.svg';
 import Card2 from '../../../images/card2.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { ReactComponent as TickIcon } from '../../../images/checkIcon.svg';
+import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+import { NumericFormat } from 'react-number-format';
+import utils from '../../../utils/utils';
+import { Guid } from 'guid-typescript';
 interface ChildComponent {
     handleClickPrev: () => void;
-    formShow?: number;
     tongPhaiTra?: number;
+    passToParent: (quyCT: QuyChiTietDto[]) => void;
 }
-const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPhaiTra = 0 }) => {
-    const PaymentsList = [
-        {
-            icon: TienMat,
-            name: 'Tiền mặt'
-        },
-        {
-            icon: NganHang,
-            name: 'Thẻ ngân hàng'
-        },
-        {
-            icon: ChuyenKhoan,
-            name: 'Chuyển khoản'
-        }
-    ];
+const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, passToParent }) => {
     const tientip = ['5%', '10%', '15%', 'Tùy chỉnh'];
 
-    const [selectedItem, setSelectedItem] = React.useState<number | -1>(-1);
-    const HandleSelected = (index: number) => {
-        setSelectedItem(index);
-    };
-    const formatCurrency = (value: number) => {
-        const formatter = new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
+    const hinhThucThanhToan = [
+        {
+            id: 1,
+            icon: TienMat,
+            text: 'Tiền mặt',
+            selected: false
+        },
+        {
+            id: 2,
+            icon: NganHang,
+            text: 'Thẻ ngân hàng',
+            selected: false
+        },
+        {
+            id: 3,
+            icon: ChuyenKhoan,
+            text: 'Chuyển khoản',
+            selected: false
+        }
+    ];
+
+    const [hinhthucThanhToanChosed, setHinhthucThanhToanChosed] = useState<QuyChiTietDto[]>([]);
+    const choseHinhThucThanhToan = (id: number) => {
+        const itemEx = hinhthucThanhToanChosed?.filter(
+            (x: QuyChiTietDto) => x.hinhThucThanhToan === id
+        );
+        const newQCT = new QuyChiTietDto({
+            hinhThucThanhToan: id,
+            tienThu: hinhthucThanhToanChosed.length === 0 ? tongPhaiTra : 0
         });
-        return formatter.format(value);
+        if (itemEx.length === 0) {
+            setHinhthucThanhToanChosed(() => [...hinhthucThanhToanChosed, newQCT]);
+        }
     };
 
-    const ProposePrice = [100000, 150000, 200000, 300000, 400000, 500000];
-    const [TienKhachTra, setTienKhachTra] = React.useState<number>(0);
-    const newValue = formatCurrency(TienKhachTra);
-    const HandleTienKhachTra = (index: number) => {
-        setTienKhachTra(ProposePrice[index]);
+    const removeHinhThucThanhToan = (id: number) => {
+        setHinhthucThanhToanChosed(() =>
+            hinhthucThanhToanChosed.filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== id)
+        );
     };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTienKhachTra(parseInt(event.target.value));
+    const indexChosed = hinhthucThanhToanChosed.map((item: QuyChiTietDto) => {
+        return item.hinhThucThanhToan;
+    });
+
+    const changeTienKhachTra = (gtri: string, loaiHinhThuc: number) => {
+        setHinhthucThanhToanChosed(
+            hinhthucThanhToanChosed.map((item: QuyChiTietDto) => {
+                if (item.hinhThucThanhToan === loaiHinhThuc) {
+                    return { ...item, tienThu: utils.formatNumberToFloat(gtri) };
+                } else {
+                    return item;
+                }
+            })
+        );
     };
+
+    const sumTienKhachTra = hinhthucThanhToanChosed.reduce(
+        (currentValue: number, item: QuyChiTietDto) => {
+            return item.tienThu + currentValue;
+        },
+        0
+    );
+
+    const tienThuaTraKhach = sumTienKhachTra - tongPhaiTra;
+
+    useEffect(() => {
+        const qctReturn = assignAgainQuyChiTiet();
+        passToParent(qctReturn);
+    }, [sumTienKhachTra]);
+
+    const shareMoney_QuyHD = (
+        phaiTT: number,
+        tienDiem: number,
+        tienmat: number,
+        tienPOS: number,
+        chuyenkhoan: number,
+        thegiatri: number,
+        tiencoc: number
+    ) => {
+        // thutu uutien: 1.coc, 2.diem, 3.thegiatri, 4.mat, 5.pos, 6.chuyenkhoan
+        if (tiencoc >= phaiTT) {
+            return {
+                TienCoc: phaiTT,
+                TTBangDiem: 0,
+                TienMat: 0,
+                TienPOS: 0,
+                TienChuyenKhoan: 0,
+                TienTheGiaTri: 0
+            };
+        } else {
+            phaiTT = phaiTT - tiencoc;
+            if (tienDiem >= phaiTT) {
+                return {
+                    TienCoc: tiencoc,
+                    TTBangDiem: phaiTT,
+                    TienMat: 0,
+                    TienPOS: 0,
+                    TienChuyenKhoan: 0,
+                    TienTheGiaTri: 0
+                };
+            } else {
+                phaiTT = phaiTT - tienDiem;
+                if (thegiatri >= phaiTT) {
+                    return {
+                        TienCoc: tiencoc,
+                        TTBangDiem: tienDiem,
+                        TienMat: 0,
+                        TienPOS: 0,
+                        TienChuyenKhoan: 0,
+                        TienTheGiaTri: Math.abs(phaiTT)
+                    };
+                } else {
+                    phaiTT = phaiTT - thegiatri;
+                    if (tienmat >= phaiTT) {
+                        return {
+                            TienCoc: tiencoc,
+                            TTBangDiem: tienDiem,
+                            TienMat: Math.abs(phaiTT),
+                            TienPOS: 0,
+                            TienChuyenKhoan: 0,
+                            TienTheGiaTri: thegiatri
+                        };
+                    } else {
+                        phaiTT = phaiTT - tienmat;
+                        if (tienPOS >= phaiTT) {
+                            return {
+                                TienCoc: tiencoc,
+                                TTBangDiem: tienDiem,
+                                TienMat: tienmat,
+                                TienPOS: Math.abs(phaiTT),
+                                TienChuyenKhoan: 0,
+                                TienTheGiaTri: thegiatri
+                            };
+                        } else {
+                            phaiTT = phaiTT - tienPOS;
+                            if (chuyenkhoan >= phaiTT) {
+                                return {
+                                    TienCoc: tiencoc,
+                                    TTBangDiem: tienDiem,
+                                    TienMat: tienmat,
+                                    TienPOS: tienPOS,
+                                    TienChuyenKhoan: Math.abs(phaiTT),
+                                    TienTheGiaTri: thegiatri
+                                };
+                            } else {
+                                phaiTT = phaiTT - chuyenkhoan;
+                                return {
+                                    TienCoc: tiencoc,
+                                    TTBangDiem: tienDiem,
+                                    TienMat: tienmat,
+                                    TienPOS: tienPOS,
+                                    TienChuyenKhoan: chuyenkhoan,
+                                    TienTheGiaTri: thegiatri
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    const assignAgainQuyChiTiet = () => {
+        let lstQuyCT: QuyChiTietDto[] = [];
+        if (sumTienKhachTra > tongPhaiTra) {
+            const tienMat = hinhthucThanhToanChosed
+                .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            const tienPos = hinhthucThanhToanChosed
+                .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+            const tienCK = hinhthucThanhToanChosed
+                .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3)
+                .reduce((currentValue: number, item: QuyChiTietDto) => {
+                    return item.tienThu + currentValue;
+                }, 0);
+
+            const shareMoney = shareMoney_QuyHD(tongPhaiTra, 0, tienMat, tienPos, tienCK, 0, 0);
+            const tienMatNew = shareMoney.TienMat,
+                tienPosNew = shareMoney.TienPOS,
+                tienCKNew = shareMoney.TienChuyenKhoan;
+
+            if (tienMatNew > 0) {
+                const newQCT = new QuyChiTietDto({ hinhThucThanhToan: 1, tienThu: tienMatNew });
+                lstQuyCT.push(newQCT);
+            }
+            if (tienPosNew > 0) {
+                const newQCT = new QuyChiTietDto({
+                    hinhThucThanhToan: 2,
+                    tienThu: tienPosNew,
+                    idTaiKhoanNganHang: null
+                });
+                lstQuyCT.push(newQCT);
+            }
+            if (tienCKNew > 0) {
+                const newQCT = new QuyChiTietDto({ hinhThucThanhToan: 3, tienThu: tienCKNew });
+                lstQuyCT.push(newQCT);
+            }
+        } else {
+            lstQuyCT = [...hinhthucThanhToanChosed];
+        }
+        return lstQuyCT;
+    };
+
     const [selectedTientip, setSelectedTienTip] = React.useState(-1);
     const handleSelectedTientip = (index: number) => {
         setSelectedTienTip(index);
     };
+    // todo get DM_TaiKhoanNganHang
     const Cards = [
         {
-            name: 'Đinh Tuấn Tài',
+            id: '768048db-3ee0-c916-ee84-47e6bd3226e8',
+            idNganHang: Guid.EMPTY,
+            soTaiKhoan: '1903 071 2927 019',
+            tenChuThe: 'Chủ thẻ techcom',
+            tenNganHang: 'techcombank',
             icon: Card1
         },
         {
-            name: 'Phan Thị Quỳnh',
+            id: '66446239-7daa-ad65-6670-8237ea103814',
+            idNganHang: Guid.EMPTY,
+            soTaiKhoan: '187 071 2927',
+            tenChuThe: 'Chủ thẻ vietcom',
+            tenNganHang: 'vietcombank',
             icon: Card2
         }
     ];
-    const [onCard, setOnCard] = React.useState(-1);
-    const handleSelectedCard = (index: number) => {
-        setOnCard(index);
+
+    const handleSelectedCard = (itemCard: any, loaiHinhThuc: number) => {
+        setHinhthucThanhToanChosed(
+            hinhthucThanhToanChosed.map((item: QuyChiTietDto) => {
+                if (item.hinhThucThanhToan === loaiHinhThuc) {
+                    return {
+                        ...item,
+                        idTaiKhoanNganHang: itemCard.id,
+                        soTaiKhoan: itemCard.soTaiKhoan,
+                        tenChuThe: itemCard.tenChuThe,
+                        tenNganHang: itemCard.tenNganHang
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
     };
+
     return (
-        <Box>
-            <Box sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+        <Box sx={{ overflowX: 'auto', maxHeight: '90%' }}>
+            <Box
+                sx={{
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'center'
+                }}>
                 <IconButton
                     onClick={handleClickPrev}
                     sx={{
@@ -131,18 +336,22 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPha
                         Hình thức thanh toán
                     </Typography>
                     <Grid container spacing={3} mt="-8px" sx={{ maxWidth: '90%' }}>
-                        {PaymentsList.map((item, index) => (
+                        {hinhThucThanhToan.map((item, index) => (
                             <Grid item key={index} md={3} sm={4} xs={12}>
                                 <Box
-                                    onClick={() => HandleSelected(index)}
+                                    onClick={() => choseHinhThucThanhToan(item.id)}
                                     textAlign="center"
                                     padding={{ md: 2, sm: '24px 10px', lg: 2, xs: 1 }}
                                     border="1px solid #CDC9CD"
                                     borderRadius="8px"
                                     sx={{
                                         position: 'relative',
-                                        bgcolor: selectedItem === index ? ' #F2EBF0' : '#fff',
-                                        borderColor: selectedItem === index ? '#7C3367' : '#CDC9CD',
+                                        bgcolor: indexChosed.includes(item.id)
+                                            ? ' #F2EBF0'
+                                            : '#fff',
+                                        borderColor: indexChosed.includes(item.id)
+                                            ? '#7C3367'
+                                            : '#CDC9CD',
                                         cursor: 'pointer',
                                         transition: '.4s',
                                         '& svg': {
@@ -160,14 +369,14 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPha
                                         variant="h3"
                                         fontWeight="400"
                                         color="#333233">
-                                        {item.name}
+                                        {item.text}
                                     </Typography>
                                     <Box
                                         sx={{
                                             position: 'absolute',
                                             right: '-4px',
                                             display: 'flex',
-                                            opacity: selectedItem === index ? '1' : '0',
+                                            opacity: indexChosed.includes(item.id) ? '1' : '0',
                                             transition: '.3s',
                                             top: '-4px',
                                             height: '14px',
@@ -185,80 +394,12 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPha
                             </Grid>
                         ))}
                     </Grid>
-                    {selectedItem !== -1 && (
-                        <>
-                            <Box mt="24px">
-                                <Box
-                                    sx={{
-                                        padding: '16px',
-                                        bgcolor: '#fff',
-                                        borderRadius: '8px',
-                                        position: 'relative',
-                                        boxShadow: '0px 5px 18px 0px #28293D12'
-                                    }}>
-                                    <IconButton
-                                        sx={{
-                                            position: 'absolute',
-                                            top: '16px',
-                                            right: '16px',
-                                            '& svg': {
-                                                width: '16px',
-                                                height: '16px'
-                                            }
-                                        }}>
-                                        <CloseIcon />
-                                    </IconButton>
-                                    <Box>
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '8px'
-                                            }}>
-                                            <IconTitleTienmat />
-                                            <Typography
-                                                variant="h3"
-                                                color="#000"
-                                                fontSize="14px"
-                                                fontWeight="700">
-                                                Tiền mặt
-                                            </Typography>
-                                        </Box>
-                                        <Box
-                                            mt="12px"
-                                            sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Typography
-                                                variant="body1"
-                                                fontSize="14px"
-                                                fontWeight="400"
-                                                color="#666466"
-                                                minWidth="105px">
-                                                Tiền khách trả
-                                            </Typography>
-
-                                            <TextField
-                                                type="number"
-                                                value={TienKhachTra !== 0 ? TienKhachTra : ''}
-                                                onChange={handleChange}
-                                                fullWidth
-                                                placeholder="đ"
-                                                sx={{
-                                                    bgcolor: '#fff',
-                                                    mt: '4px',
-                                                    '& input': {
-                                                        appearance: 'textfield',
-                                                        paddingY: '13.5px'
-                                                    },
-                                                    '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button':
-                                                        {
-                                                            appearance: 'none'
-                                                        }
-                                                }}
-                                            />
-                                        </Box>
-                                    </Box>
-                                </Box>
-
+                    {hinhthucThanhToanChosed
+                        .sort((a: QuyChiTietDto, b: QuyChiTietDto) =>
+                            a.hinhThucThanhToan > b.hinhThucThanhToan ? 1 : -1
+                        )
+                        .map((item: QuyChiTietDto) => (
+                            <Box mt="24px" key={item.hinhThucThanhToan}>
                                 <Box
                                     sx={{
                                         boxShadow: '0px 5px 18px 0px #28293D12',
@@ -277,68 +418,89 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPha
                                                 width: '16px',
                                                 height: '16px'
                                             }
-                                        }}>
+                                        }}
+                                        onClick={() =>
+                                            removeHinhThucThanhToan(item.hinhThucThanhToan)
+                                        }>
                                         <CloseIcon />
                                     </IconButton>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <IconNganhang />
+                                        {item.hinhThucThanhToan === 1 && <IconTitleTienmat />}
+                                        {item.hinhThucThanhToan === 2 && <IconNganhang />}
+                                        {item.hinhThucThanhToan === 3 && <IconNganhang />}
                                         <Typography
                                             variant="h3"
                                             color="#000"
                                             fontSize="14px"
                                             fontWeight="700">
-                                            Thẻ ngân hàng
+                                            {
+                                                hinhThucThanhToan.filter(
+                                                    (x: any) => x.id === item.hinhThucThanhToan
+                                                )[0].text
+                                            }
                                         </Typography>
                                     </Box>
-                                    <Box sx={{ display: 'flex', gap: '20px', marginTop: '8px' }}>
-                                        {Cards.map((item, index) => (
-                                            <Box
-                                                onClick={() => handleSelectedCard(index)}
-                                                key={index}
-                                                sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    alignItems: 'center',
-                                                    gap: '8px',
-                                                    '&:hover p': {
-                                                        color: '#7C3367'
-                                                    }
-                                                }}>
+                                    {item.hinhThucThanhToan !== 1 && (
+                                        <Box
+                                            sx={{ display: 'flex', gap: '20px', marginTop: '8px' }}>
+                                            {Cards.map((itemCard, index) => (
                                                 <Box
+                                                    onClick={() =>
+                                                        handleSelectedCard(
+                                                            itemCard,
+                                                            item.hinhThucThanhToan
+                                                        )
+                                                    }
+                                                    key={index}
                                                     sx={{
-                                                        padding: '10px',
-                                                        border: `1px solid ${
-                                                            onCard === index ? '#7C3367' : '#CDC9CD'
-                                                        }`,
-                                                        transition: '.3s',
-                                                        cursor: 'pointer',
-                                                        borderRadius: '8px',
-                                                        width: 'fit-content'
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        '&:hover p': {
+                                                            color: '#7C3367'
+                                                        }
                                                     }}>
                                                     <Box
                                                         sx={{
-                                                            width: 'fit-content',
-                                                            img: {
-                                                                objectFit: 'contain',
-                                                                width: '100%'
-                                                            }
+                                                            padding: '10px',
+                                                            border: `1px solid ${
+                                                                item.idTaiKhoanNganHang ===
+                                                                itemCard.id
+                                                                    ? '#7C3367'
+                                                                    : '#CDC9CD'
+                                                            }`,
+                                                            transition: '.3s',
+                                                            cursor: 'pointer',
+                                                            borderRadius: '8px',
+                                                            width: 'fit-content'
                                                         }}>
-                                                        <img src={item.icon} alt="card" />
+                                                        <Box
+                                                            sx={{
+                                                                width: 'fit-content',
+                                                                img: {
+                                                                    objectFit: 'contain',
+                                                                    width: '100%'
+                                                                }
+                                                            }}>
+                                                            <img src={itemCard.icon} alt="card" />
+                                                        </Box>
                                                     </Box>
+                                                    <Typography
+                                                        variant="body1"
+                                                        sx={{
+                                                            color: '#333233',
+                                                            fontSize: '14px',
+                                                            textTransform: 'uppercase',
+                                                            transition: '.3s'
+                                                        }}>
+                                                        {itemCard.tenChuThe}
+                                                    </Typography>
                                                 </Box>
-                                                <Typography
-                                                    variant="body1"
-                                                    sx={{
-                                                        color: '#333233',
-                                                        fontSize: '14px',
-                                                        textTransform: 'uppercase',
-                                                        transition: '.3s'
-                                                    }}>
-                                                    {item.name}
-                                                </Typography>
-                                            </Box>
-                                        ))}
-                                    </Box>
+                                            ))}
+                                        </Box>
+                                    )}
+
                                     <Box mt="12px" sx={{ display: 'flex', alignItems: 'center' }}>
                                         <Typography
                                             variant="body1"
@@ -348,44 +510,59 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, formShow, tongPha
                                             minWidth="105px">
                                             Tiền khách trả
                                         </Typography>
-
-                                        <TextField
-                                            type="number"
-                                            value={TienKhachTra !== 0 ? TienKhachTra : ''}
-                                            onChange={handleChange}
+                                        <NumericFormat
                                             fullWidth
-                                            placeholder="đ"
                                             sx={{
                                                 bgcolor: '#fff',
                                                 mt: '4px',
                                                 '& input': {
                                                     appearance: 'textfield',
-                                                    paddingY: '13.5px'
+                                                    paddingY: '13.5px',
+                                                    textAlign: 'right',
+                                                    fontWeight: 600
                                                 },
                                                 '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button':
                                                     {
                                                         appearance: 'none'
                                                     }
                                             }}
+                                            thousandSeparator={'.'}
+                                            decimalSeparator={','}
+                                            value={item?.tienThu}
+                                            customInput={TextField}
+                                            onChange={(e) => {
+                                                changeTienKhachTra(
+                                                    e.target.value,
+                                                    item.hinhThucThanhToan
+                                                );
+                                            }}
                                         />
                                     </Box>
                                 </Box>
                             </Box>
+                        ))}
+                    {hinhthucThanhToanChosed.length > 0 && (
+                        <>
                             <Box
                                 sx={{
                                     display: 'flex',
                                     justifyContent: 'space-between',
-                                    alignItems: 'center'
+                                    alignItems: 'center',
+                                    padding: 2
                                 }}>
                                 <Typography
                                     variant="body1"
                                     sx={{ fontSize: '14px', color: '#4C4B4C', marginTop: '8px' }}>
-                                    Tiền thừa trả khách
+                                    {tienThuaTraKhach > 0
+                                        ? 'Tiền thừa trả khách'
+                                        : 'Tiền khách thiếu'}
                                 </Typography>
                                 <Typography
                                     variant="body1"
                                     sx={{ fontSize: '14px', color: '#333233', fontWeight: '700' }}>
-                                    0.00
+                                    {new Intl.NumberFormat('vi-VN').format(
+                                        Math.abs(tienThuaTraKhach)
+                                    )}
                                 </Typography>
                             </Box>
                         </>

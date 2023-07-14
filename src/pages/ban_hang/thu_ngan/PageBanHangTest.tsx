@@ -1897,7 +1897,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                     </Grid>
                 ) : (
                     <Grid item md={8} className="normal">
-                        <Payments handleClickPrev={onPrevPayment} formShow={formShow} />
+                        {/* <Payments handleClickPrev={onPrevPayment} /> */}
                     </Grid>
                 )}
             </Grid>
