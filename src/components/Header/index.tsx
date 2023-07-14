@@ -171,7 +171,7 @@ const Header: React.FC<HeaderProps> = (
                         <LogoNew />
                         <Typography
                             fontFamily="vinhan"
-                            color="#7C3367"
+                            color="var(--color-main)"
                             fontSize="18px"
                             sx={{
                                 opacity: collapsed && !isChildHovered ? '0' : '1',

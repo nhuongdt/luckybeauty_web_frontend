@@ -15,7 +15,7 @@ import LoginModel from '../../../models/Login/loginModel';
 import LoginService from '../../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../../images/Lucky_beauty.jpg';
+import logo from '../../../images/logoNew.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 const LoginScreen: React.FC = () => {
@@ -155,6 +155,8 @@ const LoginScreen: React.FC = () => {
                                         }
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
+                                                display: 'block',
+                                                paddingRight: '0',
                                                 '& fieldset': {
                                                     border: formik.errors.password
                                                         ? '1px solid red!important'
@@ -163,6 +165,11 @@ const LoginScreen: React.FC = () => {
                                             },
                                             '& .MuiInputBase-root ': {
                                                 background: '#f2f6fa'
+                                            },
+                                            '& button': {
+                                                position: 'absolute',
+                                                right: '0',
+                                                top: '0'
                                             }
                                         }}
                                         type={showPassword ? 'text' : 'password'}

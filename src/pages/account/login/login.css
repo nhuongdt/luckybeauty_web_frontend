@@ -16,6 +16,7 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 24px;
+
     color: #ffffff;
 }
 .login-page .MuiFormLabel-root {
@@ -28,7 +29,9 @@
     border: 0;
     border-radius: 6px;
 }
-
+h1.login-label {
+    margin-top: 32px;
+}
 .login-label {
     -ms-flex-line-pack: center;
     align-content: center;
@@ -39,8 +42,8 @@
     font-weight: 500;
     font-size: 14px;
     line-height: 14px;
-    margin-top: 32px;
-    color: #00284c;
+
+    color: var(--color-title);
 }
 
 .form-text-float-right {
@@ -81,12 +84,13 @@
 }
 
 .login-page {
-    margin-top: 32px;
     background-image: url('../../../images/bg-login.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     min-height: 100vh;
+    display: flex;
+    align-items: center;
 }
 
 .login-page h1 {
@@ -107,7 +111,13 @@
     background-color: #fff;
     padding-bottom: 48px;
     margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     overflow: hidden;
+    position: relative;
+    z-index: 2;
+    height: calc(100vh - 120px);
 }
 
 .logo-login {
@@ -180,8 +190,8 @@
 .btn-login {
     margin-top: 0;
     border-radius: 4px;
-    margin-bottom: 28px;
-    margin-top: 34px;
+    margin-bottom: 24px;
+    margin-top: 24px;
 }
 
 .text-login {
@@ -206,7 +216,7 @@
     font-size: 14px;
     font-family: Roboto;
     text-align: center;
-    margin-top: 36px;
+    margin-top: 24px;
     margin-bottom: 0;
 }
 

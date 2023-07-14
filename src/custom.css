@@ -1,5 +1,6 @@
 :root {
-    --color-main: #009ef7; /* Định nghĩa màu sắc global */
+    --color-main: #009ef7;
+    --color-title: '#00284C';
 }
 
 .btn-import {
