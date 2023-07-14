@@ -4,7 +4,7 @@ import Header from '../Header';
 import AppSiderMenu from '../SiderMenu/index';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
-
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
@@ -70,44 +70,43 @@ const MainAppLayout: React.FC = () => {
     const changeChiNhanh = (item: SuggestChiNhanhDto) => {
         setChiNhanhCurrent(item);
     };
+
     return (
-        <>
-            <Container maxWidth={false} disableGutters={true}>
-                <AppSiderMenu
-                    collapsed={!collapsed}
+        <Container maxWidth={false} disableGutters={true}>
+            <AppSiderMenu
+                collapsed={!collapsed}
+                toggle={toggle}
+                onHoverChange={handleChildHoverChange}
+                CookieSidebar={CookieSidebar}
+            />
+            <Box
+                sx={{
+                    marginLeft: !collapsed ? '240px' : '72px',
+                    transition: '.4s'
+                }}>
+                <Header
+                    collapsed={collapsed}
                     toggle={toggle}
-                    onHoverChange={handleChildHoverChange}
+                    onClick={toggle}
+                    isChildHovered={isChildHovered}
                     CookieSidebar={CookieSidebar}
+                    handleChangeChiNhanh={changeChiNhanh}
                 />
                 <Box
                     sx={{
-                        marginLeft: !collapsed ? '240px' : '72px',
-                        transition: '.4s'
-                    }}>
-                    <Header
-                        collapsed={collapsed}
-                        toggle={toggle}
-                        onClick={toggle}
-                        isChildHovered={isChildHovered}
-                        CookieSidebar={CookieSidebar}
-                        handleChangeChiNhanh={changeChiNhanh}
-                    />
-                    <Box
-                        sx={{
-                            border: 'solid 0.1rem #e6e1e6',
-                            marginTop: '70px',
-                            minHeight: 'calc(100vh - 70px)',
+                        border: 'solid 0.1rem #e6e1e6',
+                        marginTop: '70px',
+                        minHeight: 'calc(100vh - 70px)',
 
-                            bgcolor: 'rgba(248,248,248,1)'
-                        }}>
-                        <ChiNhanhContext.Provider value={chinhanhCurrent}>
-                            <Outlet />
-                        </ChiNhanhContext.Provider>
-                        <LoginAlertDialog open={open} confirmLogin={confirm} />
-                    </Box>
+                        bgcolor: 'rgba(248,248,248,1)'
+                    }}>
+                    <ChiNhanhContext.Provider value={chinhanhCurrent}>
+                        <Outlet />
+                    </ChiNhanhContext.Provider>
+                    <LoginAlertDialog open={open} confirmLogin={confirm} />
                 </Box>
-            </Container>
-        </>
+            </Box>
+        </Container>
     );
 };
 

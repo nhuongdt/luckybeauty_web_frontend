@@ -193,10 +193,10 @@ const Header: React.FC<HeaderProps> = (
                             ':hover': {
                                 backgroundColor: 'unset!important'
                             },
-                            ':hover svg:nth-child(1)': {
+                            ':hover .icon1': {
                                 color: '#c95ea9!important'
                             },
-                            ':hover svg:nth-child(2)': {
+                            ':hover .icon2': {
                                 color: '#c95ea9d9'
                             },
                             '& .MuiTouchRipple-root': {
@@ -207,9 +207,11 @@ const Header: React.FC<HeaderProps> = (
                         }}
                         onClick={toggle}>
                         <ArrowBackIosIcon
+                            className="icon1"
                             sx={{ color: 'rgba(203, 173, 194, 0.7)', fontSize: '16px' }}
                         />
                         <ArrowBackIosIcon
+                            className="icon2"
                             sx={{
                                 color: 'rgba(203, 173, 194, 0.4)',
                                 fontSize: '16px',
@@ -297,17 +299,16 @@ const Header: React.FC<HeaderProps> = (
                                 'aria-labelledby': 'btnThongBao'
                             }}
                             sx={{
-                                '& ul': { width: '400px' },
-                                '& li:first-child,& li:last-child': {
+                                '& ul': { width: '400px' }
+                            }}>
+                            <MenuItem
+                                sx={{
                                     cursor: 'auto!important',
-                                    bgcolor: 'transparent!important'
-                                },
-                                '& li:first-child > .MuiTouchRipple-root,& li:last-child > .MuiTouchRipple-root':
-                                    {
+                                    bgcolor: 'transparent!important',
+                                    '&> .MuiTouchRipple-root': {
                                         display: 'none'
                                     }
-                            }}>
-                            <MenuItem>
+                                }}>
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -406,7 +407,14 @@ const Header: React.FC<HeaderProps> = (
                                     </Box>
                                 </MenuItem>
                             ))}
-                            <MenuItem>
+                            <MenuItem
+                                sx={{
+                                    cursor: 'auto!important',
+                                    bgcolor: 'transparent!important',
+                                    '&> .MuiTouchRipple-root': {
+                                        display: 'none'
+                                    }
+                                }}>
                                 <Button variant="text" sx={{ color: '#319DFF', margin: 'auto' }}>
                                     Xem tất cả
                                 </Button>

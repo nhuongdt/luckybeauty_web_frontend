@@ -71,15 +71,15 @@ const LoginScreen: React.FC = () => {
 
     return (
         <div className="login-page">
-            <div className="logo-login">
-                <div className="logo-image">
-                    <img src={logo} alt="Lucky Beauty" />
-                </div>
-                <div className="logo-text">Lucky Beauty</div>
-            </div>
             <Grid container className="align-items-center justify-content-center mt-2 h-100">
                 <Grid xs={12}>
                     <div className="login-page-inner">
+                        <div className="logo-login">
+                            <div className="logo-image">
+                                <img src={logo} alt="Lucky Beauty" />
+                            </div>
+                            <div className="logo-text">Lucky Beauty</div>
+                        </div>
                         <h1 className="login-label">Đăng nhập</h1>
                         <form className="login-form" onSubmit={formik.handleSubmit}>
                             <Grid container>
@@ -188,9 +188,9 @@ const LoginScreen: React.FC = () => {
                                                 {...formik.getFieldProps('remember')}
                                                 checked={formik.values.remember}
                                                 sx={{
-                                                    color: '#7C3367',
+                                                    color: 'var(--color-main)',
                                                     '&.Mui-checked': {
-                                                        color: '#7C3367'
+                                                        color: 'var(--color-main)'
                                                     }
                                                 }}
                                             />

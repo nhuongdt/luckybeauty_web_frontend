@@ -163,6 +163,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                         aria-haspopup="true"
                                         sx={{
                                             display: 'flex',
+                                            justifyContent: 'center',
                                             gap: '8px',
                                             '&:hover .arrowDown': {
                                                 opacity: '1',
@@ -216,12 +217,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                             ))}
                         </TableRow>
                     </TableHead>
-                    <TableBody
-                        sx={{
-                            '& .MuiTableCell-root:not(:first-child)': {
-                                borderLeft: '1px solid rgba(224, 224, 224, 1)'
-                            }
-                        }}>
+                    <TableBody>
                         {Array.from({ length: 14 }, (_, index) => {
                             const hour = index + 7; // Giờ bắt đầu từ 7h sáng (7 -> 20)
                             const timeLabel = hour.toString().padStart(2, '0') + ':00'; // Định dạng nhãn thời gian
@@ -236,7 +232,8 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                             paddingTop: '8px',
                                             paddingBottom: '50px',
                                             textAlign: 'right',
-                                            border: '0'
+                                            border: '0',
+                                            width: '60px'
                                         }}>
                                         {timeLabel}
                                     </TableCell>
@@ -252,7 +249,8 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                                 key={index}
                                                 sx={{
                                                     padding: '4px',
-                                                    position: 'relative'
+                                                    position: 'relative',
+                                                    borderLeft: '1px solid rgba(224, 224, 224, 1)'
                                                 }}>
                                                 <Box
                                                     sx={{

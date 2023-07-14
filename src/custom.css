@@ -1,3 +1,7 @@
+:root {
+    --color-main: #009ef7; /* Định nghĩa màu sắc global */
+}
+
 .btn-import {
     box-sizing: border-box;
     justify-content: center;

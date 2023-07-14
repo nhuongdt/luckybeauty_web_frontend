@@ -131,7 +131,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                     </TableHead>
                     <TableBody
                         sx={{
-                            '& .MuiTableCell-body:not(:first-child)': {
+                            '& .MuiTableCell-body': {
                                 borderLeft: '1px solid rgba(224, 224, 224, 1)'
                             },
                             '& .MuiTableCell-body:last-child': {
@@ -153,7 +153,8 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                             paddingBottom: '50px',
                                             textAlign: 'right',
                                             border: '0',
-                                            width: '70px'
+                                            width: '70px',
+                                            borderLeft: '0'
                                         }}>
                                         {timeLabel}
                                     </TableCell>
