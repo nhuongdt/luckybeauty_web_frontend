@@ -31,6 +31,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
+import abpCustom from '../../../components/abp-custom';
 class UserScreen extends AppComponentBase {
     state = {
         modalVisible: false,
@@ -412,6 +413,11 @@ class UserScreen extends AppComponentBase {
                                 <Box display="flex" alignItems="center">
                                     <Box display="flex" gap="8px">
                                         <Button
+                                            hidden={
+                                                !abpCustom.isGrandPermission(
+                                                    'Pages.Administration.Users.Create'
+                                                )
+                                            }
                                             variant="contained"
                                             startIcon={<img src={AddIcon} />}
                                             size="small"
@@ -527,8 +533,11 @@ class UserScreen extends AppComponentBase {
                         selectedRowId={this.state.selectedRowId}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
+                        permissionView=""
                         handleEdit={this.handleEdit}
+                        permissionEdit="Pages.Administration.Users.Edit"
                         handleDelete={this.onOkDelete}
+                        permissionDelete="Pages.Administration.Users.Delete"
                     />
                 </Box>
             </Box>

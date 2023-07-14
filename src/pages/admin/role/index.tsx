@@ -29,6 +29,7 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import { observer } from 'mobx-react';
 import { enqueueSnackbar } from 'notistack';
 import roleStore from '../../../stores/roleStore';
+import abpCustom from '../../../components/abp-custom';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IRoleProps {}
 
@@ -302,6 +303,11 @@ class RoleScreen extends React.Component<IRoleProps> {
                                 <Box>
                                     <Box display="flex" alignItems="center" gap="8px">
                                         <Button
+                                            hidden={
+                                                !abpCustom.isGrandPermission(
+                                                    'Pages.Administration.Roles'
+                                                )
+                                            }
                                             variant="contained"
                                             startIcon={<img src={AddIcon} />}
                                             size="small"
@@ -382,8 +388,11 @@ class RoleScreen extends React.Component<IRoleProps> {
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
+                        permissionView=""
                         handleEdit={this.handleEdit}
+                        permissionEdit="Pages.Administration.Roles.Edit"
                         handleDelete={this.onShowDelete}
+                        permissionDelete="Pages.Administration.Roles.Delete"
                     />
                     <CustomTablePagination
                         currentPage={this.state.currentPage}
