@@ -15,9 +15,9 @@ import {
     FormControl,
     Avatar
 } from '@mui/material';
-import { Search, Close } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 import utils from '../../utils/utils';
-
+import { ReactComponent as Close } from '../../images/close-square.svg';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
@@ -161,7 +161,9 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
 
     return (
         <>
-            <div className={isShow ? 'show overlay' : 'overlay'}></div>
+            <div
+                onClick={() => setIsShow(false)}
+                className={isShow ? 'show overlay' : 'overlay'}></div>
 
             <div id="poppup-nhanVienThucHien" className={isShow ? 'show ' : ''}>
                 <Typography variant="h5" color="333233" fontWeight="700" marginBottom="28px">
@@ -197,7 +199,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                         <Grid
                             className="person-item"
                             item
-                            xs={6}
+                            xs={12}
                             md={3}
                             lg={3}
                             key={index}
@@ -268,16 +270,19 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                     sx={{
                         marginTop: '30px',
                         background: '#fff',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        position: 'sticky',
+                        bottom: '0',
+                        left: '0',
+                        padding: '24px'
                     }}>
                     <Button
                         variant="contained"
-                        //className="button-container btn-container-hover"
+                        className="btn-container-hover"
                         sx={{
                             background: '#7c3367',
                             textTransform: 'capitalize',
-                            color: '#fff',
-                            ':hover': { background: '#7c3376b3' }
+                            color: '#fff'
                         }}
                         onClick={onSave}>
                         Lưu
@@ -287,30 +292,28 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                         sx={{
                             borderColor: '#e6e1e6',
                             textTransform: 'capitalize',
-                            color: ' #7c3367',
-                            ':hover': {
-                                borderColor: '#7c3367'
-                            }
+                            color: ' #7c3367'
                         }}
-                        //className="button-outline btn-outline-hover"
+                        className=" btn-outline-hover"
                         onClick={() => setIsShow(false)}>
                         Hủy
                     </Button>
                 </Stack>
-
-                <Close
+                <IconButton
                     sx={{
                         position: 'absolute',
                         top: '35px',
                         right: '31px',
+
                         fontSize: '30px',
                         cursor: 'pointer',
-                        '&:hover': {
+                        '&:hover svg': {
                             filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
                         }
                     }}
-                    onClick={() => setIsShow(false)}
-                />
+                    onClick={() => setIsShow(false)}>
+                    <Close />
+                </IconButton>
             </div>
         </>
     );

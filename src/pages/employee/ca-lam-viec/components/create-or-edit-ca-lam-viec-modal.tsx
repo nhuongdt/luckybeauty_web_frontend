@@ -9,7 +9,11 @@ import {
     DialogTitle,
     FormGroup,
     FormLabel,
+    FormControlLabel,
+    Checkbox,
     Grid,
+    Select,
+    MenuItem,
     TextField
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
@@ -45,11 +49,14 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                   });
             onCancel();
         };
+        const date = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <div className="row">
-                        <Box className="col-8" sx={{ float: 'left' }}>
+                        <Box
+                            className="col-8"
+                            sx={{ float: 'left', fontWeight: '500', fontSize: '24px' }}>
                             {title}
                         </Box>
                         <Box
@@ -67,7 +74,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                         </Box>
                     </div>
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ paddingBottom: '0' }}>
                     <Formik initialValues={initValues} onSubmit={handleSubmit}>
                         {({ values, handleChange }) => (
                             <Form>
@@ -79,9 +86,10 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     name="maCa"
                                     size="small"
                                     disabled
+                                    hidden
                                 />
                                 <FormGroup>
-                                    <FormLabel>Tên ca</FormLabel>
+                                    <FormLabel className="modal-lable">Tên ca</FormLabel>
                                     <TextField
                                         className="mt-2"
                                         value={values.tenCa}
@@ -89,18 +97,33 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         name="tenCa"
                                         size="small"
                                         onChange={handleChange}
-                                        placeholder="Nhập tên ngày lễ"
+                                        placeholder="Nhập tên ca"
                                     />
                                 </FormGroup>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            sx={{
+                                                color: '#7C3367!important',
+                                                '& .Mui-checked': {
+                                                    color: '#7C3367'
+                                                }
+                                            }}
+                                        />
+                                    }
+                                    label="Không cố định thời gian"
+                                />
                                 <Grid
                                     container
                                     direction="row"
                                     spacing={2}
                                     alignItems="center"
                                     className="mt-2">
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <FormLabel>Bắt đầu ca</FormLabel>
+                                            <FormLabel className="modal-lable">
+                                                Bắt đầu ca
+                                            </FormLabel>
                                             <TextField
                                                 className="mt-2"
                                                 type="time"
@@ -112,9 +135,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             />
                                         </FormGroup>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <FormLabel>Kết thúc ca</FormLabel>
+                                            <FormLabel className="modal-lable">
+                                                Kết thúc ca
+                                            </FormLabel>
                                             <TextField
                                                 type="time"
                                                 className="mt-2"
@@ -126,8 +151,68 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             />
                                         </FormGroup>
                                     </Grid>
+                                    <Grid item xs={12}>
+                                        <FormGroup
+                                            sx={{
+                                                '& textarea': {
+                                                    height: '100px',
+                                                    borderColor: 'rgba(0, 0, 0, 0.23)',
+                                                    borderRadius: '8px'
+                                                }
+                                            }}>
+                                            <FormLabel className="modal-lable">Mô tả</FormLabel>
+                                            <textarea className="mt-2"></textarea>
+                                        </FormGroup>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormLabel className="modal-lable">Lặp lại</FormLabel>
+                                        <Select
+                                            className="mt-2"
+                                            defaultValue="1"
+                                            fullWidth
+                                            sx={{
+                                                '& .MuiSelect-select': {
+                                                    paddingY: '12.5px'
+                                                }
+                                            }}>
+                                            <MenuItem value="1">Hàng tuần</MenuItem>
+                                            <MenuItem value="2">Hàng ngày</MenuItem>
+                                            <MenuItem value="3">Hàng tháng</MenuItem>
+                                        </Select>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        {date.map((item, index) => (
+                                            <FormControlLabel
+                                                sx={{
+                                                    '& .MuiFormControlLabel-label': {
+                                                        fontSize: '14px!important'
+                                                    }
+                                                }}
+                                                key={index}
+                                                control={
+                                                    <Checkbox
+                                                        sx={{
+                                                            color: '#7C3367!important',
+                                                            '& .Mui-checked': {
+                                                                color: '#7C3367'
+                                                            }
+                                                        }}
+                                                    />
+                                                }
+                                                label={item}
+                                            />
+                                        ))}
+                                    </Grid>
                                 </Grid>
-                                <DialogActions>
+                                <DialogActions
+                                    sx={{
+                                        paddingRight: '0',
+                                        position: 'sticky',
+                                        bottom: '0',
+                                        left: '0',
+                                        bgcolor: '#fff',
+                                        zIndex: '5'
+                                    }}>
                                     <Button
                                         sx={{ bgcolor: '#7C3367!important' }}
                                         variant="contained"

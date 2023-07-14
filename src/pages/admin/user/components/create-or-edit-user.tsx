@@ -19,7 +19,8 @@ import {
     MenuItem,
     Grid
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import useWindowWidth from '../../../../components/StateWidth';
+import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import fileIcon from '../../../../images/file.svg';
 import fileUpload from '../../../../images/fi_upload-cloud.svg';
 import userService from '../../../../services/user/userService';
@@ -159,7 +160,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ paddingBottom: '0' }}>
                     <Formik
                         initialValues={initialValues}
                         onSubmit={this.handleSubmit}
@@ -183,15 +184,26 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             />
                                         </TabList>
                                     </Box>
-                                    <TabPanel value="1">
+                                    <TabPanel value="1" sx={{ padding: '0' }}>
                                         <Grid container sx={{ '& label': { marginBottom: '4px' } }}>
-                                            <Grid item sm={4} position="relative">
+                                            <Grid item sm={4} xs={12} position="relative">
                                                 <Box
                                                     padding="20px"
-                                                    position="absolute"
+                                                    position={
+                                                        useWindowWidth() > 600
+                                                            ? 'absolute'
+                                                            : 'static'
+                                                    }
                                                     textAlign="center">
                                                     <img src={fileIcon} alt="file icon" />
-                                                    <Box display="flex" gap="10px">
+                                                    <Box
+                                                        display="flex"
+                                                        gap="10px"
+                                                        justifyContent={
+                                                            useWindowWidth() > 600
+                                                                ? 'unset'
+                                                                : 'center'
+                                                        }>
                                                         <img src={fileUpload} alt="file upload" />
                                                         <Typography
                                                             variant="body1"
@@ -225,6 +237,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             <Grid
                                                 item
                                                 sm={8}
+                                                xs={12}
                                                 display="flex"
                                                 flexDirection="column"
                                                 gap="16px">
@@ -436,7 +449,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             </Grid>
                                         </Grid>
                                     </TabPanel>
-                                    <TabPanel value="2">
+                                    <TabPanel value="2" sx={{ padding: '0' }}>
                                         <Box display="flex" gap="16px">
                                             <FormGroup>
                                                 {options.map((option: any) => (
@@ -466,7 +479,15 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                         </Box>
                                     </TabPanel>
                                 </TabContext>
-                                <DialogActions>
+                                <DialogActions
+                                    sx={{
+                                        paddingRight: '0!important',
+                                        position: 'sticky',
+                                        bottom: '0',
+                                        left: '0',
+                                        zIndex: '5',
+                                        bgcolor: '#fff'
+                                    }}>
                                     <Box
                                         display="flex"
                                         marginLeft="auto"

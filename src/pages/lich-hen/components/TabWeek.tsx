@@ -70,6 +70,20 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
             weekData[dateIndex] = [...weekData[dateIndex], item];
         }
     });
+    const [windowHeight, setWindowHeight] = useState(innerHeight);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(innerHeight);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <Box>
             <TableContainer
@@ -78,7 +92,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                     boxShadow: 'none',
                     width: '100%',
                     paddingRight: '40px',
-                    maxHeight: innerHeight > 768 ? '70vh' : '64vh',
+                    maxHeight: windowHeight > 768 ? '70vh' : '64vh',
                     overflowY: 'auto',
                     '&::-webkit-scrollbar': {
                         width: '10px',

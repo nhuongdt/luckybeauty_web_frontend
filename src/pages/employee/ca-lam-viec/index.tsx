@@ -30,6 +30,7 @@ import { FileUpload } from '../../../services/dto/FileUpload';
 import fileDowloadService from '../../../services/file-dowload.service';
 import uploadFileService from '../../../services/uploadFileService';
 import ImportExcel from '../../../components/ImportComponent';
+import abpCustom from '../../../components/abp-custom';
 class CaLamViecScreen extends Component {
     state = {
         filter: '',
@@ -414,6 +415,7 @@ class CaLamViecScreen extends Component {
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_CaLamViec.Import')}
                             size="small"
                             onClick={this.onImportShow}
                             variant="outlined"
@@ -430,6 +432,7 @@ class CaLamViecScreen extends Component {
                             Nhập
                         </Button>
                         <Button
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_CaLamViec.Export')}
                             size="small"
                             onClick={this.exportToExcel}
                             variant="outlined"
@@ -447,6 +450,7 @@ class CaLamViecScreen extends Component {
                             Xuất
                         </Button>
                         <Button
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_CaLamViec.Create')}
                             size="small"
                             variant="contained"
                             onClick={() => {
@@ -527,8 +531,11 @@ class CaLamViecScreen extends Component {
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
+                        permissionView=""
                         handleEdit={this.handleEdit}
+                        permissionEdit="Pages.NhanSu_CaLamViec.Edit"
                         handleDelete={this.showConfirmDelete}
+                        permissionDelete="Pages.NhanSu_CaLamViec.Edit"
                     />
                     <CustomTablePagination
                         currentPage={this.state.skipCount}

@@ -27,6 +27,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
+import abpCustom from '../../../components/abp-custom';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -326,6 +327,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             <div>
                                 <Box display="flex" alignItems="center" gap="8px">
                                     <Button
+                                        hidden={
+                                            !abpCustom.isGrandPermission('Pages.Tenants.Create')
+                                        }
                                         variant="contained"
                                         startIcon={<img src={AddIcon} />}
                                         size="small"
@@ -407,8 +411,11 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleView}
+                        permissionView=""
                         handleEdit={this.handleEdit}
+                        permissionEdit="Pages.Tenants.Edit"
                         handleDelete={this.onShowDelete}
+                        permissionDelete="Pages.Tenants.Delete"
                     />
                     <CustomTablePagination
                         currentPage={this.state.currentPage}

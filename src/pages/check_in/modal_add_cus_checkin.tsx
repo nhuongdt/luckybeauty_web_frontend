@@ -7,7 +7,9 @@ import {
     Grid,
     Stack,
     TextField,
-    Typography
+    Box,
+    Typography,
+    IconButton
 } from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
 import AutocompleteCustomer from '../../components/Autocomplete/Customer';
@@ -20,9 +22,10 @@ import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/C
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../utils/utils'; // func common
-
+import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import { Guid } from 'guid-typescript';
-
+import TabKhachHang from './TabModalKhachHang';
+import TabCuocHen from './TabModalCuocHen';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [isShow, setIsShow] = useState(false);
@@ -183,6 +186,10 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
 
         setIsShow(false);
     };
+    const [currentTab, setCurrentTab] = useState(1);
+    const handleChangeTab = (value: number) => {
+        setCurrentTab(value);
+    };
     return (
         <>
             <Dialog
@@ -195,9 +202,34 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         overflowX: 'hidden'
                     }
                 }}>
-                <DialogTitle fontWeight="700!important">Thêm khách hàng checkin</DialogTitle>
+                <DialogTitle
+                    sx={{
+                        display: 'flex',
+                        position: 'sticky',
+                        top: '0',
+                        left: '0',
+                        bgcolor: '#fff',
+                        zIndex: '5',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%'
+                    }}>
+                    <Box fontWeight="700!important" component="h3" fontSize="24px">
+                        Thêm checkin
+                    </Box>
+                    <IconButton
+                        onClick={() => setIsShow(false)}
+                        sx={{
+                            '&:hover svg': {
+                                filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                            }
+                        }}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+
                 <DialogContent sx={{ overflow: 'visible' }}>
-                    <Grid container columnSpacing={6}>
+                    {/* <Grid container columnSpacing={6}>
                         <Grid item xs={12} sm={5} md={5} lg={5}>
                             <AutocompleteCustomer
                                 handleChoseItem={changeCustomer}
@@ -253,29 +285,76 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                                         setErrPhone(false);
                                     }}></TextField>
                             </Stack>
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                paddingTop={2}
-                                justifyContent="flex-end">
-                                <Button
-                                    variant="outlined"
-                                    className="button-outline btn-outline-hover"
-                                    sx={{ width: '70px' }}
-                                    onClick={() => setIsShow(false)}>
-                                    Hủy
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    className="button-container btn-container-hover"
-                                    sx={{ width: '70px' }}
-                                    onClick={saveCheckIn}>
-                                    Lưu
-                                </Button>
-                            </Stack>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
+                    <Stack
+                        direction="row"
+                        gap="32px"
+                        sx={{
+                            '& button': {
+                                minWidth: 'unset',
+                                padding: '0',
+                                transition: '.4s'
+                            }
+                        }}>
+                        <Button
+                            sx={{
+                                color: currentTab === 1 ? '#7C3367' : '#999699',
+                                '&::after': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    bottom: '-5px',
+                                    transition: '.4s',
+                                    left: currentTab === 1 ? '0' : 'calc(100% + 32px)',
+                                    width: currentTab === 1 ? '100%' : '77.2px',
+                                    borderTop: '2px solid #7C3367'
+                                }
+                            }}
+                            variant="text"
+                            onClick={() => handleChangeTab(1)}>
+                            Cuộc hẹn
+                        </Button>
+                        <Button
+                            sx={{ color: currentTab === 2 ? '#7C3367' : '#999699' }}
+                            variant="text"
+                            onClick={() => handleChangeTab(2)}>
+                            Khách hàng
+                        </Button>
+                    </Stack>
+                    <Box sx={{ marginTop: '20px' }}>
+                        {currentTab === 1 ? <TabCuocHen /> : <TabKhachHang />}
+                    </Box>
                 </DialogContent>
+                <DialogActions
+                    sx={{
+                        position: 'sticky',
+                        left: '0',
+                        bottom: '0',
+                        zIndex: '5',
+                        bgcolor: '#fff'
+                    }}>
+                    <Stack direction="row" spacing={1} paddingTop={2} justifyContent="flex-end">
+                        <Button
+                            variant="contained"
+                            className="button-container btn-container-hover"
+                            sx={{ width: '70px' }}
+                            onClick={saveCheckIn}>
+                            Lưu
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            className=" btn-outline-hover"
+                            sx={{
+                                width: '70px',
+                                bgcolor: '#fff',
+                                borderColor: '#E6E1E6',
+                                color: '#666466'
+                            }}
+                            onClick={() => setIsShow(false)}>
+                            Hủy
+                        </Button>
+                    </Stack>
+                </DialogActions>
             </Dialog>
         </>
     );

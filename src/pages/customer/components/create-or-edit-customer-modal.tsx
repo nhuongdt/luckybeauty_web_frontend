@@ -12,7 +12,7 @@ import {
     TextareaAutosize,
     Typography
 } from '@mui/material';
-
+import useWindowWidth from '../../../components/StateWidth';
 import fileIcon from '../../../images/file.svg';
 import closeIcon from '../../../images/close-square.svg';
 import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
@@ -39,6 +39,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         errorPhoneNumber: false,
         errorTenKhach: false
     };
+
     render(): ReactNode {
         const {
             visible,
@@ -124,7 +125,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Số điện thoại
                                         </Typography>
@@ -145,7 +146,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             }
                                             sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item sm={6} xs={12}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Địa chỉ
                                         </Typography>
@@ -159,7 +160,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Ngày sinh
                                         </Typography>
@@ -178,7 +179,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             size="small"
                                         />
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Giới tính
                                         </Typography>
@@ -200,7 +201,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             <MenuItem value="true">Nam</MenuItem>
                                         </Select>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Nhóm khách
                                         </Typography>
@@ -225,7 +226,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             )}
                                         />
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Nguồn khách
                                         </Typography>
@@ -269,7 +270,10 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         />
                                     </Grid>
                                 </Grid>
-                                <Grid container sx={{ width: '350px' }} className=" box-1">
+                                <Grid
+                                    container
+                                    sx={{ width: useWindowWidth() > 600 ? '350px' : '100%' }}
+                                    className=" box-1">
                                     <Grid item xs={12} className="position-relative">
                                         <div className=" inner-box" style={{ textAlign: 'center' }}>
                                             <img src={fileIcon} />
@@ -304,45 +308,49 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     </Grid>
                                     <Grid item xs={6}></Grid>
                                     <Grid item xs={6}></Grid>
-                                    <ButtonGroup
-                                        sx={{
-                                            height: '32px',
-                                            position: 'absolute',
-                                            bottom: '24px',
-                                            right: '50px'
-                                        }}>
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
-                                                backgroundColor: '#7C3367',
-                                                border: 'none'
-                                            }}
-                                            type="submit"
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={onCancel}
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#965C85',
-                                                borderColor: '#965C85'
-                                            }}
-                                            className="btn-outline-hover">
-                                            Hủy
-                                        </Button>
-                                    </ButtonGroup>
                                 </Grid>
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: '8px',
+                                    padding: '8px',
+                                    justifyContent: 'end',
+                                    marginTop: useWindowWidth() > 600 ? '0' : '24px',
+                                    bgcolor: '#fff',
+                                    position: useWindowWidth() > 600 ? 'static' : 'sticky',
+                                    bottom: '0',
+                                    left: '0'
+                                }}>
+                                <Button
+                                    variant="contained"
+                                    sx={{
+                                        fontSize: '14px',
+                                        textTransform: 'unset',
+                                        color: '#fff',
+                                        backgroundColor: '#7C3367',
+                                        border: 'none'
+                                    }}
+                                    type="submit"
+                                    className="btn-container-hover">
+                                    Lưu
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    onClick={onCancel}
+                                    sx={{
+                                        fontSize: '14px',
+                                        textTransform: 'unset',
+                                        color: '#965C85',
+                                        borderColor: '#965C85'
+                                    }}
+                                    className="btn-outline-hover">
+                                    Hủy
+                                </Button>
                             </Box>
                         </Form>
                     )}
                 </Formik>
-
                 <Button
                     onClick={onCancel}
                     sx={{

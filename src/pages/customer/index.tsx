@@ -653,8 +653,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 anchorEl={this.state.anchorEl}
                                 closeMenu={this.handleCloseMenu}
                                 handleView={this.handleView}
+                                permissionView=""
                                 handleEdit={this.handleEdit}
+                                permissionEdit="Pages.KhachHang.Edit"
                                 handleDelete={this.showConfirmDelete}
+                                permissionDelete="Pages.KhachHang.Delete"
                             />
                             <CustomTablePagination
                                 currentPage={this.state.currentPage}

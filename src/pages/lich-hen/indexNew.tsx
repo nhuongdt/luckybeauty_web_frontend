@@ -8,7 +8,10 @@ import {
     SelectChangeEvent,
     MenuItem,
     ButtonGroup,
-    Switch
+    Switch,
+    TextField,
+    InputAdornment,
+    Autocomplete
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -16,6 +19,7 @@ import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import { ReactComponent as ShapeIcon } from '../../images/Shape.svg';
 import { ReactComponent as ShapeIcon2 } from '../../images/Shape2.svg';
+import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import TabDay from './components/TabDay';
 import TabWeek from './components/TabWeek';
 import TabMonth from './components/TabMonth';
@@ -26,15 +30,16 @@ import AppConsts from '../../lib/appconst';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
-import { SuggestNhanSuDto } from '../../services/suggests/dto/SuggestNhanSuDto';
+import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
 import SuggestService from '../../services/suggests/SuggestService';
+import abpCustom from '../../components/abp-custom';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [idBooking, setIdBooking] = useState<string>('');
-    const [suggestNhanVien, setSuggestNhanVien] = useState<SuggestNhanSuDto[]>([]);
+    const [suggestNhanVien, setSuggestNhanVien] = useState<SuggestNhanVienDichVuDto[]>([]);
     const [suggestKhachHang, setSuggestKhachHang] = useState<SuggestKhachHangDto[]>([]);
     const [suggestDonViQuiDoi, setSuggestDonViQuiDoi] = useState<SuggestDonViQuiDoiDto[]>([]);
     useEffect(() => {
@@ -69,7 +74,7 @@ const LichHen: React.FC = () => {
     const getData = async () => {
         await bookingStore.getData();
         setData(bookingStore.listBooking);
-        const suggestNhanViens = await SuggestService.SuggestNhanSu();
+        const suggestNhanViens = await SuggestService.SuggestNhanVienLamDichVu();
         const suggestKhachHangs = await SuggestService.SuggestKhachHang();
         const suggestDichVus = await SuggestService.SuggestDonViQuiDoi();
         setSuggestDonViQuiDoi(suggestDichVus);
@@ -234,6 +239,7 @@ const LichHen: React.FC = () => {
                         Thêm thời gian chặn
                     </Button>
                     <Button
+                        hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
                         startIcon={<AddIcon />}
                         variant="contained"
                         onClick={() => {
@@ -251,19 +257,33 @@ const LichHen: React.FC = () => {
                 alignItems="center"
                 sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
                 <Grid item>
-                    <Select
-                        defaultValue="Tất cả nhân viên"
+                    <Autocomplete
+                        options={suggestNhanVien}
+                        getOptionLabel={(option) => `${option.tenNhanVien}`}
                         size="small"
-                        sx={{
-                            bgcolor: '#fff',
-                            '& .MuiSelect-select': { paddingY: '5.5px' },
-                            fontSize: '14px'
-                        }}>
-                        <MenuItem value="Tất cả nhân viên">Tất cả nhân viên</MenuItem>
-                        <MenuItem value="Đinh Tuấn Tài">Đinh Tuấn Tài</MenuItem>
-                        <MenuItem value="Hả cái gì vậy ?">Hả cái gì vậy ?</MenuItem>
-                        <MenuItem value="My sún">My sún</MenuItem>
-                    </Select>
+                        fullWidth
+                        disablePortal
+                        onChange={(event, value) => {
+                            bookingStore.onChangeEmployee(value?.id ?? ''); // Cập nhật giá trị id trong Formik
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                placeholder="Tìm tên"
+                                InputProps={{
+                                    ...params.InputProps,
+                                    startAdornment: (
+                                        <>
+                                            {params.InputProps.startAdornment}
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        </>
+                                    )
+                                }}
+                            />
+                        )}
+                    />
                 </Grid>
                 <Grid item>
                     <Box
@@ -339,24 +359,39 @@ const LichHen: React.FC = () => {
                         <MenuItem value="day">Ngày</MenuItem>
                         <MenuItem value="month">Tháng</MenuItem>
                     </Select>
-                    <Select
-                        defaultValue="Dịch vụ"
+                    <Autocomplete
+                        options={suggestDonViQuiDoi}
+                        getOptionLabel={(option) => `${option.tenDonVi}`}
                         size="small"
-                        sx={{
-                            bgcolor: '#fff',
-                            '& .MuiSelect-select': { paddingY: '5.5px' },
-                            fontSize: '14px'
-                        }}>
-                        <MenuItem value="Dịch vụ">Dịch vụ</MenuItem>
-                        <MenuItem value="Cắt tóc">Cắt tóc</MenuItem>
-                        <MenuItem value="Uốn">Uốn</MenuItem>
-                    </Select>
+                        fullWidth
+                        disablePortal
+                        onChange={(event, value) => {
+                            bookingStore.onChangeService(value?.id ?? ''); // Cập nhật giá trị id trong Formik
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                placeholder="Tìm tên"
+                                InputProps={{
+                                    ...params.InputProps,
+                                    startAdornment: (
+                                        <>
+                                            {params.InputProps.startAdornment}
+                                            <InputAdornment position="start">
+                                                <SearchIcon />
+                                            </InputAdornment>
+                                        </>
+                                    )
+                                }}
+                            />
+                        )}
+                    />
                 </Grid>
             </Grid>
             {TabLichHen === 'week' ? (
                 <TabWeek dateQuery={selectedDate} data={data} />
             ) : TabLichHen === 'day' ? (
-                <TabDay />
+                <TabDay data={data} />
             ) : TabLichHen === 'month' ? (
                 <TabMonth dateQuery={selectedDate} data={data} />
             ) : undefined}

@@ -23,6 +23,7 @@ import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import rules from './createOrEditNhanVien.validate';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
+import useWindowWidth from '../../../components/StateWidth';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -67,15 +68,40 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     width: '100%',
                     padding: '28px 24px'
                 }}>
-                <Typography
-                    variant="h3"
-                    fontSize="24px"
-                    color="#333233"
-                    fontWeight="700"
-                    paddingLeft="24px"
-                    marginTop="28px">
-                    {title}
-                </Typography>
+                <Box
+                    sx={{
+                        position: 'sticky',
+                        top: '0',
+                        left: '0',
+                        bgcolor: '#fff',
+                        zIndex: '5',
+                        paddingBottom: '8px'
+                    }}>
+                    <Typography
+                        variant="h3"
+                        fontSize="24px"
+                        color="#333233"
+                        fontWeight="700"
+                        paddingLeft="24px"
+                        marginTop="28px">
+                        {title}
+                    </Typography>
+                    <Button
+                        onClick={onCancel}
+                        sx={{
+                            position: 'absolute',
+                            top: '32px',
+                            right: '28px',
+                            padding: '0',
+                            maxWidth: '24px',
+                            minWidth: '0',
+                            '&:hover img': {
+                                filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                            }
+                        }}>
+                        <img src={closeIcon} />
+                    </Button>
+                </Box>
 
                 <Typography
                     color="#999699"
@@ -112,17 +138,21 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     }}>
                     {({ handleChange, errors, values, setFieldValue, setFieldError }) => (
                         <Form>
-                            <Box display="flex" justifyContent="space-between" paddingRight="24px">
+                            <Box
+                                display="flex"
+                                flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
+                                justifyContent="space-between"
+                                paddingRight="24px">
                                 <Grid
                                     container
                                     className="form-container"
                                     spacing={3}
-                                    width="70%"
-                                    paddingRight="12px"
+                                    width={useWindowWidth() > 600 ? '70%' : '100%'}
+                                    paddingRight={useWindowWidth() > 600 ? '12px' : '0'}
                                     paddingBottom="5vw"
                                     marginTop="0"
                                     marginLeft="0">
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                         <TextField
                                             hidden
                                             size="small"
@@ -143,7 +173,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             <small className="text-danger">{errors.ho}</small>
                                         )}
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Tên nhân viên
                                         </Typography>
@@ -159,7 +189,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             <small className="text-danger">{errors.tenLot}</small>
                                         )}
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Số điện thoại
                                         </Typography>
@@ -178,7 +208,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             </small>
                                         )}
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Địa chỉ
                                         </Typography>
@@ -192,7 +222,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             fullWidth
                                             sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Ngày sinh
                                         </Typography>
@@ -206,7 +236,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             sx={{ fontSize: '16px' }}
                                             size="small"></TextField>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} md={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Giới tính
                                         </Typography>
@@ -276,7 +306,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         />
                                     </Grid>
                                 </Grid>
-                                <Grid container width="30%" paddingLeft="12px">
+                                <Grid
+                                    container
+                                    width={useWindowWidth() > 600 ? '30%' : '100%'}
+                                    paddingLeft="12px">
                                     <Grid item xs={12}>
                                         <Box
                                             height="250px"
@@ -341,59 +374,48 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             </Box>
                                         </Box>
                                     </Grid>
-
-                                    <ButtonGroup
-                                        sx={{
-                                            height: '32px',
-                                            position: 'absolute',
-                                            bottom: '24px',
-                                            right: '50px'
-                                        }}>
-                                        <Button
-                                            type="submit"
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
-                                                backgroundColor: '#7C3367',
-                                                border: 'none'
-                                            }}
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
-                                        <Button
-                                            onClick={onCancel}
-                                            variant="outlined"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#965C85'
-                                            }}
-                                            className="btn-outline-hover">
-                                            Hủy
-                                        </Button>
-                                    </ButtonGroup>
                                 </Grid>
+                            </Box>
+                            <Box
+                                sx={{
+                                    position: 'sticky',
+                                    bgcolor: '#fff',
+                                    bottom: '0',
+                                    display: 'flex',
+                                    gap: '8px',
+                                    padding: '8px 24px 8px 8px',
+
+                                    right: '50px',
+                                    justifyContent: 'end'
+                                }}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    sx={{
+                                        fontSize: '14px',
+                                        textTransform: 'unset',
+                                        color: '#fff',
+                                        backgroundColor: '#7C3367',
+                                        border: 'none'
+                                    }}
+                                    className="btn-container-hover">
+                                    Lưu
+                                </Button>
+                                <Button
+                                    onClick={onCancel}
+                                    variant="outlined"
+                                    sx={{
+                                        fontSize: '14px',
+                                        textTransform: 'unset',
+                                        color: '#965C85'
+                                    }}
+                                    className="btn-outline-hover">
+                                    Hủy
+                                </Button>
                             </Box>
                         </Form>
                     )}
                 </Formik>
-                <Button
-                    onClick={onCancel}
-                    sx={{
-                        position: 'absolute',
-                        top: '32px',
-                        right: '28px',
-                        padding: '0',
-                        maxWidth: '24px',
-                        minWidth: '0',
-                        '&:hover img': {
-                            filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
-                        }
-                    }}>
-                    <img src={closeIcon} />
-                </Button>
             </Dialog>
         );
     }

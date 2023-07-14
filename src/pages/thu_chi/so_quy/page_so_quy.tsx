@@ -33,6 +33,7 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import fileDowloadService from '../../../services/file-dowload.service';
+import abpCustom from '../../../components/abp-custom';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -517,6 +518,7 @@ const PageSoQuy = ({ xx }: any) => {
                                 />
                             </Box>
                             <Button
+                                hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Export')}
                                 variant="outlined"
                                 onClick={exportToExcel}
                                 startIcon={<UploadIcon />}
@@ -530,6 +532,7 @@ const PageSoQuy = ({ xx }: any) => {
                                 Xuất{' '}
                             </Button>
                             <Button
+                                hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Create')}
                                 variant="contained"
                                 startIcon={<Add />}
                                 sx={{

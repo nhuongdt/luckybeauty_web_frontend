@@ -14,9 +14,11 @@ import {
     FormControlLabel,
     Checkbox,
     Select,
+    Box,
     MenuItem
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+
+import { ReactComponent as CloseIcon } from '../../../../../../images/close-square.svg';
 import { Component, ReactNode } from 'react';
 import { CreateOrEditChietKhauDichVuDto } from '../../../../../../services/hoa_hong/chiet_khau_dich_vu/Dto/CreateOrEditChietKhauDichVuDto';
 import { SuggestDonViQuiDoiDto } from '../../../../../../services/suggests/dto/SuggestDonViQuiDoi';
@@ -47,7 +49,11 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
         });
         return (
             <Dialog open={visited} fullWidth maxWidth="md">
-                <DialogTitle>
+                <DialogTitle
+                    sx={{
+                        fontSize: '24px',
+                        fontWeight: '700'
+                    }}>
                     {title}
                     {onClose ? (
                         <IconButton
@@ -98,7 +104,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         hidden
                                         name="idNhanVien"
                                         value={idNhanVien}></TextField>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Dịch vụ
                                         </Typography>
@@ -122,7 +128,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             </small>
                                         )}
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Loại chiết khấu
                                         </Typography>
@@ -210,9 +216,10 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                     </Grid>
                                 </Grid>
                                 <DialogActions sx={{ pr: '0!important' }}>
-                                    <ButtonGroup
+                                    <Box
                                         sx={{
-                                            height: '32px',
+                                            display: 'flex',
+                                            gap: '8px',
                                             bottom: '24px',
                                             right: '50px'
                                         }}>
@@ -241,7 +248,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             className="btn-outline-hover">
                                             Hủy
                                         </Button>
-                                    </ButtonGroup>
+                                    </Box>
                                 </DialogActions>
                             </Form>
                         )}
