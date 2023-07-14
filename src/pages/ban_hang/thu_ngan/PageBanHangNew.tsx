@@ -86,6 +86,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
+    let lstQuyCT: QuyChiTietDto[] = [];
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
@@ -157,7 +158,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         getListHangHoa_groupbyNhom();
     }, [idNhomHang, idLoaiHangHoa]);
 
-    // only used when change textseach
+    // only used when change textsearch
     const debounceDropDown = useRef(
         debounce(async (input: any) => {
             const data = await ProductService.GetDMHangHoa_groupByNhom(input);
@@ -275,6 +276,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         setHoaDon((old: any) => {
             return {
                 ...old,
+                idChiNhanh: utils.checkNull(old.idChiNhanh) ? idChiNhanh : old.idChiNhanh,
                 tongTienHangChuaChietKhau: tongTienHangChuaCK,
                 tongTienHang: tongTienHang,
                 tongChietKhauHangHoa: tongChietKhau,
@@ -460,6 +462,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             ...cthdDoing,
             soLuong: ctUpdate.soLuong,
             donGiaTruocCK: ctUpdate.donGiaTruocCK,
+            laPTChietKhau: ctUpdate.laPTChietKhau,
             ptChietKhau: ctUpdate.ptChietKhau,
             tienChietKhau: ctUpdate.tienChietKhau,
             donGiaSauCK: ctUpdate.donGiaSauCK,
@@ -470,12 +473,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         });
         // update cthd + save to cache
         setHoaDonChiTiet(
-            hoaDonChiTiet.map((item: any, index: number) => {
+            hoaDonChiTiet.map((item: any) => {
                 if (item.id === ctUpdate.id) {
                     return {
                         ...item,
                         soLuong: ctUpdate.soLuong,
                         donGiaTruocCK: ctUpdate.donGiaTruocCK,
+                        laPTChietKhau: ctUpdate.laPTChietKhau,
                         ptChietKhau: ctUpdate.ptChietKhau,
                         tienChietKhau: ctUpdate.tienChietKhau,
                         donGiaSauCK: ctUpdate.donGiaSauCK,
@@ -557,6 +561,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         return true;
     };
 
+    const assignThongTinThanhToan = (arrQCT: QuyChiTietDto[]) => {
+        lstQuyCT = arrQCT;
+    };
+
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
         const check = await checkSave();
@@ -630,7 +638,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             });
         }
 
-        handlePrint();
+        //handlePrint();
 
         // reset after save
         setClickSave(false);
@@ -1116,7 +1124,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                     </Grid>
                 ) : (
                     <Grid item md={8} className="normal">
-                        <Payments handleClickPrev={onPrevPayment} formShow={formShow} />
+                        <Payments
+                            tongPhaiTra={hoadon?.tongThanhToan}
+                            handleClickPrev={onPrevPayment}
+                            passToParent={assignThongTinThanhToan}
+                        />
                     </Grid>
                 )}
                 <Grid item md={4} sx={{ paddingRight: '0' }}>
@@ -1436,7 +1448,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             fontWeight="700"
                                             fontSize="18px"
                                             color="#3B4758">
-                                            Tổng thanh toán
+                                            Tổng phải trả
                                         </Typography>
                                         <Typography
                                             variant="body1"

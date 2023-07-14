@@ -122,7 +122,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
             if (newNV.ptChietKhau > 0) {
                 newNV.tienChietKhau = (newNV.ptChietKhau * triggerModal.item.thanhTienSauCK) / 100;
             } else {
-                newNV.tienChietKhau = newNV.ptChietKhau * triggerModal.item.soLuong;
+                newNV.tienChietKhau = hoahongDV[0].giaTri * triggerModal.item.soLuong;
             }
         }
         // check exists
