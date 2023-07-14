@@ -19,7 +19,7 @@ import {
     MenuItem,
     Grid
 } from '@mui/material';
-
+import useWindowWidth from '../../../../components/StateWidth';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import fileIcon from '../../../../images/file.svg';
 import fileUpload from '../../../../images/fi_upload-cloud.svg';
@@ -190,7 +190,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                 <Box
                                                     padding="20px"
                                                     position={
-                                                        innerWidth > 600 ? 'absolute' : 'static'
+                                                        useWindowWidth() > 600
+                                                            ? 'absolute'
+                                                            : 'static'
                                                     }
                                                     textAlign="center">
                                                     <img src={fileIcon} alt="file icon" />
@@ -198,7 +200,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         display="flex"
                                                         gap="10px"
                                                         justifyContent={
-                                                            innerWidth < 600 ? 'center' : 'unset'
+                                                            useWindowWidth() > 600
+                                                                ? 'unset'
+                                                                : 'center'
                                                         }>
                                                         <img src={fileUpload} alt="file upload" />
                                                         <Typography

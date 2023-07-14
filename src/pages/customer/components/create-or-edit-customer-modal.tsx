@@ -12,7 +12,7 @@ import {
     TextareaAutosize,
     Typography
 } from '@mui/material';
-
+import useWindowWidth from '../../../components/StateWidth';
 import fileIcon from '../../../images/file.svg';
 import closeIcon from '../../../images/close-square.svg';
 import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
@@ -39,6 +39,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         errorPhoneNumber: false,
         errorTenKhach: false
     };
+
     render(): ReactNode {
         const {
             visible,
@@ -271,7 +272,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                 </Grid>
                                 <Grid
                                     container
-                                    sx={{ width: innerWidth > 600 ? '350px' : '100%' }}
+                                    sx={{ width: useWindowWidth() > 600 ? '350px' : '100%' }}
                                     className=" box-1">
                                     <Grid item xs={12} className="position-relative">
                                         <div className=" inner-box" style={{ textAlign: 'center' }}>
@@ -315,9 +316,9 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     gap: '8px',
                                     padding: '8px',
                                     justifyContent: 'end',
-                                    marginTop: innerWidth < 600 ? '24px' : '0',
+                                    marginTop: useWindowWidth() > 600 ? '0' : '24px',
                                     bgcolor: '#fff',
-                                    position: innerWidth < 600 ? 'sticky' : 'static',
+                                    position: useWindowWidth() > 600 ? 'static' : 'sticky',
                                     bottom: '0',
                                     left: '0'
                                 }}>

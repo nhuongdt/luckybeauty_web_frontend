@@ -23,6 +23,7 @@ import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import rules from './createOrEditNhanVien.validate';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
+import useWindowWidth from '../../../components/StateWidth';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -139,15 +140,15 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         <Form>
                             <Box
                                 display="flex"
-                                flexDirection={innerWidth < 600 ? 'column' : 'row'}
+                                flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
                                 justifyContent="space-between"
                                 paddingRight="24px">
                                 <Grid
                                     container
                                     className="form-container"
                                     spacing={3}
-                                    width={innerWidth > 600 ? '70%' : '100%'}
-                                    paddingRight={innerWidth > 600 ? '12px' : '0'}
+                                    width={useWindowWidth() > 600 ? '70%' : '100%'}
+                                    paddingRight={useWindowWidth() > 600 ? '12px' : '0'}
                                     paddingBottom="5vw"
                                     marginTop="0"
                                     marginLeft="0">
@@ -307,7 +308,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                 </Grid>
                                 <Grid
                                     container
-                                    width={innerWidth > 600 ? '30%' : '100%'}
+                                    width={useWindowWidth() > 600 ? '30%' : '100%'}
                                     paddingLeft="12px">
                                     <Grid item xs={12}>
                                         <Box

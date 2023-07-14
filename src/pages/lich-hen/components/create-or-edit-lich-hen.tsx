@@ -27,7 +27,7 @@ import AppConsts from '../../../lib/appconst';
 import datLichService from '../../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
-
+import useWindowWidth from '../../../components/StateWidth';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
 interface ICreateOrEditProps {
@@ -155,7 +155,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             <Box
                                                 textAlign="center"
                                                 mt="5vw"
-                                                display={innerWidth < 600 ? 'none' : 'block'}>
+                                                display={useWindowWidth() < 600 ? 'none' : 'block'}>
                                                 <Box>
                                                     <IconMore />
                                                 </Box>
@@ -188,7 +188,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 variant="subtitle1"
                                                 fontSize="16px"
                                                 fontWeight="700"
-                                                pt={innerWidth < 600 ? '0' : '24px'}>
+                                                pt={useWindowWidth() < 600 ? '0' : '24px'}>
                                                 Chi tiết cuộc hẹn
                                             </Typography>
                                             <FormGroup className="mt-4 mb-1">

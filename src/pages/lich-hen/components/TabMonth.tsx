@@ -71,7 +71,19 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
             icon: <ClockViolet />
         }
     ];
+    const [windowHeight, setWindowHeight] = React.useState(innerHeight);
 
+    React.useEffect(() => {
+        const handleResize = () => {
+            setWindowHeight(innerHeight);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
     return (
         <TableContainer
             sx={{
@@ -79,7 +91,7 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                 padding: '24px',
 
                 borderRadius: '8px',
-                maxHeight: innerHeight > 768 ? '70vh' : '64vh',
+                maxHeight: windowHeight > 768 ? '70vh' : '64vh',
                 '&::-webkit-scrollbar': {
                     width: '10px',
                     height: '10px'

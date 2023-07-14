@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import { Box, Typography, Button, Grid, IconButton } from '@mui/material';
-
+import useWindowWidth from '../../../components/StateWidth';
 const TabInfor: React.FC = () => {
     const [listBtn, setListBtn] = useState([
         {
@@ -79,7 +79,9 @@ const TabInfor: React.FC = () => {
                                         fontSize="14px"
                                         color="#4C4B4C"
                                         maxWidth={
-                                            index === 1 && innerWidth < 1700 ? '200px' : 'unset'
+                                            index === 1 && useWindowWidth() < 1700
+                                                ? '200px'
+                                                : 'unset'
                                         }>
                                         {item.text}
                                     </Typography>
