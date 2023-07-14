@@ -39,6 +39,13 @@ import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import { TrendingUpTwoTone } from '@mui/icons-material';
 import { PagedNhanSuRequestDto } from '../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
+import ModalTaiKhoanNganHang from './modal_tai_khoan_ngan_hang';
+import AutocompleteAccountBank from '../../../../components/Autocomplete/AccountBank';
+import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
+import {
+    NganHangDto,
+    TaiKhoanNganHangDto
+} from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 
 interface SoQuyDialogProps {
     visiable: boolean;
@@ -46,20 +53,6 @@ interface SoQuyDialogProps {
     onOk: (dataSave: any, type: number) => void;
     idQuyHD: string | null;
 }
-// const LableForm = (text: string) => {
-//     return (
-//         <span
-//             sx={{ marginTop: 2, marginBottom: 1 }}
-//             variant="h3"
-//             fontSize="14px"
-//             fontWeight="500"
-//             fontFamily="Roboto"
-//             fontStyle="normal"
-//             color="#4C4B4C">
-//             {text}
-//         </span>
-//     );
-// };
 
 const themeDate = createTheme({
     components: {
@@ -95,12 +88,16 @@ const CreateOrEditSoQuyDialog = ({
     const chinhanh = useContext(ChiNhanhContext);
     const [errMaHoadon, setErrMaHoaDon] = useState('');
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
+    const [bankAccount, setBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
     const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
         show: false,
         title: '',
         type: 1,
         mes: ''
     });
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+
+    const [isShowModalAccountBank, setIsShowModalAccountBank] = useState(false);
 
     const [quyHoaDon, setQuyHoaDon] = useState<QuyHoaDonDto>(
         new QuyHoaDonDto({
@@ -138,6 +135,7 @@ const CreateOrEditSoQuyDialog = ({
                         quyCT[0]?.idNhanVien != null ? quyCT[0]?.idNhanVien : quyCT[0]?.idKhachHang,
                     hinhThucThanhToan: quyCT[0].hinhThucThanhToan,
                     idKhoanThuChi: quyCT[0].idKhoanThuChi,
+                    idTaiKhoanNganHang: quyCT[0].idTaiKhoanNganHang,
                     quyHoaDon_ChiTiet: quyCT
                 });
             }
@@ -151,8 +149,16 @@ const CreateOrEditSoQuyDialog = ({
         setAllNhanVien(data.items);
     };
 
+    const GetAllBankAcount = async () => {
+        const data = await TaiKhoanNganHangServices.GetAllBankAccount();
+        if (data != null) {
+            setBankAccount(data);
+        }
+    };
+
     const PageLoad = () => {
         GetListNhanVien();
+        GetAllBankAcount();
     };
 
     useEffect(() => {
@@ -174,6 +180,7 @@ const CreateOrEditSoQuyDialog = ({
                 noiDungThu: '',
                 hinhThucThanhToan: 1,
                 idKhoanThuChi: null,
+                idTaiKhoanNganHang: null,
                 hachToanKinhDoanh: true
             });
         } else {
@@ -197,12 +204,14 @@ const CreateOrEditSoQuyDialog = ({
         ) as null;
 
         if (utils.checkNull(idQuyHD)) {
+            // insert
             const quyCT = new QuyChiTietDto({
                 idKhachHang: idKhachHang,
                 hinhThucThanhToan: quyHoaDon.hinhThucThanhToan,
                 tienThu: quyHoaDon.tongTienThu,
                 idNhanVien: idNhanVien,
-                idKhoanThuChi: quyHoaDon.idKhoanThuChi as null
+                idKhoanThuChi: quyHoaDon.idKhoanThuChi as null,
+                idTaiKhoanNganHang: quyHoaDon.idTaiKhoanNganHang as null
             });
             myData.quyHoaDon_ChiTiet = [quyCT];
             const data = await SoQuyServices.CreateQuyHoaDon(myData);
@@ -211,6 +220,7 @@ const CreateOrEditSoQuyDialog = ({
             quyHoaDon.txtTrangThai = 'Đã thanh toán';
             onOk(quyHoaDon, 1);
         } else {
+            // update
             // assign again ctquy
             myData.quyHoaDon_ChiTiet = quyHoaDon.quyHoaDon_ChiTiet?.map((x: any) => {
                 return {
@@ -223,7 +233,7 @@ const CreateOrEditSoQuyDialog = ({
                     idKhoanThuChi: quyHoaDon.idKhoanThuChi as null,
                     diemThanhToan: x.diemThanhToan,
                     chiPhiNganHang: x.chiPhiNganHang,
-                    idTaiKhoanNganHang: x.idTaiKhoanNganHang,
+                    idTaiKhoanNganHang: quyHoaDon.idTaiKhoanNganHang,
                     laPTChiPhiNganHang: x.laPTChiPhiNganHang,
                     thuPhiTienGui: x.thuPhiTienGui
                 } as QuyChiTietDto;
@@ -254,6 +264,7 @@ const CreateOrEditSoQuyDialog = ({
 
     // todo validate ngaylapHoaDon
     const validate = yup.object().shape({
+        hinhThucThanhToan: yup.number(),
         // check dc mã, nhưng call API quá nhiều lần
         maHoaDon: yup.string().test('maHoaDon', 'Mã phiếu đã tồn tại', async () => {
             if (!utils.checkNull(quyHoaDon?.maHoaDon)) {
@@ -272,8 +283,33 @@ const CreateOrEditSoQuyDialog = ({
             })
             .notOneOf([0], 'Tổng tiền phải > 0')
             .required('Vui lòng nhập số tiền'),
-        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền')
+        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền'),
+        idTaiKhoanNganHang: yup
+            .string()
+            .when('hinhThucThanhToan', ([hinhThucThanhToan], schema) => {
+                if (hinhThucThanhToan !== 1)
+                    return yup.string().required('Vui lòng chọn tài khoản ngân hàng');
+                return schema;
+            })
     });
+
+    const saveOKAccountBank = (dataSave: any) => {
+        setQuyHoaDon({
+            ...quyHoaDon,
+            idTaiKhoanNganHang: dataSave.id,
+            tenNganHang: dataSave.tenNganHang,
+            tenChuThe: dataSave.tenChuThe
+        });
+        setIsShowModalAccountBank(false);
+
+        setBankAccount([dataSave, ...bankAccount]);
+
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Thêm tài khoản ngân hàng thành công'
+        });
+    };
 
     return (
         <>
@@ -283,6 +319,13 @@ const CreateOrEditSoQuyDialog = ({
                 mes={inforDelete.mes}
                 onOk={deleteSoQuy}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
+            <ModalTaiKhoanNganHang
+                show={isShowModalAccountBank}
+                onClose={() => {
+                    setIsShowModalAccountBank(false);
+                }}
+                onOk={saveOKAccountBank}
+            />
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onClose}>
                 <DialogTitle>
                     <div className="row">
@@ -312,7 +355,6 @@ const CreateOrEditSoQuyDialog = ({
                         enableReinitialize>
                         {(formik) => (
                             <>
-                                {console.log('formik ', formik.values)}
                                 <Form>
                                     <Grid container rowGap={1} columnSpacing={2}>
                                         <Grid item xs={12} sm={12} lg={12}>
@@ -548,12 +590,49 @@ const CreateOrEditSoQuyDialog = ({
                                                 }
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={12}>
-                                            <span className="modal-lable">Tài khoản {sLoai} </span>
-                                        </Grid>
-                                        <Grid item xs={12} sm={12}>
-                                            <AutocompleteCustomer />
-                                        </Grid>
+                                        {quyHoaDon?.hinhThucThanhToan !== 1 && (
+                                            <>
+                                                <Grid item xs={12} sm={12}>
+                                                    <span className="modal-lable">
+                                                        Tài khoản {sLoai}{' '}
+                                                    </span>
+                                                </Grid>
+                                                <Grid item xs={12} sm={12}>
+                                                    <AutocompleteAccountBank
+                                                        listOption={bankAccount}
+                                                        idChosed={quyHoaDon.idTaiKhoanNganHang}
+                                                        handleClickBtnAdd={() =>
+                                                            setIsShowModalAccountBank(true)
+                                                        }
+                                                        handleChoseItem={(item: any) => {
+                                                            {
+                                                                formik.setFieldValue(
+                                                                    'idTaiKhoanNganHang',
+                                                                    item?.id ?? null
+                                                                );
+                                                                setQuyHoaDon({
+                                                                    ...quyHoaDon,
+                                                                    idTaiKhoanNganHang: item?.id,
+                                                                    tenNganHang: item.tenNganHang,
+                                                                    tenChuThe: item.tenChuThe
+                                                                });
+                                                            }
+                                                        }}
+                                                        error={
+                                                            formik.touched.idTaiKhoanNganHang &&
+                                                            Boolean(
+                                                                formik.errors?.idTaiKhoanNganHang
+                                                            )
+                                                        }
+                                                        helperText={
+                                                            formik.touched.idTaiKhoanNganHang &&
+                                                            formik.errors.idTaiKhoanNganHang
+                                                        }
+                                                    />
+                                                </Grid>
+                                            </>
+                                        )}
+
                                         <Grid item xs={12} sm={12}>
                                             <span className="modal-lable">Nội dung {sLoai} </span>
                                         </Grid>
@@ -572,7 +651,7 @@ const CreateOrEditSoQuyDialog = ({
                                                 }
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={12}>
+                                        <Grid item xs={12} sm={12} style={{ display: 'none' }}>
                                             <FormGroup>
                                                 <FormControlLabel
                                                     value="end"

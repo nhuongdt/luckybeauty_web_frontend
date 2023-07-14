@@ -23,6 +23,7 @@ export default class QuyHoaDonDto {
     loaiDoiTuong? = 1; // khachhang
     hinhThucThanhToan? = 1; // tienmat
     idKhoanThuChi?: string | null = null;
+    idTaiKhoanNganHang?: string | null = null;
 
     loaiPhieu? = '';
     maNguoiNop? = '';
@@ -32,6 +33,8 @@ export default class QuyHoaDonDto {
     txtTrangThai? = '';
     sHinhThucThanhToan? = '';
     tenKhoanThuChi? = '';
+    tenNganHang? = '';
+    tenChuThe? = '';
 
     constructor({
         id = Guid.create().toString(),
