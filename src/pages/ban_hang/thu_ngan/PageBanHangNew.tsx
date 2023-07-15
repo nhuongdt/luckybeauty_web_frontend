@@ -18,6 +18,7 @@ import {
 import closeIcon from '../../../images/closeSmall.svg';
 import avatar from '../../../images/avatar.png';
 import dotIcon from '../../../images/dotssIcon.svg';
+import { Close, Add } from '@mui/icons-material';
 // import { useReactToPrint } from 'react-to-print';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
@@ -63,6 +64,10 @@ import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
 import { PagedNhanSuRequestDto } from '../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
+import { DataCustomerContext } from '../../../services/khach-hang/dto/DataContext';
+import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
+import { KHCheckInDto } from '../../../services/check_in/CheckinDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -520,6 +525,88 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             );
     };
 
+    // customer: add/remove
+    const dataContext_ofCustomer = useContext(DataCustomerContext);
+    const listNguonKhach = dataContext_ofCustomer.listNguonKhach;
+    const listNhomKhach = dataContext_ofCustomer.listNhomkhach;
+    const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
+    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+
+    const onChangeInputAtModalCustomer = (event: any) => {
+        const { name, value } = event.target;
+        setNewCus({
+            ...newCus,
+            [name]: value
+        });
+    };
+
+    const changeCustomer = async (item: any = null) => {
+        if (item === null) {
+            // remove
+            setHoaDon({
+                ...hoadon,
+                idKhachHang: Guid.EMPTY.toString() as unknown as null,
+                tenKhachHang: 'Khách lẻ',
+                soDienThoai: ''
+            });
+            // delete checkin
+            await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 0);
+        } else {
+            // change other cus
+            setIsShowModalAddCus(false);
+            setHoaDon({
+                ...hoadon,
+                idKhachHang: item?.id,
+                tenKhachHang: item?.tenKhachHang,
+                soDienThoai: item?.soDienThoai
+            });
+
+            // add new checkin (todo)
+            const objCheckIn: KHCheckInDto = new KHCheckInDto({
+                idKhachHang: item?.id,
+                idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id
+            });
+            const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+        }
+
+        // update to cache
+        // remove cache checkin with idCheckIn
+        await dbDexie.khachCheckIn
+            .where('idCheckIn')
+            .equals(customerChosed.idCheckIn)
+            .delete()
+            .then((deleteCount: any) =>
+                console.log(
+                    'idcheckindelete ',
+                    customerChosed.idCheckIn,
+                    'deletecount',
+                    deleteCount
+                )
+            );
+
+        // update cache hoadon with new {idcus, cusName,..}
+        const cacheHD = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
+        if (cacheHD.length > 0) {
+            // todo update
+        }
+    };
+
+    const showModalAddCustomer = () => {
+        setIsShowModalAddCus(true);
+        setNewCus({
+            id: Guid.EMPTY,
+            maKhachHang: '',
+            tenKhachHang: '',
+            soDienThoai: '',
+            diaChi: '',
+            idNhomKhach: '',
+            idNguonKhach: '',
+            gioiTinh: false,
+            moTa: ''
+        } as CreateOrEditKhachHangDto);
+    };
+
+    // end cutomer
     const handlePrint = useReactToPrint({
         content: () => componentRef.current
     });
@@ -533,6 +620,35 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             });
             return false;
         }
+        if (lstQuyCT.length === 0) {
+            setObjAlert({
+                show: true,
+                type: 2,
+                mes: 'Vui lòng chọn hình thức thanh toán '
+            });
+            return false;
+        }
+
+        const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+        if (itemPos.length > 0 && utils.checkNull(itemPos[0].idTaiKhoanNganHang)) {
+            setObjAlert({
+                show: true,
+                type: 2,
+                mes: 'Vui lòng chọn tài khoản POS'
+            });
+            return false;
+        }
+
+        const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+        if (itemCK.length > 0 && utils.checkNull(itemCK[0].idTaiKhoanNganHang)) {
+            setObjAlert({
+                show: true,
+                type: 2,
+                mes: 'Vui lòng chọn tài khoản chuyển khoản'
+            });
+            return false;
+        }
+
         return true;
     };
 
@@ -569,13 +685,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
+        const nextIsSave = handleCheckNext();
+        if (!nextIsSave) return;
+
         const check = await checkSave();
         if (!check) {
             return;
         }
-
-        const nextIsSave = handleCheckNext();
-        if (!nextIsSave) return;
 
         // assign again STT of cthd before save
         const dataSave = { ...hoadon };
@@ -601,7 +717,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             ngayLapHoaDon: hoadon.ngayLapHoaDon,
             tongTienThu: tongThu
         });
-        // assign idHoadonLienQuan, idKhachHang fro quyCT
+        // assign idHoadonLienQuan, idKhachHang for quyCT
         lstQuyCT.map((x: QuyChiTietDto) => {
             x.idHoaDonLienQuan = hodaDonDB.id;
             x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
@@ -698,6 +814,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
     return (
         <>
+            <CreateOrEditCustomerDialog
+                visible={isShowModalAddCus}
+                onCancel={() => setIsShowModalAddCus(false)}
+                onOk={changeCustomer}
+                handleChange={onChangeInputAtModalCustomer}
+                title="Thêm mới khách hàng"
+                formRef={newCus}
+                suggestNguonKhach={listNguonKhach}
+                suggestNhomKhach={listNhomKhach}
+            />
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang
                 formType={1}
@@ -1176,14 +1302,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
-                                <Button sx={{ marginLeft: 'auto' }}>
+                                {/* <Button sx={{ marginLeft: 'auto' }}>
                                     <img
                                         src={dotIcon}
                                         style={{
                                             filter: 'brightness(0) saturate(100%) invert(11%) sepia(2%) saturate(2336%) hue-rotate(295deg) brightness(93%) contrast(94%)'
                                         }}
                                     />
-                                </Button>
+                                </Button> */}
+                                <Box sx={{ marginLeft: 'auto' }}>
+                                    {utils.checkNull(hoadon?.idKhachHang) ||
+                                    hoadon?.idKhachHang === Guid.EMPTY ? (
+                                        <Add onClick={showModalAddCustomer} />
+                                    ) : (
+                                        <Close
+                                            sx={{ color: 'red' }}
+                                            onClick={() => changeCustomer(null)}
+                                        />
+                                    )}
+                                </Box>
                             </Box>
                         </Box>
                         {/* 1 row chi tiet */}
