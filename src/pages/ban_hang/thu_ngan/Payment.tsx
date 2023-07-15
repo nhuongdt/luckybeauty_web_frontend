@@ -14,6 +14,8 @@ import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import { NumericFormat } from 'react-number-format';
 import utils from '../../../utils/utils';
 import { Guid } from 'guid-typescript';
+import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
 interface ChildComponent {
     handleClickPrev: () => void;
     tongPhaiTra?: number;
@@ -21,6 +23,8 @@ interface ChildComponent {
 }
 const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, passToParent }) => {
     const tientip = ['5%', '10%', '15%', 'Tùy chỉnh'];
+
+    const [bankAccount, setBankAccount] = useState<TaiKhoanNganHangDto[]>([]);
 
     const hinhThucThanhToan = [
         {
@@ -42,6 +46,16 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
             selected: false
         }
     ];
+
+    const GetAllTaiKhoanNganHang = async () => {
+        const data = await TaiKhoanNganHangServices.GetAllBankAccount();
+        console.log('GetAllTaiKhoanNganHang ', data);
+        setBankAccount(data);
+    };
+
+    useEffect(() => {
+        GetAllTaiKhoanNganHang();
+    }, []);
 
     const [hinhthucThanhToanChosed, setHinhthucThanhToanChosed] = useState<QuyChiTietDto[]>([]);
     const choseHinhThucThanhToan = (id: number) => {
@@ -91,7 +105,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
     useEffect(() => {
         const qctReturn = assignAgainQuyChiTiet();
         passToParent(qctReturn);
-    }, [sumTienKhachTra]);
+    }, [hinhthucThanhToanChosed]);
 
     const shareMoney_QuyHD = (
         phaiTT: number,
@@ -186,23 +200,39 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
     };
     const assignAgainQuyChiTiet = () => {
         let lstQuyCT: QuyChiTietDto[] = [];
-        if (sumTienKhachTra > tongPhaiTra) {
-            const tienMat = hinhthucThanhToanChosed
-                .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1)
-                .reduce((currentValue: number, item: QuyChiTietDto) => {
-                    return item.tienThu + currentValue;
-                }, 0);
-            const tienPos = hinhthucThanhToanChosed
-                .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2)
-                .reduce((currentValue: number, item: QuyChiTietDto) => {
-                    return item.tienThu + currentValue;
-                }, 0);
-            const tienCK = hinhthucThanhToanChosed
-                .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3)
-                .reduce((currentValue: number, item: QuyChiTietDto) => {
-                    return item.tienThu + currentValue;
-                }, 0);
+        let tienMat = 0,
+            tienPos = 0,
+            tienCK = 0;
+        let idTaiKhoanPos = null,
+            idTaiKhoanCK = null;
+        const itemPos = hinhthucThanhToanChosed.filter(
+            (x: QuyChiTietDto) => x.hinhThucThanhToan === 2
+        );
+        const itemCK = hinhthucThanhToanChosed.filter(
+            (x: QuyChiTietDto) => x.hinhThucThanhToan === 3
+        );
+        if (itemPos.length > 0) {
+            idTaiKhoanPos = itemPos[0].idTaiKhoanNganHang;
+        }
+        if (itemCK.length > 0) {
+            idTaiKhoanCK = itemCK[0].idTaiKhoanNganHang;
+        }
 
+        for (let i = 0; i < hinhthucThanhToanChosed.length; i++) {
+            const itFor = hinhthucThanhToanChosed[i];
+            switch (itFor.hinhThucThanhToan) {
+                case 1:
+                    tienMat += itFor.tienThu;
+                    break;
+                case 2:
+                    tienPos += itFor.tienThu;
+                    break;
+                case 3:
+                    tienCK += itFor.tienThu;
+                    break;
+            }
+        }
+        if (sumTienKhachTra > tongPhaiTra) {
             const shareMoney = shareMoney_QuyHD(tongPhaiTra, 0, tienMat, tienPos, tienCK, 0, 0);
             const tienMatNew = shareMoney.TienMat,
                 tienPosNew = shareMoney.TienPOS,
@@ -216,12 +246,16 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                 const newQCT = new QuyChiTietDto({
                     hinhThucThanhToan: 2,
                     tienThu: tienPosNew,
-                    idTaiKhoanNganHang: null
+                    idTaiKhoanNganHang: idTaiKhoanPos as null
                 });
                 lstQuyCT.push(newQCT);
             }
             if (tienCKNew > 0) {
-                const newQCT = new QuyChiTietDto({ hinhThucThanhToan: 3, tienThu: tienCKNew });
+                const newQCT = new QuyChiTietDto({
+                    hinhThucThanhToan: 3,
+                    tienThu: tienCKNew,
+                    idTaiKhoanNganHang: idTaiKhoanCK as null
+                });
                 lstQuyCT.push(newQCT);
             }
         } else {
@@ -234,25 +268,6 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
     const handleSelectedTientip = (index: number) => {
         setSelectedTienTip(index);
     };
-    // todo get DM_TaiKhoanNganHang
-    const Cards = [
-        {
-            id: '768048db-3ee0-c916-ee84-47e6bd3226e8',
-            idNganHang: Guid.EMPTY,
-            soTaiKhoan: '1903 071 2927 019',
-            tenChuThe: 'Chủ thẻ techcom',
-            tenNganHang: 'techcombank',
-            icon: Card1
-        },
-        {
-            id: '66446239-7daa-ad65-6670-8237ea103814',
-            idNganHang: Guid.EMPTY,
-            soTaiKhoan: '187 071 2927',
-            tenChuThe: 'Chủ thẻ vietcom',
-            tenNganHang: 'vietcombank',
-            icon: Card2
-        }
-    ];
 
     const handleSelectedCard = (itemCard: any, loaiHinhThuc: number) => {
         setHinhthucThanhToanChosed(
@@ -443,7 +458,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                     {item.hinhThucThanhToan !== 1 && (
                                         <Box
                                             sx={{ display: 'flex', gap: '20px', marginTop: '8px' }}>
-                                            {Cards.map((itemCard, index) => (
+                                            {bankAccount.map((itemCard, index) => (
                                                 <Box
                                                     onClick={() =>
                                                         handleSelectedCard(
@@ -483,7 +498,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                                                     width: '100%'
                                                                 }
                                                             }}>
-                                                            <img src={itemCard.icon} alt="card" />
+                                                            <img src={Card2} alt="card" />
                                                         </Box>
                                                     </Box>
                                                     <Typography
