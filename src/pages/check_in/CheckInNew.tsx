@@ -18,7 +18,7 @@ import utils from '../../utils/utils';
 import { Add, Menu, CalendarMonth, MoreHoriz, QueryBuilder, Search } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
-import { PropModal } from '../../utils/PropParentToChild';
+import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import CloseIcon from '@mui/icons-material/Close';
@@ -31,6 +31,7 @@ import { dbDexie } from '../../lib/dexie/dexieDB';
 import MauInServices from '../../services/mau_in/MauInServices';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 const shortNameCus = createTheme({
     components: {
         MuiButton: {
@@ -53,6 +54,14 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const MaxPc1490 = useMediaQuery('(max-width: 1490px)');
     const [txtSearch, setTextSeach] = useState('');
     const [allCusChecking, setAllCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
+    const [idCheckinDelete, setIdCheckinDelete] = useState('');
+
+    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
 
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
         new PropModal({ isShow: false })
@@ -96,7 +105,41 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             return allCusChecking;
         }
     };
-    console.log('checkin ');
+
+    const deleteCusChecking = async () => {
+        setAllCusChecking(
+            allCusChecking.filter((x: PageKhachHangCheckInDto) => x.idCheckIn !== idCheckinDelete)
+        );
+        await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, 0);
+        setinforDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+
+        const dataCheckIn_Dexie = await dbDexie.khachCheckIn
+            .where('idCheckIn')
+            .equals(idCheckinDelete)
+            .toArray();
+        console.log('dataCheckIn_Dexie ', dataCheckIn_Dexie);
+        if (dataCheckIn_Dexie.length > 0) {
+            await dbDexie.khachCheckIn
+                .where('idCheckIn')
+                .equals(idCheckinDelete)
+                .delete()
+                .then((deleteCount: any) =>
+                    console.log('idcheckindelete ', idCheckinDelete, 'deletecount', deleteCount)
+                );
+
+            await dbDexie.hoaDon
+                .where('idKhachHang')
+                .equals(dataCheckIn_Dexie[0].idKhachHang as string)
+                .delete()
+                .then((deleteCount: any) => console.log('deleteHoadon', deleteCount));
+        }
+    };
 
     const listCusChecking = SearhCusChecking();
 
@@ -145,6 +188,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            <ConfirmDelete
+                isShow={inforDelete.show}
+                title={inforDelete.title}
+                mes={inforDelete.mes}
+                onOk={deleteCusChecking}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
                 <Grid container justifyContent="end">
                     <Grid item xs={12}>
@@ -227,7 +276,19 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 minWidth: 'unset',
                                 borderRadius: '50%!important'
                             }}>
-                            <CloseIcon sx={{ color: '#333233' }} />
+                            <CloseIcon
+                                sx={{ color: '#333233' }}
+                                onClick={() => {
+                                    setIdCheckinDelete(item.idCheckIn);
+                                    setinforDelete(
+                                        new PropConfirmOKCancel({
+                                            show: true,
+                                            title: 'Xác nhận xóa',
+                                            mes: `Bạn có chắc chắn muốn hủy bỏ khách  ${item?.tenKhachHang}  đang check in không?`
+                                        })
+                                    );
+                                }}
+                            />
                         </Button>
                         <Box
                             sx={{
