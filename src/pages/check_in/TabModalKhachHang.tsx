@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import {
     Box,
     TextField,
@@ -7,80 +7,116 @@ import {
     Grid,
     InputAdornment,
     Avatar,
-    IconButton
+    IconButton,
+    debounce
 } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import avatar from '../../images/avatar.png';
+import '../../pages/customer/customerPage.css';
 
 import useWindowWidth from '../../components/StateWidth';
-const TabKhachHang: React.FC = () => {
-    const data = [
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            checkin: '1800 lần',
-            price: '400.000đ',
-            ganNhat: '06/07/2023 13h30',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            checkin: '1800 lần',
-            price: '400.000đ',
-            ganNhat: '06/07/2023 13h30',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            checkin: '1800 lần',
-            price: '400.000đ',
-            ganNhat: '06/07/2023 13h30',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            checkin: '1800 lần',
-            price: '400.000đ',
-            ganNhat: '06/07/2023 13h30',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            checkin: '1800 lần',
-            price: '400.000đ',
-            ganNhat: '06/07/2023 13h30',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            checkin: '1800 lần',
-            price: '400.000đ',
-            ganNhat: '06/07/2023 13h30',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        }
-    ];
+import CreateOrEditCustomerDialog from '../customer/components/create-or-edit-customer-modal';
+import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
+import { DataCustomerContext } from '../../services/khach-hang/dto/DataContext';
+import { Guid } from 'guid-typescript';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
+import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import khachHangService from '../../services/khach-hang/khachHangService';
+import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
+import { format } from 'date-fns';
+const TabKhachHang = ({ handleChoseCus }: any) => {
+    const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
+    const dataContext_ofCustomer = useContext(DataCustomerContext);
+    const listNguonKhach = dataContext_ofCustomer.listNguonKhach;
+    const listNhomKhach = dataContext_ofCustomer.listNhomkhach;
+
+    const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
+    const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
+
+    const [pageDataCustomer, setPageDataCustomer] = useState<PagedResultDto<KhachHangItemDto>>(
+        {} as PagedResultDto<KhachHangItemDto>
+    );
+
+    const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
+        keyword: '',
+        maxResultCount: 10,
+        skipCount: 0
+    } as PagedKhachHangResultRequestDto);
+
+    const GetAllCustomer = async (paramSearch: PagedKhachHangResultRequestDto) => {
+        const data = await khachHangService.getAll(paramSearch);
+        setPageDataCustomer({
+            totalCount: data.totalCount,
+            totalPage: data.totalPage,
+            items: data.items
+        });
+    };
+
+    const debounceDropDown = useRef(
+        debounce(async (paramSearch) => {
+            await GetAllCustomer(paramSearch);
+        }, 500)
+    ).current;
+
+    useEffect(() => {
+        if (firsLoad.current) {
+            firsLoad.current = false;
+            return;
+        }
+        debounceDropDown(paramSearch);
+    }, [paramSearch.keyword]);
+
+    useEffect(() => {
+        if (firsLoad.current) {
+            firsLoad.current = false;
+            return;
+        }
+        GetAllCustomer(paramSearch);
+    }, [paramSearch.skipCount]);
+
+    const saveOKCustomer = (dataSave: any) => {
+        setIsShowModalAddCus(false);
+        handleChoseCus(dataSave);
+    };
+
+    const showModalAddCus = () => {
+        setIsShowModalAddCus(true);
+        setNewCus({
+            id: Guid.EMPTY,
+            maKhachHang: '',
+            tenKhachHang: '',
+            soDienThoai: '',
+            diaChi: '',
+            idNhomKhach: '',
+            idNguonKhach: '',
+            gioiTinh: false,
+            moTa: ''
+        } as CreateOrEditKhachHangDto);
+    };
+
+    const onChangeInforCus = (event: any) => {
+        const { name, value } = event.target;
+        setNewCus({
+            ...newCus,
+            [name]: value
+        });
+    };
+
     return (
         <Box>
+            <CreateOrEditCustomerDialog
+                visible={isShowModalAddCus}
+                onCancel={() => setIsShowModalAddCus(false)}
+                onOk={saveOKCustomer}
+                handleChange={onChangeInforCus}
+                title="Thêm mới khách hàng"
+                formRef={newCus}
+                suggestNguonKhach={listNguonKhach}
+                suggestNhomKhach={listNhomKhach}
+            />
             <Grid container rowGap={2}>
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -88,6 +124,10 @@ const TabKhachHang: React.FC = () => {
                         fullWidth
                         sx={{ maxWidth: '375px' }}
                         placeholder="Tìm kiếm"
+                        value={paramSearch.keyword}
+                        onChange={(e) =>
+                            setParamSearch({ ...paramSearch, keyword: e.target.value })
+                        }
                         InputProps={{
                             startAdornment: (
                                 <>
@@ -108,16 +148,18 @@ const TabKhachHang: React.FC = () => {
                             height: 'fit-content'
                         }}
                         startIcon={<AddIcon />}
-                        className="btn-container-hover">
-                        Thêm cuộc hẹn mới
+                        className="btn-container-hover"
+                        onClick={showModalAddCus}>
+                        Thêm khách hàng mới
                     </Button>
                 </Grid>
             </Grid>
 
             <Grid container spacing={2} mt="0">
-                {data.map((item, index) => (
+                {pageDataCustomer.items?.map((item, index) => (
                     <Grid item key={index} sm={6} md={4} xs={12}>
                         <Box
+                            onClick={() => saveOKCustomer(item)}
                             sx={{
                                 padding: '18px',
                                 border: '1px solid #E6E1E6',
@@ -134,14 +176,14 @@ const TabKhachHang: React.FC = () => {
                                     <Avatar
                                         sx={{ width: 40, height: 40 }}
                                         src={item.avatar}
-                                        alt={item.name}
+                                        alt={item.tenKhachHang}
                                     />
                                     <Box>
                                         <Typography variant="body1" fontSize="16px" color="#333233">
-                                            {item.name}
+                                            {item.tenKhachHang}
                                         </Typography>
                                         <Typography fontSize="12px" variant="body1" color="#999699">
-                                            {item.phone}
+                                            {item.soDienThoai}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -165,7 +207,7 @@ const TabKhachHang: React.FC = () => {
                                     Checkin:
                                 </Box>
                                 <Box component="p" sx={{ fontWeight: '700' }}>
-                                    {item.checkin}
+                                    {item.soLanCheckIn} lần
                                 </Box>
                             </Box>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -178,7 +220,9 @@ const TabKhachHang: React.FC = () => {
                                         color: '#4C4B4C'
                                     }}>
                                     <Box mr="3px">Gần nhất :</Box>
-                                    <Box ml="3px">{item.ganNhat}</Box>
+                                    <Box ml="3px">
+                                        {format(new Date(item.cuocHenGanNhat), 'dd/MM/yyyy HH:mm')}
+                                    </Box>
                                 </Box>
                             </Box>
                         </Box>
