@@ -580,11 +580,11 @@ const PageSoQuy = ({ xx }: any) => {
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
                                 fill: '#7C3367'
                             },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
+                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
                                     fill: '#000'
                                 },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(1)':
+                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
                                 {
                                     fill: '#000'
                                 },

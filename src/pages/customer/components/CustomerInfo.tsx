@@ -134,19 +134,21 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                 mt: '12px',
                                 '& p': {
                                     fontSize: '14px',
-                                    color: '#333233'
-                                },
-                                '& p:not(:first-child)': {
+                                    color: '#333233',
                                     mt: '4px'
                                 }
                             }}>
                             <Box>
-                                <Typography variant="body1">Nhóm khách :</Typography>
+                                <Typography sx={{ mt: '0' }} variant="body1">
+                                    Nhóm khách :
+                                </Typography>
                                 <Typography variant="body1">Số điện thoại :</Typography>
                                 <Typography variant="body1">Địa chỉ :</Typography>
                             </Box>
                             <Box>
-                                <Typography variant="body1">HD4545675</Typography>
+                                <Typography sx={{ mt: '0' }} variant="body1">
+                                    HD4545675
+                                </Typography>
                                 <Typography variant="body1">0911290476</Typography>
                                 <Typography variant="body1">Ninh Bình</Typography>
                             </Box>

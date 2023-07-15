@@ -15,7 +15,7 @@ import LoginModel from '../../../models/Login/loginModel';
 import LoginService from '../../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../../images/Lucky_beauty.jpg';
+import logo from '../../../images/logoNew.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 const LoginScreen: React.FC = () => {
@@ -71,15 +71,15 @@ const LoginScreen: React.FC = () => {
 
     return (
         <div className="login-page">
-            <div className="logo-login">
-                <div className="logo-image">
-                    <img src={logo} alt="Lucky Beauty" />
-                </div>
-                <div className="logo-text">Lucky Beauty</div>
-            </div>
             <Grid container className="align-items-center justify-content-center mt-2 h-100">
                 <Grid xs={12}>
                     <div className="login-page-inner">
+                        <div className="logo-login">
+                            <div className="logo-image">
+                                <img src={logo} alt="Lucky Beauty" />
+                            </div>
+                            <div className="logo-text">Lucky Beauty</div>
+                        </div>
                         <h1 className="login-label">Đăng nhập</h1>
                         <form className="login-form" onSubmit={formik.handleSubmit}>
                             <Grid container>
@@ -155,6 +155,8 @@ const LoginScreen: React.FC = () => {
                                         }
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
+                                                display: 'block',
+                                                paddingRight: '0',
                                                 '& fieldset': {
                                                     border: formik.errors.password
                                                         ? '1px solid red!important'
@@ -163,6 +165,11 @@ const LoginScreen: React.FC = () => {
                                             },
                                             '& .MuiInputBase-root ': {
                                                 background: '#f2f6fa'
+                                            },
+                                            '& button': {
+                                                position: 'absolute',
+                                                right: '0',
+                                                top: '0'
                                             }
                                         }}
                                         type={showPassword ? 'text' : 'password'}
@@ -188,9 +195,9 @@ const LoginScreen: React.FC = () => {
                                                 {...formik.getFieldProps('remember')}
                                                 checked={formik.values.remember}
                                                 sx={{
-                                                    color: '#7C3367',
+                                                    color: 'var(--color-main)',
                                                     '&.Mui-checked': {
-                                                        color: '#7C3367'
+                                                        color: 'var(--color-main)'
                                                     }
                                                 }}
                                             />

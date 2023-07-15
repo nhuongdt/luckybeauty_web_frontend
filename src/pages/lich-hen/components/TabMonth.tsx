@@ -27,6 +27,7 @@ import { ReactComponent as ClockGreen } from '../../../images/clock-green.svg';
 import { ReactComponent as ClockOrange } from '../../../images/clock-orange.svg';
 import { ReactComponent as ClockViolet } from '../../../images/clock-violet.svg';
 import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
+import { positions } from '@mui/system';
 const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
     data,
     dateQuery
@@ -142,6 +143,7 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                             border: '1px solid #e0e0e0',
                                             position: 'relative',
                                             height: '150px',
+                                            overflow: 'hidden',
                                             width: 1 / weekDays.length
                                         }}>
                                         <Box
@@ -154,9 +156,11 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                 justifyContent: 'end',
                                                 pointerEvents: 'none',
                                                 padding: '8px',
+                                                bgcolor: '#fff',
                                                 position: 'absolute',
                                                 top: '0',
-                                                left: '0'
+                                                left: '0',
+                                                zIndex: '2'
                                             }}>
                                             {format(currentDate, 'd')}
                                         </Box>
@@ -168,8 +172,14 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                           bgcolor: item.color + '1a',
                                                           padding: item ? '4px 12px' : '',
                                                           width: 'fit-content',
+                                                          top: `${
+                                                              (itemIndex / matchingData.length) *
+                                                              100
+                                                          }%`,
+                                                          left: '0',
                                                           borderRadius: '4px',
-                                                          marginTop: itemIndex != 0 ? '2px' : '0opx'
+                                                          position: 'absolute',
+                                                          zIndex: '3'
                                                       }}>
                                                       <Typography
                                                           variant="body1"

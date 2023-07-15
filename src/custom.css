@@ -1,3 +1,8 @@
+:root {
+    --color-main: #009ef7;
+    --color-title: '#00284C';
+}
+
 .btn-import {
     box-sizing: border-box;
     justify-content: center;
