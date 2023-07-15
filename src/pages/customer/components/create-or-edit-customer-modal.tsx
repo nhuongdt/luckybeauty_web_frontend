@@ -28,7 +28,7 @@ export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
     title: string;
-    onOk: () => void;
+    onOk: ({ dataSave }: any) => void;
     handleChange: (event: any) => void;
     formRef: CreateOrEditKhachHangDto;
     suggestNhomKhach: SuggestNhomKhachDto[];
@@ -86,7 +86,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                       autoHideDuration: 3000
                                   });
                             this.setState({ errorPhoneNumber: false, errorTenKhach: false });
-                            onOk();
+                            onOk(createOrEdit);
                         }
                     }}>
                     {({ setFieldValue }) => (
