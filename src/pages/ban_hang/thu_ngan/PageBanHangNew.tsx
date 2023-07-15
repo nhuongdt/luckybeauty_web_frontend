@@ -12,7 +12,8 @@ import {
     Avatar,
     ListItemIcon,
     ListItemText,
-    InputAdornment
+    InputAdornment,
+    Link
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
 import avatar from '../../../images/avatar.png';
@@ -81,7 +82,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
             idKhachHang: null,
-            tenKhachHang: '',
+            tenKhachHang: 'Khách lẻ',
             idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id
         })
     );
@@ -206,7 +207,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                         : chiNhanhCurrent.id,
                     idKhachHang: customerChosed.idKhachHang,
                     maKhachHang: customerChosed.maKhachHang,
-                    tenKhachHang: customerChosed.tenKhachHang,
+                    tenKhachHang: customerChosed.tenKhachHang ?? 'Khách lẻ',
                     soDienThoai: customerChosed.soDienThoai,
                     tongTichDiem: customerChosed.tongTichDiem
                 };
@@ -240,7 +241,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                     ...old,
                     idKhachHang: customerChosed.idKhachHang,
                     maKhachHang: customerChosed.maKhachHang,
-                    tenKhachHang: customerChosed.tenKhachHang,
+                    tenKhachHang: customerChosed.tenKhachHang ?? 'Khách lẻ',
                     soDienThoai: customerChosed.soDienThoai,
                     tongTichDiem: customerChosed.tongTichDiem
                 };
@@ -563,6 +564,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
     const assignThongTinThanhToan = (arrQCT: QuyChiTietDto[]) => {
         lstQuyCT = arrQCT;
+        console.log('lstQuyCT ', lstQuyCT);
     };
 
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
@@ -589,20 +591,22 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             idHoaDon: hodaDonDB.id
         });
 
-        // save soquy (todo POS, ChuyenKhoan)
+        // save soquy (Mat, POS, ChuyenKhoan)
+        const tongThu = lstQuyCT.reduce((currentValue: number, item: any) => {
+            return currentValue + item.tienThu;
+        }, 0);
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
             idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id,
             idLoaiChungTu: 11,
             ngayLapHoaDon: hoadon.ngayLapHoaDon,
-            tongTienThu: hoadon.tongThanhToan
+            tongTienThu: tongThu
         });
-        quyHD.quyHoaDon_ChiTiet = [
-            new QuyChiTietDto({
-                idHoaDonLienQuan: hodaDonDB.id,
-                idKhachHang: hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang,
-                tienThu: hoadon.tongThanhToan
-            })
-        ];
+        // assign idHoadonLienQuan, idKhachHang fro quyCT
+        lstQuyCT.map((x: QuyChiTietDto) => {
+            x.idHoaDonLienQuan = hodaDonDB.id;
+            x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
+        });
+        quyHD.quyHoaDon_ChiTiet = lstQuyCT;
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
 
         setObjAlert({
@@ -646,7 +650,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         setShowPayment(false);
 
         setHoaDonChiTiet([]);
-        setHoaDon(new PageHoaDonDto({ idKhachHang: null }));
+        setHoaDon(new PageHoaDonDto({ idKhachHang: null, tenKhachHang: 'Khách lẻ' }));
         await RemoveCache();
     };
 
@@ -1154,7 +1158,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                 paddingBottom: '16px'
                             }}>
                             <Box display="flex" gap="8px" alignItems="center">
-                                <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
+                                <Avatar
+                                    src={
+                                        utils.checkNull(hoadon?.idKhachHang) ||
+                                        hoadon?.idKhachHang === Guid.EMPTY
+                                            ? ''
+                                            : avatar
+                                    }
+                                    sx={{ width: 40, height: 40 }}
+                                />
+
                                 <Box>
                                     <Typography variant="body2" fontSize="14px" color="#666466">
                                         {hoadon?.tenKhachHang}
@@ -1359,6 +1372,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                     size="small"
                                     fullWidth
                                     placeholder="Nhập mã"
+                                    value={hoadon?.ghiChuHD}
+                                    onChange={(e) =>
+                                        setHoaDon({ ...hoadon, ghiChuHD: e.target.value })
+                                    }
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
