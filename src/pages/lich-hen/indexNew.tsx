@@ -32,16 +32,16 @@ import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
-import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
 import SuggestService from '../../services/suggests/SuggestService';
 import abpCustom from '../../components/abp-custom';
+import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [idBooking, setIdBooking] = useState<string>('');
     const [suggestNhanVien, setSuggestNhanVien] = useState<SuggestNhanVienDichVuDto[]>([]);
     const [suggestKhachHang, setSuggestKhachHang] = useState<SuggestKhachHangDto[]>([]);
-    const [suggestDonViQuiDoi, setSuggestDonViQuiDoi] = useState<SuggestDonViQuiDoiDto[]>([]);
+    const [suggestDichVu, setSuggestDichVu] = useState<SuggestDichVuDto[]>([]);
     useEffect(() => {
         const connection = new HubConnectionBuilder()
             .withUrl(AppConsts.remoteServiceBaseUrl + 'bookingHub')
@@ -76,8 +76,8 @@ const LichHen: React.FC = () => {
         setData(bookingStore.listBooking);
         const suggestNhanViens = await SuggestService.SuggestNhanVienLamDichVu();
         const suggestKhachHangs = await SuggestService.SuggestKhachHang();
-        const suggestDichVus = await SuggestService.SuggestDonViQuiDoi();
-        setSuggestDonViQuiDoi(suggestDichVus);
+        const suggestDichVus = await SuggestService.SuggestDichVu();
+        setSuggestDichVu(suggestDichVus);
         setSuggestKhachHang(suggestKhachHangs);
         setSuggestNhanVien(suggestNhanViens);
     };
@@ -360,8 +360,8 @@ const LichHen: React.FC = () => {
                         <MenuItem value="month">Tháng</MenuItem>
                     </Select>
                     <Autocomplete
-                        options={suggestDonViQuiDoi}
-                        getOptionLabel={(option) => `${option.tenDonVi}`}
+                        options={suggestDichVu}
+                        getOptionLabel={(option) => `${option.tenDichVu}`}
                         size="small"
                         fullWidth
                         disablePortal
@@ -403,7 +403,7 @@ const LichHen: React.FC = () => {
                 onOk={handleSubmit}
                 idLichHen={idBooking}
                 suggestNhanVien={suggestNhanVien}
-                suggestDichVu={suggestDonViQuiDoi}
+                suggestDichVu={suggestDichVu}
                 suggestKhachHang={suggestKhachHang}></CreateOrEditLichHenModal>
         </Box>
     );

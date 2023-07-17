@@ -13,6 +13,7 @@ import { SuggestNhanSuDto } from './dto/SuggestNhanSuDto';
 import { SuggestChucVuDto } from './dto/SuggestChucVuDto';
 import { SuggestNhanVienDichVuDto } from './dto/SuggestNhanVienDichVuDto';
 import Cookies from 'js-cookie';
+import { SuggestDichVuDto } from './dto/SuggestDichVuDto';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
@@ -64,7 +65,15 @@ class SuggestService {
             return [];
         }
     }
-
+    public async SuggestDichVu(): Promise<SuggestDichVuDto[]> {
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestDichVu');
+            return result.data.result;
+        } catch (error) {
+            console.error('Có lỗi sảy ra khi lấy dữ liệu:', error);
+            return [];
+        }
+    }
     public async SuggestDonViQuiDoi(): Promise<SuggestDonViQuiDoiDto[]> {
         try {
             const result = await http.post('api/services/app/Suggest/SuggestDonViQuiDois');

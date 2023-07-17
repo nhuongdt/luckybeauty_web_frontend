@@ -86,20 +86,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                         initialValues={initValues}
                         onSubmit={async (values) => {
                             const createOrEdit = await chietKhauHoaDonStore.createOrEdit(values);
-                            createOrEdit != null
-                                ? formRef.id === AppConsts.guidEmpty || formRef.id === ''
-                                    ? enqueueSnackbar('Thêm mới thành công', {
-                                          variant: 'success',
-                                          autoHideDuration: 3000
-                                      })
-                                    : enqueueSnackbar('Cập nhật thành công', {
-                                          variant: 'success',
-                                          autoHideDuration: 3000
-                                      })
-                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                                      variant: 'error',
-                                      autoHideDuration: 3000
-                                  });
+                            enqueueSnackbar(createOrEdit.message, {
+                                variant: createOrEdit.status,
+                                autoHideDuration: 3000
+                            });
                             await onSave();
                         }}>
                         {({ handleChange, errors, values }) => (
