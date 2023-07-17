@@ -42,7 +42,7 @@ class ChietKhauDichVuScreen extends Component {
         maxResultCount: 10,
         totalPage: 0,
         totalCount: 0,
-        createOrEditDto: {} as CreateOrEditChietKhauDichVuDto,
+        createOrEditDto: { laPhanTram: false } as CreateOrEditChietKhauDichVuDto,
         suggestNhanSu: [] as SuggestNhanSuDto[],
         suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
     };

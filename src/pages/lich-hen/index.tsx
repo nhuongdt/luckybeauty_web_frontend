@@ -19,11 +19,11 @@ import { vi } from 'date-fns/locale';
 import { ReactComponent as SettingIcon } from '../../images/setting-00.svg';
 import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
-import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
 import SuggestService from '../../services/suggests/SuggestService';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 import abpCustom from '../../components/abp-custom';
+import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
 class LichHenScreen extends Component {
     calendarRef: RefObject<FullCalendar> = React.createRef();
     state = {
@@ -34,16 +34,16 @@ class LichHenScreen extends Component {
         idBooking: '',
         suggestNhanVien: [] as SuggestNhanVienDichVuDto[],
         suggestKhachHang: [] as SuggestKhachHangDto[],
-        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
+        suggestDichVu: [] as SuggestDichVuDto[]
     };
     async componentDidMount() {
         this.getData();
         const suggestNhanViens = await SuggestService.SuggestNhanVienLamDichVu();
         const suggestKhachHangs = await SuggestService.SuggestKhachHang();
-        const suggestDichVus = await SuggestService.SuggestDonViQuiDoi();
+        const suggestDichVus = await SuggestService.SuggestDichVu();
         this.setState({
             suggestNhanVien: suggestNhanViens,
-            suggestDonViQuiDoi: suggestDichVus,
+            suggestDichVu: suggestDichVus,
             suggestKhachHang: suggestKhachHangs
         });
     }
@@ -387,7 +387,7 @@ class LichHenScreen extends Component {
                     onOk={this.handleSubmit}
                     idLichHen={this.state.idBooking}
                     suggestNhanVien={this.state.suggestNhanVien}
-                    suggestDichVu={this.state.suggestDonViQuiDoi}
+                    suggestDichVu={this.state.suggestDichVu}
                     suggestKhachHang={this.state.suggestKhachHang}></CreateOrEditLichHenModal>
             </Box>
         );

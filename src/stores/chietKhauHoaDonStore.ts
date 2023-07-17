@@ -6,6 +6,7 @@ import { ChietKhauHoaDonItemDto } from '../services/hoa_hong/chiet_khau_hoa_don/
 import { CreateOrEditChietKhauHoaDonDto } from '../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
 import ChietKhauHoaDonService from '../services/hoa_hong/chiet_khau_hoa_don/chietKhauHoaDonService';
 import { action, makeAutoObservable, observable } from 'mobx';
+import { ExecuteResultDto } from '../services/dto/ExecuteResultDto';
 
 class ChietKhauHoaDonStore {
     id!: string;
@@ -26,6 +27,7 @@ class ChietKhauHoaDonStore {
     }
     async createOrEdit(input: CreateOrEditChietKhauHoaDonDto) {
         const result = await ChietKhauHoaDonService.CreateOrEdit(input);
+        return result;
     }
     async delete(id: string) {
         await ChietKhauHoaDonService.Delete(id);

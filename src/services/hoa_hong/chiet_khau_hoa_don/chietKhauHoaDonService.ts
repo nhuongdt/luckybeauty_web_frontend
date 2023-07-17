@@ -1,3 +1,4 @@
+import { ExecuteResultDto } from '../../dto/ExecuteResultDto';
 import { PagedRequestDto } from '../../dto/pagedRequestDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
@@ -19,7 +20,7 @@ class ChietKhauHoaDonService {
         const result = await http.get(`api/services/app/ChietKhauHoaDon/GetForEdit${id}`);
         return result.data.result;
     }
-    public async CreateOrEdit(input: CreateOrEditChietKhauHoaDonDto): Promise<ChietKhauHoaDonDto> {
+    public async CreateOrEdit(input: CreateOrEditChietKhauHoaDonDto) {
         const result = await http.post('api/services/app/ChietKhauHoaDon/CreateOrEdit', input);
         return result.data.result;
     }

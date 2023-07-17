@@ -97,7 +97,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                   });
                             await onSave();
                         }}>
-                        {({ values, handleChange, errors, touched }) => (
+                        {({ values, handleChange, errors, touched, setFieldValue }) => (
                             <Form>
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <TextField
@@ -197,13 +197,15 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                     <Grid item xs={12}>
                                         <FormControlLabel
                                             label={'Là phần trăm'}
-                                            checked={values.laPhanTram ? true : false}
-                                            value={values.laPhanTram}
-                                            onChange={handleChange}
+                                            value={values.laPhanTram == true ? true : false}
+                                            //checked={values.laPhanTram == true ? true : false}
+                                            onChange={(e, checked) => {
+                                                setFieldValue('laPhanTram', checked);
+                                            }}
                                             name="laPhanTram"
                                             control={
                                                 <Checkbox
-                                                    checked={values.laPhanTram ? true : false}
+                                                    // checked={values.laPhanTram ? true : false}
                                                     sx={{
                                                         color: '#7C3367',
                                                         '&.Mui-checked': {
