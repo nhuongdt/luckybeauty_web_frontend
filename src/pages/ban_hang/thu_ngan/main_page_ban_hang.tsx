@@ -130,75 +130,80 @@ export default function MainPageBanHang() {
                                         sx={{
                                             textTransform: 'unset',
 
-                                        color: activeTab == 1 ? '#fff' : '#999699',
-                                        backgroundColor:
-                                            activeTab == 1 ? '#7C3367!important' : '#F2EBF0',
-                                        borderColor: 'transparent!important',
-                                        '&:hover': {
-                                            borderColor:
-                                                activeTab == 2
-                                                    ? '#7C3367!important'
-                                                    : 'transparent!important'
-                                        }
-                                    }}
-                                    onClick={() => handleTab(1)}
-                                    className={activeTab === 1 ? 'active' : ''}
-                                    variant={activeTab === 1 ? 'contained' : 'outlined'}>
-                                    Checkin
-                                </Button>
-                                <Button
-                                    sx={{
-                                        textTransform: 'unset',
-
-                                        color: activeTab == 2 ? '#fff' : '#999699',
-                                        borderColor: 'transparent!important',
-                                        backgroundColor:
-                                            activeTab == 2 ? '#7C3367!important' : '#F2EBF0',
-                                        '&:hover': {
-                                            borderColor:
+                                            color: activeTab == 1 ? '#fff' : '#999699',
+                                            backgroundColor:
                                                 activeTab == 1
-                                                    ? '#7C3367!important'
-                                                    : 'transparent!important'
-                                        }
-                                    }}
-                                    onClick={() => handleTab(2)}
-                                    className={activeTab === 2 ? 'active' : ''}
-                                    variant={activeTab === 2 ? 'contained' : 'outlined'}>
-                                    Thanh toán
-                                </Button>
-                            </ButtonGroup>
-                            {activeTab === 2 && (
-                                <Button
-                                    variant="outlined"
-                                    sx={{
-                                        minWidth: 'unset',
-                                        padding: '0',
-                                        width: '40px',
-                                        height: '40px',
-                                        bgcolor: '#fff',
-                                        '& svg': {
-                                            color: '#999699'
-                                        }
-                                    }}
-                                    onClick={handleLayoutToggle}
-                                    className="btn-outline-hover">
-                                    <MoreHorizIcon />
-                                </Button>
-                            )}
-                        </Box>
-                        {activeTab === 2 ? htmlValue : undefined}
-                    </Grid>
-                ) : undefined}
-                {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
-                {activeTab === 2 && (
-                    <PageBanHang
-                        setHtmlElement={handleHtmlValue}
-                        customerChosed={cusChosing}
-                        CoditionLayout={layout}
-                        onPaymentChild={handleShow}
-                    />
-                )}
-            </Grid>
+                                                    ? 'var(--color-main)!important'
+                                                    : 'var(--color-bg)',
+                                            borderColor: 'transparent!important',
+                                            '&:hover': {
+                                                borderColor:
+                                                    activeTab == 2
+                                                        ? 'var(--color-main)!important'
+                                                        : 'transparent!important'
+                                            }
+                                        }}
+                                        onClick={() => handleTab(1)}
+                                        className={activeTab === 1 ? 'active' : ''}
+                                        variant={activeTab === 1 ? 'contained' : 'outlined'}>
+                                        Checkin
+                                    </Button>
+                                    <Button
+                                        sx={{
+                                            textTransform: 'unset',
+
+                                            color: activeTab == 2 ? '#fff' : '#999699',
+                                            borderColor: 'transparent!important',
+                                            backgroundColor:
+                                                activeTab == 2
+                                                    ? 'var(--color-main)!important'
+                                                    : 'var(--color-bg)',
+                                            '&:hover': {
+                                                borderColor:
+                                                    activeTab == 1
+                                                        ? 'var(--color-main)!important'
+                                                        : 'transparent!important'
+                                            }
+                                        }}
+                                        onClick={() => handleTab(2)}
+                                        className={activeTab === 2 ? 'active' : ''}
+                                        variant={activeTab === 2 ? 'contained' : 'outlined'}>
+                                        Thanh toán
+                                    </Button>
+                                </ButtonGroup>
+                                {activeTab === 2 && (
+                                    <Button
+                                        variant="outlined"
+                                        sx={{
+                                            minWidth: 'unset',
+                                            padding: '0',
+                                            width: '40px',
+                                            height: '40px',
+                                            bgcolor: '#fff',
+                                            '& svg': {
+                                                color: '#999699'
+                                            }
+                                        }}
+                                        onClick={handleLayoutToggle}
+                                        className="btn-outline-hover">
+                                        <MoreHorizIcon />
+                                    </Button>
+                                )}
+                            </Box>
+                            {activeTab === 2 ? htmlValue : undefined}
+                        </Grid>
+                    ) : undefined}
+                    {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
+                    {activeTab === 2 && (
+                        <PageBanHang
+                            setHtmlElement={handleHtmlValue}
+                            customerChosed={cusChosing}
+                            CoditionLayout={layout}
+                            onPaymentChild={handleShow}
+                        />
+                    )}
+                </Grid>
+            </DataCustomerContext.Provider>
         </>
     );
 }
