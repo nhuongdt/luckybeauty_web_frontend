@@ -339,7 +339,7 @@ class ChietKhauDichVuScreen extends Component {
                     container
                     sx={{
                         height: '48px',
-                        background: '#F2EBF0',
+                        background: 'var(--color-bg)',
                         alignItems: 'center',
                         paddingX: '8px'
                     }}>
@@ -461,10 +461,10 @@ class ChietKhauDichVuScreen extends Component {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path::nth-of-type(2)':
                                 {
@@ -475,7 +475,7 @@ class ChietKhauDichVuScreen extends Component {
                                     fill: '#000'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -483,7 +483,7 @@ class ChietKhauDichVuScreen extends Component {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         localeText={TextTranslate}

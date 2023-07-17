@@ -135,21 +135,20 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                 </Grid>
                                 <DialogActions sx={{ paddingRight: '0!important' }}>
                                     <Button
-                                        sx={{ bgcolor: '#7C3367!important' }}
                                         variant="contained"
                                         type="submit"
-                                        className="btn-ok-dialog btn-container-hover">
+                                        className="btn-container-hover">
                                         Lưu
                                     </Button>
                                     <Button
                                         sx={{
-                                            color: '#965C85!important',
+                                            color: 'var(--color-main)!important',
                                             bgcolor: '#fff!important'
                                         }}
                                         variant="outlined"
                                         type="button"
                                         onClick={onCancel}
-                                        className="btn-cancel-dialog btn-outline-hover">
+                                        className="btn-outline-hover">
                                         Hủy
                                     </Button>
                                 </DialogActions>

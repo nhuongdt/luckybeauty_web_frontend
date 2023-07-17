@@ -199,6 +199,11 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     <Box
                                                         display="flex"
                                                         gap="10px"
+                                                        sx={{
+                                                            '& img': {
+                                                                filter: 'var(--color-hoverIcon)'
+                                                            }
+                                                        }}
                                                         justifyContent={
                                                             useWindowWidth() > 600
                                                                 ? 'unset'
@@ -209,7 +214,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             variant="body1"
                                                             fontSize="14px"
                                                             fontWeight="500"
-                                                            color="#7C3367"
+                                                            color="var(--color-main)"
                                                             marginTop="16px">
                                                             Tải ảnh lên
                                                         </Typography>
@@ -436,10 +441,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         control={
                                                             <Checkbox
                                                                 sx={{
-                                                                    color: '#7C3367',
-                                                                    '&.Mui-checked': {
-                                                                        color: '#7C3367'
-                                                                    }
+                                                                    color: 'var(--color-main)!important'
                                                                 }}
                                                             />
                                                         }
@@ -465,10 +467,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 name="roleNames"
                                                                 value={option.value}
                                                                 sx={{
-                                                                    color: '#7C3367',
-                                                                    '&.Mui-checked': {
-                                                                        color: '#7C3367'
-                                                                    }
+                                                                    color: 'var(--color-main)!important'
                                                                 }}
                                                             />
                                                         }
@@ -501,7 +500,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             variant="outlined"
                                             size="small"
                                             sx={{
-                                                color: '#7C3367'
+                                                color: 'var(--color-main)'
                                             }}
                                             onClick={onCancel}
                                             className="btn-outline-hover">
@@ -514,7 +513,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             // onClick={() => {
                                             //     this.handleSubmit(values);
                                             // }}
-                                            sx={{ backgroundColor: '#7C3367!important' }}
+
                                             className="btn-container-hover">
                                             Lưu
                                         </Button>

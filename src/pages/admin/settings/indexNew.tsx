@@ -117,10 +117,10 @@ const SettingsNew: React.FC = () => {
                                             borderRadius: '4px'
                                         },
                                         '& button.Mui-selected': {
-                                            backgroundColor: '#F2EBF0'
+                                            backgroundColor: 'var(--color-bg)'
                                         },
                                         '& .MuiTabs-indicator': {
-                                            backgroundColor: '#7C3367',
+                                            backgroundColor: 'var(--color-main)',
                                             display: 'none'
                                         }
                                     }}>

@@ -150,7 +150,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                 fontSize: '12px'
                             },
                             '& .MuiDataGrid-columnHeaders': {
-                                bgcolor: '#F2EBF0'
+                                bgcolor: 'var(--color-bg)'
                             },
                             '& .MuiDataGrid-footerContainer': {
                                 display: 'none'
@@ -169,21 +169,21 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
-                                    fill: '#000'
+                                    fill: 'var(--color-main)'
                                 },
                             '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
                                 {
-                                    fill: '#000'
+                                    fill: 'var(--color-main)'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -191,7 +191,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         localeText={TextTranslate}

@@ -37,14 +37,14 @@ class CaiDatHoaHongScreen extends Component {
                                                 ? '#FFF'
                                                 : '#666466',
                                             backgroundColor: this.state.isChietKhauHoaDon
-                                                ? 'rgb(124, 51, 103)!important'
+                                                ? 'var(--color-main)!important'
                                                 : '#FFFFFF!important',
                                             borderColor: 'transparent!important',
                                             boxShadow: 'none!important',
                                             '&:hover': {
                                                 color: this.state.isChietKhauHoaDon
                                                     ? '#fff'
-                                                    : '#7C3367'
+                                                    : 'var(--color-main)'
                                             }
                                         }}
                                         onClick={() => {
@@ -65,12 +65,12 @@ class CaiDatHoaHongScreen extends Component {
                                                 : '#fff',
                                             backgroundColor: this.state.isChietKhauHoaDon
                                                 ? '#FFFFFF!important'
-                                                : 'rgb(124, 51, 103)!important',
+                                                : 'var(--color-main)!important',
                                             border: 'none!important',
                                             boxShadow: 'none!important',
                                             '&:hover': {
                                                 color: this.state.isChietKhauHoaDon
-                                                    ? '#7C3367'
+                                                    ? 'var(--color-main)'
                                                     : '#fff'
                                             }
                                         }}

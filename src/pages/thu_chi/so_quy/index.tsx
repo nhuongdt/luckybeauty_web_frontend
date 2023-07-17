@@ -363,7 +363,7 @@ class SoQuyScreen extends Component {
                                 variant="contained"
                                 startIcon={<FilterIcon />}
                                 sx={{
-                                    bgcolor: '#7C3367!important',
+                                    bgcolor: 'var(--color-main)!important',
                                     color: '#fff',
                                     fontSize: '14px'
                                 }}
@@ -382,7 +382,7 @@ class SoQuyScreen extends Component {
                         columns={columns}
                         checkboxSelection
                         sx={{
-                            '& .MuiDataGrid-columnHeaders': { bgcolor: '#F2EBF0' },
+                            '& .MuiDataGrid-columnHeaders': { bgcolor: 'var(--color-bg)' },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },
@@ -399,10 +399,10 @@ class SoQuyScreen extends Component {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
@@ -413,7 +413,7 @@ class SoQuyScreen extends Component {
                                     fill: '#000'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: '#var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {

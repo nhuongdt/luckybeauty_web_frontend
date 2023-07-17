@@ -1,5 +1,5 @@
 .bg-table {
-    background-color: #f2ebf0;
+    background-color: #fff;
 }
 .text-th-table {
     font-family: 'Roboto';
@@ -41,7 +41,7 @@
 }
 
 .list-nhan-vien .MuiDataGrid-columnHeaders {
-    background-color: #f2ebf0;
+    background-color: var(--color-bg);
 }
 
 .poppup-them-nhan-vien .MuiPaper-root {

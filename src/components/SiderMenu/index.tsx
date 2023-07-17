@@ -205,13 +205,13 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         itemMenu.children?.some(
                                             (dropdownItem) => location.pathname === dropdownItem.key
                                         )
-                                            ? '#E5F3FF!important'
+                                            ? 'var(--color-bg)!important'
                                             : 'transparent',
                                     borderRadius: '8px',
                                     maxWidth: collapsed || OpenHover ? '500px' : '51px',
                                     maxHeight: collapsed || OpenHover ? '500px' : '51px',
                                     ':hover': {
-                                        backgroundColor: '#E5F3FF!important'
+                                        backgroundColor: 'var(--color-bg)!important'
                                     }
                                 }}
                                 onClick={
@@ -348,7 +348,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                             filter:
                                                                 location.pathname ===
                                                                 dropdownItem.key
-                                                                    ? ' brightness(0) saturate(100%) invert(27%) sepia(11%) saturate(3212%) hue-rotate(265deg) brightness(92%) contrast(91%)'
+                                                                    ? ' var(--color-hoverIcon)'
                                                                     : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
                                                         },
                                                         minWidth: '20px'

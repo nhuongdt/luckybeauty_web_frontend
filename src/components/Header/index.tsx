@@ -24,6 +24,7 @@ import {
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
+import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import MessageIcon from '../../images/message-question.svg';
@@ -194,10 +195,10 @@ const Header: React.FC<HeaderProps> = (
                                 backgroundColor: 'unset!important'
                             },
                             ':hover .icon1': {
-                                color: '#c95ea9!important'
+                                color: 'rgba(49, 157, 255, 1)!important'
                             },
                             ':hover .icon2': {
-                                color: '#c95ea9d9'
+                                color: 'rgba(49, 157, 255, 0.7)'
                             },
                             '& .MuiTouchRipple-root': {
                                 display: 'none'
@@ -208,12 +209,12 @@ const Header: React.FC<HeaderProps> = (
                         onClick={toggle}>
                         <ArrowBackIosIcon
                             className="icon1"
-                            sx={{ color: 'rgba(203, 173, 194, 0.7)', fontSize: '16px' }}
+                            sx={{ color: 'rgba(49, 157, 255, 0.7)', fontSize: '16px' }}
                         />
                         <ArrowBackIosIcon
                             className="icon2"
                             sx={{
-                                color: 'rgba(203, 173, 194, 0.4)',
+                                color: 'rgba(49, 157, 255, 0.4)',
                                 fontSize: '16px',
                                 marginLeft: '-8px'
                             }}
@@ -236,7 +237,7 @@ const Header: React.FC<HeaderProps> = (
                                         fontSize: '14px'
                                     },
                                     '&:hover': {
-                                        color: '#7C3367'
+                                        color: 'var(--color-main)'
                                     }
                                 }}
                                 size="small"
@@ -258,7 +259,7 @@ const Header: React.FC<HeaderProps> = (
                                     bgcolor: 'transparent!important',
                                     minWidth: 'unset!important',
                                     '&:hover img': {
-                                        filter: ' brightness(0) saturate(100%) invert(26%) sepia(17%) saturate(1943%) hue-rotate(265deg) brightness(100%) contrast(95%)'
+                                        filter: 'var(--color-hoverIcon)'
                                     }
                                 }}>
                                 <img src={MessageIcon} alt="Message" />
@@ -284,7 +285,7 @@ const Header: React.FC<HeaderProps> = (
                                     bgcolor: 'transparent!important',
                                     minWidth: 'unset!important',
                                     '&:hover img': {
-                                        filter: ' brightness(0) saturate(100%) invert(26%) sepia(17%) saturate(1943%) hue-rotate(265deg) brightness(100%) contrast(95%)'
+                                        filter: 'var(--color-hoverIcon)'
                                     }
                                 }}>
                                 <img src={NotificationIcon} alt="notification" />
@@ -349,7 +350,7 @@ const Header: React.FC<HeaderProps> = (
                                         onClick={handleSettingClick}
                                         sx={{
                                             '&:hover svg': {
-                                                filter: 'brightness(0) saturate(100%) invert(25%) sepia(19%) saturate(3488%) hue-rotate(276deg) brightness(86%) contrast(84%)'
+                                                filter: 'var(--color-hoverIcon)'
                                             }
                                         }}>
                                         <SettingIcon />
@@ -445,7 +446,7 @@ const Header: React.FC<HeaderProps> = (
                                         justifyContent: 'space-between',
                                         width: '100%',
                                         '& button:hover svg': {
-                                            filter: 'brightness(0) saturate(100%) invert(25%) sepia(19%) saturate(3488%) hue-rotate(276deg) brightness(86%) contrast(84%)'
+                                            filter: 'var(--color-hoverIcon)'
                                         }
                                     }}>
                                     <Typography
@@ -487,7 +488,7 @@ const Header: React.FC<HeaderProps> = (
                                                 <FormControlLabel
                                                     sx={{
                                                         '& .Mui-checked': {
-                                                            color: '#7C3367!important'
+                                                            color: 'var(--color-main)!important'
                                                         }
                                                     }}
                                                     key={indexChild}
@@ -526,7 +527,7 @@ const Header: React.FC<HeaderProps> = (
                                         variant="contained"
                                         fullWidth
                                         className="btn-container-hover"
-                                        sx={{ color: '#fff', bgcolor: '#7C3367' }}>
+                                        sx={{ color: '#fff', bgcolor: 'var(--color-main)' }}>
                                         Áp dụng
                                     </Button>
                                 </Box>
@@ -567,10 +568,10 @@ const Header: React.FC<HeaderProps> = (
                                     gap: '16px'
                                 },
                                 '& .hover:hover button': {
-                                    color: '#7C3367'
+                                    color: 'var(--color-main)'
                                 },
                                 '& .hover:hover svg': {
-                                    filter: 'brightness(0) saturate(100%) invert(25%) sepia(19%) saturate(3488%) hue-rotate(276deg) brightness(86%) contrast(84%)'
+                                    filter: 'var(--color-hoverIcon)'
                                 }
                             }}>
                             <MenuItem>
@@ -641,7 +642,7 @@ const Header: React.FC<HeaderProps> = (
                     </Box>
                 </Grid>
             </Grid>
-            {/* <Button
+            <Button
                 variant="contained"
                 sx={{
                     position: 'fixed',
@@ -651,10 +652,10 @@ const Header: React.FC<HeaderProps> = (
                     height: '60px',
                     minWidth: 'unset',
                     borderRadius: '50%',
-                    bgcolor: '#7C3367!important'
+                    bgcolor: 'var(--color-main)!important'
                 }}>
                 <SuportIcon />
-            </Button> */}
+            </Button>
         </Box>
     );
 };

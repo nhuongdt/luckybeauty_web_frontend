@@ -158,7 +158,7 @@ class ChietKhauHoaDonScreen extends Component {
                     container
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ background: '#ede4ea', padding: '8px' }}>
+                    sx={{ background: 'var(--color-bg)', padding: '8px' }}>
                     <Grid item>
                         <Box className="form-search">
                             <TextField
@@ -194,7 +194,7 @@ class ChietKhauHoaDonScreen extends Component {
                             onClick={() => {
                                 this.setState({ visited: true });
                             }}
-                            sx={{ backgroundColor: '#7C3367', height: 32, color: '#FFFAFF' }}
+                            sx={{ height: 32, color: '#FFFAFF' }}
                             startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
                             className="btn-container-hover">
                             Thêm mới
@@ -223,21 +223,21 @@ class ChietKhauHoaDonScreen extends Component {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
-                                    fill: '#000'
+                                    fill: 'var(--color-main)'
                                 },
                             '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
                                 {
-                                    fill: '#000'
+                                    fill: 'var(--color-main)'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -245,7 +245,7 @@ class ChietKhauHoaDonScreen extends Component {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         hideFooter

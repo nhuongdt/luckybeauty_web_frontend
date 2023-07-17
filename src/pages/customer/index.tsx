@@ -570,7 +570,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         Xuất
                                     </Button>
                                     <Button
-                                        className="bg-main btn-container-hover"
+                                        className=" btn-container-hover"
                                         hidden={
                                             !abpCustom.isGrandPermission('Pages.KhachHang.Create')
                                         }
@@ -621,10 +621,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             outline: 'none '
                                         },
                                     '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                        color: '#7C3367'
+                                        color: 'var(--color-main)'
                                     },
                                     '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                        fill: '#7C3367'
+                                        fill: 'var(--color-main)'
                                     },
                                     '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                         {
@@ -635,7 +635,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             fill: '#000'
                                         },
                                     '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                        color: '#7C3367!important'
+                                        color: 'var(--color-main)!important'
                                     },
                                     '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                         {
@@ -643,7 +643,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         },
                                     '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                         {
-                                            bgcolor: '#f2ebf0'
+                                            bgcolor: 'var(--color-bg)'
                                         }
                                 }}
                                 localeText={TextTranslate}

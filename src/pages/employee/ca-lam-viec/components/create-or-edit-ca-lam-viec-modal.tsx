@@ -104,10 +104,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     control={
                                         <Checkbox
                                             sx={{
-                                                color: '#7C3367!important',
-                                                '& .Mui-checked': {
-                                                    color: '#7C3367'
-                                                }
+                                                color: 'var(--color-main)!important'
                                             }}
                                         />
                                     }
@@ -192,10 +189,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 control={
                                                     <Checkbox
                                                         sx={{
-                                                            color: '#7C3367!important',
-                                                            '& .Mui-checked': {
-                                                                color: '#7C3367'
-                                                            }
+                                                            color: 'var(--color-main)!important'
                                                         }}
                                                     />
                                                 }
@@ -214,15 +208,14 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         zIndex: '5'
                                     }}>
                                     <Button
-                                        sx={{ bgcolor: '#7C3367!important' }}
                                         variant="contained"
                                         type="submit"
-                                        className="btn-ok-dialog btn-container-hover">
+                                        className="btn-container-hover">
                                         Lưu
                                     </Button>
                                     <Button
                                         sx={{
-                                            color: '#965C85!important',
+                                            color: 'var(--color-main)!important',
                                             bgcolor: '#fff!important'
                                         }}
                                         variant="outlined"

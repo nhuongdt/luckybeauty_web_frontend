@@ -223,8 +223,8 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                                 </Button>
                                 <Button
                                     variant="contained"
+                                    className="btn-container-hover"
                                     sx={{
-                                        bgcolor: '#7C3367!important',
                                         color: '#fff'
                                     }}>
                                     Sao chép
@@ -354,10 +354,10 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                                     minHeight: 'unset'
                                 },
                                 '& .Mui-selected': {
-                                    color: '#7C3367!important'
+                                    color: 'var(--color-main)!important'
                                 },
                                 '& .MuiTabs-indicator': {
-                                    bgcolor: '#7C3367'
+                                    bgcolor: 'var(--color-main)'
                                 }
                             }}>
                             <Tab label="Thông tin" />

@@ -337,8 +337,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                             height: '40px',
                                             fontSize: '14px',
                                             textTransform: 'unset',
-                                            fontWeight: '400',
-                                            backgroundColor: '#7C3367!important'
+                                            fontWeight: '400'
                                         }}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen(0);
@@ -366,7 +365,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                 display: 'none'
                             },
                             '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: '#F2EBF0'
+                                backgroundColor: 'var(--color-bg)'
                             },
                             '& p': {
                                 mb: 0
@@ -378,10 +377,10 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path::nth-of-type(2)':
                                 {
@@ -392,7 +391,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                     fill: '#000'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -400,7 +399,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         hideFooter

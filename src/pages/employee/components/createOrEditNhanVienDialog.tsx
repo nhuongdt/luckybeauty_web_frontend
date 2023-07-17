@@ -353,10 +353,13 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                     this.state.avatarFile != undefined &&
                                                     this.state.avatarFile != ''
                                                 }
-                                                style={{
+                                                sx={{
                                                     display: 'flex',
                                                     marginTop: '34px',
-                                                    justifyContent: 'center'
+                                                    justifyContent: 'center',
+                                                    '& img': {
+                                                        filter: 'var(--color-hoverIcon)'
+                                                    }
                                                 }}>
                                                 <img src={fileSmallIcon} />
                                                 <Typography>Tải ảnh lên</Typography>
@@ -395,7 +398,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         fontSize: '14px',
                                         textTransform: 'unset',
                                         color: '#fff',
-                                        backgroundColor: '#7C3367',
+
                                         border: 'none'
                                     }}
                                     className="btn-container-hover">
@@ -407,7 +410,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     sx={{
                                         fontSize: '14px',
                                         textTransform: 'unset',
-                                        color: '#965C85'
+                                        color: 'var(--color-main)'
                                     }}
                                     className="btn-outline-hover">
                                     Hủy

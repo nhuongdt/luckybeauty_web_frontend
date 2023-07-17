@@ -43,7 +43,7 @@ const CustomEmployee: React.FC<DialogComponentProps> = ({
             <Box
                 sx={{
                     '& li:hover': {
-                        color: '#7C3367'
+                        color: 'var(--color-main)'
                     }
                 }}>
                 <MenuItem onClick={handleOpenDialog}>Thêm ca làm việc thường xuyên</MenuItem>

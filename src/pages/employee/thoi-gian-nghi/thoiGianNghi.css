@@ -1,5 +1,5 @@
 .thoi-gian-nghi-page .MuiDataGrid-columnHeaders {
-    background-color: #f2ebf0;
+    background-color: var(--color-bg);
 }
 .thoi-gian-nghi-page .MuiTablePagination-selectLabel,
 .thoi-gian-nghi-page .MuiTablePagination-displayedRows {
