@@ -13,8 +13,10 @@ import {
     Select,
     MenuItem,
     FormControl,
-    Avatar
+    Avatar,
+    Dialog
 } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Search } from '@mui/icons-material';
 import utils from '../../utils/utils';
 import { ReactComponent as Close } from '../../images/close-square.svg';
@@ -49,7 +51,9 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
             }
         }
     }, [triggerModal]);
-
+    const handleClose = () => {
+        setIsShow(false);
+    };
     const GetListNVThucHien_DichVu = () => {
         console.log(33);
     };
@@ -161,160 +165,165 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
 
     return (
         <>
-            <div
+            {/* <div
                 onClick={() => setIsShow(false)}
-                className={isShow ? 'show overlay' : 'overlay'}></div>
+                className={isShow ? 'show overlay' : 'overlay'}></div> */}
 
-            <div id="poppup-nhanVienThucHien" className={isShow ? 'show ' : ''}>
-                <Typography variant="h5" color="333233" fontWeight="700" marginBottom="28px">
-                    Chọn kỹ thuật viên
-                </Typography>
-                <TextField
-                    size="small"
-                    sx={{
-                        borderColor: '#CDC9CD',
-                        width: '375px'
-                    }}
-                    className="search-field"
-                    variant="outlined"
-                    type="search"
-                    placeholder="Tìm kiếm"
-                    value={txtSearch}
-                    onChange={(event) => {
-                        setTxtSearch(event.target.value);
-                    }}
-                    InputProps={{
-                        startAdornment: (
-                            <IconButton type="submit">
-                                <SearchIcon />
-                            </IconButton>
-                        )
-                    }}
-                />
-                <Typography variant="subtitle1" fontWeight="700" color="#999699" marginTop="28px">
-                    Danh sách kỹ thuật viên
-                </Typography>
-                <Grid container className="list-persons" spacing={2} marginTop="8px">
-                    {lstNhanVien?.map((person: any, index: any) => (
-                        <Grid
-                            className="person-item"
-                            item
-                            xs={12}
-                            md={3}
-                            lg={3}
-                            key={index}
-                            onClick={() => ChoseNhanVien(person)}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    position: 'relative',
-                                    padding: ' 24px 24px 20px 24px',
-                                    borderRadius: '8px',
-                                    transition: '.4s',
-                                    cursor: 'pointer',
-                                    border: '1px solid #CDC9CD',
-                                    borderColor: person.isChosed ? '#7C3367' : '',
-
-                                    '&:hover': {
-                                        borderColor: '#7C3367'
-                                    },
-                                    '& .Check-icon': {
-                                        position: 'absolute',
-                                        right: '-10px',
-                                        height: '20px',
-                                        borderRadius: '50%',
-                                        top: '5px',
-                                        zIndex: '2',
-                                        transition: '.4s',
-                                        opacity: person.isChosed ? '1' : '0'
-                                    }
-                                }}>
+            <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="xl">
+                <Box padding="24px">
+                    <Typography variant="h5" color="333233" fontWeight="700" marginBottom="28px">
+                        Chọn kỹ thuật viên
+                    </Typography>
+                    <TextField
+                        size="small"
+                        sx={{
+                            borderColor: '#CDC9CD',
+                            width: '375px'
+                        }}
+                        className="search-field"
+                        variant="outlined"
+                        type="search"
+                        placeholder="Tìm kiếm"
+                        value={txtSearch}
+                        onChange={(event) => {
+                            setTxtSearch(event.target.value);
+                        }}
+                        InputProps={{
+                            startAdornment: (
+                                <IconButton type="submit">
+                                    <SearchIcon />
+                                </IconButton>
+                            )
+                        }}
+                    />
+                    <Typography
+                        variant="subtitle1"
+                        fontWeight="700"
+                        color="#999699"
+                        marginTop="28px">
+                        Danh sách kỹ thuật viên
+                    </Typography>
+                    <Grid container className="list-persons" spacing={2} marginTop="8px">
+                        {lstNhanVien?.map((person: any, index: any) => (
+                            <Grid
+                                className="person-item"
+                                item
+                                xs={12}
+                                md={3}
+                                lg={3}
+                                key={index}
+                                onClick={() => ChoseNhanVien(person)}>
                                 <Box
-                                    bgcolor="#fff"
-                                    className="Check-icon"
                                     sx={{
-                                        '& svg': {
-                                            verticalAlign: 'unset'
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                        position: 'relative',
+                                        padding: ' 24px 24px 20px 24px',
+                                        borderRadius: '8px',
+                                        transition: '.4s',
+                                        cursor: 'pointer',
+                                        border: '1px solid #CDC9CD',
+                                        borderColor: person.isChosed ? 'var(--color-main)' : '',
+
+                                        '&:hover': {
+                                            borderColor: 'var(--color-main)'
+                                        },
+                                        '& .Check-icon': {
+                                            position: 'absolute',
+                                            right: '-10px',
+                                            height: '20px',
+                                            borderRadius: '50%',
+                                            top: '5px',
+                                            zIndex: '2',
+                                            transition: '.4s',
+                                            opacity: person.isChosed ? '1' : '0'
                                         }
                                     }}>
-                                    <CheckIcon />
+                                    <Box
+                                        bgcolor="#fff"
+                                        className="Check-icon"
+                                        sx={{
+                                            '& svg': {
+                                                verticalAlign: 'unset'
+                                            }
+                                        }}>
+                                        <CheckCircleIcon sx={{ color: 'var(--color-main)' }} />
+                                    </Box>
+                                    <div className="person-avatar">
+                                        <Avatar
+                                            src={person.avatar}
+                                            alt={person.name}
+                                            sx={{ width: '44px', height: '44px' }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <Typography
+                                            variant="subtitle1"
+                                            color="#333233"
+                                            className="person-name">
+                                            {person.tenNhanVien}
+                                        </Typography>
+                                        <Typography variant="caption" className="person-position">
+                                            {person.tenChucVu}
+                                        </Typography>
+                                    </div>
                                 </Box>
-                                <div className="person-avatar">
-                                    <Avatar
-                                        src={person.avatar}
-                                        alt={person.name}
-                                        sx={{ width: '44px', height: '44px' }}
-                                    />
-                                </div>
-                                <div>
-                                    <Typography
-                                        variant="subtitle1"
-                                        color="#333233"
-                                        className="person-name">
-                                        {person.tenNhanVien}
-                                    </Typography>
-                                    <Typography variant="caption" className="person-position">
-                                        {person.tenChucVu}
-                                    </Typography>
-                                </div>
-                            </Box>
-                        </Grid>
-                    ))}
-                </Grid>
+                            </Grid>
+                        ))}
+                    </Grid>
 
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    sx={{
-                        marginTop: '30px',
-                        background: '#fff',
-                        justifyContent: 'center',
-                        position: 'sticky',
-                        bottom: '0',
-                        left: '0',
-                        padding: '24px'
-                    }}>
-                    <Button
-                        variant="contained"
-                        className="btn-container-hover"
+                    <Stack
+                        direction="row"
+                        spacing={1}
                         sx={{
-                            background: '#7c3367',
-                            textTransform: 'capitalize',
-                            color: '#fff'
-                        }}
-                        onClick={onSave}>
-                        Lưu
-                    </Button>
-                    <Button
-                        variant="outlined"
+                            marginTop: '30px',
+                            background: '#fff',
+                            justifyContent: 'center',
+                            position: 'sticky',
+                            bottom: '0',
+                            left: '0',
+                            padding: '24px'
+                        }}>
+                        <Button
+                            variant="contained"
+                            className="btn-container-hover"
+                            sx={{
+                                background: '#7c3367',
+                                textTransform: 'capitalize',
+                                color: '#fff'
+                            }}
+                            onClick={onSave}>
+                            Lưu
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            sx={{
+                                borderColor: '#e6e1e6',
+                                textTransform: 'capitalize'
+                            }}
+                            className=" btn-outline-hover"
+                            onClick={() => setIsShow(false)}>
+                            Hủy
+                        </Button>
+                    </Stack>
+                    <IconButton
                         sx={{
-                            borderColor: '#e6e1e6',
-                            textTransform: 'capitalize',
-                            color: ' #7c3367'
+                            position: 'absolute',
+                            top: '35px',
+                            right: '31px',
+
+                            fontSize: '30px',
+                            cursor: 'pointer',
+                            '&:hover svg': {
+                                filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                            }
                         }}
-                        className=" btn-outline-hover"
                         onClick={() => setIsShow(false)}>
-                        Hủy
-                    </Button>
-                </Stack>
-                <IconButton
-                    sx={{
-                        position: 'absolute',
-                        top: '35px',
-                        right: '31px',
-
-                        fontSize: '30px',
-                        cursor: 'pointer',
-                        '&:hover svg': {
-                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                        }
-                    }}
-                    onClick={() => setIsShow(false)}>
-                    <Close />
-                </IconButton>
-            </div>
+                        <Close />
+                    </IconButton>
+                </Box>
+            </Dialog>
         </>
     );
 };
