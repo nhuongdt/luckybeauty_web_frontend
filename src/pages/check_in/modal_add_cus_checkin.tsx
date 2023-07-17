@@ -26,12 +26,20 @@ import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import { Guid } from 'guid-typescript';
 import TabKhachHang from './TabModalKhachHang';
 import TabCuocHen from './TabModalCuocHen';
+import { PagedResultDto } from '../../services/dto/pagedResultDto';
+import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
+import khachHangService from '../../services/khach-hang/khachHangService';
+import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
+import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [errPhone, setErrPhone] = useState(false);
     const [errCheckIn, setErrCheckIn] = useState(false);
+    const [objAlert, setObjAlert] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
 
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({
         id: Guid.EMPTY,
@@ -44,7 +52,6 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         idNguonKhach: '',
         idNhomKhach: ''
     });
-    //const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>();
 
     useEffect(() => {
         if (trigger.isShow) {
@@ -64,128 +71,48 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         setIsSave(false);
     }, [trigger]);
 
-    const changeCustomer = (item: KhachHangItemDto) => {
-        if (item === null || item === undefined) {
-            setNewCus({
-                id: Guid.EMPTY,
-                maKhachHang: '',
-                tenKhachHang: '',
-                idLoaiKhach: 1,
-                soDienThoai: '',
-                diaChi: '',
-                gioiTinh: false,
-                idNguonKhach: '',
-                idNhomKhach: ''
-            });
-
+    const checkSaveCheckin = async (idCus: string) => {
+        const exists = await CheckinService.CheckExistCusCheckin(idCus);
+        if (exists) {
+            setErrCheckIn(true);
+            setObjAlert({ ...objAlert, show: true, mes: 'Khách hàng đã check in' });
+            return false;
+        }
+        return true;
+    };
+    const saveCheckIn = async (cusChosed: any) => {
+        const check = await checkSaveCheckin(cusChosed.id);
+        if (!check) {
             return;
         }
+        setIsShow(false);
         setNewCus((itemOlds: any) => {
             return {
                 ...itemOlds,
-                id: item.id.toString(),
-                maKhachHang: item.maKhachHang,
-                tenKhachHang: item.tenKhachHang,
-                soDienThoai: item.soDienThoai,
-                tongTichDiem: item.tongTichDiem
+                id: cusChosed.id,
+                maKhachHang: cusChosed.maKhachHang,
+                tenKhachHang: cusChosed.tenKhachHang,
+                soDienThoai: cusChosed.soDienThoai
             };
         });
-        setIsSave(false);
-        setErrCheckIn(false);
+        const objCheckIn: KHCheckInDto = new KHCheckInDto({
+            idKhachHang: cusChosed.id,
+            idChiNhanh: chiNhanhCurrent.id
+        });
+        const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+        const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+            idCheckIn: dataCheckIn.id,
+            idKhachHang: objCheckIn.idKhachHang,
+            maKhachHang: cusChosed.maKhachHang,
+            tenKhachHang: cusChosed.tenKhachHang,
+            soDienThoai: cusChosed.soDienThoai,
+            tongTichDiem: cusChosed.tongTichDiem,
+            dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
+            txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
+        });
+        handleSave(objCheckInNew);
     };
 
-    const checkSaveCus = async () => {
-        if (Utils.checkNull(newCus?.tenKhachHang ?? '')) {
-            return false;
-        }
-        if (!Utils.checkNull(newCus?.soDienThoai ?? '')) {
-            const exists = await KhachHangService.checkExistSoDienThoai(
-                newCus?.soDienThoai ?? '',
-                newCus.id
-            );
-            if (exists) {
-                setErrPhone(true);
-                return false;
-            }
-        }
-        return true;
-    };
-    const checkSaveCheckin = async (idCus: string) => {
-        if (Utils.checkNull(newCus?.tenKhachHang ?? '')) {
-            return false;
-        }
-        if (!Utils.checkNull(newCus?.soDienThoai ?? '')) {
-            const exists = await CheckinService.CheckExistCusCheckin(newCus.id);
-            if (exists) {
-                setErrCheckIn(true);
-                return false;
-            }
-        }
-        return true;
-    };
-
-    const saveCheckIn = async () => {
-        if (isSave) return;
-        setIsSave(true);
-
-        if (Utils.checkNull(newCus?.id) || newCus.id === Guid.EMPTY) {
-            // insert customer
-            const check = await checkSaveCus();
-            if (!check) {
-                return;
-            }
-            const khCheckIn = await KhachHangService.createOrEdit(newCus);
-            setNewCus((itemOlds: any) => {
-                return {
-                    ...itemOlds,
-                    id: khCheckIn.id,
-                    maKhachHang: khCheckIn.maKhachHang,
-                    tenKhachHang: khCheckIn.tenKhachHang
-                };
-            });
-            const objCheckIn: KHCheckInDto = new KHCheckInDto({
-                idKhachHang: khCheckIn.id.toString(),
-                idChiNhanh: chiNhanhCurrent.id
-            });
-            // insert checkin
-            const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
-            const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-                idCheckIn: dataCheckIn.id,
-                idKhachHang: khCheckIn.id.toString(),
-                maKhachHang: khCheckIn.maKhachHang,
-                tenKhachHang: khCheckIn.tenKhachHang,
-                soDienThoai: khCheckIn.soDienThoai,
-                tongTichDiem: khCheckIn.tongTichDiem,
-                dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
-                txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
-            });
-            handleSave(objCheckInNew);
-        } else {
-            const check = await checkSaveCheckin(newCus.id);
-            if (!check) {
-                return;
-            }
-            const objCheckIn: KHCheckInDto = new KHCheckInDto({
-                idKhachHang: newCus.id,
-                idChiNhanh: chiNhanhCurrent.id
-            });
-            // insert checkin
-            const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
-            const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
-                idCheckIn: dataCheckIn.id,
-                idKhachHang: objCheckIn.idKhachHang,
-                maKhachHang: newCus.maKhachHang,
-                tenKhachHang: newCus.tenKhachHang,
-                soDienThoai: newCus.soDienThoai,
-                tongTichDiem: newCus.tongTichDiem,
-                dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
-                txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
-            });
-            handleSave(objCheckInNew);
-        }
-
-        setIsShow(false);
-    };
     const [currentTab, setCurrentTab] = useState(1);
     const handleChangeTab = (value: number) => {
         setCurrentTab(value);
@@ -202,6 +129,13 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         overflowX: 'hidden'
                     }
                 }}>
+                <SnackbarAlert
+                    showAlert={objAlert.show}
+                    type={objAlert.type}
+                    title={objAlert.mes}
+                    handleClose={() =>
+                        setObjAlert({ show: false, mes: '', type: 1 } as PropConfirmOKCancel)
+                    }></SnackbarAlert>
                 <DialogTitle
                     sx={{
                         display: 'flex',
@@ -229,64 +163,6 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 </DialogTitle>
 
                 <DialogContent sx={{ overflow: 'visible' }}>
-                    {/* <Grid container columnSpacing={6}>
-                        <Grid item xs={12} sm={5} md={5} lg={5}>
-                            <AutocompleteCustomer
-                                handleChoseItem={changeCustomer}
-                                idChosed={newCus?.id}
-                            />
-                            {isSave && errCheckIn && (
-                                <Typography
-                                    variant="body2"
-                                    style={{ color: 'red', paddingTop: '4px' }}>
-                                    Khách hàng đã check-in
-                                </Typography>
-                            )}
-                        </Grid>
-                        <Grid item xs={12} sm={7} md={7} lg={7}>
-                            <Stack direction="column" paddingTop={2}>
-                                <Typography variant="body2">Họ và tên</Typography>
-                                <TextField
-                                    size="small"
-                                    value={newCus?.tenKhachHang}
-                                    error={isSave && Utils.checkNull(newCus?.tenKhachHang)}
-                                    helperText={
-                                        isSave && Utils.checkNull(newCus?.tenKhachHang)
-                                            ? 'Vui lòng nhập thông tin khách hàng'
-                                            : ''
-                                    }
-                                    onChange={(event) => {
-                                        setNewCus((itemOlds: any) => {
-                                            return {
-                                                ...itemOlds,
-                                                tenKhachHang: event.target.value
-                                            };
-                                        });
-                                        setIsSave(false);
-                                    }}></TextField>
-                            </Stack>
-                            <Stack direction="column" paddingTop={2}>
-                                <Typography variant="body2">Số điện thoại</Typography>
-                                <TextField
-                                    size="small"
-                                    value={newCus?.soDienThoai}
-                                    error={isSave && errPhone}
-                                    helperText={
-                                        isSave && errPhone ? 'Số điện thoại đã tồn tại' : ''
-                                    }
-                                    onChange={(event) => {
-                                        setNewCus((itemOlds: any) => {
-                                            return {
-                                                ...itemOlds,
-                                                soDienThoai: event.target.value
-                                            };
-                                        });
-                                        setIsSave(false);
-                                        setErrPhone(false);
-                                    }}></TextField>
-                            </Stack>
-                        </Grid>
-                    </Grid> */}
                     <Stack
                         direction="row"
                         gap="32px"
@@ -322,7 +198,11 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         </Button>
                     </Stack>
                     <Box sx={{ marginTop: '20px' }}>
-                        {currentTab === 1 ? <TabCuocHen /> : <TabKhachHang />}
+                        {currentTab === 1 ? (
+                            <TabCuocHen />
+                        ) : (
+                            <TabKhachHang handleChoseCus={saveCheckIn} />
+                        )}
                     </Box>
                 </DialogContent>
                 <DialogActions

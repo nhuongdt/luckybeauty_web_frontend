@@ -12,4 +12,6 @@ export interface KhachHangItemDto {
     tongChiTieu?: number;
     cuocHenGanNhat: Date;
     tongTichDiem: number;
+    soLanCheckIn?: number;
+    trangThaiCheckIn?: number;
 }

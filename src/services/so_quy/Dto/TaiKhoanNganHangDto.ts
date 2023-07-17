@@ -1,3 +1,9 @@
+export interface NganHangDto {
+    id: string;
+    maNganHang: string;
+    tenNganHang: string;
+}
+
 export interface TaiKhoanNganHangDto {
     id: string;
     tenChuThe: string;
@@ -5,11 +11,7 @@ export interface TaiKhoanNganHangDto {
     idNganHang: string;
     ghiChu?: string;
 
-    tenNganHang: string;
-}
-
-export interface NganHangDto {
-    id: string;
     maNganHang: string;
     tenNganHang: string;
+    loGoNganHang: string;
 }
