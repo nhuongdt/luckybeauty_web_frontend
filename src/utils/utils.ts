@@ -225,6 +225,24 @@ class Utils {
         }
         return retStr;
     }
+    DocHangThapPhan(so: any, daydu: any) {
+        // todo
+        let chuoi = '';
+        const thapPhan = so - Math.floor(so);
+        if (thapPhan > 0) {
+            chuoi += ' phẩy';
+            const soSauThapPhan = (thapPhan * 100).toFixed(3);
+            const layPhanTram = Math.floor(parseFloat(soSauThapPhan) / 100);
+            const layPhanDu = parseFloat(soSauThapPhan) % 100;
+            if (layPhanTram > 0) {
+                chuoi = ' ' + this.mangso[layPhanTram] + ' trăm';
+                chuoi += this.DocHangChuc(layPhanDu, true);
+            } else {
+                chuoi += this.DocHangChuc(layPhanDu, false);
+            }
+        }
+        return chuoi;
+    }
     DocHangChuc(so: any, daydu: any) {
         let chuoi = '';
         const chuc = Math.floor(so / 10);

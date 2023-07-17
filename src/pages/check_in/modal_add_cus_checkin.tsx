@@ -148,7 +148,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         alignItems: 'center',
                         width: '100%'
                     }}>
-                    <Box fontWeight="700!important" component="h3" fontSize="24px">
+                    <Box fontWeight="700!important" fontSize="24px">
                         Thêm checkin
                     </Box>
                     <IconButton
