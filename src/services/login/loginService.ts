@@ -14,7 +14,9 @@ class LoginService {
         });
 
         const tenantId = result.data.result['tenantId'] || 0;
-
+        Cookies.set('TenantName', tenantName, {
+            expires: new Date().getTime() + 1000 * 86400
+        });
         Cookies.set('Abp.TenantId', tenantName ? tenantId : 'null', {
             expires: isRemember === true ? 1 : undefined
         });
