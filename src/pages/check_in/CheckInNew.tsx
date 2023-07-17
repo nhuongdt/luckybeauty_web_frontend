@@ -163,7 +163,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 .where('idCheckIn')
                 .equals(dataCheckIn.idCheckIn)
                 .toArray();
-            if (cus.length === 0) {
+            if (cus.length > 0) {
                 // remove & add again
                 await dbDexie.khachCheckIn.delete(dataCheckIn.idCheckIn);
                 await dbDexie.khachCheckIn.add(cusChecking);
