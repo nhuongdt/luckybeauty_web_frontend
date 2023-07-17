@@ -543,7 +543,10 @@ export default function ModalEditChiTietGioHang({
                                                             color: 'red',
                                                             display: 'none'
                                                         }}>
-                                                        -{Utils.formatNumber(ct?.tienChietKhau)}
+                                                        -
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            ct?.tienChietKhau
+                                                        )}
                                                     </span>
                                                 </Stack>
                                                 <Stack
@@ -631,7 +634,10 @@ export default function ModalEditChiTietGioHang({
                                                             color: 'red',
                                                             display: 'none'
                                                         }}>
-                                                        -{Utils.formatNumber(ct?.tienChietKhau)}
+                                                        -{' '}
+                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                            ct?.tienChietKhau
+                                                        )}
                                                     </span>
                                                 </Stack>
                                                 <Stack

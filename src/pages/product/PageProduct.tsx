@@ -682,7 +682,9 @@ export default function PageProduct() {
                                                     {row.tenNhomHang}
                                                 </TableCell>
                                                 <TableCell sx={{ width: 1 / 12 }} align="right">
-                                                    {Utils.formatNumber(row.giaBan)}
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        row.giaBan
+                                                    )}
                                                 </TableCell>
                                                 <TableCell sx={{ width: 1 / 10 }} align="center">
                                                     {row.soPhutThucHien}
