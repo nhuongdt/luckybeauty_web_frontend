@@ -292,7 +292,7 @@ class EmployeeScreen extends React.Component {
             field: 'soDienThoai',
             sortable: false,
             headerName: 'Số điện thoại',
-            minWidth: 114,
+            minWidth: 120,
             flex: 1,
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
@@ -649,7 +649,7 @@ class EmployeeScreen extends React.Component {
                                     minWidth: '173px',
                                     fontSize: '14px',
                                     borderRadius: '4px!important',
-                                    backgroundColor: '#7C3367!important'
+                                    backgroundColor: 'var(--color-main)!important'
                                 }}
                                 className="btn-container-hover">
                                 Thêm nhân viên
@@ -679,10 +679,10 @@ class EmployeeScreen extends React.Component {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
@@ -693,7 +693,7 @@ class EmployeeScreen extends React.Component {
                                     fill: '#000'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -701,7 +701,7 @@ class EmployeeScreen extends React.Component {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#faf2f8'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         hideFooter

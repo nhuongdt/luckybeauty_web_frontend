@@ -208,10 +208,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                             control={
                                                                 <Checkbox
                                                                     sx={{
-                                                                        color: '#7C3367',
-                                                                        '&.Mui-checked': {
-                                                                            color: '#7C3367'
-                                                                        }
+                                                                        color: 'var(--color-main)!important'
                                                                     }}
                                                                 />
                                                             }
@@ -262,10 +259,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     control={
                                                         <Checkbox
                                                             sx={{
-                                                                color: '#7C3367',
-                                                                '&.Mui-checked': {
-                                                                    color: '#7C3367'
-                                                                }
+                                                                color: 'var(--color-main)!important'
                                                             }}
                                                         />
                                                     }
@@ -278,7 +272,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
-                                                    color: '#7C3367'
+                                                    color: 'var(--color-main)'
                                                 }}
                                                 onClick={onCancel}
                                                 className="btn-outline-hover">
@@ -290,7 +284,6 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 onClick={() => {
                                                     this.handleSubmit(values);
                                                 }}
-                                                sx={{ backgroundColor: '#7C3367!important' }}
                                                 className="btn-container-hover">
                                                 Lưu
                                             </Button>

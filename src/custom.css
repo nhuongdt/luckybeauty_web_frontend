@@ -244,6 +244,9 @@
 .btn-outline-hover:hover {
     border-color: var(--color-main) !important;
 }
+.btn-container-hover {
+    background-color: var(--color-main) !important;
+}
 .btn-container-hover:hover {
     background-color: #0056f7 !important;
 }

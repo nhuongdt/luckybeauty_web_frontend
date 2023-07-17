@@ -405,7 +405,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 </Box>
                                 <Box sx={{ pt: 2 }}>
                                     <CloudDoneIcon
-                                        style={{ paddingRight: '5px', color: '#7C3367' }}
+                                        style={{ paddingRight: '5px', color: 'var(--color-main)' }}
                                     />
                                     <Link href="#" underline="always">
                                         Tải ảnh lên
@@ -472,7 +472,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
 
                     <Button
                         variant="outlined"
-                        sx={{ color: '#7C3367' }}
+                        sx={{ color: 'var(--color-main)' }}
                         onClick={() => setOpen(false)}
                         className="btn-outline-hover">
                         Hủy

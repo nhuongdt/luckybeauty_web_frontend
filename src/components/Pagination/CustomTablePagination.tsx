@@ -89,7 +89,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                                     lineHeight: '1'
                                 },
                                 '& .Mui-selected': {
-                                    backgroundColor: '#7C3367!important',
+                                    backgroundColor: 'var(--color-main)!important',
                                     color: '#fff'
                                 }
                             }}

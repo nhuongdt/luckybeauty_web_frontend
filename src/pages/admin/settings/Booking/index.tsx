@@ -38,7 +38,6 @@ const Booking: React.FC = () => {
             <Button
                 variant="contained"
                 sx={{
-                    bgcolor: '#7C3367!important',
                     mb: '16px',
                     width: 'fit-content',
                     marginLeft: 'auto'
@@ -58,7 +57,15 @@ const Booking: React.FC = () => {
                     }
                 }}>
                 <Box>
-                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: '8px',
+                            alignItems: 'center',
+                            '& svg': {
+                                filter: 'var(--color-hoverIcon)'
+                            }
+                        }}>
                         <Typography variant="h3" fontSize="16px" fontWeight="700" color="#333233">
                             Tùy chọn trang web đặt lịch
                         </Typography>
@@ -87,7 +94,15 @@ const Booking: React.FC = () => {
                     />
                 </Box>
                 <Box>
-                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: '8px',
+                            alignItems: 'center',
+                            '& svg': {
+                                filter: 'var(--color-hoverIcon)'
+                            }
+                        }}>
                         <Typography variant="h3" fontSize="16px" fontWeight="700" color="#333233">
                             Thời gian đặt lịch trước
                         </Typography>
@@ -192,7 +207,15 @@ const Booking: React.FC = () => {
                     </Grid>
                 </Box>
                 <Box>
-                    <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: '8px',
+                            alignItems: 'center',
+                            '& svg': {
+                                filter: 'var(--color-hoverIcon)'
+                            }
+                        }}>
                         <Typography variant="h3" fontSize="16px" fontWeight="700" color="#333233">
                             Tùy chọn cuộc hẹn
                         </Typography>
@@ -213,10 +236,7 @@ const Booking: React.FC = () => {
                             control={
                                 <Checkbox
                                     sx={{
-                                        color: '#7C3367',
-                                        '&.Mui-checked': {
-                                            color: '#7C3367'
-                                        }
+                                        color: 'var(--color-main)!important'
                                     }}
                                 />
                             }
@@ -227,10 +247,7 @@ const Booking: React.FC = () => {
                             control={
                                 <Checkbox
                                     sx={{
-                                        color: '#7C3367',
-                                        '&.Mui-checked': {
-                                            color: '#7C3367'
-                                        }
+                                        color: 'var(--color-main)!important'
                                     }}
                                 />
                             }
@@ -247,10 +264,7 @@ const Booking: React.FC = () => {
                             control={
                                 <Checkbox
                                     sx={{
-                                        color: '#7C3367',
-                                        '&.Mui-checked': {
-                                            color: '#7C3367'
-                                        }
+                                        color: 'var(--color-main)!important'
                                     }}
                                 />
                             }

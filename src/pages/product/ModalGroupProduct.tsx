@@ -374,7 +374,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Button>
                     <Button
                         variant="contained"
-                        sx={{ bgcolor: '#7C3367!important' }}
+                        sx={{ bgcolor: 'var(--color-main)!important' }}
                         onClick={saveNhomHangHoa}
                         className="btn-container-hover">
                         Lưu
@@ -382,7 +382,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <Button
                         variant="outlined"
                         sx={{
-                            color: '#965C85'
+                            color: 'var(--color-main)'
                         }}
                         onClick={() => setIsShow(false)}
                         className="btn-outline-hover">

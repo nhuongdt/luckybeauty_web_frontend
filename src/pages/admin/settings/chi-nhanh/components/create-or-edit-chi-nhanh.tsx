@@ -8,7 +8,8 @@ import {
     Grid,
     IconButton,
     TextField,
-    Typography
+    Typography,
+    Box
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 
@@ -158,8 +159,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                         left: '0',
                                         bgcolor: '#fff'
                                     }}>
-                                    <ButtonGroup
+                                    <Box
                                         sx={{
+                                            display: 'flex',
+                                            gap: '8px',
                                             height: '32px',
                                             bottom: '24px',
                                             right: '50px'
@@ -169,8 +172,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
-                                                color: '#fff',
-                                                backgroundColor: '#7C3367'
+                                                color: '#fff'
                                             }}
                                             type="submit"
                                             className="btn-container-hover">
@@ -181,13 +183,13 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
-                                                color: '#965C85'
+                                                color: 'var(--color-main)'
                                             }}
                                             onClick={this.props.onCLose}
                                             className="btn-outline-hover">
                                             Hủy
                                         </Button>
-                                    </ButtonGroup>
+                                    </Box>
                                 </DialogActions>
                             </Form>
                         )}

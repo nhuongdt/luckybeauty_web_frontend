@@ -536,7 +536,6 @@ const PageSoQuy = ({ xx }: any) => {
                                 variant="contained"
                                 startIcon={<Add />}
                                 sx={{
-                                    bgcolor: '#7C3367!important',
                                     color: '#fff',
                                     fontSize: '14px'
                                 }}
@@ -558,7 +557,10 @@ const PageSoQuy = ({ xx }: any) => {
                         columns={columns}
                         checkboxSelection
                         sx={{
-                            '& .MuiDataGrid-columnHeaders': { bgcolor: '#F2EBF0' },
+                            '& .MuiDataGrid-virtualScroller': {
+                                bgcolor: '#fff'
+                            },
+                            '& .MuiDataGrid-columnHeaders': { bgcolor: 'var(--color-bg)' },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },
@@ -575,10 +577,10 @@ const PageSoQuy = ({ xx }: any) => {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
@@ -589,7 +591,7 @@ const PageSoQuy = ({ xx }: any) => {
                                     fill: '#000'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -597,7 +599,7 @@ const PageSoQuy = ({ xx }: any) => {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#faf2f8'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         hideFooter

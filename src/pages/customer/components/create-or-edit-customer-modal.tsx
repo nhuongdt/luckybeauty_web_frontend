@@ -265,7 +265,8 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 width: '100%',
                                                 borderColor: '#E6E1E6',
                                                 borderRadius: '8px',
-                                                padding: '16px'
+                                                padding: '16px',
+                                                outline: 'none'
                                             }}
                                         />
                                     </Grid>
@@ -328,7 +329,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         fontSize: '14px',
                                         textTransform: 'unset',
                                         color: '#fff',
-                                        backgroundColor: '#7C3367',
+
                                         border: 'none'
                                     }}
                                     type="submit"
@@ -341,8 +342,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     sx={{
                                         fontSize: '14px',
                                         textTransform: 'unset',
-                                        color: '#965C85',
-                                        borderColor: '#965C85'
+                                        color: '#666466'
                                     }}
                                     className="btn-outline-hover">
                                     Hủy

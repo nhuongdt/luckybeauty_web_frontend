@@ -462,8 +462,7 @@ class CaLamViecScreen extends Component {
                                 fontWeight: '400',
                                 minWidth: '173px',
                                 height: '40px',
-                                fontSize: '14px',
-                                backgroundColor: '#7C3367!important'
+                                fontSize: '14px'
                             }}
                             className="btn-container-hover">
                             Thêm ca làm việc
@@ -486,7 +485,7 @@ class CaLamViecScreen extends Component {
                                 display: 'none'
                             },
                             '& .MuiDataGrid-columnHeadersInner': {
-                                backgroundColor: '#F2EBF0'
+                                backgroundColor: 'var(--color-bg)'
                             },
                             '& .MuiDataGrid-cellContent': {
                                 fontSize: '12px'
@@ -498,10 +497,10 @@ class CaLamViecScreen extends Component {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
                             '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                 {
@@ -512,7 +511,7 @@ class CaLamViecScreen extends Component {
                                     fill: '#000'
                                 },
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -520,7 +519,7 @@ class CaLamViecScreen extends Component {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         hideFooter
