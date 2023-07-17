@@ -59,16 +59,17 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
 
     const [hinhthucThanhToanChosed, setHinhthucThanhToanChosed] = useState<QuyChiTietDto[]>([]);
     const choseHinhThucThanhToan = (id: number) => {
-        const itemEx = hinhthucThanhToanChosed?.filter(
-            (x: QuyChiTietDto) => x.hinhThucThanhToan === id
-        );
+        // const itemEx = hinhthucThanhToanChosed?.filter(
+        //     (x: QuyChiTietDto) => x.hinhThucThanhToan === id
+        // );
         const newQCT = new QuyChiTietDto({
             hinhThucThanhToan: id,
             tienThu: hinhthucThanhToanChosed.length === 0 ? tongPhaiTra : 0
         });
-        if (itemEx.length === 0) {
-            setHinhthucThanhToanChosed(() => [...hinhthucThanhToanChosed, newQCT]);
-        }
+        // if (itemEx.length === 0) {
+        //     setHinhthucThanhToanChosed(() => [...hinhthucThanhToanChosed, newQCT]);
+        // }
+        setHinhthucThanhToanChosed(() => [newQCT]);
     };
 
     const removeHinhThucThanhToan = (id: number) => {
