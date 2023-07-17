@@ -39,8 +39,8 @@ const ColumnChartNew: React.FC = () => {
                     />
                     <Tooltip />
 
-                    <Bar dataKey="Tuần trước" stackId="stack" fill="#E5D6E1" barSize={12} />
-                    <Bar dataKey="Tuần này" stackId="stack" fill="#7C3367" barSize={12} />
+                    <Bar dataKey="Tuần trước" stackId="stack" fill="var(--color-bg)" barSize={12} />
+                    <Bar dataKey="Tuần này" stackId="stack" fill="var(--color-main)" barSize={12} />
                 </BarChart>
             </ResponsiveContainer>
         </div>

@@ -333,9 +333,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 startIcon={<AddIcon />}
                                                 variant="text"
                                                 sx={{
-                                                    color: '#7C3367',
+                                                    color: 'var(--color-main)',
                                                     '& svg': {
-                                                        filter: 'brightness(0) saturate(100%) invert(29%) sepia(34%) saturate(991%) hue-rotate(265deg) brightness(86%) contrast(95%)'
+                                                        filter: 'var(--color-hoverIcon)'
                                                     },
                                                     '& .MuiButton-startIcon': {
                                                         marginRight: '4px',
@@ -414,7 +414,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         size="small"
                                                         type="submit"
                                                         sx={{
-                                                            backgroundColor: '#7C3367!important'
+                                                            backgroundColor:
+                                                                'var(--color-main)!important'
                                                         }}>
                                                         Lưu
                                                     </Button>
@@ -424,7 +425,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         size="small"
                                                         sx={{
                                                             borderColor: '#E6E1E6',
-                                                            color: '#7C3367'
+                                                            color: 'var(--color-main)'
                                                         }}
                                                         onClick={onCancel}>
                                                         Hủy

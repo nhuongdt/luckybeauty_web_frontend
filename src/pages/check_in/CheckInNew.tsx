@@ -42,7 +42,7 @@ const shortNameCus = createTheme({
                     height: '35px',
                     border: 'none',
                     backgroundColor: '#e4cdde',
-                    color: '#7C3367'
+                    color: 'var(--color-main)'
                 }
             }
         }
@@ -197,7 +197,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 variant="contained"
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#7C3367!important',
+                                    backgroundColor: 'var(--color-main)!important',
 
                                     fontSize: '14px'
                                 }}
@@ -240,7 +240,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 transition: '.4s',
                                 cursor: 'pointer',
                                 '&:hover': {
-                                    borderColor: '#7C3367'
+                                    borderColor: 'var(--color-main)'
                                 }
                             }}
                             onClick={() => {

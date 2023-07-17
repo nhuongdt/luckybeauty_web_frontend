@@ -205,13 +205,13 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         itemMenu.children?.some(
                                             (dropdownItem) => location.pathname === dropdownItem.key
                                         )
-                                            ? '#E5F3FF!important'
+                                            ? 'var(--color-bg)!important'
                                             : 'transparent',
                                     borderRadius: '8px',
                                     maxWidth: collapsed || OpenHover ? '500px' : '51px',
                                     maxHeight: collapsed || OpenHover ? '500px' : '51px',
                                     ':hover': {
-                                        backgroundColor: '#E5F3FF!important'
+                                        backgroundColor: 'var(--color-bg)!important'
                                     }
                                 }}
                                 onClick={

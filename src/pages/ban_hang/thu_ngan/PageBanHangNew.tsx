@@ -794,7 +794,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         borderRadius: '8px'
                                     },
                                     '&::-webkit-scrollbar-track': {
-                                        bgcolor: '#F2EBF0'
+                                        bgcolor: 'var(--color-bg)'
                                     }
                                 }}>
                                 <Box>
@@ -823,7 +823,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     onClick={handlePrevClick}
                                                     sx={{
                                                         '&:hover svg': {
-                                                            color: '#7C3367'
+                                                            color: 'var(--color-main)'
                                                         }
                                                     }}>
                                                     <ArrowBackIosIcon
@@ -837,7 +837,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     onClick={handleNextClick}
                                                     sx={{
                                                         '&:hover svg': {
-                                                            color: '#7C3367'
+                                                            color: 'var(--color-main)'
                                                         }
                                                     }}>
                                                     <ArrowForwardIosIcon
@@ -1048,7 +1048,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             borderRadius: '8px'
                                         },
                                         '&::-webkit-scrollbar-track': {
-                                            bgcolor: '#F2EBF0'
+                                            bgcolor: 'var(--color-bg)'
                                         }
                                     }}>
                                     {listProduct.map((nhom: any, index: any) => (
@@ -1080,9 +1080,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                                 border: '1px solid transparent',
                                                                 cursor: 'pointer',
                                                                 transition: '.4s',
-                                                                backgroundColor: '#F2EBF0',
+                                                                backgroundColor: 'var(--color-bg)',
                                                                 '&:hover': {
-                                                                    borderColor: '#7C3367'
+                                                                    borderColor: 'var(--color-main)'
                                                                 }
                                                             }}
                                                             onClick={() => {
@@ -1185,7 +1185,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                     borderRadius: '8px'
                                 },
                                 '&::-webkit-scrollbar-track': {
-                                    bgcolor: '#F2EBF0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                             }}>
                             {hoaDonChiTiet?.map((ct: any, index) => (
@@ -1203,7 +1203,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             <Typography
                                                 variant="body1"
                                                 fontSize="16px"
-                                                color="#7C3367"
+                                                color="var(--color-main)"
                                                 fontWeight="400"
                                                 lineHeight="24px"
                                                 sx={{
@@ -1230,7 +1230,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     cursor: 'pointer',
                                                     transition: '.4s',
                                                     '&:hover': {
-                                                        color: '#7C3367'
+                                                        color: 'var(--color-main)'
                                                     }
                                                 }}
                                                 onClick={() => showPopChiTietGioHang(ct)}>
@@ -1304,7 +1304,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     display="flex"
                                                     alignItems="center"
                                                     sx={{
-                                                        backgroundColor: '#F2EBF0',
+                                                        backgroundColor: 'var(--color-bg)',
                                                         padding: '4px 8px',
                                                         gap: '10px',
                                                         borderRadius: '100px',
@@ -1374,7 +1374,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     bgcolor: 'transparent!important',
                                                     color: '#4C4B4C',
                                                     '&:hover': {
-                                                        color: '#7C3367'
+                                                        color: 'var(--color-main)'
                                                     }
                                                 }}>
                                                 Áp dụng
@@ -1469,7 +1469,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         fontWeight: '700',
                                         color: '#fff',
                                         textTransform: 'unset!important',
-                                        backgroundColor: '#7C3367!important',
+                                        backgroundColor: 'var(--color-main)!important',
                                         paddingY: '12px',
                                         mt: '24px'
                                     }}

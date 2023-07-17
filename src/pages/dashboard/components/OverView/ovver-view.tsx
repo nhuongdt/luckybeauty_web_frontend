@@ -30,7 +30,7 @@ class OverView extends Component {
                                 <div className="mx-auto my-auto text-center mt-5">
                                     <div
                                         style={{
-                                            color: '#7C3367',
+                                            color: 'var(--color-main)',
                                             height: '42px',
                                             lineHeight: '42px',
                                             fontSize: '32px',

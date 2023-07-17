@@ -8,9 +8,9 @@
 }
 
 .recharts-tooltip-item {
-    display: -webkit-box!important;
-    display: -ms-flexbox!important;
-    display: flex!important;
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
     -webkit-box-align: center;
     -ms-flex-align: center;
     align-items: center;
@@ -22,19 +22,19 @@
 }
 
 .chart .recharts-tooltip-item:first-child:before {
-    background: #CBADC2;
+    background: var(--color-bg);
 }
 
 .chart .recharts-tooltip-item:nth-child(2):before {
-    background: #FFC700;
+    background: #ffc700;
 }
 
 .body-row-4 .recharts-tooltip-item:first-child:before {
-    background: #7C3367;
+    background: var(--color-main);
 }
 
 .body-row-4 .recharts-tooltip-item:nth-child(2):before {
-    background: #E5D6E1;
+    background: var(--color-bg);
 }
 
 .tooltips {
@@ -74,11 +74,11 @@
 }
 
 .tooltip-dot.current {
-    background: #CBADC2;
+    background: var(--color-main);
 }
 
 .tooltip-dot.before {
-    background: #FFC700;
+    background: #ff9900;
 }
 
 .chart {

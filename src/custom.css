@@ -1,6 +1,9 @@
 :root {
     --color-main: #009ef7;
-    --color-title: '#00284C';
+    --color-title: #00284c;
+    --color-bg: #e5f3ff;
+    --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%)
+        hue-rotate(174deg) brightness(98%) contrast(103%);
 }
 
 .btn-import {
@@ -29,7 +32,7 @@
 
 .btn-add-item {
     color: #fffaff;
-    background-color: #7c3367;
+    background-color: var(--color-main);
     height: 40px !important;
     border-radius: 4px !important;
     justify-content: center;
@@ -202,7 +205,7 @@
     color: #333233;
 }
 .btn-add-in-select {
-    color: #7c3367;
+    color: var(--color-main);
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
@@ -218,14 +221,14 @@
     padding: 8px 16px;
     height: 32px;
     background: #ffffff;
-    border: 1px solid #965c85;
+    border: 1px solid var(--color-main);
     border-radius: 4px;
-    color: #965c85;
+    color: var(--color-main);
 }
 .btn-ok-dialog {
     height: 32px;
     border-radius: 4px;
-    background: #b085a4;
+    background: var(--color-bg);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -235,21 +238,22 @@
     color: #ffffff;
 }
 .btn-outline-hover {
-    border-color: #e6e1e6 !important;
+    border-color: #666466 !important;
+    transition: '.3s';
 }
 .btn-outline-hover:hover {
-    border-color: #7c3367 !important;
+    border-color: var(--color-main) !important;
 }
 .btn-container-hover:hover {
-    background-color: rgba(124, 51, 103, 0.7) !important;
+    background-color: #0056f7 !important;
 }
 .btn-container-hover .MuiTouchRipple-root * {
-    background-color: #5d264d !important;
+    background-color: var(--color-main) !important;
 }
 
 .Mui-focused .MuiOutlinedInput-notchedOutline {
     border-width: 1px !important;
-    border-color: #7c3367 !important;
+    border-color: var(--color-main) !important;
 }
 .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary
     .MuiOutlinedInput-notchedOutline {
@@ -259,7 +263,7 @@
 }
 .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary:hover
     .MuiOutlinedInput-notchedOutline {
-    border-color: #7c3367 !important;
+    border-color: var(--color-main) !important;
 }
 .MuiDataGrid-menuIcon {
     position: absolute;
