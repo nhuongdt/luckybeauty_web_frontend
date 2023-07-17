@@ -112,7 +112,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             {loaiChungTu.map((name) => (
                                                 <MenuItem key={name} value={name}>
                                                     <Checkbox
-                                                        sx={{ color: '#7C3367!important' }}
+                                                        sx={{
+                                                            color: 'var(--color-main)!important'
+                                                        }}
                                                         checked={values.chungTuApDung.includes(
                                                             name
                                                         )}
@@ -134,21 +136,33 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             <FormControlLabel
                                                 value={1}
                                                 control={
-                                                    <Radio sx={{ color: '#7C3367!important' }} />
+                                                    <Radio
+                                                        sx={{
+                                                            color: 'var(--color-main)!important'
+                                                        }}
+                                                    />
                                                 }
                                                 label="Theo % thực thu"
                                             />
                                             <FormControlLabel
                                                 value={2}
                                                 control={
-                                                    <Radio sx={{ color: '#7C3367!important' }} />
+                                                    <Radio
+                                                        sx={{
+                                                            color: 'var(--color-main)!important'
+                                                        }}
+                                                    />
                                                 }
                                                 label=" Theo % doanh thu"
                                             />
                                             <FormControlLabel
                                                 value={3}
                                                 control={
-                                                    <Radio sx={{ color: '#7C3367!important' }} />
+                                                    <Radio
+                                                        sx={{
+                                                            color: 'var(--color-main)!important'
+                                                        }}
+                                                    />
                                                 }
                                                 label="Theo VNĐ"
                                             />
@@ -182,7 +196,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
                                                 color: '#fff',
-                                                backgroundColor: '#7C3367',
+
                                                 border: 'none'
                                             }}
                                             type="submit">
@@ -195,7 +209,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             sx={{
                                                 fontSize: '14px',
                                                 textTransform: 'unset',
-                                                color: '#965C85',
+                                                color: 'var(--color-main)',
                                                 borderColor: '#965C85'
                                             }}>
                                             Hủy

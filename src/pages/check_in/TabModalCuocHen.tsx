@@ -94,10 +94,10 @@ const TabCuocHen: React.FC = () => {
             state: 'Đã xác nhận'
         },
         {
-            name: 'Đinh Tuấn Tài',
+            name: 'Đinh Tuấn Tài flex đến chết',
             phone: '0911290476',
             avatar: avatar,
-            sevice: 'Cắt tóc',
+            sevice: 'Cắt tóc uốn ép các kiểu con đà điểu ',
             price: '400.000đ',
             startTime: '2h00',
             endTime: '8h30',
@@ -117,8 +117,8 @@ const TabCuocHen: React.FC = () => {
             name: 'Đinh Tuấn Tài',
             phone: '0911290476',
             avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
+            sevice: 'Cắt tóc,tỉa tốt các thứ thứ các thứ hihihi hahahahah hoho hoho hoho ',
+            price: '40.000.000đ',
             startTime: '2h00',
             endTime: '8h30',
             state: 'Đã xác nhận'
@@ -159,7 +159,7 @@ const TabCuocHen: React.FC = () => {
                     <Button
                         variant="contained"
                         sx={{
-                            bgcolor: '#7C3367',
+                            bgcolor: 'var(--color-main)',
                             marginLeft: windowWidth > 600 ? 'auto' : '0',
                             height: 'fit-content'
                         }}
@@ -185,7 +185,8 @@ const TabCuocHen: React.FC = () => {
                             border: `1px solid ${
                                 tabFilter === index ? 'transparent' : '#E6E1E6'
                             }!important`,
-                            bgcolor: tabFilter === index ? '#F2EBF0!important' : '#fff!important'
+                            bgcolor:
+                                tabFilter === index ? 'var(--color-bg)!important' : '#fff!important'
                         }}>
                         {item}
                     </Button>
@@ -203,18 +204,32 @@ const TabCuocHen: React.FC = () => {
                                 transition: '.4s',
                                 cursor: 'pointer',
                                 '&:hover': {
-                                    borderColor: '#7C3367'
+                                    borderColor: 'var(--color-main)'
+                                },
+                                '& p': {
+                                    mb: '0'
                                 }
                             }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Box sx={{ display: 'flex', gap: '8px' }}>
+                                <Box
+                                    sx={{ display: 'flex', gap: '8px', width: '90%' }}
+                                    title={item.name}>
                                     <Avatar
                                         sx={{ width: 40, height: 40 }}
                                         src={item.avatar}
                                         alt={item.name}
                                     />
-                                    <Box>
-                                        <Typography variant="body1" fontSize="16px" color="#333233">
+                                    <Box sx={{ width: '100%' }}>
+                                        <Typography
+                                            variant="body1"
+                                            fontSize="16px"
+                                            color="#333233"
+                                            sx={{
+                                                whiteSpace: 'nowrap',
+                                                textOverflow: 'ellipsis',
+                                                overflow: 'hidden',
+                                                maxWidth: '80%'
+                                            }}>
                                             {item.name}
                                         </Typography>
                                         <Typography fontSize="12px" variant="body1" color="#999699">
@@ -231,14 +246,25 @@ const TabCuocHen: React.FC = () => {
                             <Box
                                 sx={{
                                     display: 'flex',
+                                    height: '42px',
                                     justifyContent: 'space-between',
+                                    mt: '4px',
                                     '& p': {
                                         fontSize: '14px',
 
                                         color: '#4C4B4C'
                                     }
                                 }}>
-                                <Box component="p" sx={{ fontWeight: '500' }}>
+                                <Box
+                                    title={item.sevice}
+                                    component="p"
+                                    sx={{
+                                        fontWeight: '500',
+                                        overflow: 'hidden',
+                                        WebkitBoxOrient: 'vertical',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: '2'
+                                    }}>
                                     {item.sevice}
                                 </Box>
                                 <Box component="p" sx={{ fontWeight: '700' }}>
@@ -264,8 +290,8 @@ const TabCuocHen: React.FC = () => {
                                         fontSize: '12px',
                                         padding: '4px 12px',
                                         borderRadius: '8px',
-                                        color: '#7C3367',
-                                        bgcolor: '#F2EBF0'
+                                        color: 'var(--color-main)',
+                                        bgcolor: 'var(--color-bg)'
                                     }}>
                                     {item.state}
                                 </Box>

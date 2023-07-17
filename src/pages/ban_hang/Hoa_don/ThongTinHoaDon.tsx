@@ -10,7 +10,8 @@ import {
     Select,
     MenuItem,
     Dialog,
-    Link
+    Link,
+    IconButton
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -41,7 +42,7 @@ import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
 import utils from '../../../utils/utils';
 import ProductService from '../../../services/product/ProductService';
-
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -191,7 +192,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         );
     };
     return (
-        <Dialog open={open} onClose={gotoBack} maxWidth="lg" fullWidth>
+        <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -225,21 +226,21 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item xs="auto">
                             <Stack gap={1} direction="row">
-                                <span
-                                    style={{
+                                <Box
+                                    sx={{
                                         fontSize: '24px',
                                         fontWeight: '700',
                                         color: '#333233'
                                     }}>
                                     Hóa đơn
-                                </span>
-                                <span
-                                    style={{
+                                </Box>
+                                <Box
+                                    sx={{
                                         fontSize: '24px',
                                         color: '#999699'
                                     }}>
                                     {hoadonChosed?.maHoaDon}
-                                </span>
+                                </Box>
                             </Stack>
                         </Grid>
                         <Grid item xs="auto">
@@ -276,6 +277,15 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                     Sao chép
                                 </Button>
                             </Box> */}
+                            <IconButton
+                                onClick={gotoBack}
+                                sx={{
+                                    '&:hover svg': {
+                                        filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
+                                    }
+                                }}>
+                                <CloseIcon />
+                            </IconButton>
                         </Grid>
                     </Grid>
                     <Grid
@@ -434,10 +444,10 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         minHeight: 'unset'
                                     },
                                     '& .Mui-selected': {
-                                        color: '#7C3367!important'
+                                        color: 'var(--color-main)!important'
                                     },
                                     '& .MuiTabs-indicator': {
-                                        bgcolor: '#7C3367'
+                                        bgcolor: 'var(--color-main)'
                                     }
                                 }}>
                                 <Tab label="Thông tin" />
@@ -486,14 +496,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                             <>
                                 <Button
                                     variant="outlined"
-                                    sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                                    sx={{ borderColor: '#3B4758', color: 'var(--color-main)' }}
                                     className="btn-outline-hover"
                                     onClick={showModalEditGioHang}>
                                     Chỉnh sửa
                                 </Button>
                                 <Button
                                     variant="contained"
-                                    sx={{ bgcolor: '#7C3367!important', color: '#fff' }}
+                                    sx={{ color: '#fff' }}
                                     className="btn-container-hover"
                                     onClick={updateHoaDon}>
                                     Lưu

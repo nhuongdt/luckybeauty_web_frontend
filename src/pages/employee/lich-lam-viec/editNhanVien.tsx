@@ -87,9 +87,10 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) =
                 <Box sx={{ '& button': { minWidth: 'unset' }, marginTop: '16px' }}>
                     <Button
                         variant="outlined"
+                        className="btn-outline-hover"
                         sx={{
                             paddingX: '5px',
-                            borderColor: '#965C85!important',
+
                             transition: '.4s'
                         }}>
                         <AddIcon sx={{ color: '#4C4B4C' }} />
@@ -97,7 +98,7 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) =
                     <Button
                         variant="text"
                         sx={{
-                            color: '#7C3367',
+                            color: 'var(--color-main)',
                             fontSize: '14px',
                             fontWeight: '500',
                             textTransform: 'unset'
@@ -109,7 +110,7 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) =
                     Để đặt ca làm việc thường xuyên, đi tới{' '}
                     <Box
                         component="span"
-                        sx={{ color: '#7C3367', cursor: 'pointer' }}
+                        sx={{ color: 'var(--color-main)', cursor: 'pointer' }}
                         onClick={openEditLich}>
                         Lịch làm việc
                     </Box>{' '}
@@ -125,17 +126,13 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) =
                         gap: '8px',
                         display: 'flex'
                     }}>
-                    <Button
-                        onClick={onClose}
-                        variant="contained"
-                        sx={{ bgcolor: '#7C3367' }}
-                        className="btn-container-hover">
+                    <Button onClick={onClose} variant="contained" className="btn-container-hover">
                         Lưu
                     </Button>
                     <Button
                         onClick={onClose}
                         variant="outlined"
-                        sx={{ color: '#965C85!important', bgcolor: '#fff!important' }}
+                        sx={{ color: 'var(--color-main)!important', bgcolor: '#fff!important' }}
                         className="btn-outline-hover">
                         Hủy{' '}
                     </Button>

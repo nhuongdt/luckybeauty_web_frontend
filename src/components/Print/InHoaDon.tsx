@@ -28,8 +28,14 @@ export function InHoaDon({ props }: any) {
             '{NgayBan}',
             `${format(new Date(props.hoadon?.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}`
         );
-        str = str.replace('{TongTienHang}', `${utils.formatNumber(props.hoadon?.tongTienHang)}`);
-        str = str.replace('{DaThanhToan}', `${utils.formatNumber(props.hoadon?.tongTienHang)}`);
+        str = str.replace(
+            '{TongTienHang}',
+            `${new Intl.NumberFormat('vi-VN').format(props.hoadon?.tongTienHang)}`
+        );
+        str = str.replace(
+            '{DaThanhToan}',
+            `${new Intl.NumberFormat('vi-VN').format(props.hoadon?.daThanhToan)}`
+        );
         str = str.replace('{TienBangChu}', `${utils.DocSo(props.hoadon?.tongThanhToan)}`);
 
         return str;
@@ -37,10 +43,13 @@ export function InHoaDon({ props }: any) {
     const ReplaceHoaDonChiTiet = (str: string) => {
         str = str.replace('{TenHangHoa}', `${props.hoadonChiTiet[0].tenHangHoa}`);
         str = str.replace('{SoLuong}', `${props.hoadonChiTiet[0].soLuong}`);
-        str = str.replace('{GiaBan}', `${utils.formatNumber(props.hoadonChiTiet[0].giaBan)}`);
+        str = str.replace(
+            '{GiaBan}',
+            `${new Intl.NumberFormat('vi-VN').format(props.hoadonChiTiet[0]?.donGiaTruocCK)}`
+        );
         str = str.replace(
             '{ThanhTien}',
-            `${utils.formatNumber(props.hoadonChiTiet[0].thanhTienSauCK)}`
+            `${new Intl.NumberFormat('vi-VN').format(props.hoadonChiTiet[0]?.thanhTienTruocCK)}`
         );
         return str;
     };

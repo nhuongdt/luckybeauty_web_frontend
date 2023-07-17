@@ -271,7 +271,7 @@ class StoreDetail extends Component {
                                 fontSize: '14px',
                                 fontWeight: '400',
                                 ml: 'auto',
-                                backgroundColor: '#7C3367!important',
+
                                 mt: '16px'
                             }}
                             className="btn-container-hover">

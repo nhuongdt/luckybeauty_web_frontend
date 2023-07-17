@@ -149,7 +149,7 @@ export default function TabDiary({ idHoaDon }: any) {
                         overflow: 'hidden'
                     },
                     '& .MuiDataGrid-columnHeaders': {
-                        bgcolor: '#F2EBF0'
+                        bgcolor: 'var(--color-bg)'
                     },
                     '& .MuiDataGrid-footerContainer': {
                         display: 'none'
@@ -167,10 +167,10 @@ export default function TabDiary({ idHoaDon }: any) {
                         outline: 'none '
                     },
                     '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                        color: '#7C3367'
+                        color: 'var(--color-main)'
                     },
                     '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                        fill: '#7C3367'
+                        fill: 'var(--color-main)'
                     },
                     // '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-child(2)':
                     //     {
@@ -181,7 +181,7 @@ export default function TabDiary({ idHoaDon }: any) {
                     //         fill: '#000'
                     //     },
                     '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                        color: '#7C3367!important'
+                        color: 'var(--color-main)!important'
                     },
                     '& .MuiDataGrid-columnHeaderTitleContainerContent': {
                         fontWeight: '700',
@@ -192,7 +192,7 @@ export default function TabDiary({ idHoaDon }: any) {
                     },
                     '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                         {
-                            bgcolor: '#f2ebf0'
+                            bgcolor: 'var(--color-bg)'
                         }
                 }}
                 localeText={TextTranslate}

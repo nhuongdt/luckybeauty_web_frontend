@@ -20,18 +20,6 @@
     box-shadow: unset;
 }
 
-.bg-main {
-    background-color: #7c3367;
-}
-
-.bg-main:hover {
-    background-color: #7c3367;
-}
-
-.border-color {
-    border-color: #e6e1e6 !important;
-}
-
 .customer-page .form-search {
     height: -webkit-fit-content;
     height: -moz-fit-content;
@@ -39,7 +27,7 @@
 }
 
 .customer-page .MuiDataGrid-columnHeaders {
-    background-color: #f2ebf0;
+    background-color: var(--color-bg);
 }
 
 .poppup-add input {
@@ -99,12 +87,7 @@
     -webkit-box-pack: center;
     -ms-flex-pack: center;
     justify-content: center;
-    background: -webkit-gradient(linear, left bottom, left top, from(#fffaff), to(#fffaff)),
-        -webkit-gradient(linear, left bottom, left top, from(#e5d6e1), to(#e5d6e1));
-    background: -o-linear-gradient(bottom, #fffaff, #fffaff),
-        -o-linear-gradient(bottom, #e5d6e1, #e5d6e1);
-    background: linear-gradient(0deg, #fffaff, #fffaff), linear-gradient(0deg, #e5d6e1, #e5d6e1);
-    border: 1px solid #e5d6e1;
+    background: var(--color-bg);
 }
 
 .inner-box {

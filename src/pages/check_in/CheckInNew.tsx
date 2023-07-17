@@ -43,7 +43,7 @@ const shortNameCus = createTheme({
                     height: '35px',
                     border: 'none',
                     backgroundColor: '#e4cdde',
-                    color: '#7C3367'
+                    color: 'var(--color-main)'
                 }
             }
         }
@@ -163,7 +163,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 .where('idCheckIn')
                 .equals(dataCheckIn.idCheckIn)
                 .toArray();
-            if (cus.length === 0) {
+            if (cus.length > 0) {
                 // remove & add again
                 await dbDexie.khachCheckIn.delete(dataCheckIn.idCheckIn);
                 await dbDexie.khachCheckIn.add(cusChecking);
@@ -195,6 +195,17 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 onOk={deleteCusChecking}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        height: '100vh',
+                        width: '100vw',
+                        left: '0',
+                        top: '0',
+                        pointerEvents: 'none',
+                        bgcolor: '#f8f8f8',
+                        zIndex: '-5'
+                    }}></Box>
                 <Grid container justifyContent="end">
                     <Grid item xs={12}>
                         <Stack
@@ -205,7 +216,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             alignItems="center">
                             <TextField
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
+                                    backgroundColor: '#fff',
                                     borderColor: '#CDC9CD!important',
                                     borderWidth: '1px!important',
                                     maxWidth: '300px'
@@ -246,7 +257,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 variant="contained"
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#7C3367!important',
+                                    backgroundColor: 'var(--color-main)!important',
 
                                     fontSize: '14px'
                                 }}
@@ -301,7 +312,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 transition: '.4s',
                                 cursor: 'pointer',
                                 '&:hover': {
-                                    borderColor: '#7C3367'
+                                    borderColor: 'var(--color-main)'
                                 }
                             }}
                             onClick={() => {

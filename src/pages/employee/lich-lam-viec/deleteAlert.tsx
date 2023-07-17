@@ -94,14 +94,14 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     <Button
                         onClick={onClose}
                         variant="contained"
-                        sx={{ bgcolor: '#F1416C!important' }}
+                        sx={{ bgcolor: 'var(--color-main)!important' }}
                         className="btn-container-hover">
                         Xoá
                     </Button>
                     <Button
                         onClick={onClose}
                         variant="outlined"
-                        sx={{ color: '#965C85!important' }}
+                        sx={{ color: 'var(--color-main)!important' }}
                         className="btn-outline-hover">
                         Hủy
                     </Button>

@@ -28,7 +28,7 @@ const LineChartNew: React.FC = () => {
                 <Line
                     type="monotone"
                     dataKey="Tháng này"
-                    stroke="#B085A4"
+                    stroke="var(--color-main)"
                     dot={false}
                     activeDot={{ r: 4 }}
                     animationDuration={8000}
@@ -36,7 +36,7 @@ const LineChartNew: React.FC = () => {
                 <Line
                     type="monotone"
                     dataKey="Tháng trước"
-                    stroke="#FFC700"
+                    stroke="#ff9900"
                     dot={false}
                     activeDot={{ r: 4 }}
                     animationDuration={8000}

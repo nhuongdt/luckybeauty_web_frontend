@@ -67,7 +67,9 @@ import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import { DataCustomerContext } from '../../../services/khach-hang/dto/DataContext';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
-import { KHCheckInDto } from '../../../services/check_in/CheckinDto';
+import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
+import khachHangStore from '../../../stores/khachHangStore';
+import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -92,7 +94,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
-    let lstQuyCT: QuyChiTietDto[] = [];
+    const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([]);
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
@@ -107,6 +109,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         new PropModal({ isShow: false })
     );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
+        new PropModal({ isShow: false })
+    );
 
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
@@ -207,6 +212,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             if (data.length === 0) {
                 const dataHD: PageHoaDonDto = {
                     ...hoadon,
+                    id: Guid.create().toString(),
                     idChiNhanh: utils.checkNull(chiNhanhCurrent.id)
                         ? idChiNhanh
                         : chiNhanhCurrent.id,
@@ -232,6 +238,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                         khachhang: { ...customerChosed },
                         hoadonChiTiet: [...hdctCache],
                         chinhanh: {
+                            ...old.chinhanh,
                             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
                             soDienThoai: '0973474985',
                             logo: logo
@@ -252,6 +259,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                 };
             });
         }
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: customerChosed?.idCheckIn });
     };
 
     const updateCurrentInvoice = async () => {
@@ -343,7 +351,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             soLuong: 1,
             expanded: false
         });
-        console.log('newCT ', newCT);
 
         const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
         if (checkCT.length === 0) {
@@ -513,15 +520,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             );
         await dbDexie.khachCheckIn
             .where('idCheckIn')
-            .equals(customerChosed.idCheckIn)
+            .equals(triggerAddCheckIn.id as string)
             .delete()
             .then((deleteCount: any) =>
-                console.log(
-                    'idcheckindelete ',
-                    customerChosed.idCheckIn,
-                    'deletecount',
-                    deleteCount
-                )
+                console.log('idcheckindelete ', triggerAddCheckIn.id, 'deletecount', deleteCount)
             );
     };
 
@@ -541,54 +543,33 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     };
 
     const changeCustomer = async (item: any = null) => {
-        if (item === null) {
-            // remove
-            setHoaDon({
-                ...hoadon,
-                idKhachHang: Guid.EMPTY.toString() as unknown as null,
-                tenKhachHang: 'Khách lẻ',
-                soDienThoai: ''
-            });
-            // delete checkin
-            await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 0);
-        } else {
-            // change other cus
+        const cusChecking = new PageKhachHangCheckInDto({
+            idKhachHang: Guid.EMPTY,
+            maKhachHang: '',
+            tenKhachHang: 'Khách lẻ',
+            soDienThoai: '',
+            tongTichDiem: 0
+        });
+        if (item !== null) {
             setIsShowModalAddCus(false);
-            setHoaDon({
-                ...hoadon,
-                idKhachHang: item?.id,
-                tenKhachHang: item?.tenKhachHang,
-                soDienThoai: item?.soDienThoai
-            });
+            cusChecking.idKhachHang = item?.id;
+            cusChecking.tenKhachHang = item?.tenKhachHang;
+            cusChecking.maKhachHang = item?.maKhachHang;
+            cusChecking.soDienThoai = item?.soDienThoai;
 
-            // add new checkin (todo)
             const objCheckIn: KHCheckInDto = new KHCheckInDto({
-                idKhachHang: item?.id,
+                idKhachHang: cusChecking.idKhachHang as string,
                 idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id
             });
             const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
+            cusChecking.idCheckIn = dataCheckIn.id;
+            cusChecking.dateTimeCheckIn = dataCheckIn.dateTimeCheckIn;
+
+            await dbDexie.khachCheckIn.add(cusChecking);
+            setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.id });
         }
 
-        // update to cache
-        // remove cache checkin with idCheckIn
-        await dbDexie.khachCheckIn
-            .where('idCheckIn')
-            .equals(customerChosed.idCheckIn)
-            .delete()
-            .then((deleteCount: any) =>
-                console.log(
-                    'idcheckindelete ',
-                    customerChosed.idCheckIn,
-                    'deletecount',
-                    deleteCount
-                )
-            );
-
-        // update cache hoadon with new {idcus, cusName,..}
-        const cacheHD = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
-        if (cacheHD.length > 0) {
-            // todo update
-        }
+        await updateCache_IfChangeCus(cusChecking);
     };
 
     const showModalAddCustomer = () => {
@@ -602,8 +583,63 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             idNhomKhach: '',
             idNguonKhach: '',
             gioiTinh: false,
-            moTa: ''
+            moTa: '',
+            idLoaiKhach: 1
         } as CreateOrEditKhachHangDto);
+    };
+
+    const updateCache_IfChangeCus = async (dataCheckIn: any) => {
+        const idCheckInOld = triggerAddCheckIn.id as string; // always get state Id_Old
+        // remove checkin DB
+        await CheckinService.UpdateTrangThaiCheckin(idCheckInOld, 0);
+
+        // remove cache khcheckin
+        await dbDexie.khachCheckIn
+            .where('idCheckIn')
+            .equals(idCheckInOld)
+            .delete()
+            .then((deleteCount: any) =>
+                console.log('idcheckindelete ', idCheckInOld, 'deletecount', deleteCount)
+            );
+
+        // update cache hoadon with new {idcus, cusName,..}
+        const cacheHD = await dbDexie.hoaDon.where('id').equals(hoadon?.id).toArray();
+        if (cacheHD.length > 0) {
+            await dbDexie.hoaDon.update(hoadon?.id, {
+                idKhachHang: dataCheckIn?.idKhachHang,
+                tenKhachHang: dataCheckIn?.tenKhachHang,
+                maKhachHang: dataCheckIn?.maKhachHang,
+                soDienThoai: dataCheckIn?.soDienThoai
+            });
+        }
+        // set state hoadon
+        setHoaDon({
+            ...hoadon,
+            idKhachHang: dataCheckIn?.idKhachHang as unknown as null,
+            maKhachHang: dataCheckIn?.maKhachHang,
+            tenKhachHang: dataCheckIn?.tenKhachHang,
+            soDienThoai: dataCheckIn?.soDienThoai
+        });
+    };
+
+    const showModalCheckIn = async () => {
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, isShow: true, id: customerChosed?.idCheckIn });
+    };
+
+    const saveCheckInOK = async (dataCheckIn: any) => {
+        const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
+            idKhachHang: dataCheckIn.idKhachHang,
+            idCheckIn: dataCheckIn.idCheckIn,
+            maKhachHang: dataCheckIn.maKhachHang,
+            tenKhachHang: dataCheckIn.tenKhachHang,
+            soDienThoai: dataCheckIn.soDienThoai,
+            tongTichDiem: dataCheckIn.tongTichDiem,
+            dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
+        });
+        await dbDexie.khachCheckIn.add(cusChecking);
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.idCheckIn, isShow: false });
+
+        await updateCache_IfChangeCus(cusChecking);
     };
 
     // end cutomer
@@ -612,14 +648,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     });
 
     const checkSave = async () => {
-        if (hoaDonChiTiet.length === 0) {
-            setObjAlert({
-                show: true,
-                type: 2,
-                mes: 'Vui lòng nhập chi tiết hóa đơn '
-            });
-            return false;
-        }
         if (lstQuyCT.length === 0) {
             setObjAlert({
                 show: true,
@@ -679,12 +707,19 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
     };
 
     const assignThongTinThanhToan = (arrQCT: QuyChiTietDto[]) => {
-        lstQuyCT = arrQCT;
-        console.log('lstQuyCT ', lstQuyCT);
+        setLstQuyCT([...arrQCT]);
     };
 
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
+        if (hoaDonChiTiet.length === 0) {
+            setObjAlert({
+                show: true,
+                type: 2,
+                mes: 'Vui lòng nhập chi tiết hóa đơn '
+            });
+            return false;
+        }
         const nextIsSave = handleCheckNext();
         if (!nextIsSave) return;
 
@@ -701,9 +736,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
         //checkout + insert tbl checkin_hoadon
-        await CheckinService.UpdateTrangThaiCheckin(customerChosed.idCheckIn, 2);
+        await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, 2);
         await CheckinService.InsertCheckInHoaDon({
-            idCheckIn: customerChosed.idCheckIn,
+            idCheckIn: triggerAddCheckIn.id as string,
             idHoaDon: hodaDonDB.id
         });
 
@@ -732,19 +767,22 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         });
 
         // print
-        setPropMauIn((old: any) => {
+        setPropMauIn((old: PropToChildMauIn) => {
             return {
                 ...old,
                 hoadon: {
                     ...old.hoadon,
                     maHoaDon: hodaDonDB.maHoaDon,
-                    daThanhToan: quyHD.tongTienThu // why not get daThanhToan
+                    daThanhToan: quyHD.tongTienThu,
+                    conNo: hoadon.tongThanhToan - tongThu
                 }
-            };
+            } as PropToChildMauIn;
         });
 
         const chinhanh = await getInforChiNhanh_byID();
+
         if (chinhanh !== null) {
+            // why not update chinhanh at mauin??
             setPropMauIn((old: any) => {
                 return {
                     ...old,
@@ -758,7 +796,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             });
         }
 
-        //handlePrint();
+        handlePrint();
 
         // reset after save
         setClickSave(false);
@@ -766,7 +804,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         setShowPayment(false);
 
         setHoaDonChiTiet([]);
-        setHoaDon(new PageHoaDonDto({ idKhachHang: null, tenKhachHang: 'Khách lẻ' }));
+        setHoaDon(
+            new PageHoaDonDto({
+                id: Guid.create().toString(),
+                idKhachHang: null,
+                tenKhachHang: 'Khách lẻ'
+            })
+        );
+        setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '' });
         await RemoveCache();
     };
 
@@ -814,6 +859,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
 
     return (
         <>
+            <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
             <CreateOrEditCustomerDialog
                 visible={isShowModalAddCus}
                 onCancel={() => setIsShowModalAddCus(false)}
@@ -924,7 +970,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         borderRadius: '8px'
                                     },
                                     '&::-webkit-scrollbar-track': {
-                                        bgcolor: '#F2EBF0'
+                                        bgcolor: 'var(--color-bg)'
                                     }
                                 }}>
                                 <Box>
@@ -953,7 +999,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     onClick={handlePrevClick}
                                                     sx={{
                                                         '&:hover svg': {
-                                                            color: '#7C3367'
+                                                            color: 'var(--color-main)'
                                                         }
                                                     }}>
                                                     <ArrowBackIosIcon
@@ -967,7 +1013,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     onClick={handleNextClick}
                                                     sx={{
                                                         '&:hover svg': {
-                                                            color: '#7C3367'
+                                                            color: 'var(--color-main)'
                                                         }
                                                     }}>
                                                     <ArrowForwardIosIcon
@@ -1178,7 +1224,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             borderRadius: '8px'
                                         },
                                         '&::-webkit-scrollbar-track': {
-                                            bgcolor: '#F2EBF0'
+                                            bgcolor: 'var(--color-bg)'
                                         }
                                     }}>
                                     {listProduct.map((nhom: any, index: any) => (
@@ -1210,9 +1256,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                                 border: '1px solid transparent',
                                                                 cursor: 'pointer',
                                                                 transition: '.4s',
-                                                                backgroundColor: '#F2EBF0',
+                                                                backgroundColor: 'var(--color-bg)',
                                                                 '&:hover': {
-                                                                    borderColor: '#7C3367'
+                                                                    borderColor: 'var(--color-main)'
                                                                 }
                                                             }}
                                                             onClick={() => {
@@ -1294,7 +1340,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                     sx={{ width: 40, height: 40 }}
                                 />
 
-                                <Box>
+                                <Box onClick={showModalCheckIn}>
                                     <Typography variant="body2" fontSize="14px" color="#666466">
                                         {hoadon?.tenKhachHang}
                                     </Typography>
@@ -1335,7 +1381,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                     borderRadius: '8px'
                                 },
                                 '&::-webkit-scrollbar-track': {
-                                    bgcolor: '#F2EBF0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                             }}>
                             {hoaDonChiTiet?.map((ct: any, index) => (
@@ -1353,7 +1399,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                             <Typography
                                                 variant="body1"
                                                 fontSize="16px"
-                                                color="#7C3367"
+                                                color="var(--color-main)"
                                                 fontWeight="400"
                                                 lineHeight="24px"
                                                 sx={{
@@ -1380,7 +1426,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     cursor: 'pointer',
                                                     transition: '.4s',
                                                     '&:hover': {
-                                                        color: '#7C3367'
+                                                        color: 'var(--color-main)'
                                                     }
                                                 }}
                                                 onClick={() => showPopChiTietGioHang(ct)}>
@@ -1454,7 +1500,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     display="flex"
                                                     alignItems="center"
                                                     sx={{
-                                                        backgroundColor: '#F2EBF0',
+                                                        backgroundColor: 'var(--color-bg)',
                                                         padding: '4px 8px',
                                                         gap: '10px',
                                                         borderRadius: '100px',
@@ -1528,7 +1574,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     bgcolor: 'transparent!important',
                                                     color: '#4C4B4C',
                                                     '&:hover': {
-                                                        color: '#7C3367'
+                                                        color: 'var(--color-main)'
                                                     }
                                                 }}>
                                                 Áp dụng
@@ -1623,7 +1669,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         fontWeight: '700',
                                         color: '#fff',
                                         textTransform: 'unset!important',
-                                        backgroundColor: '#7C3367!important',
+                                        backgroundColor: 'var(--color-main)!important',
                                         paddingY: '12px',
                                         mt: '24px'
                                     }}

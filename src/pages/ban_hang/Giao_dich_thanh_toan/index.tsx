@@ -255,7 +255,7 @@ const GiaoDichThanhToan: React.FC = () => {
             headerName: 'Ngày bán',
             headerAlign: 'center',
             align: 'center',
-            minWidth: 118,
+            minWidth: 130,
             flex: 1,
             renderHeader: (params: any) => (
                 <Box title={params.value}>
@@ -270,8 +270,8 @@ const GiaoDichThanhToan: React.FC = () => {
         {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
-            minWidth: 118,
-            flex: 1,
+            minWidth: 140,
+            flex: 1.2,
             renderHeader: (params: any) => (
                 <Box title={params.value}>
                     {params.colDef.headerName}
@@ -494,7 +494,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                     transition: '.4s',
                                     maxWidth: '300px',
                                     '&:hover': {
-                                        borderColor: '#7C3367'
+                                        borderColor: 'var(--color-main)'
                                     },
                                     '& .MuiOutlinedInput-root': {
                                         pr: '0'
@@ -558,7 +558,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 variant="contained"
                                 startIcon={<FilterIcon />}
                                 sx={{
-                                    bgcolor: '#7C3367!important',
+                                    bgcolor: 'var(--color-main)!important',
                                     color: '#fff',
                                     fontSize: '14px'
                                 }}
@@ -582,7 +582,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 display: 'none'
                             },
                             '& .MuiDataGrid-columnHeadersInner': {
-                                backgroundColor: '#F2EBF0'
+                                backgroundColor: 'var(--color-bg)'
                             },
                             '& .MuiBox-root': {
                                 maxWidth: '100%',
@@ -600,14 +600,14 @@ const GiaoDichThanhToan: React.FC = () => {
                                 outline: 'none '
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: '#7C3367'
+                                color: 'var(--color-main)'
                             },
                             '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: '#7C3367'
+                                fill: 'var(--color-main)'
                             },
 
                             '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#7C3367!important'
+                                color: 'var(--color-main)!important'
                             },
                             '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                 {
@@ -615,7 +615,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         localeText={TextTranslate}

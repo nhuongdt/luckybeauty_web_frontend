@@ -4,17 +4,17 @@ import utils from '../../utils/utils';
 import { format } from 'date-fns';
 
 export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: any) {
-    const [tenKhachHang, setTenKhachHang] = useState('');
-    const [tienKhachThieu, setTienKhachThieu] = useState(0);
-    const [tienKhachThieu_BangChu, setTienKhachThieu_BangChu] = useState('');
-    useEffect(() => {
-        const khachthieu = props?.hoadon?.tongThanhToan - props?.hoadon?.daThanhToan;
-        setTienKhachThieu(khachthieu);
-        setTienKhachThieu_BangChu(utils.DocSo(khachthieu));
+    // const [tenKhachHang, setTenKhachHang] = useState('');
+    // const [tienKhachThieu, setTienKhachThieu] = useState(0);
+    // const [tienKhachThieu_BangChu, setTienKhachThieu_BangChu] = useState('');
+    // useEffect(() => {
+    //     const khachthieu = props?.hoadon?.tongThanhToan - props?.hoadon?.daThanhToan;
+    //     setTienKhachThieu(khachthieu);
+    //     setTienKhachThieu_BangChu(utils.DocSo(khachthieu));
 
-        if (props?.khachhang?.tenKhachHang === '') setTenKhachHang('Khách lẻ');
-        else setTenKhachHang(props?.khachhang?.tenKhachHang);
-    }, [props]);
+    //     if (props?.khachhang?.tenKhachHang === '') setTenKhachHang('Khách lẻ');
+    //     else setTenKhachHang(props?.khachhang?.tenKhachHang);
+    // }, [props]);
     return (
         <>
             <div ref={ref}>
@@ -97,7 +97,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                 <div>
                     <span style={{ fontSize: 12 }}>
                         <span style={{ fontFamily: 'Tahoma' }}>
-                            Khách hàng: <span>{tenKhachHang}</span>
+                            Khách hàng: <span>{props?.khachhang?.tenKhachHang}</span>
                         </span>
                     </span>
                 </div>
@@ -162,7 +162,11 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                     <td style={{ borderBottom: '1px dashed black' }}>
                                         <span style={{ fontSize: 12 }}>
                                             <span style={{ fontFamily: 'Tahoma' }}>
-                                                <span>{utils.formatNumber(ct.donGiaTruocCK)}</span>
+                                                <span>
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        ct.donGiaTruocCK
+                                                    )}
+                                                </span>
                                             </span>
                                         </span>
                                     </td>
@@ -185,7 +189,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                         <span style={{ fontSize: 12 }}>
                                             <span style={{ fontFamily: 'Tahoma' }}>
                                                 <span>
-                                                    {utils.formatNumber(ct.thanhTienTruocCK)}
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        ct.thanhTienTruocCK
+                                                    )}
                                                 </span>
                                             </span>
                                         </span>
@@ -208,7 +214,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <span>
-                                            {utils.formatNumber(
+                                            {new Intl.NumberFormat('vi-VN').format(
                                                 props?.hoadon.tongTienHangChuaChietKhau
                                             )}
                                         </span>
@@ -226,7 +232,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <span>
-                                            {utils.formatNumber(props?.hoadon.tongChietKhauHangHoa)}
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                props?.hoadon.tongChietKhauHangHoa
+                                            )}
                                         </span>
                                     </span>
                                 </span>
@@ -245,7 +253,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <strong>
                                             <span>
-                                                {utils.formatNumber(props?.hoadon.tongThanhToan)}
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    props?.hoadon.tongThanhToan
+                                                )}
                                             </span>
                                         </strong>
                                     </span>
@@ -262,7 +272,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <span>
-                                            {utils.formatNumber(props?.hoadon?.daThanhToan)}
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                props?.hoadon?.daThanhToan
+                                            )}
                                         </span>
                                     </span>
                                 </span>
@@ -277,7 +289,11 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>{utils.formatNumber(tienKhachThieu)}</span>
+                                        <span>
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                props?.hoadon?.conNo
+                                            )}
+                                        </span>
                                     </span>
                                 </span>
                             </td>
@@ -287,7 +303,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                 <p>
                     <span style={{ fontSize: 12 }}>
                         <span style={{ fontFamily: 'Tahoma' }}>
-                            Tiền bằng chữ: <span>{tienKhachThieu_BangChu}</span>
+                            Tiền bằng chữ: <span>{utils.DocSo(props?.hoadon?.daThanhToan)}</span>
                         </span>
                     </span>
                 </p>

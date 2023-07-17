@@ -143,7 +143,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                     <Button
                         variant="contained"
                         sx={{
-                            bgcolor: '#7C3367',
+                            bgcolor: 'var(--color-main)',
                             marginLeft: windowWidth > 600 ? 'auto' : '0',
                             height: 'fit-content'
                         }}
@@ -168,7 +168,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                                 transition: '.4s',
                                 cursor: 'pointer',
                                 '&:hover': {
-                                    borderColor: '#7C3367'
+                                    borderColor: 'var(--color-main)'
                                 }
                             }}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

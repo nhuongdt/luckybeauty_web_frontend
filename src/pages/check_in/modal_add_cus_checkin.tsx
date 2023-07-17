@@ -148,7 +148,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         alignItems: 'center',
                         width: '100%'
                     }}>
-                    <Box fontWeight="700!important" component="h3" fontSize="24px">
+                    <Box fontWeight="700!important" fontSize="24px">
                         Thêm checkin
                     </Box>
                     <IconButton
@@ -175,7 +175,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         }}>
                         <Button
                             sx={{
-                                color: currentTab === 1 ? '#7C3367' : '#999699',
+                                color: currentTab === 1 ? 'var(--color-main)' : '#999699',
                                 '&::after': {
                                     content: '""',
                                     position: 'absolute',
@@ -183,7 +183,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                                     transition: '.4s',
                                     left: currentTab === 1 ? '0' : 'calc(100% + 32px)',
                                     width: currentTab === 1 ? '100%' : '77.2px',
-                                    borderTop: '2px solid #7C3367'
+                                    borderTop: '2px solid var(--color-main)'
                                 }
                             }}
                             variant="text"
@@ -191,7 +191,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                             Cuộc hẹn
                         </Button>
                         <Button
-                            sx={{ color: currentTab === 2 ? '#7C3367' : '#999699' }}
+                            sx={{ color: currentTab === 2 ? 'var(--color-main)' : '#999699' }}
                             variant="text"
                             onClick={() => handleChangeTab(2)}>
                             Khách hàng
@@ -216,7 +216,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                     <Stack direction="row" spacing={1} paddingTop={2} justifyContent="flex-end">
                         <Button
                             variant="contained"
-                            className="button-container btn-container-hover"
+                            className=" btn-container-hover"
                             sx={{ width: '70px' }}
                             onClick={saveCheckIn}>
                             Lưu

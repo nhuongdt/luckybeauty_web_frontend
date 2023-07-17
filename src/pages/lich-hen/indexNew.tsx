@@ -246,7 +246,7 @@ const LichHen: React.FC = () => {
                             handleCreateUpdateShow('');
                         }}
                         className="btn-container-hover"
-                        sx={{ bgcolor: '#7C3367' }}>
+                        sx={{ bgcolor: 'var(--color-main)' }}>
                         Thêm cuộc hẹn
                     </Button>
                 </Box>
@@ -312,7 +312,7 @@ const LichHen: React.FC = () => {
                             onClick={toDayClick}
                             variant="text"
                             sx={{
-                                color: '#7C3367!important',
+                                color: 'var(--color-main)!important',
                                 fontSize: '16px!important',
                                 textTransform: 'unset!important',
                                 bgcolor: 'transparent!important',

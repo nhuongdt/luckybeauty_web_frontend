@@ -282,7 +282,7 @@ const Calendar: React.FC = () => {
                             getData();
                         }}
                         sx={{
-                            color: '#7C3367!important',
+                            color: 'var(--color-main)!important',
                             fontSize: '16px!important',
                             textTransform: 'unset!important',
                             bgcolor: 'transparent!important',
@@ -377,7 +377,7 @@ const Calendar: React.FC = () => {
                             '& .custom-time': {
                                 fontFamily: 'Roboto',
                                 height: '32px',
-                                bgcolor: '#F2EBF0',
+                                bgcolor: 'var(--color-bg)',
                                 borderRadius: '8px',
                                 padding: '8px',
                                 fontSize: '12px',
@@ -392,7 +392,7 @@ const Calendar: React.FC = () => {
                             lichLamViecStore.listLichLamViec.items &&
                             lichLamViecStore.listLichLamViec.items.map((item) => (
                                 <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
-                                    <TableCell sx={{ border: '0!important' }}>
+                                    <TableCell sx={{ border: '0!important', width: '20%' }}>
                                         <Box
                                             sx={{
                                                 display: 'flex',
@@ -429,7 +429,7 @@ const Calendar: React.FC = () => {
                                                     minWidth: 'unset',
                                                     ml: 'auto',
                                                     '&:hover svg': {
-                                                        filter: 'brightness(0) saturate(100%) invert(23%) sepia(23%) saturate(1797%) hue-rotate(267deg) brightness(103%) contrast(88%)'
+                                                        filter: 'var(--color-hoverIcon)'
                                                     }
                                                 }}>
                                                 <EditIcon />

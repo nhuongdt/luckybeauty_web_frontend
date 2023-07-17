@@ -31,10 +31,7 @@ const LichLamViec: React.FC = () => {
                                     }}
                                 />
                             </Button>
-                            <Button
-                                variant="contained"
-                                sx={{ bgcolor: '#7C3367!important' }}
-                                className="btn-container-hover">
+                            <Button variant="contained" className="btn-container-hover">
                                 Thêm ca
                             </Button>
                         </Box>

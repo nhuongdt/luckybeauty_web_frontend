@@ -102,7 +102,7 @@ export default function PageProductNew() {
         const obj = new ModelNhomHangHoa({
             id: '',
             tenNhomHang: 'Tất cả',
-            color: '#7C3367'
+            color: 'var(--color-main)'
         });
         setTreeNhomHangHoa([obj, ...list.items]);
     };
@@ -602,10 +602,10 @@ export default function PageProductNew() {
                         <Button
                             size="small"
                             variant="contained"
-                            className="button-container btn-container-hover"
+                            className=" btn-container-hover"
                             sx={{
                                 minWidth: '143px',
-                                backgroundColor: '#7c3367!important',
+
                                 fontSize: '14px'
                             }}
                             startIcon={<Add />}
@@ -630,21 +630,22 @@ export default function PageProductNew() {
                                 <Typography fontSize="18px" fontWeight="700">
                                     Nhóm dịch vụ
                                 </Typography>
-                                <Add
-                                    className="button-container"
-                                    sx={{
-                                        '&:hover': {
-                                            bgcolor: 'rgba(124, 51, 103, 0.7) !important'
-                                        },
-                                        transition: '.4s',
-                                        height: '30px',
-                                        cursor: 'pointer',
-                                        width: '30px',
-                                        borderRadius: '4px',
-                                        padding: '4px'
-                                    }}
-                                    onClick={() => showModalAddNhomHang()}
-                                />
+                                <Button
+                                    sx={{ padding: '0', minWidth: 'unset' }}
+                                    className="btn-container-hover">
+                                    <Add
+                                        sx={{
+                                            color: '#fff',
+                                            transition: '.4s',
+                                            height: '30px',
+                                            cursor: 'pointer',
+                                            width: '30px',
+                                            borderRadius: '4px',
+                                            padding: '4px'
+                                        }}
+                                        onClick={() => showModalAddNhomHang()}
+                                    />
+                                </Button>
                             </Box>
                             <Box
                                 sx={{
@@ -659,7 +660,7 @@ export default function PageProductNew() {
                                         borderRadius: '8px'
                                     },
                                     '&::-webkit-scrollbar-track': {
-                                        bgcolor: '#F2EBF0'
+                                        bgcolor: 'var(--color-bg)'
                                     }
                                 }}>
                                 <AccordionNhomHangHoa
@@ -700,10 +701,10 @@ export default function PageProductNew() {
                                             outline: 'none '
                                         },
                                     '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                        color: '#7C3367'
+                                        color: 'var(--color-main)'
                                     },
                                     '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                        fill: '#7C3367'
+                                        fill: 'var(--color-main)'
                                     },
                                     '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
                                         {
@@ -714,7 +715,7 @@ export default function PageProductNew() {
                                             fill: '#000'
                                         },
                                     '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                        color: '#7C3367!important'
+                                        color: 'var(--color-main)!important'
                                     },
                                     '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
                                         {
@@ -722,7 +723,7 @@ export default function PageProductNew() {
                                         },
                                     '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                         {
-                                            bgcolor: '#f2ebf0'
+                                            bgcolor: 'var(--color-bg)'
                                         }
                                 }}
                                 localeText={TextTranslate}

@@ -725,7 +725,7 @@ const CreateOrEditSoQuyDialog = ({
 
                                         <Button
                                             variant="outlined"
-                                            sx={{ color: '#7C3367' }}
+                                            sx={{ color: 'var(--color-main)' }}
                                             className="btn-outline-hover"
                                             onClick={onClose}>
                                             Hủy

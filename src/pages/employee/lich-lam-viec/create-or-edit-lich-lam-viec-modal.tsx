@@ -322,7 +322,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -338,7 +338,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -354,7 +354,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -370,7 +370,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -386,7 +386,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -402,7 +402,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -418,7 +418,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 )
                                                                     ? {
                                                                           backgroundColor:
-                                                                              '#4CB050',
+                                                                              'var(--color-main)',
                                                                           color: '#FFFFFF'
                                                                       }
                                                                     : { color: 'black' }
@@ -445,14 +445,13 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                     <Button
                                         type="submit"
                                         variant="contained"
-                                        sx={{ bgcolor: '#7C3367!important' }}
                                         className="btn-container-hover">
                                         Lưu
                                     </Button>
                                     <Button
                                         onClick={onClose}
                                         variant="outlined"
-                                        sx={{ color: '#965C85!important' }}
+                                        sx={{ color: 'var(--color-main)!important' }}
                                         className="btn-outline-hover">
                                         Hủy
                                     </Button>

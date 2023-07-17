@@ -177,10 +177,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                             onChange={(e) => this.handleCheck(e, node)}
                             checked={this.state.selectedPermissions?.includes(node.name)}
                             sx={{
-                                color: '#7C3367',
-                                '&.Mui-checked': {
-                                    color: '#7C3367'
-                                }
+                                color: 'var(--color-main)!important'
                             }}
                         />
                         <>
@@ -418,10 +415,17 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 }
                                             }}>
                                             <Button
+                                                variant="contained"
+                                                type="submit"
+                                                size="small"
+                                                className="btn-container-hover">
+                                                Lưu
+                                            </Button>
+                                            <Button
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
-                                                    color: '#7C3367'
+                                                    color: 'var(--color-main)'
                                                 }}
                                                 onClick={() => {
                                                     this.setState({
@@ -432,14 +436,6 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 }}
                                                 className="btn-outline-hover">
                                                 Hủy
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                type="submit"
-                                                size="small"
-                                                sx={{ backgroundColor: '#7C3367!important' }}
-                                                className="btn-container-hover">
-                                                Lưu
                                             </Button>
                                         </Box>
                                     </DialogActions>

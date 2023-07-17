@@ -132,12 +132,14 @@ export default function MainPageBanHang() {
 
                                             color: activeTab == 1 ? '#fff' : '#999699',
                                             backgroundColor:
-                                                activeTab == 1 ? '#7C3367!important' : '#F2EBF0',
+                                                activeTab == 1
+                                                    ? 'var(--color-main)!important'
+                                                    : 'var(--color-bg)',
                                             borderColor: 'transparent!important',
                                             '&:hover': {
                                                 borderColor:
                                                     activeTab == 2
-                                                        ? '#7C3367!important'
+                                                        ? 'var(--color-main)!important'
                                                         : 'transparent!important'
                                             }
                                         }}
@@ -153,11 +155,13 @@ export default function MainPageBanHang() {
                                             color: activeTab == 2 ? '#fff' : '#999699',
                                             borderColor: 'transparent!important',
                                             backgroundColor:
-                                                activeTab == 2 ? '#7C3367!important' : '#F2EBF0',
+                                                activeTab == 2
+                                                    ? 'var(--color-main)!important'
+                                                    : 'var(--color-bg)',
                                             '&:hover': {
                                                 borderColor:
                                                     activeTab == 1
-                                                        ? '#7C3367!important'
+                                                        ? 'var(--color-main)!important'
                                                         : 'transparent!important'
                                             }
                                         }}
