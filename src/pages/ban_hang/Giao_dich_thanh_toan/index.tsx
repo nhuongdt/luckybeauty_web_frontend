@@ -615,7 +615,7 @@ const GiaoDichThanhToan: React.FC = () => {
                                 },
                             '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
                                 {
-                                    bgcolor: '#f2ebf0'
+                                    bgcolor: 'var(--color-bg)'
                                 }
                         }}
                         localeText={TextTranslate}

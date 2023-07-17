@@ -205,7 +205,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             alignItems="center">
                             <TextField
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
+                                    backgroundColor: '#fff',
                                     borderColor: '#CDC9CD!important',
                                     borderWidth: '1px!important',
                                     maxWidth: '300px'

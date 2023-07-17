@@ -46,6 +46,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { width } from '@mui/system';
 import ProductService from '../../../services/product/ProductService';
 import ModalSearchProduct from '../../product/modal_search_product';
+import { cursorTo } from 'readline';
 const themInputChietKhau = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -436,10 +437,10 @@ export default function ModalEditChiTietGioHang({
                                         lg={formType === 1 ? 3 : 2}>
                                         <Stack direction="row" spacing={1} justifyContent="end">
                                             <Typography
-                                                style={{
+                                                sx={{
                                                     fontWeight: 500,
                                                     textAlign: 'right',
-                                                    color: '#7c3367'
+                                                    color: 'var(--color-main)'
                                                 }}>
                                                 {new Intl.NumberFormat('vi-VN').format(
                                                     ct?.thanhTienSauVAT
@@ -450,7 +451,9 @@ export default function ModalEditChiTietGioHang({
                                     {/* // man hinh thu ngan: khong hien icon toogle  */}
                                     {formType !== 1 && (
                                         <Grid item xs={2} sm={1} md={1} lg={1}>
-                                            <Box onClick={() => toggleVisibility(index)}>
+                                            <Box
+                                                onClick={() => toggleVisibility(index)}
+                                                sx={{ cursor: 'pointer' }}>
                                                 <ExpandMore
                                                     sx={{
                                                         display:
@@ -501,7 +504,10 @@ export default function ModalEditChiTietGioHang({
                                                 variant="body2">
                                                 Số lượng
                                             </Typography>
-                                            <Stack direction="row" spacing={1}>
+                                            <Stack
+                                                direction="row"
+                                                spacing={1}
+                                                sx={{ '& .btnIcon': { cursor: 'pointer' } }}>
                                                 <Remove
                                                     className="btnIcon"
                                                     onClick={() => giamSoLuong(ct.id)}
@@ -701,9 +707,14 @@ export default function ModalEditChiTietGioHang({
                     <Grid container paddingTop={2}>
                         <Grid item xs={1} />
                         <Grid item xs={11}>
-                            <Stack style={{ display: displayComponent }}>
+                            <Stack
+                                style={{ display: displayComponent }}
+                                sx={{
+                                    '& a': {
+                                        color: 'var(--color-main)'
+                                    }
+                                }}>
                                 <Link
-                                    color="#7c3367"
                                     sx={{ fontSize: '14px' }}
                                     onClick={() => setShowModalSeachProduct(true)}>
                                     <Add />

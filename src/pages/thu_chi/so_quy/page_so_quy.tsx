@@ -463,7 +463,7 @@ const PageSoQuy = ({ xx }: any) => {
                             <TextField
                                 size="small"
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
+                                    backgroundColor: '#fff',
                                     borderColor: '#CDC9CD!important',
                                     '& .MuiInputBase-root': {
                                         pl: '0'

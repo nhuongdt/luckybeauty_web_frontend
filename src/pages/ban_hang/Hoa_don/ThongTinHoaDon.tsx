@@ -434,10 +434,10 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                         minHeight: 'unset'
                                     },
                                     '& .Mui-selected': {
-                                        color: '#7C3367!important'
+                                        color: 'var(--color-main)!important'
                                     },
                                     '& .MuiTabs-indicator': {
-                                        bgcolor: '#7C3367'
+                                        bgcolor: 'var(--color-main)'
                                     }
                                 }}>
                                 <Tab label="Thông tin" />
@@ -486,14 +486,14 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                             <>
                                 <Button
                                     variant="outlined"
-                                    sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                                    sx={{ borderColor: '#3B4758', color: 'var(--color-main)' }}
                                     className="btn-outline-hover"
                                     onClick={showModalEditGioHang}>
                                     Chỉnh sửa
                                 </Button>
                                 <Button
                                     variant="contained"
-                                    sx={{ bgcolor: '#7C3367!important', color: '#fff' }}
+                                    sx={{ color: '#fff' }}
                                     className="btn-container-hover"
                                     onClick={updateHoaDon}>
                                     Lưu

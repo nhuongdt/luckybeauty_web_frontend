@@ -292,15 +292,18 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     height: '100%'
                                                 }}
                                             />
-                                            <div
-                                                style={{
+                                            <Box
+                                                sx={{
                                                     display: 'flex',
                                                     marginTop: '34px',
-                                                    justifyContent: 'center'
+                                                    justifyContent: 'center',
+                                                    '& img': {
+                                                        filter: 'var(--color-hoverIcon)'
+                                                    }
                                                 }}>
                                                 <img src={fileSmallIcon} />
                                                 <div>Tải ảnh lên</div>
-                                            </div>
+                                            </Box>
                                             <div style={{ color: '#999699', marginTop: '13px' }}>
                                                 File định dạng{' '}
                                                 <span style={{ color: '#333233' }}>jpeg, png</span>{' '}
