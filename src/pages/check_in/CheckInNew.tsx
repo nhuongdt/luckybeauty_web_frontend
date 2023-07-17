@@ -195,6 +195,17 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 onOk={deleteCusChecking}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        height: '100vh',
+                        width: '100vw',
+                        left: '0',
+                        top: '0',
+                        pointerEvents: 'none',
+                        bgcolor: '#f8f8f8',
+                        zIndex: '-5'
+                    }}></Box>
                 <Grid container justifyContent="end">
                     <Grid item xs={12}>
                         <Stack
