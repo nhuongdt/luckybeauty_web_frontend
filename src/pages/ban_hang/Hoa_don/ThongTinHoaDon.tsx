@@ -105,7 +105,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     };
 
     const huyHoaDon = async () => {
-        setOpenDialog(true);
+        setOpenDialog(false);
         await HoaDonService.DeleteHoaDon(idHoaDon);
         await SoQuyServices.HuyPhieuThuChi_ofHoaDonLienQuan(idHoaDon);
 

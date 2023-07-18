@@ -9,3 +9,30 @@ export interface BookingGetAllItemDto {
     color: string;
     bookingDate: string;
 }
+export class BookingDetailDto {
+    maHangHoa = '';
+    tenHangHoa = '';
+    giaBan = 0;
+
+    // constructor({ maHangHoa = '', tenHangHoa = '', giaBan = 0 }) {
+    //     this.maHangHoa = maHangHoa;
+    //     this.tenHangHoa = tenHangHoa;
+    //     this.giaBan = giaBan;
+    // }
+}
+
+export class BookingDetail_ofCustomerDto {
+    idBooking = '';
+    idKhachHang = '';
+    startTime = '';
+    endTime = '';
+    bookingDate = '';
+    trangThai = '';
+
+    maKhachHang = '';
+    tenKhachHang = '';
+    soDienThoai = '';
+    txtTrangThaiBook = '';
+
+    details: BookingDetailDto[] = [];
+}

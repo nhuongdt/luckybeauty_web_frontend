@@ -199,7 +199,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                     </Stack>
                     <Box sx={{ marginTop: '20px' }}>
                         {currentTab === 1 ? (
-                            <TabCuocHen />
+                            <TabCuocHen handleChoseCusBooking={saveCheckIn} />
                         ) : (
                             <TabKhachHang handleChoseCus={saveCheckIn} />
                         )}
@@ -207,6 +207,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                 </DialogContent>
                 <DialogActions
                     sx={{
+                        display: 'none',
                         position: 'sticky',
                         left: '0',
                         bottom: '0',

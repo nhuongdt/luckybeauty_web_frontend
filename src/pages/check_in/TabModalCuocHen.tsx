@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     TextField,
@@ -15,125 +15,57 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import avatar from '../../images/avatar.png';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
 import useWindowWidth from '../../components/StateWidth';
-const TabCuocHen: React.FC = () => {
+import {
+    BookingDetailDto,
+    BookingDetail_ofCustomerDto
+} from '../../services/dat-lich/dto/BookingGetAllItemDto';
+import datLichService from '../../services/dat-lich/datLichService';
+import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
+import { format } from 'date-fns';
+const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const [tabFilter, setTabFilter] = React.useState(0);
     const handleChangeFilter = (value: number) => {
         setTabFilter(value);
     };
     const titleTab = ['Tất cả', 'Chưa xác nhận', 'Đã xác nhận'];
 
-    const data = [
+    const arrTrangThaiBook = [
         {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
+            id: 0,
+            text: 'Tất cả'
         },
         {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
+            id: 1,
+            text: 'Chưa xác nhận'
         },
         {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài flex đến chết',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc uốn ép các kiểu con đà điểu ',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc,tỉa tốt các thứ thứ các thứ hihihi hahahahah hoho hoho hoho ',
-            price: '40.000.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
-        },
-        {
-            name: 'Đinh Tuấn Tài',
-            phone: '0911290476',
-            avatar: avatar,
-            sevice: 'Cắt tóc',
-            price: '400.000đ',
-            startTime: '2h00',
-            endTime: '8h30',
-            state: 'Đã xác nhận'
+            id: 2,
+            text: 'Đã xác nhận'
         }
     ];
+
+    const [paramSearch, setParamSearch] = useState<BookingRequestDto>({
+        currentPage: 0
+    } as BookingRequestDto);
+
+    const [listCusBooking, setListCusBooking] = useState<BookingDetail_ofCustomerDto[]>([]);
+
+    const GetListCustomer_wasBooking = async () => {
+        const data = await datLichService.GetList_Booking_byCustomer(paramSearch);
+        console.log(data);
+        setListCusBooking(data);
+    };
+
+    useEffect(() => {
+        GetListCustomer_wasBooking();
+    }, []);
+
+    const choseBooking = (itemBook: any) => {
+        const dataCus = { ...itemBook };
+        dataCus.id = itemBook.idKhachHang;
+        handleChoseCusBooking(dataCus);
+    };
+
     const windowWidth = useWindowWidth();
     return (
         <Box>
@@ -144,6 +76,10 @@ const TabCuocHen: React.FC = () => {
                         fullWidth
                         sx={{ maxWidth: '375px' }}
                         placeholder="Tìm kiếm"
+                        value={paramSearch.textSearch}
+                        onChange={(e) =>
+                            setParamSearch({ ...paramSearch, textSearch: e.target.value })
+                        }
                         InputProps={{
                             startAdornment: (
                                 <>
@@ -193,7 +129,7 @@ const TabCuocHen: React.FC = () => {
                 ))}
             </Box>
             <Grid container spacing={2}>
-                {data.map((item, index) => (
+                {listCusBooking.map((item, index) => (
                     <Grid item key={index} sm={6} md={4} xs={12}>
                         <Box
                             sx={{
@@ -209,15 +145,16 @@ const TabCuocHen: React.FC = () => {
                                 '& p': {
                                     mb: '0'
                                 }
-                            }}>
+                            }}
+                            onClick={() => choseBooking(item)}>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Box
-                                    sx={{ display: 'flex', gap: '8px', width: '90%' }}
-                                    title={item.name}>
+                                    sx={{ display: 'flex', gap: '8px', width: '100%' }}
+                                    title={item.tenKhachHang}>
                                     <Avatar
                                         sx={{ width: 40, height: 40 }}
-                                        src={item.avatar}
-                                        alt={item.name}
+                                        src=""
+                                        alt={item.maKhachHang}
                                     />
                                     <Box sx={{ width: '100%' }}>
                                         <Typography
@@ -230,47 +167,51 @@ const TabCuocHen: React.FC = () => {
                                                 overflow: 'hidden',
                                                 maxWidth: '80%'
                                             }}>
-                                            {item.name}
+                                            {item.tenKhachHang}
                                         </Typography>
                                         <Typography fontSize="12px" variant="body1" color="#999699">
-                                            {item.phone}
+                                            {item.soDienThoai}
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Box>
+                                {/* <Box>
                                     <IconButton sx={{ padding: '0' }}>
                                         <MoreHorizIcon sx={{ color: '#231F20', width: '15px' }} />
                                     </IconButton>
-                                </Box>
+                                </Box> */}
                             </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    height: '42px',
-                                    justifyContent: 'space-between',
-                                    mt: '4px',
-                                    '& p': {
-                                        fontSize: '14px',
+                            {item.details.map((ct: BookingDetailDto) => (
+                                <>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            height: '42px',
+                                            justifyContent: 'space-between',
+                                            mt: '4px',
+                                            '& p': {
+                                                fontSize: '14px',
 
-                                        color: '#4C4B4C'
-                                    }
-                                }}>
-                                <Box
-                                    title={item.sevice}
-                                    component="p"
-                                    sx={{
-                                        fontWeight: '500',
-                                        overflow: 'hidden',
-                                        WebkitBoxOrient: 'vertical',
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: '2'
-                                    }}>
-                                    {item.sevice}
-                                </Box>
-                                <Box component="p" sx={{ fontWeight: '700' }}>
-                                    {item.price}
-                                </Box>
-                            </Box>
+                                                color: '#4C4B4C'
+                                            }
+                                        }}>
+                                        <Box
+                                            title={ct.tenHangHoa}
+                                            component="p"
+                                            sx={{
+                                                fontWeight: '500',
+                                                overflow: 'hidden',
+                                                WebkitBoxOrient: 'vertical',
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: '2'
+                                            }}>
+                                            {ct.tenHangHoa}
+                                        </Box>
+                                        <Box component="p" sx={{ fontWeight: '700' }}>
+                                            {new Intl.NumberFormat('vi-VN').format(ct.giaBan)}
+                                        </Box>
+                                    </Box>
+                                </>
+                            ))}
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Box
                                     sx={{
@@ -282,8 +223,8 @@ const TabCuocHen: React.FC = () => {
                                     <Box marginRight="4px">
                                         <ClockIcon />
                                     </Box>
-                                    <Box mr="3px">{item.startTime}</Box> -{' '}
-                                    <Box ml="3px">{item.endTime}</Box>
+                                    <Box mr="3px">{format(new Date(item.startTime), 'HH:mm')}</Box>{' '}
+                                    - <Box ml="3px">{format(new Date(item.endTime), 'HH:mm')}</Box>
                                 </Box>
                                 <Box
                                     sx={{
@@ -293,7 +234,7 @@ const TabCuocHen: React.FC = () => {
                                         color: 'var(--color-main)',
                                         bgcolor: 'var(--color-bg)'
                                     }}>
-                                    {item.state}
+                                    {item.txtTrangThaiBook}
                                 </Box>
                             </Box>
                         </Box>
