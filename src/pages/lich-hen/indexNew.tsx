@@ -268,6 +268,7 @@ const LichHen: React.FC = () => {
                         }}
                         renderInput={(params) => (
                             <TextField
+                                sx={{ bgcolor: '#fff' }}
                                 {...params}
                                 placeholder="Tìm tên"
                                 InputProps={{
@@ -370,6 +371,7 @@ const LichHen: React.FC = () => {
                         }}
                         renderInput={(params) => (
                             <TextField
+                                sx={{ bgcolor: '#fff' }}
                                 {...params}
                                 placeholder="Tìm tên"
                                 InputProps={{

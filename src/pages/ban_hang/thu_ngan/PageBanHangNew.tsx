@@ -1004,7 +1004,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     }}>
                                                     <ArrowBackIosIcon
                                                         sx={{
-                                                            color: '#CBADC2'
+                                                            color: 'rgba(49, 157, 255, 0.5)'
                                                         }}
                                                     />
                                                 </Button>
@@ -1018,7 +1018,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     }}>
                                                     <ArrowForwardIosIcon
                                                         sx={{
-                                                            color: '#CBADC2'
+                                                            color: 'rgba(49, 157, 255, 0.5)'
                                                         }}
                                                     />
                                                 </Button>

@@ -482,6 +482,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             <Box
                                 sx={{
                                     display: 'flex',
+                                    bgcolor: '#fff',
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         border: 'none!important'
                                     },
