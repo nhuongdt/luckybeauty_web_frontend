@@ -625,7 +625,9 @@ const Header: React.FC<HeaderProps> = (
                                     style={{ textDecoration: 'none', listStyle: 'none' }}
                                     onClick={() => {
                                         Object.keys(Cookies.get()).forEach((cookieName) => {
-                                            Cookies.remove(cookieName);
+                                            if (cookieName !== 'TenantName') {
+                                                Cookies.remove(cookieName);
+                                            }
                                         });
                                         localStorage.clear();
                                     }}>
