@@ -167,7 +167,18 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                         <Grid item xs={12} sm={12}>
                                             <span className="modal-lable">Ngân hàng </span>
                                         </Grid>
-                                        <Grid item xs={12} sm={12}>
+                                        <Grid
+                                            item
+                                            xs={12}
+                                            sm={12}
+                                            sx={{
+                                                '& label': {
+                                                    display: 'none'
+                                                },
+                                                '& legend': {
+                                                    display: 'none'
+                                                }
+                                            }}>
                                             <AutocompleteBank
                                                 idChosed={taiKhoanNganHang?.idNganHang}
                                                 listOption={allBank}
@@ -274,12 +285,13 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                     </Grid>
                                     <DialogActions>
                                         <Button
-                                            variant="outlined"
-                                            sx={{ color: '#7C3367' }}
-                                            className="btn-outline-hover"
-                                            onClick={onClose}>
-                                            Hủy
+                                            variant="contained"
+                                            className="btn-container-hover"
+                                            type="submit"
+                                            disabled={formik.isSubmitting}>
+                                            Lưu
                                         </Button>
+
                                         {!utils.checkNull(idTaiKhoanNganHang) && (
                                             <>
                                                 <Button
@@ -299,14 +311,12 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                                 </Button>
                                             </>
                                         )}
-
                                         <Button
-                                            variant="contained"
-                                            sx={{ bgcolor: '#7C3367' }}
-                                            className="btn-container-hover"
-                                            type="submit"
-                                            disabled={formik.isSubmitting}>
-                                            Lưu
+                                            variant="outlined"
+                                            sx={{ color: 'var(--color-main)' }}
+                                            className="btn-outline-hover"
+                                            onClick={onClose}>
+                                            Hủy
                                         </Button>
                                     </DialogActions>
                                 </Form>

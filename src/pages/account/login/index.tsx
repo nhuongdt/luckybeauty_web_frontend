@@ -18,13 +18,14 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../../images/logoNew.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { values } from 'lodash';
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();
     const [showPassword, setShowPassword] = useState(false);
     const formik = useFormik({
         initialValues: {
-            tenant: '',
+            tenant: Cookies.get('TenantName') ?? '',
             userNameOrEmail: '',
             password: '',
             remember: true
@@ -96,6 +97,7 @@ const LoginScreen: React.FC = () => {
                                         onKeyDown={handleKeyDown}
                                         variant="outlined"
                                         name="tenant"
+                                        value={formik.values.tenant}
                                         placeholder="ID đăng nhập"
                                         type="text"
                                         sx={{

@@ -217,13 +217,14 @@ class ProfileScreen extends Component {
                                                 <Button
                                                     type="submit"
                                                     variant="outlined"
+                                                    className="btn-container-hover"
                                                     sx={{
                                                         textTransform: 'none',
                                                         width: '100%',
                                                         height: '48px',
                                                         marginTop: 2,
                                                         border: 'none',
-                                                        backgroundColor: '#7C3367',
+
                                                         ':hover': {
                                                             backgroundColor: '#009EF7',
                                                             border: 'none'
@@ -400,18 +401,14 @@ class ProfileScreen extends Component {
                                             </FormGroup>
                                             <Button
                                                 type="submit"
-                                                variant="outlined"
+                                                variant="contained"
+                                                className="btn-container-hover"
                                                 sx={{
                                                     textTransform: 'none',
                                                     height: '48px',
                                                     width: '100%',
                                                     marginTop: 2,
-                                                    border: 'none',
-                                                    backgroundColor: '#7C3367',
-                                                    ':hover': {
-                                                        backgroundColor: '#009EF7',
-                                                        border: 'none'
-                                                    }
+                                                    border: 'none'
                                                 }}>
                                                 <Typography
                                                     color={'#FFFAFF'}

@@ -89,7 +89,11 @@ h1.login-label {
     background-size: cover;
     background-position: center;
     min-height: 100vh;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
@@ -105,19 +109,28 @@ h1.login-label {
 .login-page-inner {
     max-width: 480px;
     padding: 40px 24px;
-    -webkit-box-shadow: 0px 5px 18px 0px #28293d12;
-    box-shadow: 0px 5px 18px 0px #28293d12;
+    -webkit-box-shadow: 0px 4px 20px 0px rgba(170, 169, 184, 0.1);
+    box-shadow: 0px 4px 20px 0px rgba(170, 169, 184, 0.1);
+
     border-radius: 12px;
     background-color: #fff;
     padding-bottom: 48px;
     margin: auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     overflow: hidden;
     position: relative;
     z-index: 2;
-    height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    border: 1px solid rgba(163, 173, 194, 1);
 }
 
 .logo-login {
@@ -127,6 +140,8 @@ h1.login-label {
     gap: 8px;
     -webkit-box-align: center;
     -ms-flex-align: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
     align-items: center;
 }
@@ -229,14 +244,26 @@ h1.login-label {
 }
 
 .form-item:nth-child(2) {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
 .form-item_checkBox {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 .bg-pw {

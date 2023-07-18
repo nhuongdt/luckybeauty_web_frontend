@@ -242,7 +242,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                     sx={{
                                         flex: 'unset!important',
                                         '& a': {
-                                            fontSize: '14px',
+                                            fontSize: '16px',
                                             color:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -267,14 +267,14 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         marginY: 0,
                                         paddingY: '4px',
                                         '& span': {
-                                            fontSize: '14px',
+                                            fontSize: '16px',
                                             color:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
                                                     (dropdownItem) =>
                                                         location.pathname === dropdownItem.key
                                                 )
-                                                    ? '#333233'
+                                                    ? '#3B4758'
                                                     : '#343234',
                                             fontWeight:
                                                 location.pathname === itemMenu.key ||
@@ -363,16 +363,11 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                             color:
                                                                 location.pathname ===
                                                                 dropdownItem.key
-                                                                    ? '#333233'
-                                                                    : '#343234',
-                                                            fontWeight:
-                                                                location.pathname ===
-                                                                dropdownItem.key
-                                                                    ? '500'
-                                                                    : '400'
+                                                                    ? 'var(--color-main)'
+                                                                    : '#343234'
                                                         },
                                                         ':hover a': {
-                                                            color: '#333233'
+                                                            color: 'var(--color-main)'
                                                         }
                                                     }}
                                                 />

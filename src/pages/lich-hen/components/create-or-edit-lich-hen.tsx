@@ -5,7 +5,6 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControl,
     FormGroup,
     Grid,
     IconButton,
@@ -20,7 +19,6 @@ import { Component, ReactNode } from 'react';
 import { ReactComponent as AddIcon } from '../../../images/add.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
-import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDonViQuiDoi';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import AppConsts from '../../../lib/appconst';
@@ -30,11 +28,13 @@ import { enqueueSnackbar } from 'notistack';
 import useWindowWidth from '../../../components/StateWidth';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
+import rules from './create-or-edit-lich-hen.validate';
+import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
     idLichHen: string;
-    suggestDichVu: SuggestDonViQuiDoiDto[];
+    suggestDichVu: SuggestDichVuDto[];
     suggestKhachHang: SuggestKhachHangDto[];
     suggestNhanVien: SuggestNhanVienDichVuDto[];
     onOk: () => void;
@@ -109,7 +109,10 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                         </IconButton>
                     </DialogTitle>
                     <DialogContent sx={{ pr: '0', pb: '0' }}>
-                        <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
+                        <Formik
+                            initialValues={initialValues}
+                            onSubmit={this.handleSubmit}
+                            validationSchema={rules}>
                             {({ errors, touched, values, handleChange, setFieldValue }) => (
                                 <Form>
                                     <Grid container spacing={[8, 3]}>
@@ -151,6 +154,11 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     />
                                                 )}
                                             />
+                                            {errors.idKhachHang && (
+                                                <small className="text-danger">
+                                                    {errors.idKhachHang}
+                                                </small>
+                                            )}
                                             {/* </FormGroup> */}
                                             <Box
                                                 textAlign="center"
@@ -183,14 +191,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             xs={12}
                                             sm={7}
                                             rowSpacing={4}
-                                            sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
-                                            <Typography
-                                                variant="subtitle1"
-                                                fontSize="16px"
-                                                fontWeight="700"
-                                                pt={useWindowWidth() < 600 ? '0' : '24px'}>
-                                                Chi tiết cuộc hẹn
-                                            </Typography>
+                                            sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
                                             <FormGroup className="mt-4 mb-1">
                                                 <Typography
                                                     variant="body1"
@@ -209,6 +210,11 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     name="startTime"
                                                     value={values.startTime}
                                                     onChange={handleChange}></TextField>
+                                                {errors.startTime && (
+                                                    <small className="text-danger">
+                                                        {errors.startTime}
+                                                    </small>
+                                                )}
                                             </FormGroup>
                                             <Grid
                                                 container
@@ -231,7 +237,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             <Autocomplete
                                                                 options={suggestDichVu}
                                                                 getOptionLabel={(option) =>
-                                                                    `${option.tenDonVi}`
+                                                                    `${option.tenDichVu}`
                                                                 }
                                                                 size="small"
                                                                 fullWidth
@@ -249,6 +255,11 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                     />
                                                                 )}
                                                             />
+                                                            {errors.idDonViQuiDoi && (
+                                                                <small className="text-danger">
+                                                                    {errors.idDonViQuiDoi}
+                                                                </small>
+                                                            )}
                                                         </FormGroup>
                                                     </Grid>
                                                     <Grid item md={4} xs={12} sm={6}>
@@ -265,6 +276,11 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 name="startHours"
                                                                 value={values.startHours}
                                                                 onChange={handleChange}></TextField>
+                                                            {errors.startHours && (
+                                                                <small className="text-danger">
+                                                                    {errors.startHours}
+                                                                </small>
+                                                            )}
                                                         </FormGroup>
                                                     </Grid>
                                                 </Grid>

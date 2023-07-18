@@ -1004,7 +1004,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     }}>
                                                     <ArrowBackIosIcon
                                                         sx={{
-                                                            color: '#CBADC2'
+                                                            color: 'rgba(49, 157, 255, 0.5)'
                                                         }}
                                                     />
                                                 </Button>
@@ -1018,7 +1018,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                     }}>
                                                     <ArrowForwardIosIcon
                                                         sx={{
-                                                            color: '#CBADC2'
+                                                            color: 'rgba(49, 157, 255, 0.5)'
                                                         }}
                                                     />
                                                 </Button>
@@ -1316,7 +1316,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                             overflow: 'hidden',
                             height: '100vh',
                             padding: '16px',
-                            maxHeight: '100vh',
+                            marginRight: CoditionLayout ? '24px' : '0px',
                             paddingBottom: '32px',
                             display: 'flex',
                             flexDirection: 'column',
@@ -1359,12 +1359,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     {utils.checkNull(hoadon?.idKhachHang) ||
                                     hoadon?.idKhachHang === Guid.EMPTY ? (
-                                        <Add onClick={showModalAddCustomer} />
+                                        <IconButton>
+                                            <Add onClick={showModalAddCustomer} />
+                                        </IconButton>
                                     ) : (
-                                        <Close
-                                            sx={{ color: 'red' }}
-                                            onClick={() => changeCustomer(null)}
-                                        />
+                                        <IconButton>
+                                            <Close
+                                                sx={{ color: 'red' }}
+                                                onClick={() => changeCustomer(null)}
+                                            />
+                                        </IconButton>
                                     )}
                                 </Box>
                             </Box>
@@ -1448,7 +1452,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                                         minWidth: '0',
                                                         padding: '0',
                                                         '&:hover': {
-                                                            filter: ' brightness(0) saturate(100%) invert(25%) sepia(16%) saturate(2588%) hue-rotate(267deg) brightness(96%) contrast(88%)'
+                                                            filter: 'var(--color-hoverIcon)'
                                                         }
                                                     }}
                                                     onClick={() => showPopNhanVienThucHien(ct)}>

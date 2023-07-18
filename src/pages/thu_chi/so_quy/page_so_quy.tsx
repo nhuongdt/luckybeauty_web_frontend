@@ -498,10 +498,17 @@ const PageSoQuy = ({ xx }: any) => {
                             }}>
                             <Box
                                 sx={{
+                                    display: 'flex',
+                                    bgcolor: '#fff',
+                                    alignItems: 'center',
                                     border: '1px solid #E6E1E6',
                                     borderRadius: '8px',
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         border: 'none'
+                                    },
+                                    '& .MuiInputBase-root': {
+                                        paddingRight: '0',
+                                        flexDirection: 'row-reverse'
                                     }
                                 }}>
                                 <DatePickerCustom
@@ -510,6 +517,7 @@ const PageSoQuy = ({ xx }: any) => {
                                         setParamSearch({ ...paramSearch, fromDate: newVal })
                                     }
                                 />
+                                <Box>-</Box>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.toDate}
                                     handleChangeDate={(newVal: string) =>

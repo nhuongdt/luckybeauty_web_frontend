@@ -48,7 +48,9 @@ export default function AutocompleteAccountBank({
                                 {option.id == '' && (
                                     <Button
                                         key={0}
-                                        color="secondary"
+                                        sx={{
+                                            color: 'var(--color-main)'
+                                        }}
                                         variant="outlined"
                                         startIcon={<AddIcon />}
                                         fullWidth
