@@ -1,5 +1,6 @@
 :root {
     --color-main: #009ef7;
+
     --color-title: #00284c;
     --color-bg: #e5f3ff;
     --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%)

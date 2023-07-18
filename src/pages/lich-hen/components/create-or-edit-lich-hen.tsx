@@ -191,14 +191,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             xs={12}
                                             sm={7}
                                             rowSpacing={4}
-                                            sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
-                                            <Typography
-                                                variant="subtitle1"
-                                                fontSize="16px"
-                                                fontWeight="700"
-                                                pt={useWindowWidth() < 600 ? '0' : '24px'}>
-                                                Chi tiết cuộc hẹn
-                                            </Typography>
+                                            sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
                                             <FormGroup className="mt-4 mb-1">
                                                 <Typography
                                                     variant="body1"

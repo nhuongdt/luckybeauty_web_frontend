@@ -1,7 +1,6 @@
-// import { Avatar, Badge, Col, Dropdown, Layout, Menu, Row, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import avatar from '../../images/user.png';
-
+// import avatar from '../../images/user.png';
+import avatar from '../../images/xinh.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -288,19 +287,7 @@ const Header: React.FC<HeaderProps> = (
                                 })}
                             </Select>
                         </Box>
-                        <Badge sx={{ marginRight: '10px' }}>
-                            <Button
-                                sx={{
-                                    padding: '0',
-                                    bgcolor: 'transparent!important',
-                                    minWidth: 'unset!important',
-                                    '&:hover img': {
-                                        filter: 'var(--color-hoverIcon)'
-                                    }
-                                }}>
-                                <img src={MessageIcon} alt="Message" />
-                            </Button>
-                        </Badge>
+
                         <Badge
                             color="error"
                             variant="dot"
@@ -569,10 +556,7 @@ const Header: React.FC<HeaderProps> = (
                                 </Box>
                             </MenuItem>
                         </Menu>
-                        <div style={{ marginLeft: '32px', marginRight: 8 }}>
-                            <div className="store-name">Nail Spa</div>
-                            <div className="branch-name">Hà nội</div>
-                        </div>
+
                         <Button
                             id="btnAuthor"
                             aria-controls={open ? 'author' : undefined}
