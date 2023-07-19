@@ -605,7 +605,18 @@ const CreateOrEditSoQuyDialog = ({
                                                         Tài khoản {sLoai}{' '}
                                                     </span>
                                                 </Grid>
-                                                <Grid item xs={12} sm={12}>
+                                                <Grid
+                                                    item
+                                                    xs={12}
+                                                    sm={12}
+                                                    sx={{
+                                                        '& legend': {
+                                                            display: 'none'
+                                                        },
+                                                        '& label': {
+                                                            display: 'none'
+                                                        }
+                                                    }}>
                                                     <AutocompleteAccountBank
                                                         listOption={bankAccount}
                                                         idChosed={quyHoaDon.idTaiKhoanNganHang}

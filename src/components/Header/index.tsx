@@ -1,7 +1,6 @@
-// import { Avatar, Badge, Col, Dropdown, Layout, Menu, Row, Space, Typography } from 'antd';
 import { useEffect, useState } from 'react';
-import avatar from '../../images/user.png';
-
+// import avatar from '../../images/user.png';
+import avatar from '../../images/xinh.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -43,7 +42,7 @@ import { ReactComponent as RestartIcon } from '../../images/restart_alt.svg';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import CakeIcon from '../../images/cake.svg';
 import avatarThongBao from '../../images/xinh.png';
-
+import useWindowWidth from '../StateWidth';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -160,6 +159,42 @@ const Header: React.FC<HeaderProps> = (
             option: ['Sản phẩm', 'Sinh nhật khách hàng', 'Khách Đánh giá']
         }
     ];
+    // kéo thả nút
+
+    const [isDragging, setIsDragging] = useState(false);
+    const [position, setPosition] = useState({
+        x: useWindowWidth() - 120,
+        y: window.innerHeight - 90
+    });
+    const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
+    useEffect(() => {
+        if (isDragging) {
+            const handleMouseMove = (e: any) => {
+                setPosition((prevPosition) => ({
+                    x: e.clientX - startPosition.x,
+                    y: e.clientY - startPosition.y
+                }));
+            };
+
+            document.addEventListener('mousemove', handleMouseMove);
+
+            return () => {
+                document.removeEventListener('mousemove', handleMouseMove);
+            };
+        }
+    }, [isDragging, startPosition]);
+    const handleMouseDown = (e: any) => {
+        setIsDragging(true);
+        setStartPosition({
+            x: e.clientX - position.x,
+            y: e.clientY - position.y
+        });
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
     return (
         <Box
             display="flex"
@@ -252,19 +287,7 @@ const Header: React.FC<HeaderProps> = (
                                 })}
                             </Select>
                         </Box>
-                        <Badge sx={{ marginRight: '10px' }}>
-                            <Button
-                                sx={{
-                                    padding: '0',
-                                    bgcolor: 'transparent!important',
-                                    minWidth: 'unset!important',
-                                    '&:hover img': {
-                                        filter: 'var(--color-hoverIcon)'
-                                    }
-                                }}>
-                                <img src={MessageIcon} alt="Message" />
-                            </Button>
-                        </Badge>
+
                         <Badge
                             color="error"
                             variant="dot"
@@ -533,10 +556,7 @@ const Header: React.FC<HeaderProps> = (
                                 </Box>
                             </MenuItem>
                         </Menu>
-                        <div style={{ marginLeft: '32px', marginRight: 8 }}>
-                            <div className="store-name">Nail Spa</div>
-                            <div className="branch-name">Hà nội</div>
-                        </div>
+
                         <Button
                             id="btnAuthor"
                             aria-controls={open ? 'author' : undefined}
@@ -648,14 +668,17 @@ const Header: React.FC<HeaderProps> = (
                 variant="contained"
                 sx={{
                     position: 'fixed',
-                    right: '24px',
-                    bottom: '40px',
+                    transition: '.1s',
+                    left: `${position.x}px`,
+                    top: `${position.y}px`,
                     width: '60px',
                     height: '60px',
                     minWidth: 'unset',
                     borderRadius: '50%',
                     bgcolor: 'var(--color-main)!important'
-                }}>
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseUp={handleMouseUp}>
                 <SuportIcon />
             </Button>
         </Box>
