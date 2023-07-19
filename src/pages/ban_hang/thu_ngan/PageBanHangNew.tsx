@@ -735,12 +735,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
         });
         const hodaDonDB = await HoaDonService.CreateHoaDon(dataSave);
 
-        //checkout + insert tbl checkin_hoadon
+        //checkout + update idHoadon (to checkin_hoadon)
         await CheckinService.UpdateTrangThaiCheckin(triggerAddCheckIn.id as string, 2);
-        await CheckinService.InsertCheckInHoaDon({
-            idCheckIn: triggerAddCheckIn.id as string,
-            idHoaDon: hodaDonDB.id
-        });
+        await CheckinService.Update_IdHoaDon_toCheckInHoaDon(
+            triggerAddCheckIn.id as string,
+            hodaDonDB.id
+        );
 
         // save soquy (Mat, POS, ChuyenKhoan)
         const tongThu = lstQuyCT.reduce((currentValue: number, item: any) => {
