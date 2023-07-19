@@ -27,7 +27,7 @@ export class BookingDetail_ofCustomerDto {
     startTime = '';
     endTime = '';
     bookingDate = '';
-    trangThai = '';
+    trangThai = 1;
 
     maKhachHang = '';
     tenKhachHang = '';
