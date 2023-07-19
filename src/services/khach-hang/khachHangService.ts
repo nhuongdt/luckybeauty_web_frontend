@@ -11,6 +11,7 @@ import { FileDto, IFileDto } from '../dto/FileDto';
 import utils from '../../utils/utils';
 import { ExecuteResultDto } from '../dto/ExecuteResultDto';
 import { FileUpload } from '../dto/FileUpload';
+import QueryString from 'qs';
 
 class KhachHangService {
     public async getAll(
@@ -52,6 +53,11 @@ class KhachHangService {
         const result = await http.get(
             `api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`
         );
+        return result.data.result;
+    }
+    async GetKhachHang_noBooking(input: PagedKhachHangResultRequestDto) {
+        const param = QueryString.stringify(input); // convert object to param string
+        const result = await http.get(`api/services/app/KhachHang/GetKhachHang_noBooking?${param}`);
         return result.data.result;
     }
     async importKhachHang(input: FileUpload) {
