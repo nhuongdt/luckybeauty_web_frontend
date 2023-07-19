@@ -60,13 +60,28 @@ class CheckinService {
         if (utils.checkNull(input?.idCheckIn) || input?.idCheckIn === Guid.EMPTY) {
             return;
         }
-        // used to khachhang checkout --> insert (idCheckin + idHoadon)
+        if (utils.checkNull(input?.idBooking) || input?.idBooking === Guid.EMPTY) {
+            input.idBooking = null;
+        }
         const xx = await http
             .post(`api/services/app/CheckIn/InsertCheckInHoaDon`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
         return xx;
+    };
+    Update_IdHoaDon_toCheckInHoaDon = async (idCheckIn: string, idHoaDon: string) => {
+        if (utils.checkNull(idCheckIn) || idCheckIn === Guid.EMPTY) {
+            return false;
+        }
+        try {
+            const xx = await http.get(
+                `api/services/app/CheckIn/Update_IdHoaDon_toCheckInHoaDon?idCheckIn=${idCheckIn}&idHoaDon=${idHoaDon}`
+            );
+            return xx.data.result;
+        } catch (error) {
+            return false;
+        }
     };
 }
 export default new CheckinService();
