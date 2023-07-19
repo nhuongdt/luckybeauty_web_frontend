@@ -31,6 +31,7 @@ import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/Pa
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
+import utils from '../../utils/utils';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const [isShow, setIsShow] = useState(false);
@@ -86,6 +87,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             return;
         }
         setIsShow(false);
+
         setNewCus((itemOlds: any) => {
             return {
                 ...itemOlds,
@@ -109,6 +111,12 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             tongTichDiem: cusChosed.tongTichDiem,
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn,
             txtTrangThaiCheckIn: dataCheckIn.txtTrangThaiCheckIn
+        });
+
+        // save to Booking_Checkin_HD
+        await CheckinService.InsertCheckInHoaDon({
+            idCheckIn: dataCheckIn.id,
+            idBooking: cusChosed?.idBooking
         });
         handleSave(objCheckInNew);
     };
