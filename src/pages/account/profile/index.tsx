@@ -12,7 +12,7 @@ import {
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { observer } from 'mobx-react';
-import { Component, ReactNode, useRef } from 'react';
+import { Component, ReactNode } from 'react';
 import UserStore from '../../../stores/userStore';
 import AppConsts from '../../../lib/appconst';
 import userService from '../../../services/user/userService';

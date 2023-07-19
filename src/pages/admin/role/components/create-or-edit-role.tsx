@@ -255,7 +255,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         }
     };
     render(): ReactNode {
-        const { visible, onCancel, modalType, permissionTree, formRef } = this.props;
+        const { visible, onCancel, modalType, formRef } = this.props;
         const initialValues = {
             description: formRef.description,
             displayName: formRef.displayName,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -7,8 +7,7 @@ import {
     FormControlLabel,
     Checkbox,
     InputAdornment,
-    IconButton,
-    Button
+    IconButton
 } from '@mui/material';
 import './login.css';
 import LoginModel from '../../../models/Login/loginModel';
@@ -18,7 +17,6 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../../images/logoNew.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { values } from 'lodash';
 const LoginScreen: React.FC = () => {
     const navigate = useNavigate();
     const loginModel = new LoginModel();

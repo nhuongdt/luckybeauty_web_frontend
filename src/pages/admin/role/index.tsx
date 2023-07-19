@@ -1,4 +1,4 @@
-import React, { ChangeEventHandler, useRef } from 'react';
+import React, { ChangeEventHandler } from 'react';
 import {
     Button,
     Box,
@@ -16,8 +16,6 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { GetAllRoleOutput } from '../../../services/role/dto/getAllRoleOutput';
 import '../../../custom.css';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
-import DownloadIcon from '../../../images/download.svg';
-import UploadIcon from '../../../images/upload.svg';
 import CreateOrEditRoleModal from './components/create-or-edit-role';
 import { PermissionTree } from '../../../services/role/dto/permissionTree';
 import { CreateOrEditRoleDto } from '../../../services/role/dto/createOrEditRoleDto';

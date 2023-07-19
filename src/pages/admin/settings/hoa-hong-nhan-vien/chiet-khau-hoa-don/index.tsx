@@ -9,10 +9,8 @@ import { TextTranslate } from '../../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../.././../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
-import { minWidth } from '@mui/system';
 import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
 class ChietKhauHoaDonScreen extends Component {
     state = {

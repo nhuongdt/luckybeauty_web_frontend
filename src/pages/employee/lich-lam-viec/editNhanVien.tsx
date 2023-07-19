@@ -1,5 +1,5 @@
-import { Dialog, Button, Typography, Box, SelectChangeEvent, Grid, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import { Dialog, Button, Typography, Box, Grid, TextField } from '@mui/material';
+import React from 'react';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';

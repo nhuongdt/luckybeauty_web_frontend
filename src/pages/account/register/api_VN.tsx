@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NativeSelect, FormControl, InputLabel, Select } from '@mui/material/';
+import { NativeSelect, FormControl, InputLabel } from '@mui/material/';
 import axios from 'axios';
 
 interface Province {

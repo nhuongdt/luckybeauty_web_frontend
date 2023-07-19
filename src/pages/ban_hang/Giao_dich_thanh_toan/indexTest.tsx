@@ -17,9 +17,7 @@ import {
     Checkbox,
     Collapse
 } from '@mui/material';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import SearchIcon from '../../../images/search-normal.svg';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';

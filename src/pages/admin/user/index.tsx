@@ -15,8 +15,6 @@ import userService from '../../../services/user/userService';
 
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import AddIcon from '../../../images/add.svg';
-import DownloadIcon from '../../../images/download.svg';
-import UploadIcon from '../../../images/upload.svg';
 import '../../../custom.css';
 import { GetAllUserOutput } from '../../../services/user/dto/getAllUserOutput';
 import CreateOrEditUser from './components/create-or-edit-user';

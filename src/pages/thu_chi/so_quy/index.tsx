@@ -15,12 +15,10 @@ import { ReactComponent as IconSorting } from '../../../images/column-sorting.sv
 import SearchIcon from '../../../images/search-normal.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import { observer } from 'mobx-react';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import soQuyStore from '../../../stores/soQuyStore';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
-import Cookies from 'js-cookie';
 import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
 class SoQuyScreen extends Component {
     state = {

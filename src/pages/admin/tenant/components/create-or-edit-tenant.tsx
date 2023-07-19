@@ -66,7 +66,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
         }
     };
     render(): React.ReactNode {
-        const { visible, onCancel, modalType, tenantId, onOk, formRef } = this.props;
+        const { visible, onCancel, modalType, tenantId, formRef } = this.props;
         const { isHostDatabase } = this.state;
         const initialValues = {
             name: formRef.name,

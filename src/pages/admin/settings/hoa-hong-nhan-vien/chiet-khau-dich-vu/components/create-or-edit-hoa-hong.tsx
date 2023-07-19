@@ -1,5 +1,4 @@
 import {
-    ButtonGroup,
     Button,
     Dialog,
     DialogActions,
@@ -87,7 +86,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                             });
                             await onSave();
                         }}>
-                        {({ values, handleChange, errors, touched, setFieldValue }) => (
+                        {({ values, handleChange, errors, setFieldValue }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {

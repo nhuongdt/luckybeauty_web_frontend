@@ -5,7 +5,6 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import error500 from '../../images/500.png';
 import { Avatar, Button, Grid } from '@mui/material';
-import { width } from '@mui/system';
 
 class Exception500 extends React.Component<any, any> {
     render() {
