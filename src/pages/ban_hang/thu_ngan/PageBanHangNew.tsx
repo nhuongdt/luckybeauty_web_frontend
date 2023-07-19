@@ -13,7 +13,12 @@ import {
     ListItemIcon,
     ListItemText,
     InputAdornment,
-    Link
+    Link,
+    RadioGroup,
+    Radio,
+    FormControl,
+    FormLabel,
+    FormControlLabel
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
 import avatar from '../../../images/avatar.png';
@@ -861,6 +866,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setShowDetail(!showDetail);
         sendDataToParent(!showDetail);
     };
+    const method = ['Tiền mặt', 'Chuyển khoản', 'Quẹt thẻ'];
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
@@ -1551,7 +1557,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             ))}
                         </Box>
                         <Box marginTop="auto">
-                            <Box pt="8px">
+                            <Box pt="8px" display="none">
                                 <Typography
                                     variant="h3"
                                     color="#333233"
@@ -1606,18 +1612,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     bgcolor="#F9F9F9">
                                     <Box display="flex" justifyContent="space-between">
                                         <Typography variant="h6" fontSize="14px" color="#3B4758">
-                                            Tổng tiền hàng
+                                            Tổng thanh toán
                                         </Typography>
                                         <Typography
                                             variant="caption"
                                             fontSize="12px"
                                             color="#3B4758">
                                             {Intl.NumberFormat('vi-VN').format(
-                                                hoadon?.tongTienHangChuaChietKhau
+                                                hoadon?.tongThanhToan
                                             )}
                                         </Typography>
                                     </Box>
-                                    <Box display="flex" justifyContent="space-between">
+                                    <Box display="none" justifyContent="space-between">
                                         <Typography variant="h6" fontSize="14px" color="#3B4758">
                                             Giảm giá
                                         </Typography>
@@ -1647,6 +1653,52 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             )}
                                         </Typography>
                                     </Box>
+                                    <Grid container justifyContent="space-between">
+                                        <Grid
+                                            item
+                                            xs="auto"
+                                            sx={{ display: 'flex', alignItems: 'center' }}>
+                                            <Typography
+                                                variant="body1"
+                                                fontSize="14px"
+                                                color="#3D475C">
+                                                Tiền khách trả
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs="auto">
+                                            <RadioGroup
+                                                sx={{ display: 'flex', flexDirection: 'row' }}>
+                                                {method.map((item, index) => (
+                                                    <FormControlLabel
+                                                        sx={{
+                                                            '& .MuiFormControlLabel-label': {
+                                                                fontSize: '14px'
+                                                            }
+                                                        }}
+                                                        key={index}
+                                                        label={item}
+                                                        control={
+                                                            <Radio value={item} size="small" />
+                                                        }
+                                                    />
+                                                ))}
+                                            </RadioGroup>
+                                        </Grid>
+                                        <Grid xs={12} item>
+                                            <TextField
+                                                fullWidth
+                                                defaultValue="777.777đ"
+                                                sx={{
+                                                    '& input': {
+                                                        textAlign: 'right',
+                                                        fontWeight: '700',
+                                                        color: '#3D475C',
+                                                        fontSize: '16px'
+                                                    }
+                                                }}
+                                            />
+                                        </Grid>
+                                    </Grid>
                                     <Box
                                         display="flex"
                                         justifyContent="space-between"
@@ -1654,19 +1706,17 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         mt="8px">
                                         <Typography
                                             variant="h5"
-                                            fontWeight="700"
-                                            fontSize="18px"
+                                            fontWeight="400"
+                                            fontSize="14px"
                                             color="#3B4758">
-                                            Tổng phải trả
+                                            Tiền thừa
                                         </Typography>
                                         <Typography
                                             variant="body1"
                                             fontWeight="700"
                                             fontSize="16px"
                                             color="#3B4758">
-                                            {Intl.NumberFormat('vi-VN').format(
-                                                hoadon?.tongThanhToan
-                                            )}
+                                            999.999đ
                                         </Typography>
                                     </Box>
                                 </Box>
