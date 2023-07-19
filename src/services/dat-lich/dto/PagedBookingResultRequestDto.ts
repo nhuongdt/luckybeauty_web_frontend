@@ -8,5 +8,10 @@ export interface PagedBookingResultRequestDto {
 }
 
 export class BookingRequestDto extends ParamSearchDto {
-    trangThaiBook = '1,2,3';
+    trangThaiBook = 3; // 3.all, 1.chua xacnha, 2.da xacnhan, 0.xoa
+
+    constructor({ currentPage = 0, pageSize = 10, textSearch = '', trangThaiBook = 3 }) {
+        super({ currentPage, pageSize, textSearch });
+        this.trangThaiBook = trangThaiBook;
+    }
 }
