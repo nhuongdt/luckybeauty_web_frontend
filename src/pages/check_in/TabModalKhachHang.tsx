@@ -36,9 +36,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
     const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
 
-    const [pageDataCustomer, setPageDataCustomer] = useState<PagedResultDto<KhachHangItemDto>>(
-        {} as PagedResultDto<KhachHangItemDto>
-    );
+    const [pageDataCustomer, setPageDataCustomer] = useState<KhachHangItemDto[]>([]);
 
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
         keyword: '',
@@ -46,18 +44,15 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
         skipCount: 0
     } as PagedKhachHangResultRequestDto);
 
-    const GetAllCustomer = async (paramSearch: PagedKhachHangResultRequestDto) => {
-        const data = await khachHangService.getAll(paramSearch);
-        setPageDataCustomer({
-            totalCount: data.totalCount,
-            totalPage: data.totalPage,
-            items: data.items
-        });
+    const GetKhachHang_noBooking = async (paramSearch: PagedKhachHangResultRequestDto) => {
+        console.log('param ', paramSearch);
+        const data = await khachHangService.GetKhachHang_noBooking(paramSearch);
+        setPageDataCustomer(data);
     };
 
     const debounceDropDown = useRef(
         debounce(async (paramSearch) => {
-            await GetAllCustomer(paramSearch);
+            await GetKhachHang_noBooking(paramSearch);
         }, 500)
     ).current;
 
@@ -74,7 +69,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             firsLoad.current = false;
             return;
         }
-        GetAllCustomer(paramSearch);
+        GetKhachHang_noBooking(paramSearch);
     }, [paramSearch.skipCount]);
 
     const saveOKCustomer = (dataSave: any) => {
@@ -156,7 +151,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             </Grid>
 
             <Grid container spacing={2} mt="0">
-                {pageDataCustomer.items?.map((item, index) => (
+                {pageDataCustomer?.map((item, index) => (
                     <Grid item key={index} sm={6} md={4} xs={12}>
                         <Box
                             onClick={() => saveOKCustomer(item)}
