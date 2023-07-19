@@ -45,12 +45,16 @@ interface ICreateOrEditRoleState {
     selectedPermissions: string[];
     expandedPermissions: string[];
     tabIndex: string;
+    searchKeyWord: string;
+    filteredPermissions: PermissionTree[];
 }
 class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
     state = {
         selectedPermissions: this.props.formRef.grantedPermissions ?? ['Pages'],
         expandedPermissions: ['Pages'],
-        tabIndex: '1'
+        tabIndex: '1',
+        searchKeyWord: '',
+        filteredPermissions: this.props.permissionTree
     };
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         const defaultExpand = this.getDefaultExpandPermission(this.props.permissionTree);
@@ -63,7 +67,30 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         this.setState({
             tabIndex: newValue,
             selectedPermissions: permissions,
-            expandedPermissions: defaultExpand
+            expandedPermissions: defaultExpand,
+            filteredPermissions: this.props.permissionTree
+        });
+    };
+    filterPermissions = (
+        permissions: PermissionTree[],
+        searchKeyword: string
+    ): PermissionTree[] => {
+        return permissions.filter((permission) => {
+            const matchesKeyword = permission.displayName.toLowerCase().includes(searchKeyword);
+            const hasMatchingChildren =
+                this.filterPermissions(permission.children, searchKeyword).length > 0;
+            return matchesKeyword || hasMatchingChildren;
+        });
+    };
+    handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const searchKeyword = event.target.value.toLowerCase().toString();
+        const filteredPermissions = this.filterPermissions(
+            this.props.permissionTree,
+            searchKeyword
+        );
+        this.setState({
+            searchKeyWord: searchKeyword,
+            filteredPermissions: filteredPermissions
         });
     };
     getDefaultExpandPermission = (permissions: PermissionTree[]) => {
@@ -152,7 +179,14 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
     };
 
     renderTree = (nodes: PermissionTree[], isCollapsed = false) => {
+        const { searchKeyWord } = this.state;
         return nodes.map((node) => {
+            const hasMatchingChildren =
+                this.filterPermissions(node.children, searchKeyWord).length > 0;
+
+            if (!hasMatchingChildren && !node.displayName.toLowerCase().includes(searchKeyWord)) {
+                return null; // Skip rendering if no match found
+            }
             const hasChildren = node.children && node.children.length > 0;
             const isItemCollapsed =
                 isCollapsed || !this.state.expandedPermissions?.includes(node.name);
@@ -215,7 +249,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
 
         this.setState({ expandedPermissions: expandedPermissions });
     };
-
+    handleFormKeyPress = (event: React.KeyboardEvent<HTMLFormElement>) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission
+        }
+    };
     render(): ReactNode {
         const { visible, onCancel, modalType, permissionTree, formRef } = this.props;
         const initialValues = {
@@ -261,7 +299,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         onSubmit={this.handleSubmit}
                         validationSchema={rules}>
                         {({ values, handleChange, errors }) => (
-                            <Form>
+                            <Form onKeyPress={this.handleFormKeyPress}>
                                 <Box>
                                     <TabContext value={this.state.tabIndex}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -379,15 +417,16 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             </FormGroup>
                                         </TabPanel>
                                         <TabPanel value="2" sx={{ padding: '0' }}>
-                                            {/* <TextField
+                                            <TextField
                                                 size="small"
                                                 fullWidth
                                                 type="text"
+                                                onChange={this.handleSearchChange}
                                                 placeholder="Tìm kiếm..."
                                                 sx={{
                                                     paddingTop: 1,
                                                     paddingBottom: 2
-                                                }}></TextField> */}
+                                                }}></TextField>
                                             <FormGroup
                                                 sx={{
                                                     '& .MuiFormControlLabel-root': {
@@ -398,7 +437,9 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     maxHeight: '450px'
                                                 }}>
                                                 <List component="nav" disablePadding>
-                                                    {this.renderTree(permissionTree)}
+                                                    {this.renderTree(
+                                                        this.state.filteredPermissions
+                                                    )}
                                                 </List>
                                             </FormGroup>
                                         </TabPanel>

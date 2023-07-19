@@ -93,7 +93,12 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                             await onSave();
                         }}>
                         {({ handleChange, errors, values }) => (
-                            <Form>
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">

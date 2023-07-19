@@ -137,7 +137,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         onOk();
                     }}>
                     {({ handleChange, errors, values, setFieldValue, setFieldError }) => (
-                        <Form>
+                        <Form
+                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault(); // Prevent form submission
+                                }
+                            }}>
                             <Box
                                 display="flex"
                                 flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}

@@ -91,7 +91,11 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             });
         }
     };
-
+    handleFormKeyPress = (event: React.KeyboardEvent<HTMLFormElement>) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission
+        }
+    };
     render() {
         const { visible, onCancel, modalType, userId, roles, suggestNhanSu, formRef } = this.props;
 
@@ -166,7 +170,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                         onSubmit={this.handleSubmit}
                         validationSchema={rules}>
                         {({ handleChange, values, errors, touched }) => (
-                            <Form>
+                            <Form onKeyPress={this.handleFormKeyPress}>
                                 <TabContext value={this.state.tabIndex}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                         <TabList

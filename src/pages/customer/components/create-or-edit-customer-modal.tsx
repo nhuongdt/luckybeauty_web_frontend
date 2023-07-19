@@ -94,7 +94,12 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             }
                         }}>
                         {({ setFieldValue }) => (
-                            <Form>
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Box
                                     className="form-add"
                                     sx={{

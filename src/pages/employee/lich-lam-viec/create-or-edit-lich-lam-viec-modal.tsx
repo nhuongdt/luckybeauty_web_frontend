@@ -119,7 +119,12 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                               });
                     }}>
                     {({ values, handleChange }) => (
-                        <Form>
+                        <Form
+                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault(); // Prevent form submission
+                                }
+                            }}>
                             <Grid container spacing={3}>
                                 <Grid item xs={5}>
                                     <Box

@@ -136,7 +136,14 @@ class ProfileScreen extends Component {
                                                   );
                                         }}>
                                         {({ handleChange, errors, values }) => (
-                                            <Form>
+                                            <Form
+                                                onKeyPress={(
+                                                    event: React.KeyboardEvent<HTMLFormElement>
+                                                ) => {
+                                                    if (event.key === 'Enter') {
+                                                        event.preventDefault(); // Prevent form submission
+                                                    }
+                                                }}>
                                                 <Grid container alignItems={'center'} spacing={2}>
                                                     <Grid item container xs={5}>
                                                         <FormGroup>
@@ -276,7 +283,14 @@ class ProfileScreen extends Component {
                                               );
                                     }}>
                                     {({ handleChange, values, errors }) => (
-                                        <Form>
+                                        <Form
+                                            onKeyPress={(
+                                                event: React.KeyboardEvent<HTMLFormElement>
+                                            ) => {
+                                                if (event.key === 'Enter') {
+                                                    event.preventDefault(); // Prevent form submission
+                                                }
+                                            }}>
                                             <FormGroup>
                                                 {LableForm('Mật khẩu hiện tại')}
                                                 <TextField
