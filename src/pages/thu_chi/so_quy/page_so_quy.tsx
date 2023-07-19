@@ -31,7 +31,6 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { Add } from '@mui/icons-material';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
-import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import fileDowloadService from '../../../services/file-dowload.service';
 import abpCustom from '../../../components/abp-custom';
 

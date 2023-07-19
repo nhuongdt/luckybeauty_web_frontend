@@ -60,8 +60,13 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
             });
         }
     };
+    handleFormKeyPress = (event: React.KeyboardEvent<HTMLFormElement>) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevent form submission
+        }
+    };
     render(): React.ReactNode {
-        const { visible, onCancel, modalType, tenantId, onOk, formRef } = this.props;
+        const { visible, onCancel, modalType, tenantId, formRef } = this.props;
         const { isHostDatabase } = this.state;
         const initialValues = {
             name: formRef.name,
@@ -102,7 +107,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                     console.log(e);
                                 }}>
                                 {({ handleChange, values, errors, touched }) => (
-                                    <Form>
+                                    <Form onKeyPress={this.handleFormKeyPress}>
                                         <Box
                                             display="flex"
                                             flexDirection="column"

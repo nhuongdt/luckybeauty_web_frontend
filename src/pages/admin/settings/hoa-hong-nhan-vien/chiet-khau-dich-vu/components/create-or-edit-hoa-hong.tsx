@@ -1,5 +1,4 @@
 import {
-    ButtonGroup,
     Button,
     Dialog,
     DialogActions,
@@ -81,24 +80,19 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                             values.idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
                             values.idDonViQuiDoi = values.idDonViQuiDoi ?? suggestDonViQuiDoi[0].id;
                             const createOrEdit = await chietKhauDichVuService.CreateOrEdit(values);
-                            createOrEdit != null
-                                ? formRef.id === AppConsts.guidEmpty
-                                    ? enqueueSnackbar('Thêm mới thành công', {
-                                          variant: 'success',
-                                          autoHideDuration: 3000
-                                      })
-                                    : enqueueSnackbar('Cập nhật thành công', {
-                                          variant: 'success',
-                                          autoHideDuration: 3000
-                                      })
-                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                                      variant: 'error',
-                                      autoHideDuration: 3000
-                                  });
+                            enqueueSnackbar(createOrEdit.message, {
+                                variant: createOrEdit.status,
+                                autoHideDuration: 3000
+                            });
                             await onSave();
                         }}>
-                        {({ values, handleChange, errors, touched, setFieldValue }) => (
-                            <Form>
+                        {({ values, handleChange, errors, setFieldValue }) => (
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <TextField
                                         hidden

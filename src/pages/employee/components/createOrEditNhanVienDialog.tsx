@@ -4,7 +4,6 @@ import {
     Autocomplete,
     Box,
     Button,
-    ButtonGroup,
     Dialog,
     Grid,
     MenuItem,
@@ -15,7 +14,6 @@ import {
 } from '@mui/material';
 import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import closeIcon from '../../../images/close-square.svg';
-import fileIcon from '../../../images/file.svg';
 import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
 import '../employee.css';
 import { Form, Formik } from 'formik';
@@ -136,8 +134,13 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                               });
                         onOk();
                     }}>
-                    {({ handleChange, errors, values, setFieldValue, setFieldError }) => (
-                        <Form>
+                    {({ handleChange, errors, values, setFieldValue }) => (
+                        <Form
+                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault(); // Prevent form submission
+                                }
+                            }}>
                             <Box
                                 display="flex"
                                 flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}

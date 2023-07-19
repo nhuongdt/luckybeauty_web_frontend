@@ -9,9 +9,7 @@ import {
     TextField,
     IconButton,
     InputAdornment,
-    LinearProgress,
-    FormControlLabel,
-    Box
+    FormControlLabel
 } from '@mui/material';
 
 import VisibilityOff from '@mui/icons-material/VisibilityOff';

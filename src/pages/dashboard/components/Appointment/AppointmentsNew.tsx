@@ -2,7 +2,6 @@ import React from 'react';
 import avatar from '../../../../images/avatar.png';
 import clockIcon from '../../../../images/clock.svg';
 import './appointmentsNew.css';
-import { da } from 'date-fns/locale';
 const AppoimentsNew: React.FC = () => {
     const datas = [
         {

@@ -4,7 +4,6 @@ import {
     Autocomplete,
     Box,
     Button,
-    ButtonGroup,
     Grid,
     MenuItem,
     Select,
@@ -19,7 +18,6 @@ import closeIcon from '../../../images/close-square.svg';
 import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import React from 'react';
 import { Form, Formik } from 'formik';
-import rules from './create-or-edit-customer.validate';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
@@ -94,7 +92,12 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             }
                         }}>
                         {({ setFieldValue }) => (
-                            <Form>
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Box
                                     className="form-add"
                                     sx={{

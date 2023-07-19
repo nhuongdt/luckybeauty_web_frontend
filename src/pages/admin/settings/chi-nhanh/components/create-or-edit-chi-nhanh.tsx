@@ -1,6 +1,5 @@
 import {
     Button,
-    ButtonGroup,
     Dialog,
     DialogActions,
     DialogContent,
@@ -55,7 +54,12 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                             onSave();
                         }}>
                         {({ handleChange, values, errors }) => (
-                            <Form>
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">

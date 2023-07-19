@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Tab, Typography, Button, Grid, IconButton, Tabs } from '@mui/material';
+import { Box, Tab, Typography, Button, IconButton, Tabs } from '@mui/material';
 
 import { ReactComponent as ExportIcon } from '../../../images/download.svg';
 import { ReactComponent as PrintIcon } from '../../../images/printer.svg';

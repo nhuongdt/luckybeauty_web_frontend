@@ -1,18 +1,11 @@
 import React from 'react';
 import OverViewNew from './components/OverView/overViewNew';
-import addIcon from '../../images/add.svg';
-import dotsIcon from '../../images/Color.svg';
 import './dashboardNew.css';
 import AppoimentsNew from './components/Appointment/AppointmentsNew';
 import LineChartNew from './components/Charts/LineChartNew';
 import ColumnChartNew from './components/Charts/ColumnChartNew';
 import HotServicesNew from './components/Statistical/HotServicesNew';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import SearchIcon from '../../images/search-normal.svg';
-import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
-import { Typography, TextField, IconButton } from '@mui/material';
 
 const Dashboard: React.FC = () => {
     const [month, setMonth] = React.useState('Tháng này');

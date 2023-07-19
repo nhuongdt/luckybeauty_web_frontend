@@ -8,7 +8,6 @@ import {
     SelectChangeEvent,
     MenuItem,
     ButtonGroup,
-    Switch,
     TextField,
     InputAdornment,
     Autocomplete

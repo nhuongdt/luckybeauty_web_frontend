@@ -15,8 +15,6 @@ import tenantService from '../../../services/tenant/tenantService';
 
 import '../../../custom.css';
 import AddIcon from '../../../images/add.svg';
-import DownloadIcon from '../../../images/download.svg';
-import UploadIcon from '../../../images/upload.svg';
 import CreateOrEditTenant from './components/create-or-edit-tenant';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import CreateTenantInput from '../../../services/tenant/dto/createTenantInput';
