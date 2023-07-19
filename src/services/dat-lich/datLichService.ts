@@ -2,6 +2,7 @@ import http from '../httpService';
 import { BookingDto } from './dto/BookingDto';
 import { BookingGetAllItemDto } from './dto/BookingGetAllItemDto';
 import { CreateBookingDto } from './dto/CreateBookingDto';
+import qs from 'qs';
 import {
     BookingRequestDto,
     PagedBookingResultRequestDto
@@ -17,9 +18,14 @@ class BookingServices {
         const result = await http.post('api/services/app/Booking/CreateBooking', input);
         return result.data.success;
     }
-    public async GetList_Booking_byCustomer(input: BookingRequestDto) {
+    public async GetKhachHang_Booking(input: BookingRequestDto) {
+        const param = qs.stringify(input);
+        const xx = await http.get(`api/services/app/Booking/GetKhachHang_Booking?${param}`);
+        return xx.data.result;
+    }
+    public async UpdateTrangThaiBooking(idBooking: string, trangthai = 1) {
         const xx = await http.get(
-            `api/services/app/Booking/GetList_Booking_byCustomer?input=${input}`
+            `api/services/app/Booking/UpdateTrangThaiBooking?idBooking=${idBooking}&trangThai=${trangthai}`
         );
         return xx.data.result;
     }
