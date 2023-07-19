@@ -4,6 +4,8 @@ import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Guid } from 'guid-typescript';
 import '../style.css';
+import { ReactComponent as Layout2Icon } from '../../../images/layout2.svg';
+import { ReactComponent as Layout1Icon } from '../../../images/layout1.svg';
 
 import CheckInNew from '../../check_in/CheckInNew';
 import PageBanHang from './PageBanHangNew';
@@ -79,14 +81,14 @@ export default function MainPageBanHang() {
 
     // Xử lý thay đổi giao diện của tab thanh toán
     const [layout, setLayout] = useState(false);
-    const handleLayoutToggle = () => {
-        setLayout(!layout);
-        if (layout == true) {
-            Cookies.set('changed', 'true', { expires: 7 });
-        } else {
-            Cookies.set('changed', 'false');
-        }
-        console.log(Cookies.get('changed'));
+    const handleLayoutTrue = () => {
+        setLayout(true);
+
+        Cookies.set('changed', 'true', { expires: 7 });
+    };
+    const handleLayoutFalse = () => {
+        setLayout(false);
+        Cookies.set('changed', 'false');
     };
     useEffect(() => {
         if (Cookies.get('changed') === 'true') {
@@ -104,7 +106,10 @@ export default function MainPageBanHang() {
     const handleHtmlValue = (value: any) => {
         setHtmlValue(value);
     };
-
+    const [getStateChild, setGetStateChild] = useState(false);
+    const handleCallBack = (data: boolean) => {
+        setGetStateChild(data);
+    };
     return (
         <>
             <DataCustomerContext.Provider
@@ -116,7 +121,7 @@ export default function MainPageBanHang() {
                     rowSpacing={2}
                     bgcolor="#f8f8f8"
                     pr={activeTab === 1 ? '16px' : '0'}>
-                    {!PaymentChild ? (
+                    {!getStateChild ? (
                         <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                             <Box display="flex" gap="12px">
                                 <ButtonGroup
@@ -172,22 +177,51 @@ export default function MainPageBanHang() {
                                     </Button>
                                 </ButtonGroup>
                                 {activeTab === 2 && (
-                                    <Button
-                                        variant="outlined"
+                                    <ButtonGroup
                                         sx={{
-                                            minWidth: 'unset',
-                                            padding: '0',
-                                            width: '40px',
-                                            height: '40px',
-                                            bgcolor: '#fff',
-                                            '& svg': {
-                                                color: '#999699'
+                                            '& button': {
+                                                borderColor: '#C2C9D6!important'
                                             }
-                                        }}
-                                        onClick={handleLayoutToggle}
-                                        className="btn-outline-hover">
-                                        <MoreHorizIcon />
-                                    </Button>
+                                        }}>
+                                        <Button
+                                            variant="outlined"
+                                            sx={{
+                                                minWidth: 'unset',
+                                                padding: '0',
+                                                borderRight: '0!important',
+                                                width: '40px',
+                                                height: '40px',
+                                                bgcolor: layout ? '#fff' : '#c2c9d61a',
+                                                '& svg': {
+                                                    filter: layout
+                                                        ? 'brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(1139%) hue-rotate(182deg) brightness(96%) contrast(87%)'
+                                                        : 'brightness(0) saturate(100%) invert(77%) sepia(2%) saturate(1404%) hue-rotate(181deg) brightness(104%) contrast(93%)'
+                                                }
+                                            }}
+                                            onClick={handleLayoutTrue}
+                                            className="btn-outline-hover">
+                                            <Layout2Icon />
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            sx={{
+                                                minWidth: 'unset',
+                                                padding: '0',
+                                                borderLeft: '0!important',
+                                                width: '40px',
+                                                height: '40px',
+                                                bgcolor: !layout ? '#fff' : '#c2c9d61a',
+                                                '& svg': {
+                                                    filter: !layout
+                                                        ? 'brightness(0) saturate(100%) invert(36%) sepia(11%) saturate(1139%) hue-rotate(182deg) brightness(96%) contrast(87%)'
+                                                        : 'brightness(0) saturate(100%) invert(77%) sepia(2%) saturate(1404%) hue-rotate(181deg) brightness(104%) contrast(93%)'
+                                                }
+                                            }}
+                                            onClick={handleLayoutFalse}
+                                            className="btn-outline-hover">
+                                            <Layout1Icon />
+                                        </Button>
+                                    </ButtonGroup>
                                 )}
                             </Box>
                             {activeTab === 2 ? htmlValue : undefined}
@@ -200,6 +234,7 @@ export default function MainPageBanHang() {
                             customerChosed={cusChosing}
                             CoditionLayout={layout}
                             onPaymentChild={handleShow}
+                            sendDataToParent={handleCallBack}
                         />
                     )}
                 </Grid>

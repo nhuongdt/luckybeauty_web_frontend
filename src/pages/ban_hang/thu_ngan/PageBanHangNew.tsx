@@ -23,9 +23,9 @@ import { Close, Add } from '@mui/icons-material';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import { useReactToPrint } from 'react-to-print';
-
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { MauInHoaDon } from '../../../components/Print/MauInHoaDon';
-
+import DetailHoaDon from './DetailHoaDon';
 import ProductService from '../../../services/product/ProductService';
 import GroupProductService from '../../../services/product/GroupProductService';
 
@@ -70,7 +70,7 @@ import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import khachHangStore from '../../../stores/khachHangStore';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
-const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) => {
+const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
     const [txtSearch, setTxtSearch] = useState('');
@@ -856,7 +856,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
             };
         }
     }, [CoditionLayout]);
-
+    const [showDetail, setShowDetail] = useState(false);
+    const handleShowDetail = () => {
+        setShowDetail(!showDetail);
+        sendDataToParent(!showDetail);
+    };
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
@@ -892,7 +896,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                 spacing={3}
                 marginTop={showPayment ? '0' : '21px'}
                 paddingLeft="16px"
-                paddingBottom="24px"
                 ml="0"
                 sx={{
                     height: '100%',
@@ -900,14 +903,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                         paddingTop: '0!important'
                     }
                 }}>
-                {!showPayment ? (
+                {!showDetail ? (
                     <Grid
                         item
                         container
-                        md={8}
+                        md={7}
                         spacing={3}
                         height="fit-content"
                         marginTop={CoditionLayout ? '-83px' : '-24px'}
+                        paddingBottom="0"
                         bgcolor="#F8F8F8">
                         <Grid
                             item
@@ -1299,24 +1303,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                         </Grid>
                     </Grid>
                 ) : (
-                    <Grid item md={8} className="normal">
-                        <Payments
+                    <Grid item md={7} className="normal">
+                        {/* <Payments
                             tongPhaiTra={hoadon?.tongThanhToan}
                             handleClickPrev={onPrevPayment}
                             passToParent={assignThongTinThanhToan}
-                        />
+                        /> */}
+                        <DetailHoaDon toggleDetail={handleShowDetail} />
                     </Grid>
                 )}
-                <Grid item md={4} sx={{ paddingRight: '0' }}>
+                <Grid item md={5} sx={{ paddingRight: '0' }}>
                     <Box
                         sx={{
-                            mt: showPayment ? '0' : '-80px',
+                            mt: showDetail ? '-21px' : '-76px',
                             backgroundColor: '#fff',
                             borderRadius: '8px',
                             overflow: 'hidden',
                             height: '100vh',
                             padding: '16px',
-                            marginRight: CoditionLayout ? '24px' : '0px',
+                            marginRight: CoditionLayout ? '16px' : '0px',
                             paddingBottom: '32px',
                             display: 'flex',
                             flexDirection: 'column',
@@ -1665,22 +1670,38 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild }: any) =>
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Button
-                                    variant="contained"
-                                    fullWidth
+                                <Box
                                     sx={{
-                                        fontSize: '16px',
-                                        fontWeight: '700',
-                                        color: '#fff',
-                                        textTransform: 'unset!important',
-                                        backgroundColor: 'var(--color-main)!important',
-                                        paddingY: '12px',
-                                        mt: '24px'
-                                    }}
-                                    className="btn-container-hover"
-                                    onClick={saveHoaDon}>
-                                    Thanh Toán
-                                </Button>
+                                        display: 'flex',
+                                        alignItems: 'stretch',
+                                        mt: '24px',
+                                        gap: '8px'
+                                    }}>
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ minWidth: 'unset' }}
+                                        onClick={handleShowDetail}>
+                                        <MoreHorizIcon sx={{ color: '#525F7A' }} />
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        sx={{
+                                            fontSize: '16px',
+                                            fontWeight: '700',
+                                            color: '#fff',
+                                            textTransform: 'unset!important',
+                                            backgroundColor: 'var(--color-main)!important',
+                                            paddingY: '12px',
+                                            transition: '.3s',
+                                            opacity: showDetail ? '0.2' : '1',
+                                            pointerEvents: showDetail ? 'none' : 'all'
+                                        }}
+                                        className="btn-container-hover"
+                                        onClick={saveHoaDon}>
+                                        Thanh Toán
+                                    </Button>
+                                </Box>
                             </Box>
                         </Box>
                     </Box>
