@@ -77,7 +77,12 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                 <DialogContent sx={{ paddingBottom: '0' }}>
                     <Formik initialValues={initValues} onSubmit={handleSubmit}>
                         {({ values, handleChange }) => (
-                            <Form>
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Field as={TextField} type="text" name="id" hidden />
                                 <TextField
                                     className="mt-2"

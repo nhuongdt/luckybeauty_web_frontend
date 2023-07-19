@@ -14,7 +14,6 @@ import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDon
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import NhanVienDichVuTab from './nhanVien_DichVu_Modal';
 import DichVuNhanVienTab from './dichVu_NhanVien_Modal';
-import SuggestService from '../../../services/suggests/SuggestService';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
 interface ModalProps {
@@ -45,7 +44,7 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
         });
     };
     render(): React.ReactNode {
-        const { visiable, handleClose, handleOk } = this.props;
+        const { visiable, handleClose } = this.props;
         return (
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={handleClose}>
                 <DialogTitle></DialogTitle>

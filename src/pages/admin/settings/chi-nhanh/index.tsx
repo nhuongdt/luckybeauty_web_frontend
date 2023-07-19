@@ -24,7 +24,7 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../../lib/appconst';
-import { DataGrid, GridColumnVisibilityModel, GridColDef, GridApi } from '@mui/x-data-grid';
+import { DataGrid, GridApi } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';

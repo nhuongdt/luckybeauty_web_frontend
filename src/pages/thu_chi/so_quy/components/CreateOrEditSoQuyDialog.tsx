@@ -358,7 +358,12 @@ const CreateOrEditSoQuyDialog = ({
                         enableReinitialize>
                         {(formik) => (
                             <>
-                                <Form>
+                                <Form
+                                    onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                        if (event.key === 'Enter') {
+                                            event.preventDefault(); // Prevent form submission
+                                        }
+                                    }}>
                                     <Grid container rowGap={1} columnSpacing={2}>
                                         <Grid item xs={12} sm={12} lg={12}>
                                             <FormControlLabel
@@ -600,18 +605,7 @@ const CreateOrEditSoQuyDialog = ({
                                                         Tài khoản {sLoai}{' '}
                                                     </span>
                                                 </Grid>
-                                                <Grid
-                                                    item
-                                                    xs={12}
-                                                    sm={12}
-                                                    sx={{
-                                                        '& legend': {
-                                                            display: 'none'
-                                                        },
-                                                        '& label': {
-                                                            display: 'none'
-                                                        }
-                                                    }}>
+                                                <Grid item xs={12} sm={12}>
                                                     <AutocompleteAccountBank
                                                         listOption={bankAccount}
                                                         idChosed={quyHoaDon.idTaiKhoanNganHang}

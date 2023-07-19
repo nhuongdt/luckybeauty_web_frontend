@@ -114,7 +114,12 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                             onSubmit={this.handleSubmit}
                             validationSchema={rules}>
                             {({ errors, touched, values, handleChange, setFieldValue }) => (
-                                <Form>
+                                <Form
+                                    onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                        if (event.key === 'Enter') {
+                                            event.preventDefault(); // Prevent form submission
+                                        }
+                                    }}>
                                     <Grid container spacing={[8, 3]}>
                                         <Grid item xs={12} sm={5} sx={{ pr: '20px' }}>
                                             {/* <FormGroup> */}

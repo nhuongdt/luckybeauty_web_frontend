@@ -3,7 +3,6 @@ import {
     Box,
     Typography,
     RadioGroup,
-    FormControl,
     FormControlLabel,
     Radio,
     FormGroup,

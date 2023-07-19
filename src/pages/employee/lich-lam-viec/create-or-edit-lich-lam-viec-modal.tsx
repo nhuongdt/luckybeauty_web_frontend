@@ -25,7 +25,6 @@ import { SuggestCaLamViecDto } from '../../../services/suggests/dto/SuggestCaLam
 import SuggestService from '../../../services/suggests/SuggestService';
 import { Form, Formik } from 'formik';
 import Cookies from 'js-cookie';
-import lichLamViecStore from '../../../stores/lichLamViecStore';
 import lichLamViecService from '../../../services/nhan-vien/lich_lam_viec/lichLamViecService';
 import { enqueueSnackbar } from 'notistack';
 
@@ -119,7 +118,12 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                               });
                     }}>
                     {({ values, handleChange }) => (
-                        <Form>
+                        <Form
+                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault(); // Prevent form submission
+                                }
+                            }}>
                             <Grid container spacing={3}>
                                 <Grid item xs={5}>
                                     <Box

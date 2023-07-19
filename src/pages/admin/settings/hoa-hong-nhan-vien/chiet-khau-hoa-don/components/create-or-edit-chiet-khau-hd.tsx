@@ -1,5 +1,4 @@
 import {
-    ButtonGroup,
     Button,
     Dialog,
     DialogActions,
@@ -17,14 +16,13 @@ import {
     MenuItem,
     ListItemText
 } from '@mui/material';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 import { ReactComponent as CloseIcon } from '../../../../../../images/close-square.svg';
 import { Component, ReactNode } from 'react';
 import { CreateOrEditChietKhauHoaDonDto } from '../../../../../../services/hoa_hong/chiet_khau_hoa_don/Dto/CreateOrEditChietKhauHoaDonDto';
 import { Form, Formik } from 'formik';
 import chietKhauHoaDonStore from '../../../../../../stores/chietKhauHoaDonStore';
 import { enqueueSnackbar } from 'notistack';
-import AppConsts from '../../../../../../lib/appconst';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;
@@ -93,7 +91,12 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                             await onSave();
                         }}>
                         {({ handleChange, errors, values }) => (
-                            <Form>
+                            <Form
+                                onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                    if (event.key === 'Enter') {
+                                        event.preventDefault(); // Prevent form submission
+                                    }
+                                }}>
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <Grid item xs={12} sm={6}>
                                         <Typography color="#4C4B4C" variant="subtitle2">

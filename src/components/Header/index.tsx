@@ -15,7 +15,6 @@ import {
     Badge,
     Avatar,
     IconButton,
-    SelectChangeEvent,
     Checkbox,
     FormGroup,
     FormControlLabel
@@ -26,15 +25,12 @@ import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
 import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import MessageIcon from '../../images/message-question.svg';
 import NotificationIcon from '../../images/notification.svg';
-import http from '../../services/httpService';
 import Cookies from 'js-cookie';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import chiNhanhService from '../../services/chi_nhanh/chiNhanhService';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { ReactComponent as LocationIcon } from '../../images/location.svg';
-import PortraitOutlinedIcon from '@mui/icons-material/PortraitOutlined';
 import { ReactComponent as ProfileIcon } from '../../images/profile-circle.svg';
 import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
 import { ReactComponent as LogoutIcon } from '../../images/logoutInner.svg';
@@ -53,10 +49,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = (
-    { collapsed, toggle, isChildHovered, CookieSidebar, handleChangeChiNhanh },
+    { collapsed, toggle, isChildHovered, handleChangeChiNhanh },
     props: HeaderProps
 ) => {
-    const { onClick } = props;
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [ThongBaoAnchorEl, setThongBaoAnchorEl] = React.useState<null | HTMLElement>(null);
     const [settingThongBao, setSettingThongBao] = React.useState<null | HTMLElement>(null);

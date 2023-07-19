@@ -28,7 +28,6 @@ import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
-import AppConsts from '../../lib/appconst';
 import { observer } from 'mobx-react';
 import khachHangStore from '../../stores/khachHangStore';
 import { enqueueSnackbar } from 'notistack';

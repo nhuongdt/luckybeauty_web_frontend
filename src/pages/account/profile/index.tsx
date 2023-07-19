@@ -12,7 +12,7 @@ import {
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { observer } from 'mobx-react';
-import { Component, ReactNode, useRef } from 'react';
+import { Component, ReactNode } from 'react';
 import UserStore from '../../../stores/userStore';
 import AppConsts from '../../../lib/appconst';
 import userService from '../../../services/user/userService';
@@ -136,7 +136,14 @@ class ProfileScreen extends Component {
                                                   );
                                         }}>
                                         {({ handleChange, errors, values }) => (
-                                            <Form>
+                                            <Form
+                                                onKeyPress={(
+                                                    event: React.KeyboardEvent<HTMLFormElement>
+                                                ) => {
+                                                    if (event.key === 'Enter') {
+                                                        event.preventDefault(); // Prevent form submission
+                                                    }
+                                                }}>
                                                 <Grid container alignItems={'center'} spacing={2}>
                                                     <Grid item container xs={5}>
                                                         <FormGroup>
@@ -276,7 +283,14 @@ class ProfileScreen extends Component {
                                               );
                                     }}>
                                     {({ handleChange, values, errors }) => (
-                                        <Form>
+                                        <Form
+                                            onKeyPress={(
+                                                event: React.KeyboardEvent<HTMLFormElement>
+                                            ) => {
+                                                if (event.key === 'Enter') {
+                                                    event.preventDefault(); // Prevent form submission
+                                                }
+                                            }}>
                                             <FormGroup>
                                                 {LableForm('Mật khẩu hiện tại')}
                                                 <TextField
