@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Box,
     TextField,
@@ -7,7 +7,8 @@ import {
     Grid,
     InputAdornment,
     Avatar,
-    IconButton
+    IconButton,
+    debounce
 } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
@@ -23,15 +24,9 @@ import datLichService from '../../services/dat-lich/datLichService';
 import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
 import { format } from 'date-fns';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
-    const [tabFilter, setTabFilter] = React.useState(0);
-    const handleChangeFilter = (value: number) => {
-        setTabFilter(value);
-    };
-    const titleTab = ['Tất cả', 'Chưa xác nhận', 'Đã xác nhận'];
-
     const arrTrangThaiBook = [
         {
-            id: 0,
+            id: 3,
             text: 'Tất cả'
         },
         {
@@ -44,27 +39,42 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         }
     ];
 
-    const [paramSearch, setParamSearch] = useState<BookingRequestDto>({
-        currentPage: 0
-    } as BookingRequestDto);
+    const [paramSearch, setParamSearch] = useState<BookingRequestDto>(
+        new BookingRequestDto(
+            { currentPage: 0, trangThaiBook: 3 } // 0.xoa 1.chua xacnhan, 2.da xacnhan, 3.all
+        )
+    );
 
     const [listCusBooking, setListCusBooking] = useState<BookingDetail_ofCustomerDto[]>([]);
 
-    const GetListCustomer_wasBooking = async () => {
-        const data = await datLichService.GetList_Booking_byCustomer(paramSearch);
-        console.log(data);
+    const GetListCustomer_wasBooking = async (paramSearch: BookingRequestDto) => {
+        const data = await datLichService.GetKhachHang_Booking(paramSearch);
         setListCusBooking(data);
     };
 
     useEffect(() => {
-        GetListCustomer_wasBooking();
+        GetListCustomer_wasBooking(paramSearch);
     }, []);
 
-    const choseBooking = (itemBook: any) => {
+    const choseBooking = async (itemBook: any) => {
         const dataCus = { ...itemBook };
         dataCus.id = itemBook.idKhachHang;
         handleChoseCusBooking(dataCus);
     };
+
+    const debounceCustomer = useRef(
+        debounce(async (paramSearch) => {
+            await GetListCustomer_wasBooking(paramSearch);
+        }, 500)
+    ).current;
+
+    useEffect(() => {
+        debounceCustomer(paramSearch);
+    }, [paramSearch.textSearch]);
+
+    useEffect(() => {
+        GetListCustomer_wasBooking(paramSearch);
+    }, [paramSearch.trangThaiBook]);
 
     const windowWidth = useWindowWidth();
     return (
@@ -106,9 +116,9 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                 </Grid>
             </Grid>
             <Box sx={{ display: 'flex', gap: '24px', marginY: '16px' }}>
-                {titleTab.map((item, index) => (
+                {arrTrangThaiBook.map((item, index) => (
                     <Button
-                        onClick={() => handleChangeFilter(index)}
+                        onClick={() => setParamSearch({ ...paramSearch, trangThaiBook: item.id })}
                         key={index}
                         variant="outlined"
                         sx={{
@@ -119,18 +129,20 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                             color: '#666466',
                             fontSize: '12px',
                             border: `1px solid ${
-                                tabFilter === index ? 'transparent' : '#E6E1E6'
+                                paramSearch.trangThaiBook === item.id ? 'transparent' : '#E6E1E6'
                             }!important`,
                             bgcolor:
-                                tabFilter === index ? 'var(--color-bg)!important' : '#fff!important'
+                                paramSearch.trangThaiBook === item.id
+                                    ? 'var(--color-bg)!important'
+                                    : '#fff!important'
                         }}>
-                        {item}
+                        {item.text}
                     </Button>
                 ))}
             </Box>
             <Grid container spacing={2}>
                 {listCusBooking.map((item, index) => (
-                    <Grid item key={index} sm={6} md={4} xs={12}>
+                    <Grid item key={item.idBooking} sm={6} md={4} xs={12}>
                         <Box
                             sx={{
                                 padding: '18px',
@@ -180,9 +192,10 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                     </IconButton>
                                 </Box> */}
                             </Box>
-                            {item.details.map((ct: BookingDetailDto) => (
+                            {item.details.map((ct: BookingDetailDto, index2) => (
                                 <>
                                     <Box
+                                        key={index2}
                                         sx={{
                                             display: 'flex',
                                             height: '42px',
@@ -231,8 +244,9 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                         fontSize: '12px',
                                         padding: '4px 12px',
                                         borderRadius: '8px',
-                                        color: 'var(--color-main)',
-                                        bgcolor: 'var(--color-bg)'
+                                        color:
+                                            item.trangThai == 2 ? 'var(--color-main)' : '#75753a',
+                                        bgcolor: item.trangThai == 2 ? 'var(--color-bg)' : '#ededc8'
                                     }}>
                                     {item.txtTrangThaiBook}
                                 </Box>
