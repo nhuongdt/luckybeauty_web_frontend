@@ -62,6 +62,7 @@ import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg'
 import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';
 import { ReactComponent as UserIcon } from '../../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
@@ -1427,21 +1428,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 />
 
                                 <Box onClick={showModalCheckIn}>
-                                    <Typography variant="body2" fontSize="14px" color="#666466">
+                                    <Typography variant="body2" fontSize="14px" color="#3D475C">
                                         {hoadon?.tenKhachHang}
                                     </Typography>
-                                    <Typography variant="body2" fontSize="12px" color="#999699">
+                                    <Typography variant="body2" fontSize="12px" color="#525F7A">
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
-                                {/* <Button sx={{ marginLeft: 'auto' }}>
-                                    <img
-                                        src={dotIcon}
-                                        style={{
-                                            filter: 'brightness(0) saturate(100%) invert(11%) sepia(2%) saturate(2336%) hue-rotate(295deg) brightness(93%) contrast(94%)'
-                                        }}
-                                    />
-                                </Button> */}
+
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     {utils.checkNull(hoadon?.idKhachHang) ||
                                     hoadon?.idKhachHang === Guid.EMPTY ? (
@@ -1449,12 +1443,27 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             <Add onClick={showModalAddCustomer} />
                                         </IconButton>
                                     ) : (
-                                        <IconButton>
-                                            <Close
-                                                sx={{ color: 'red' }}
-                                                onClick={() => changeCustomer(null)}
-                                            />
-                                        </IconButton>
+                                        <>
+                                            <IconButton>
+                                                <VisibilityIcon
+                                                    sx={{
+                                                        color: '#8492AE',
+                                                        width: '16px',
+                                                        height: '16px'
+                                                    }}
+                                                />
+                                            </IconButton>
+                                            <IconButton>
+                                                <Close
+                                                    sx={{
+                                                        color: '#8492AE',
+                                                        width: '16px',
+                                                        height: '16px'
+                                                    }}
+                                                    onClick={() => changeCustomer(null)}
+                                                />
+                                            </IconButton>
+                                        </>
                                     )}
                                 </Box>
                             </Box>
@@ -1476,7 +1485,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             }}>
                             {hoaDonChiTiet?.map((ct: any, index) => (
                                 <Box
-                                    padding="12px"
+                                    padding="8px 12px"
                                     borderRadius="8px"
                                     border="1px solid #F2F2F2"
                                     marginTop="16px"
@@ -1485,65 +1494,167 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         display="flex"
                                         justifyContent="space-between"
                                         alignItems="center">
-                                        <Box width="100%">
+                                        <Box width="50%">
                                             <Typography
                                                 variant="body1"
-                                                fontSize="16px"
+                                                fontSize="14px"
                                                 color="var(--color-main)"
                                                 fontWeight="400"
-                                                lineHeight="24px"
+                                                lineHeight="20px"
                                                 sx={{
                                                     display: '-webkit-box',
                                                     WebkitLineClamp: '1',
                                                     WebkitBoxOrient: 'vertical',
                                                     overflow: 'hidden',
-                                                    textOverflow: 'ellipsis'
+                                                    textOverflow: 'ellipsis',
+                                                    cursor: 'pointer'
                                                 }}
                                                 title={ct.tenHangHoa}
-                                                onClick={() => showPopChiTietGioHang(ct)}>
+                                                onClick={() => showPopNhanVienThucHien(ct)}>
                                                 {ct.tenHangHoa}
                                             </Typography>
+                                            {/* nhan vien thuc hien */}
+
+                                            {ct.nhanVienThucHien.length > 0 && (
+                                                <Box
+                                                    display="flex"
+                                                    alignItems="center"
+                                                    flexWrap="wrap"
+                                                    gap="8px">
+                                                    {ct.nhanVienThucHien.map(
+                                                        (nv: any, index3: number) => (
+                                                            <Typography
+                                                                variant="body1"
+                                                                fontSize="12px"
+                                                                lineHeight="16px"
+                                                                color="#4C4B4C"
+                                                                alignItems="center"
+                                                                sx={{
+                                                                    maxWidth:
+                                                                        ct.nhanVienThucHien
+                                                                            .length === 1
+                                                                            ? '100%'
+                                                                            : ct.nhanVienThucHien
+                                                                                  .length > 2
+                                                                            ? 'calc(50% - 23px)'
+                                                                            : 'calc(50% - 4px)',
+                                                                    backgroundColor: '#E0E4EB',
+                                                                    padding: '4px 8px',
+                                                                    gap: '10px',
+                                                                    borderRadius: '100px',
+                                                                    '& .remove-NV:hover img': {
+                                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                                    },
+                                                                    display:
+                                                                        index3 > 1
+                                                                            ? 'none'
+                                                                            : 'flex',
+                                                                    width: 'auto'
+                                                                }}
+                                                                key={index3}>
+                                                                <Box
+                                                                    sx={{
+                                                                        width: '100%',
+                                                                        whiteSpace: 'nowrap',
+                                                                        textOverflow: 'ellipsis',
+                                                                        overflow: 'hidden'
+                                                                    }}
+                                                                    title={nv.tenNhanVien}>
+                                                                    {nv.tenNhanVien}
+                                                                </Box>
+                                                                <span
+                                                                    className="remove-NV"
+                                                                    style={{ cursor: 'pointer' }}
+                                                                    onClick={() =>
+                                                                        RemoveNVThucHien(ct, nv)
+                                                                    }>
+                                                                    <img
+                                                                        src={closeIcon}
+                                                                        alt="close"
+                                                                    />
+                                                                </span>
+                                                            </Typography>
+                                                        )
+                                                    )}
+                                                    {ct.nhanVienThucHien.length > 2 ? (
+                                                        <Box
+                                                            sx={{
+                                                                fontSize: '12px',
+                                                                color: '#525F7A',
+                                                                padding: '4px 8px',
+                                                                borderRadius: '100px',
+                                                                bgcolor: '#E0E4EB',
+                                                                cursor: 'pointer'
+                                                            }}>
+                                                            {ct.nhanVienThucHien.length - 2}+
+                                                        </Box>
+                                                    ) : undefined}
+                                                </Box>
+                                            )}
                                         </Box>
-                                        <Box display="flex" alignItems="center">
+                                        <Box>
                                             <Typography
                                                 color="#000"
                                                 variant="body1"
-                                                fontSize="16px"
+                                                fontSize="14px"
                                                 fontWeight="400"
                                                 sx={{
                                                     display: 'flex',
                                                     gap: '8px',
-                                                    cursor: 'pointer',
+
                                                     transition: '.4s',
-                                                    '&:hover': {
+                                                    '& .price': {
+                                                        fontSize: '14px',
                                                         color: 'var(--color-main)'
+                                                    },
+                                                    '& .price:hover': {
+                                                        cursor: 'pointer'
+                                                    },
+                                                    '& .quantity': {
+                                                        color: '#667799'
                                                     }
-                                                }}
-                                                onClick={() => showPopChiTietGioHang(ct)}>
-                                                <span> {ct.soLuong + 'x'} </span>
-                                                <span>
-                                                    {Intl.NumberFormat('vi-VN').format(
-                                                        ct.donGiaTruocCK
-                                                    )}
-                                                </span>
+                                                }}>
+                                                <Box component="span" className="quantity">
+                                                    {' '}
+                                                    {ct.soLuong + 'x'}{' '}
+                                                </Box>
+                                                <Box>
+                                                    <Box
+                                                        component="span"
+                                                        onClick={() => showPopChiTietGioHang(ct)}
+                                                        className="price">
+                                                        {Intl.NumberFormat('vi-VN').format(
+                                                            ct.donGiaTruocCK
+                                                        )}
+                                                    </Box>
+                                                    <Typography
+                                                        textAlign="center"
+                                                        variant="body1"
+                                                        color="#8492AE"
+                                                        fontSize="10px"
+                                                        fontStyle="italic">
+                                                        Giam 69.000đ
+                                                    </Typography>
+                                                </Box>
                                             </Typography>
+                                        </Box>
+                                        <Box display="flex" alignItems="center">
                                             <Box
                                                 sx={{
                                                     marginLeft: '8px',
                                                     display: 'flex',
                                                     gap: '10px'
                                                 }}>
-                                                <Button
-                                                    sx={{
-                                                        minWidth: '0',
-                                                        padding: '0',
-                                                        '&:hover': {
-                                                            filter: 'var(--color-hoverIcon)'
-                                                        }
-                                                    }}
-                                                    onClick={() => showPopNhanVienThucHien(ct)}>
-                                                    <UserIcon style={{ cursor: 'pointer' }} />
-                                                </Button>
+                                                <Typography
+                                                    variant="body1"
+                                                    color="#3D475C"
+                                                    fontWeight="500"
+                                                    fontSize="14px">
+                                                    {' '}
+                                                    {Intl.NumberFormat('vi-VN').format(
+                                                        ct.soLuong * ct.donGiaTruocCK
+                                                    )}
+                                                </Typography>
                                                 <Button
                                                     sx={{
                                                         minWidth: '0',
@@ -1565,69 +1676,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             </Box>
                                         </Box>
                                     </Box>
-                                    {/* nhan vien thuc hien */}
-
-                                    {ct.nhanVienThucHien.length > 0 && (
-                                        <Box
-                                            display="flex"
-                                            alignItems="center"
-                                            flexWrap="wrap"
-                                            gap="8px"
-                                            mt="8px">
-                                            <Typography
-                                                variant="body2"
-                                                fontSize="12px"
-                                                color="#666466"
-                                                lineHeight="16px">
-                                                Nhân viên :
-                                            </Typography>
-                                            {ct.nhanVienThucHien.map((nv: any, index3: any) => (
-                                                <Typography
-                                                    variant="body1"
-                                                    fontSize="12px"
-                                                    lineHeight="16px"
-                                                    color="#4C4B4C"
-                                                    display="flex"
-                                                    alignItems="center"
-                                                    sx={{
-                                                        backgroundColor: 'var(--color-bg)',
-                                                        padding: '4px 8px',
-                                                        gap: '10px',
-                                                        borderRadius: '100px',
-                                                        '& .remove-NV:hover img': {
-                                                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                                                        },
-                                                        flexGrow:
-                                                            ct.nhanVienThucHien.length % 2 === 0
-                                                                ? '1'
-                                                                : 'unset',
-
-                                                        width:
-                                                            ct.nhanVienThucHien.length % 2 === 0
-                                                                ? 'calc(50% - 69px)'
-                                                                : 'auto'
-                                                    }}
-                                                    key={index3}>
-                                                    <Box
-                                                        sx={{
-                                                            width: '100%',
-                                                            whiteSpace: 'nowrap',
-                                                            textOverflow: 'ellipsis',
-                                                            overflow: 'hidden'
-                                                        }}
-                                                        title={nv.tenNhanVien}>
-                                                        {nv.tenNhanVien}
-                                                    </Box>
-                                                    <span
-                                                        className="remove-NV"
-                                                        style={{ cursor: 'pointer' }}
-                                                        onClick={() => RemoveNVThucHien(ct, nv)}>
-                                                        <img src={closeIcon} alt="close" />
-                                                    </span>
-                                                </Typography>
-                                            ))}
-                                        </Box>
-                                    )}
                                 </Box>
                             ))}
                         </Box>
@@ -1769,6 +1817,32 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     />
                                                 ))}
                                             </RadioGroup>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    gap: '16px',
+                                                    '& .item': {
+                                                        fontSize: '14px',
+                                                        color: '#525F7A'
+                                                    },
+                                                    '& > div': {
+                                                        display: 'flex',
+                                                        gap: '5px'
+                                                    }
+                                                }}>
+                                                <Box>
+                                                    <Box className="label item">Tiền mặt:</Box>
+                                                    <Box className="value item">999.999</Box>
+                                                </Box>
+                                                <Box>
+                                                    <Box className="label item">Chuyển khoản:</Box>
+                                                    <Box className="value item">999.999</Box>
+                                                </Box>
+                                                <Box>
+                                                    <Box className="label item">Quẹt thẻ:</Box>
+                                                    <Box className="value item">999.999</Box>
+                                                </Box>
+                                            </Box>
                                         </Grid>
                                         <Grid xs={12} item>
                                             <NumericFormat
