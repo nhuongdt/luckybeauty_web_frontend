@@ -202,7 +202,7 @@ const DetailHoaDon = ({
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
         return tongThu;
     };
-
+    const chietKhau = ['5%', '10%', '15%', '20%', '25%', '30%', '35%', '40%', '45%', '50%'];
     return (
         <>
             <Box
