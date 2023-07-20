@@ -75,6 +75,9 @@ import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import khachHangStore from '../../../stores/khachHangStore';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
+import AppConsts from '../../../lib/appconst';
+import { lstat } from 'fs/promises';
+import { NumericFormat } from 'react-number-format';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -99,7 +102,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
-    const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([]);
+    const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
+        new QuyChiTietDto({ hinhThucThanhToan: 1 })
+    ]);
 
     // used to check update infor cthd
     const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
@@ -725,13 +730,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             });
             return false;
         }
-        const nextIsSave = handleCheckNext();
-        if (!nextIsSave) return;
+        // const nextIsSave = handleCheckNext();
+        // if (!nextIsSave) return;
 
-        const check = await checkSave();
-        if (!check) {
-            return;
-        }
+        // const check = await checkSave();
+        // if (!check) {
+        //     return;
+        // }
 
         // assign again STT of cthd before save
         const dataSave = { ...hoadon };
@@ -747,9 +752,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             hodaDonDB.id
         );
 
+        // again again if tra thua tien
+        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
+            lstQuyCT,
+            sumTienKhachTra,
+            hoadon?.tongThanhToan ?? 0
+        );
+
         // save soquy (Mat, POS, ChuyenKhoan)
-        const tongThu = lstQuyCT.reduce((currentValue: number, item: any) => {
-            return currentValue + item.tienThu;
+        const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
+            return currentValue + utils.formatNumberToFloat(item.tienThu);
         }, 0);
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
             idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id,
@@ -758,11 +770,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             tongTienThu: tongThu
         });
         // assign idHoadonLienQuan, idKhachHang for quyCT
-        lstQuyCT.map((x: QuyChiTietDto) => {
+        lstQCT_After.map((x: QuyChiTietDto) => {
             x.idHoaDonLienQuan = hodaDonDB.id;
             x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
+            x.tienThu = utils.formatNumberToFloat(x.tienThu);
         });
-        quyHD.quyHoaDon_ChiTiet = lstQuyCT;
+        quyHD.quyHoaDon_ChiTiet = lstQCT_After;
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
 
         setObjAlert({
@@ -861,12 +874,40 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             };
         }
     }, [CoditionLayout]);
+
+    // start: page thanhtoan new
     const [showDetail, setShowDetail] = useState(false);
     const handleShowDetail = () => {
         setShowDetail(!showDetail);
         sendDataToParent(!showDetail);
     };
-    const method = ['Tiền mặt', 'Chuyển khoản', 'Quẹt thẻ'];
+
+    const changeHinhThucThanhToan = (item: any) => {
+        setLstQuyCT(
+            lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                return { ...itemCT, hinhThucThanhToan: item.id, sHinhThucThanhToan: item.text };
+            })
+        );
+    };
+
+    useEffect(() => {
+        if (!afterRender.current) return;
+        setLstQuyCT(
+            lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                return { ...itemCT, tienThu: hoadon.tongThanhToan };
+            })
+        );
+    }, [hoadon.tongThanhToan]);
+
+    const sumTienKhachTra = utils.RoundDecimal(
+        lstQuyCT.reduce((currentValue: number, item: QuyChiTietDto) => {
+            return item.tienThu + utils.formatNumberToFloat(currentValue);
+        }, 0)
+    );
+
+    const tienThuaTraKhach = sumTienKhachTra - hoadon?.tongThanhToan ?? 0;
+
+    // end thanhtoan new
     return (
         <>
             <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
@@ -1315,7 +1356,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             handleClickPrev={onPrevPayment}
                             passToParent={assignThongTinThanhToan}
                         /> */}
-                        <DetailHoaDon toggleDetail={handleShowDetail} />
+                        <DetailHoaDon
+                            toggleDetail={handleShowDetail}
+                            tongTienHang={hoadon?.tongTienHang}
+                        />
                     </Grid>
                 )}
                 <Grid item md={5} sx={{ paddingRight: '0' }}>
@@ -1668,7 +1712,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         <Grid item xs="auto">
                                             <RadioGroup
                                                 sx={{ display: 'flex', flexDirection: 'row' }}>
-                                                {method.map((item, index) => (
+                                                {AppConsts.hinhThucThanhToan.map((item, index) => (
                                                     <FormControlLabel
                                                         sx={{
                                                             '& .MuiFormControlLabel-label': {
@@ -1676,18 +1720,29 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             }
                                                         }}
                                                         key={index}
-                                                        label={item}
+                                                        label={item.text}
+                                                        checked={
+                                                            lstQuyCT.length == 1 &&
+                                                            lstQuyCT[0].hinhThucThanhToan ===
+                                                                item.id
+                                                        }
+                                                        onChange={() =>
+                                                            changeHinhThucThanhToan(item)
+                                                        }
                                                         control={
-                                                            <Radio value={item} size="small" />
+                                                            <Radio value={item.id} size="small" />
                                                         }
                                                     />
                                                 ))}
                                             </RadioGroup>
                                         </Grid>
                                         <Grid xs={12} item>
-                                            <TextField
+                                            <NumericFormat
+                                                size="small"
                                                 fullWidth
-                                                defaultValue="777.777đ"
+                                                value={sumTienKhachTra}
+                                                decimalSeparator=","
+                                                thousandSeparator="."
                                                 sx={{
                                                     '& input': {
                                                         textAlign: 'right',
@@ -1696,11 +1751,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         fontSize: '16px'
                                                     }
                                                 }}
+                                                customInput={TextField}
+                                                onChange={(event: any) =>
+                                                    setLstQuyCT(
+                                                        lstQuyCT.map((itemQuy: QuyChiTietDto) => {
+                                                            return {
+                                                                ...itemQuy,
+                                                                tienThu: utils.formatNumberToFloat(
+                                                                    event.target.value
+                                                                )
+                                                            };
+                                                        })
+                                                    )
+                                                }
                                             />
                                         </Grid>
                                     </Grid>
+
                                     <Box
-                                        display="flex"
+                                        display={tienThuaTraKhach != 0 ? 'flex' : 'none'}
                                         justifyContent="space-between"
                                         alignItems="center"
                                         mt="8px">
@@ -1709,14 +1778,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             fontWeight="400"
                                             fontSize="14px"
                                             color="#3B4758">
-                                            Tiền thừa
+                                            {tienThuaTraKhach > 0
+                                                ? 'Tiền thừa'
+                                                : 'Tiên khách thiếu'}
                                         </Typography>
                                         <Typography
                                             variant="body1"
                                             fontWeight="700"
                                             fontSize="16px"
                                             color="#3B4758">
-                                            999.999đ
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                Math.abs(tienThuaTraKhach)
+                                            )}
                                         </Typography>
                                     </Box>
                                 </Box>

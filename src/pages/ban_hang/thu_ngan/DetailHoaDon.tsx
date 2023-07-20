@@ -11,16 +11,20 @@ import {
     FormControlLabel
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { util } from 'prettier';
+import utils from '../../../utils/utils';
+import { NumericFormat } from 'react-number-format';
+import AppConsts from '../../../lib/appconst';
 interface Detail {
     toggleDetail: () => void;
 }
-const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
+const DetailHoaDon = ({ toggleDetail, tongTienHang, hinhThucTT = 1 }: any) => {
     const [chietKhau, setChietKhau] = React.useState(0);
     const selectedChietKhau = (value: number) => {
         setChietKhau(value);
     };
-    const payments = ['Tiền mặt', 'Quẹt thẻ', 'Chuyển khoản', 'Kết hợp'];
+    const payments = [...AppConsts.hinhThucThanhToan, { id: 0, text: 'Kết hợp' }];
     const ketHop = [
         {
             name: 'Tiền mặt',
@@ -43,6 +47,42 @@ const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
 
     const [valuePrice, setValuePrice] = React.useState(0);
 
+    const [tongGiamGiaHD, setTongGiamGiaHD] = useState(0);
+    const [ptGiamGiaHD, setPTGiamGiaHD] = useState(0);
+    const [laPTGiamGia, setlaPTGiamGia] = useState(true);
+    // const [tongThanhToan, setTongThanhToan] = useState(0);
+
+    const tongThanhToan = tongTienHang - tongGiamGiaHD;
+
+    const onClickPTramVND = (newVal: boolean) => {
+        let gtriPT = 0;
+        if (!laPTGiamGia) {
+            if (newVal && tongTienHang > 0) {
+                gtriPT = (tongGiamGiaHD / tongTienHang) * 100;
+                setPTGiamGiaHD(gtriPT);
+            }
+        }
+        setlaPTGiamGia(newVal);
+    };
+
+    const onChangeGtriGiamGia = (gtri: string) => {
+        let gtriNew = utils.formatNumberToFloat(gtri);
+        if (gtriNew > tongTienHang) {
+            gtriNew = tongTienHang;
+        }
+        let gtriVND = 0;
+        if (tongTienHang > 0) {
+            if (laPTGiamGia) {
+                gtriVND = (gtriNew * tongTienHang) / 100;
+                setPTGiamGiaHD(gtriNew);
+            } else {
+                gtriVND = gtriNew;
+            }
+        }
+        setTongGiamGiaHD(gtriVND);
+    };
+
+    const gtriXX = laPTGiamGia ? ptGiamGiaHD : tongGiamGiaHD;
     return (
         <>
             <Box
@@ -76,7 +116,7 @@ const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
                         Tổng tiền hàng
                     </Typography>
                     <Typography variant="body1" color="#29303D" fontWeight="700" fontSize="14px">
-                        999.999
+                        {new Intl.NumberFormat('vi-VN').format(tongTienHang)}
                     </Typography>
                 </Box>
                 <Box
@@ -90,14 +130,25 @@ const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
                             alignItems: 'stretch',
                             gap: '16px'
                         }}>
-                        <TextField
-                            defaultValue="6%"
+                        <NumericFormat
                             size="medium"
+                            fullWidth
+                            value={gtriXX}
+                            decimalSeparator=","
+                            thousandSeparator="."
+                            isAllowed={(values) => {
+                                const floatValue = values.floatValue;
+                                if (laPTGiamGia) return (floatValue ?? 0) <= 100; // neu %: khong cho phep nhap qua 100%
+                                if (!laPTGiamGia) return (floatValue ?? 0) <= tongTienHang;
+                                return true;
+                            }}
                             sx={{
                                 '& input': {
                                     paddingY: '13.5px'
                                 }
                             }}
+                            customInput={TextField}
+                            onChange={(event: any) => onChangeGtriGiamGia(event.target.value)}
                         />
                         <ButtonGroup
                             sx={{
@@ -106,19 +157,19 @@ const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
                                 }
                             }}>
                             <Button
-                                onClick={() => selectedChietKhau(1)}
+                                onClick={() => onClickPTramVND(true)}
                                 sx={{
-                                    bgcolor: chietKhau === 1 ? '#fff' : 'rgba(61, 71, 92, 0.1)',
-                                    color: chietKhau === 1 ? '#3D475C' : 'rgba(194, 201, 214, 0.7)'
+                                    bgcolor: laPTGiamGia ? '#fff' : 'rgba(61, 71, 92, 0.1)',
+                                    color: laPTGiamGia ? '#3D475C' : 'rgba(194, 201, 214, 0.7)'
                                 }}>
                                 %
                             </Button>
                             <Button
-                                onClick={() => selectedChietKhau(2)}
+                                onClick={() => onClickPTramVND(false)}
                                 sx={{
-                                    color: chietKhau === 2 ? '#3D475C' : 'rgba(194, 201, 214, 0.7)',
+                                    color: !laPTGiamGia ? '#3D475C' : 'rgba(194, 201, 214, 0.7)',
                                     borderLeft: '0!important',
-                                    bgcolor: chietKhau === 2 ? '#fff' : 'rgba(61, 71, 92, 0.1)'
+                                    bgcolor: !laPTGiamGia ? '#fff' : 'rgba(61, 71, 92, 0.1)'
                                 }}>
                                 đ
                             </Button>
@@ -131,7 +182,7 @@ const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
                         Thanh toán
                     </Typography>
                     <Typography variant="body1" color="#29303D" fontWeight="700" fontSize="16px">
-                        888.888
+                        {new Intl.NumberFormat('vi-VN').format(tongThanhToan)}
                     </Typography>
                 </Box>
                 <Grid container justifyContent="space-between" alignItems="center" rowGap="16px">
@@ -151,12 +202,12 @@ const DetailHoaDon: React.FC<Detail> = ({ toggleDetail }) => {
                                     key={index}
                                     control={
                                         <Radio
-                                            value={item}
+                                            value={item.id}
                                             checked={selectedPayment === index}
                                             onChange={() => selectedPayments(index)}
                                         />
                                     }
-                                    label={item}
+                                    label={item.text}
                                     sx={{
                                         '& .MuiFormControlLabel-label': {
                                             color: 'rgba(0, 0, 0, 0.85)',

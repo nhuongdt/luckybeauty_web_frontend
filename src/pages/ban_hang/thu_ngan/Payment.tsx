@@ -36,13 +36,13 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
         {
             id: 2,
             icon: NganHang,
-            text: 'Thẻ ngân hàng',
+            text: 'Chuyển khoản',
             selected: false
         },
         {
             id: 3,
             icon: ChuyenKhoan,
-            text: 'Chuyển khoản',
+            text: 'Quẹt thẻ',
             selected: false
         }
     ];
