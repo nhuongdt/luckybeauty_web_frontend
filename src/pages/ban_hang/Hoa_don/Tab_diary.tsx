@@ -123,8 +123,18 @@ export default function TabDiary({ idHoaDon }: any) {
                     sx={{
                         padding: '4px',
                         borderRadius: '100px',
-                        color: '#0DA678',
-                        bgcolor: '#CAFBEC'
+                        color:
+                            params.row.trangThai === 1
+                                ? '#50CD89'
+                                : params.row.trangThai === 0
+                                ? '#FF9900'
+                                : '#F1416C',
+                        bgcolor:
+                            params.row.trangThai === 1
+                                ? '#E8FFF3'
+                                : params.row.trangThai === 0
+                                ? '#FFF8DD'
+                                : '#FFF5F8'
                     }}>
                     {params.value}
                 </Box>
