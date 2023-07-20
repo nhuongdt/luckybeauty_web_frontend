@@ -813,6 +813,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         });
 
         // print
+        const chinhanh = await getInforChiNhanh_byID();
         setPropMauIn((old: PropToChildMauIn) => {
             return {
                 ...old,
@@ -821,26 +822,29 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                     maHoaDon: hodaDonDB.maHoaDon,
                     daThanhToan: quyHD.tongTienThu,
                     conNo: hoadon.tongThanhToan - tongThu
+                },
+                chinhanh: {
+                    ...old.chinhanh,
+                    tenChiNhanh: 'Spa',
+                    soDienThoai: '1111' as unknown as null
                 }
             } as PropToChildMauIn;
         });
 
-        const chinhanh = await getInforChiNhanh_byID();
-
-        if (chinhanh !== null) {
-            // why not update chinhanh at mauin??
-            setPropMauIn((old: any) => {
-                return {
-                    ...old,
-                    chinhanh: {
-                        ...old.chinhanh,
-                        tenChiNhanh: chinhanh?.tenChiNhanh,
-                        soDienThoai: chinhanh?.soDienThoai,
-                        logo: logo // todo logo
-                    }
-                };
-            });
-        }
+        // if (chinhanh !== null) {
+        //     // why not update chinhanh at mauin??
+        //     setPropMauIn((old: any) => {
+        //         return {
+        //             ...old,
+        //             chinhanh: {
+        //                 ...old.chinhanh,
+        //                 tenChiNhanh: chinhanh?.tenChiNhanh,
+        //                 soDienThoai: chinhanh?.soDienThoai,
+        //                 logo: logo // todo logo
+        //             }
+        //         };
+        //     });
+        // }
 
         handlePrint();
 

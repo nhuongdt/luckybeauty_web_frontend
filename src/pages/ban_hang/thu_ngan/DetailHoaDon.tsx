@@ -12,12 +12,16 @@ import {
     Input
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { util } from 'prettier';
 import utils from '../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
 import AppConsts, { ISelect } from '../../../lib/appconst';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+import SoQuyServices from '../../../services/so_quy/SoQuyServices';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import { Guid } from 'guid-typescript';
+import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 interface Detail {
     toggleDetail: () => void;
 }
@@ -27,10 +31,14 @@ const DetailHoaDon = ({
     hinhThucTT = 1,
     onChangeQuyChiTiet,
     onChangeHoaDon,
-    onClickThanhToan
+    onClickThanhToan,
+    formType = 1, // 1.banhang, 0.other
+    dataHoaDonAfterSave
 }: any) => {
     const arrHinhThucThanhToan = [...AppConsts.hinhThucThanhToan, { value: 0, text: 'Kết hợp' }];
     const [idHinhThucTT, setIdHinhThucTT] = React.useState(hinhThucTT);
+    const chinhanhCurrent = useContext(ChiNhanhContext);
+    const idChiNhanh = chinhanhCurrent.id;
 
     const [tongGiamGiaHD, setTongGiamGiaHD] = useState(0);
     const [ptGiamGiaHD, setPTGiamGiaHD] = useState(0);
@@ -142,12 +150,52 @@ const DetailHoaDon = ({
 
     // change at child --> update to parent
     useEffect(() => {
-        onChangeQuyChiTiet(lstQuyCT);
+        if (formType === 1) onChangeQuyChiTiet(lstQuyCT);
     }, [lstQuyCT]);
 
     useEffect(() => {
-        onChangeHoaDon(ptGiamGiaHD, tongGiamGiaHD, khachPhaiTra, ghichuHD);
+        if (formType === 1) onChangeHoaDon(ptGiamGiaHD, tongGiamGiaHD, khachPhaiTra, ghichuHD);
     }, [ptGiamGiaHD, tongGiamGiaHD, ghichuHD]);
+
+    const clickThanhToan = async () => {
+        if (formType !== 1) {
+            savePhieuThu();
+        }
+        onClickThanhToan();
+    };
+
+    const savePhieuThu = async () => {
+        // again again if tra thua tien
+        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
+            lstQuyCT,
+            sumTienKhachTra,
+            dataHoaDonAfterSave?.tongThanhToan ?? 0
+        );
+
+        // save soquy (Mat, POS, ChuyenKhoan)
+        const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
+            return currentValue + utils.formatNumberToFloat(item.tienThu);
+        }, 0);
+        const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+            idChiNhanh: utils.checkNull(dataHoaDonAfterSave.idChiNhanh)
+                ? idChiNhanh
+                : dataHoaDonAfterSave?.idChiNhanh,
+            idLoaiChungTu: 11,
+            ngayLapHoaDon: dataHoaDonAfterSave?.ngayLapHoaDon,
+            tongTienThu: tongThu
+        });
+        // assign idHoadonLienQuan, idKhachHang for quyCT
+        lstQCT_After.map((x: QuyChiTietDto) => {
+            x.idHoaDonLienQuan = dataHoaDonAfterSave?.id;
+            x.idKhachHang =
+                dataHoaDonAfterSave.idKhachHang == Guid.EMPTY
+                    ? null
+                    : dataHoaDonAfterSave?.idKhachHang;
+            x.tienThu = utils.formatNumberToFloat(x.tienThu);
+        });
+        quyHD.quyHoaDon_ChiTiet = lstQCT_After;
+        await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
+    };
 
     return (
         <>
@@ -284,7 +332,7 @@ const DetailHoaDon = ({
                             ))}
                         </RadioGroup>
                     </Grid>
-                    <Grid xs={12}>
+                    <Grid item xs={12}>
                         <NumericFormat
                             size="small"
                             fullWidth
@@ -305,7 +353,7 @@ const DetailHoaDon = ({
                         />
                     </Grid>
                     {idHinhThucTT === 0 ? (
-                        <Grid xs={12} container spacing="16px">
+                        <Grid container spacing="16px">
                             {lstQuyCT.map((item, index) => (
                                 <Grid item xs={4} key={index}>
                                     <Box
@@ -362,7 +410,7 @@ const DetailHoaDon = ({
                         </Grid>
                     ) : undefined}
                     {tienThuaTraKhach !== 0 && (
-                        <Grid item xs={12} container justifyContent="space-between">
+                        <Grid container justifyContent="space-between">
                             <Grid item xs="auto">
                                 <Typography
                                     variant="body1"
@@ -409,7 +457,7 @@ const DetailHoaDon = ({
                     variant="contained"
                     className="btn-container-hover"
                     sx={{ width: '158px', margin: 'auto', paddingY: '14px', fontSize: '16px' }}
-                    onClick={onClickThanhToan}>
+                    onClick={clickThanhToan}>
                     Thanh toán
                 </Button>
             </Box>
