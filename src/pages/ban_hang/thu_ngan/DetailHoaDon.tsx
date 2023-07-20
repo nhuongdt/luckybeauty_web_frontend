@@ -286,6 +286,7 @@ const DetailHoaDon = ({
                                 onClick={() => onClickPTramVND(true)}
                                 sx={{
                                     bgcolor: laPTGiamGia ? '#fff' : 'rgba(61, 71, 92, 0.1)',
+                                    borderRight: '0!important',
                                     color: laPTGiamGia ? '#3D475C' : 'rgba(194, 201, 214, 0.7)'
                                 }}>
                                 %
@@ -322,12 +323,20 @@ const DetailHoaDon = ({
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">
-                        <RadioGroup sx={{ display: 'flex', flexDirection: 'row' }}>
+                        <RadioGroup
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                '& label:last-of-type': {
+                                    marginRight: '0'
+                                }
+                            }}>
                             {arrHinhThucThanhToan.map((item, index) => (
                                 <FormControlLabel
                                     key={index}
                                     control={
                                         <Radio
+                                            size="small"
                                             value={item.value}
                                             checked={idHinhThucTT === item.value}
                                             onChange={() => {
@@ -398,7 +407,7 @@ const DetailHoaDon = ({
                                                 )[0].text
                                             }
                                         </Typography>
-                                        {/* <input type="number" value={item.tienThu} /> */}
+
                                         <NumericFormat
                                             size="small"
                                             fullWidth

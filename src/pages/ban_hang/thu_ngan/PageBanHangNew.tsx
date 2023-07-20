@@ -1836,7 +1836,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                     '& .MuiFormControlLabel-label':
                                                                         {
                                                                             fontSize: '14px'
-                                                                        }
+                                                                        },
+
+                                                                    marginRight:
+                                                                        index === 2 ? '0' : '16px'
                                                                 }}
                                                                 key={index}
                                                                 label={item?.text}

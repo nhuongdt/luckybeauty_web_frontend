@@ -380,7 +380,7 @@ export default function ModalEditChiTietGioHang({
             await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
         }
     };
-
+    const chietKhau = ['5%', '10%', '15%', '20%', '25%', '30%', '35%', '40%', '45%', '50%'];
     return (
         <>
             <ModalSearchProduct
@@ -389,7 +389,9 @@ export default function ModalEditChiTietGioHang({
                 handleChoseProduct={addNewChiTiet}
             />
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle className="dialog-title">Chỉnh sửa giỏ hàng</DialogTitle>
+                <DialogTitle sx={{ color: '#29303D', fontWeight: '700', fontSize: '24px' }}>
+                    Chỉnh sửa giỏ hàng
+                </DialogTitle>
                 <IconButton
                     onClick={closeModal}
                     sx={{
@@ -408,10 +410,9 @@ export default function ModalEditChiTietGioHang({
                         <Grid
                             container
                             key={index}
-                            padding={2.5}
-                            paddingLeft={formType === 1 ? '20px' : '10px'}
-                            border={1}
-                            borderColor="#cccc"
+                            padding={0}
+                            // paddingLeft={formType === 1 ? '20px' : '10px'}
+
                             borderRadius={1}
                             marginBottom={formType === 1 ? 0 : '10px'}>
                             <Grid
@@ -420,7 +421,7 @@ export default function ModalEditChiTietGioHang({
                                 sm={formType === 1 ? 0 : 1}
                                 md={formType === 1 ? 0 : 1}
                                 lg={formType === 1 ? 0 : 1}
-                                style={{ display: displayComponent }}>
+                                sx={{ display: displayComponent }}>
                                 <Close
                                     sx={{ width: 40, height: 40, color: 'red', padding: '8px' }}
                                     onClick={() => xoaChiTietHoaDon(ct)}
@@ -434,13 +435,33 @@ export default function ModalEditChiTietGioHang({
                                 lg={formType === 1 ? 12 : 11}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={9} md={9} lg={9}>
-                                        <Typography
-                                            style={{
-                                                fontWeight: 600,
-                                                display: formType === 3 ? 'none' : ''
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '8px',
+                                                maxWidth: '80%'
                                             }}>
-                                            {ct?.tenHangHoa}
-                                        </Typography>
+                                            <Box
+                                                sx={{
+                                                    bgcolor: '#E5F3FF',
+                                                    width: 40,
+                                                    height: 40,
+                                                    borderRadius: '4px'
+                                                }}></Box>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: 400,
+                                                    display: formType === 3 ? 'none' : '',
+                                                    color: '#3B4758',
+                                                    maxWidth: 'calc(100% - 48px)',
+                                                    textOverflow: 'ellipsis',
+                                                    overflow: 'hidden',
+                                                    whiteSpace: 'nowrap'
+                                                }}>
+                                                {ct?.tenHangHoa}
+                                            </Typography>
+                                        </Box>
                                     </Grid>
                                     <Grid
                                         item
@@ -448,7 +469,12 @@ export default function ModalEditChiTietGioHang({
                                         sm={formType === 1 ? 3 : 1}
                                         md={formType === 1 ? 3 : 2}
                                         lg={formType === 1 ? 3 : 2}>
-                                        <Stack direction="row" spacing={1} justifyContent="end">
+                                        <Stack
+                                            direction="row"
+                                            spacing={1}
+                                            justifyContent="end"
+                                            height="100%"
+                                            alignItems="center">
                                             <Typography
                                                 sx={{
                                                     fontWeight: 500,
@@ -542,9 +568,9 @@ export default function ModalEditChiTietGioHang({
                                     <Grid
                                         item
                                         xs={6}
-                                        md={7}
-                                        lg={7}
-                                        sm={7}
+                                        md={10}
+                                        lg={10}
+                                        sm={10}
                                         sx={{
                                             display: itemVisibility[index] ? '' : 'none'
                                         }}>
@@ -552,7 +578,7 @@ export default function ModalEditChiTietGioHang({
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
                                                     <Typography variant="body2">
-                                                        Chiết khấu
+                                                        Giảm giá
                                                     </Typography>
                                                     <span
                                                         style={{
@@ -605,33 +631,49 @@ export default function ModalEditChiTietGioHang({
                                     <Grid
                                         item
                                         xs={6}
-                                        md={5}
-                                        lg={5}
-                                        sm={5}
+                                        md={2}
+                                        lg={2}
+                                        sm={2}
                                         sx={{
                                             display: itemVisibility[index] ? '' : 'none'
                                         }}>
                                         <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
                                             <Button
-                                                className={
-                                                    ct.laPTChietKhau
-                                                        ? 'button-outline'
-                                                        : 'button-not-active'
-                                                }
+                                                sx={{
+                                                    bgcolor: ct.laPTChietKhau ? ' #fff' : '#EEF0F4'
+                                                }}
                                                 onClick={() => changeLoaiChietKhau(true, ct.id)}>
                                                 %
                                             </Button>
                                             <Button
-                                                className={
-                                                    !ct.laPTChietKhau
-                                                        ? 'button-outline'
-                                                        : 'button-not-active'
-                                                }
+                                                sx={{
+                                                    bgcolor: !ct.laPTChietKhau ? ' #fff' : '#EEF0F4'
+                                                }}
                                                 onClick={() => changeLoaiChietKhau(false, ct.id)}>
                                                 đ
                                             </Button>
                                         </ButtonGroup>
                                     </Grid>
+                                    {ct.laPTChietKhau ? (
+                                        <Grid item xs={12} sx={{ display: 'flex', gap: '8px' }}>
+                                            {chietKhau.map((item, index) => (
+                                                <Button
+                                                    key={index}
+                                                    sx={{
+                                                        minWidth: 'unset',
+                                                        flexGrow: '1',
+                                                        fontSize: '12px',
+                                                        color: 'var(--color-main)',
+                                                        paddingY: '8px ',
+                                                        textAlign: 'center',
+                                                        border: '1px solid var(--color-main)',
+                                                        borderRadius: '4px'
+                                                    }}>
+                                                    {item}
+                                                </Button>
+                                            ))}
+                                        </Grid>
+                                    ) : undefined}
                                     <Grid
                                         item
                                         xs={12}
@@ -747,7 +789,7 @@ export default function ModalEditChiTietGioHang({
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" className="button-container" onClick={agrreGioHang}>
-                        {formType == 1 ? 'Đồng ý' : 'Lưu'}
+                        Lưu
                     </Button>
                     <Button variant="outlined" className="button-outline" onClick={closeModal}>
                         Hủy
