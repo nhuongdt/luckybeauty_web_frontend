@@ -47,6 +47,7 @@ import { width } from '@mui/system';
 import ProductService from '../../../services/product/ProductService';
 import ModalSearchProduct from '../../product/modal_search_product';
 import { cursorTo } from 'readline';
+import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 const themInputChietKhau = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -389,6 +390,18 @@ export default function ModalEditChiTietGioHang({
             />
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle className="dialog-title">Chỉnh sửa giỏ hàng</DialogTitle>
+                <IconButton
+                    onClick={closeModal}
+                    sx={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        '&:hover svg': {
+                            filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                        }
+                    }}>
+                    <CloseIcon />
+                </IconButton>
                 <DialogContent>
                     {/* 1 row */}
                     {lstCTHoaDon.map((ct: any, index: number) => (
