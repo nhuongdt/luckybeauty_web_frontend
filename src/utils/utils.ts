@@ -157,6 +157,19 @@ class Utils {
             }
         }
     };
+    RoundDecimal = (data: any, number = 2) => {
+        data = Math.round(data * Math.pow(10, number)) / Math.pow(10, number);
+        if (data !== null) {
+            let lastone = data.toString().split('').pop();
+            if (lastone !== '.') {
+                data = parseFloat(data);
+            }
+        }
+        if (isNaN(data) || data === Infinity) {
+            data = 0;
+        }
+        return data;
+    };
     formatNumber = (number: string | number | undefined) => {
         if (number === undefined || number === null) {
             return 0;
