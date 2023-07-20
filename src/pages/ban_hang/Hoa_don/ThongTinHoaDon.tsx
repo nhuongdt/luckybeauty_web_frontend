@@ -11,7 +11,8 @@ import {
     MenuItem,
     Dialog,
     Link,
-    IconButton
+    IconButton,
+    DialogContent
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -43,6 +44,9 @@ import { ReactComponent as printIcon } from '../../../images/printer-title.svg';
 import utils from '../../../utils/utils';
 import ProductService from '../../../services/product/ProductService';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
+import DetailHoaDon from '../thu_ngan/DetailHoaDon';
+import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -58,6 +62,7 @@ const themOutlineInput = createTheme({
 const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
 
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
@@ -175,6 +180,16 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         handleGotoBack(hoadonChosed, 1);
     };
 
+    // thanhtoan congno hoadon
+    const savePhieuThuOK = (tongThunew = 0) => {
+        setObjAlert({ ...objAlert, show: true, mes: 'Thanh toán hóa đơn thành công' });
+        setIsShowModalThanhToan(false);
+        setHoaDonChosed({
+            ...hoadonChosed,
+            conNo: (hoadonChosed?.conNo ?? 0) - tongThunew
+        });
+    };
+
     const [activeTab, setActiveTab] = useState(0);
     const handleTabChange = (event: any, newValue: number) => {
         setActiveTab(newValue);
@@ -192,59 +207,74 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
         );
     };
     return (
-        <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
-            <SnackbarAlert
-                showAlert={objAlert.show}
-                type={objAlert.type}
-                title={objAlert.mes}
-                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <ModalEditChiTietGioHang
-                formType={0}
-                isShow={isShowEditGioHang}
-                hoadonChiTiet={
-                    idCTHDChosing === ''
-                        ? chitietHoaDon
-                        : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)
-                }
-                handleSave={AgreeGioHang}
-                handleClose={() => setIsShowEditGioHang(false)}
-            />
-
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    minHeight: 'calc(100vh - 70px)'
-                }}>
-                <ModalWarning
-                    open={openDialog}
-                    onClose={() => setOpenDialog(false)}
-                    onOK={huyHoaDon}
+        <>
+            <Dialog
+                open={isShowModalThanhToan}
+                onClose={() => setIsShowModalThanhToan(false)}
+                maxWidth="md">
+                <DetailHoaDon
+                    formType={0}
+                    toggleDetail={() => setIsShowModalThanhToan(false)}
+                    tongTienHang={hoadonChosed?.tongTienHang}
+                    dataHoaDonAfterSave={hoadonChosed}
+                    onClickThanhToan={savePhieuThuOK}
                 />
-                <Box padding="16px 2.2222222222222223vw ">
-                    <Grid container justifyContent="space-between" alignItems="center">
-                        <Grid item xs="auto">
-                            <Stack gap={1} direction="row">
-                                <Box
-                                    sx={{
-                                        fontSize: '24px',
-                                        fontWeight: '700',
-                                        color: '#333233'
-                                    }}>
-                                    Hóa đơn
-                                </Box>
-                                <Box
-                                    sx={{
-                                        fontSize: '24px',
-                                        color: '#999699'
-                                    }}>
-                                    {hoadonChosed?.maHoaDon}
-                                </Box>
-                            </Stack>
-                        </Grid>
-                        <Grid item xs="auto">
-                            {/* <Box display="flex" gap="8px">
+            </Dialog>
+            <Dialog open={open} onClose={gotoBack} maxWidth="xl" fullWidth>
+                <SnackbarAlert
+                    showAlert={objAlert.show}
+                    type={objAlert.type}
+                    title={objAlert.mes}
+                    handleClose={() =>
+                        setObjAlert({ show: false, mes: '', type: 1 })
+                    }></SnackbarAlert>
+                <ModalEditChiTietGioHang
+                    formType={0}
+                    isShow={isShowEditGioHang}
+                    hoadonChiTiet={
+                        idCTHDChosing === ''
+                            ? chitietHoaDon
+                            : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)
+                    }
+                    handleSave={AgreeGioHang}
+                    handleClose={() => setIsShowEditGioHang(false)}
+                />
+
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        minHeight: 'calc(100vh - 70px)'
+                    }}>
+                    <ModalWarning
+                        open={openDialog}
+                        onClose={() => setOpenDialog(false)}
+                        onOK={huyHoaDon}
+                    />
+                    <Box padding="16px 2.2222222222222223vw ">
+                        <Grid container justifyContent="space-between" alignItems="center">
+                            <Grid item xs="auto">
+                                <Stack gap={1} direction="row">
+                                    <Box
+                                        sx={{
+                                            fontSize: '24px',
+                                            fontWeight: '700',
+                                            color: '#333233'
+                                        }}>
+                                        Hóa đơn
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            fontSize: '24px',
+                                            color: '#999699'
+                                        }}>
+                                        {hoadonChosed?.maHoaDon}
+                                    </Box>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs="auto">
+                                {/* <Box display="flex" gap="8px">
                                 <Button
                                     className="btn-outline-hover"
                                     startIcon={<InIcon />}
@@ -277,257 +307,271 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                     Sao chép
                                 </Button>
                             </Box> */}
-                            <IconButton
-                                onClick={gotoBack}
-                                sx={{
-                                    '&:hover svg': {
-                                        filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
-                                    }
-                                }}>
-                                <CloseIcon />
-                            </IconButton>
-                        </Grid>
-                    </Grid>
-                    <Grid
-                        container
-                        sx={{
-                            mt: '16px',
-                            boxShadow: '0px 4px 20px 0px #AAA9B81A',
-                            borderRadius: '12px',
-                            padding: '24px 24px 0px 24px',
-                            bgcolor: '#fff',
-                            alignItems: 'center'
-                        }}>
-                        <Grid item xs={1.5}>
-                            <Box
-                                sx={{
-                                    borderRadius: '6px',
-                                    '& img': {
-                                        maxWidth: '100%',
-                                        maxHeight: '100%',
-                                        objectFit: 'cover'
-                                    }
-                                }}>
-                                <img width={100} src={Avatar} alt="avatar" />
-                            </Box>
-                        </Grid>
-                        <Grid
-                            item
-                            xs={10.5}
-                            sx={{
-                                '& .MuiFormLabel-root, & legend': {
-                                    display: 'none'
-                                },
-                                '& input': {
-                                    height: '100%'
-                                }
-                            }}>
-                            <Box display="flex" gap="23px" mb="12px">
-                                <Stack direction="row" gap={1}>
-                                    <Typography
-                                        variant="h4"
-                                        color="#3B4758"
-                                        fontWeight="700"
-                                        fontSize="24px">
-                                        {hoadonChosed?.tenKhachHang}
-                                    </Typography>
-                                    <ModeEditIcon style={{ color: '#999699' }} />
-                                </Stack>
-
-                                <Box
+                                <IconButton
+                                    onClick={gotoBack}
                                     sx={{
-                                        padding: '2px 3px',
-                                        borderRadius: '100px',
-                                        color:
-                                            hoadonChosed?.trangThai === 3
-                                                ? '#50CD89'
-                                                : hoadonChosed?.trangThai === 1
-                                                ? '#FF9900'
-                                                : '#F1416C',
-                                        bgcolor:
-                                            hoadonChosed?.trangThai === 3
-                                                ? '#E8FFF3'
-                                                : hoadonChosed?.trangThai === 1
-                                                ? '#FFF8DD'
-                                                : '#FFF5F8',
-                                        width: 'fit-content',
-                                        fontSize: '12px',
-                                        height: 'fit-content'
-                                    }}>
-                                    {hoadonChosed?.txtTrangThaiHD}
-                                </Box>
-                            </Box>
-                            <Grid
-                                container
-                                sx={{
-                                    '& .MuiFormControl-root': {
-                                        width: '100%'
-                                    }
-                                }}
-                                spacing="2.7vw">
-                                <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
-                                        Mã hóa đơn
-                                    </Typography>
-                                    <TextField
-                                        fullWidth
-                                        size="small"
-                                        className="inputEdit"
-                                        onChange={(event: any) =>
-                                            setHoaDonChosed({
-                                                ...hoadonChosed,
-                                                maHoaDon: event.target.value
-                                            })
+                                        '&:hover svg': {
+                                            filter: 'brightness(0) saturate(100%) invert(34%) sepia(44%) saturate(2405%) hue-rotate(316deg) brightness(98%) contrast(92%)'
                                         }
-                                        value={hoadonChosed?.maHoaDon}
-                                    />
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
-                                        Ngày lập
-                                    </Typography>
-                                    <ThemeProvider theme={themOutlineInput}>
-                                        <DateTimePickerCustom
-                                            className="inputEdit"
-                                            defaultVal={hoadonChosed?.ngayLapHoaDon}
-                                            handleChangeDate={changeNgayLapHoaDon}
-                                        />
-                                    </ThemeProvider>
-                                </Grid>
-                                <Grid item xs={3}>
-                                    <Typography
-                                        variant="h5"
-                                        fontSize="12px"
-                                        color="#999699"
-                                        fontWeight="400"
-                                        height={24}>
-                                        Chi nhánh
-                                    </Typography>
-                                    <ThemeProvider theme={themOutlineInput}>
-                                        <AutocompleteChiNhanh
-                                            dataChiNhanh={allChiNhanh}
-                                            idChosed={hoadonChosed?.idChiNhanh}
-                                            handleChoseItem={changeChiNhanh}
-                                        />
-                                    </ThemeProvider>
-                                </Grid>
+                                    }}>
+                                    <CloseIcon />
+                                </IconButton>
                             </Grid>
                         </Grid>
-                        <Grid xs={12} item>
-                            <Tabs
-                                value={activeTab}
-                                onChange={handleTabChange}
-                                sx={{
-                                    borderTop: '1px solid #EEF0F4',
-                                    paddingTop: '16px',
-                                    marginTop: '20px',
-                                    '& .MuiTabs-flexContainer': {
-                                        gap: '32px'
-                                    },
-                                    '& button': {
-                                        textTransform: 'unset',
-                                        color: '#999699',
-                                        fontSize: '16px',
-                                        fontWeight: '400',
-                                        padding: '0',
-                                        minWidth: 'unset',
-                                        minHeight: 'unset'
-                                    },
-                                    '& .Mui-selected': {
-                                        color: 'var(--color-main)!important'
-                                    },
-                                    '& .MuiTabs-indicator': {
-                                        bgcolor: 'var(--color-main)'
-                                    }
-                                }}>
-                                <Tab label="Thông tin" />
-                                <Tab label="Nhật ký thanh toán" />
-                            </Tabs>
-                        </Grid>
-                    </Grid>
-                    <Box sx={{ mt: '40px' }}>
-                        <TabPanel value={activeTab} index={0}>
-                            <TabInfo hoadon={hoadonChosed} chitietHoaDon={chitietHoaDon} />
-                        </TabPanel>
-                        <TabPanel value={activeTab} index={1}>
-                            <TabDiary idHoaDon={idHoaDon} />
-                        </TabPanel>
-                    </Box>
-                </Box>
-                <Box
-                    sx={{
-                        bgcolor: '#fff',
-                        width: '100%',
-                        padding: '24px 32px',
-                        display: 'flex',
-                        justifyContent: 'space-between'
-                    }}>
-                    <Box>
-                        <Button
-                            startIcon={<ArrowIcon />}
-                            variant="outlined"
-                            sx={{ color: '#3B4758', borderColor: '#3B4758' }}
-                            className="btn-outline-hover"
-                            onClick={gotoBack}>
-                            Quay trở lại
-                        </Button>
-                    </Box>
-                    <Box display="flex" gap="8px">
-                        {hoadonChosed?.trangThai === 0 && (
-                            <Button
-                                variant="outlined"
-                                sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
-                                className="btn-outline-hover"
-                                onClick={gotoBack}>
-                                Đóng
-                            </Button>
-                        )}
-                        {hoadonChosed?.trangThai !== 0 && (
-                            <>
-                                <Button
-                                    variant="outlined"
-                                    sx={{ borderColor: '#3B4758', color: 'var(--color-main)' }}
-                                    className="btn-outline-hover"
-                                    onClick={showModalEditGioHang}>
-                                    Chỉnh sửa
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    sx={{ color: '#fff' }}
-                                    className="btn-container-hover"
-                                    onClick={updateHoaDon}>
-                                    Lưu
-                                </Button>
-
-                                <Button
-                                    onClick={() => setOpenDialog(true)}
-                                    variant="contained"
+                        <Grid
+                            container
+                            sx={{
+                                mt: '16px',
+                                boxShadow: '0px 4px 20px 0px #AAA9B81A',
+                                borderRadius: '12px',
+                                padding: '24px 24px 0px 24px',
+                                bgcolor: '#fff',
+                                alignItems: 'center'
+                            }}>
+                            <Grid item xs={1.5}>
+                                <Box
                                     sx={{
-                                        transition: '.4s',
-                                        bgcolor: '#FF316A!important',
-                                        color: '#fff',
-                                        '&:hover': {
-                                            bgcolor: 'red!important'
+                                        borderRadius: '6px',
+                                        '& img': {
+                                            maxWidth: '100%',
+                                            maxHeight: '100%',
+                                            objectFit: 'cover'
                                         }
                                     }}>
-                                    Hủy bỏ
+                                    <img width={100} src={Avatar} alt="avatar" />
+                                </Box>
+                            </Grid>
+                            <Grid
+                                item
+                                xs={10.5}
+                                sx={{
+                                    '& .MuiFormLabel-root, & legend': {
+                                        display: 'none'
+                                    },
+                                    '& input': {
+                                        height: '100%'
+                                    }
+                                }}>
+                                <Box display="flex" gap="23px" mb="12px">
+                                    <Stack direction="row" gap={1}>
+                                        <Typography
+                                            variant="h4"
+                                            color="#3B4758"
+                                            fontWeight="700"
+                                            fontSize="24px">
+                                            {hoadonChosed?.tenKhachHang}
+                                        </Typography>
+                                        <ModeEditIcon style={{ color: '#999699' }} />
+                                    </Stack>
+
+                                    <Box
+                                        sx={{
+                                            padding: '2px 3px',
+                                            borderRadius: '100px',
+                                            color:
+                                                hoadonChosed?.trangThai === 3
+                                                    ? '#50CD89'
+                                                    : hoadonChosed?.trangThai === 1
+                                                    ? '#FF9900'
+                                                    : '#F1416C',
+                                            bgcolor:
+                                                hoadonChosed?.trangThai === 3
+                                                    ? '#E8FFF3'
+                                                    : hoadonChosed?.trangThai === 1
+                                                    ? '#FFF8DD'
+                                                    : '#FFF5F8',
+                                            width: 'fit-content',
+                                            fontSize: '12px',
+                                            height: 'fit-content'
+                                        }}>
+                                        {hoadonChosed?.txtTrangThaiHD}
+                                    </Box>
+                                </Box>
+                                <Grid
+                                    container
+                                    sx={{
+                                        '& .MuiFormControl-root': {
+                                            width: '100%'
+                                        }
+                                    }}
+                                    spacing="2.7vw">
+                                    <Grid item xs={3}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
+                                            Mã hóa đơn
+                                        </Typography>
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            className="inputEdit"
+                                            onChange={(event: any) =>
+                                                setHoaDonChosed({
+                                                    ...hoadonChosed,
+                                                    maHoaDon: event.target.value
+                                                })
+                                            }
+                                            value={hoadonChosed?.maHoaDon}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
+                                            Ngày lập
+                                        </Typography>
+                                        <ThemeProvider theme={themOutlineInput}>
+                                            <DateTimePickerCustom
+                                                className="inputEdit"
+                                                defaultVal={hoadonChosed?.ngayLapHoaDon}
+                                                handleChangeDate={changeNgayLapHoaDon}
+                                            />
+                                        </ThemeProvider>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
+                                            Chi nhánh
+                                        </Typography>
+                                        <ThemeProvider theme={themOutlineInput}>
+                                            <AutocompleteChiNhanh
+                                                dataChiNhanh={allChiNhanh}
+                                                idChosed={hoadonChosed?.idChiNhanh}
+                                                handleChoseItem={changeChiNhanh}
+                                            />
+                                        </ThemeProvider>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid xs={12} item>
+                                <Tabs
+                                    value={activeTab}
+                                    onChange={handleTabChange}
+                                    sx={{
+                                        borderTop: '1px solid #EEF0F4',
+                                        paddingTop: '16px',
+                                        marginTop: '20px',
+                                        '& .MuiTabs-flexContainer': {
+                                            gap: '32px'
+                                        },
+                                        '& button': {
+                                            textTransform: 'unset',
+                                            color: '#999699',
+                                            fontSize: '16px',
+                                            fontWeight: '400',
+                                            padding: '0',
+                                            minWidth: 'unset',
+                                            minHeight: 'unset'
+                                        },
+                                        '& .Mui-selected': {
+                                            color: 'var(--color-main)!important'
+                                        },
+                                        '& .MuiTabs-indicator': {
+                                            bgcolor: 'var(--color-main)'
+                                        }
+                                    }}>
+                                    <Tab label="Thông tin" />
+                                    <Tab label="Nhật ký thanh toán" />
+                                </Tabs>
+                            </Grid>
+                        </Grid>
+                        <Box sx={{ mt: '40px' }}>
+                            <TabPanel value={activeTab} index={0}>
+                                <TabInfo hoadon={hoadonChosed} chitietHoaDon={chitietHoaDon} />
+                            </TabPanel>
+                            <TabPanel value={activeTab} index={1}>
+                                <TabDiary idHoaDon={idHoaDon} />
+                            </TabPanel>
+                        </Box>
+                    </Box>
+                    <Box
+                        sx={{
+                            bgcolor: '#fff',
+                            width: '100%',
+                            padding: '24px 32px',
+                            display: 'flex',
+                            justifyContent: 'space-between'
+                        }}>
+                        <Box>
+                            <Button
+                                startIcon={<ArrowIcon />}
+                                variant="outlined"
+                                sx={{ color: '#3B4758', borderColor: '#3B4758' }}
+                                className="btn-outline-hover"
+                                onClick={gotoBack}>
+                                Quay trở lại
+                            </Button>
+                        </Box>
+                        <Box display="flex" gap="8px">
+                            {hoadonChosed?.trangThai === 0 && (
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderColor: '#3B4758', color: '#4C4B4C' }}
+                                    className="btn-outline-hover"
+                                    onClick={gotoBack}>
+                                    Đóng
                                 </Button>
-                            </>
-                        )}
+                            )}
+                            {hoadonChosed?.trangThai !== 0 && (
+                                <>
+                                    {(hoadonChosed?.conNo ?? 0) > 0 && (
+                                        <Button
+                                            variant="outlined"
+                                            sx={{
+                                                borderColor: '#3B4758',
+                                                color: 'var(--color-main)'
+                                            }}
+                                            className="btn-outline-hover"
+                                            onClick={() => setIsShowModalThanhToan(true)}>
+                                            Thanh toán
+                                        </Button>
+                                    )}
+
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ borderColor: '#3B4758', color: 'var(--color-main)' }}
+                                        className="btn-outline-hover"
+                                        onClick={showModalEditGioHang}>
+                                        Chỉnh sửa
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ color: '#fff' }}
+                                        className="btn-container-hover"
+                                        onClick={updateHoaDon}>
+                                        Lưu
+                                    </Button>
+
+                                    <Button
+                                        onClick={() => setOpenDialog(true)}
+                                        variant="contained"
+                                        sx={{
+                                            transition: '.4s',
+                                            bgcolor: '#FF316A!important',
+                                            color: '#fff',
+                                            '&:hover': {
+                                                bgcolor: 'red!important'
+                                            }
+                                        }}>
+                                        Hủy bỏ
+                                    </Button>
+                                </>
+                            )}
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
-        </Dialog>
+            </Dialog>
+        </>
     );
 };
 export default ThongTinHoaDon;
