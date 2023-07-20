@@ -46,10 +46,10 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            bgcolor: idChosing === item.id ? '#F2EBF0' : '',
+                            bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
                             borderRadius: '8px',
                             '&:hover': {
-                                bgcolor: '#F2EBF0'
+                                bgcolor: 'var(--color-bg)'
                             }
                         }}
                         onMouseLeave={(event: any) => {

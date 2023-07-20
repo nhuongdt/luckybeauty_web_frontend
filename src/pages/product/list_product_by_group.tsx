@@ -28,9 +28,9 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
                                 border: '1px solid transparent',
                                 cursor: 'pointer',
                                 transition: '.4s',
-                                backgroundColor: '#F2EBF0',
+                                backgroundColor: 'var(--color-bg)',
                                 '&:hover': {
-                                    borderColor: '#7C3367'
+                                    borderColor: 'var(--color-main)'
                                 }
                             }}
                             onClick={() => handleChoseItem(item)}>
