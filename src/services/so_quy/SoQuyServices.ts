@@ -8,6 +8,7 @@ import { GetAllQuyHoaDonItemDto } from './Dto/QuyHoaDonViewItemDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { IFileDto } from '../dto/FileDto';
+import QuyChiTietDto from './QuyChiTietDto';
 
 class SoQuyServices {
     CreateQuyHoaDon = async (input: any) => {
@@ -63,6 +64,171 @@ class SoQuyServices {
             );
             return response.data.result;
         }
+    };
+    ShareMoney_QuyHD = (
+        phaiTT: number,
+        tienDiem: number,
+        tienmat: number,
+        tienPOS: number,
+        chuyenkhoan: number,
+        thegiatri: number,
+        tiencoc: number
+    ) => {
+        // thutu uutien: 1.coc, 2.diem, 3.thegiatri, 4.mat, 5.pos, 6.chuyenkhoan
+        if (tiencoc >= phaiTT) {
+            return {
+                TienCoc: phaiTT,
+                TTBangDiem: 0,
+                TienMat: 0,
+                TienPOS: 0,
+                TienChuyenKhoan: 0,
+                TienTheGiaTri: 0
+            };
+        } else {
+            phaiTT = phaiTT - tiencoc;
+            if (tienDiem >= phaiTT) {
+                return {
+                    TienCoc: tiencoc,
+                    TTBangDiem: phaiTT,
+                    TienMat: 0,
+                    TienPOS: 0,
+                    TienChuyenKhoan: 0,
+                    TienTheGiaTri: 0
+                };
+            } else {
+                phaiTT = phaiTT - tienDiem;
+                if (thegiatri >= phaiTT) {
+                    return {
+                        TienCoc: tiencoc,
+                        TTBangDiem: tienDiem,
+                        TienMat: 0,
+                        TienPOS: 0,
+                        TienChuyenKhoan: 0,
+                        TienTheGiaTri: Math.abs(phaiTT)
+                    };
+                } else {
+                    phaiTT = phaiTT - thegiatri;
+                    if (tienmat >= phaiTT) {
+                        return {
+                            TienCoc: tiencoc,
+                            TTBangDiem: tienDiem,
+                            TienMat: Math.abs(phaiTT),
+                            TienPOS: 0,
+                            TienChuyenKhoan: 0,
+                            TienTheGiaTri: thegiatri
+                        };
+                    } else {
+                        phaiTT = phaiTT - tienmat;
+                        if (tienPOS >= phaiTT) {
+                            return {
+                                TienCoc: tiencoc,
+                                TTBangDiem: tienDiem,
+                                TienMat: tienmat,
+                                TienPOS: Math.abs(phaiTT),
+                                TienChuyenKhoan: 0,
+                                TienTheGiaTri: thegiatri
+                            };
+                        } else {
+                            phaiTT = phaiTT - tienPOS;
+                            if (chuyenkhoan >= phaiTT) {
+                                return {
+                                    TienCoc: tiencoc,
+                                    TTBangDiem: tienDiem,
+                                    TienMat: tienmat,
+                                    TienPOS: tienPOS,
+                                    TienChuyenKhoan: Math.abs(phaiTT),
+                                    TienTheGiaTri: thegiatri
+                                };
+                            } else {
+                                phaiTT = phaiTT - chuyenkhoan;
+                                return {
+                                    TienCoc: tiencoc,
+                                    TTBangDiem: tienDiem,
+                                    TienMat: tienmat,
+                                    TienPOS: tienPOS,
+                                    TienChuyenKhoan: chuyenkhoan,
+                                    TienTheGiaTri: thegiatri
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    AssignAgainQuyChiTiet = (
+        lstQuyCT: QuyChiTietDto[],
+        sumTienKhachTra: number,
+        tongPhaiTra: number
+    ) => {
+        let lstQuyCT_After: QuyChiTietDto[] = [];
+        console.log('lstQuyCT_After ', lstQuyCT_After);
+        let tienMat = 0,
+            tienPos = 0,
+            tienCK = 0;
+        let idTaiKhoanPos = null,
+            idTaiKhoanCK = null;
+        const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+        const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+        if (itemPos.length > 0) {
+            idTaiKhoanPos = itemPos[0].idTaiKhoanNganHang;
+        }
+        if (itemCK.length > 0) {
+            idTaiKhoanCK = itemCK[0].idTaiKhoanNganHang;
+        }
+
+        for (let i = 0; i < lstQuyCT.length; i++) {
+            const itFor = lstQuyCT[i];
+            switch (itFor.hinhThucThanhToan) {
+                case 1:
+                    tienMat += itFor.tienThu;
+                    break;
+                case 2:
+                    tienPos += itFor.tienThu;
+                    break;
+                case 3:
+                    tienCK += itFor.tienThu;
+                    break;
+            }
+        }
+        if (sumTienKhachTra > tongPhaiTra) {
+            const shareMoney = this.ShareMoney_QuyHD(
+                tongPhaiTra,
+                0,
+                tienMat,
+                tienPos,
+                tienCK,
+                0,
+                0
+            );
+            const tienMatNew = shareMoney.TienMat,
+                tienPosNew = shareMoney.TienPOS,
+                tienCKNew = shareMoney.TienChuyenKhoan;
+
+            if (tienMatNew > 0) {
+                const newQCT = new QuyChiTietDto({ hinhThucThanhToan: 1, tienThu: tienMatNew });
+                lstQuyCT_After.push(newQCT);
+            }
+            if (tienPosNew > 0) {
+                const newQCT = new QuyChiTietDto({
+                    hinhThucThanhToan: 2,
+                    tienThu: tienPosNew,
+                    idTaiKhoanNganHang: idTaiKhoanPos as null
+                });
+                lstQuyCT_After.push(newQCT);
+            }
+            if (tienCKNew > 0) {
+                const newQCT = new QuyChiTietDto({
+                    hinhThucThanhToan: 3,
+                    tienThu: tienCKNew,
+                    idTaiKhoanNganHang: idTaiKhoanCK as null
+                });
+                lstQuyCT_After.push(newQCT);
+            }
+        } else {
+            lstQuyCT_After = [...lstQuyCT];
+        }
+        return lstQuyCT_After;
     };
 }
 

@@ -25,6 +25,11 @@ const AppConsts = {
         { value: 3, name: 'Check in' },
         { value: 4, name: 'Xóa' }
     ],
+    hinhThucThanhToan: [
+        { id: 1, text: 'Tiền mặt' },
+        { id: 2, text: 'Chuyển khoản' },
+        { id: 3, text: 'Quẹt thẻ' }
+    ],
     loaiBooking: {
         online: 0,
         offline: 1,
