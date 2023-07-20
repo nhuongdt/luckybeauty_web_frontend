@@ -303,7 +303,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </Grid>
                             <Grid container sx={{ pb: 2 }} spacing={2}>
-                                <Grid item xs={12} sm={6} md={6} lg={6}>
+                                <Grid item xs={12} sm={12} md={12} lg={12}>
                                     <span className="modal-lable">Giá bán</span>
                                     <NumericFormat
                                         size="small"
@@ -315,7 +315,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         onChange={(event) => editGiaBan(event)}
                                     />
                                 </Grid>
-                                <Grid
+                                {/* <Grid
                                     item
                                     xs={12}
                                     sm={6}
@@ -339,7 +339,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                             })
                                         }
                                     />
-                                </Grid>
+                                </Grid> */}
                             </Grid>
 
                             <Grid item sx={{ pb: 2 }}>

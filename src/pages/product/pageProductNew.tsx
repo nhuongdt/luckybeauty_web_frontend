@@ -443,26 +443,26 @@ export default function PageProductNew() {
                 </Box>
             )
         },
-        {
-            field: 'soPhutThucHien',
-            headerName: 'Thời gian',
-            minWidth: 128,
-            flex: 1,
-            renderCell: (params) => (
-                <Box display="flex" width="100%" justifyContent="center">
-                    <ClockIcon />
-                    <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
-                        {params.value || ''} phút
-                    </Typography>
-                </Box>
-            ),
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
-        },
+        // {
+        //     field: 'soPhutThucHien',
+        //     headerName: 'Thời gian',
+        //     minWidth: 128,
+        //     flex: 1,
+        //     renderCell: (params) => (
+        //         <Box display="flex" width="100%" justifyContent="center">
+        //             <ClockIcon />
+        //             <Typography variant="body2" color="#333233" marginLeft="9px" fontSize="12px">
+        //                 {params.value || ''} phút
+        //             </Typography>
+        //         </Box>
+        //     ),
+        //     renderHeader: (params) => (
+        //         <Box sx={{ fontWeight: '700' }}>
+        //             {params.colDef.headerName}
+        //             <IconSorting className="custom-icon" />{' '}
+        //         </Box>
+        //     )
+        // },
         {
             field: 'txtTrangThaiHang',
             headerName: 'Trạng thái',
