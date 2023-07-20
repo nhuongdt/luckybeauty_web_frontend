@@ -934,7 +934,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
 
     const tienThuaTraKhach = sumTienKhachTra - hoadon?.tongThanhToan ?? 0;
-
+    const [method, setMethod] = useState(false);
+    const handleMethod = (value: boolean) => {
+        setMethod(value);
+    };
     // end thanhtoan new
     return (
         <>
@@ -1385,6 +1388,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             passToParent={assignThongTinThanhToan}
                         /> */}
                         <DetailHoaDon
+                            methodFromParent={handleMethod}
                             toggleDetail={handleShowDetail}
                             hinhThucTT={lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0}
                             tongTienHang={hoadon?.tongTienHang}
@@ -1789,60 +1793,69 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             </Typography>
                                         </Grid>
                                         <Grid item xs="auto">
-                                            <RadioGroup
-                                                sx={{ display: 'flex', flexDirection: 'row' }}>
-                                                {AppConsts.hinhThucThanhToan.map((item, index) => (
-                                                    <FormControlLabel
-                                                        sx={{
-                                                            '& .MuiFormControlLabel-label': {
-                                                                fontSize: '14px'
-                                                            }
-                                                        }}
-                                                        key={index}
-                                                        label={item?.text}
-                                                        checked={
-                                                            lstQuyCT.length == 1 &&
-                                                            lstQuyCT[0].hinhThucThanhToan ===
-                                                                item.value
-                                                        }
-                                                        onChange={() =>
-                                                            changeHinhThucThanhToan(item)
-                                                        }
-                                                        control={
-                                                            <Radio
-                                                                value={item.value}
-                                                                size="small"
-                                                            />
-                                                        }
-                                                    />
-                                                ))}
-                                            </RadioGroup>
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    gap: '16px',
-                                                    '& .item': {
-                                                        fontSize: '14px',
-                                                        color: '#525F7A'
-                                                    },
-                                                    '& > div': {
+                                            {method ? (
+                                                <Box
+                                                    sx={{
                                                         display: 'flex',
-                                                        gap: '5px'
-                                                    }
-                                                }}>
-                                                <Box>
-                                                    <Box className="label item">Tiền mặt:</Box>
-                                                    <Box className="value item">999.999</Box>
+                                                        gap: '16px',
+                                                        '& .item': {
+                                                            fontSize: '14px',
+                                                            color: '#525F7A'
+                                                        },
+                                                        '& > div': {
+                                                            display: 'flex',
+                                                            gap: '5px'
+                                                        }
+                                                    }}>
+                                                    <Box>
+                                                        <Box className="label item">Tiền mặt:</Box>
+                                                        <Box className="value item">999.999</Box>
+                                                    </Box>
+                                                    <Box>
+                                                        <Box className="label item">
+                                                            Chuyển khoản:
+                                                        </Box>
+                                                        <Box className="value item">999.999</Box>
+                                                    </Box>
+                                                    <Box>
+                                                        <Box className="label item">Quẹt thẻ:</Box>
+                                                        <Box className="value item">999.999</Box>
+                                                    </Box>
                                                 </Box>
-                                                <Box>
-                                                    <Box className="label item">Chuyển khoản:</Box>
-                                                    <Box className="value item">999.999</Box>
-                                                </Box>
-                                                <Box>
-                                                    <Box className="label item">Quẹt thẻ:</Box>
-                                                    <Box className="value item">999.999</Box>
-                                                </Box>
-                                            </Box>
+                                            ) : (
+                                                <RadioGroup
+                                                    sx={{ display: 'flex', flexDirection: 'row' }}>
+                                                    {AppConsts.hinhThucThanhToan.map(
+                                                        (item, index) => (
+                                                            <FormControlLabel
+                                                                sx={{
+                                                                    '& .MuiFormControlLabel-label':
+                                                                        {
+                                                                            fontSize: '14px'
+                                                                        }
+                                                                }}
+                                                                key={index}
+                                                                label={item?.text}
+                                                                checked={
+                                                                    lstQuyCT.length == 1 &&
+                                                                    lstQuyCT[0]
+                                                                        .hinhThucThanhToan ===
+                                                                        item.value
+                                                                }
+                                                                onChange={() => {
+                                                                    changeHinhThucThanhToan(item);
+                                                                }}
+                                                                control={
+                                                                    <Radio
+                                                                        value={item.value}
+                                                                        size="small"
+                                                                    />
+                                                                }
+                                                            />
+                                                        )
+                                                    )}
+                                                </RadioGroup>
+                                            )}
                                         </Grid>
                                         <Grid xs={12} item>
                                             <NumericFormat
