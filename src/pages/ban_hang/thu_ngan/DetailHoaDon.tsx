@@ -32,7 +32,8 @@ const DetailHoaDon = ({
     onChangeQuyChiTiet,
     onChangeHoaDon,
     onClickThanhToan,
-    formType = 1, // 1.banhang, 0.other
+    methodFromParent,
+    formType = 1,
     dataHoaDonAfterSave
 }: any) => {
     const arrHinhThucThanhToan = [...AppConsts.hinhThucThanhToan, { value: 0, text: 'Kết hợp' }];
@@ -54,6 +55,11 @@ const DetailHoaDon = ({
         const itemHT = AppConsts.hinhThucThanhToan.filter((x: ISelect) => x.value === hinhThucTT);
         if (itemHT.length > 0) {
             choseHinhThucThanhToan(itemHT[0]);
+        }
+        if (idHinhThucTT === 0) {
+            methodFromParent(true);
+        } else {
+            methodFromParent(false);
         }
     }, [hinhThucTT]);
 
@@ -122,6 +128,7 @@ const DetailHoaDon = ({
                     hinhThucThanhToan: item.value
                 })
             ]);
+            console.log(item.value);
         } else {
             setLstQuyCT(() => [
                 new QuyChiTietDto({
@@ -201,8 +208,13 @@ const DetailHoaDon = ({
         <>
             <Box
                 sx={{
+                    marginTop: '-45px',
+                    height: 'calc(100% + 45px)',
                     padding: '24px',
-                    border: '1px solid var(--color-main)',
+                    boxShadow: '1px 5px 22px 4px #00000026',
+                    width: '90%',
+                    marginX: 'auto',
+                    justifyContent: 'center',
                     borderRadius: '12px',
                     bgcolor: '#fff',
                     display: 'flex',
@@ -318,7 +330,9 @@ const DetailHoaDon = ({
                                         <Radio
                                             value={item.value}
                                             checked={idHinhThucTT === item.value}
-                                            onChange={() => choseHinhThucThanhToan(item)}
+                                            onChange={() => {
+                                                choseHinhThucThanhToan(item);
+                                            }}
                                         />
                                     }
                                     label={item.text}
@@ -436,6 +450,7 @@ const DetailHoaDon = ({
                 </Grid>
                 <Box
                     sx={{
+                        wiidth: '100%',
                         '& textarea': {
                             height: '80px',
                             width: '100%',
