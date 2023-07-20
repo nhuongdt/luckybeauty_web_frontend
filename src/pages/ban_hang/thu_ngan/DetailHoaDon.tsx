@@ -22,6 +22,7 @@ import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import { Guid } from 'guid-typescript';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { format } from 'date-fns';
 interface Detail {
     toggleDetail: () => void;
 }
@@ -32,7 +33,6 @@ const DetailHoaDon = ({
     onChangeQuyChiTiet,
     onChangeHoaDon,
     onClickThanhToan,
-    methodFromParent,
     formType = 1,
     dataHoaDonAfterSave
 }: any) => {
@@ -40,13 +40,17 @@ const DetailHoaDon = ({
     const [idHinhThucTT, setIdHinhThucTT] = React.useState(hinhThucTT);
     const chinhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = chinhanhCurrent.id;
+    const noHDCu = utils.RoundDecimal(dataHoaDonAfterSave?.conNo ?? 0);
 
     const [tongGiamGiaHD, setTongGiamGiaHD] = useState(0);
     const [ptGiamGiaHD, setPTGiamGiaHD] = useState(0);
     const [laPTGiamGia, setlaPTGiamGia] = useState(true);
     const [ghichuHD, setGhichuHD] = useState('');
     const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
-        new QuyChiTietDto({ hinhThucThanhToan: hinhThucTT, tienThu: tongTienHang })
+        new QuyChiTietDto({
+            hinhThucThanhToan: hinhThucTT,
+            tienThu: formType === 1 ? tongTienHang : noHDCu
+        })
     ]);
 
     // change at parent- -> update to child
@@ -56,18 +60,16 @@ const DetailHoaDon = ({
         if (itemHT.length > 0) {
             choseHinhThucThanhToan(itemHT[0]);
         }
-        if (idHinhThucTT === 0) {
-            methodFromParent(true);
-        } else {
-            methodFromParent(false);
-        }
     }, [hinhThucTT]);
 
     useEffect(() => {
         setLstQuyCT(
             lstQuyCT.map((item: QuyChiTietDto) => {
                 if (item.hinhThucThanhToan === hinhThucTT) {
-                    return { ...item, tienThu: tongTienHang };
+                    return {
+                        ...item,
+                        tienThu: formType === 1 ? tongTienHang : noHDCu
+                    };
                 } else {
                     return { ...item };
                 }
@@ -75,8 +77,8 @@ const DetailHoaDon = ({
         );
     }, [tongTienHang]);
 
-    const khachPhaiTra = tongTienHang - tongGiamGiaHD;
-
+    const khachPhaiTra = formType === 1 ? tongTienHang - tongGiamGiaHD : noHDCu;
+    console.log('khachPhaiTra', khachPhaiTra);
     const onClickPTramVND = (newVal: boolean) => {
         let gtriPT = 0;
         if (!laPTGiamGia) {
@@ -149,7 +151,7 @@ const DetailHoaDon = ({
 
     const sumTienKhachTra = utils.RoundDecimal(
         lstQuyCT.reduce((currentValue: number, item: QuyChiTietDto) => {
-            return item.tienThu + utils.formatNumberToFloat(currentValue);
+            return item.tienThu + currentValue;
         }, 0)
     );
 
@@ -165,31 +167,28 @@ const DetailHoaDon = ({
     }, [ptGiamGiaHD, tongGiamGiaHD, ghichuHD]);
 
     const clickThanhToan = async () => {
+        let tongThuThucTe = sumTienKhachTra;
         if (formType !== 1) {
-            savePhieuThu();
+            tongThuThucTe = await savePhieuThu();
         }
-        onClickThanhToan();
+        onClickThanhToan(tongThuThucTe);
     };
 
     const savePhieuThu = async () => {
-        // again again if tra thua tien
-        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
-            lstQuyCT,
-            sumTienKhachTra,
-            dataHoaDonAfterSave?.tongThanhToan ?? 0
-        );
+        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(lstQuyCT, sumTienKhachTra, noHDCu);
 
         // save soquy (Mat, POS, ChuyenKhoan)
         const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
-            return currentValue + utils.formatNumberToFloat(item.tienThu);
+            return currentValue + item.tienThu;
         }, 0);
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
             idChiNhanh: utils.checkNull(dataHoaDonAfterSave.idChiNhanh)
                 ? idChiNhanh
                 : dataHoaDonAfterSave?.idChiNhanh,
             idLoaiChungTu: 11,
-            ngayLapHoaDon: dataHoaDonAfterSave?.ngayLapHoaDon,
-            tongTienThu: tongThu
+            ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+            tongTienThu: tongThu,
+            noiDungThu: ghichuHD
         });
         // assign idHoadonLienQuan, idKhachHang for quyCT
         lstQCT_After.map((x: QuyChiTietDto) => {
@@ -198,21 +197,21 @@ const DetailHoaDon = ({
                 dataHoaDonAfterSave.idKhachHang == Guid.EMPTY
                     ? null
                     : dataHoaDonAfterSave?.idKhachHang;
-            x.tienThu = utils.formatNumberToFloat(x.tienThu);
         });
         quyHD.quyHoaDon_ChiTiet = lstQCT_After;
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
+        return tongThu;
     };
 
     return (
         <>
             <Box
                 sx={{
-                    marginTop: '-45px',
-                    height: 'calc(100% + 45px)',
+                    // marginTop: '-45px',
+                    // height: 'calc(100% + 45px)',
                     padding: '24px',
                     boxShadow: '1px 5px 22px 4px #00000026',
-                    width: '90%',
+                    // width: '90%',
                     marginX: 'auto',
                     justifyContent: 'center',
                     borderRadius: '12px',
@@ -224,7 +223,7 @@ const DetailHoaDon = ({
                 <Box
                     sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography variant="h3" color="#29303D" fontSize="24px" fontWeight="700">
-                        Chi tiết hóa đơn
+                        {formType === 1 ? 'Chi tiết hóa đơn' : 'Thông tin thanh toán'}
                     </Typography>
                     <IconButton
                         sx={{
@@ -236,7 +235,11 @@ const DetailHoaDon = ({
                         <CloseIcon />
                     </IconButton>
                 </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box
+                    sx={{
+                        display: formType == 1 ? 'flex' : 'none',
+                        justifyContent: 'space-between'
+                    }}>
                     {' '}
                     <Typography variant="body1" color="#3B4758" fontSize="14px">
                         Tổng tiền hàng
@@ -246,7 +249,11 @@ const DetailHoaDon = ({
                     </Typography>
                 </Box>
                 <Box
-                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    sx={{
+                        display: formType == 1 ? 'flex' : 'none',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
                     <Typography variant="body1" color="#3B4758" fontSize="14px">
                         Giảm giá
                     </Typography>
@@ -305,7 +312,7 @@ const DetailHoaDon = ({
                 <Box
                     sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="body1" color="#3D475C" fontWeight="700" fontSize="16px">
-                        Thanh toán
+                        {formType == 1 ? 'Thanh toán' : 'Còn nợ'}
                     </Typography>
                     <Typography variant="body1" color="#29303D" fontWeight="700" fontSize="16px">
                         {new Intl.NumberFormat('vi-VN').format(khachPhaiTra)}

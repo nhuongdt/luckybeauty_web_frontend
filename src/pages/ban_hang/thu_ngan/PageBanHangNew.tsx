@@ -789,22 +789,23 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
         // save soquy (Mat, POS, ChuyenKhoan)
         const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
-            return currentValue + utils.formatNumberToFloat(item.tienThu);
+            return currentValue + item.tienThu;
         }, 0);
-        const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
-            idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id,
-            idLoaiChungTu: 11,
-            ngayLapHoaDon: hoadon.ngayLapHoaDon,
-            tongTienThu: tongThu
-        });
-        // assign idHoadonLienQuan, idKhachHang for quyCT
-        lstQCT_After.map((x: QuyChiTietDto) => {
-            x.idHoaDonLienQuan = hodaDonDB.id;
-            x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
-            x.tienThu = utils.formatNumberToFloat(x.tienThu);
-        });
-        quyHD.quyHoaDon_ChiTiet = lstQCT_After;
-        await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
+        if (tongThu > 0) {
+            const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+                idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id,
+                idLoaiChungTu: 11,
+                ngayLapHoaDon: hoadon.ngayLapHoaDon,
+                tongTienThu: tongThu
+            });
+            // assign idHoadonLienQuan, idKhachHang for quyCT
+            lstQCT_After.map((x: QuyChiTietDto) => {
+                x.idHoaDonLienQuan = hodaDonDB.id;
+                x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
+            });
+            quyHD.quyHoaDon_ChiTiet = lstQCT_After;
+            await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
+        }
 
         setObjAlert({
             show: true,
@@ -820,7 +821,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 hoadon: {
                     ...old.hoadon,
                     maHoaDon: hodaDonDB.maHoaDon,
-                    daThanhToan: quyHD.tongTienThu,
+                    daThanhToan: tongThu,
                     conNo: hoadon.tongThanhToan - tongThu
                 },
                 chinhanh: {
@@ -938,10 +939,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
 
     const tienThuaTraKhach = sumTienKhachTra - hoadon?.tongThanhToan ?? 0;
-    const [method, setMethod] = useState(false);
-    const handleMethod = (value: boolean) => {
-        setMethod(value);
-    };
     // end thanhtoan new
     return (
         <>
@@ -1392,7 +1389,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             passToParent={assignThongTinThanhToan}
                         /> */}
                         <DetailHoaDon
-                            methodFromParent={handleMethod}
                             toggleDetail={handleShowDetail}
                             hinhThucTT={lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0}
                             tongTienHang={hoadon?.tongTienHang}
@@ -1797,7 +1793,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             </Typography>
                                         </Grid>
                                         <Grid item xs="auto">
-                                            {method ? (
+                                            {lstQuyCT.length > 1 ? (
                                                 <Box
                                                     sx={{
                                                         display: 'flex',
