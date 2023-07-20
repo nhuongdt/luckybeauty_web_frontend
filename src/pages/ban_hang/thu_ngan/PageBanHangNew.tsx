@@ -103,7 +103,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
     const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
-        new QuyChiTietDto({ hinhThucThanhToan: 1 })
+        new QuyChiTietDto({ hinhThucThanhToan: 1 }) // !! important: luôn set ít nhất 1 giá trị cho mảng quỹ chi tiết
     ]);
 
     // used to check update infor cthd
@@ -658,34 +658,52 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     });
 
     const checkSave = async () => {
-        if (lstQuyCT.length === 0) {
+        if (hoaDonChiTiet.length === 0) {
             setObjAlert({
                 show: true,
                 type: 2,
-                mes: 'Vui lòng chọn hình thức thanh toán '
+                mes: 'Vui lòng nhập chi tiết hóa đơn '
             });
             return false;
         }
+        if (utils.checkNull(hoadon?.idKhachHang) || hoadon?.idKhachHang === Guid.EMPTY) {
+            if (sumTienKhachTra < hoadon?.tongThanhToan) {
+                setObjAlert({
+                    show: true,
+                    type: 2,
+                    mes: 'Là khách lẻ. Không cho phép nợ'
+                });
+                return false;
+            }
+        }
+        // if (lstQuyCT.length === 0) {
+        //     setObjAlert({
+        //         show: true,
+        //         type: 2,
+        //         mes: 'Vui lòng chọn hình thức thanh toán '
+        //     });
+        //     return false;
+        // }
 
-        const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
-        if (itemPos.length > 0 && utils.checkNull(itemPos[0].idTaiKhoanNganHang)) {
-            setObjAlert({
-                show: true,
-                type: 2,
-                mes: 'Vui lòng chọn tài khoản POS'
-            });
-            return false;
-        }
+        // const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+        // if (itemPos.length > 0 && utils.checkNull(itemPos[0].idTaiKhoanNganHang)) {
+        //     setObjAlert({
+        //         show: true,
+        //         type: 2,
+        //         mes: 'Vui lòng chọn tài khoản POS'
+        //     });
+        //     return false;
+        // }
 
-        const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
-        if (itemCK.length > 0 && utils.checkNull(itemCK[0].idTaiKhoanNganHang)) {
-            setObjAlert({
-                show: true,
-                type: 2,
-                mes: 'Vui lòng chọn tài khoản chuyển khoản'
-            });
-            return false;
-        }
+        // const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+        // if (itemCK.length > 0 && utils.checkNull(itemCK[0].idTaiKhoanNganHang)) {
+        //     setObjAlert({
+        //         show: true,
+        //         type: 2,
+        //         mes: 'Vui lòng chọn tài khoản chuyển khoản'
+        //     });
+        //     return false;
+        // }
 
         return true;
     };
@@ -720,23 +738,32 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setLstQuyCT([...arrQCT]);
     };
 
+    const editInforHoaDon_atPayment = (
+        ptGiamGiaHD: number,
+        tongGiamGiaHD: number,
+        khachPhaiTra: number,
+        ghichuHD: string
+    ) => {
+        setHoaDon({
+            ...hoadon,
+            pTGiamGiaHD: ptGiamGiaHD,
+            tongGiamGiaHD: tongGiamGiaHD,
+            tongThanhToan: khachPhaiTra,
+            ghiChuHD: ghichuHD
+        });
+    };
+
     // click thanh toan---> chon hinh thucthanhtoan--->   luu hoadon + phieuthu
     const saveHoaDon = async () => {
-        if (hoaDonChiTiet.length === 0) {
-            setObjAlert({
-                show: true,
-                type: 2,
-                mes: 'Vui lòng nhập chi tiết hóa đơn '
-            });
-            return false;
-        }
+        setShowDetail(false);
+
         // const nextIsSave = handleCheckNext();
         // if (!nextIsSave) return;
 
-        // const check = await checkSave();
-        // if (!check) {
-        //     return;
-        // }
+        const check = await checkSave();
+        if (!check) {
+            return;
+        }
 
         // assign again STT of cthd before save
         const dataSave = { ...hoadon };
@@ -885,7 +912,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const changeHinhThucThanhToan = (item: any) => {
         setLstQuyCT(
             lstQuyCT.map((itemCT: QuyChiTietDto) => {
-                return { ...itemCT, hinhThucThanhToan: item.id, sHinhThucThanhToan: item.text };
+                return { ...itemCT, hinhThucThanhToan: item.value, sHinhThucThanhToan: item?.text };
             })
         );
     };
@@ -1358,7 +1385,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         /> */}
                         <DetailHoaDon
                             toggleDetail={handleShowDetail}
+                            hinhThucTT={lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0}
                             tongTienHang={hoadon?.tongTienHang}
+                            onChangeQuyChiTiet={assignThongTinThanhToan}
+                            onChangeHoaDon={editInforHoaDon_atPayment}
+                            onClickThanhToan={saveHoaDon}
                         />
                     </Grid>
                 )}
@@ -1720,17 +1751,20 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             }
                                                         }}
                                                         key={index}
-                                                        label={item.text}
+                                                        label={item?.text}
                                                         checked={
                                                             lstQuyCT.length == 1 &&
                                                             lstQuyCT[0].hinhThucThanhToan ===
-                                                                item.id
+                                                                item.value
                                                         }
                                                         onChange={() =>
                                                             changeHinhThucThanhToan(item)
                                                         }
                                                         control={
-                                                            <Radio value={item.id} size="small" />
+                                                            <Radio
+                                                                value={item.value}
+                                                                size="small"
+                                                            />
                                                         }
                                                     />
                                                 ))}
