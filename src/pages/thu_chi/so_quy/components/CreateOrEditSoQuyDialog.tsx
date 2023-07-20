@@ -30,7 +30,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import * as yup from 'yup';
 import { useFormik, useFormikContext } from 'formik';
 import { addDays, format, isDate, parse } from 'date-fns';
-import AppConsts from '../../../../lib/appconst';
+import AppConsts, { ISelect } from '../../../../lib/appconst';
 import { Guid } from 'guid-typescript';
 import { ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
@@ -72,16 +72,10 @@ const CreateOrEditSoQuyDialog = ({
     onClose,
     onOk
 }: SoQuyDialogProps) => {
-    const hinhThucThanhToan = [
-        { id: 1, text: 'Tiền mặt' },
-        { id: 2, text: 'POS' },
-        { id: 3, text: 'Chuyển khoản' }
-    ];
-
     const doiTuongNopTien = [
-        { id: 1, text: 'Khách hàng' },
+        { value: 1, text: 'Khách hàng' },
         // { id: 2, text: 'Nhà cung cấp' },
-        { id: 3, text: 'Nhân viên' }
+        { value: 3, text: 'Nhân viên' }
     ];
     console.log('CreateOrEditSoQuyDialog ');
 
@@ -257,8 +251,8 @@ const CreateOrEditSoQuyDialog = ({
     useEffect(() => {
         setQuyHoaDon({
             ...quyHoaDon,
-            sHinhThucThanhToan: hinhThucThanhToan.filter(
-                (x: any) => x.id === quyHoaDon.hinhThucThanhToan
+            sHinhThucThanhToan: AppConsts.hinhThucThanhToan.filter(
+                (x: ISelect) => x.value === quyHoaDon.hinhThucThanhToan
             )[0]?.text
         });
     }, [quyHoaDon.hinhThucThanhToan]);
@@ -284,14 +278,14 @@ const CreateOrEditSoQuyDialog = ({
             })
             .notOneOf([0], 'Tổng tiền phải > 0')
             .required('Vui lòng nhập số tiền'),
-        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền'),
-        idTaiKhoanNganHang: yup
-            .string()
-            .when('hinhThucThanhToan', ([hinhThucThanhToan], schema) => {
-                if (hinhThucThanhToan !== 1)
-                    return yup.string().required('Vui lòng chọn tài khoản ngân hàng');
-                return schema;
-            })
+        idDoiTuongNopTien: yup.string().required('Vui lòng chọn đối tượng nộp tiền')
+        // idTaiKhoanNganHang: yup
+        //     .string()
+        //     .when('hinhThucThanhToan', ([hinhThucThanhToan], schema) => {
+        //         if (hinhThucThanhToan !== 1)
+        //             return yup.string().required('Vui lòng chọn tài khoản ngân hàng');
+        //         return schema;
+        //     })
     });
 
     const saveOKAccountBank = (dataSave: any) => {
@@ -459,12 +453,12 @@ const CreateOrEditSoQuyDialog = ({
                                                 }}>
                                                 <span className="modal-lable">Hình thức </span>
                                                 <SelectWithData
-                                                    data={hinhThucThanhToan}
+                                                    data={AppConsts.hinhThucThanhToan}
                                                     idChosed={quyHoaDon?.hinhThucThanhToan}
-                                                    handleChange={(item: any) =>
+                                                    handleChange={(item: ISelect) =>
                                                         setQuyHoaDon({
                                                             ...quyHoaDon,
-                                                            hinhThucThanhToan: item.id
+                                                            hinhThucThanhToan: item.value
                                                         })
                                                     }
                                                 />
@@ -489,7 +483,7 @@ const CreateOrEditSoQuyDialog = ({
                                                     handleChange={(item: any) =>
                                                         setQuyHoaDon({
                                                             ...quyHoaDon,
-                                                            loaiDoiTuong: item.id
+                                                            loaiDoiTuong: item.value
                                                         })
                                                     }
                                                 />
@@ -598,7 +592,8 @@ const CreateOrEditSoQuyDialog = ({
                                                 }
                                             />
                                         </Grid>
-                                        {quyHoaDon?.hinhThucThanhToan !== 1 && (
+                                        {/*  không cần chọn tài khoản ngân hàng*/}
+                                        {quyHoaDon?.hinhThucThanhToan === 0 && (
                                             <>
                                                 <Grid item xs={12} sm={12}>
                                                     <span className="modal-lable">

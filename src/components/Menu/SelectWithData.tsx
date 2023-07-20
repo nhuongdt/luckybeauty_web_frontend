@@ -13,7 +13,7 @@ export default function SelectWithData({ idChosed, data, handleChange }: any) {
                     value={idChosed}
                     label="Age">
                     {data.map((item: any, index: number) => (
-                        <MenuItem key={index} value={item.id} onClick={() => changeItem(item)}>
+                        <MenuItem key={index} value={item.value} onClick={() => changeItem(item)}>
                             {item.text}
                         </MenuItem>
                     ))}

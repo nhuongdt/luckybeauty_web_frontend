@@ -184,7 +184,7 @@ class SoQuyServices {
                     tienMat += itFor.tienThu;
                     break;
                 case 2:
-                    tienPos += itFor.tienThu;
+                    tienPos += itFor.tienThu; // tienPos = tienCK (DB)
                     break;
                 case 3:
                     tienCK += itFor.tienThu;

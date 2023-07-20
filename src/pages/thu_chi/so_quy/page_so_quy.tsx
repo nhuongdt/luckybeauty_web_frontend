@@ -290,24 +290,24 @@ const PageSoQuy = ({ xx }: any) => {
                 </Box>
             )
         },
-        {
-            field: 'tenKhoanThuChi',
-            sortable: false,
-            headerName: 'Loại thu chi',
-            minWidth: 118,
-            flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'tenKhoanThuChi' });
-                        }}
-                    />
-                </Box>
-            ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
-        },
+        // {
+        //     field: 'tenKhoanThuChi',
+        //     sortable: false,
+        //     headerName: 'Loại thu chi',
+        //     minWidth: 118,
+        //     flex: 1,
+        //     renderHeader: (params: any) => (
+        //         <Box title={params.value}>
+        //             {params.colDef.headerName}
+        //             <IconSorting
+        //                 onClick={() => {
+        //                     setParamSearch({ ...paramSearch, columnSort: 'tenKhoanThuChi' });
+        //                 }}
+        //             />
+        //         </Box>
+        //     ),
+        //     renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+        // },
         {
             field: 'tenNguoiNop',
             sortable: false,
