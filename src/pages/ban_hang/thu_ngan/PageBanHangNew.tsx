@@ -940,6 +940,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
 
     const tienThuaTraKhach = sumTienKhachTra - hoadon?.tongThanhToan ?? 0;
+    console.log(listProduct);
     // end thanhtoan new
     return (
         <>
@@ -1039,6 +1040,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             )}
                             <Box
                                 sx={{
+                                    scrollBehavior: 'smooth',
                                     backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
                                     boxShadow: CoditionLayout
@@ -1133,8 +1135,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         }}>
                                         {nhomDichVu.map((nhomDV, index) => (
                                             <ListItem
+                                                component="a"
+                                                href={'#' + nhomDV.id}
                                                 key={index}
-                                                onClick={() => choseNhomDichVu(nhomDV)}
+                                                // onClick={() => choseNhomDichVu(nhomDV)}
                                                 sx={{
                                                     gap: '6px',
                                                     padding: '8px 10px ',
@@ -1192,6 +1196,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         ))}
                                         {nhomHangHoa.map((nhomHH, index) => (
                                             <ListItem
+                                                component="a"
+                                                href={'#' + nhomHH.id}
                                                 key={index}
                                                 sx={{
                                                     gap: '6px',
@@ -1222,7 +1228,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         opacity: '1'
                                                     }
                                                 }}
-                                                onClick={() => choseNhomDichVu(nhomHH)}>
+                                                // onClick={() => choseNhomDichVu(nhomHH)}
+                                            >
                                                 <ListItemIcon
                                                     sx={{
                                                         minWidth: '0',
@@ -1306,6 +1313,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 : '88.5vh',
                                         overflowX: 'hidden',
                                         overflowY: 'auto',
+                                        scrollBehavior: 'smooth',
                                         '&::-webkit-scrollbar': {
                                             width: '7px'
                                         },
@@ -1318,13 +1326,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         }
                                     }}>
                                     {listProduct.map((nhom: any, index: any) => (
-                                        <Box key={index}>
+                                        <Box key={index} id={nhom.idNhomHangHoa}>
                                             <Typography
                                                 variant="h4"
                                                 fontSize="16px"
                                                 color="#000"
+                                                pt="5px"
                                                 fontWeight="700"
-                                                marginBottom="16px">
+                                                marginBottom="11px">
                                                 {nhom.tenNhomHang}
                                             </Typography>
 
@@ -1525,6 +1534,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         {/* 1 row chi tiet */}
                         <Box
                             sx={{
+                                scrollBehavior: 'smooth',
                                 overflowY: 'auto',
                                 '&::-webkit-scrollbar': {
                                     width: '7px'
