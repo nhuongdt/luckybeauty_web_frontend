@@ -207,13 +207,13 @@ const DetailHoaDon = ({
         <>
             <Box
                 sx={{
-                    // marginTop: '-45px',
-                    // height: 'calc(100% + 45px)',
                     padding: '24px',
+
                     boxShadow: '1px 5px 22px 4px #00000026',
-                    // width: '90%',
+                    width: '90%',
+                    height: '100%',
                     marginX: 'auto',
-                    justifyContent: 'center',
+
                     borderRadius: '12px',
                     bgcolor: '#fff',
                     display: 'flex',
@@ -487,7 +487,14 @@ const DetailHoaDon = ({
                 <Button
                     variant="contained"
                     className="btn-container-hover"
-                    sx={{ width: '158px', margin: 'auto', paddingY: '14px', fontSize: '16px' }}
+                    sx={{
+                        width: '158px',
+                        marginX: 'auto',
+                        mt: 'auto',
+                        mb: '5px',
+                        paddingY: '14px',
+                        fontSize: '16px'
+                    }}
                     onClick={clickThanhToan}>
                     Thanh toán
                 </Button>

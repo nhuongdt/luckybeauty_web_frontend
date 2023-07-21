@@ -1780,7 +1780,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     sx={{ '& input': { fontSize: '14px' } }}
                                 />
                             </Box>
-                            <Box borderTop="1px solid #F2F2F2" marginY="16px"></Box>
+
                             <Box>
                                 <Box
                                     display="flex"
@@ -1792,12 +1792,17 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     paddingX="16px"
                                     bgcolor="#F9F9F9">
                                     <Box display="flex" justifyContent="space-between">
-                                        <Typography variant="h6" fontSize="14px" color="#3B4758">
+                                        <Typography
+                                            variant="h6"
+                                            fontSize="16px"
+                                            fontWeight="700"
+                                            color="#3B4758">
                                             Tổng thanh toán
                                         </Typography>
                                         <Typography
-                                            variant="caption"
-                                            fontSize="12px"
+                                            variant="body1"
+                                            fontWeight="700"
+                                            fontSize="16px"
                                             color="#3B4758">
                                             {Intl.NumberFormat('vi-VN').format(
                                                 hoadon?.tongThanhToan
@@ -1842,7 +1847,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             <Typography
                                                 variant="body1"
                                                 fontSize="14px"
-                                                color="#3D475C">
+                                                color="#3D475C"
+                                                fontWeight="500">
                                                 Tiền khách trả
                                             </Typography>
                                         </Grid>
@@ -1850,6 +1856,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             {lstQuyCT.length > 1 ? (
                                                 <Box
                                                     sx={{
+                                                        mb: '8px',
                                                         display: 'flex',
                                                         gap: '16px',
                                                         '& .item': {
@@ -1926,7 +1933,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         textAlign: 'right',
                                                         fontWeight: '700',
                                                         color: '#3D475C',
-                                                        fontSize: '16px'
+                                                        fontSize: '16px',
+                                                        padding: '14px'
                                                     }
                                                 }}
                                                 customInput={TextField}
