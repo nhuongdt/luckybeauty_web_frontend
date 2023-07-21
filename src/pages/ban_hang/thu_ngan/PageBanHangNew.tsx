@@ -18,7 +18,8 @@ import {
     Radio,
     FormControl,
     FormLabel,
-    FormControlLabel
+    FormControlLabel,
+    Autocomplete
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
 import avatar from '../../../images/avatar.png';
@@ -1013,6 +1014,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         marginLeft: 'auto',
                                         '& .MuiInputBase-root': {
                                             bgcolor: '#fff'
+                                        },
+                                        '& input': {
+                                            color: '#3D475C!important'
                                         }
                                     }}
                                     size="small"
@@ -1262,7 +1266,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
                                             boxShadow: ' 0px 20px 100px 0px #0000000D',
 
-                                            margin: 'auto'
+                                            margin: 'auto',
+                                            '& input': {
+                                                color: '#3D475C!important'
+                                            }
                                         }}
                                         size="small"
                                         className="search-field"
@@ -1421,31 +1428,74 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 paddingBottom: '16px'
                             }}>
                             <Box display="flex" gap="8px" alignItems="center">
-                                <Avatar
-                                    src={
-                                        utils.checkNull(hoadon?.idKhachHang) ||
-                                        hoadon?.idKhachHang === Guid.EMPTY
-                                            ? ''
-                                            : avatar
-                                    }
-                                    sx={{ width: 40, height: 40 }}
-                                />
+                                {hoadon?.tenKhachHang !== 'Khách lẻ' ? (
+                                    <>
+                                        <Avatar
+                                            src={
+                                                utils.checkNull(hoadon?.idKhachHang) ||
+                                                hoadon?.idKhachHang === Guid.EMPTY
+                                                    ? ''
+                                                    : avatar
+                                            }
+                                            sx={{ width: 40, height: 40 }}
+                                        />
 
-                                <Box onClick={showModalCheckIn}>
-                                    <Typography variant="body2" fontSize="14px" color="#3D475C">
-                                        {hoadon?.tenKhachHang}
-                                    </Typography>
-                                    <Typography variant="body2" fontSize="12px" color="#525F7A">
-                                        {hoadon?.soDienThoai}
-                                    </Typography>
-                                </Box>
-
+                                        <Box onClick={showModalCheckIn}>
+                                            <Typography
+                                                variant="body2"
+                                                fontSize="14px"
+                                                color="#3D475C">
+                                                {hoadon?.tenKhachHang}
+                                            </Typography>
+                                            <Typography
+                                                variant="body2"
+                                                fontSize="12px"
+                                                color="#525F7A">
+                                                {hoadon?.soDienThoai}
+                                            </Typography>
+                                        </Box>
+                                    </>
+                                ) : (
+                                    <Box sx={{ flexGrow: '1' }}>
+                                        <Autocomplete
+                                            fullWidth
+                                            options={allNhanVien}
+                                            getOptionLabel={(option) => option.tenNhanVien}
+                                            size="small"
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    fullWidth
+                                                    placeholder="Tìm kiếm"
+                                                    InputProps={{
+                                                        ...params.InputProps,
+                                                        startAdornment: (
+                                                            <>
+                                                                <SearchIcon />
+                                                                {params.InputProps.startAdornment}
+                                                            </>
+                                                        )
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </Box>
+                                )}
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     {utils.checkNull(hoadon?.idKhachHang) ||
                                     hoadon?.idKhachHang === Guid.EMPTY ? (
-                                        <IconButton>
+                                        <Button
+                                            variant="outlined"
+                                            sx={{
+                                                border: '1px solid var(--color-main)',
+                                                bgcolor: '#fff',
+                                                minWidth: 'unset',
+                                                width: '40px',
+                                                height: '40px',
+                                                borderRadius: '8px'
+                                            }}>
                                             <Add onClick={showModalAddCustomer} />
-                                        </IconButton>
+                                        </Button>
                                     ) : (
                                         <>
                                             <IconButton>
@@ -1490,15 +1540,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             {hoaDonChiTiet?.map((ct: any, index) => (
                                 <Box
                                     padding="8px 12px"
-                                    borderRadius="8px"
-                                    border="1px solid #F2F2F2"
+                                    borderBottom="1px solid #E0E4EB"
                                     marginTop="16px"
                                     key={index}>
                                     <Box
                                         display="flex"
                                         justifyContent="space-between"
                                         alignItems="center">
-                                        <Box width="50%">
+                                        <Box width="55%" paddingRight="20px">
                                             <Typography
                                                 variant="body1"
                                                 fontSize="14px"
@@ -1529,7 +1578,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         (nv: any, index3: number) => (
                                                             <Typography
                                                                 variant="body1"
-                                                                fontSize="12px"
+                                                                fontSize="10px"
                                                                 lineHeight="16px"
                                                                 color="#4C4B4C"
                                                                 alignItems="center"
@@ -1542,9 +1591,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                                   .length > 2
                                                                             ? 'calc(50% - 23px)'
                                                                             : 'calc(50% - 4px)',
-                                                                    backgroundColor: '#E0E4EB',
+                                                                    backgroundColor:
+                                                                        'var(--color-bg)',
                                                                     padding: '4px 8px',
-                                                                    gap: '10px',
+                                                                    gap: '4px',
                                                                     borderRadius: '100px',
                                                                     '& .remove-NV:hover img': {
                                                                         filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
@@ -1583,11 +1633,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     {ct.nhanVienThucHien.length > 2 ? (
                                                         <Box
                                                             sx={{
-                                                                fontSize: '12px',
+                                                                fontSize: '10px',
                                                                 color: '#525F7A',
                                                                 padding: '4px 8px',
                                                                 borderRadius: '100px',
-                                                                bgcolor: '#E0E4EB',
+                                                                bgcolor: 'var(--color-bg)',
                                                                 cursor: 'pointer'
                                                             }}>
                                                             {ct.nhanVienThucHien.length - 2}+
@@ -1596,7 +1646,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 </Box>
                                             )}
                                         </Box>
-                                        <Box>
+                                        <Box width="20%">
                                             <Typography
                                                 color="#000"
                                                 variant="body1"
@@ -1642,7 +1692,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 </Box>
                                             </Typography>
                                         </Box>
-                                        <Box display="flex" alignItems="center">
+                                        <Box
+                                            display="flex"
+                                            alignItems="center"
+                                            width="25%"
+                                            justifyContent="end">
                                             <Box
                                                 sx={{
                                                     marginLeft: '8px',
