@@ -1468,9 +1468,41 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 ) : (
                                     <Box sx={{ flexGrow: '1' }}>
                                         <Autocomplete
+                                            sx={{
+                                                '& .MuiAutocomplete-paper::-webkit-scrollbar': {
+                                                    width: '8px'
+                                                }
+                                            }}
                                             fullWidth
                                             options={allNhanVien}
                                             getOptionLabel={(option) => option.tenNhanVien}
+                                            renderOption={(props, option) => (
+                                                <Box
+                                                    component="li"
+                                                    {...props}
+                                                    sx={{ display: 'flex', gap: '8px' }}>
+                                                    <Box>
+                                                        <Avatar
+                                                            sx={{ width: 24, height: 24 }}
+                                                            src={option.avatar}
+                                                        />
+                                                    </Box>
+                                                    <Box>
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontSize="12px"
+                                                            color="#3D475C">
+                                                            {option.tenNhanVien}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body1"
+                                                            color="#667799"
+                                                            fontSize="12px">
+                                                            {option.soDienThoai}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            )}
                                             size="small"
                                             renderInput={(params) => (
                                                 <TextField
