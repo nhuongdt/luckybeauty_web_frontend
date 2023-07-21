@@ -61,10 +61,12 @@ export default function MainPageBanHang() {
     //ẩn thanh cuộn dọc của trình duyệt khi vào trang bán hàng
     useEffect(() => {
         activeTab === 2
-            ? (document.documentElement.style.overflowY = 'hidden')
+            ? ((document.documentElement.style.overflowY = 'hidden'),
+              (document.documentElement.style.height = '100vh'))
             : (document.documentElement.style.overflowY = 'auto');
 
         return () => {
+            document.documentElement.style.height = 'unset';
             document.documentElement.style.overflowY = 'auto';
         };
     }, [activeTab]);
@@ -110,6 +112,7 @@ export default function MainPageBanHang() {
     const handleCallBack = (data: boolean) => {
         setGetStateChild(data);
     };
+
     return (
         <>
             <DataCustomerContext.Provider

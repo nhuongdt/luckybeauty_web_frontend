@@ -940,7 +940,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
 
     const tienThuaTraKhach = sumTienKhachTra - hoadon?.tongThanhToan ?? 0;
-    console.log(listProduct);
+
     // end thanhtoan new
     return (
         <>
@@ -1303,9 +1303,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     padding="16px"
                                     marginTop="16px"
                                     sx={{
+                                        width: '100%',
                                         backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                         borderRadius: '8px',
-                                        maxHeight:
+                                        height:
                                             CoditionLayout && innerHeight > 600
                                                 ? '74vh'
                                                 : CoditionLayout && innerHeight < 605
@@ -1417,11 +1418,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 <Grid item md={5} sx={{ paddingRight: '0' }}>
                     <Box
                         sx={{
-                            mt: showDetail ? '-21px' : '-76px',
+                            mt: showDetail ? '-21px' : '-75px',
                             backgroundColor: '#fff',
                             borderRadius: '8px',
                             overflow: 'hidden',
-                            height: '100vh',
+                            height: '98vh',
                             padding: '16px',
                             marginRight: CoditionLayout ? '16px' : '0px',
                             paddingBottom: '32px',
