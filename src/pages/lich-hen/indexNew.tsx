@@ -336,7 +336,7 @@ const LichHen: React.FC = () => {
                     </Box>
                 </Grid>
                 <Grid item sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <ButtonGroup variant="outlined" sx={{ height: '32px' }}>
+                    <ButtonGroup variant="outlined">
                         <Button className="btn-outline-hover" sx={{ marginRight: '1px' }}>
                             <ShapeIcon />
                         </Button>

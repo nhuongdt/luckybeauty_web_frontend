@@ -250,7 +250,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                         location.pathname === dropdownItem.key
                                                 )
                                                     ? '#333233'
-                                                    : '#343234',
+                                                    : '#3D475C',
                                             fontWeight:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -275,7 +275,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                         location.pathname === dropdownItem.key
                                                 )
                                                     ? '#3B4758'
-                                                    : '#343234',
+                                                    : '#3D475C',
                                             fontWeight:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(

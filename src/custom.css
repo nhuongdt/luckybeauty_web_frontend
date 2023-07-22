@@ -240,8 +240,9 @@
     color: #ffffff;
 }
 .btn-outline-hover {
-    border-color: #666466 !important;
+    border-color: var(--border-color) !important;
     transition: '.3s';
+    color: #525f7a !important;
 }
 .btn-outline-hover:hover {
     border-color: var(--color-main) !important;
@@ -263,6 +264,9 @@
     transition: '.4s';
     border-color: var(--border-color) !important;
 }
+.MuiOutlinedInput-notchedOutline input {
+    color: #525f7a !important;
+}
 .Mui-focused .MuiOutlinedInput-notchedOutline {
     border-width: 1px !important;
     border-color: var(--color-main) !important;
@@ -281,4 +285,10 @@
 }
 .MuiDataGrid-columnSeparator {
     display: none !important;
+}
+.MuiDataGrid-cell {
+    color: #3d475c;
+}
+.MuiDataGrid-columnHeaderTitleContainerContent {
+    color: #3d475c;
 }
