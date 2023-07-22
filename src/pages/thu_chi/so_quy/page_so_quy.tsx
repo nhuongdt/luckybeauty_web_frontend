@@ -114,7 +114,10 @@ const PageSoQuy = ({ xx }: any) => {
         }
     };
     const exportToExcel = async () => {
-        const data = await SoQuyServices.ExportToExcel(paramSearch);
+        const param = { ...paramSearch };
+        param.pageSize = pageDataSoQuy.totalCount;
+        param.currentPage = 1;
+        const data = await SoQuyServices.ExportToExcel(param);
         fileDowloadService.downloadExportFile(data);
     };
     const handleChangePage = (event: any, value: number) => {
@@ -134,7 +137,9 @@ const PageSoQuy = ({ xx }: any) => {
     const doActionRow = (action: number, itemSQ: GetAllQuyHoaDonItemDto) => {
         setSelectedRowId(itemSQ?.id);
         if (action < 2) {
-            setisShowModal(true);
+            if (utils.checkNull(itemSQ?.idHoaDonLienQuan)) {
+                setisShowModal(true);
+            }
         } else {
             setinforDelete(
                 new PropConfirmOKCancel({
@@ -271,7 +276,7 @@ const PageSoQuy = ({ xx }: any) => {
         {
             field: 'ngayLapHoaDon',
             sortable: false,
-            headerName: 'Thời gian',
+            headerName: 'Ngày lập',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (

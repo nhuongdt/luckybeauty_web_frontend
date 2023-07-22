@@ -10,4 +10,5 @@ export interface GetAllQuyHoaDonItemDto {
     phuongThucTT: string;
     trangThai: string;
     ngayLapHoaDon: string;
+    idHoaDonLienQuan: string;
 }

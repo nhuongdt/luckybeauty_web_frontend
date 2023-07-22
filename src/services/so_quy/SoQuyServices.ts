@@ -45,7 +45,7 @@ class SoQuyServices {
     }
 
     async ExportToExcel(input: RequestFromToDto): Promise<IFileDto> {
-        const response = await http.post('api/services/app/QuyHoaDon/ExportToExcel', input);
+        const response = await http.post('api/services/app/QuyHoaDon/ExportExcelQuyHoaDon', input);
         return response.data.result;
     }
     async GetForEdit(idQuyHD: string): Promise<QuyHoaDonDto> {
