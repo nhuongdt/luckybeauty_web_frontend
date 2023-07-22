@@ -46,6 +46,10 @@ const DetailHoaDon = ({
     const [ptGiamGiaHD, setPTGiamGiaHD] = useState(0);
     const [laPTGiamGia, setlaPTGiamGia] = useState(true);
     const [ghichuHD, setGhichuHD] = useState('');
+    const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
+    const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
+
+    const [tienKhachTraMax, setTienKhachTraMax] = useState(0);
     const [lstQuyCT, setLstQuyCT] = useState<QuyChiTietDto[]>([
         new QuyChiTietDto({
             hinhThucThanhToan: hinhThucTT,
@@ -75,10 +79,13 @@ const DetailHoaDon = ({
                 }
             })
         );
+        setTienKhachTraMax(formType === 1 ? tongTienHang : noHDCu);
+        setSumTienKhachTra(formType === 1 ? tongTienHang : noHDCu);
+        setTienThuaTraKhach(0);
     }, [tongTienHang]);
 
     const khachPhaiTra = formType === 1 ? tongTienHang - tongGiamGiaHD : noHDCu;
-    console.log('khachPhaiTra', khachPhaiTra);
+
     const onClickPTramVND = (newVal: boolean) => {
         let gtriPT = 0;
         if (!laPTGiamGia) {
@@ -110,15 +117,77 @@ const DetailHoaDon = ({
     const gtriXX = laPTGiamGia ? ptGiamGiaHD : tongGiamGiaHD;
 
     const onChangeTienKhachTra = (gtri: string, loai: number) => {
-        setLstQuyCT(
-            lstQuyCT.map((item: QuyChiTietDto) => {
-                if (item.hinhThucThanhToan === loai) {
-                    return { ...item, tienThu: utils.formatNumberToFloat(gtri) };
-                } else {
-                    return { ...item };
-                }
-            })
-        );
+        const gtriNhapNew = utils.formatNumberToFloat(gtri);
+        if (hinhThucTT === 0) {
+            // tinh lai  tien
+            switch (loai) {
+                case 1: // tinhtien chuyenkhoan
+                    {
+                        const conLai = tienKhachTraMax - gtriNhapNew;
+                        setLstQuyCT(
+                            lstQuyCT.map((item: QuyChiTietDto) => {
+                                if (item.hinhThucThanhToan === 1) {
+                                    return { ...item, tienThu: gtriNhapNew };
+                                } else {
+                                    if (item.hinhThucThanhToan === 2) {
+                                        return { ...item, tienThu: conLai > 0 ? conLai : 0 };
+                                    } else {
+                                        return { ...item, tienThu: 0 };
+                                    }
+                                }
+                            })
+                        );
+                    }
+                    break;
+                case 2: // tinhtien pos
+                    {
+                        const sumTienMat = lstQuyCT
+                            .filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 1)
+                            .reduce((currentValue: number, item: QuyChiTietDto) => {
+                                return item.tienThu + currentValue;
+                            }, 0);
+                        const conLai = tienKhachTraMax - sumTienMat - gtriNhapNew;
+
+                        setLstQuyCT(
+                            lstQuyCT.map((item: QuyChiTietDto) => {
+                                if (item.hinhThucThanhToan === 1) {
+                                    return { ...item };
+                                } else {
+                                    if (item.hinhThucThanhToan === 2) {
+                                        return { ...item, tienThu: gtriNhapNew };
+                                    } else {
+                                        return { ...item, tienThu: conLai > 0 ? conLai : 0 };
+                                    }
+                                }
+                            })
+                        );
+                    }
+                    break;
+                case 3:
+                    {
+                        const sumMatCK = lstQuyCT
+                            .filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== 3)
+                            .reduce((currentValue: number, item: QuyChiTietDto) => {
+                                return item.tienThu + currentValue;
+                            }, 0);
+                        setSumTienKhachTra(sumMatCK + gtriNhapNew);
+                    }
+                    break;
+            }
+            setTienThuaTraKhach(0);
+        } else {
+            setLstQuyCT(
+                lstQuyCT.map((item: QuyChiTietDto) => {
+                    if (item.hinhThucThanhToan === loai) {
+                        return { ...item, tienThu: gtriNhapNew };
+                    } else {
+                        return { ...item };
+                    }
+                })
+            );
+            setSumTienKhachTra(gtriNhapNew);
+            setTienThuaTraKhach(gtriNhapNew - khachPhaiTra);
+        }
     };
 
     const choseHinhThucThanhToan = (item: ISelect) => {
@@ -130,7 +199,6 @@ const DetailHoaDon = ({
                     hinhThucThanhToan: item.value
                 })
             ]);
-            console.log(item.value);
         } else {
             setLstQuyCT(() => [
                 new QuyChiTietDto({
@@ -149,21 +217,27 @@ const DetailHoaDon = ({
         }
     };
 
-    const sumTienKhachTra = utils.RoundDecimal(
-        lstQuyCT.reduce((currentValue: number, item: QuyChiTietDto) => {
-            return item.tienThu + currentValue;
-        }, 0)
-    );
-
-    const tienThuaTraKhach = sumTienKhachTra - khachPhaiTra;
-
     // change at child --> update to parent
     useEffect(() => {
         if (formType === 1) onChangeQuyChiTiet(lstQuyCT);
     }, [lstQuyCT]);
 
     useEffect(() => {
-        if (formType === 1) onChangeHoaDon(ptGiamGiaHD, tongGiamGiaHD, khachPhaiTra, ghichuHD);
+        if (formType === 1) {
+            onChangeHoaDon(ptGiamGiaHD, tongGiamGiaHD, khachPhaiTra, ghichuHD);
+            setTienKhachTraMax(khachPhaiTra);
+            setSumTienKhachTra(khachPhaiTra);
+
+            setLstQuyCT(
+                lstQuyCT.map((item: QuyChiTietDto) => {
+                    if (item.hinhThucThanhToan === hinhThucTT) {
+                        return { ...item, tienThu: khachPhaiTra };
+                    } else {
+                        return { ...item };
+                    }
+                })
+            );
+        }
     }, [ptGiamGiaHD, tongGiamGiaHD, ghichuHD]);
 
     const clickThanhToan = async () => {
@@ -363,24 +437,46 @@ const DetailHoaDon = ({
                         </RadioGroup>
                     </Grid>
                     <Grid item xs={12}>
-                        <NumericFormat
-                            size="small"
-                            fullWidth
-                            sx={{
-                                '& input': {
-                                    paddingY: '13.5px',
-                                    textAlign: 'right'
+                        {hinhThucTT !== 0 && (
+                            <NumericFormat
+                                size="small"
+                                fullWidth
+                                sx={{
+                                    '& input': {
+                                        paddingY: '13.5px',
+                                        textAlign: 'right'
+                                    }
+                                }}
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                customInput={TextField}
+                                value={sumTienKhachTra}
+                                onChange={(event) =>
+                                    onChangeTienKhachTra(event.target.value, idHinhThucTT)
                                 }
-                            }}
-                            decimalSeparator=","
-                            thousandSeparator="."
-                            customInput={TextField}
-                            value={sumTienKhachTra}
-                            disabled={idHinhThucTT === 0}
-                            onChange={(event: any) =>
-                                onChangeTienKhachTra(event.target.value, idHinhThucTT)
-                            }
-                        />
+                            />
+                        )}
+                        {hinhThucTT === 0 && (
+                            <NumericFormat
+                                size="small"
+                                fullWidth
+                                sx={{
+                                    '& input': {
+                                        paddingY: '13.5px',
+                                        textAlign: 'right'
+                                    }
+                                }}
+                                decimalSeparator=","
+                                thousandSeparator="."
+                                customInput={TextField}
+                                value={tienKhachTraMax}
+                                onChange={(event) =>
+                                    setTienKhachTraMax(
+                                        utils.formatNumberToFloat(event.target.value)
+                                    )
+                                }
+                            />
+                        )}
                     </Grid>
                     {idHinhThucTT === 0 ? (
                         <Grid container spacing="16px">
@@ -427,7 +523,7 @@ const DetailHoaDon = ({
                                                 }
                                             }}
                                             value={item.tienThu}
-                                            onChange={(event: any) =>
+                                            onChange={(event) =>
                                                 onChangeTienKhachTra(
                                                     event.target.value,
                                                     item.hinhThucThanhToan
