@@ -62,11 +62,11 @@ export default function MainPageBanHang() {
     useEffect(() => {
         activeTab === 2
             ? ((document.documentElement.style.overflowY = 'hidden'),
-              (document.documentElement.style.height = '100vh'))
+              (document.documentElement.style.maxHeight = '100vh'))
             : (document.documentElement.style.overflowY = 'auto');
 
         return () => {
-            document.documentElement.style.height = 'unset';
+            document.documentElement.style.maxHeight = 'unset';
             document.documentElement.style.overflowY = 'auto';
         };
     }, [activeTab]);

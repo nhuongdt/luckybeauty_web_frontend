@@ -22,7 +22,7 @@ import {
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
-import { ReactComponent as SuportIcon } from '../../images/supportIcon.svg';
+import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import NotificationIcon from '../../images/notification.svg';
@@ -666,11 +666,16 @@ const Header: React.FC<HeaderProps> = (
                     transition: '.1s',
                     left: `${position.x}px`,
                     top: `${position.y}px`,
-                    width: '60px',
-                    height: '60px',
+                    width: '48px',
+                    height: '48px',
+                    paddingX: '12px!important',
                     minWidth: 'unset',
                     borderRadius: '50%',
-                    bgcolor: 'var(--color-main)!important'
+                    bgcolor: 'var(--color-main)!important',
+                    '& svg': {
+                        width: '24px',
+                        height: '24px'
+                    }
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}>
