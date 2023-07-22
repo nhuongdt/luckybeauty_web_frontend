@@ -265,6 +265,9 @@ export default function ModalEditChiTietGioHang({
                         if (!laPhanTramNew) {
                             // % to vnd
                             tienCKNew = ((item?.ptChietKhau ?? 0) * giaBan) / 100;
+                        } else {
+                            // keep %
+                            ptCKNew = item?.ptChietKhau ?? 0;
                         }
                     } else {
                         if (laPhanTramNew) {
@@ -380,7 +383,30 @@ export default function ModalEditChiTietGioHang({
             await HoaDonService.Update_ChiTietHoaDon(lstCTHoaDon, hoadonChiTiet[0]?.idHoaDon);
         }
     };
-    const chietKhau = ['5%', '10%', '15%', '20%', '25%', '30%', '35%', '40%', '45%', '50%'];
+    const chietKhau = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50];
+
+    const onClickPtramChietKhau = (gtri: number, idCTHD: string) => {
+        setLstCTHoaDon(
+            lstCTHoaDon.map((item: PageHoaDonChiTietDto) => {
+                if (item.id === idCTHD) {
+                    const tienCK = (gtri * item.donGiaTruocCK) / 100;
+                    const dongiasauCK = item.donGiaTruocCK - tienCK;
+                    return {
+                        ...item,
+                        ptChietKhau: gtri,
+                        tienChietKhau: tienCK,
+                        donGiaSauCK: dongiasauCK,
+                        donGiaSauVAT: dongiasauCK,
+                        thanhTienSauCK: dongiasauCK * item.soLuong,
+                        thanhTienSauVAT: dongiasauCK * item.soLuong
+                    };
+                } else {
+                    return item;
+                }
+            })
+        );
+    };
+
     return (
         <>
             <ModalSearchProduct
@@ -659,17 +685,31 @@ export default function ModalEditChiTietGioHang({
                                             {chietKhau.map((item, index) => (
                                                 <Button
                                                     key={index}
+                                                    onClick={() =>
+                                                        onClickPtramChietKhau(item, ct.id)
+                                                    }
                                                     sx={{
                                                         minWidth: 'unset',
                                                         flexGrow: '1',
                                                         fontSize: '12px',
-                                                        color: 'var(--color-main)',
+                                                        color:
+                                                            ct.ptChietKhau === item
+                                                                ? 'white'
+                                                                : 'var(--color-main)',
                                                         paddingY: '8px ',
                                                         textAlign: 'center',
                                                         border: '1px solid var(--color-main)',
-                                                        borderRadius: '4px'
+                                                        borderRadius: '4px',
+                                                        bgcolor:
+                                                            ct.ptChietKhau === item
+                                                                ? 'var(--color-main)'
+                                                                : '',
+                                                        '&:hover ': {
+                                                            bgcolor: 'var(--bs-primary)',
+                                                            color: 'white'
+                                                        }
                                                     }}>
-                                                    {item}
+                                                    {item} %
                                                 </Button>
                                             ))}
                                         </Grid>
