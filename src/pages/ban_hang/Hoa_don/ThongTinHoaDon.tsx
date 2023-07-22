@@ -184,6 +184,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
     const savePhieuThuOK = (tongThunew = 0) => {
         setObjAlert({ ...objAlert, show: true, mes: 'Thanh toán hóa đơn thành công' });
         setIsShowModalThanhToan(false);
+        setTypeAction(1);
         setHoaDonChosed({
             ...hoadonChosed,
             conNo: (hoadonChosed?.conNo ?? 0) - tongThunew
@@ -259,15 +260,15 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                     <Box
                                         sx={{
                                             fontSize: '24px',
-                                            fontWeight: '700',
-                                            color: '#333233'
+                                            color: '#999699'
                                         }}>
                                         Hóa đơn
                                     </Box>
                                     <Box
                                         sx={{
                                             fontSize: '24px',
-                                            color: '#999699'
+                                            fontWeight: '700',
+                                            color: '#333233'
                                         }}>
                                         {hoadonChosed?.maHoaDon}
                                     </Box>
