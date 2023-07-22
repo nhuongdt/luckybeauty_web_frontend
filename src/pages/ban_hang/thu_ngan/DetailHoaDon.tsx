@@ -202,7 +202,12 @@ const DetailHoaDon = ({
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
         return tongThu;
     };
-    const chietKhau = ['5%', '10%', '15%', '20%', '25%', '30%', '35%', '40%', '45%', '50%'];
+    // useEffect(() => {
+    //     document.documentElement.style.overflowY = 'hidden';
+    //     return () => {
+    //         document.documentElement.style.overflowY = 'unset';
+    //     };
+    // }, []);
     return (
         <>
             <Box
@@ -218,7 +223,18 @@ const DetailHoaDon = ({
                     bgcolor: '#fff',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '16px'
+                    gap: '16px',
+                    position: 'relative',
+                    '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        bottom: '-15px',
+                        pointerEvents: 'none',
+                        height: '40px',
+                        left: '0',
+                        width: '100%',
+                        bgcolor: '#fff'
+                    }
                 }}>
                 <Box
                     sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

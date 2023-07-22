@@ -8,7 +8,8 @@ import {
     Box,
     TextField,
     Typography,
-    SelectChangeEvent
+    SelectChangeEvent,
+    ButtonGroup
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../../../../../images/column-sorting.svg';
@@ -29,6 +30,7 @@ import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong
 import { SuggestDonViQuiDoiDto } from '../../../../../services/suggests/dto/SuggestDonViQuiDoi';
 import Cookies from 'js-cookie';
 import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
+
 class ChietKhauDichVuScreen extends Component {
     state = {
         visited: false,
@@ -43,7 +45,10 @@ class ChietKhauDichVuScreen extends Component {
         totalCount: 0,
         createOrEditDto: { laPhanTram: false } as CreateOrEditChietKhauDichVuDto,
         suggestNhanSu: [] as SuggestNhanSuDto[],
-        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[]
+        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[],
+        activeButton: '',
+        focusField: '',
+        showButton: false
     };
     componentDidMount(): void {
         this.InitData();
@@ -103,6 +108,20 @@ class ChietKhauDichVuScreen extends Component {
             sortBy: sortBy
         });
         this.getDataAccordingByNhanVien(this.state.idNhanVien);
+    };
+    handleButtonClick = (rowId: number, buttonType: string) => {
+        this.setState((prevState) => ({
+            ...prevState,
+            activeButton: {
+                ...prevState,
+                [rowId]: buttonType
+            }
+        }));
+    };
+    onFocus = (RowId: number) => {
+        this.setState({
+            focusField: RowId
+        });
     };
     render(): ReactNode {
         const { listChietKhauDichVu } = chietKhauDichVuStore;
@@ -189,21 +208,74 @@ class ChietKhauDichVuScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box
-                        title={params.value}
+                    <TextField
+                        type="number"
+                        defaultValue="0"
                         sx={{
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            width: 'calc(100% - 20px)',
-                            border: '1px solid #E6E1E6',
-                            borderRadius: '8px',
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            padding: '0 16px'
-                        }}>
-                        {params.value}
-                    </Box>
+                            height: '85%',
+                            '&>div': {
+                                height: '100%'
+                            },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
+                                {
+                                    appearance: 'none'
+                                },
+                            '& .MuiOutlinedInput-root': {
+                                paddingRight: '8px'
+                            }
+                        }}
+                        onFocus={() => this.onFocus(params.row.id)}
+                        InputProps={{
+                            endAdornment:
+                                this.state.focusField === params.row.id ? (
+                                    <ButtonGroup
+                                        sx={{
+                                            display: 'flex',
+                                            '& button': {
+                                                fontSize: '14px',
+                                                transition: '.4s',
+                                                padding: '0',
+                                                width: '30px',
+                                                minWidth: 'unset!important',
+                                                height: '30px',
+
+                                                borderColor: 'var(--color-main)',
+                                                bgcolor: 'transparent'
+                                            },
+                                            '& button.active': {
+                                                backgroundColor: 'var(--color-main)',
+                                                borderColor: 'transparent',
+                                                color: '#fff'
+                                            }
+                                        }}>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => {
+                                                this.handleButtonClick(params.row.id, '%');
+                                            }}
+                                            className={
+                                                this.state.activeButton[params.row.id]
+                                                    ? 'active'
+                                                    : 'normal'
+                                            }>
+                                            %
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => {
+                                                this.handleButtonClick(params.row.id, 'đ');
+                                            }}
+                                            className={
+                                                this.state.activeButton[params.row.id]
+                                                    ? 'active'
+                                                    : 'normal'
+                                            }>
+                                            đ
+                                        </Button>
+                                    </ButtonGroup>
+                                ) : undefined
+                        }}
+                    />
                 )
             },
             {
@@ -224,21 +296,76 @@ class ChietKhauDichVuScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box
-                        title={params.value}
+                    <TextField
+                        type="number"
+                        defaultValue="0"
                         sx={{
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            width: 'calc(100% - 40px)',
-                            border: '1px solid #E6E1E6',
-                            borderRadius: '8px',
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            padding: '0 16px'
-                        }}>
-                        {params.value}
-                    </Box>
+                            height: '85%',
+                            '&>div': {
+                                height: '100%'
+                            },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
+                                {
+                                    appearance: 'none'
+                                },
+                            '& .MuiOutlinedInput-root': {
+                                paddingRight: '8px'
+                            }
+                        }}
+                        onFocus={() => this.onFocus(params.row.id)}
+                        // onBlur={() => this.onFocus(21012004)}
+                        InputProps={{
+                            endAdornment:
+                                this.state.focusField === params.row.id ? (
+                                    <ButtonGroup
+                                        sx={{
+                                            display: 'flex',
+                                            '& button': {
+                                                fontSize: '14px',
+                                                transition: '.4s',
+                                                padding: '0',
+                                                width: '30px',
+                                                minWidth: 'unset!important',
+                                                height: '30px',
+
+                                                borderColor: 'var(--color-main)',
+                                                bgcolor: 'transparent'
+                                            },
+                                            '& button.active': {
+                                                backgroundColor: 'var(--color-main)',
+                                                borderColor: 'transparent',
+                                                color: '#fff'
+                                            }
+                                        }}>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => {
+                                                this.handleButtonClick(params.row.id, '%');
+                                                this.setState({ showButton: true });
+                                            }}
+                                            className={
+                                                this.state.activeButton[params.row.id] === '%'
+                                                    ? 'active'
+                                                    : 'normal'
+                                            }>
+                                            %
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => {
+                                                this.handleButtonClick(params.row.id, 'đ');
+                                            }}
+                                            className={
+                                                this.state.activeButton[params.row.id]
+                                                    ? 'active'
+                                                    : 'normal'
+                                            }>
+                                            đ
+                                        </Button>
+                                    </ButtonGroup>
+                                ) : undefined
+                        }}
+                    />
                 )
             },
             {
@@ -259,21 +386,77 @@ class ChietKhauDichVuScreen extends Component {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box
-                        title={params.value}
+                    <TextField
+                        type="number"
+                        defaultValue="0"
                         sx={{
-                            textOverflow: 'ellipsis',
-                            overflow: 'hidden',
-                            width: '100%',
-                            border: '1px solid #E6E1E6',
-                            borderRadius: '8px',
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            padding: '0 16px'
-                        }}>
-                        {params.value}
-                    </Box>
+                            height: '85%',
+                            '&>div': {
+                                height: '100%'
+                            },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
+                                {
+                                    appearance: 'none'
+                                },
+                            '& .MuiOutlinedInput-root': {
+                                paddingRight: '8px'
+                            }
+                        }}
+                        onFocus={() => this.onFocus(params.row.id)}
+                        // onBlur={() => this.onFocus(21012004)}
+                        InputProps={{
+                            endAdornment:
+                                this.state.focusField === params.row.id ? (
+                                    <ButtonGroup
+                                        sx={{
+                                            display: 'flex',
+                                            '& button': {
+                                                fontSize: '14px',
+                                                transition: '.4s',
+                                                padding: '0',
+                                                width: '30px',
+                                                minWidth: 'unset!important',
+                                                height: '30px',
+
+                                                borderColor: 'var(--color-main)',
+                                                bgcolor: 'transparent'
+                                            },
+                                            '& button.active': {
+                                                backgroundColor: 'var(--color-main)',
+                                                borderColor: 'transparent',
+                                                color: '#fff'
+                                            }
+                                        }}>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => {
+                                                this.handleButtonClick(params.row.id, '%');
+                                                this.setState({ showButton: true });
+                                            }}
+                                            className={
+                                                this.state.activeButton[params.row.id]
+                                                    ? 'active'
+                                                    : 'normal'
+                                            }>
+                                            %
+                                        </Button>
+                                        <Button
+                                            variant="outlined"
+                                            onClick={() => {
+                                                this.handleButtonClick(params.row.id, 'đ');
+                                                this.setState({ showButton: true });
+                                            }}
+                                            className={
+                                                this.state.activeButton[params.row.id]
+                                                    ? 'active'
+                                                    : 'normal'
+                                            }>
+                                            đ
+                                        </Button>
+                                    </ButtonGroup>
+                                ) : undefined
+                        }}
+                    />
                 )
             },
             {
@@ -281,7 +464,7 @@ class ChietKhauDichVuScreen extends Component {
                 sortable: false,
                 headerName: 'Giá bán',
                 minWidth: 85,
-                flex: 1,
+                flex: 0.6,
                 renderHeader: (params: any) => (
                     <Box
                         sx={{

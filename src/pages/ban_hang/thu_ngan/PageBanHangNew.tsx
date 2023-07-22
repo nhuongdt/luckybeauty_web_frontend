@@ -1399,7 +1399,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         </Grid>
                     </Grid>
                 ) : (
-                    <Grid item md={7} className="normal">
+                    <Grid
+                        item
+                        md={7}
+                        className="normal"
+                        sx={{
+                            pt: '0!important',
+                            marginTop: '-24px'
+                        }}>
                         {/* <Payments
                             tongPhaiTra={hoadon?.tongThanhToan}
                             handleClickPrev={onPrevPayment}
@@ -1421,14 +1428,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             mt: showDetail ? '-21px' : '-75px',
                             backgroundColor: '#fff',
                             borderRadius: '8px',
-                            overflow: 'hidden',
+
                             height: '98vh',
                             padding: '16px',
                             marginRight: CoditionLayout ? '16px' : '0px',
                             paddingBottom: '32px',
                             display: 'flex',
                             flexDirection: 'column',
-                            justifyContent: 'space-between'
+                            justifyContent: 'space-between',
+                            position: 'relative',
+                            '&::after': {
+                                content: "''",
+                                pointerEvents: 'none',
+                                position: 'absolute',
+                                left: '0',
+                                width: '100%',
+                                height: '40px',
+                                bottom: '-15px',
+                                bgcolor: '#fff'
+                            }
                         }}>
                         <Box
                             sx={{

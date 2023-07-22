@@ -3,6 +3,7 @@
 
     --color-title: #00284c;
     --color-bg: #e5f3ff;
+    --border-color: #c2c9d6;
     --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%)
         hue-rotate(174deg) brightness(98%) contrast(103%);
 }
@@ -255,15 +256,16 @@
     background-color: var(--color-main) !important;
 }
 
-.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-width: 1px !important;
-    border-color: var(--color-main) !important;
-}
 .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary
     .MuiOutlinedInput-notchedOutline {
     -webkit-transition: '.4s';
     -o-transition: '.4s';
     transition: '.4s';
+    border-color: var(--border-color) !important;
+}
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-width: 1px !important;
+    border-color: var(--color-main) !important;
 }
 .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary:hover
     .MuiOutlinedInput-notchedOutline {
