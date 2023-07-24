@@ -3,7 +3,7 @@ import {
     Box,
     Grid,
     Typography,
-    ButtonGroup,
+    Stack,
     Button,
     TextField,
     IconButton,
@@ -817,7 +817,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         );
 
         // again again if tra thua tien
-        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
+        let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
             lstQuyCT,
             sumTienKhachTra,
             hoadon?.tongThanhToan ?? 0
@@ -834,6 +834,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 ngayLapHoaDon: hoadon.ngayLapHoaDon,
                 tongTienThu: tongThu
             });
+            lstQCT_After = lstQCT_After.filter((x: QuyChiTietDto) => x.tienThu > 0);
             // assign idHoadonLienQuan, idKhachHang for quyCT
             lstQCT_After.map((x: QuyChiTietDto) => {
                 x.idHoaDonLienQuan = hodaDonDB.id;
@@ -1523,7 +1524,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         </Button>
                                     ) : (
                                         <>
-                                            <IconButton>
+                                            <Stack spacing={2} direction="row">
                                                 <VisibilityIcon
                                                     onClick={showModalEditCus}
                                                     sx={{
@@ -1532,8 +1533,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         height: '16px'
                                                     }}
                                                 />
-                                            </IconButton>
-                                            <IconButton>
                                                 <Close
                                                     sx={{
                                                         color: '#8492AE',
@@ -1542,7 +1541,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     }}
                                                     onClick={() => changeCustomer(null)}
                                                 />
-                                            </IconButton>
+                                            </Stack>
                                         </>
                                     )}
                                 </Box>
@@ -1604,14 +1603,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             gap="8px">
                                                             {ct.nhanVienThucHien.map(
                                                                 (nv: any, index3: number) => (
-                                                                    <Typography
+                                                                    <Box
                                                                         key={index3}
-                                                                        variant="body1"
-                                                                        fontSize="10px"
-                                                                        lineHeight="16px"
-                                                                        color="#4C4B4C"
-                                                                        alignItems="center"
                                                                         sx={{
+                                                                            fontSize: '10px',
+                                                                            lineHeight: '16px',
+                                                                            color: '#4C4B4C',
+                                                                            alignItems: 'center',
                                                                             maxWidth:
                                                                                 ct.nhanVienThucHien !==
                                                                                     undefined &&
@@ -1669,7 +1667,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                                 alt="close"
                                                                             />
                                                                         </span>
-                                                                    </Typography>
+                                                                    </Box>
                                                                 )
                                                             )}
                                                             {ct.nhanVienThucHien.length > 2 ? (
@@ -1695,14 +1693,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             )} */}
                                         </Box>
                                         <Box width="20%">
-                                            <Typography
-                                                color="#000"
-                                                variant="body1"
-                                                fontSize="14px"
-                                                fontWeight="400"
+                                            <Box
                                                 sx={{
                                                     display: 'flex',
                                                     gap: '8px',
+                                                    color: '#000',
+                                                    fontSize: '14px',
+                                                    fontWeight: 400,
 
                                                     transition: '.4s',
                                                     '& .price': {
@@ -1748,7 +1745,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             </Typography>
                                                         )}
                                                 </Box>
-                                            </Typography>
+                                            </Box>
                                         </Box>
                                         <Box
                                             display="flex"
