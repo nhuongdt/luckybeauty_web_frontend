@@ -7,6 +7,8 @@ import {
     BookingRequestDto,
     PagedBookingResultRequestDto
 } from './dto/PagedBookingResultRequestDto';
+import utils from '../../utils/utils';
+import { Guid } from 'guid-typescript';
 class BookingServices {
     public async getAllBooking(
         input: PagedBookingResultRequestDto
@@ -16,7 +18,7 @@ class BookingServices {
     }
     public async CreateBooking(input: CreateBookingDto) {
         const result = await http.post('api/services/app/Booking/CreateBooking', input);
-        return result.data.success;
+        return result.data.result;
     }
     public async GetKhachHang_Booking(input: BookingRequestDto) {
         const param = qs.stringify(input);
@@ -29,5 +31,12 @@ class BookingServices {
         );
         return xx.data.result;
     }
+    GetInforBooking_byID = async (idBooking: string) => {
+        if (utils.checkNull(idBooking) || idBooking == Guid.EMPTY) return null;
+        const xx = await http.get(
+            `api/services/app/Booking/GetInforBooking_byID?idBooking=${idBooking}`
+        );
+        return xx.data.result;
+    };
 }
 export default new BookingServices();
