@@ -114,6 +114,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                 idKhachHang: itemBook.idKhachHang,
                 maKhachHang: itemBook.maKhachHang,
                 tenKhachHang: itemBook.tenKhachHang,
+                soDienThoai: itemBook.soDienThoai,
                 tongTienHang: tongTienHang
             });
             hoadon.tongTienHangChuaChietKhau = tongTienHang;
