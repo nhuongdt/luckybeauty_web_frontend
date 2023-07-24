@@ -671,7 +671,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             .where('idKhachHang')
             .equals(dataCheckIn.idKhachHang)
             .toArray();
-        if (data != null) {
+        if (data != null && data.length > 0) {
             const hdctCache = data[0].hoaDonChiTiet ?? [];
             setHoaDon(data[0]);
             setHoaDonChiTiet(hdctCache);
