@@ -80,6 +80,9 @@ import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
 import AppConsts from '../../../lib/appconst';
 import { lstat } from 'fs/promises';
 import { NumericFormat } from 'react-number-format';
+import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
+import khachHangService from '../../../services/khach-hang/khachHangService';
+import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -584,6 +587,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         }
 
         await updateCache_IfChangeCus(cusChecking);
+        setNewCus(item);
     };
 
     const showModalAddCustomer = () => {
@@ -600,6 +604,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             moTa: '',
             idLoaiKhach: 1
         } as CreateOrEditKhachHangDto);
+    };
+
+    const showModalEditCus = async () => {
+        if (Object.keys(newCus)) {
+            // used to first load --> not changeCus
+            const dataCus = await khachHangService.getKhachHang(hoadon?.idKhachHang ?? '');
+            setNewCus(dataCus);
+        }
+        setIsShowModalAddCus(true);
     };
 
     const updateCache_IfChangeCus = async (dataCheckIn: any) => {
@@ -652,6 +665,17 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         });
         await dbDexie.khachCheckIn.add(cusChecking);
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.idCheckIn, isShow: false });
+
+        // get dataHoaDon if khach was booking
+        const data = await dbDexie.hoaDon
+            .where('idKhachHang')
+            .equals(dataCheckIn.idKhachHang)
+            .toArray();
+        if (data != null) {
+            const hdctCache = data[0].hoaDonChiTiet ?? [];
+            setHoaDon(data[0]);
+            setHoaDonChiTiet(hdctCache);
+        }
 
         await updateCache_IfChangeCus(cusChecking);
     };
@@ -949,7 +973,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     // end thanhtoan new
     return (
         <>
-            <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            <ListNhanVienDataContext.Provider value={allNhanVien}>
+                <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            </ListNhanVienDataContext.Provider>
             <CreateOrEditCustomerDialog
                 visible={isShowModalAddCus}
                 onCancel={() => setIsShowModalAddCus(false)}
@@ -1461,91 +1487,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 paddingBottom: '16px'
                             }}>
                             <Box display="flex" gap="8px" alignItems="center">
-                                {hoadon?.tenKhachHang !== 'Khách lẻ' ? (
-                                    <>
-                                        <Avatar
-                                            src={
-                                                utils.checkNull(hoadon?.idKhachHang) ||
-                                                hoadon?.idKhachHang === Guid.EMPTY
-                                                    ? ''
-                                                    : avatar
-                                            }
-                                            sx={{ width: 40, height: 40 }}
-                                        />
+                                <Avatar
+                                    src={
+                                        utils.checkNull(hoadon?.idKhachHang) ||
+                                        hoadon?.idKhachHang === Guid.EMPTY
+                                            ? ''
+                                            : avatar
+                                    }
+                                    sx={{ width: 40, height: 40 }}
+                                />
 
-                                        <Box onClick={showModalCheckIn}>
-                                            <Typography
-                                                variant="body2"
-                                                fontSize="14px"
-                                                color="#3D475C">
-                                                {hoadon?.tenKhachHang}
-                                            </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                fontSize="12px"
-                                                color="#525F7A">
-                                                {hoadon?.soDienThoai}
-                                            </Typography>
-                                        </Box>
-                                    </>
-                                ) : (
-                                    <Box sx={{ flexGrow: '1' }}>
-                                        <Autocomplete
-                                            sx={{
-                                                '& .MuiAutocomplete-paper::-webkit-scrollbar': {
-                                                    width: '8px'
-                                                }
-                                            }}
-                                            fullWidth
-                                            options={allNhanVien}
-                                            getOptionLabel={(option) => option.tenNhanVien}
-                                            renderOption={(props, option) => (
-                                                <Box
-                                                    component="li"
-                                                    {...props}
-                                                    sx={{ display: 'flex', gap: '8px' }}>
-                                                    <Box>
-                                                        <Avatar
-                                                            sx={{ width: 24, height: 24 }}
-                                                            src={option.avatar}
-                                                        />
-                                                    </Box>
-                                                    <Box>
-                                                        <Typography
-                                                            variant="body1"
-                                                            fontSize="12px"
-                                                            color="#3D475C">
-                                                            {option.tenNhanVien}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body1"
-                                                            color="#667799"
-                                                            fontSize="12px">
-                                                            {option.soDienThoai}
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            )}
-                                            size="small"
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    fullWidth
-                                                    placeholder="Tìm kiếm"
-                                                    InputProps={{
-                                                        ...params.InputProps,
-                                                        startAdornment: (
-                                                            <>
-                                                                <SearchIcon />
-                                                                {params.InputProps.startAdornment}
-                                                            </>
-                                                        )
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Box>
-                                )}
+                                <Box onClick={showModalCheckIn}>
+                                    <Typography variant="body2" fontSize="14px" color="#3D475C">
+                                        {hoadon?.tenKhachHang}
+                                    </Typography>
+                                    <Typography variant="body2" fontSize="12px" color="#525F7A">
+                                        {hoadon?.soDienThoai}
+                                    </Typography>
+                                </Box>
+
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     {utils.checkNull(hoadon?.idKhachHang) ||
                                     hoadon?.idKhachHang === Guid.EMPTY ? (
@@ -1565,6 +1525,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         <>
                                             <IconButton>
                                                 <VisibilityIcon
+                                                    onClick={showModalEditCus}
                                                     sx={{
                                                         color: '#8492AE',
                                                         width: '16px',
