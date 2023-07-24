@@ -47,8 +47,8 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
         const dayOfMonth = date.getDate();
         return (
             <>
-                <Box sx={{ fontWeight: '400', fontSize: '12px' }}>{day}</Box>
-                <Box sx={{ fontSize: '18px', color: '#333233', mt: '8px' }}>{dayOfMonth}</Box>
+                <Box sx={{ fontWeight: '400', fontSize: '12px', color: '#525F7A' }}>{day}</Box>
+                <Box sx={{ fontSize: '18px', color: '#29303D', mt: '8px' }}>{dayOfMonth}</Box>
             </>
         );
     };
@@ -117,7 +117,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                     colSpan={1}
                                     key={index}
                                     sx={{
-                                        color: '#999699'
+                                        color: '#29303D'
                                     }}>
                                     {date}
                                 </TableCell>
@@ -141,7 +141,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                 <TableRow key={index}>
                                     <TableCell
                                         sx={{
-                                            color: '#999699',
+                                            color: '#525F7A',
                                             fontSize: '12px',
                                             verticalAlign: 'top',
                                             paddingTop: '8px',
@@ -149,7 +149,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                             textAlign: 'right',
                                             border: '0',
                                             width: '70px',
-                                            borderLeft: '0'
+                                            borderLeft: '0!important'
                                         }}>
                                         {timeLabel}
                                     </TableCell>
