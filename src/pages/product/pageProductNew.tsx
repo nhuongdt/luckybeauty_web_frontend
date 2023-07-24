@@ -345,6 +345,9 @@ export default function PageProductNew() {
         });
     };
     const exportToExcel = async () => {
+        const param = { ...filterPageProduct };
+        param.currentPage = 1;
+        param.pageSize = pageDataProduct.totalCount;
         const result = await ProductService.ExportToExcel(filterPageProduct);
         fileDowloadService.downloadExportFile(result);
     };
