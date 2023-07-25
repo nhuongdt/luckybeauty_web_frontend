@@ -12,6 +12,7 @@ import {
     Avatar,
     SelectChangeEvent
 } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
@@ -588,104 +589,172 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </ButtonGroup>
                             </Grid>
                         </Grid>
-                        <div
-                            className="customer-page_row-2"
-                            style={{
-                                width: '100%',
-                                marginTop: '24px',
-                                backgroundColor: '#fff'
-                            }}>
-                            <DataGrid
-                                disableRowSelectionOnClick
-                                autoHeight
-                                rows={this.state.rowTable}
-                                columns={columns}
-                                onRowClick={() => this.handleOpenInfor}
-                                hideFooter
-                                onColumnVisibilityModelChange={this.toggleColumnVisibility}
-                                columnVisibilityModel={this.state.visibilityColumn}
-                                checkboxSelection
-                                sx={{
-                                    '& .MuiDataGrid-iconButtonContainer': {
-                                        display: 'none'
-                                    },
-                                    '& .MuiDataGrid-cellContent': {
-                                        fontSize: '12px'
-                                    },
-                                    '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                        outline: 'none!important'
-                                    },
-                                    '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
-                                        {
-                                            outline: 'none '
-                                        },
-                                    '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                        color: 'var(--color-main)'
-                                    },
-                                    '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                        fill: 'var(--color-main)'
-                                    },
-                                    '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                        {
-                                            fill: '#000'
-                                        },
-                                    '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                        {
-                                            fill: '#000'
-                                        },
-                                    '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                        color: 'var(--color-main)!important'
-                                    },
-                                    '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                        {
-                                            outline: 'none'
-                                        },
-                                    '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                        {
-                                            bgcolor: 'var(--color-bg)'
+                        <Grid container spacing={1}>
+                            <Grid item lg={2} md={2} sm={3} xs={12}>
+                                <Box
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderRadius: '8px',
+                                        minHeight: '100%'
+                                    }}>
+                                    <Box
+                                        display="flex"
+                                        flexDirection={'row'}
+                                        justifyContent="space-between"
+                                        alignItems={'center'}
+                                        textAlign={'center'}
+                                        borderBottom="1px solid #E6E1E6"
+                                        padding="28px 8px">
+                                        <Typography fontSize="14px" fontWeight="700">
+                                            Nhóm khách hàng
+                                        </Typography>
+                                        <Button
+                                            sx={{
+                                                padding: '0',
+                                                minWidth: 'unset',
+                                                bgcolor: '#fff',
+                                                border: '1px solid #D1D7E1'
+                                            }}>
+                                            <Add
+                                                sx={{
+                                                    color: '#525F7A',
+                                                    transition: '.4s',
+                                                    height: '30px',
+                                                    cursor: 'pointer',
+                                                    width: '30px',
+                                                    borderRadius: '4px',
+                                                    padding: '4px'
+                                                }}
+                                                onClick={() => {
+                                                    console.log('ok');
+                                                }}
+                                            />
+                                        </Button>
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            overflow: 'auto',
+                                            maxHeight: '66vh',
+                                            padding: '0px 24px',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '8px'
+                                            },
+                                            '&::-webkit-scrollbar-track': {
+                                                bgcolor: 'var(--color-bg)'
+                                            }
+                                        }}>
+                                        danh sách nhóm khách
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid item lg={10} md={10} sm={9} xs={12}>
+                                <div
+                                    className="customer-page_row-2"
+                                    style={{
+                                        width: '100%',
+                                        marginTop: '24px',
+                                        backgroundColor: '#fff'
+                                    }}>
+                                    <DataGrid
+                                        disableRowSelectionOnClick
+                                        autoHeight
+                                        rows={this.state.rowTable}
+                                        columns={columns}
+                                        onRowClick={() => this.handleOpenInfor}
+                                        hideFooter
+                                        onColumnVisibilityModelChange={this.toggleColumnVisibility}
+                                        columnVisibilityModel={this.state.visibilityColumn}
+                                        checkboxSelection
+                                        sx={{
+                                            '& .MuiDataGrid-iconButtonContainer': {
+                                                display: 'none'
+                                            },
+                                            '& .MuiDataGrid-cellContent': {
+                                                fontSize: '12px'
+                                            },
+                                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                                outline: 'none!important'
+                                            },
+                                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
+                                                {
+                                                    outline: 'none '
+                                                },
+                                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                                color: 'var(--color-main)'
+                                            },
+                                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover':
+                                                {
+                                                    fill: 'var(--color-main)'
+                                                },
+                                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
+                                                {
+                                                    fill: '#000'
+                                                },
+                                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
+                                                {
+                                                    fill: '#000'
+                                                },
+                                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                                color: 'var(--color-main)!important'
+                                            },
+                                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                                {
+                                                    outline: 'none'
+                                                },
+                                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                                {
+                                                    bgcolor: 'var(--color-bg)'
+                                                }
+                                        }}
+                                        localeText={TextTranslate}
+                                    />
+                                    <ActionMenuTable
+                                        selectedRowId={this.state.selectedRowId}
+                                        anchorEl={this.state.anchorEl}
+                                        closeMenu={this.handleCloseMenu}
+                                        handleView={this.handleView}
+                                        permissionView=""
+                                        handleEdit={this.handleEdit}
+                                        permissionEdit="Pages.KhachHang.Edit"
+                                        handleDelete={this.showConfirmDelete}
+                                        permissionDelete="Pages.KhachHang.Delete"
+                                    />
+                                    <CustomTablePagination
+                                        currentPage={this.state.currentPage}
+                                        rowPerPage={this.state.rowPerPage}
+                                        totalRecord={this.state.totalItems}
+                                        totalPage={this.state.totalPage}
+                                        handlePerPageChange={this.handlePerPageChange}
+                                        handlePageChange={this.handlePageChange}
+                                    />
+                                    <CreateOrEditCustomerDialog
+                                        visible={this.state.toggle}
+                                        onCancel={this.handleToggle}
+                                        onOk={this.handleSubmit}
+                                        handleChange={this.handleChange}
+                                        title={
+                                            this.state.idkhachHang == ''
+                                                ? 'Thêm mới khách hàng'
+                                                : 'Cập nhật thông tin khách hàng'
                                         }
-                                }}
-                                localeText={TextTranslate}
-                            />
-                            <ActionMenuTable
-                                selectedRowId={this.state.selectedRowId}
-                                anchorEl={this.state.anchorEl}
-                                closeMenu={this.handleCloseMenu}
-                                handleView={this.handleView}
-                                permissionView=""
-                                handleEdit={this.handleEdit}
-                                permissionEdit="Pages.KhachHang.Edit"
-                                handleDelete={this.showConfirmDelete}
-                                permissionDelete="Pages.KhachHang.Delete"
-                            />
-                            <CustomTablePagination
-                                currentPage={this.state.currentPage}
-                                rowPerPage={this.state.rowPerPage}
-                                totalRecord={this.state.totalItems}
-                                totalPage={this.state.totalPage}
-                                handlePerPageChange={this.handlePerPageChange}
-                                handlePageChange={this.handlePageChange}
-                            />
-                            <CreateOrEditCustomerDialog
-                                visible={this.state.toggle}
-                                onCancel={this.handleToggle}
-                                onOk={this.handleSubmit}
-                                handleChange={this.handleChange}
-                                title={
-                                    this.state.idkhachHang == ''
-                                        ? 'Thêm mới khách hàng'
-                                        : 'Cập nhật thông tin khách hàng'
-                                }
-                                formRef={createOrEditKhachHang}
-                                suggestNguonKhach={suggestNguonKhach}
-                                suggestNhomKhach={suggestNhomKhach}
-                            />
-                        </div>
-                        <div
-                            className={
-                                this.state.toggle ? 'show customer-overlay' : 'customer-overlay'
-                            }
-                            onClick={this.handleToggle}></div>
+                                        formRef={createOrEditKhachHang}
+                                        suggestNguonKhach={suggestNguonKhach}
+                                        suggestNhomKhach={suggestNhomKhach}
+                                    />
+                                </div>
+                                <div
+                                    className={
+                                        this.state.toggle
+                                            ? 'show customer-overlay'
+                                            : 'customer-overlay'
+                                    }
+                                    onClick={this.handleToggle}></div>
+                            </Grid>
+                        </Grid>
 
                         <ConfirmDelete
                             isShow={this.state.isShowConfirmDelete}

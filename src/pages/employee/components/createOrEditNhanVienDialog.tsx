@@ -22,19 +22,29 @@ import rules from './createOrEditNhanVien.validate';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
 import useWindowWidth from '../../../components/StateWidth';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import CreateOrEditChucVuModal from '../chuc-vu/components/create-or-edit-chuc-vu-modal';
+import suggestStore from '../../../stores/suggestStore';
+import { observer } from 'mobx-react';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
     title: string;
     onOk: () => void;
     formRef: CreateOrUpdateNhanSuDto;
-    suggestChucVu: SuggestChucVuDto[];
 }
 
 class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     state = {
-        avatarFile: ''
+        avatarFile: '',
+        chucVuVisiable: false
     };
+    onModalChucVu = () => {
+        this.setState({
+            chucVuVisiable: !this.state.chucVuVisiable
+        });
+    };
+
     onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -52,7 +62,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
         }
     };
     render(): ReactNode {
-        const { visible, onCancel, title, onOk, formRef, suggestChucVu } = this.props;
+        const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrUpdateNhanSuDto = formRef;
 
         return (
@@ -117,7 +127,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     onSubmit={async (values) => {
                         values.tenNhanVien = values.ho + ' ' + values.tenLot;
                         const createOrEdit = await nhanVienService.createOrEdit(values);
-                        console.log(createOrEdit);
                         createOrEdit != null
                             ? formRef.id === AppConsts.guidEmpty
                                 ? enqueueSnackbar('Thêm mới thành công', {
@@ -263,33 +272,49 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             <MenuItem value={1}>Nam</MenuItem>
                                         </Select>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Vị trí
-                                        </Typography>
-                                        <Autocomplete
-                                            options={suggestChucVu}
-                                            getOptionLabel={(option) => `${option.tenChucVu}`}
-                                            size="small"
-                                            fullWidth
-                                            disablePortal
-                                            onChange={(event, value) => {
-                                                setFieldValue(
-                                                    'idChucVu',
-                                                    value ? value.idChucVu : ''
-                                                ); // Cập nhật giá trị id trong Formik
-                                            }}
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    placeholder="Nhập tên vị trí"
-                                                />
+
+                                    <Grid item container xs={12}>
+                                        <Grid item xs={12}>
+                                            <Typography color="#4C4B4C" variant="subtitle2">
+                                                Vị trí
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={11}>
+                                            <Autocomplete
+                                                options={suggestStore.suggestChucVu}
+                                                getOptionLabel={(option) => `${option.tenChucVu}`}
+                                                size="small"
+                                                fullWidth
+                                                disablePortal
+                                                onChange={(event, value) => {
+                                                    setFieldValue(
+                                                        'idChucVu',
+                                                        value ? value.idChucVu : ''
+                                                    ); // Cập nhật giá trị id trong Formik
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        placeholder="Nhập tên vị trí"
+                                                    />
+                                                )}
+                                            />
+
+                                            {errors.idChucVu && (
+                                                <small className="text-danger">
+                                                    {errors.idChucVu}
+                                                </small>
                                             )}
-                                        />
-                                        {errors.idChucVu && (
-                                            <small className="text-danger">{errors.idChucVu}</small>
-                                        )}
+                                        </Grid>
+                                        <Grid item xs={1}>
+                                            <Button fullWidth onClick={this.onModalChucVu}>
+                                                <AddBoxIcon
+                                                    sx={{ width: '28px', height: '28px' }}
+                                                />
+                                            </Button>
+                                        </Grid>
                                     </Grid>
+
                                     <Grid item xs={12}>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Ghi chú
@@ -422,8 +447,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         </Form>
                     )}
                 </Formik>
+                <CreateOrEditChucVuModal
+                    visiable={this.state.chucVuVisiable}
+                    handleClose={this.onModalChucVu}
+                />
             </Dialog>
         );
     }
 }
-export default CreateOrEditEmployeeDialog;
+export default observer(CreateOrEditEmployeeDialog);

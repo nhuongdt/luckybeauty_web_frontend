@@ -40,6 +40,7 @@ import ImportExcel from '../../components/ImportComponent';
 import abpCustom from '../../components/abp-custom';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
+import suggestStore from '../../stores/suggestStore';
 class EmployeeScreen extends React.Component {
     static contextType = ChiNhanhContext;
     state = {
@@ -94,6 +95,7 @@ class EmployeeScreen extends React.Component {
     async getData() {
         const chiNhanhContext = this.context as SuggestChiNhanhDto;
         const suggestChucVus = await SuggestService.SuggestChucVu();
+        await suggestStore.getSuggestChucVu();
         this.setState({
             suggestChucVu: suggestChucVus,
             idChiNhanh: chiNhanhContext.id
@@ -747,7 +749,6 @@ class EmployeeScreen extends React.Component {
                             ? 'Thêm mới nhân viên'
                             : 'Cập nhật thông tin nhân viên'
                     }
-                    suggestChucVu={this.state.suggestChucVu}
                     formRef={nhanVienStore.createEditNhanVien}></CreateOrEditNhanVienDialog>
             </Box>
         );
