@@ -26,6 +26,7 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import CreateOrEditChucVuModal from '../chuc-vu/components/create-or-edit-chuc-vu-modal';
 import suggestStore from '../../../stores/suggestStore';
 import { observer } from 'mobx-react';
+import abpCustom from '../../../components/abp-custom';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -279,7 +280,13 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 Vị trí
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={11}>
+                                        <Grid
+                                            item
+                                            xs={
+                                                abpCustom.isGrandPermission('Pages.ChucVu.Create')
+                                                    ? 11
+                                                    : 12
+                                            }>
                                             <Autocomplete
                                                 options={suggestStore.suggestChucVu}
                                                 getOptionLabel={(option) => `${option.tenChucVu}`}
@@ -306,7 +313,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 </small>
                                             )}
                                         </Grid>
-                                        <Grid item xs={1}>
+                                        <Grid
+                                            item
+                                            xs={1}
+                                            hidden={
+                                                !abpCustom.isGrandPermission('Pages.ChucVu.Create')
+                                            }>
                                             <Button fullWidth onClick={this.onModalChucVu}>
                                                 <AddBoxIcon
                                                     sx={{ width: '28px', height: '28px' }}

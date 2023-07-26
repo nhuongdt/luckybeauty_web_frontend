@@ -250,6 +250,20 @@ export const appRouters: AppRouteProps = {
                     component: LoadableComponent(() => import('../../pages/customer'))
                 },
                 {
+                    path: '/khach-hangs/:khachHangId',
+                    permission: 'Pages.KhachHang',
+                    title: 'Khách hàng',
+                    name: 'khachhang',
+                    icon: <ClientIcon width="20px" />,
+                    iconActive: <ClientActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(
+                        () => import('../../pages/customer/components/CustomerInfo')
+                    )
+                },
+                {
                     path: '/dich-vus',
                     permission: '',
                     title: 'Dịch vụ',
@@ -310,6 +324,7 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             component: LoadableComponent(() => import('../../pages/employee'))
                         },
+
                         {
                             path: '/nghi-le-nhan-viens',
                             permission: 'Pages.NhanSu_NgayNghiLe',

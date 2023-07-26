@@ -51,8 +51,8 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
         };
         const date = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
         return (
-            <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
-                <DialogTitle>
+            <Dialog open={visible} onClose={onCancel} maxWidth="md">
+                <DialogTitle width={648}>
                     <div className="row">
                         <Box
                             className="col-8"
@@ -74,7 +74,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                         </Box>
                     </div>
                 </DialogTitle>
-                <DialogContent sx={{ paddingBottom: '0' }}>
+                <DialogContent sx={{ paddingBottom: '0', width: 648 }}>
                     <Formik initialValues={initValues} onSubmit={handleSubmit}>
                         {({ values, handleChange }) => (
                             <Form
@@ -106,6 +106,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     />
                                 </FormGroup>
                                 <FormControlLabel
+                                    sx={{
+                                        '& .MuiFormControlLabel-label': {
+                                            fontSize: '13px!important'
+                                        }
+                                    }}
                                     control={
                                         <Checkbox
                                             sx={{
@@ -171,6 +176,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         <Select
                                             className="mt-2"
                                             defaultValue="1"
+                                            size="small"
                                             fullWidth
                                             sx={{
                                                 '& .MuiSelect-select': {
@@ -187,7 +193,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             <FormControlLabel
                                                 sx={{
                                                     '& .MuiFormControlLabel-label': {
-                                                        fontSize: '14px!important'
+                                                        fontSize: '13px!important'
                                                     }
                                                 }}
                                                 key={index}

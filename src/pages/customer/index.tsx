@@ -10,7 +10,8 @@ import {
     TextField,
     IconButton,
     Avatar,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Divider
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import './customerPage.css';
@@ -19,6 +20,7 @@ import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import { ReactComponent as CutomerGroupIcon } from '../../images/customer-group.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
@@ -41,6 +43,8 @@ import abpCustom from '../../components/abp-custom';
 import { SuggestNguonKhachDto } from '../../services/suggests/dto/SuggestNguonKhachDto';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import SuggestService from '../../services/suggests/SuggestService';
+import suggestStore from '../../stores/suggestStore';
+import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -62,6 +66,8 @@ interface CustomerScreenState {
     suggestNhomKhach: SuggestNhomKhachDto[];
     visibilityColumn: any;
     information: boolean;
+    idNhomKhach: string;
+    isShowNhomKhachModal: boolean;
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -87,7 +93,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             suggestNguonKhach: [] as SuggestNguonKhachDto[],
             suggestNhomKhach: [] as SuggestNhomKhachDto[],
             visibilityColumn: {},
-            information: false
+            information: false,
+            idNhomKhach: '',
+            isShowNhomKhachModal: false
         };
     }
 
@@ -106,6 +114,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         });
     }
     async getData() {
+        await suggestStore.getSuggestNhomKhach();
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
@@ -113,7 +122,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             loaiDoiTuong: 0,
             sortBy: this.state.sortBy,
             sortType: this.state.sortType,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
+            idNhomKhach: this.state.idNhomKhach == '' ? undefined : this.state.idNhomKhach
         });
         await this.setState({
             rowTable: khachHangs.items,
@@ -137,16 +147,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
             await khachHangStore.createKhachHangDto();
-            this.updateModal();
+            this.updateKhachHangModel();
         } else {
             await khachHangStore.getForEdit(id ?? '');
-            this.updateModal();
+            this.updateKhachHangModel();
         }
         this.setState({ idkhachHang: id ?? '' }, () => {
             this.handleToggle();
         });
     }
-    updateModal = () => {
+    onNhomKhachModal = () => {
+        this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
+    };
+    updateKhachHangModel = () => {
         this.setState({ createOrEditKhachHang: khachHangStore.createEditKhachHangDto });
     };
     async delete(id: string) {
@@ -609,6 +622,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             Nhóm khách hàng
                                         </Typography>
                                         <Button
+                                            hidden={
+                                                !abpCustom.isGrandPermission(
+                                                    'Pages.NhomKhach.Create'
+                                                )
+                                            }
                                             sx={{
                                                 padding: '0',
                                                 minWidth: 'unset',
@@ -625,9 +643,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                     borderRadius: '4px',
                                                     padding: '4px'
                                                 }}
-                                                onClick={() => {
-                                                    console.log('ok');
-                                                }}
+                                                onClick={this.onNhomKhachModal}
                                             />
                                         </Button>
                                     </Box>
@@ -635,7 +651,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         sx={{
                                             overflow: 'auto',
                                             maxHeight: '66vh',
-                                            padding: '0px 24px',
+                                            padding: '0px 8px',
                                             '&::-webkit-scrollbar': {
                                                 width: '7px'
                                             },
@@ -647,7 +663,83 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 bgcolor: 'var(--color-bg)'
                                             }
                                         }}>
-                                        danh sách nhóm khách
+                                        <Typography
+                                            sx={{
+                                                padding: '8px',
+                                                fontSize: '14px',
+                                                fontWeight: 500,
+                                                color: '#29303D',
+                                                alignItems: 'center',
+                                                justifyItems: 'center'
+                                            }}>
+                                            <CutomerGroupIcon
+                                                style={{
+                                                    width: '18px',
+                                                    height: '18px',
+                                                    marginRight: 4
+                                                }}
+                                            />
+                                            <span
+                                                onClick={() => {
+                                                    this.setState(
+                                                        {
+                                                            idNhomKhach: ''
+                                                        },
+                                                        () => {
+                                                            this.getData();
+                                                        }
+                                                    );
+                                                }}
+                                                style={{
+                                                    fontSize: '14px',
+                                                    fontWeight: 500,
+                                                    color: '#29303D'
+                                                }}>
+                                                Tất cả
+                                            </span>
+                                        </Typography>
+                                        {suggestStore.suggestNhomKhach?.map((item, index) => (
+                                            <>
+                                                <Divider
+                                                    textAlign="right"
+                                                    variant="inset"
+                                                    component={'div'}
+                                                />
+                                                <Typography
+                                                    sx={{
+                                                        padding: '8px',
+
+                                                        alignItems: 'center',
+                                                        justifyItems: 'center'
+                                                    }}>
+                                                    <CutomerGroupIcon
+                                                        style={{
+                                                            width: '18px',
+                                                            height: '18px',
+                                                            marginRight: 4
+                                                        }}
+                                                    />
+                                                    <span
+                                                        onClick={() => {
+                                                            this.setState(
+                                                                {
+                                                                    idNhomKhach: item.id
+                                                                },
+                                                                () => {
+                                                                    this.getData();
+                                                                }
+                                                            );
+                                                        }}
+                                                        style={{
+                                                            fontSize: '14px',
+                                                            fontWeight: 500,
+                                                            color: '#29303D'
+                                                        }}>
+                                                        {item.tenNhomKhach}
+                                                    </span>
+                                                </Typography>
+                                            </>
+                                        ))}
                                     </Box>
                                 </Box>
                             </Grid>
@@ -755,7 +847,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     onClick={this.handleToggle}></div>
                             </Grid>
                         </Grid>
-
+                        <CreateOrEditNhomKhachModal
+                            visiable={this.state.isShowNhomKhachModal}
+                            handleClose={this.onNhomKhachModal}
+                        />
                         <ConfirmDelete
                             isShow={this.state.isShowConfirmDelete}
                             onOk={this.onOkDelete}

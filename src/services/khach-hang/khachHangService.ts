@@ -12,12 +12,17 @@ import utils from '../../utils/utils';
 import { ExecuteResultDto } from '../dto/ExecuteResultDto';
 import { FileUpload } from '../dto/FileUpload';
 import QueryString from 'qs';
+import { CreateOrEditNhomKhachDto } from './dto/CreateOrEditNhomKhachDto';
 
 class KhachHangService {
     public async getAll(
         input: PagedKhachHangResultRequestDto
     ): Promise<PagedResultDto<KhachHangItemDto>> {
         const result = await http.post(`api/services/app/KhachHang/Search`, input);
+        return result.data.result;
+    }
+    public async createNhomKhach(input: CreateOrEditNhomKhachDto) {
+        const result = await http.post('api/services/app/NhomKhach/CreateNhomKhach', input);
         return result.data.result;
     }
     public async createOrEdit(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {

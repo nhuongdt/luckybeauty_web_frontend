@@ -4,6 +4,7 @@ export interface PagedKhachHangResultRequestDto extends PagedFilterAndSortedRequ
     keyword: string;
     loaiDoiTuong?: number;
     idChiNhanh?: string;
+    idNhomKhach?: string;
     sortBy: string;
     sortType: string;
 }
