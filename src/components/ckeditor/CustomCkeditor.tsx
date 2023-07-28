@@ -4,47 +4,54 @@ import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
 import { Essentials } from '@ckeditor/ckeditor5-essentials';
 import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
 import { Bold, Italic, Underline, Subscript, Superscript } from '@ckeditor/ckeditor5-basic-styles';
-import { Table, TableProperties, TableToolbar, TableColumnResize } from '@ckeditor/ckeditor5-table';
+import {
+    Table,
+    TableProperties,
+    TableToolbar,
+    TableColumnResize,
+    TableCellProperties
+} from '@ckeditor/ckeditor5-table';
 import Link from '@ckeditor/ckeditor5-link/src/link';
 import { CodeBlock } from '@ckeditor/ckeditor5-code-block';
 import { Font } from '@ckeditor/ckeditor5-font';
-// import { ImageInsert, ImageUpload, PictureEditing } from '@ckeditor/ckeditor5-image';
-// import {
-//     Image,
-//     ImageCaption,
-//     ImageResize,
-//     ImageStyle,
-//     ImageToolbar
-// } from '@ckeditor/ckeditor5-image';
+import { ImageInsert, ImageUpload, PictureEditing } from '@ckeditor/ckeditor5-image';
+import {
+    Image,
+    ImageCaption,
+    ImageResize,
+    ImageStyle,
+    ImageToolbar
+} from '@ckeditor/ckeditor5-image';
 // // used to upload image
 // // import ArticlePluginSet from '@ckeditor/ckeditor5-core/tests/_utils/articlepluginset';
 // // import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
 // //import { CKBox } from '@ckeditor/ckeditor5-ckbox';
-// import { SourceEditing } from '@ckeditor/ckeditor5-source-editing';
+import { SourceEditing } from '@ckeditor/ckeditor5-source-editing';
+import { Alignment } from '@ckeditor/ckeditor5-alignment';
 
-// import {
-//     SpecialCharacters,
-//     SpecialCharactersEssentials
-// } from '@ckeditor/ckeditor5-special-characters';
+import {
+    SpecialCharacters,
+    SpecialCharactersEssentials
+} from '@ckeditor/ckeditor5-special-characters';
 
-export default function CustomCkeditor() {
-    console.log('cked');
-    // function SpecialCharactersEmoji(editor: any) {
-    //     editor.plugins.get('SpecialCharacters').addItems(
-    //         'Emoji',
-    //         [
-    //             { title: 'smiley face', character: '😊' },
-    //             { title: 'rocket', character: '🚀' },
-    //             { title: 'wind blowing face', character: '🌬️' },
-    //             { title: 'floppy disk', character: '💾' },
-    //             { title: 'heart', character: '❤️' }
-    //         ],
-    //         { label: 'Emoticons' }
-    //     );
-    // }
+export default function CustomCkeditor({ html, handleChange }: any) {
+    function SpecialCharactersEmoji(editor: any) {
+        editor.plugins.get('SpecialCharacters').addItems(
+            'Emoji',
+            [
+                { title: 'smiley face', character: '😊' },
+                { title: 'rocket', character: '🚀' },
+                { title: 'wind blowing face', character: '🌬️' },
+                { title: 'floppy disk', character: '💾' },
+                { title: 'heart', character: '❤️' }
+            ],
+            { label: 'Emoticons' }
+        );
+    }
     const editorConfiguration = {
         plugins: [
             CodeBlock,
+            Alignment,
             Essentials,
             Bold,
             Italic,
@@ -57,60 +64,69 @@ export default function CustomCkeditor() {
             TableToolbar,
             TableProperties,
             TableColumnResize,
-            Link
-            //  Image,
-            // ImageInsert,
-            // ImageCaption,
-            // ImageResize,
-            // ImageStyle,
-            // ImageToolbar,
+            TableCellProperties,
+            Link,
+            // Image,
+            ImageInsert,
+            ImageCaption,
+            ImageResize,
+            ImageStyle,
+            ImageToolbar,
             // ArticlePluginSet,
-            // PictureEditing,
-            // ImageUpload,
+            PictureEditing,
+            ImageUpload,
             // // CloudServices,
             // //   CKBox,
-            // SourceEditing,
-            // SpecialCharacters,
-            // SpecialCharactersEssentials
-            // SpecialCharactersEmoji
+            SourceEditing,
+            SpecialCharacters,
+            SpecialCharactersEssentials,
+            SpecialCharactersEmoji
         ],
         toolbar: [
+            'sourceEditing',
             'codeBlock',
-            'bold',
-            'italic',
-            'underline',
-            'subscript',
-            'superscript',
             '|',
             'fontSize',
             'fontFamily',
             'fontColor',
             'fontBackgroundColor',
             '|',
+            'bold',
+            'italic',
+            'underline',
+            'subscript',
+            'superscript',
+            '|',
             'link',
             'insertTable',
-            'insertImage'
+            'insertImage',
             //  'ckbox',
-            // 'specialCharacters',
-            // '|',
-            // 'sourceEditing'
+            'specialCharacters',
+            '|',
+            'alignment'
         ],
         table: {
-            contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+            contentToolbar: [
+                'tableColumn',
+                'tableRow',
+                'mergeTableCells',
+                'tableProperties',
+                'tableCellProperties'
+            ]
         },
         fontSize: {
             options: [11, 12, 13, 14, 15, 16, 17, 18, 19]
+        },
+        image: {
+            toolbar: [
+                'imageStyle:block',
+                'imageStyle:side',
+                '|',
+                'toggleImageCaption',
+                'imageTextAlternative',
+                '|'
+            ]
         }
-        // image: {
-        //     toolbar: [
-        //         'imageStyle:block',
-        //         'imageStyle:side',
-        //         '|',
-        //         'toggleImageCaption',
-        //         'imageTextAlternative',
-        //         '|'
-        //     ]
-        // },
         // ckbox: {
         //     defaultUploadCategories: {
         //         Bitmaps: ['bmp'],
@@ -125,11 +141,14 @@ export default function CustomCkeditor() {
         <>
             <CKEditor
                 editor={ClassicEditor}
-                data="<p>Hello from CKEditor </p>"
+                data={html}
                 config={editorConfiguration}
-                onReady={(editor) => {
-                    // You can store the "editor" and use when it is needed.
-                    console.log('Editor1 is ready to use!', editor);
+                onChange={(event, editor) => {
+                    const data = editor.getData();
+                    handleChange(data);
+                }}
+                onFocus={(event, editor) => {
+                    console.log('Focus.', editor);
                 }}
             />
         </>

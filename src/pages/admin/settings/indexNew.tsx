@@ -3,12 +3,22 @@ import { Box, Tabs, Tab, Typography, Grid } from '@mui/material';
 import StoreDetail from './cua-hang/index';
 import ChiNhanhScreen from './chi-nhanh/index';
 import CaiDatHoaHongScreen from './hoa-hong-nhan-vien';
+import TabPanel from '../../../components/TabPanel/TabPanel';
+import PageMauIn from './mau_in/page_mau_in';
 import Booking from './Booking';
 import Cookies from 'js-cookie';
+
 const SettingsNew: React.FC = () => {
     const [activeTab, setActiveTab] = useState(1);
+    const [selectedTab, setSelectedTab] = useState('Chi tiết cửa hàng');
+    useEffect(() => {
+        const CookiesTab = Cookies.get('tabSetting');
+        if (CookiesTab !== undefined) setActiveTab(parseInt(CookiesTab));
+    }, []);
+
     const handleTabChange = (event: any, newValue: number) => {
         setActiveTab(newValue);
+        console.log('newValue ', newValue, typeof newValue);
         switch (newValue) {
             case 1:
                 Cookies.set('tabSetting', '1', { expires: 7 });
@@ -33,38 +43,6 @@ const SettingsNew: React.FC = () => {
                 break;
         }
     };
-    useEffect(() => {
-        const CookiesTab = Cookies.get('tabSetting');
-        CookiesTab === '1'
-            ? setActiveTab(1)
-            : CookiesTab === '2'
-            ? setActiveTab(2)
-            : CookiesTab === '3'
-            ? setActiveTab(3)
-            : CookiesTab === '5'
-            ? setActiveTab(5)
-            : CookiesTab === '7'
-            ? setActiveTab(7)
-            : CookiesTab === '8'
-            ? setActiveTab(8)
-            : undefined;
-    }, []);
-    interface TabPanelProps {
-        children?: React.ReactNode;
-        value: number;
-        index: number;
-    }
-    const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
-        return (
-            <div role="tabpanel" hidden={value !== index}>
-                {value === index && <Box>{children}</Box>}
-            </div>
-        );
-    };
-    const HoaHong = () => <div>Mẫu hóa đơn</div>;
-    const ThanhToan = () => <div>Thanh toasn</div>;
-
-    const [selectedTab, setSelectedTab] = useState('Chi tiết cửa hàng');
 
     const handleTabClick = (tab: string) => {
         setSelectedTab(tab);
@@ -169,12 +147,8 @@ const SettingsNew: React.FC = () => {
                                         Bán hàng
                                     </Typography>
                                     <Tab
-                                        label="Phương thức thanh toán"
-                                        onClick={() => handleTabClick('Phương thức thanh toán')}
-                                    />
-                                    <Tab
                                         label="Mẫu hóa đơn"
-                                        onClick={() => handleTabClick('Mẫu hóa đơn')}
+                                        onClick={() => handleTabClick('Mẫu in')}
                                     />
                                 </Tabs>
                             </Box>
@@ -194,10 +168,7 @@ const SettingsNew: React.FC = () => {
                             <CaiDatHoaHongScreen />
                         </TabPanel>
                         <TabPanel value={activeTab} index={7}>
-                            <ThanhToan />
-                        </TabPanel>
-                        <TabPanel value={activeTab} index={8}>
-                            <HoaHong />
+                            <PageMauIn />
                         </TabPanel>
                     </Grid>
                 </Grid>
