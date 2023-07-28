@@ -31,6 +31,7 @@ import fileDowloadService from '../../../services/file-dowload.service';
 import uploadFileService from '../../../services/uploadFileService';
 import ImportExcel from '../../../components/ImportComponent';
 import abpCustom from '../../../components/abp-custom';
+import { format, compareAsc } from 'date-fns';
 class CaLamViecScreen extends Component {
     state = {
         filter: '',
@@ -258,7 +259,7 @@ class CaLamViecScreen extends Component {
                             color="#333233"
                             lineHeight="16px"
                             title={params.value}>
-                            {params.value}
+                            {format(new Date(params.value), 'HH:mm')}
                         </Typography>
                     </Box>
                 ),
@@ -297,7 +298,7 @@ class CaLamViecScreen extends Component {
                             color="#333233"
                             lineHeight="16px"
                             title={params.value}>
-                            {params.value}
+                            {format(new Date(params.value), 'HH:mm')}
                         </Typography>
                     </Box>
                 ),

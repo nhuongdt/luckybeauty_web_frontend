@@ -11,10 +11,12 @@ import TabInfor from './TabInfor';
 import TabCuocHen from './TabCuocHen';
 import TabMuaHang from './TabMuaHang';
 import { ReactComponent as ArrowLeft } from '../../../images/arrow_back.svg';
+import { useParams } from 'react-router-dom';
 interface Custom {
     onClose: () => void;
 }
 const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
+    const { khachHangId } = useParams();
     interface TabPanelProps {
         children?: React.ReactNode;
         value: number;
@@ -40,7 +42,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
             sx={{ height: 'calc(100vh - 70px)', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h3" fontWeight="700" fontSize="16px" color="#333233">
-                    Khách hàng
+                    Khách hàng {khachHangId}
                 </Typography>
                 <Box
                     sx={{

@@ -303,7 +303,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                                         <Button
                                             hidden={
                                                 !abpCustom.isGrandPermission(
-                                                    'Pages.Administration.Roles'
+                                                    'Pages.Administration.Roles.Create'
                                                 )
                                             }
                                             variant="contained"

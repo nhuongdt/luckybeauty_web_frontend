@@ -10,14 +10,17 @@ import {
     TextField,
     IconButton,
     Avatar,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Divider
 } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import { ReactComponent as CutomerGroupIcon } from '../../images/customer-group.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
@@ -40,6 +43,8 @@ import abpCustom from '../../components/abp-custom';
 import { SuggestNguonKhachDto } from '../../services/suggests/dto/SuggestNguonKhachDto';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import SuggestService from '../../services/suggests/SuggestService';
+import suggestStore from '../../stores/suggestStore';
+import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -61,6 +66,8 @@ interface CustomerScreenState {
     suggestNhomKhach: SuggestNhomKhachDto[];
     visibilityColumn: any;
     information: boolean;
+    idNhomKhach: string;
+    isShowNhomKhachModal: boolean;
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -86,7 +93,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             suggestNguonKhach: [] as SuggestNguonKhachDto[],
             suggestNhomKhach: [] as SuggestNhomKhachDto[],
             visibilityColumn: {},
-            information: false
+            information: false,
+            idNhomKhach: '',
+            isShowNhomKhachModal: false
         };
     }
 
@@ -105,6 +114,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         });
     }
     async getData() {
+        await suggestStore.getSuggestNhomKhach();
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
@@ -112,7 +122,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             loaiDoiTuong: 0,
             sortBy: this.state.sortBy,
             sortType: this.state.sortType,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
+            idNhomKhach: this.state.idNhomKhach == '' ? undefined : this.state.idNhomKhach
         });
         await this.setState({
             rowTable: khachHangs.items,
@@ -136,16 +147,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
             await khachHangStore.createKhachHangDto();
-            this.updateModal();
+            this.updateKhachHangModel();
         } else {
             await khachHangStore.getForEdit(id ?? '');
-            this.updateModal();
+            this.updateKhachHangModel();
         }
         this.setState({ idkhachHang: id ?? '' }, () => {
             this.handleToggle();
         });
     }
-    updateModal = () => {
+    onNhomKhachModal = () => {
+        this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
+    };
+    updateKhachHangModel = () => {
         this.setState({ createOrEditKhachHang: khachHangStore.createEditKhachHangDto });
     };
     async delete(id: string) {
@@ -588,105 +602,255 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </ButtonGroup>
                             </Grid>
                         </Grid>
-                        <div
-                            className="customer-page_row-2"
-                            style={{
-                                width: '100%',
-                                marginTop: '24px',
-                                backgroundColor: '#fff'
-                            }}>
-                            <DataGrid
-                                disableRowSelectionOnClick
-                                autoHeight
-                                rows={this.state.rowTable}
-                                columns={columns}
-                                onRowClick={() => this.handleOpenInfor}
-                                hideFooter
-                                onColumnVisibilityModelChange={this.toggleColumnVisibility}
-                                columnVisibilityModel={this.state.visibilityColumn}
-                                checkboxSelection
-                                sx={{
-                                    '& .MuiDataGrid-iconButtonContainer': {
-                                        display: 'none'
-                                    },
-                                    '& .MuiDataGrid-cellContent': {
-                                        fontSize: '12px'
-                                    },
-                                    '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                        outline: 'none!important'
-                                    },
-                                    '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
-                                        {
-                                            outline: 'none '
-                                        },
-                                    '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                        color: 'var(--color-main)'
-                                    },
-                                    '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                        fill: 'var(--color-main)'
-                                    },
-                                    '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                        {
-                                            fill: '#000'
-                                        },
-                                    '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                        {
-                                            fill: '#000'
-                                        },
-                                    '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                        color: 'var(--color-main)!important'
-                                    },
-                                    '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                        {
-                                            outline: 'none'
-                                        },
-                                    '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                        {
-                                            bgcolor: 'var(--color-bg)'
-                                        }
-                                }}
-                                localeText={TextTranslate}
-                            />
-                            <ActionMenuTable
-                                selectedRowId={this.state.selectedRowId}
-                                anchorEl={this.state.anchorEl}
-                                closeMenu={this.handleCloseMenu}
-                                handleView={this.handleView}
-                                permissionView=""
-                                handleEdit={this.handleEdit}
-                                permissionEdit="Pages.KhachHang.Edit"
-                                handleDelete={this.showConfirmDelete}
-                                permissionDelete="Pages.KhachHang.Delete"
-                            />
-                            <CustomTablePagination
-                                currentPage={this.state.currentPage}
-                                rowPerPage={this.state.rowPerPage}
-                                totalRecord={this.state.totalItems}
-                                totalPage={this.state.totalPage}
-                                handlePerPageChange={this.handlePerPageChange}
-                                handlePageChange={this.handlePageChange}
-                            />
-                            <CreateOrEditCustomerDialog
-                                visible={this.state.toggle}
-                                onCancel={this.handleToggle}
-                                onOk={this.handleSubmit}
-                                handleChange={this.handleChange}
-                                title={
-                                    this.state.idkhachHang == ''
-                                        ? 'Thêm mới khách hàng'
-                                        : 'Cập nhật thông tin khách hàng'
-                                }
-                                formRef={createOrEditKhachHang}
-                                suggestNguonKhach={suggestNguonKhach}
-                                suggestNhomKhach={suggestNhomKhach}
-                            />
-                        </div>
-                        <div
-                            className={
-                                this.state.toggle ? 'show customer-overlay' : 'customer-overlay'
-                            }
-                            onClick={this.handleToggle}></div>
+                        <Grid container spacing={1}>
+                            <Grid item lg={2} md={2} sm={3} xs={12}>
+                                <Box
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderRadius: '8px',
+                                        minHeight: '100%'
+                                    }}>
+                                    <Box
+                                        display="flex"
+                                        flexDirection={'row'}
+                                        justifyContent="space-between"
+                                        alignItems={'center'}
+                                        textAlign={'center'}
+                                        borderBottom="1px solid #E6E1E6"
+                                        padding="28px 8px">
+                                        <Typography fontSize="14px" fontWeight="700">
+                                            Nhóm khách hàng
+                                        </Typography>
+                                        <Button
+                                            hidden={
+                                                !abpCustom.isGrandPermission(
+                                                    'Pages.NhomKhach.Create'
+                                                )
+                                            }
+                                            sx={{
+                                                padding: '0',
+                                                minWidth: 'unset',
+                                                bgcolor: '#fff',
+                                                border: '1px solid #D1D7E1'
+                                            }}>
+                                            <Add
+                                                sx={{
+                                                    color: '#525F7A',
+                                                    transition: '.4s',
+                                                    height: '30px',
+                                                    cursor: 'pointer',
+                                                    width: '30px',
+                                                    borderRadius: '4px',
+                                                    padding: '4px'
+                                                }}
+                                                onClick={this.onNhomKhachModal}
+                                            />
+                                        </Button>
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            overflow: 'auto',
+                                            maxHeight: '66vh',
+                                            padding: '0px 8px',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '8px'
+                                            },
+                                            '&::-webkit-scrollbar-track': {
+                                                bgcolor: 'var(--color-bg)'
+                                            }
+                                        }}>
+                                        <Typography
+                                            sx={{
+                                                padding: '8px',
+                                                fontSize: '14px',
+                                                fontWeight: 500,
+                                                color: '#29303D',
+                                                alignItems: 'center',
+                                                justifyItems: 'center'
+                                            }}>
+                                            <CutomerGroupIcon
+                                                style={{
+                                                    width: '18px',
+                                                    height: '18px',
+                                                    marginRight: 4
+                                                }}
+                                            />
+                                            <span
+                                                onClick={() => {
+                                                    this.setState(
+                                                        {
+                                                            idNhomKhach: ''
+                                                        },
+                                                        () => {
+                                                            this.getData();
+                                                        }
+                                                    );
+                                                }}
+                                                style={{
+                                                    fontSize: '14px',
+                                                    fontWeight: 500,
+                                                    color: '#29303D'
+                                                }}>
+                                                Tất cả
+                                            </span>
+                                        </Typography>
+                                        {suggestStore.suggestNhomKhach?.map((item, index) => (
+                                            <>
+                                                <Divider
+                                                    textAlign="right"
+                                                    variant="inset"
+                                                    component={'div'}
+                                                />
+                                                <Typography
+                                                    sx={{
+                                                        padding: '8px',
 
+                                                        alignItems: 'center',
+                                                        justifyItems: 'center'
+                                                    }}>
+                                                    <CutomerGroupIcon
+                                                        style={{
+                                                            width: '18px',
+                                                            height: '18px',
+                                                            marginRight: 4
+                                                        }}
+                                                    />
+                                                    <span
+                                                        onClick={() => {
+                                                            this.setState(
+                                                                {
+                                                                    idNhomKhach: item.id
+                                                                },
+                                                                () => {
+                                                                    this.getData();
+                                                                }
+                                                            );
+                                                        }}
+                                                        style={{
+                                                            fontSize: '14px',
+                                                            fontWeight: 500,
+                                                            color: '#29303D'
+                                                        }}>
+                                                        {item.tenNhomKhach}
+                                                    </span>
+                                                </Typography>
+                                            </>
+                                        ))}
+                                    </Box>
+                                </Box>
+                            </Grid>
+                            <Grid item lg={10} md={10} sm={9} xs={12}>
+                                <div
+                                    className="customer-page_row-2"
+                                    style={{
+                                        width: '100%',
+                                        marginTop: '24px',
+                                        backgroundColor: '#fff'
+                                    }}>
+                                    <DataGrid
+                                        disableRowSelectionOnClick
+                                        autoHeight
+                                        rows={this.state.rowTable}
+                                        columns={columns}
+                                        onRowClick={() => this.handleOpenInfor}
+                                        hideFooter
+                                        onColumnVisibilityModelChange={this.toggleColumnVisibility}
+                                        columnVisibilityModel={this.state.visibilityColumn}
+                                        checkboxSelection
+                                        sx={{
+                                            '& .MuiDataGrid-iconButtonContainer': {
+                                                display: 'none'
+                                            },
+                                            '& .MuiDataGrid-cellContent': {
+                                                fontSize: '12px'
+                                            },
+                                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                                                outline: 'none!important'
+                                            },
+                                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
+                                                {
+                                                    outline: 'none '
+                                                },
+                                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                                                color: 'var(--color-main)'
+                                            },
+                                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover':
+                                                {
+                                                    fill: 'var(--color-main)'
+                                                },
+                                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
+                                                {
+                                                    fill: '#000'
+                                                },
+                                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
+                                                {
+                                                    fill: '#000'
+                                                },
+                                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                                                color: 'var(--color-main)!important'
+                                            },
+                                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
+                                                {
+                                                    outline: 'none'
+                                                },
+                                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
+                                                {
+                                                    bgcolor: 'var(--color-bg)'
+                                                }
+                                        }}
+                                        localeText={TextTranslate}
+                                    />
+                                    <ActionMenuTable
+                                        selectedRowId={this.state.selectedRowId}
+                                        anchorEl={this.state.anchorEl}
+                                        closeMenu={this.handleCloseMenu}
+                                        handleView={this.handleView}
+                                        permissionView=""
+                                        handleEdit={this.handleEdit}
+                                        permissionEdit="Pages.KhachHang.Edit"
+                                        handleDelete={this.showConfirmDelete}
+                                        permissionDelete="Pages.KhachHang.Delete"
+                                    />
+                                    <CustomTablePagination
+                                        currentPage={this.state.currentPage}
+                                        rowPerPage={this.state.rowPerPage}
+                                        totalRecord={this.state.totalItems}
+                                        totalPage={this.state.totalPage}
+                                        handlePerPageChange={this.handlePerPageChange}
+                                        handlePageChange={this.handlePageChange}
+                                    />
+                                    <CreateOrEditCustomerDialog
+                                        visible={this.state.toggle}
+                                        onCancel={this.handleToggle}
+                                        onOk={this.handleSubmit}
+                                        handleChange={this.handleChange}
+                                        title={
+                                            this.state.idkhachHang == ''
+                                                ? 'Thêm mới khách hàng'
+                                                : 'Cập nhật thông tin khách hàng'
+                                        }
+                                        formRef={createOrEditKhachHang}
+                                        suggestNguonKhach={suggestNguonKhach}
+                                        suggestNhomKhach={suggestNhomKhach}
+                                    />
+                                </div>
+                                <div
+                                    className={
+                                        this.state.toggle
+                                            ? 'show customer-overlay'
+                                            : 'customer-overlay'
+                                    }
+                                    onClick={this.handleToggle}></div>
+                            </Grid>
+                        </Grid>
+                        <CreateOrEditNhomKhachModal
+                            visiable={this.state.isShowNhomKhachModal}
+                            handleClose={this.onNhomKhachModal}
+                        />
                         <ConfirmDelete
                             isShow={this.state.isShowConfirmDelete}
                             onOk={this.onOkDelete}

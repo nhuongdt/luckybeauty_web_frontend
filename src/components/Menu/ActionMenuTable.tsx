@@ -39,7 +39,7 @@ class ActionMenuTable extends Component<MenuProps> {
                 sx={{ minWidth: '120px' }}>
                 <MenuItem
                     onClick={handleView}
-                    hidden={!abpCustom.isGrandPermission(permissionView ?? '')}>
+                    hidden={!abpCustom.isGrandPermission(permissionView ?? 'notHavePermission')}>
                     <Typography
                         color="#009EF7"
                         fontSize="12px"
@@ -54,7 +54,7 @@ class ActionMenuTable extends Component<MenuProps> {
                 </MenuItem>
                 <MenuItem
                     onClick={handleEdit}
-                    hidden={!abpCustom.isGrandPermission(permissionEdit ?? '')}>
+                    hidden={!abpCustom.isGrandPermission(permissionEdit ?? 'notHavePermission')}>
                     <Typography
                         color="#009EF7"
                         fontSize="12px"
@@ -69,7 +69,7 @@ class ActionMenuTable extends Component<MenuProps> {
                 </MenuItem>
                 <MenuItem
                     onClick={handleDelete}
-                    hidden={!abpCustom.isGrandPermission(permissionDelete ?? '')}>
+                    hidden={!abpCustom.isGrandPermission(permissionDelete ?? 'notHavePermission')}>
                     <Typography
                         color="#F1416C"
                         fontSize="12px"

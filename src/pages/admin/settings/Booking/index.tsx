@@ -14,6 +14,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import React, { useState } from 'react';
 import { ReactComponent as HelpIcon } from '../../../../images/help-circle.svg';
 import { ReactComponent as ArrowDown } from '../../../../images/arow-down.svg';
+import Cookies from 'js-cookie';
 const Booking: React.FC = () => {
     const [option1, setOption1] = useState('1');
     const [option2, setOption2] = useState('1');
@@ -82,7 +83,12 @@ const Booking: React.FC = () => {
                     <TextField
                         fullWidth
                         size="small"
-                        defaultValue="https://luckybeauty-booking.com/nailsalon"
+                        defaultValue={`http://192.168.1.63:5100/booking/${
+                            Cookies.get('TenantName') == null ||
+                            Cookies.get('TenantName') == undefined
+                                ? 'default'
+                                : Cookies.get('TenantName')
+                        }`}
                         sx={{
                             '& input': { height: '31px' },
                             borderColor: '#E6E1E6!important',

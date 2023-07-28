@@ -163,7 +163,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                         marginTop: '80px',
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: '8px',
+                        gap: '4px',
                         '& .Mui-selected': {
                             bgcolor: 'transparent!important'
                         }
@@ -242,7 +242,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                     sx={{
                                         flex: 'unset!important',
                                         '& a': {
-                                            fontSize: '16px',
+                                            fontSize: '14px',
                                             color:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -267,7 +267,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         marginY: 0,
                                         paddingY: '4px',
                                         '& span': {
-                                            fontSize: '16px',
+                                            fontSize: '14px',
                                             color:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
