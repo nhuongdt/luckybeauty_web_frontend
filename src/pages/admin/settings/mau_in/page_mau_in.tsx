@@ -14,11 +14,13 @@ import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
-import { ISelect } from '../../../../lib/appconst';
+import AppConsts, { ISelect } from '../../../../lib/appconst';
 import ModalAddMauIn from './modal_add_mau_in';
 import utils from '../../../../utils/utils';
 import { ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import DataMauIn from './DataMauIn';
+import SelectMauIn from '../../../../components/Menu/SelectMauIn';
+import { number } from 'yup';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -26,13 +28,15 @@ export default function PageMauIn({ xx }: any) {
     const firstLoad = useRef(true);
     const chinhanhCurrent = useContext(ChiNhanhContext);
 
-    const [lstMauIn, setListMauIn] = useState<ISelect[]>([]);
-    const [idMauInChosed, setIdMauInChosed] = useState('');
+    const [allListMauIn, setAllListMauIn] = useState<MauInDto[]>([]);
+    // const [lstMauIn, setListMauIn] = useState<ISelect[]>([]);
+    const [idMauInChosed, setIdMauInChosed] = useState<string | number>('');
     const [isShowModalAddMauIn, setIsShowModalAddMauIn] = useState(false);
     const [idLoaiChungTu, setIdLoaiChungTu] = useState(1);
 
     useEffect(() => {
         GetContentHtml();
+        GetAllMauIn_byChiNhanh();
     }, []);
 
     const GetContentHtml = async () => {
@@ -43,8 +47,9 @@ export default function PageMauIn({ xx }: any) {
     };
 
     const BindDataPrint = (shtml: string) => {
-        let dataAfter = DataMauIn.replaceHoaDon(shtml);
-        dataAfter = DataMauIn.replaceChiTietHoaDon(dataAfter);
+        // !import: repace cthd --> hoadon
+        let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
+        dataAfter = DataMauIn.replaceHoaDon(dataAfter);
         setdataPrint(dataAfter);
     };
 
@@ -52,13 +57,13 @@ export default function PageMauIn({ xx }: any) {
         setIdLoaiChungTu(newValue);
     };
 
-    const GetListMauIn_byLoaiChungTu = () => {
-        const data = [{ id: '1', laMacDinh: false, tenMauIn: 'Mau01' } as MauInDto];
-        const lst = data.map((item) => {
-            return { value: item.id, text: item.tenMauIn } as unknown as ISelect;
-        });
-        setListMauIn(lst);
+    const GetAllMauIn_byChiNhanh = async () => {
+        const data = await MauInServices.GetAllMauIn_byChiNhanh();
+        setAllListMauIn(data);
     };
+
+    // setListMauIn(allListMauIn.filter((x: MauInDto) => x.loaiChungTu === idLoaiChungTu));
+    const lstMauIn = allListMauIn.filter((x: MauInDto) => x.loaiChungTu === idLoaiChungTu);
 
     const [newMauIn, setNewMauIn] = useState<MauInDto>({} as MauInDto);
 
@@ -67,8 +72,11 @@ export default function PageMauIn({ xx }: any) {
         setNewMauIn({ ...newMauIn, id: '', tenMauIn: '' });
     };
 
-    const changeMauIn = (item: any) => {
+    const changeMauInMacDinh = (item: any) => {
         setIdMauInChosed(item.value);
+    };
+    const changeMauIn = (item: any) => {
+        setIdMauInChosed(item.id);
     };
     const saveMauIn = async (dataMauIn: any) => {
         setIsShowModalAddMauIn(false);
@@ -85,7 +93,7 @@ export default function PageMauIn({ xx }: any) {
         };
         if (utils.checkNull(newMauIn.id)) {
             // insert
-            dataNew.idLoaiChungTu = idLoaiChungTu;
+            dataNew.loaiChungTu = idLoaiChungTu;
             dataNew.idChiNhanh = chinhanhCurrent.id;
 
             await MauInServices.InsertMauIn(dataNew);
@@ -104,6 +112,7 @@ export default function PageMauIn({ xx }: any) {
         }
         return sLoai;
     };
+    console.log('pagemauin');
 
     const onChangeCkeditor = (shtmlNew: string) => {
         console.log('onchange');
@@ -143,20 +152,31 @@ export default function PageMauIn({ xx }: any) {
                             </Button>
                         </Grid>
                         <Grid item xs={4}>
-                            <SelectWithData
-                                data={lstMauIn}
-                                idChosed={idMauInChosed}
-                                handleChange={changeMauIn}
-                            />
+                            {lstMauIn.length > 0 && (
+                                <SelectMauIn
+                                    data={lstMauIn}
+                                    idChosed={idMauInChosed}
+                                    handleChange={changeMauIn}
+                                />
+                            )}
+                            {lstMauIn.length === 0 && (
+                                <SelectWithData
+                                    data={AppConsts.lstMauInMacDinh}
+                                    idChosed={idMauInChosed}
+                                    handleChange={changeMauInMacDinh}
+                                />
+                            )}
                         </Grid>
                         <Grid item xs={2}>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                fullWidth
-                                onClick={saveMauIn}>
-                                Cập nhật
-                            </Button>
+                            {typeof idMauInChosed == 'string' && (
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    fullWidth
+                                    onClick={saveMauIn}>
+                                    Cập nhật
+                                </Button>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>
@@ -165,7 +185,9 @@ export default function PageMauIn({ xx }: any) {
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={12} lg={12}>
-                    <div dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
+                    <div
+                        className="ck-content"
+                        dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
                 </Grid>
             </Grid>
         </>

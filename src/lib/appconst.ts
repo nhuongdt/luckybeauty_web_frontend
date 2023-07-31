@@ -62,7 +62,17 @@ const AppConsts = {
         friday: 'Friday',
         saturday: 'Saturday',
         sunday: 'Sunday'
-    }
+    },
+    lstMauInMacDinh: [
+        {
+            value: 1,
+            text: 'Mẫu K80'
+        },
+        {
+            value: 2,
+            text: 'Mẫu A4'
+        }
+    ] as ISelect[]
 };
 
 export default AppConsts;

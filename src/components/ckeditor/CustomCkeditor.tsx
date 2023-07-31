@@ -94,8 +94,8 @@ export default function CustomCkeditor({ html, handleChange }: any) {
             'bold',
             'italic',
             'underline',
-            'subscript',
-            'superscript',
+            'alignment',
+
             '|',
             'link',
             'insertTable',
@@ -103,7 +103,8 @@ export default function CustomCkeditor({ html, handleChange }: any) {
             //  'ckbox',
             'specialCharacters',
             '|',
-            'alignment'
+            'subscript',
+            'superscript'
         ],
         table: {
             contentToolbar: [

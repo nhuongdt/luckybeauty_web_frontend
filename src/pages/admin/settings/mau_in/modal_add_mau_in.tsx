@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
-import { ISelect } from '../../../../lib/appconst';
+import AppConsts, { ISelect } from '../../../../lib/appconst';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import DataMauIn from './DataMauIn';
@@ -22,17 +22,6 @@ export default function ModalAddMauIn({ isShowModal, tenLoaiChungTu, handleSave,
     const [html, setHtml] = useState('');
     const [dataPrint, setDataPrint] = useState('');
     const [tenMauIn, setTenMauIn] = useState('');
-
-    const lstMauInMacDinh: ISelect[] = [
-        {
-            value: 1,
-            text: 'Mẫu K80'
-        },
-        {
-            value: 2,
-            text: 'Mẫu A4'
-        }
-    ];
 
     const GetContentMauInMacDinh = async (loai = 1) => {
         //Loai (1.k80,2.a4)
@@ -49,9 +38,9 @@ export default function ModalAddMauIn({ isShowModal, tenLoaiChungTu, handleSave,
     }, [isShowModal]);
 
     const BindDataMauIn = (html: string) => {
-        let dataAfter = DataMauIn.replaceHoaDon(html);
-        dataAfter = DataMauIn.replaceChiTietHoaDon(dataAfter);
-        setDataPrint(dataAfter);
+        let dataAfter = DataMauIn.replaceChiTietHoaDon(html);
+        dataAfter = DataMauIn.replaceHoaDon(dataAfter);
+        setDataPrint(() => dataAfter);
     };
 
     const changeMauIn = (item: ISelect) => {
@@ -110,7 +99,7 @@ export default function ModalAddMauIn({ isShowModal, tenLoaiChungTu, handleSave,
                                 </Grid>
                                 <Grid item xs={8}>
                                     <SelectWithData
-                                        data={lstMauInMacDinh}
+                                        data={AppConsts.lstMauInMacDinh}
                                         idChosed={idChosed}
                                         handleChange={changeMauIn}
                                     />
@@ -126,11 +115,12 @@ export default function ModalAddMauIn({ isShowModal, tenLoaiChungTu, handleSave,
                             <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
                         </Grid>
                         <Grid item md={6} lg={6}>
-                            <div dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
+                            <div
+                                className="ck-content"
+                                dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
                         </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions></DialogActions>
             </Dialog>
         </>
     );

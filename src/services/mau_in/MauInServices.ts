@@ -1,3 +1,4 @@
+import utils from '../../utils/utils';
 import http from '../httpService';
 import { MauInDto } from './MauInDto';
 
@@ -33,6 +34,23 @@ class MauInServices {
                 return res.data.result;
             });
         return xx;
+    };
+    GetAllMauIn_byChiNhanh = async (idChiNhanh: string | null = null) => {
+        if (utils.checkNull(idChiNhanh)) {
+            const xx = await http
+                .get(`api/services/app/MauIn/GetAllMauIn_byChiNhanh`)
+                .then((res: { data: { result: any } }) => {
+                    return res.data.result;
+                });
+            return xx;
+        } else {
+            const xx = await http
+                .get(`api/services/app/MauIn/GetAllMauIn_byChiNhanh?idChiNhanh=${idChiNhanh}`)
+                .then((res: { data: { result: any } }) => {
+                    return res.data.result;
+                });
+            return xx;
+        }
     };
 }
 
