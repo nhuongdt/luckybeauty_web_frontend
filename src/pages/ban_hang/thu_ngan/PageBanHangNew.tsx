@@ -78,11 +78,13 @@ import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_i
 import khachHangStore from '../../../stores/khachHangStore';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
 import AppConsts from '../../../lib/appconst';
-import { lstat } from 'fs/promises';
 import { NumericFormat } from 'react-number-format';
 import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
+import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import MauInServices from '../../../services/mau_in/MauInServices';
+import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -90,16 +92,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const isFirstRender = useRef(true);
     const afterRender = useRef(false);
     const [clickSSave, setClickSave] = useState(false);
-    const componentRef = useRef(null);
     const [isPrint, setIsPrint] = useState(false); // todo check on/off print
+    const componentRef = useRef(null);
     const [idNhomHang, setIdNhomHang] = useState('');
     const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
-    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
-    const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
-    const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
-
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState([]);
+    const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
+    const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
@@ -119,7 +119,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
 
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
-        new PropToChildMauIn({ contentHtml: '' })
+        new PropToChildMauIn({ contentHtml: '', isPrint: false })
     );
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
@@ -247,21 +247,21 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 setHoaDon(data[0]);
                 setHoaDonChiTiet(hdctCache);
 
-                setPropMauIn((old: any) => {
-                    return {
-                        ...old,
-                        // contentHtml: content,
-                        hoadon: { ...data[0] },
-                        khachhang: { ...customerChosed },
-                        hoadonChiTiet: [...hdctCache],
-                        chinhanh: {
-                            ...old.chinhanh,
-                            tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
-                            soDienThoai: '0973474985',
-                            logo: logo
-                        }
-                    };
-                });
+                // setPropMauIn((old: any) => {
+                //     return {
+                //         ...old,
+                //         // contentHtml: content,
+                //         hoadon: { ...data[0] },
+                //         khachhang: { ...customerChosed },
+                //         hoadonChiTiet: [...hdctCache],
+                //         chinhanh: {
+                //             ...old.chinhanh,
+                //             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
+                //             soDienThoai: '0973474985',
+                //             logo: logo
+                //         }
+                //     };
+                // });
             }
         } else {
             // asisgn hoadon
@@ -319,21 +319,21 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
         UpdateCacheHD(dataHD);
 
-        setPropMauIn((old: any) => {
-            return {
-                ...old,
-                // contentHtml: content,
-                hoadon: { ...dataHD },
-                khachhang: { ...customerChosed },
-                hoadonChiTiet: [...hoaDonChiTiet],
-                chinhanh: {
-                    ...old.chinhanh,
-                    tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
-                    soDienThoai: '0973474985',
-                    logo: logo
-                }
-            };
-        });
+        // setPropMauIn((old: any) => {
+        //     return {
+        //         ...old,
+        //         // contentHtml: content,
+        //         hoadon: { ...dataHD },
+        //         khachhang: { ...customerChosed },
+        //         hoadonChiTiet: [...hoaDonChiTiet],
+        //         chinhanh: {
+        //             ...old.chinhanh,
+        //             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
+        //             soDienThoai: '0973474985',
+        //             logo: logo
+        //         }
+        //     };
+        // });
     };
 
     const UpdateCacheHD = async (dataHD: any) => {
@@ -587,7 +587,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         }
 
         await updateCache_IfChangeCus(cusChecking);
-        setNewCus(item);
+        setNewCus(item); // gán luôn để nếu có click xem thông tin khách hàng, thì không phải DB để lấy nữa
     };
 
     const showModalAddCustomer = () => {
@@ -851,40 +851,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         });
 
         // print
-        const chinhanh = await getInforChiNhanh_byID();
-        setPropMauIn((old: PropToChildMauIn) => {
-            return {
-                ...old,
-                hoadon: {
-                    ...old.hoadon,
-                    maHoaDon: hodaDonDB.maHoaDon,
-                    daThanhToan: tongThu,
-                    conNo: hoadon.tongThanhToan - tongThu
-                },
-                chinhanh: {
-                    ...old.chinhanh,
-                    tenChiNhanh: 'Spa',
-                    soDienThoai: '1111' as unknown as null
-                }
-            } as PropToChildMauIn;
-        });
-
-        // if (chinhanh !== null) {
-        //     // why not update chinhanh at mauin??
-        //     setPropMauIn((old: any) => {
-        //         return {
-        //             ...old,
-        //             chinhanh: {
-        //                 ...old.chinhanh,
-        //                 tenChiNhanh: chinhanh?.tenChiNhanh,
-        //                 soDienThoai: chinhanh?.soDienThoai,
-        //                 logo: logo // todo logo
-        //             }
-        //         };
-        //     });
-        // }
-
-        handlePrint();
+        await GetDataPrint(hodaDonDB.maHoaDon, tongThu);
 
         // reset after save
         setClickSave(false);
@@ -901,6 +868,26 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         );
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '' });
         await RemoveCache();
+    };
+
+    const GetDataPrint = async (mahoadon = '', daThanhToan = 0) => {
+        const chinhanhPrint = await getInforChiNhanh_byID();
+        const tempMauIn = await MauInServices.GetFileMauIn('HoaDonBan.txt'); // todo get mauin macdinh
+        DataMauIn.chinhanh = chinhanhPrint;
+        DataMauIn.hoadon = hoadon;
+        DataMauIn.hoadon.maHoaDon = mahoadon;
+        DataMauIn.hoadon.daThanhToan = daThanhToan;
+        DataMauIn.hoadon.conNo = hoadon.tongThanhToan - daThanhToan;
+        DataMauIn.hoadonChiTiet = hoaDonChiTiet;
+        DataMauIn.khachhang = {
+            maKhachHang: hoadon?.maKhachHang,
+            tenKhachHang: hoadon?.tenKhachHang,
+            soDienThoai: hoadon?.soDienThoai
+        } as KhachHangItemDto;
+
+        let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+        newHtml = DataMauIn.replaceHoaDon(newHtml);
+        DataMauIn.Print(newHtml);
     };
 
     // thêm 2 nút điều hướng cho phần cuộn ngang
@@ -1001,9 +988,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
-            <div style={{ display: 'none' }}>
+            {/* <div style={{ display: 'none' }}>
                 <MauInHoaDon ref={componentRef} props={propMauIn} />
-            </div>
+            </div> */}
             <Grid
                 container
                 spacing={3}

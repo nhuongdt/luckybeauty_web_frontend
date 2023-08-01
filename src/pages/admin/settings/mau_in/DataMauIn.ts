@@ -5,6 +5,7 @@ import { KhachHangItemDto } from '../../../../services/khach-hang/dto/KhachHangI
 import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
 import { CuaHangDto } from '../../../../services/cua_hang/Dto/CuaHangDto';
 import utils from '../../../../utils/utils';
+import { format } from 'date-fns';
 
 const dv1 = new PageHoaDonChiTietDto({
     maHangHoa: 'DV01',
@@ -64,71 +65,85 @@ class DataMauIn {
     congty = congty;
     khachhang = khachhang;
     chinhanh = chinhanh;
+    hoadon = hoadon;
     hoadonChiTiet = [dv1, dv2];
     replaceHoaDon = (shtml: string) => {
         let data = shtml;
-        data = data.replaceAll('{TenCuaHang}', congty.tenCongTy);
-        data = data.replaceAll('{LogoCuaHang}', congty.logo);
-        data = data.replaceAll('{DiaChiCuaHang}', congty.diaChi);
-        data = data.replaceAll('{DienThoaiCuaHang}', congty.soDienThoai);
+        data = data.replaceAll('{TenCuaHang}', this.congty.tenCongTy.toUpperCase());
+        data = data.replaceAll('{LogoCuaHang}', this.congty.logo);
+        data = data.replaceAll('{DiaChiCuaHang}', this.congty.diaChi);
+        data = data.replaceAll('{DienThoaiCuaHang}', this.congty.soDienThoai);
 
-        data = data.replaceAll('{LogoChiNhanh}', `<img src=${chinhanh.logo ?? ''} />`);
-        data = data.replaceAll('{TenChiNhanh}', chinhanh.tenChiNhanh);
-        data = data.replaceAll('{DienThoaiChiNhanh}', chinhanh.soDienThoai ?? '');
-        data = data.replaceAll('{DiaChiChiNhanh}', chinhanh.diaChi ?? '');
+        data = data.replaceAll(
+            '{LogoChiNhanh}',
+            `<img src=${this.chinhanh.logo ?? chinhanh.logo} />`
+        );
+        data = data.replaceAll('{TenChiNhanh}', this.chinhanh.tenChiNhanh.toUpperCase());
+        data = data.replaceAll('{DienThoaiChiNhanh}', this.chinhanh.soDienThoai ?? '');
+        data = data.replaceAll('{DiaChiChiNhanh}', this.chinhanh.diaChi ?? '');
 
-        data = data.replaceAll('{TenKhachHang}', khachhang.tenKhachHang);
-        data = data.replaceAll('{DiaChiKhachHang}', khachhang.diaChi);
-        data = data.replaceAll('{DienThoaiKhachHang}', khachhang.soDienThoai);
+        data = data.replaceAll('{TenKhachHang}', this.khachhang.tenKhachHang);
+        data = data.replaceAll('{DiaChiKhachHang}', this.khachhang.diaChi ?? '');
+        data = data.replaceAll('{DienThoaiKhachHang}', this.khachhang.soDienThoai ?? '');
 
-        data = data.replaceAll('{MaHoaDon}', hoadon.maHoaDon);
-        data = data.replaceAll('{NgayBan}', hoadon.ngayLapHoaDon);
-        data = data.replaceAll('{NgayLapHoaDon}', hoadon.ngayLapHoaDon);
-        data = data.replaceAll('{NhanVienBanHang}', hoadon.tenNhanVien ?? '');
-        data = data.replaceAll('{GhiChuHD}', hoadon.ghiChuHD ?? '');
+        data = data.replaceAll('{MaHoaDon}', this.hoadon.maHoaDon);
+        data = data.replaceAll(
+            '{NgayBan}',
+            format(new Date(this.hoadon?.ngayLapHoaDon ?? ''), 'dd/MM/yyyy HH:mm:ss')
+        );
+        data = data.replaceAll(
+            '{NgayLapHoaDon}',
+            format(new Date(this.hoadon?.ngayLapHoaDon ?? ''), 'dd/MM/yyyy HH:mm:ss')
+        );
+        data = data.replaceAll('{NhanVienBanHang}', this.hoadon.tenNhanVien ?? '');
+        data = data.replaceAll('{GhiChuHD}', this.hoadon.ghiChuHD ?? '');
 
         data = data.replaceAll(
             '{TongTienHangChuaChietKhau}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongTienHangChuaChietKhau)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongTienHangChuaChietKhau)
         );
         data = data.replaceAll(
             '{TongChietKhauHangHoa}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongChietKhauHangHoa)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongChietKhauHangHoa)
         );
         data = data.replaceAll(
             '{TongTienHang}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongTienHang)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongTienHang)
         );
-        data = data.replaceAll('{PTThueHD}', hoadon.ptThueHD?.toString() ?? '0');
+        data = data.replaceAll('{PTThueHD}', this.hoadon.ptThueHD?.toString() ?? '0');
         data = data.replaceAll(
             '{TongTienThue}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongTienThue ?? 0)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongTienThue ?? 0)
         );
         data = data.replaceAll(
             '{TongTienHDSauVAT}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongTienHDSauVAT ?? 0)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongTienHDSauVAT ?? 0)
         );
-        data = data.replaceAll('{PTGiamGiaHD}', hoadon.pTGiamGiaHD?.toString() ?? '0');
+        data = data.replaceAll('{PTGiamGiaHD}', this.hoadon.pTGiamGiaHD?.toString() ?? '0');
         data = data.replaceAll(
             '{TongGiamGiaHD}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongGiamGiaHD)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongGiamGiaHD)
         );
         data = data.replaceAll(
             '{TongThanhToan}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.tongThanhToan)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.tongThanhToan)
         );
 
         // thanh toan
         data = data.replaceAll(
             '{DaThanhToan}',
-            new Intl.NumberFormat('vi-VN').format(hoadon.daThanhToan ?? 0)
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.daThanhToan ?? 0)
         );
-        data = data.replaceAll('{TienBangChu}', utils.DocSo(hoadon.daThanhToan));
+        data = data.replaceAll(
+            '{NoHoaDon}',
+            new Intl.NumberFormat('vi-VN').format(this.hoadon.conNo ?? 0)
+        );
+        data = data.replaceAll('{TienBangChu}', utils.DocSo(this.hoadon.daThanhToan));
         return data;
     };
     replaceChiTietHoaDon = (shtml: string) => {
         let data = shtml;
-        // find table contains cthd
+        // find table contain cthd
         let cthd_from = data.lastIndexOf('tbody', data.indexOf('{TenHangHoa')) - 1;
         let cthd_to = data.indexOf('tbody', data.indexOf('{TenHangHoa')) + 6;
         let contain_Ten = true;
@@ -138,7 +153,6 @@ class DataMauIn {
             contain_Ten = false;
         }
         const sTempCTHD = data.substring(cthd_from, cthd_to);
-        console.log('sTempCTHD ', sTempCTHD);
 
         let tr1_from = -1,
             tr1_to = -1;
@@ -205,6 +219,25 @@ class DataMauIn {
         data = data.replace(cthdContentCopy, cthdContent);
 
         return data;
+    };
+    Print = (contentHtml: string) => {
+        const css = `<style type="text/css"> figure table {width: 100%} </style>`;
+        contentHtml = css.concat(contentHtml);
+        const newIframe = document.createElement('iframe');
+        newIframe.height = '0';
+        newIframe.src = 'about:blank';
+        document.body.appendChild(newIframe);
+        newIframe.src = 'javascript:window["contents"]';
+        newIframe.focus();
+        const pri = newIframe.contentWindow;
+        pri?.document.open();
+        pri?.document.write(contentHtml);
+        pri?.document.close();
+        pri?.focus();
+        // pri?.print();
+        setTimeout(function () {
+            pri?.print();
+        }, 1000);
     };
 }
 
