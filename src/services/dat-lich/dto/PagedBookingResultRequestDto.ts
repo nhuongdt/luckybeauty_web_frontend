@@ -5,6 +5,7 @@ export interface PagedBookingResultRequestDto {
     dateSelected: Date;
     typeView: string;
     idNhanVien?: string;
+    idDichVu?: string;
 }
 
 export class BookingRequestDto extends ParamSearchDto {

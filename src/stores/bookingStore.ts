@@ -19,7 +19,8 @@ class BookingStore {
             dateSelected: this.selectedDate,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
             typeView: this.typeView,
-            idNhanVien: this.idNhanVien
+            idNhanVien: this.idNhanVien,
+            idDichVu: this.idService
         });
         this.listBooking = result;
     }

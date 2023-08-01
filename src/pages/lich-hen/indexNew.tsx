@@ -19,6 +19,8 @@ import { ReactComponent as AddIcon } from '../../images/add.svg';
 import { ReactComponent as ShapeIcon } from '../../images/Shape.svg';
 import { ReactComponent as ShapeIcon2 } from '../../images/Shape2.svg';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
+import ListIcon from '@mui/icons-material/List';
+import DateRangeIcon from '@mui/icons-material/DateRange';
 import TabDay from './components/TabDay';
 import TabWeek from './components/TabWeek';
 import TabMonth from './components/TabMonth';
@@ -255,15 +257,16 @@ const LichHen: React.FC = () => {
                 justifyContent="space-between"
                 alignItems="center"
                 sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
-                <Grid item>
+                <Grid item xs={4}>
                     <Autocomplete
                         options={suggestNhanVien}
                         getOptionLabel={(option) => `${option.tenNhanVien}`}
                         size="small"
+                        sx={{ width: '45%' }}
                         fullWidth
                         disablePortal
-                        onChange={(event, value) => {
-                            bookingStore.onChangeEmployee(value?.id ?? ''); // Cập nhật giá trị id trong Formik
+                        onChange={async (event, value) => {
+                            await bookingStore.onChangeEmployee(value?.id ?? ''); // Cập nhật giá trị id trong Formik
                         }}
                         renderInput={(params) => (
                             <TextField
@@ -285,7 +288,7 @@ const LichHen: React.FC = () => {
                         )}
                     />
                 </Grid>
-                <Grid item>
+                <Grid item xs={4}>
                     <Box
                         display="flex"
                         sx={{
@@ -335,15 +338,24 @@ const LichHen: React.FC = () => {
                         </Button>
                     </Box>
                 </Grid>
-                <Grid item sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Grid
+                    item
+                    xs={4}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'end',
+                        gap: '8px'
+                    }}>
                     <ButtonGroup variant="outlined">
                         <Button className="btn-outline-hover" sx={{ marginRight: '1px' }}>
-                            <ShapeIcon />
+                            <DateRangeIcon />
                         </Button>
                         <Button className="btn-outline-hover">
-                            <ShapeIcon2 />
+                            <ListIcon />
                         </Button>
                     </ButtonGroup>
+
                     <Select
                         size="small"
                         value={TabLichHen}
@@ -352,7 +364,7 @@ const LichHen: React.FC = () => {
                         }}
                         sx={{
                             bgcolor: '#fff',
-                            '& .MuiSelect-select': { paddingY: '5.5px' },
+                            // '& .MuiSelect-select': { paddingY: '5.5px' },
                             fontSize: '14px'
                         }}>
                         <MenuItem value="week">Tuần</MenuItem>
@@ -362,11 +374,12 @@ const LichHen: React.FC = () => {
                     <Autocomplete
                         options={suggestDichVu}
                         getOptionLabel={(option) => `${option.tenDichVu}`}
+                        sx={{ width: '40%' }}
                         size="small"
                         fullWidth
                         disablePortal
-                        onChange={(event, value) => {
-                            bookingStore.onChangeService(value?.id ?? ''); // Cập nhật giá trị id trong Formik
+                        onChange={async (event, value) => {
+                            await bookingStore.onChangeService(value?.id ?? ''); // Cập nhật giá trị id trong Formik
                         }}
                         renderInput={(params) => (
                             <TextField
