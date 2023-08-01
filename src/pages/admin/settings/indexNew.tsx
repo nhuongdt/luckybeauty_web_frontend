@@ -169,10 +169,6 @@ const SettingsNew: React.FC = () => {
                                         Bán hàng
                                     </Typography>
                                     <Tab
-                                        label="Phương thức thanh toán"
-                                        onClick={() => handleTabClick('Phương thức thanh toán')}
-                                    />
-                                    <Tab
                                         label="Mẫu hóa đơn"
                                         onClick={() => handleTabClick('Mẫu hóa đơn')}
                                     />
@@ -193,10 +189,7 @@ const SettingsNew: React.FC = () => {
                         <TabPanel value={activeTab} index={5}>
                             <CaiDatHoaHongScreen />
                         </TabPanel>
-                        <TabPanel value={activeTab} index={7}>
-                            <ThanhToan />
-                        </TabPanel>
-                        <TabPanel value={activeTab} index={8}>
+                        <TabPanel value={activeTab} index={6}>
                             <HoaHong />
                         </TabPanel>
                     </Grid>
