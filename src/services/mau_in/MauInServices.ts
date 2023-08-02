@@ -29,23 +29,25 @@ class MauInServices {
     };
     UpdatetMauIn = async (input: MauInDto) => {
         const xx = await http
-            .post(`api/services/app/MauIn/UpdatetMauIn`, input)
+            .post(`api/services/app/MauIn/UpdateMauIn`, input)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
         return xx;
     };
-    GetAllMauIn_byChiNhanh = async (idChiNhanh: string | null = null) => {
+    GetAllMauIn_byChiNhanh = async (idChiNhanh: string | null = null, idLoaiChungTu = 0) => {
         if (utils.checkNull(idChiNhanh)) {
             const xx = await http
-                .get(`api/services/app/MauIn/GetAllMauIn_byChiNhanh`)
+                .get(`api/services/app/MauIn/GetAllMauIn_byChiNhanh?idLoaiChungTu=${idLoaiChungTu}`)
                 .then((res: { data: { result: any } }) => {
                     return res.data.result;
                 });
             return xx;
         } else {
             const xx = await http
-                .get(`api/services/app/MauIn/GetAllMauIn_byChiNhanh?idChiNhanh=${idChiNhanh}`)
+                .get(
+                    `api/services/app/MauIn/GetAllMauIn_byChiNhanh?idChiNhanh=${idChiNhanh}&idLoaiChungTu=${idLoaiChungTu}`
+                )
                 .then((res: { data: { result: any } }) => {
                     return res.data.result;
                 });

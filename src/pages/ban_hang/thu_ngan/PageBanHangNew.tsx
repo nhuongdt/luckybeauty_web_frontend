@@ -85,6 +85,7 @@ import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVie
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
+import { MauInDto } from '../../../services/mau_in/MauInDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -100,6 +101,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const [listProduct, setListProduct] = useState([]);
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
+    const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
@@ -148,6 +150,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setAllNhanVien([...data.items]);
     };
 
+    const GetAllMauIn_byChiNhanh = async () => {
+        const data = await MauInServices.GetAllMauIn_byChiNhanh();
+        setAllMauIn(data);
+    };
+
     const getInforChiNhanh_byID = async () => {
         const idChinhanh = utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id;
         const data = await chiNhanhService.GetDetail(idChinhanh ?? '');
@@ -158,6 +165,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         await GetTreeNhomHangHoa();
         await GetListNhanVien();
         await FirstLoad_getSetDataFromCache();
+        await GetAllMauIn_byChiNhanh();
         afterRender.current = true;
     };
 
@@ -872,7 +880,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
     const GetDataPrint = async (mahoadon = '', daThanhToan = 0) => {
         const chinhanhPrint = await getInforChiNhanh_byID();
-        const tempMauIn = await MauInServices.GetFileMauIn('HoaDonBan.txt'); // todo get mauin macdinh
+        let tempMauIn = '';
+        const mauInMacDinh = allMauIn.filter((x: MauInDto) => x.loaiChungTu === 1 && x.laMacDinh);
+        if (mauInMacDinh.length > 0) {
+            tempMauIn = mauInMacDinh[0].noiDungMauIn;
+        } else {
+            tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+        }
+        // const tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
         DataMauIn.chinhanh = chinhanhPrint;
         DataMauIn.hoadon = hoadon;
         DataMauIn.hoadon.maHoaDon = mahoadon;

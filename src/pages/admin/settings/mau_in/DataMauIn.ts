@@ -46,7 +46,7 @@ const khachhang = {
 
 const hoadon = new PageHoaDonDto({
     maHoaDon: 'HD001',
-    ngayLapHoaDon: '25/07/2023 10:15',
+    ngayLapHoaDon: new Date().toString(),
     tenKhachHang: 'Anh B',
     tongTienHang: 1000000
 });
@@ -220,9 +220,32 @@ class DataMauIn {
 
         return data;
     };
+
     Print = (contentHtml: string) => {
-        const css = `<style type="text/css"> figure table {width: 100%} </style>`;
-        contentHtml = css.concat(contentHtml);
+        contentHtml = contentHtml.replaceAll('figure', 'div');
+        const style = `<style  type="text/css"> 
+        .ck-content .table table {
+            overflow: hidden;
+        }
+        .ck-content .table {
+            display: table;
+            margin: .9em auto;
+        }
+        .ck-content .table table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            height: 100%;
+            width: 100%;
+        } 
+        .ck-content .table table td, .ck-content .table table th {
+            padding: 0.4em
+        }
+        .ck-content .table td, .ck-content .table th{
+            overflow-wrap: break-word;
+            position: relative;
+        }
+        </style>`;
+        const allContent = `<html><head>${style}</head> <body><div class="ck-content"> ${contentHtml} </div></body></html>`;
         const newIframe = document.createElement('iframe');
         newIframe.height = '0';
         newIframe.src = 'about:blank';
@@ -231,14 +254,15 @@ class DataMauIn {
         newIframe.focus();
         const pri = newIframe.contentWindow;
         pri?.document.open();
-        pri?.document.write(contentHtml);
+        pri?.document.write(allContent);
         pri?.document.close();
         pri?.focus();
-        // pri?.print();
-        setTimeout(function () {
-            pri?.print();
-        }, 1000);
+        pri?.print();
+        // setTimeout(function () {
+        //     pri?.print();
+        // }, 1000);
     };
 }
+console.log('datamauin');
 
 export default new DataMauIn();

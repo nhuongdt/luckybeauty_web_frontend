@@ -14,18 +14,16 @@ import {
 import Link from '@ckeditor/ckeditor5-link/src/link';
 import { CodeBlock } from '@ckeditor/ckeditor5-code-block';
 import { Font } from '@ckeditor/ckeditor5-font';
-import { ImageInsert, ImageUpload, PictureEditing } from '@ckeditor/ckeditor5-image';
 import {
     Image,
     ImageCaption,
     ImageResize,
     ImageStyle,
-    ImageToolbar
+    ImageToolbar,
+    ImageInsert,
+    ImageUpload,
+    PictureEditing
 } from '@ckeditor/ckeditor5-image';
-// // used to upload image
-// // import ArticlePluginSet from '@ckeditor/ckeditor5-core/tests/_utils/articlepluginset';
-// // import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
-// //import { CKBox } from '@ckeditor/ckeditor5-ckbox';
 import { SourceEditing } from '@ckeditor/ckeditor5-source-editing';
 import { Alignment } from '@ckeditor/ckeditor5-alignment';
 
@@ -66,17 +64,14 @@ export default function CustomCkeditor({ html, handleChange }: any) {
             TableColumnResize,
             TableCellProperties,
             Link,
-            // Image,
+            Image,
             ImageInsert,
             ImageCaption,
             ImageResize,
             ImageStyle,
             ImageToolbar,
-            // ArticlePluginSet,
             PictureEditing,
             ImageUpload,
-            // // CloudServices,
-            // //   CKBox,
             SourceEditing,
             SpecialCharacters,
             SpecialCharactersEssentials,
@@ -88,23 +83,21 @@ export default function CustomCkeditor({ html, handleChange }: any) {
             '|',
             'fontSize',
             'fontFamily',
-            'fontColor',
-            'fontBackgroundColor',
             '|',
             'bold',
             'italic',
             'underline',
             'alignment',
-
             '|',
             'link',
             'insertTable',
             'insertImage',
-            //  'ckbox',
             'specialCharacters',
             '|',
             'subscript',
-            'superscript'
+            'superscript',
+            'fontColor',
+            'fontBackgroundColor'
         ],
         table: {
             contentToolbar: [
@@ -114,6 +107,25 @@ export default function CustomCkeditor({ html, handleChange }: any) {
                 'tableProperties',
                 'tableCellProperties'
             ]
+            // tableToolbar: [
+            //     'tableColumn',
+            //     'tableRow',
+            //     'mergeTableCells',
+            //     'tableProperties',
+            //     'tableCellProperties'
+            // ]
+            // tableProperties: {
+            //     defaultProperties: {
+            //         borderStyle: 'none'
+            //     }
+            // }
+            // tableCellProperties: {
+            //     defaultProperties: {
+            //         borderWidth: '5px',
+            //         borderStyle: 'dashed',
+            //         padding: '0px'
+            //     }
+            // }
         },
         fontSize: {
             options: [11, 12, 13, 14, 15, 16, 17, 18, 19]
@@ -128,15 +140,6 @@ export default function CustomCkeditor({ html, handleChange }: any) {
                 '|'
             ]
         }
-        // ckbox: {
-        //     defaultUploadCategories: {
-        //         Bitmaps: ['bmp'],
-        //         Pictures: ['jpg', 'jpeg'],
-        //         Scans: ['png', 'tiff'],
-        //         // The category below is referenced by its ID.
-        //         'fdf2a647-b67f-4a6c-b692-5ba1dc1ed87b': ['gif']
-        //     }
-        // }
     };
     return (
         <>

@@ -218,7 +218,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                             alignItems="center"
                             rowGap="24px"
                             sx={{
-                                '& .MuiGrid-item:nth-child(even) .MuiTypography-root': {
+                                '& .MuiGrid-item:nth-of-typ(even) .MuiTypography-root': {
                                     textAlign: 'right'
                                 }
                             }}>

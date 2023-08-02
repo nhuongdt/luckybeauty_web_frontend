@@ -33,20 +33,23 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../../services/file-dowload.service';
+import { MauInDto } from '../../../services/mau_in/MauInDto';
+import MauInServices from '../../../services/mau_in/MauInServices';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
-    const current = useContext(ChiNhanhContext);
+    const chinhanhCurrent = useContext(ChiNhanhContext);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
+    const [lstMauIn, setLstMauIn] = useState<MauInDto[]>([]);
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
-        idChiNhanhs: [current.id],
+        idChiNhanhs: [chinhanhCurrent.id],
         currentPage: 1,
         pageSize: 5,
         columnSort: 'NgayLapHoaDon',
@@ -70,6 +73,11 @@ const GiaoDichThanhToan: React.FC = () => {
         });
     };
 
+    const GetlstMauIn_byChiNhanh = async () => {
+        const data = await MauInServices.GetAllMauIn_byChiNhanh(chinhanhCurrent.id, 1);
+        setLstMauIn(data);
+    };
+
     const GetAllChiNhanh = async () => {
         const data = await chiNhanhService.GetAll({
             keyword: '',
@@ -84,6 +92,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const PageLoad = () => {
         GetListHoaDon();
         GetAllChiNhanh();
+        GetlstMauIn_byChiNhanh();
     };
 
     useEffect(() => {
@@ -91,8 +100,8 @@ const GiaoDichThanhToan: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        setParamSearch({ ...paramSearch, idChiNhanhs: [current.id] });
-    }, [current.id]);
+        setParamSearch({ ...paramSearch, idChiNhanhs: [chinhanhCurrent.id] });
+    }, [chinhanhCurrent.id]);
 
     useEffect(() => {
         if (firstLoad.current) {
@@ -425,6 +434,7 @@ const GiaoDichThanhToan: React.FC = () => {
                     hoadon={hoadon}
                     open={openDetail}
                     handleGotoBack={childGotoBack}
+                    listMauIn={lstMauIn}
                 />
             </ChiNhanhContextbyUser.Provider>
 
