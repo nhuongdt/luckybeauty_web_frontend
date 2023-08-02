@@ -23,6 +23,7 @@ export class BookingDetailDto {
 
 export class BookingDetail_ofCustomerDto {
     idBooking = '';
+    idChiNhanh = '';
     idKhachHang = '';
     startTime = '';
     endTime = '';

@@ -3,7 +3,7 @@ import {
     Box,
     Grid,
     Typography,
-    ButtonGroup,
+    Stack,
     Button,
     TextField,
     IconButton,
@@ -78,8 +78,14 @@ import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_i
 import khachHangStore from '../../../stores/khachHangStore';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
 import AppConsts from '../../../lib/appconst';
-import { lstat } from 'fs/promises';
 import { NumericFormat } from 'react-number-format';
+import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
+import khachHangService from '../../../services/khach-hang/khachHangService';
+import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
+import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import MauInServices from '../../../services/mau_in/MauInServices';
+import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
+import { MauInDto } from '../../../services/mau_in/MauInDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -87,16 +93,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const isFirstRender = useRef(true);
     const afterRender = useRef(false);
     const [clickSSave, setClickSave] = useState(false);
-    const componentRef = useRef(null);
     const [isPrint, setIsPrint] = useState(false); // todo check on/off print
+    const componentRef = useRef(null);
     const [idNhomHang, setIdNhomHang] = useState('');
     const [idLoaiHangHoa, setIdLoaiHangHoa] = useState(0);
-    const [contentPrint, setContentPrint] = useState('<h1> Hello </h1>');
-    const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
-    const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
-
     const [allNhomHangHoa, setAllNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [listProduct, setListProduct] = useState([]);
+    const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
+    const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
+    const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
@@ -116,7 +121,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     );
 
     const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
-        new PropToChildMauIn({ contentHtml: '' })
+        new PropToChildMauIn({ contentHtml: '', isPrint: false })
     );
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
@@ -145,6 +150,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setAllNhanVien([...data.items]);
     };
 
+    const GetAllMauIn_byChiNhanh = async () => {
+        const data = await MauInServices.GetAllMauIn_byChiNhanh();
+        setAllMauIn(data);
+    };
+
     const getInforChiNhanh_byID = async () => {
         const idChinhanh = utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id;
         const data = await chiNhanhService.GetDetail(idChinhanh ?? '');
@@ -155,6 +165,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         await GetTreeNhomHangHoa();
         await GetListNhanVien();
         await FirstLoad_getSetDataFromCache();
+        await GetAllMauIn_byChiNhanh();
         afterRender.current = true;
     };
 
@@ -244,21 +255,21 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 setHoaDon(data[0]);
                 setHoaDonChiTiet(hdctCache);
 
-                setPropMauIn((old: any) => {
-                    return {
-                        ...old,
-                        // contentHtml: content,
-                        hoadon: { ...data[0] },
-                        khachhang: { ...customerChosed },
-                        hoadonChiTiet: [...hdctCache],
-                        chinhanh: {
-                            ...old.chinhanh,
-                            tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
-                            soDienThoai: '0973474985',
-                            logo: logo
-                        }
-                    };
-                });
+                // setPropMauIn((old: any) => {
+                //     return {
+                //         ...old,
+                //         // contentHtml: content,
+                //         hoadon: { ...data[0] },
+                //         khachhang: { ...customerChosed },
+                //         hoadonChiTiet: [...hdctCache],
+                //         chinhanh: {
+                //             ...old.chinhanh,
+                //             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
+                //             soDienThoai: '0973474985',
+                //             logo: logo
+                //         }
+                //     };
+                // });
             }
         } else {
             // asisgn hoadon
@@ -316,21 +327,21 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
         UpdateCacheHD(dataHD);
 
-        setPropMauIn((old: any) => {
-            return {
-                ...old,
-                // contentHtml: content,
-                hoadon: { ...dataHD },
-                khachhang: { ...customerChosed },
-                hoadonChiTiet: [...hoaDonChiTiet],
-                chinhanh: {
-                    ...old.chinhanh,
-                    tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
-                    soDienThoai: '0973474985',
-                    logo: logo
-                }
-            };
-        });
+        // setPropMauIn((old: any) => {
+        //     return {
+        //         ...old,
+        //         // contentHtml: content,
+        //         hoadon: { ...dataHD },
+        //         khachhang: { ...customerChosed },
+        //         hoadonChiTiet: [...hoaDonChiTiet],
+        //         chinhanh: {
+        //             ...old.chinhanh,
+        //             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
+        //             soDienThoai: '0973474985',
+        //             logo: logo
+        //         }
+        //     };
+        // });
     };
 
     const UpdateCacheHD = async (dataHD: any) => {
@@ -584,6 +595,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         }
 
         await updateCache_IfChangeCus(cusChecking);
+        setNewCus(item); // gán luôn để nếu có click xem thông tin khách hàng, thì không phải DB để lấy nữa
     };
 
     const showModalAddCustomer = () => {
@@ -600,6 +612,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             moTa: '',
             idLoaiKhach: 1
         } as CreateOrEditKhachHangDto);
+    };
+
+    const showModalEditCus = async () => {
+        if (Object.keys(newCus)) {
+            // used to first load --> not changeCus
+            const dataCus = await khachHangService.getKhachHang(hoadon?.idKhachHang ?? '');
+            setNewCus(dataCus);
+        }
+        setIsShowModalAddCus(true);
     };
 
     const updateCache_IfChangeCus = async (dataCheckIn: any) => {
@@ -652,6 +673,17 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         });
         await dbDexie.khachCheckIn.add(cusChecking);
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.idCheckIn, isShow: false });
+
+        // get dataHoaDon if khach was booking
+        const data = await dbDexie.hoaDon
+            .where('idKhachHang')
+            .equals(dataCheckIn.idKhachHang)
+            .toArray();
+        if (data != null && data.length > 0) {
+            const hdctCache = data[0].hoaDonChiTiet ?? [];
+            setHoaDon(data[0]);
+            setHoaDonChiTiet(hdctCache);
+        }
 
         await updateCache_IfChangeCus(cusChecking);
     };
@@ -793,7 +825,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         );
 
         // again again if tra thua tien
-        const lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
+        let lstQCT_After = SoQuyServices.AssignAgainQuyChiTiet(
             lstQuyCT,
             sumTienKhachTra,
             hoadon?.tongThanhToan ?? 0
@@ -810,6 +842,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 ngayLapHoaDon: hoadon.ngayLapHoaDon,
                 tongTienThu: tongThu
             });
+            lstQCT_After = lstQCT_After.filter((x: QuyChiTietDto) => x.tienThu > 0);
             // assign idHoadonLienQuan, idKhachHang for quyCT
             lstQCT_After.map((x: QuyChiTietDto) => {
                 x.idHoaDonLienQuan = hodaDonDB.id;
@@ -826,40 +859,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         });
 
         // print
-        const chinhanh = await getInforChiNhanh_byID();
-        setPropMauIn((old: PropToChildMauIn) => {
-            return {
-                ...old,
-                hoadon: {
-                    ...old.hoadon,
-                    maHoaDon: hodaDonDB.maHoaDon,
-                    daThanhToan: tongThu,
-                    conNo: hoadon.tongThanhToan - tongThu
-                },
-                chinhanh: {
-                    ...old.chinhanh,
-                    tenChiNhanh: 'Spa',
-                    soDienThoai: '1111' as unknown as null
-                }
-            } as PropToChildMauIn;
-        });
-
-        // if (chinhanh !== null) {
-        //     // why not update chinhanh at mauin??
-        //     setPropMauIn((old: any) => {
-        //         return {
-        //             ...old,
-        //             chinhanh: {
-        //                 ...old.chinhanh,
-        //                 tenChiNhanh: chinhanh?.tenChiNhanh,
-        //                 soDienThoai: chinhanh?.soDienThoai,
-        //                 logo: logo // todo logo
-        //             }
-        //         };
-        //     });
-        // }
-
-        handlePrint();
+        await GetDataPrint(hodaDonDB.maHoaDon, tongThu);
 
         // reset after save
         setClickSave(false);
@@ -876,6 +876,33 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         );
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '' });
         await RemoveCache();
+    };
+
+    const GetDataPrint = async (mahoadon = '', daThanhToan = 0) => {
+        const chinhanhPrint = await getInforChiNhanh_byID();
+        let tempMauIn = '';
+        const mauInMacDinh = allMauIn.filter((x: MauInDto) => x.loaiChungTu === 1 && x.laMacDinh);
+        if (mauInMacDinh.length > 0) {
+            tempMauIn = mauInMacDinh[0].noiDungMauIn;
+        } else {
+            tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+        }
+        // const tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+        DataMauIn.chinhanh = chinhanhPrint;
+        DataMauIn.hoadon = hoadon;
+        DataMauIn.hoadon.maHoaDon = mahoadon;
+        DataMauIn.hoadon.daThanhToan = daThanhToan;
+        DataMauIn.hoadon.conNo = hoadon.tongThanhToan - daThanhToan;
+        DataMauIn.hoadonChiTiet = hoaDonChiTiet;
+        DataMauIn.khachhang = {
+            maKhachHang: hoadon?.maKhachHang,
+            tenKhachHang: hoadon?.tenKhachHang,
+            soDienThoai: hoadon?.soDienThoai
+        } as KhachHangItemDto;
+
+        let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+        newHtml = DataMauIn.replaceHoaDon(newHtml);
+        DataMauIn.Print(newHtml);
     };
 
     // thêm 2 nút điều hướng cho phần cuộn ngang
@@ -949,7 +976,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     // end thanhtoan new
     return (
         <>
-            <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            <ListNhanVienDataContext.Provider value={allNhanVien}>
+                <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            </ListNhanVienDataContext.Provider>
             <CreateOrEditCustomerDialog
                 visible={isShowModalAddCus}
                 onCancel={() => setIsShowModalAddCus(false)}
@@ -974,9 +1003,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
-            <div style={{ display: 'none' }}>
+            {/* <div style={{ display: 'none' }}>
                 <MauInHoaDon ref={componentRef} props={propMauIn} />
-            </div>
+            </div> */}
             <Grid
                 container
                 spacing={3}
@@ -1461,91 +1490,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 paddingBottom: '16px'
                             }}>
                             <Box display="flex" gap="8px" alignItems="center">
-                                {hoadon?.tenKhachHang !== 'Khách lẻ' ? (
-                                    <>
-                                        <Avatar
-                                            src={
-                                                utils.checkNull(hoadon?.idKhachHang) ||
-                                                hoadon?.idKhachHang === Guid.EMPTY
-                                                    ? ''
-                                                    : avatar
-                                            }
-                                            sx={{ width: 40, height: 40 }}
-                                        />
+                                <Avatar
+                                    src={
+                                        utils.checkNull(hoadon?.idKhachHang) ||
+                                        hoadon?.idKhachHang === Guid.EMPTY
+                                            ? ''
+                                            : avatar
+                                    }
+                                    sx={{ width: 40, height: 40 }}
+                                />
 
-                                        <Box onClick={showModalCheckIn}>
-                                            <Typography
-                                                variant="body2"
-                                                fontSize="14px"
-                                                color="#3D475C">
-                                                {hoadon?.tenKhachHang}
-                                            </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                fontSize="12px"
-                                                color="#525F7A">
-                                                {hoadon?.soDienThoai}
-                                            </Typography>
-                                        </Box>
-                                    </>
-                                ) : (
-                                    <Box sx={{ flexGrow: '1' }}>
-                                        <Autocomplete
-                                            sx={{
-                                                '& .MuiAutocomplete-paper::-webkit-scrollbar': {
-                                                    width: '8px'
-                                                }
-                                            }}
-                                            fullWidth
-                                            options={allNhanVien}
-                                            getOptionLabel={(option) => option.tenNhanVien}
-                                            renderOption={(props, option) => (
-                                                <Box
-                                                    component="li"
-                                                    {...props}
-                                                    sx={{ display: 'flex', gap: '8px' }}>
-                                                    <Box>
-                                                        <Avatar
-                                                            sx={{ width: 24, height: 24 }}
-                                                            src={option.avatar}
-                                                        />
-                                                    </Box>
-                                                    <Box>
-                                                        <Typography
-                                                            variant="body1"
-                                                            fontSize="12px"
-                                                            color="#3D475C">
-                                                            {option.tenNhanVien}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body1"
-                                                            color="#667799"
-                                                            fontSize="12px">
-                                                            {option.soDienThoai}
-                                                        </Typography>
-                                                    </Box>
-                                                </Box>
-                                            )}
-                                            size="small"
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    fullWidth
-                                                    placeholder="Tìm kiếm"
-                                                    InputProps={{
-                                                        ...params.InputProps,
-                                                        startAdornment: (
-                                                            <>
-                                                                <SearchIcon />
-                                                                {params.InputProps.startAdornment}
-                                                            </>
-                                                        )
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                    </Box>
-                                )}
+                                <Box onClick={showModalCheckIn}>
+                                    <Typography variant="body2" fontSize="14px" color="#3D475C">
+                                        {hoadon?.tenKhachHang}
+                                    </Typography>
+                                    <Typography variant="body2" fontSize="12px" color="#525F7A">
+                                        {hoadon?.soDienThoai}
+                                    </Typography>
+                                </Box>
+
                                 <Box sx={{ marginLeft: 'auto' }}>
                                     {utils.checkNull(hoadon?.idKhachHang) ||
                                     hoadon?.idKhachHang === Guid.EMPTY ? (
@@ -1563,16 +1526,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         </Button>
                                     ) : (
                                         <>
-                                            <IconButton>
+                                            <Stack spacing={2} direction="row">
                                                 <VisibilityIcon
+                                                    onClick={showModalEditCus}
                                                     sx={{
                                                         color: '#8492AE',
                                                         width: '16px',
                                                         height: '16px'
                                                     }}
                                                 />
-                                            </IconButton>
-                                            <IconButton>
                                                 <Close
                                                     sx={{
                                                         color: '#8492AE',
@@ -1581,7 +1543,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     }}
                                                     onClick={() => changeCustomer(null)}
                                                 />
-                                            </IconButton>
+                                            </Stack>
                                         </>
                                     )}
                                 </Box>
@@ -1643,14 +1605,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             gap="8px">
                                                             {ct.nhanVienThucHien.map(
                                                                 (nv: any, index3: number) => (
-                                                                    <Typography
+                                                                    <Box
                                                                         key={index3}
-                                                                        variant="body1"
-                                                                        fontSize="10px"
-                                                                        lineHeight="16px"
-                                                                        color="#4C4B4C"
-                                                                        alignItems="center"
                                                                         sx={{
+                                                                            fontSize: '10px',
+                                                                            lineHeight: '16px',
+                                                                            color: '#4C4B4C',
+                                                                            alignItems: 'center',
                                                                             maxWidth:
                                                                                 ct.nhanVienThucHien !==
                                                                                     undefined &&
@@ -1708,7 +1669,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                                 alt="close"
                                                                             />
                                                                         </span>
-                                                                    </Typography>
+                                                                    </Box>
                                                                 )
                                                             )}
                                                             {ct.nhanVienThucHien.length > 2 ? (
@@ -1734,14 +1695,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             )} */}
                                         </Box>
                                         <Box width="20%">
-                                            <Typography
-                                                color="#000"
-                                                variant="body1"
-                                                fontSize="14px"
-                                                fontWeight="400"
+                                            <Box
                                                 sx={{
                                                     display: 'flex',
                                                     gap: '8px',
+                                                    color: '#000',
+                                                    fontSize: '14px',
+                                                    fontWeight: 400,
 
                                                     transition: '.4s',
                                                     '& .price': {
@@ -1787,7 +1747,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             </Typography>
                                                         )}
                                                 </Box>
-                                            </Typography>
+                                            </Box>
                                         </Box>
                                         <Box
                                             display="flex"

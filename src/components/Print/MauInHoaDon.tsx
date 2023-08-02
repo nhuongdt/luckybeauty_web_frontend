@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useState } from 'react';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import utils from '../../utils/utils';
 import { format } from 'date-fns';
+import { Box } from '@mui/material';
 
 export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: any) {
     // const [tenKhachHang, setTenKhachHang] = useState('');
@@ -146,60 +147,59 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             </td>
                         </tr>
                     </thead>
-                    <tbody>
-                        {props?.hoadonChiTiet.map((ct: any, index: any) => (
-                            <>
-                                <tr key={index}>
-                                    <td colSpan={3}>
-                                        <span style={{ fontSize: 12 }}>
-                                            <span style={{ fontFamily: 'Tahoma' }}>
-                                                <span>{ct.tenHangHoa}</span>
+
+                    {props?.hoadonChiTiet.map((ct: any, index: any) => (
+                        <tbody key={index}>
+                            <tr>
+                                <td colSpan={3}>
+                                    <span style={{ fontSize: 12 }}>
+                                        <span style={{ fontFamily: 'Tahoma' }}>
+                                            <span>{ct.tenHangHoa}</span>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style={{ borderBottom: '1px dashed black' }}>
+                                    <span style={{ fontSize: 12 }}>
+                                        <span style={{ fontFamily: 'Tahoma' }}>
+                                            <span>
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    ct.donGiaTruocCK
+                                                )}
                                             </span>
                                         </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style={{ borderBottom: '1px dashed black' }}>
-                                        <span style={{ fontSize: 12 }}>
-                                            <span style={{ fontFamily: 'Tahoma' }}>
-                                                <span>
-                                                    {new Intl.NumberFormat('vi-VN').format(
-                                                        ct.donGiaTruocCK
-                                                    )}
-                                                </span>
+                                    </span>
+                                </td>
+                                <td
+                                    style={{
+                                        borderBottom: '1px dashed black',
+                                        textAlign: 'center'
+                                    }}>
+                                    <span style={{ fontSize: 12 }}>
+                                        <span style={{ fontFamily: 'Tahoma' }}>
+                                            <span>{ct.soLuong}</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td
+                                    style={{
+                                        borderBottom: '1px dashed black',
+                                        textAlign: 'right'
+                                    }}>
+                                    <span style={{ fontSize: 12 }}>
+                                        <span style={{ fontFamily: 'Tahoma' }}>
+                                            <span>
+                                                {new Intl.NumberFormat('vi-VN').format(
+                                                    ct.thanhTienTruocCK
+                                                )}
                                             </span>
                                         </span>
-                                    </td>
-                                    <td
-                                        style={{
-                                            borderBottom: '1px dashed black',
-                                            textAlign: 'center'
-                                        }}>
-                                        <span style={{ fontSize: 12 }}>
-                                            <span style={{ fontFamily: 'Tahoma' }}>
-                                                <span>{ct.soLuong}</span>
-                                            </span>
-                                        </span>
-                                    </td>
-                                    <td
-                                        style={{
-                                            borderBottom: '1px dashed black',
-                                            textAlign: 'right'
-                                        }}>
-                                        <span style={{ fontSize: 12 }}>
-                                            <span style={{ fontFamily: 'Tahoma' }}>
-                                                <span>
-                                                    {new Intl.NumberFormat('vi-VN').format(
-                                                        ct.thanhTienTruocCK
-                                                    )}
-                                                </span>
-                                            </span>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </>
-                        ))}
-                    </tbody>
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    ))}
                 </table>
                 <p>&nbsp;</p>
                 <table style={{ width: '100%' }} border={0} cellSpacing={0} cellPadding={0}>

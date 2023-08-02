@@ -32,6 +32,10 @@ import MauInServices from '../../services/mau_in/MauInServices';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import nhanVienService from '../../services/nhan-vien/nhanVienService';
+import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
+import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
+import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 const shortNameCus = createTheme({
     components: {
         MuiButton: {
@@ -66,6 +70,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
         new PropModal({ isShow: false })
     );
+    const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
         const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
@@ -73,8 +78,17 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         setAllCusChecking([...list]);
     };
 
+    const GetAllNhanVien = async () => {
+        const data = await nhanVienService.getAll({
+            skipCount: 0,
+            maxResultCount: 100
+        } as PagedNhanSuRequestDto);
+        setLstNhanVien([...data.items]);
+    };
+
     const PageLoad = () => {
         GetListCustomerChecking();
+        GetAllNhanVien();
     };
 
     useEffect(() => {
@@ -187,7 +201,9 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
     return (
         <>
-            <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            <ListNhanVienDataContext.Provider value={lstNhanVien}>
+                <ModalAddCustomerCheckIn trigger={triggerAddCheckIn} handleSave={saveCheckInOK} />
+            </ListNhanVienDataContext.Provider>
             <ConfirmDelete
                 isShow={inforDelete.show}
                 title={inforDelete.title}

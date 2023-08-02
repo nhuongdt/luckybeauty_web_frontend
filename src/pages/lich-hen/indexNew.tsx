@@ -36,6 +36,9 @@ import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHan
 import SuggestService from '../../services/suggests/SuggestService';
 import abpCustom from '../../components/abp-custom';
 import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
+import nhanVienService from '../../services/nhan-vien/nhanVienService';
+import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
+import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
@@ -75,12 +78,16 @@ const LichHen: React.FC = () => {
     const getData = async () => {
         await bookingStore.getData();
         setData(bookingStore.listBooking);
-        const suggestNhanViens = await SuggestService.SuggestNhanVienLamDichVu();
+        const suggestNhanViens = await nhanVienService.getAll({
+            filter: '',
+            skipCount: 0,
+            maxResultCount: 100
+        } as PagedNhanSuRequestDto);
         const suggestKhachHangs = await SuggestService.SuggestKhachHang();
         const suggestDichVus = await SuggestService.SuggestDichVu();
         setSuggestDichVu(suggestDichVus);
         setSuggestKhachHang(suggestKhachHangs);
-        setSuggestNhanVien(suggestNhanViens);
+        setSuggestNhanVien(suggestNhanViens.items as unknown as SuggestNhanVienDichVuDto[]);
     };
     const handlePreviousWeek = async () => {
         const datePreviousWeek = new Date(bookingStore.selectedDate);

@@ -8,6 +8,7 @@ import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/Pa
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
+import { DataArray } from '@mui/icons-material';
 
 export default function AutocompleteCustomer({
     idChosed,
@@ -73,7 +74,7 @@ export default function AutocompleteCustomer({
                     handleInputChange(newInputValue);
                 }}
                 filterOptions={(x) => x}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
+                //isOptionEqualToValue={(option, value) => option.id === value.id}// bi douple 2 dong neu them dong nay
                 options={listCustomer}
                 getOptionLabel={(option: any) => (option.tenKhachHang ? option.tenKhachHang : '')}
                 renderInput={(params) => (
@@ -81,7 +82,7 @@ export default function AutocompleteCustomer({
                 )}
                 renderOption={(props, option) => {
                     return (
-                        <li {...props}>
+                        <li {...props} key={option.id}>
                             <Grid container alignItems="center">
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />

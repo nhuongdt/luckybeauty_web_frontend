@@ -230,14 +230,7 @@ class Utils {
         let strTime = hours + ':' + sMinutes + ' ' + ampm;
         return strTime;
     }
-    ReplaceAllProp(obj: any) {
-        // todo
-        let retStr = '';
-        for (let x in obj) {
-            retStr = retStr.replace(new RegExp(x, 'g'), obj[x]);
-        }
-        return retStr;
-    }
+
     DocHangThapPhan(so: any, daydu: any) {
         // todo
         let chuoi = '';

@@ -488,6 +488,20 @@ export const appRouters: AppRouteProps = {
                         () => import('../../pages/admin/settings/hoa-hong-nhan-vien')
                     )
                 },
+                {
+                    path: '/settings/mau-in',
+                    permission: 'Pages.CongTy',
+                    title: 'Hoa hồng',
+                    name: 'caidat',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(
+                        () => import('../../pages/admin/settings/mau_in/page_mau_in')
+                    )
+                },
 
                 {
                     path: '/account',

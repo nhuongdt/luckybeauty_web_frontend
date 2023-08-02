@@ -30,6 +30,7 @@ import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg'
 import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
 import rules from './create-or-edit-lich-hen.validate';
 import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
+import { BookingDetailDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -37,13 +38,14 @@ interface ICreateOrEditProps {
     suggestDichVu: SuggestDichVuDto[];
     suggestKhachHang: SuggestKhachHangDto[];
     suggestNhanVien: SuggestNhanVienDichVuDto[];
-    onOk: () => void;
+    onOk: (idBooking: string) => void;
 }
 
 class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
     handleSubmit = async (values: any) => {
+        let createResult = { id: '' };
         if (this.props.idLichHen === '') {
-            const createResult = await datLichService.CreateBooking({
+            createResult = await datLichService.CreateBooking({
                 idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
                 idDonViQuiDoi: values.idDonViQuiDoi,
                 idKhachHang: values.idKhachHang,
@@ -53,7 +55,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                 ghiChu: values.ghiChu,
                 trangThai: values.trangThai
             });
-            createResult != null
+            const saveOK = createResult != null;
+            saveOK
                 ? enqueueSnackbar('Thêm mới thành công', {
                       variant: 'success',
                       autoHideDuration: 3000
@@ -63,7 +66,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                       autoHideDuration: 3000
                   });
         }
-        this.props.onOk();
+        this.props.onOk(createResult.id);
     };
     render(): ReactNode {
         const { visible, onCancel, idLichHen, suggestDichVu, suggestKhachHang, suggestNhanVien } =
@@ -83,6 +86,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
             { tenKhachHang: 'Thêm mới', soDienThoai: 'add_new', id: '' },
             ...suggestKhachHang
         ];
+
         return (
             <div>
                 <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">

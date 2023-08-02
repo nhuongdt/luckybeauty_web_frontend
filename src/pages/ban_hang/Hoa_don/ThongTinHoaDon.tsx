@@ -47,6 +47,10 @@ import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import DetailHoaDon from '../thu_ngan/DetailHoaDon';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
+import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import { MauInDto } from '../../../services/mau_in/MauInDto';
+import MauInServices from '../../../services/mau_in/MauInServices';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -59,7 +63,7 @@ const themOutlineInput = createTheme({
     }
 });
 
-const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
+const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: any) => {
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
@@ -189,6 +193,28 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
             ...hoadonChosed,
             conNo: (hoadonChosed?.conNo ?? 0) - tongThunew
         });
+    };
+
+    const InHoaDon = async () => {
+        DataMauIn.hoadon = { ...hoadonChosed };
+        DataMauIn.hoadonChiTiet = [...chitietHoaDon];
+        DataMauIn.khachhang = {
+            maKhachHang: hoadonChosed?.maKhachHang,
+            tenKhachHang: hoadonChosed?.tenKhachHang,
+            soDienThoai: hoadon?.soDienThoai
+        } as KhachHangItemDto;
+        DataMauIn.chinhanh = { tenChiNhanh: hoadon?.tenChiNhanh } as ChiNhanhDto;
+        let tempMauIn = '';
+        const mauInMacDinh = listMauIn.filter((x: MauInDto) => x.laMacDinh);
+        if (mauInMacDinh.length > 0) {
+            tempMauIn = mauInMacDinh[0].noiDungMauIn;
+        } else {
+            tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+        }
+        // const tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+        let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+        newHtml = DataMauIn.replaceHoaDon(newHtml);
+        DataMauIn.Print(newHtml);
     };
 
     const [activeTab, setActiveTab] = useState(0);
@@ -452,6 +478,16 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                             />
                                         </ThemeProvider>
                                     </Grid>
+                                    <Grid item xs={3}>
+                                        <Box sx={{ paddingTop: '18px' }}>
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                onClick={InHoaDon}>
+                                                In hóa đơn
+                                            </Button>
+                                        </Box>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                             <Grid xs={12} item>
@@ -564,7 +600,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open }: any) => {
                                                 bgcolor: 'red!important'
                                             }
                                         }}>
-                                        Hủy bỏ
+                                        Xóa
                                     </Button>
                                 </>
                             )}

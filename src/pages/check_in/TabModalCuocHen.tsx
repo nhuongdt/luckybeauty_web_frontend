@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Box,
     TextField,
@@ -23,6 +23,16 @@ import {
 import datLichService from '../../services/dat-lich/datLichService';
 import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
 import { format } from 'date-fns';
+import { dbDexie } from '../../lib/dexie/dexieDB';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
+import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
+import CreateOrEditLichHenModal from '../lich-hen/components/create-or-edit-lich-hen';
+import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
+import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
+import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
+import SuggestService from '../../services/suggests/SuggestService';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -39,6 +49,13 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         }
     ];
 
+    const chiNhanhCurrent = useContext(ChiNhanhContext);
+    const lstNhanVien = useContext(ListNhanVienDataContext) as unknown as SuggestNhanVienDichVuDto;
+
+    const [isShowModalLichHen, setIsShowModalLichHen] = useState(false);
+    const [suggestKhachHang, setSuggestKhachHang] = useState<SuggestKhachHangDto[]>([]);
+    const [suggestDichVu, setSuggestDichVu] = useState<SuggestDichVuDto[]>([]);
+
     const [paramSearch, setParamSearch] = useState<BookingRequestDto>(
         new BookingRequestDto(
             { currentPage: 0, trangThaiBook: 3 } // 0.xoa 1.chua xacnhan, 2.da xacnhan, 3.all
@@ -52,11 +69,60 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         setListCusBooking(data);
     };
 
+    const GetAllDichVu = async () => {
+        const data = await SuggestService.SuggestDichVu();
+        setSuggestDichVu(data);
+    };
+
+    const GetAllListCustomer = async () => {
+        const data = await SuggestService.SuggestKhachHang();
+        setSuggestKhachHang(data);
+    };
+
     useEffect(() => {
         GetListCustomer_wasBooking(paramSearch);
+        GetAllListCustomer();
+        GetAllDichVu();
     }, []);
 
     const choseBooking = async (itemBook: any) => {
+        // if not exist cache & cus booking
+        const dataCache = await dbDexie.hoaDon
+            .where('idKhachHang')
+            .equals(itemBook.idKhachHang)
+            .toArray();
+        if (dataCache.length === 0) {
+            const hoadonCT = [];
+            let tongTienHang = 0;
+
+            for (let i = 0; i < itemBook.details.length; i++) {
+                const itFor = itemBook.details[i];
+                const newCT = new PageHoaDonChiTietDto({
+                    idDonViQuyDoi: itFor.idDonViQuyDoi,
+                    maHangHoa: itFor.maHangHoa,
+                    tenHangHoa: itFor.tenHangHoa,
+                    giaBan: itFor.giaBan,
+                    idNhomHangHoa: itFor.idNhomHangHoa,
+                    idHangHoa: itFor.idHangHoa,
+                    soLuong: 1
+                });
+                hoadonCT.push(newCT);
+                tongTienHang += itFor.giaBan;
+            }
+            const hoadon = new PageHoaDonDto({
+                idChiNhanh: chiNhanhCurrent.id,
+                idKhachHang: itemBook.idKhachHang,
+                maKhachHang: itemBook.maKhachHang,
+                tenKhachHang: itemBook.tenKhachHang,
+                soDienThoai: itemBook.soDienThoai,
+                tongTienHang: tongTienHang
+            });
+            hoadon.tongTienHangChuaChietKhau = tongTienHang;
+            hoadon.tongTienHDSauVAT = tongTienHang;
+            hoadon.tongThanhToan = tongTienHang;
+            hoadon.hoaDonChiTiet = hoadonCT;
+            await dbDexie.hoaDon.add(hoadon);
+        }
         const dataCus = { ...itemBook };
         dataCus.id = itemBook.idKhachHang;
         handleChoseCusBooking(dataCus);
@@ -76,9 +142,32 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         GetListCustomer_wasBooking(paramSearch);
     }, [paramSearch.trangThaiBook]);
 
+    const showModalAddLichHen = () => {
+        setIsShowModalLichHen(true);
+    };
+
+    const saveLichHenOK = async (idBooking = '') => {
+        setIsShowModalLichHen(false);
+        const newBooking = await datLichService.GetInforBooking_byID(idBooking);
+        if (newBooking != null && newBooking.length > 0) {
+            setListCusBooking([newBooking[0], ...listCusBooking]);
+        }
+    };
+
     const windowWidth = useWindowWidth();
     return (
-        <Box>
+        <>
+            <CreateOrEditLichHenModal
+                visible={isShowModalLichHen}
+                onCancel={() => {
+                    setIsShowModalLichHen(false);
+                }}
+                onOk={saveLichHenOK}
+                idLichHen=""
+                suggestNhanVien={lstNhanVien as unknown as SuggestNhanVienDichVuDto[]}
+                suggestDichVu={suggestDichVu}
+                suggestKhachHang={suggestKhachHang}
+            />
             <Grid container rowSpacing={2}>
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -110,7 +199,8 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                             height: 'fit-content'
                         }}
                         startIcon={<AddIcon />}
-                        className="btn-container-hover">
+                        className="btn-container-hover"
+                        onClick={showModalAddLichHen}>
                         Thêm cuộc hẹn mới
                     </Button>
                 </Grid>
@@ -141,8 +231,8 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                 ))}
             </Box>
             <Grid container spacing={2}>
-                {listCusBooking.map((item, index) => (
-                    <Grid item key={item.idBooking} sm={6} md={4} xs={12}>
+                {listCusBooking.map((item, indexBooking) => (
+                    <Grid item key={indexBooking} sm={6} md={4} xs={12}>
                         <Box
                             sx={{
                                 padding: '18px',
@@ -186,16 +276,10 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                         </Typography>
                                     </Box>
                                 </Box>
-                                {/* <Box>
-                                    <IconButton sx={{ padding: '0' }}>
-                                        <MoreHorizIcon sx={{ color: '#231F20', width: '15px' }} />
-                                    </IconButton>
-                                </Box> */}
                             </Box>
                             {item.details.map((ct: BookingDetailDto, index2) => (
-                                <>
+                                <div key={index2}>
                                     <Box
-                                        key={index2}
                                         sx={{
                                             display: 'flex',
                                             height: '42px',
@@ -223,7 +307,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                             {new Intl.NumberFormat('vi-VN').format(ct.giaBan)}
                                         </Box>
                                     </Box>
-                                </>
+                                </div>
                             ))}
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Box
@@ -255,7 +339,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                     </Grid>
                 ))}
             </Grid>
-        </Box>
+        </>
     );
 };
 export default TabCuocHen;
