@@ -9,7 +9,9 @@ import {
     TextField,
     Typography,
     Checkbox,
-    Box
+    Box,
+    createTheme,
+    ThemeProvider
 } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
@@ -18,6 +20,18 @@ import DataMauIn from './DataMauIn';
 import utils from '../../../../utils/utils';
 import SelectMauIn from '../../../../components/Menu/SelectMauIn';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
+
+const zIndexDialog = createTheme({
+    components: {
+        MuiDialog: {
+            styleOverrides: {
+                root: {
+                    zIndex: 20 // !important: (default 1300), use to show tableToolbar of CKEditor
+                }
+            }
+        }
+    }
+});
 
 export default function ModalAddMauIn({
     lstMauIn,
@@ -113,76 +127,82 @@ export default function ModalAddMauIn({
     };
     return (
         <>
-            <Dialog
-                disableEnforceFocus
-                open={isShowModal}
-                onClose={onClose}
-                fullWidth
-                maxWidth="xl">
-                <DialogTitle>
-                    Thêm mẫu in <i></i>
-                </DialogTitle>
-                <DialogContent>
-                    <Grid container spacing={1}>
-                        <Grid item md={6} lg={6}>
-                            <Grid container>
-                                <Grid item xs={2}>
-                                    <span className="modal-lable">Tên mẫu in</span>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <TextField
-                                        size="small"
-                                        fullWidth
-                                        value={tenMauIn}
-                                        onChange={(e) => {
-                                            setTenMauIn(e.target.value);
-                                        }}
-                                        helperText={errtenMauIn}
-                                    />
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Box sx={{ float: 'right' }}>
-                                        <Checkbox
-                                            checked={isCheckMauMacDinh}
-                                            onChange={(e) => setIsCheckMauMacDinh(e.target.checked)}
+            <ThemeProvider theme={zIndexDialog}>
+                <Dialog
+                    disableEnforceFocus
+                    open={isShowModal}
+                    onClose={onClose}
+                    fullWidth
+                    maxWidth="xl">
+                    <DialogTitle>
+                        Thêm mẫu in <i></i>
+                    </DialogTitle>
+                    <DialogContent>
+                        <Grid container spacing={1}>
+                            <Grid item md={6} lg={6}>
+                                <Grid container>
+                                    <Grid item xs={2}>
+                                        <span className="modal-lable">Tên mẫu in</span>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                        <TextField
+                                            size="small"
+                                            fullWidth
+                                            value={tenMauIn}
+                                            onChange={(e) => {
+                                                setTenMauIn(e.target.value);
+                                            }}
+                                            helperText={errtenMauIn}
                                         />
-                                        <span className="modal-lable" style={{ fontSize: '14px' }}>
-                                            Là mẫu in mặc định
-                                        </span>
-                                    </Box>
+                                    </Grid>
+                                    <Grid item xs={5}>
+                                        <Box sx={{ float: 'right' }}>
+                                            <Checkbox
+                                                checked={isCheckMauMacDinh}
+                                                onChange={(e) =>
+                                                    setIsCheckMauMacDinh(e.target.checked)
+                                                }
+                                            />
+                                            <span
+                                                className="modal-lable"
+                                                style={{ fontSize: '14px' }}>
+                                                Là mẫu in mặc định
+                                            </span>
+                                        </Box>
+                                    </Grid>
                                 </Grid>
                             </Grid>
-                        </Grid>
-                        <Grid item md={6} lg={6}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={2}>
-                                    <span className="modal-lable">Mẫu gợi ý</span>
-                                </Grid>
-                                <Grid item xs={8}>
-                                    <SelectMauIn
-                                        data={lstMauIn}
-                                        idChosed={idChosed}
-                                        handleChange={changeMauIn}
-                                    />
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <Button variant="contained" onClick={saveMauIn}>
-                                        Lưu
-                                    </Button>
+                            <Grid item md={6} lg={6}>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={2}>
+                                        <span className="modal-lable">Mẫu gợi ý</span>
+                                    </Grid>
+                                    <Grid item xs={8}>
+                                        <SelectMauIn
+                                            data={lstMauIn}
+                                            idChosed={idChosed}
+                                            handleChange={changeMauIn}
+                                        />
+                                    </Grid>
+                                    <Grid item xs={2}>
+                                        <Button variant="contained" onClick={saveMauIn}>
+                                            Lưu
+                                        </Button>
+                                    </Grid>
                                 </Grid>
                             </Grid>
+                            <Grid item md={6} lg={6}>
+                                <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
+                            </Grid>
+                            <Grid item md={6} lg={6}>
+                                <div
+                                    className="ck-content"
+                                    dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
+                            </Grid>
                         </Grid>
-                        <Grid item md={6} lg={6}>
-                            <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
-                        </Grid>
-                        <Grid item md={6} lg={6}>
-                            <div
-                                className="ck-content"
-                                dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
-                        </Grid>
-                    </Grid>
-                </DialogContent>
-            </Dialog>
+                    </DialogContent>
+                </Dialog>
+            </ThemeProvider>
         </>
     );
 }

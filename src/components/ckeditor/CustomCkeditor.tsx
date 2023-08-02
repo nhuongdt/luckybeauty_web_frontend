@@ -47,6 +47,7 @@ export default function CustomCkeditor({ html, handleChange }: any) {
         );
     }
     const editorConfiguration = {
+        baseFloatZIndex: 400001,
         plugins: [
             CodeBlock,
             Alignment,
@@ -107,25 +108,6 @@ export default function CustomCkeditor({ html, handleChange }: any) {
                 'tableProperties',
                 'tableCellProperties'
             ]
-            // tableToolbar: [
-            //     'tableColumn',
-            //     'tableRow',
-            //     'mergeTableCells',
-            //     'tableProperties',
-            //     'tableCellProperties'
-            // ]
-            // tableProperties: {
-            //     defaultProperties: {
-            //         borderStyle: 'none'
-            //     }
-            // }
-            // tableCellProperties: {
-            //     defaultProperties: {
-            //         borderWidth: '5px',
-            //         borderStyle: 'dashed',
-            //         padding: '0px'
-            //     }
-            // }
         },
         fontSize: {
             options: [11, 12, 13, 14, 15, 16, 17, 18, 19]
