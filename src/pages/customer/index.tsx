@@ -298,7 +298,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         />
                         <Typography
                             sx={{
-                                fontSize: '12px',
+                                fontSize: '13px',
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
                                 width: '100%'
@@ -337,7 +337,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box textAlign="center" width="100%" fontSize="12px">
+                    <Box textAlign="center" width="100%" fontSize="13px">
                         {params.value}
                     </Box>
                 )
@@ -378,7 +378,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box textAlign="center" width="100%" fontSize="12px">
+                    <Box textAlign="center" width="100%" fontSize="13px">
                         {params.value}
                     </Box>
                 )
@@ -401,7 +401,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value} fontSize="12px" textAlign="center" width="100%">
+                    <Box title={params.value} fontSize="13px" textAlign="center" width="100%">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -415,7 +415,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '12px',
+                            fontSize: '13px',
                             justifyContent: 'center',
                             width: '100%'
                         }}>
@@ -766,7 +766,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 display: 'none'
                                             },
                                             '& .MuiDataGrid-cellContent': {
-                                                fontSize: '12px'
+                                                fontSize: '13px'
                                             },
                                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                                 outline: 'none!important'

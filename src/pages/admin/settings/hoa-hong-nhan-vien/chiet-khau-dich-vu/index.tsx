@@ -9,7 +9,8 @@ import {
     TextField,
     Typography,
     SelectChangeEvent,
-    ButtonGroup
+    Autocomplete,
+    InputAdornment
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../../../../../images/column-sorting.svg';
@@ -19,6 +20,7 @@ import DownloadIcon from '../../../../../images/download.svg';
 import UploadIcon from '../../../../../images/upload.svg';
 import AddIcon from '../../../../../images/add.svg';
 import SearchIcon from '../../../../../images/search-normal.svg';
+import { ReactComponent as SearchIconInput } from '../../../../../images/search-normal.svg';
 import { Component, ReactNode } from 'react';
 import chietKhauDichVuStore from '../../../../../stores/chietKhauDichVuStore';
 import SuggestService from '../../../../../services/suggests/SuggestService';
@@ -30,6 +32,7 @@ import { CreateOrEditChietKhauDichVuDto } from '../../../../../services/hoa_hong
 import { SuggestDonViQuiDoiDto } from '../../../../../services/suggests/dto/SuggestDonViQuiDoi';
 import Cookies from 'js-cookie';
 import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
+import suggestStore from '../../../../../stores/suggestStore';
 
 class ChietKhauDichVuScreen extends Component {
     state = {
@@ -56,11 +59,10 @@ class ChietKhauDichVuScreen extends Component {
     async InitData() {
         const suggestNhanVien = await SuggestService.SuggestNhanSu();
         await this.setState({ suggestNhanSu: suggestNhanVien });
-        if (suggestNhanVien.length > 0) {
-            await this.setState({ idNhanVien: suggestNhanVien[0].id });
-        }
+        // if (suggestNhanVien.length > 0) {
+        //     await this.setState({ idNhanVien: suggestNhanVien[0].id });
+        // }
         const suggestDonViQuiDoi = await SuggestService.SuggestDonViQuiDoi();
-        console.log(suggestDonViQuiDoi);
         await this.setState({ suggestDonViQuiDoi: suggestDonViQuiDoi });
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
     }
@@ -73,19 +75,18 @@ class ChietKhauDichVuScreen extends Component {
                 sortBy: this.state.sortBy,
                 sortType: this.state.sortType
             },
-            idNhanVien
+            idNhanVien ?? AppConsts.guidEmpty
         );
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
-            currentPage: value
+            skipCount: value
         });
         this.InitData();
     };
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
-            currentPage: 1,
             skipCount: 1
         });
         this.InitData();
@@ -138,12 +139,12 @@ class ChietKhauDichVuScreen extends Component {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            fontSize: '14px',
+                            fontSize: '13px',
                             width: '100%'
                         }}
                         title={params.value}>
                         <Typography
-                            fontSize="14px"
+                            fontSize="13px"
                             sx={{
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
@@ -185,7 +186,12 @@ class ChietKhauDichVuScreen extends Component {
                 renderCell: (params: any) => (
                     <Box
                         title={params.value}
-                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                        sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%',
+                            fontSize: '13px'
+                        }}>
                         {params.value}
                     </Box>
                 )
@@ -209,8 +215,15 @@ class ChietKhauDichVuScreen extends Component {
                 ),
                 renderCell: (params: any) => (
                     <TextField
-                        type="number"
+                        type="text"
                         defaultValue="0"
+                        value={
+                            params.value === 0
+                                ? '0'
+                                : params.row.laPhanTram === true
+                                ? params.value.toString() + ' %'
+                                : params.value.toString() + ' VNĐ'
+                        }
                         sx={{
                             height: '85%',
                             '&>div': {
@@ -222,58 +235,8 @@ class ChietKhauDichVuScreen extends Component {
                                 },
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
-                            }
-                        }}
-                        onFocus={() => this.onFocus(params.row.id)}
-                        InputProps={{
-                            endAdornment:
-                                this.state.focusField === params.row.id ? (
-                                    <ButtonGroup
-                                        sx={{
-                                            display: 'flex',
-                                            '& button': {
-                                                fontSize: '14px',
-                                                transition: '.4s',
-                                                padding: '0',
-                                                width: '30px',
-                                                minWidth: 'unset!important',
-                                                height: '30px',
-
-                                                borderColor: 'var(--color-main)',
-                                                bgcolor: 'transparent'
-                                            },
-                                            '& button.active': {
-                                                backgroundColor: 'var(--color-main)',
-                                                borderColor: 'transparent',
-                                                color: '#fff'
-                                            }
-                                        }}>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                this.handleButtonClick(params.row.id, '%');
-                                            }}
-                                            className={
-                                                this.state.activeButton[params.row.id]
-                                                    ? 'active'
-                                                    : 'normal'
-                                            }>
-                                            %
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                this.handleButtonClick(params.row.id, 'đ');
-                                            }}
-                                            className={
-                                                this.state.activeButton[params.row.id]
-                                                    ? 'active'
-                                                    : 'normal'
-                                            }>
-                                            đ
-                                        </Button>
-                                    </ButtonGroup>
-                                ) : undefined
+                            },
+                            fontSize: '13px'
                         }}
                     />
                 )
@@ -297,10 +260,18 @@ class ChietKhauDichVuScreen extends Component {
                 ),
                 renderCell: (params: any) => (
                     <TextField
-                        type="number"
+                        type="text"
                         defaultValue="0"
+                        value={
+                            params.value === 0
+                                ? '0'
+                                : params.row.laPhanTram === true
+                                ? params.value + ' %'
+                                : params.value + ' VNĐ'
+                        }
                         sx={{
                             height: '85%',
+                            fontSize: '13px',
                             '&>div': {
                                 height: '100%'
                             },
@@ -311,59 +282,6 @@ class ChietKhauDichVuScreen extends Component {
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             }
-                        }}
-                        onFocus={() => this.onFocus(params.row.id)}
-                        // onBlur={() => this.onFocus(21012004)}
-                        InputProps={{
-                            endAdornment:
-                                this.state.focusField === params.row.id ? (
-                                    <ButtonGroup
-                                        sx={{
-                                            display: 'flex',
-                                            '& button': {
-                                                fontSize: '14px',
-                                                transition: '.4s',
-                                                padding: '0',
-                                                width: '30px',
-                                                minWidth: 'unset!important',
-                                                height: '30px',
-
-                                                borderColor: 'var(--color-main)',
-                                                bgcolor: 'transparent'
-                                            },
-                                            '& button.active': {
-                                                backgroundColor: 'var(--color-main)',
-                                                borderColor: 'transparent',
-                                                color: '#fff'
-                                            }
-                                        }}>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                this.handleButtonClick(params.row.id, '%');
-                                                this.setState({ showButton: true });
-                                            }}
-                                            className={
-                                                this.state.activeButton[params.row.id] === '%'
-                                                    ? 'active'
-                                                    : 'normal'
-                                            }>
-                                            %
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                this.handleButtonClick(params.row.id, 'đ');
-                                            }}
-                                            className={
-                                                this.state.activeButton[params.row.id]
-                                                    ? 'active'
-                                                    : 'normal'
-                                            }>
-                                            đ
-                                        </Button>
-                                    </ButtonGroup>
-                                ) : undefined
                         }}
                     />
                 )
@@ -387,9 +305,17 @@ class ChietKhauDichVuScreen extends Component {
                 ),
                 renderCell: (params: any) => (
                     <TextField
-                        type="number"
+                        type="text"
                         defaultValue="0"
+                        value={
+                            params.value === 0
+                                ? '0'
+                                : params.row.laPhanTram === true
+                                ? params.value + ' %'
+                                : params.value + ' VNĐ'
+                        }
                         sx={{
+                            fontSize: '13px',
                             height: '85%',
                             '&>div': {
                                 height: '100%'
@@ -401,60 +327,6 @@ class ChietKhauDichVuScreen extends Component {
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             }
-                        }}
-                        onFocus={() => this.onFocus(params.row.id)}
-                        // onBlur={() => this.onFocus(21012004)}
-                        InputProps={{
-                            endAdornment:
-                                this.state.focusField === params.row.id ? (
-                                    <ButtonGroup
-                                        sx={{
-                                            display: 'flex',
-                                            '& button': {
-                                                fontSize: '14px',
-                                                transition: '.4s',
-                                                padding: '0',
-                                                width: '30px',
-                                                minWidth: 'unset!important',
-                                                height: '30px',
-
-                                                borderColor: 'var(--color-main)',
-                                                bgcolor: 'transparent'
-                                            },
-                                            '& button.active': {
-                                                backgroundColor: 'var(--color-main)',
-                                                borderColor: 'transparent',
-                                                color: '#fff'
-                                            }
-                                        }}>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                this.handleButtonClick(params.row.id, '%');
-                                                this.setState({ showButton: true });
-                                            }}
-                                            className={
-                                                this.state.activeButton[params.row.id]
-                                                    ? 'active'
-                                                    : 'normal'
-                                            }>
-                                            %
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={() => {
-                                                this.handleButtonClick(params.row.id, 'đ');
-                                                this.setState({ showButton: true });
-                                            }}
-                                            className={
-                                                this.state.activeButton[params.row.id]
-                                                    ? 'active'
-                                                    : 'normal'
-                                            }>
-                                            đ
-                                        </Button>
-                                    </ButtonGroup>
-                                ) : undefined
                         }}
                     />
                 )
@@ -485,7 +357,12 @@ class ChietKhauDichVuScreen extends Component {
                 renderCell: (params: any) => (
                     <Box
                         title={params.value}
-                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                        sx={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            width: '100%',
+                            fontSize: '13px'
+                        }}>
                         {params.value}
                     </Box>
                 )
@@ -526,24 +403,36 @@ class ChietKhauDichVuScreen extends Component {
                         paddingX: '8px'
                     }}>
                     <Grid item xs={3}>
-                        <FormControl size="small">
-                            <Select
-                                defaultValue={
-                                    this.state.suggestNhanSu.length > 1
-                                        ? this.state.suggestNhanSu[0].id
-                                        : AppConsts.guidEmpty
-                                }
-                                sx={{ height: 40, bgcolor: '#fff' }}
-                                value={this.state.idNhanVien}
-                                onChange={async (e) => {
-                                    await this.setState({ idNhanVien: e.target.value });
-                                    await this.getDataAccordingByNhanVien(e.target.value);
-                                }}>
-                                {this.state.suggestNhanSu.map((item) => {
-                                    return <MenuItem value={item.id}>{item.tenNhanVien}</MenuItem>;
-                                })}
-                            </Select>
-                        </FormControl>
+                        <Autocomplete
+                            options={this.state.suggestNhanSu}
+                            getOptionLabel={(option) => `${option.tenNhanVien}`}
+                            size="small"
+                            sx={{ width: '75%' }}
+                            fullWidth
+                            disablePortal
+                            onChange={async (event, value) => {
+                                await this.setState({ idNhanVien: value?.id });
+                                await this.getDataAccordingByNhanVien(value?.id);
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    sx={{ bgcolor: '#fff' }}
+                                    {...params}
+                                    placeholder="Tìm tên"
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        startAdornment: (
+                                            <>
+                                                {params.InputProps.startAdornment}
+                                                <InputAdornment position="start">
+                                                    <SearchIconInput />
+                                                </InputAdornment>
+                                            </>
+                                        )
+                                    }}
+                                />
+                            )}
+                        />
                     </Grid>
 
                     <Grid
@@ -620,6 +509,9 @@ class ChietKhauDichVuScreen extends Component {
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
                         checkboxSelection={false}
                         sx={{
+                            '& .uiDataGrid-cellContent': {
+                                fontSize: '13px'
+                            },
                             '& p': {
                                 mb: 0
                             },

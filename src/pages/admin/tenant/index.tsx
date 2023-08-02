@@ -196,7 +196,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'center',
                             overflow: 'hidden',
@@ -221,7 +221,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'center',
                             overflow: 'hidden',
@@ -250,7 +250,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             borderRadius: '100px',
                             color: 'rgb(0, 158, 247)',
                             bgcolor: 'rgb(241, 250, 255)',
-                            margin: 'auto'
+                            margin: 'auto',
+                            fontSize: '13px'
                         }}>
                         {params.value == true ? 'Hoạt động' : 'Ngừng hoạt động'}
                     </Box>
@@ -359,6 +360,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         rows={this.state.listTenant}
                         checkboxSelection
                         sx={{
+                            '& .uiDataGrid-cellContent': {
+                                fontSize: '13px'
+                            },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },

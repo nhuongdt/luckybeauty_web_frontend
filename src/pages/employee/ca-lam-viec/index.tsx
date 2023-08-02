@@ -196,7 +196,7 @@ class CaLamViecScreen extends Component {
                             overflow: 'hidden',
                             width: '100%',
                             textOverflow: 'ellipsis',
-                            fontSize: '12px',
+                            fontSize: '13px',
                             textAlign: 'center'
                         }}
                         title={params.value}>
@@ -213,7 +213,7 @@ class CaLamViecScreen extends Component {
                 renderCell: (params) => (
                     <Box style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -253,7 +253,7 @@ class CaLamViecScreen extends Component {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -292,7 +292,7 @@ class CaLamViecScreen extends Component {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -329,7 +329,7 @@ class CaLamViecScreen extends Component {
                             width: '100%'
                         }}>
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -489,7 +489,7 @@ class CaLamViecScreen extends Component {
                                 backgroundColor: 'var(--color-bg)'
                             },
                             '& .MuiDataGrid-cellContent': {
-                                fontSize: '12px'
+                                fontSize: '13px'
                             },
                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                 outline: 'none!important'

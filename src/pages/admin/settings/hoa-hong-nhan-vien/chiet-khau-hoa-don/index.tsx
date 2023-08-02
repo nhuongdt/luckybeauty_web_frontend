@@ -209,7 +209,7 @@ class ChietKhauHoaDonScreen extends Component {
                         checkboxSelection={false}
                         sx={{
                             '& .uiDataGrid-cellContent': {
-                                fontSize: '12px'
+                                fontSize: '13px'
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'

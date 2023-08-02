@@ -128,18 +128,6 @@ export const appRouters: AppRouteProps = {
             name: 'AnonymousLayout',
             routes: [
                 {
-                    path: '/booking-online',
-                    permission: '',
-                    title: 'booking',
-                    name: 'booking',
-                    icon: null,
-                    iconActive: null,
-                    children: [],
-                    showInMenu: true,
-                    isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/booking_online'))
-                },
-                {
                     path: '/ban-hang',
                     permission: '',
                     title: 'Thu ngân',
@@ -444,10 +432,63 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
+                    component: LoadableComponent(() => import('../../pages/admin/settings'))
+                },
+                {
+                    path: '/settings/cua-hang',
+                    permission: 'Pages.CongTy',
+                    title: 'Cửa hàng',
+                    name: 'caidat',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
                     component: LoadableComponent(
-                        () => import('../../pages/admin/settings/indexNew')
+                        () => import('../../pages/admin/settings/cua-hang/index')
                     )
                 },
+                {
+                    path: '/settings/chi-nhanhs',
+                    permission: 'Pages.CongTy',
+                    title: 'Chi nhánh',
+                    name: 'caidat',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(
+                        () => import('../../pages/admin/settings/chi-nhanh')
+                    )
+                },
+                {
+                    path: '/settings/dat-lich',
+                    permission: 'Pages.CongTy',
+                    title: 'Đặt lịch',
+                    name: 'caidat',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/admin/settings/Booking'))
+                },
+                {
+                    path: '/settings/hoa-hong',
+                    permission: 'Pages.CongTy',
+                    title: 'Hoa hồng',
+                    name: 'caidat',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(
+                        () => import('../../pages/admin/settings/hoa-hong-nhan-vien')
+                    )
+                },
+
                 {
                     path: '/account',
                     permission: '',

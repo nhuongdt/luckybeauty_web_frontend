@@ -202,7 +202,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box width="100%" textAlign="center" fontSize="12px">
+                    <Box width="100%" textAlign="center" fontSize="13px">
                         {params.value}
                     </Box>
                 )
@@ -221,7 +221,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
 
                             overflow: 'hidden',
@@ -335,6 +335,9 @@ class RoleScreen extends React.Component<IRoleProps> {
                         rows={this.state.listRole}
                         checkboxSelection
                         sx={{
+                            '& .uiDataGrid-cellContent': {
+                                fontSize: '13px'
+                            },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },

@@ -30,7 +30,7 @@ class ChietKhauDichVuService {
     ): Promise<PagedResultDto<ChietKhauDichVuItemDto>> {
         const result = await http.get('api/services/app/ChietKhauDichVu/GetAccordingByNhanVien', {
             params: {
-                input,
+                ...input,
                 idNhanVien,
                 idChiNhanh
             }

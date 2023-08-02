@@ -266,7 +266,7 @@ class EmployeeScreen extends React.Component {
                         style={{ width: 24, height: 24, marginRight: 8 }}
                     />
                     <Typography
-                        fontSize="12px"
+                        fontSize="13px"
                         fontWeight="400"
                         variant="h6"
                         color="#333233"
@@ -330,7 +330,7 @@ class EmployeeScreen extends React.Component {
                         <>
                             <DateIcon style={{ marginRight: 4 }} />
                             <Typography
-                                fontSize="12px"
+                                fontSize="13px"
                                 fontWeight="400"
                                 variant="h6"
                                 color="#333233"
@@ -367,7 +367,7 @@ class EmployeeScreen extends React.Component {
                         width: '100%'
                     }}>
                     <Typography
-                        fontSize="12px"
+                        fontSize="13px"
                         fontWeight="400"
                         variant="h6"
                         color="#333233"
@@ -414,7 +414,7 @@ class EmployeeScreen extends React.Component {
                         width: '100%',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
-                        fontSize: '12px',
+                        fontSize: '13px',
                         textAlign: 'center'
                     }}
                     title={params.value}>
@@ -430,7 +430,7 @@ class EmployeeScreen extends React.Component {
             flex: 1,
             renderCell: (params) => (
                 <Typography
-                    fontSize="12px"
+                    fontSize="13px"
                     fontWeight="400"
                     variant="h6"
                     color="#333233"
@@ -467,7 +467,7 @@ class EmployeeScreen extends React.Component {
                     }}>
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
-                        fontSize="12px"
+                        fontSize="13px"
                         variant="h6"
                         fontWeight="400"
                         color="#333233"
@@ -496,7 +496,7 @@ class EmployeeScreen extends React.Component {
             flex: 1,
             renderCell: (params) => (
                 <Typography
-                    fontSize="12px"
+                    fontSize="13px"
                     variant="h6"
                     lineHeight="16px"
                     padding="4px 8px"

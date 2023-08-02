@@ -198,7 +198,7 @@ class UserScreen extends AppComponentBase {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'center',
                             overflow: 'hidden',
@@ -226,7 +226,7 @@ class UserScreen extends AppComponentBase {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'center',
                             overflow: 'hidden',
@@ -251,7 +251,7 @@ class UserScreen extends AppComponentBase {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'center',
                             overflow: 'hidden',
@@ -283,7 +283,7 @@ class UserScreen extends AppComponentBase {
                 renderCell: (params: any) => (
                     <Box
                         sx={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             width: '100%',
                             textAlign: 'center',
                             overflow: 'hidden',
@@ -315,7 +315,7 @@ class UserScreen extends AppComponentBase {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -459,7 +459,7 @@ class UserScreen extends AppComponentBase {
                                     mb: 0
                                 },
                                 '& .MuiDataGrid-cellContent': {
-                                    fontSize: '12px'
+                                    fontSize: '13px'
                                 },
                                 '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                     outline: 'none!important'

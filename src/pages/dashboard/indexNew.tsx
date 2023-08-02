@@ -6,6 +6,8 @@ import LineChartNew from './components/Charts/LineChartNew';
 import ColumnChartNew from './components/Charts/ColumnChartNew';
 import HotServicesNew from './components/Statistical/HotServicesNew';
 import Box from '@mui/material/Box';
+import OverView from './components/OverView/ovver-view';
+import { Grid } from '@mui/material';
 
 const Dashboard: React.FC = () => {
     const [month, setMonth] = React.useState('Tháng này');
@@ -21,89 +23,65 @@ const Dashboard: React.FC = () => {
                 <div className="page-header_col-1">
                     <div className="breadcrumb">Trang chủ</div>
                 </div>
-                {/* <Box>
-                    <TextField
-                        sx={{
-                            backgroundColor: '#FFFAFF',
-                            borderColor: '#CDC9CD',
-                            height: '40px',
-                            ml: '12px'
-                        }}
-                        size="small"
-                        className="search-field"
-                        variant="outlined"
-                        placeholder="Tìm kiếm"
-                        InputProps={{
-                            startAdornment: (
-                                <IconButton type="button">
-                                    <img src={SearchIcon} />
-                                </IconButton>
-                            )
-                        }}
-                    />
-                </Box> */}
             </Box>
             <div className="page-body">
                 <div className="page-body_row-1">
                     <OverViewNew />
                 </div>
-                <div className="page-body_row-2">
-                    <div className="page-body_row-2_col-1">
-                        <h3>Danh sách cuộc hẹn hôm nay</h3>
-                        <p>Cuộc hẹn mới nhất</p>
-                        <AppoimentsNew />
-                    </div>
-                    <div className="page-body_row-2_col-2">
-                        <h3>Tổng số cuộc hẹn hàng tuần</h3>
-                        <LineChartNew />
-                    </div>
-                </div>
-                <div className="page-body_row-3">
-                    <div className="page-body_row-3_col-1">
-                        <div className="page-body_row-3_col-1_row-1">
-                            <div>
-                                <h3>Doanh thu</h3>
-                                <p>Doanh thu cửa hàng</p>
-                            </div>
-                            <div>
-                                {/* <Box sx={{ minWidth: 120 }}>
-                                    <FormControl fullWidth>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            value={month}
-                                            onChange={handleChange}>
-                                            <MenuItem value="Tháng này">Tháng này</MenuItem>
-                                            <MenuItem value="Tháng trước">Tháng trước</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box> */}
-                            </div>
+                <Grid container spacing={0.5}>
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                        <div className="page-body_row-2_col-1">
+                            <h3>Danh sách cuộc hẹn hôm nay</h3>
+                            <p>Cuộc hẹn mới nhất</p>
+                            <AppoimentsNew />
                         </div>
-                        <div className="page-body_row-3_col-1_row-2">
+                    </Grid>
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                        <div className="page-body_row-2_col-2">
+                            <h3>Tổng số cuộc hẹn hàng tuần</h3>
+                            <LineChartNew />
+                        </div>
+                    </Grid>
+                </Grid>
+
+                <div className="page-body_row-3">
+                    <Grid container spacing={0.5}>
+                        <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
                             <div>
-                                <div className="danh-thu">36,2531.00</div>
-                                <div className="doanh-thu-rario">(+1.37%)</div>
-                            </div>
-                            <div>
-                                <div className="bar-tootilp">
-                                    <div className="tootilp-item">
-                                        <div className="tooltilp-dot"></div>
-                                        <div className="tooltilp-text">Tuần này</div>
-                                    </div>
-                                    <div className="tootilp-item">
-                                        <div className="tooltilp-dot"></div>
-                                        <div className="tooltilp-text">Tuần trước</div>
+                                <div>
+                                    <div>
+                                        <h3>Doanh thu</h3>
+                                        <p>Doanh thu cửa hàng</p>
                                     </div>
                                 </div>
+                                <div className="page-body_row-3_col-1_row-2">
+                                    <div>
+                                        <div className="danh-thu">36,2531.00</div>
+                                        <div className="doanh-thu-rario">(+1.37%)</div>
+                                    </div>
+                                    <div>
+                                        <div className="bar-tootilp">
+                                            <div className="tootilp-item">
+                                                <div className="tooltilp-dot"></div>
+                                                <div className="tooltilp-text">Tuần này</div>
+                                            </div>
+                                            <div className="tootilp-item">
+                                                <div className="tooltilp-dot"></div>
+                                                <div className="tooltilp-text">Tuần trước</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ColumnChartNew />
                             </div>
-                        </div>
-                        <ColumnChartNew />
-                    </div>
-                    <div className="page-body_row-3_col-2">
-                        <h3>Top 5 dịch vụ hot</h3>
-                        <HotServicesNew />
-                    </div>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
+                            <div>
+                                <h3>Top 5 dịch vụ hot</h3>
+                                <HotServicesNew />
+                            </div>
+                        </Grid>
+                    </Grid>
                 </div>
             </div>
         </div>

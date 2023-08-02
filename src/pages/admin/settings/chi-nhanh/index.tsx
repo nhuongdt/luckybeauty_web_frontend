@@ -145,7 +145,7 @@ class ChiNhanhScreen extends Component {
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -176,7 +176,7 @@ class ChiNhanhScreen extends Component {
                 renderCell: (params: any) => (
                     <Typography
                         variant="caption"
-                        fontSize="12px"
+                        fontSize="13px"
                         title={params.value}
                         sx={{
                             textOverflow: 'ellipsis',
@@ -210,7 +210,7 @@ class ChiNhanhScreen extends Component {
                         width="100%"
                         textAlign="center"
                         variant="caption"
-                        fontSize="12px"
+                        fontSize="13px"
                         title={params.value}>
                         {params.value}
                     </Typography>
@@ -243,7 +243,7 @@ class ChiNhanhScreen extends Component {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             variant="h6"
                             fontWeight="400"
                             color="#333233"
@@ -280,7 +280,7 @@ class ChiNhanhScreen extends Component {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             variant="h6"
                             fontWeight="400"
                             color="#333233"
@@ -325,11 +325,7 @@ class ChiNhanhScreen extends Component {
         ];
 
         return (
-            <Box
-                className="customer-page"
-                paddingLeft="2.2222222222222223vw"
-                paddingRight="2.2222222222222223vw"
-                paddingTop="1.5277777777777777vw">
+            <Box bgcolor="#fff" padding="24px">
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
@@ -423,6 +419,9 @@ class ChiNhanhScreen extends Component {
                         rows={this.state.listChiNhanh}
                         checkboxSelection
                         sx={{
+                            '& .uiDataGrid-cellContent': {
+                                fontSize: '13px'
+                            },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
                             },

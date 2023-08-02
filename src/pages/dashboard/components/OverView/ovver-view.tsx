@@ -1,162 +1,90 @@
 import { Component, ReactNode } from 'react';
-import cake from '../../../../images/cake.png';
-import { AiOutlineUser } from 'react-icons/ai';
-import { FaRegCalendarPlus, FaRegMoneyBillAlt } from 'react-icons/fa';
-import { Grid } from '@mui/material';
+import React from 'react';
+import sinhnhat from '../../../../images/sn.svg';
+import userIcon from '../../../../images/user1.svg';
+import calendarIcon from '../../../../images/calendar-add.svg';
+import walletIcon from '../../../../images/wallet.svg';
+import incrementIcon from '../../../../images/tang.svg';
+import decrementIcon from '../../../../images/giam.svg';
+import { Box, Grid, Typography } from '@mui/material';
+import './overViewNew.css';
 class OverView extends Component {
     render(): ReactNode {
+        const grids = [
+            {
+                icon: sinhnhat,
+                title: 'Khách hàng sinh nhật',
+                number: '5'
+            },
+            {
+                icon: userIcon,
+                title: 'Tổng số khách hàng ',
+                number: '100',
+                ratioText: '+11.01%',
+                ratioIcon: incrementIcon
+            },
+            {
+                icon: calendarIcon,
+                title: 'Tổng cuộc hẹn',
+                number: '150',
+                ratioText: '-5.01%',
+                ratioIcon: decrementIcon
+            },
+            {
+                icon: walletIcon,
+                title: 'Tổng doanh thu ',
+                number: '10,000',
+                ratioText: '+11.01%',
+                ratioIcon: incrementIcon
+            }
+        ];
         return (
-            <div className="mt-3">
-                <Grid container style={{ maxHeight: '120px' }}>
-                    <Grid item xs={3}>
-                        <div
-                            className="row text-center"
-                            style={{
-                                background: '#FFF5F8',
-                                borderRadius: 8,
-                                height: 120,
-                                margin: '12px'
-                            }}>
-                            <div className="col-4">
-                                <img
-                                    width={86}
-                                    height={86}
-                                    src={cake}
-                                    style={{ marginLeft: 14, marginBottom: 15, marginTop: 19 }}
-                                />
-                            </div>
-
-                            <div className="col text-center">
-                                <div className="mx-auto my-auto text-center mt-5">
-                                    <div
-                                        style={{
-                                            color: 'var(--color-main)',
-                                            height: '42px',
-                                            lineHeight: '42px',
-                                            fontSize: '32px',
-                                            fontWeight: '700',
-                                            fontFamily: 'roboto'
-                                        }}>
-                                        5
-                                    </div>
-                                    <div style={{ color: '#4C4B4C', height: '20px' }}>
-                                        Khách hàng sinh nhật
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                        <Box></Box>
                     </Grid>
-                    <Grid item xs={3}>
-                        <div
-                            className="ovver-view-item"
-                            style={{
-                                background: '#FFF5F8',
-                                borderRadius: 8,
-                                height: 120,
-                                margin: '12px'
-                            }}>
-                            <div className="ovver-view-item-icon">
-                                <div
-                                    className="card"
-                                    style={{
-                                        width: 56,
-                                        height: 56,
-                                        background: '#009EF7',
-                                        borderRadius: '18px'
+                    <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                        <Box padding={'32px 24px'} display={'flex'} flexDirection={'row'}>
+                            <Box
+                                width={56}
+                                height={56}
+                                borderRadius={'18px'}
+                                sx={{
+                                    background: '#009EF7',
+                                    color: '#FFF',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center'
+                                }}>
+                                <img src={grids[1].icon} />
+                            </Box>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    marginLeft: '12px',
+                                    flexDirection: 'column',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center'
+                                }}>
+                                <Typography>Tổng số khách hàng</Typography>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between'
                                     }}>
-                                    <div className="card-body text-center">
-                                        <AiOutlineUser size={18} color="#FFFFFF" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ovver-view-item-content text-center">
-                                <div className="title-overview">Tổng số khách hàng</div>
-                                <div className="row text-center">
-                                    <div className="col text-center">
-                                        <h4 className="amount-ovverview">100</h4>
-                                    </div>
-                                    <div className="col percen-increase-overview text-center">
-                                        +11%
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                    <Typography>100</Typography>
+                                    <Typography>1000</Typography>
+                                </Box>
+                            </Box>
+                        </Box>
                     </Grid>
-                    <Grid item xs={3}>
-                        <div
-                            className="ovver-view-item"
-                            style={{
-                                background: '#FFF5F8',
-                                borderRadius: 8,
-                                height: 120,
-                                margin: '12px'
-                            }}>
-                            <div className="ovver-view-item-icon">
-                                <div
-                                    className="card"
-                                    style={{
-                                        width: 56,
-                                        height: 56,
-                                        background: '#FFC700',
-                                        borderRadius: '18px'
-                                    }}>
-                                    <div className="card-body text-center">
-                                        <FaRegCalendarPlus size={18} color="#FFFFFF" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ovver-view-item-content text-center">
-                                <div className="title-overview">Tổng cuộc hẹn</div>
-                                <div className="row text-center">
-                                    <div className="col text-center">
-                                        <h4 className="amount-ovverview">150</h4>
-                                    </div>
-                                    <div className="col text-center">
-                                        <div
-                                            className="percen-reduced-overview text-center"
-                                            style={{ textAlign: 'center' }}>
-                                            <span className="text-center">-11%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                        <Box></Box>
                     </Grid>
-                    <Grid item xs={3}>
-                        <div
-                            className="ovver-view-item"
-                            style={{
-                                background: '#FFF5F8',
-                                borderRadius: 8,
-                                height: 120,
-                                margin: '12px'
-                            }}>
-                            <div className="ovver-view-item-icon">
-                                <div
-                                    className="card"
-                                    style={{
-                                        width: 56,
-                                        height: 56,
-                                        background: '#50CD89',
-                                        borderRadius: '18px'
-                                    }}>
-                                    <div className="card-body text-center">
-                                        <FaRegMoneyBillAlt size={18} color="#FFFFFF" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="ovver-view-item-content text-center">
-                                <div className="title-overview">Tổng doanh thu</div>
-                                <div className="row text-center">
-                                    <div className="col text-center">
-                                        <h4 className="amount-ovverview">100000</h4>
-                                    </div>
-                                    <div className="col percen-increase-overview text-center">
-                                        +11%
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                        <Box></Box>
                     </Grid>
                 </Grid>
             </div>

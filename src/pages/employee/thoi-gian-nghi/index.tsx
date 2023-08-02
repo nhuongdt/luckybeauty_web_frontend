@@ -243,7 +243,7 @@ class EmployeeHoliday extends Component {
                             overflow: 'hidden',
                             width: '100%',
                             textOverflow: 'ellipsis',
-                            fontSize: '12px',
+                            fontSize: '13px',
                             textAlign: 'center'
                         }}>
                         {params.value}
@@ -266,7 +266,7 @@ class EmployeeHoliday extends Component {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -303,7 +303,7 @@ class EmployeeHoliday extends Component {
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -340,7 +340,7 @@ class EmployeeHoliday extends Component {
                             textAlign: 'center'
                         }}>
                         <Typography
-                            fontSize="12px"
+                            fontSize="13px"
                             fontWeight="400"
                             variant="h6"
                             color="#333233"
@@ -498,7 +498,7 @@ class EmployeeHoliday extends Component {
                                 backgroundColor: 'var(--color-bg)'
                             },
                             '& .MuiDataGrid-cellContent': {
-                                fontSize: '12px'
+                                fontSize: '13px'
                             },
                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                 outline: 'none!important'
