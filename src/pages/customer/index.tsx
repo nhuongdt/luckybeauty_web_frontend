@@ -766,7 +766,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 display: 'none'
                                             },
                                             '& .MuiDataGrid-cellContent': {
-                                                fontSize: '13px'
+                                                fontSize: '12px'
                                             },
                                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                                 outline: 'none!important'
