@@ -12,7 +12,6 @@ import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import { KhachHangItemDto } from '../../../../services/khach-hang/dto/KhachHangItemDto';
 import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
 
-import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
 import AppConsts, { ISelect } from '../../../../lib/appconst';
@@ -23,6 +22,8 @@ import DataMauIn from './DataMauIn';
 import SelectMauIn from '../../../../components/Menu/SelectMauIn';
 import { number } from 'yup';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+
+import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -159,7 +160,9 @@ export default function PageMauIn({ xx }: any) {
             return;
         }
         BindDataPrint(shtmlNew);
-        setNewMauIn({ ...newMauIn, noiDungMauIn: shtmlNew });
+        setNewMauIn(() => {
+            return { ...newMauIn, noiDungMauIn: shtmlNew };
+        });
     };
 
     return (

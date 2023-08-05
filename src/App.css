@@ -224,6 +224,7 @@ body .font-normal {
     color: var(--color-main) !important;
 }
 
-.ck-content .table table {
+
+/* .ck-content .table table {
     border: none!important;
-}
+} */
