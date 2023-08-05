@@ -986,8 +986,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 handleChange={onChangeInputAtModalCustomer}
                 title="Thêm mới khách hàng"
                 formRef={newCus}
-                suggestNguonKhach={listNguonKhach}
-                suggestNhomKhach={listNhomKhach}
+                // suggestNguonKhach={listNguonKhach}
+                // suggestNhomKhach={listNhomKhach}
             />
             <ModelNhanVienThucHien triggerModal={propNVThucHien} handleSave={AgreeNVThucHien} />
             <ModalEditChiTietGioHang

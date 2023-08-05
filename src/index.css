@@ -60,3 +60,6 @@ html {
     font-family: vinhan;
     src: url('./font/vni.common.VINHAN.ttf');
 }
+.text-danger{
+    color: #DC3545 ;
+}

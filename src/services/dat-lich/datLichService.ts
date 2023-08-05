@@ -9,6 +9,7 @@ import {
 } from './dto/PagedBookingResultRequestDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
+import { BookingInfoDto } from './dto/BookingInfoDto';
 class BookingServices {
     public async getAllBooking(
         input: PagedBookingResultRequestDto
@@ -37,6 +38,10 @@ class BookingServices {
             `api/services/app/Booking/GetInforBooking_byID?idBooking=${idBooking}`
         );
         return xx.data.result;
+    };
+    GetInforBooking = async (idBooking: string): Promise<BookingInfoDto> => {
+        const response = await http.get(`api/services/app/Booking/GetBookingInfo?id=${idBooking}`);
+        return response.data.result;
     };
 }
 export default new BookingServices();

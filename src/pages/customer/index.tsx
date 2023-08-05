@@ -23,7 +23,6 @@ import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import { ReactComponent as CutomerGroupIcon } from '../../images/customer-group.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
-import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -40,9 +39,6 @@ import ImportExcel from '../../components/ImportComponent';
 import { FileUpload } from '../../services/dto/FileUpload';
 import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
-import { SuggestNguonKhachDto } from '../../services/suggests/dto/SuggestNguonKhachDto';
-import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
-import SuggestService from '../../services/suggests/SuggestService';
 import suggestStore from '../../stores/suggestStore';
 import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
 interface CustomerScreenState {
@@ -61,9 +57,6 @@ interface CustomerScreenState {
     moreOpen: boolean;
     anchorEl: any;
     selectedRowId: any;
-    createOrEditKhachHang: CreateOrEditKhachHangDto;
-    suggestNguonKhach: SuggestNguonKhachDto[];
-    suggestNhomKhach: SuggestNhomKhachDto[];
     visibilityColumn: any;
     information: boolean;
     idNhomKhach: string;
@@ -89,9 +82,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             moreOpen: false,
             anchorEl: null,
             selectedRowId: null,
-            createOrEditKhachHang: {} as CreateOrEditKhachHangDto,
-            suggestNguonKhach: [] as SuggestNguonKhachDto[],
-            suggestNhomKhach: [] as SuggestNhomKhachDto[],
             visibilityColumn: {},
             information: false,
             idNhomKhach: '',
@@ -101,20 +91,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
 
     componentDidMount(): void {
         this.getData();
-        this.getSuggest();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
         this.setState({ visibilityColumn: visibilityColumn });
     }
-    async getSuggest() {
-        const nguonKhach = await SuggestService.SuggestNguonKhach();
-        const nhomKhach = await SuggestService.SuggestNhomKhach();
-        this.setState({
-            suggestNguonKhach: nguonKhach,
-            suggestNhomKhach: nhomKhach
-        });
-    }
+
     async getData() {
-        await suggestStore.getSuggestNhomKhach();
         const khachHangs = await khachHangService.getAll({
             keyword: this.state.keyword,
             maxResultCount: this.state.rowPerPage,
@@ -132,13 +113,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         });
     }
     handleChange = (event: any) => {
-        const { name, value } = event.target;
-        this.setState({
-            createOrEditKhachHang: {
-                ...this.state.createOrEditKhachHang,
-                [name]: value
-            }
-        });
+        //const { name, value } = event.target;
+        // this.setState({
+        //     createOrEditKhachHang: {
+        //         ...this.state.createOrEditKhachHang,
+        //         [name]: value
+        //     }
+        // });
     };
     handleSubmit = () => {
         this.getData();
@@ -147,10 +128,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     async createOrUpdateModalOpen(id: string) {
         if (id === '') {
             await khachHangStore.createKhachHangDto();
-            this.updateKhachHangModel();
         } else {
             await khachHangStore.getForEdit(id ?? '');
-            this.updateKhachHangModel();
         }
         this.setState({ idkhachHang: id ?? '' }, () => {
             this.handleToggle();
@@ -159,9 +138,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     onNhomKhachModal = () => {
         this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
     };
-    updateKhachHangModel = () => {
-        this.setState({ createOrEditKhachHang: khachHangStore.createEditKhachHangDto });
-    };
+
     async delete(id: string) {
         const deleteReult = await khachHangService.delete(id);
         deleteReult != null
@@ -474,7 +451,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             }
         ];
-        const { createOrEditKhachHang, suggestNguonKhach, suggestNhomKhach } = this.state;
+        //const { createOrEditKhachHang, suggestNguonKhach, suggestNhomKhach } = this.state;
 
         return (
             <>
@@ -708,7 +685,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 <Typography
                                                     sx={{
                                                         padding: '8px',
-
                                                         alignItems: 'center',
                                                         justifyItems: 'center'
                                                     }}>
@@ -766,7 +742,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 display: 'none'
                                             },
                                             '& .MuiDataGrid-cellContent': {
-                                                fontSize: '12px'
+                                                fontSize: '13px'
                                             },
                                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                                 outline: 'none!important'
@@ -833,9 +809,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 ? 'Thêm mới khách hàng'
                                                 : 'Cập nhật thông tin khách hàng'
                                         }
-                                        formRef={createOrEditKhachHang}
-                                        suggestNguonKhach={suggestNguonKhach}
-                                        suggestNhomKhach={suggestNhomKhach}
+                                        formRef={khachHangStore.createEditKhachHangDto}
                                     />
                                 </div>
                                 <div

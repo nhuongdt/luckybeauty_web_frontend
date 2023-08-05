@@ -18,7 +18,6 @@ import {
 
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendarMenu.svg';
-import { ReactComponent as ClockIcon } from '../../../images/clock.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import AppConsts from '../../../lib/appconst';
 import { SuggestCaLamViecDto } from '../../../services/suggests/dto/SuggestCaLamViecDto';

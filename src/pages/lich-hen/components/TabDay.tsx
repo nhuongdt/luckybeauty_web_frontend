@@ -14,11 +14,6 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Edit from '../../employee/lich-lam-viec/editNhanVien';
-import { ReactComponent as ClockBlue } from '../../../images/clock-blue.svg';
-import { ReactComponent as ClockPink } from '../../../images/clock-pink.svg';
-import { ReactComponent as ClockGreen } from '../../../images/clock-green.svg';
-import { ReactComponent as ClockOrange } from '../../../images/clock-orange.svg';
-import { ReactComponent as ClockViolet } from '../../../images/clock-violet.svg';
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
@@ -36,34 +31,6 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
         const allNhanVien = await SuggestService.SuggestNhanVienLamDichVu(bookingStore.idNhanVien);
         setNhanViens(allNhanVien);
     };
-
-    const color = [
-        {
-            color: '#009EF7',
-            background: '#F1FAFF', //Đang phục vụ
-            icon: <ClockBlue />
-        },
-        {
-            color: '#F1416C',
-            background: '#FFF5F8', // Huỷ
-            icon: <ClockPink />
-        },
-        {
-            color: '#FF9900',
-            background: '#FFF8DD', //Chưa xác nhận
-            icon: <ClockOrange />
-        },
-        {
-            color: '#50CD89',
-            background: '#E8FFF3', //Hoàn thành
-            icon: <ClockGreen />
-        },
-        {
-            color: '#7C3367',
-            background: '#E5D6E1', // Đã xác nhận
-            icon: <ClockViolet />
-        }
-    ];
 
     const NhanViens2 = nhanViens;
     const Mang2Chieu: any[][] = Array(7)
@@ -221,7 +188,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                         {Array.from({ length: 14 }, (_, index) => {
                             const hour = index + 7; // Giờ bắt đầu từ 7h sáng (7 -> 20)
                             const timeLabel = hour.toString().padStart(2, '0') + ':00'; // Định dạng nhãn thời gian
-
+                            const cellHeight = `${60 * 1.25 * 2}px`;
                             return (
                                 <TableRow key={index}>
                                     <TableCell
@@ -233,7 +200,8 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                             paddingBottom: '50px',
                                             textAlign: 'right',
                                             border: '0',
-                                            width: '60px'
+                                            width: '60px',
+                                            height: cellHeight
                                         }}>
                                         {timeLabel}
                                     </TableCell>
@@ -291,62 +259,74 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
 
                                                         const duration =
                                                             durationHours * 60 + durationMinutes;
-                                                        const cellHeight = `${duration * 1.25}px`;
+                                                        const cellHeight = `${
+                                                            duration * 1.25 * 2
+                                                        }px`;
 
                                                         const topPosition = `${
                                                             (startTimeMinutes / 60) * 75.16
                                                         }px`;
 
                                                         return (
-                                                            <Box
-                                                                key={itemIndex}
-                                                                bgcolor={item.color + '1a'}
-                                                                position="absolute"
-                                                                height={cellHeight}
-                                                                whiteSpace="nowrap"
-                                                                overflow="hidden"
-                                                                zIndex="1"
-                                                                padding="8px 8px 16px 8px"
-                                                                borderRadius="4px"
-                                                                borderLeft={`6px solid ${item.color}`}
-                                                                width={`${
-                                                                    100 / matchingData.length
-                                                                }%`}
-                                                                top={topPosition}
-                                                                left={`${
-                                                                    (itemIndex /
-                                                                        matchingData.length) *
-                                                                    100
-                                                                }%`}>
+                                                            <div
+                                                                onClick={async () => {
+                                                                    bookingStore.idBooking =
+                                                                        item.id;
+                                                                    await bookingStore.getBookingInfo(
+                                                                        item.id
+                                                                    );
+                                                                    await bookingStore.onShowBookingInfo();
+                                                                }}>
                                                                 <Box
-                                                                    sx={{
-                                                                        display: 'flex',
-                                                                        gap: '6px'
-                                                                    }}>
+                                                                    key={itemIndex}
+                                                                    bgcolor={item.color + '1a'}
+                                                                    position="absolute"
+                                                                    height={cellHeight}
+                                                                    whiteSpace="nowrap"
+                                                                    overflow="hidden"
+                                                                    zIndex="1"
+                                                                    padding="8px 8px 16px 8px"
+                                                                    borderRadius="4px"
+                                                                    borderLeft={`6px solid ${item.color}`}
+                                                                    width={`${
+                                                                        100 / matchingData.length
+                                                                    }%`}
+                                                                    top={topPosition}
+                                                                    left={`${
+                                                                        (itemIndex /
+                                                                            matchingData.length) *
+                                                                        100
+                                                                    }%`}>
+                                                                    <Box
+                                                                        sx={{
+                                                                            display: 'flex',
+                                                                            gap: '6px'
+                                                                        }}>
+                                                                        <Typography
+                                                                            variant="body1"
+                                                                            color={item.color}
+                                                                            fontSize="12px">
+                                                                            {item.startTime +
+                                                                                ' - ' +
+                                                                                item.endTime}
+                                                                        </Typography>
+                                                                        {/* {item.icon} */}
+                                                                    </Box>
                                                                     <Typography
                                                                         variant="body1"
                                                                         color={item.color}
+                                                                        fontWeight="700"
                                                                         fontSize="12px">
-                                                                        {item.startTime +
-                                                                            ' - ' +
-                                                                            item.endTime}
+                                                                        {item.employee}
                                                                     </Typography>
-                                                                    {/* {item.icon} */}
+                                                                    <Typography
+                                                                        color={item.color}
+                                                                        variant="body1"
+                                                                        fontSize="12px">
+                                                                        {item.services}
+                                                                    </Typography>
                                                                 </Box>
-                                                                <Typography
-                                                                    variant="body1"
-                                                                    color={item.color}
-                                                                    fontWeight="700"
-                                                                    fontSize="12px">
-                                                                    {item.employee}
-                                                                </Typography>
-                                                                <Typography
-                                                                    color={item.color}
-                                                                    variant="body1"
-                                                                    fontSize="12px">
-                                                                    {item.services}
-                                                                </Typography>
-                                                            </Box>
+                                                            </div>
                                                         );
                                                     })}
                                                 </Box>

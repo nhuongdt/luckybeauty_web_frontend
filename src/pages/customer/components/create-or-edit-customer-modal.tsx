@@ -23,6 +23,10 @@ import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
 import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
 import { SuggestNguonKhachDto } from '../../../services/suggests/dto/SuggestNguonKhachDto';
+import { observer } from 'mobx-react';
+import suggestStore from '../../../stores/suggestStore';
+import khachHangStore from '../../../stores/khachHangStore';
+import rules from './create-or-edit-customer.validate';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
@@ -30,68 +34,50 @@ export interface ICreateOrEditCustomerProps {
     onOk: ({ dataSave }: any) => void;
     handleChange: (event: any) => void;
     formRef: CreateOrEditKhachHangDto;
-    suggestNhomKhach: SuggestNhomKhachDto[];
-    suggestNguonKhach: SuggestNguonKhachDto[];
 }
 class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     state = {
         errorPhoneNumber: false,
         errorTenKhach: false
     };
-
+    async getSuggest() {
+        await suggestStore.getSuggestNguonKhach();
+        await suggestStore.getSuggestNhomKhach();
+    }
+    componentDidMount(): void {
+        this.getSuggest();
+    }
     render(): ReactNode {
-        const {
-            visible,
-            onCancel,
-            title,
-            onOk,
-            formRef,
-            handleChange,
-            suggestNguonKhach,
-            suggestNhomKhach
-        } = this.props;
+        const { visible, onCancel, title, onOk, formRef } = this.props;
         const initValues: CreateOrEditKhachHangDto = formRef;
         return (
-            <Dialog open={visible} onClose={onCancel} maxWidth="lg" fullWidth>
+            <Dialog open={visible} onClose={onCancel} maxWidth="md" fullWidth>
                 <Box sx={{ padding: '24px' }}>
                     <div className="poppup-title">{title}</div>
                     <div className="poppup-des">Thông tin chi tiết</div>
                     <Formik
                         initialValues={initValues}
+                        validationSchema={rules}
                         onSubmit={async (values) => {
-                            formRef.idNhomKhach = values.idNhomKhach;
-                            formRef.idNguonKhach = values.idNguonKhach;
-                            const isValidPhoneNumber = AppConsts.phoneRegex.test(
-                                formRef.soDienThoai
-                            );
-                            console.log(isValidPhoneNumber);
-                            if (isValidPhoneNumber == false) {
-                                this.setState({ errorPhoneNumber: true });
-                            }
-                            if (formRef.tenKhachHang === '' || formRef.tenKhachHang === null) {
-                                this.setState({ errorTenKhach: true });
-                            }
-                            if (formRef.tenKhachHang && isValidPhoneNumber) {
-                                const createOrEdit = await khachHangService.createOrEdit(formRef);
-                                createOrEdit != null
-                                    ? formRef.id === AppConsts.guidEmpty
-                                        ? enqueueSnackbar('Thêm mới thành công', {
-                                              variant: 'success',
-                                              autoHideDuration: 3000
-                                          })
-                                        : enqueueSnackbar('Cập nhật thành công', {
-                                              variant: 'success',
-                                              autoHideDuration: 3000
-                                          })
-                                    : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                                          variant: 'error',
+                            const createOrEdit = await khachHangService.createOrEdit(values);
+                            createOrEdit != null
+                                ? values.id === AppConsts.guidEmpty
+                                    ? enqueueSnackbar('Thêm mới thành công', {
+                                          variant: 'success',
                                           autoHideDuration: 3000
-                                      });
-                                this.setState({ errorPhoneNumber: false, errorTenKhach: false });
-                                onOk(createOrEdit);
-                            }
+                                      })
+                                    : enqueueSnackbar('Cập nhật thành công', {
+                                          variant: 'success',
+                                          autoHideDuration: 3000
+                                      })
+                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+                                      variant: 'error',
+                                      autoHideDuration: 3000
+                                  });
+                            this.setState({ errorPhoneNumber: false, errorTenKhach: false });
+                            onOk(createOrEdit);
                         }}>
-                        {({ setFieldValue }) => (
+                        {({ setFieldValue, values, handleChange, errors }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -107,12 +93,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     }}>
                                     <Grid container className="form-container" spacing={2}>
                                         <Grid item xs={12}>
-                                            <TextField
-                                                size="small"
-                                                name="id"
-                                                value={formRef.id}
-                                                fullWidth
-                                                hidden></TextField>
                                             <Typography color="#4C4B4C" variant="subtitle2">
                                                 Họ và tên
                                             </Typography>
@@ -120,10 +100,10 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 size="small"
                                                 placeholder="Họ và tên"
                                                 name="tenKhachHang"
-                                                value={formRef.tenKhachHang}
+                                                value={values.tenKhachHang}
                                                 onChange={handleChange}
                                                 helperText={
-                                                    this.state.errorTenKhach ? (
+                                                    errors.tenKhachHang ? (
                                                         <small className="text-danger">
                                                             Tên khách hàng không được để trống
                                                         </small>
@@ -143,12 +123,12 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 type="tel"
                                                 size="small"
                                                 name="soDienThoai"
-                                                value={formRef.soDienThoai}
+                                                value={values.soDienThoai}
                                                 onChange={handleChange}
                                                 placeholder="Số điện thoại"
                                                 fullWidth
                                                 helperText={
-                                                    this.state.errorPhoneNumber ? (
+                                                    errors.soDienThoai ? (
                                                         <small className="text-danger">
                                                             Số điện thoại không hợp lệ
                                                         </small>
@@ -165,7 +145,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 size="small"
                                                 placeholder="Nhập địa chỉ của khách hàng"
                                                 name="diaChi"
-                                                value={formRef.diaChi}
+                                                value={values.diaChi}
                                                 onChange={handleChange}
                                                 fullWidth
                                                 sx={{ fontSize: '16px' }}></TextField>
@@ -180,8 +160,8 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 placeholder="21/04/2004"
                                                 name="ngaySinh"
                                                 value={
-                                                    formRef.ngaySinh != null
-                                                        ? formRef.ngaySinh
+                                                    values.ngaySinh != null
+                                                        ? values.ngaySinh
                                                               ?.toString()
                                                               .substring(0, 10)
                                                         : ''
@@ -198,7 +178,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             <Select
                                                 id="gender"
                                                 fullWidth
-                                                value={formRef.gioiTinh ? 'true' : 'false'}
+                                                value={values.gioiTinh ? 'true' : 'false'}
                                                 name="gioiTinh"
                                                 onChange={handleChange}
                                                 sx={{
@@ -218,7 +198,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 Nhóm khách
                                             </Typography>
                                             <Autocomplete
-                                                options={suggestNhomKhach}
+                                                options={suggestStore.suggestNhomKhach}
                                                 getOptionLabel={(option) =>
                                                     `${option.tenNhomKhach}`
                                                 }
@@ -245,7 +225,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 Nguồn khách
                                             </Typography>
                                             <Autocomplete
-                                                options={suggestNguonKhach}
+                                                options={suggestStore.suggestNguonKhach}
                                                 getOptionLabel={(option) =>
                                                     `${option.tenNguonKhach}`
                                                 }
@@ -273,7 +253,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             <TextareaAutosize
                                                 placeholder="Điền"
                                                 name="moTa"
-                                                value={formRef.moTa}
+                                                value={values.moTa}
                                                 onChange={handleChange}
                                                 maxRows={4}
                                                 minRows={4}
@@ -299,7 +279,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 <TextField
                                                     type="file"
                                                     name="avatar"
-                                                    value={formRef.avatar}
+                                                    value={values.avatar}
                                                     onChange={handleChange}
                                                     id="input-file"
                                                     sx={{
@@ -395,4 +375,4 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         );
     }
 }
-export default CreateOrEditCustomerDialog;
+export default observer(CreateOrEditCustomerDialog);

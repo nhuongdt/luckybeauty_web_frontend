@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import closeIcon from '../../../images/close-square.svg';
-import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
 import '../employee.css';
 import { Form, Formik } from 'formik';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
@@ -126,6 +125,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     initialValues={initValues}
                     validationSchema={rules}
                     onSubmit={async (values) => {
+                        values.id = initValues.id;
                         values.tenNhanVien = values.ho + ' ' + values.tenLot;
                         const createOrEdit = await nhanVienService.createOrEdit(values);
                         createOrEdit != null
@@ -166,11 +166,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     marginTop="0"
                                     marginLeft="0">
                                     <Grid item xs={12} md={6}>
-                                        <TextField
-                                            hidden
-                                            size="small"
-                                            name="id"
-                                            value={values.id}></TextField>
                                         <Typography color="#4C4B4C" variant="subtitle2">
                                             Họ nhân viên
                                         </Typography>

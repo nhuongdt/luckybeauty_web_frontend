@@ -1,4 +1,5 @@
 export interface BookingGetAllItemDto {
+    id: string;
     sourceId: string;
     startTime: string;
     endTime: string;
@@ -7,7 +8,7 @@ export interface BookingGetAllItemDto {
     services: string;
     dayOfWeek: string;
     color: string;
-    bookingDate: string;
+    bookingDate: Date;
 }
 export class BookingDetailDto {
     maHangHoa = '';

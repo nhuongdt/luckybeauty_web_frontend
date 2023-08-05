@@ -2,6 +2,8 @@ import { makeAutoObservable } from 'mobx';
 import { BookingGetAllItemDto } from '../services/dat-lich/dto/BookingGetAllItemDto';
 import datLichService from '../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
+import { BookingInfoDto } from '../services/dat-lich/dto/BookingInfoDto';
+import AppConsts from '../lib/appconst';
 
 class BookingStore {
     selectedDate: Date = new Date();
@@ -9,20 +11,43 @@ class BookingStore {
     typeView!: string;
     idNhanVien!: string;
     idService!: string;
+    idBooking!: string;
+    bookingInfoDto!: BookingInfoDto;
+    isShowBookingInfo!: boolean;
     constructor() {
         makeAutoObservable(this);
         this.selectedDate = new Date();
-        this.typeView = 'week';
+        this.isShowBookingInfo = false;
+        this.bookingInfoDto = {
+            id: AppConsts.guidEmpty,
+            bookingDate: new Date(),
+            startTime: '',
+            endTime: '',
+            color: 'blue',
+            donGia: 0,
+            ghiChu: '',
+            nhanVienThucHien: '',
+            soDienThoai: '',
+            tenDichVu: '',
+            tenKhachHang: ''
+        };
+    }
+    async onShowBookingInfo() {
+        this.isShowBookingInfo = !this.isShowBookingInfo;
     }
     async getData() {
         const result = await datLichService.getAllBooking({
             dateSelected: this.selectedDate,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-            typeView: this.typeView,
+            typeView: this.typeView ?? 'week',
             idNhanVien: this.idNhanVien,
             idDichVu: this.idService
         });
         this.listBooking = result;
+    }
+    async getBookingInfo(id: string) {
+        const result = await datLichService.GetInforBooking(id);
+        this.bookingInfoDto = result;
     }
     async onChangeTypeView(type: string) {
         this.typeView = type;

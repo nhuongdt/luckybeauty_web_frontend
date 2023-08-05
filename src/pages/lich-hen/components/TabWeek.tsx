@@ -11,6 +11,8 @@ import {
     Typography
 } from '@mui/material';
 import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
+import { observer } from 'mobx-react';
+import bookingStore from '../../../stores/bookingStore';
 const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
     dateQuery,
     data
@@ -21,11 +23,10 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
         getWeekDate(dateQuery);
         const HTML = document.documentElement;
         HTML.style.overflowY = 'hidden';
-
         return () => {
             HTML.style.overflowY = 'auto';
         };
-    }, []);
+    }, [dateQuery]);
     const getWeekDate = (dateCurrent: Date) => {
         const firstDayOfWeek = new Date(
             dateCurrent.setDate(dateCurrent.getDate() - dateCurrent.getDay() + 1)
@@ -136,7 +137,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                         {Array.from({ length: 14 }, (_, index) => {
                             const hour = index + 7; // Giờ bắt đầu từ 7h sáng (7 -> 20)
                             const timeLabel = hour.toString().padStart(2, '0') + ':00'; // Định dạng nhãn thời gian
-
+                            const cellHeight = `${60 * 1.25 * 3}px`;
                             return (
                                 <TableRow key={index}>
                                     <TableCell
@@ -149,7 +150,8 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                             textAlign: 'right',
                                             border: '0',
                                             width: '70px',
-                                            borderLeft: '0!important'
+                                            borderLeft: '0!important',
+                                            height: cellHeight
                                         }}>
                                         {timeLabel}
                                     </TableCell>
@@ -207,61 +209,74 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
 
                                                         const duration =
                                                             durationHours * 60 + durationMinutes;
-                                                        const cellHeight = `${duration * 1.25}px`;
+                                                        const cellHeight = `${
+                                                            duration * 1.25 * 3
+                                                        }px`;
 
                                                         const topPosition = `${
                                                             (startTimeMinutes / 60) * 75.16
                                                         }px`;
 
                                                         return (
-                                                            <Box
-                                                                key={itemIndex}
-                                                                bgcolor={item.color + '1a'}
-                                                                title={
-                                                                    'Nhân viên thực hiện: ' +
-                                                                    item.employee
-                                                                }
-                                                                position="absolute"
-                                                                height={cellHeight}
-                                                                whiteSpace="nowrap"
-                                                                overflow="hidden"
-                                                                zIndex="1"
-                                                                padding="8px 8px 16px 8px"
-                                                                borderRadius="4px"
-                                                                borderLeft={`6px solid ${item.color}`}
-                                                                width={`${
-                                                                    100 / matchingData.length
-                                                                }%`}
-                                                                top={topPosition}
-                                                                left={`${
-                                                                    (itemIndex /
-                                                                        matchingData.length) *
-                                                                    100
-                                                                }%`}>
-                                                                <Box>
+                                                            <div
+                                                                onClick={async () => {
+                                                                    bookingStore.idBooking =
+                                                                        item.id;
+                                                                    await bookingStore.getBookingInfo(
+                                                                        item.id
+                                                                    );
+                                                                    await bookingStore.onShowBookingInfo();
+                                                                }}>
+                                                                {' '}
+                                                                <Box
+                                                                    key={itemIndex}
+                                                                    bgcolor={item.color + '1a'}
+                                                                    title={
+                                                                        'Nhân viên thực hiện: ' +
+                                                                        item.employee
+                                                                    }
+                                                                    position="absolute"
+                                                                    height={cellHeight}
+                                                                    whiteSpace="nowrap"
+                                                                    overflow="hidden"
+                                                                    zIndex="1"
+                                                                    padding="8px 8px 16px 8px"
+                                                                    borderRadius="4px"
+                                                                    borderLeft={`6px solid ${item.color}`}
+                                                                    width={`${
+                                                                        100 / matchingData.length
+                                                                    }%`}
+                                                                    top={topPosition}
+                                                                    left={`${
+                                                                        (itemIndex /
+                                                                            matchingData.length) *
+                                                                        100
+                                                                    }%`}>
+                                                                    <Box>
+                                                                        <Typography
+                                                                            variant="body1"
+                                                                            color={item.color}
+                                                                            fontSize="12px">
+                                                                            {item.startTime +
+                                                                                ' - ' +
+                                                                                item.endTime}
+                                                                        </Typography>
+                                                                    </Box>
                                                                     <Typography
                                                                         variant="body1"
                                                                         color={item.color}
+                                                                        fontWeight="700"
                                                                         fontSize="12px">
-                                                                        {item.startTime +
-                                                                            ' - ' +
-                                                                            item.endTime}
+                                                                        {item.customer}
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        color={item.color}
+                                                                        variant="body1"
+                                                                        fontSize="12px">
+                                                                        {item.services}
                                                                     </Typography>
                                                                 </Box>
-                                                                <Typography
-                                                                    variant="body1"
-                                                                    color={item.color}
-                                                                    fontWeight="700"
-                                                                    fontSize="12px">
-                                                                    {item.customer}
-                                                                </Typography>
-                                                                <Typography
-                                                                    color={item.color}
-                                                                    variant="body1"
-                                                                    fontSize="12px">
-                                                                    {item.services}
-                                                                </Typography>
-                                                            </Box>
+                                                            </div>
                                                         );
                                                     })}
                                                 </Box>
@@ -277,4 +292,4 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
         </Box>
     );
 };
-export default TabWeek;
+export default observer(TabWeek);

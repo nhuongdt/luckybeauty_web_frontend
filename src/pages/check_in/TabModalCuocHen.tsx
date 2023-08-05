@@ -33,6 +33,7 @@ import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNha
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
 import SuggestService from '../../services/suggests/SuggestService';
+import suggestStore from '../../stores/suggestStore';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -71,18 +72,23 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
 
     const GetAllDichVu = async () => {
         const data = await SuggestService.SuggestDichVu();
+        await suggestStore.getSuggestDichVu();
         setSuggestDichVu(data);
     };
 
     const GetAllListCustomer = async () => {
         const data = await SuggestService.SuggestKhachHang();
+        await suggestStore.getSuggestKhachHang();
         setSuggestKhachHang(data);
     };
-
+    const GetAllKyThuatVien = async () => {
+        await suggestStore.getSuggestKyThuatVien();
+    };
     useEffect(() => {
         GetListCustomer_wasBooking(paramSearch);
         GetAllListCustomer();
         GetAllDichVu();
+        GetAllKyThuatVien();
     }, []);
 
     const choseBooking = async (itemBook: any) => {
@@ -164,9 +170,6 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                 }}
                 onOk={saveLichHenOK}
                 idLichHen=""
-                suggestNhanVien={lstNhanVien as unknown as SuggestNhanVienDichVuDto[]}
-                suggestDichVu={suggestDichVu}
-                suggestKhachHang={suggestKhachHang}
             />
             <Grid container rowSpacing={2}>
                 <Grid item xs={12} sm={6}>

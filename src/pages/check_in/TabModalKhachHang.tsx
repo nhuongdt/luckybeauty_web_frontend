@@ -109,8 +109,8 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                 handleChange={onChangeInforCus}
                 title="Thêm mới khách hàng"
                 formRef={newCus}
-                suggestNguonKhach={listNguonKhach}
-                suggestNhomKhach={listNhomKhach}
+                // suggestNguonKhach={listNguonKhach}
+                // suggestNhomKhach={listNhomKhach}
             />
             <Grid container rowGap={2}>
                 <Grid item xs={12} sm={6}>

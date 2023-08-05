@@ -158,7 +158,22 @@ class SuggestService {
             const result = await http.post(apiUrl);
             return result.data.result;
         } catch (error) {
-            console.error('Error occurred while suggesting ChucVus:', error);
+            console.error('Error occurred while suggesting nhan vien:', error);
+            return [];
+        }
+    }
+    public async SuggestNhanVienByIdDichVu(idDichVu: string): Promise<SuggestNhanVienDichVuDto[]> {
+        try {
+            let apiUrl = `api/services/app/Suggest/SuggestNhanVienByIdDichVu?idChiNhanh=${Cookies.get(
+                'IdChiNhanh'
+            )}`;
+
+            apiUrl += `&idDichVu=${idDichVu}`;
+
+            const result = await http.post(apiUrl);
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting nhan vien:', error);
             return [];
         }
     }

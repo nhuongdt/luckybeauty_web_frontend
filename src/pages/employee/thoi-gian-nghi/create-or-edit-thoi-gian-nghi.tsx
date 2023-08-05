@@ -9,14 +9,11 @@ import {
     FormLabel,
     Grid,
     TextField,
-    Box,
-    TextFieldProps
+    Box
 } from '@mui/material';
-import { BsX } from 'react-icons/bs';
 import { Formik, Form, Field } from 'formik';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
-import { format } from 'date-fns';
 import AppConsts from '../../../lib/appconst';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { enqueueSnackbar } from 'notistack';

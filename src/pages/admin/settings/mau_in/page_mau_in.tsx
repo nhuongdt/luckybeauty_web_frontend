@@ -227,7 +227,7 @@ export default function PageMauIn({ xx }: any) {
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={6} md={12} lg={12}>
-                    <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
+                    {/* <CustomCkeditor html={html} handleChange={onChangeCkeditor} /> */}
                 </Grid>
 
                 <Grid item xs={12} sm={6} md={12} lg={12}>

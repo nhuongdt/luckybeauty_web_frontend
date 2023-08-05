@@ -4,18 +4,8 @@ import khachHangService from '../services/khach-hang/khachHangService';
 import AppConsts from '../lib/appconst';
 
 class KhachHangSrore {
-    createEditKhachHangDto: CreateOrEditKhachHangDto = {
-        id: AppConsts.guidEmpty,
-        maKhachHang: '',
-        tenKhachHang: '',
-        soDienThoai: '',
-        gioiTinh: false,
-        idLoaiKhach: 0,
-        idNhomKhach: '',
-        idNguonKhach: '',
-        diaChi: '',
-        moTa: ''
-    };
+    createEditKhachHangDto!: CreateOrEditKhachHangDto;
+
     constructor() {
         makeAutoObservable(this);
     }

@@ -25,8 +25,11 @@ const Dashboard: React.FC = () => {
                 </div>
             </Box>
             <div className="page-body">
-                <div className="page-body_row-1">
-                    <OverViewNew />
+                <div
+                    style={{
+                        marginBottom: '14px'
+                    }}>
+                    <OverView />
                 </div>
                 <Grid container spacing={0.5}>
                     <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -44,7 +47,10 @@ const Dashboard: React.FC = () => {
                     </Grid>
                 </Grid>
 
-                <div className="page-body_row-3">
+                <div
+                    style={{
+                        marginTop: '14px'
+                    }}>
                     <Grid container spacing={0.5}>
                         <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
                             <div>
