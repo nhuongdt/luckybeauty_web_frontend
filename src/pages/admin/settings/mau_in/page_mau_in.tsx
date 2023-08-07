@@ -24,6 +24,7 @@ import { number } from 'yup';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
+import { Guid } from 'guid-typescript';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -110,30 +111,68 @@ export default function PageMauIn({ xx }: any) {
 
     const saveMauIn = async (dataMauIn: any) => {
         setIsShowModalAddMauIn(false);
-        console.log(' newMauIn', newMauIn);
 
-        // setNewMauIn({
-        //     ...newMauIn,
-        //     loaiChungTu: idLoaiChungTu,
-        //     tenMauIn: dataMauIn,
-        //     noiDungMauIn: dataMauIn.noiDungMauIn
-        // });
+        setHtml(() => dataMauIn.noiDungMauIn);
 
-        if (utils.checkNull(newMauIn.id)) {
-            const dataNew = {
-                ...dataMauIn
-            };
+        const dataNew = {
+            ...dataMauIn
+        };
+        dataNew.loaiChungTu = idLoaiChungTu;
+        dataNew.idChiNhanh = chinhanhCurrent.id;
+
+        if (utils.checkNull(idMauInUpdate)) {
             // insert
-            dataNew.loaiChungTu = idLoaiChungTu;
-            dataNew.idChiNhanh = chinhanhCurrent.id;
-
-            await MauInServices.InsertMauIn(dataNew);
+            dataNew.id = Guid.EMPTY;
+            const data = await MauInServices.InsertMauIn(dataNew);
+            dataNew.id = data.id;
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu in thành công' });
+
+            setListMauIn(() => [dataNew, ...lstMauIn]);
+            setIdMauInChosed(data.id);
+
+            setNewMauIn(() => {
+                return {
+                    ...newMauIn,
+                    id: dataNew.id,
+                    loaiChungTu: idLoaiChungTu,
+                    tenMauIn: dataMauIn.tenMauIn,
+                    noiDungMauIn: dataMauIn.noiDungMauIn
+                };
+            });
         } else {
-            await MauInServices.UpdatetMauIn(newMauIn);
+            await MauInServices.UpdatetMauIn(dataNew);
             setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật mẫu in thành công' });
+
+            setNewMauIn(() => {
+                return {
+                    ...newMauIn,
+                    id: dataNew.id,
+                    loaiChungTu: idLoaiChungTu,
+                    tenMauIn: dataMauIn.tenMauIn,
+                    noiDungMauIn: dataMauIn.noiDungMauIn
+                };
+            });
+
+            setListMauIn(() =>
+                lstMauIn.map((x: MauInDto) => {
+                    if (x.id === dataNew.id) {
+                        return {
+                            ...x,
+                            laMacDinh: dataNew.laMacDinh,
+                            tenMauIn: dataNew.tenMauIn,
+                            noiDungMauIn: dataNew.noiDungMauIn
+                        };
+                    } else {
+                        return x;
+                    }
+                })
+            );
         }
-        // map/push to list mauin
+    };
+
+    const UpdateMauIn = async () => {
+        await MauInServices.UpdatetMauIn(newMauIn);
+        setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật mẫu in thành công' });
     };
 
     const tenLoaiChungTu = () => {
@@ -226,7 +265,7 @@ export default function PageMauIn({ xx }: any) {
                                                 variant="contained"
                                                 color="secondary"
                                                 fullWidth
-                                                onClick={saveMauIn}>
+                                                onClick={UpdateMauIn}>
                                                 Lưu
                                             </Button>
                                         </Stack>
