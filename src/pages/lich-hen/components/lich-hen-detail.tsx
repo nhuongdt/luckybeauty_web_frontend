@@ -40,7 +40,7 @@ class LichhenDetail extends Component {
                         <IconButton
                             size="small"
                             onClick={async () => {
-                                await bookingStore.onShowBookingInfo();
+                                bookingStore.isShowConfirmDelete = true;
                             }}>
                             <DeleteIcon sx={{ color: '#FFF' }} />
                         </IconButton>

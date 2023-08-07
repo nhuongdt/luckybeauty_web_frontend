@@ -1,12 +1,21 @@
 import React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box } from '@mui/material';
+import { Box, SelectChangeEvent } from '@mui/material';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
+import khachHangStore from '../../../stores/khachHangStore';
+import { observer } from 'mobx-react';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 const TabMuaHang: React.FC = () => {
+    const handlePageChange = async (event: any, newPage: number) => {
+        console.log(newPage);
+    };
+    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        console.log(event);
+    };
     const columns = [
         {
-            field: 'id',
+            field: 'maHoaDon',
             headerName: 'Mã hóa đơn',
             minWidth: 70,
             flex: 1.2,
@@ -25,7 +34,7 @@ const TabMuaHang: React.FC = () => {
             )
         },
         {
-            field: 'ngayBan',
+            field: 'ngayLapHoaDon   ',
             headerName: 'Ngày bán',
             flex: 1.2,
             renderHeader: (params: any) => (
@@ -129,7 +138,7 @@ const TabMuaHang: React.FC = () => {
             )
         },
         {
-            field: 'state',
+            field: 'trangThai',
             headerName: 'Trạng thái',
             flex: 1,
             renderHeader: (params: any) => (
@@ -161,47 +170,27 @@ const TabMuaHang: React.FC = () => {
             )
         }
     ];
-    const rows = [
-        {
-            id: '09785srdf',
-            ngayBan: '21/01/2000',
-            tongTienHang: '1.200.000đ',
-            tongGiamGia: '700.000đ',
-            tongPhaiTra: '780.000đ',
-            khachDaTra: '2.500.000đ',
-            conNo: '25.000đ',
-            state: 'Hủy'
-        },
-        {
-            id: '0rdf',
-            ngayBan: '21/01/2004',
-            tongTienHang: '1.200.000đ',
-            tongGiamGia: '700.000đ',
-            tongPhaiTra: '780.000đ',
-            khachDaTra: '2.500.000đ',
-            conNo: '25.000đ',
-            state: 'Chưa hoàn thành'
-        },
-        {
-            id: '09785srdfghvj',
-            ngayBan: '21/01/2004',
-            tongTienHang: '1.200.000đ',
-            tongGiamGia: '700.000đ',
-            tongPhaiTra: '780.000đ',
-            khachDaTra: '2.500.000đ',
-            conNo: '25.000đ',
-            state: 'Hoàn thành'
-        }
-    ];
+
     return (
         <>
             <Box mt="24px">
                 <DataGrid
                     disableRowSelectionOnClick
-                    hideFooter
+                    //hideFooter
                     autoHeight
                     columns={columns}
-                    rows={rows}
+                    rows={
+                        khachHangStore.lichSuGiaoDich === undefined
+                            ? []
+                            : khachHangStore.lichSuGiaoDich.items
+                    }
+                    getRowId={(row) => row.maHoaDon}
+                    initialState={{
+                        pagination: {
+                            paginationModel: { page: 0, pageSize: 5 }
+                        }
+                    }}
+                    pageSizeOptions={[5, 10, 20, 50, 100]}
                     localeText={TextTranslate}
                     sx={{
                         '& .MuiDataGrid-columnHeaders': {
@@ -245,8 +234,16 @@ const TabMuaHang: React.FC = () => {
                             }
                     }}
                 />
+                {/* <CustomTablePagination
+                    currentPage={1}
+                    rowPerPage={10}
+                    totalRecord={8}
+                    totalPage={1}
+                    handlePerPageChange={handlePerPageChange}
+                    handlePageChange={handlePageChange}
+                /> */}
             </Box>
         </>
     );
 };
-export default TabMuaHang;
+export default observer(TabMuaHang);

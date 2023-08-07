@@ -32,7 +32,7 @@ class SettingPages extends Component {
                 </Box>
                 <Box padding={'16px 32px'}>
                     <Grid container spacing={1}>
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
                                 padding={'16px 32px'}
                                 borderRadius={4}
@@ -113,7 +113,7 @@ class SettingPages extends Component {
                                 </List>
                             </Box>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
                                 padding={'16px 32px'}
                                 borderRadius={4}
@@ -156,7 +156,7 @@ class SettingPages extends Component {
                                 </List>
                             </Box>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
                                 padding={'16px 32px'}
                                 borderRadius={4}
@@ -216,7 +216,7 @@ class SettingPages extends Component {
                                 </List>
                             </Box>
                         </Grid>
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
                                 padding={'16px 32px'}
                                 borderRadius={4}

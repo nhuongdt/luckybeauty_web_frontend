@@ -32,6 +32,10 @@ import LichhenDetail from './components/lich-hen-detail';
 import { observer } from 'mobx-react';
 import '../customer/customerPage.css';
 import suggestStore from '../../stores/suggestStore';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import datLichService from '../../services/dat-lich/datLichService';
+import { enqueueSnackbar } from 'notistack';
+import AppConsts from '../../lib/appconst';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
@@ -389,6 +393,27 @@ const LichHen: React.FC = () => {
                 onOk={handleSubmit}
                 idLichHen={idBooking}></CreateOrEditLichHenModal>
             <LichhenDetail />
+            <ConfirmDelete
+                isShow={bookingStore.isShowConfirmDelete}
+                onOk={async () => {
+                    const deleteReult = await datLichService.DeleteBooking(bookingStore.idBooking);
+                    deleteReult === true
+                        ? enqueueSnackbar('Xóa bản ghi thành công', {
+                              variant: 'success',
+                              autoHideDuration: 3000
+                          })
+                        : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                              variant: 'error',
+                              autoHideDuration: 3000
+                          });
+                    bookingStore.isShowConfirmDelete = false;
+                    await bookingStore.onShowBookingInfo();
+                    bookingStore.idBooking = AppConsts.guidEmpty;
+                    getData();
+                }}
+                onCancel={() => {
+                    bookingStore.isShowConfirmDelete = false;
+                }}></ConfirmDelete>
         </Box>
     );
 };

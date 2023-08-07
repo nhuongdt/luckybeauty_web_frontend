@@ -43,5 +43,9 @@ class BookingServices {
         const response = await http.get(`api/services/app/Booking/GetBookingInfo?id=${idBooking}`);
         return response.data.result;
     };
+    DeleteBooking = async (idBooking: string) => {
+        const result = await http.post(`api/services/app/Booking/DeleteBooking?id=${idBooking}`);
+        return result.data.result;
+    };
 }
 export default new BookingServices();

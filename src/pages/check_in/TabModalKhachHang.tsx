@@ -106,7 +106,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                 visible={isShowModalAddCus}
                 onCancel={() => setIsShowModalAddCus(false)}
                 onOk={saveOKCustomer}
-                handleChange={onChangeInforCus}
+                //handleChange={onChangeInforCus}
                 title="Thêm mới khách hàng"
                 formRef={newCus}
                 // suggestNguonKhach={listNguonKhach}

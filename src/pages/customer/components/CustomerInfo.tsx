@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Tab, Typography, Button, IconButton, Tabs } from '@mui/material';
 
 import { ReactComponent as ExportIcon } from '../../../images/download.svg';
@@ -12,16 +12,33 @@ import TabCuocHen from './TabCuocHen';
 import TabMuaHang from './TabMuaHang';
 import { ReactComponent as ArrowLeft } from '../../../images/arrow_back.svg';
 import { useParams } from 'react-router-dom';
+import khachHangStore from '../../../stores/khachHangStore';
+import AppConsts from '../../../lib/appconst';
+import { observer } from 'mobx-react';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import CreateOrEditCustomerDialog from '../components/create-or-edit-customer-modal';
+import khachHangService from '../../../services/khach-hang/khachHangService';
+import { enqueueSnackbar } from 'notistack';
 interface Custom {
     onClose: () => void;
 }
 const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
     const { khachHangId } = useParams();
+    const [isShowEditKhachHang, setIsShowEditKhachHang] = useState(false);
+    const [isShowDeleteKhachHang, setIsShowDeleteKhachHang] = useState(false);
     interface TabPanelProps {
         children?: React.ReactNode;
         value: number;
         index: number;
     }
+    useEffect(() => {
+        getKhachHangInfo();
+    }, [khachHangId]);
+    const getKhachHangInfo = async () => {
+        await khachHangStore.getDetail(khachHangId ?? AppConsts.guidEmpty);
+        await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty);
+        await khachHangStore.getLichSuGiaoDich(khachHangId ?? AppConsts.guidEmpty);
+    };
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
         return (
             <div role="tabpanel" hidden={value !== index}>
@@ -42,7 +59,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
             sx={{ height: 'calc(100vh - 70px)', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h3" fontWeight="700" fontSize="16px" color="#333233">
-                    Khách hàng {khachHangId}
+                    Khách hàng {khachHangStore.khachHangDetail.tenKhachHang}
                 </Typography>
                 <Box
                     sx={{
@@ -99,7 +116,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                     borderRadius: '6px'
                                 }
                             }}>
-                            <img src={Avatar} alt="avatar" />
+                            <img src={khachHangStore.khachHangDetail.avatar} alt="avatar" />
                         </Box>
                     </Box>
                     <Box>
@@ -117,42 +134,59 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                 fontWeight="700"
                                 fontSize="24px"
                                 mr="12px">
-                                Đinh Tuấn Tài
+                                {khachHangStore.khachHangDetail.tenKhachHang}
                             </Typography>
                             <IconButton>
-                                <EditIcon />
+                                <EditIcon
+                                    onClick={async () => {
+                                        await khachHangStore.getForEdit(
+                                            khachHangStore.khachHangDetail.id
+                                        );
+                                        setIsShowEditKhachHang(true);
+                                    }}
+                                />
                             </IconButton>
                             <IconButton>
                                 <EditUserIcon />
                             </IconButton>
                             <IconButton>
-                                <DeleteIcon />
+                                <DeleteIcon
+                                    onClick={() => {
+                                        setIsShowDeleteKhachHang(true);
+                                    }}
+                                />
                             </IconButton>
                         </Box>
                         <Box
                             sx={{
                                 display: 'flex',
-                                gap: '30px',
-                                mt: '12px',
+                                marginTop: '12px',
                                 '& p': {
                                     fontSize: '14px',
                                     color: '#333233',
                                     mt: '4px'
-                                }
+                                },
+                                flexDirection: 'column'
                             }}>
-                            <Box>
+                            <Box display={'flex'} flexDirection={'row'}>
                                 <Typography sx={{ mt: '0' }} variant="body1">
                                     Nhóm khách :
                                 </Typography>
-                                <Typography variant="body1">Số điện thoại :</Typography>
-                                <Typography variant="body1">Địa chỉ :</Typography>
-                            </Box>
-                            <Box>
                                 <Typography sx={{ mt: '0' }} variant="body1">
-                                    HD4545675
+                                    {khachHangStore.khachHangDetail.nhomKhach}
                                 </Typography>
-                                <Typography variant="body1">0911290476</Typography>
-                                <Typography variant="body1">Ninh Bình</Typography>
+                            </Box>
+                            <Box display={'flex'} flexDirection={'row'}>
+                                <Typography variant="body1">Số điện thoại : </Typography>
+                                <Typography variant="body1">
+                                    {khachHangStore.khachHangDetail.soDienThoai}
+                                </Typography>
+                            </Box>
+                            <Box display={'flex'} flexDirection={'row'}>
+                                <Typography variant="body1">Địa chỉ : </Typography>
+                                <Typography variant="body1">
+                                    {khachHangStore.khachHangDetail.diaChi}
+                                </Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -204,7 +238,9 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                     marginX: '-2.2222222222222223vw'
                 }}>
                 <Button
-                    onClick={onClose}
+                    onClick={() => {
+                        window.location.replace('/khach-hangs');
+                    }}
                     sx={{ color: '#666466', ml: '32px' }}
                     className="btn-outline-hover"
                     variant="outlined"
@@ -212,7 +248,40 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                     Quay trở lại
                 </Button>
             </Box>
+            <CreateOrEditCustomerDialog
+                visible={isShowEditKhachHang}
+                onCancel={() => {
+                    setIsShowEditKhachHang(!isShowEditKhachHang);
+                }}
+                onOk={async () => {
+                    setIsShowEditKhachHang(!isShowEditKhachHang);
+                    await khachHangStore.getDetail(khachHangId ?? AppConsts.guidEmpty);
+                }}
+                title={'Cập nhật thông tin khách hàng'}
+                formRef={khachHangStore.createEditKhachHangDto}
+            />
+            <ConfirmDelete
+                isShow={isShowDeleteKhachHang}
+                onOk={async () => {
+                    const deleteReult = await khachHangService.delete(
+                        khachHangStore.khachHangDetail.id
+                    );
+                    deleteReult != null
+                        ? enqueueSnackbar('Xóa bản ghi thành công', {
+                              variant: 'success',
+                              autoHideDuration: 3000
+                          })
+                        : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                              variant: 'error',
+                              autoHideDuration: 3000
+                          });
+                    setIsShowEditKhachHang(!isShowDeleteKhachHang);
+                    window.location.href = '/khach-hangs';
+                }}
+                onCancel={() => {
+                    setIsShowEditKhachHang(!isShowDeleteKhachHang);
+                }}></ConfirmDelete>
         </Box>
     );
 };
-export default CustomerInfo;
+export default observer(CustomerInfo);

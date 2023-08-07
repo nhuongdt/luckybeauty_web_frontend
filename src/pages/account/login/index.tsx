@@ -79,7 +79,9 @@ const LoginScreen: React.FC = () => {
                             </div>
                             <div className="logo-text">Lucky Beauty</div>
                         </div>
-                        <h1 className="login-label">Đăng nhập</h1>
+                        <h1 className="login-label" style={{ marginBottom: '10px' }}>
+                            Đăng nhập
+                        </h1>
                         <form className="login-form" onSubmit={formik.handleSubmit}>
                             <Grid container>
                                 <span className="login-label">ID đăng nhập</span>

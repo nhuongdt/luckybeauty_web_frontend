@@ -238,7 +238,7 @@ export const appRouters: AppRouteProps = {
                     component: LoadableComponent(() => import('../../pages/customer'))
                 },
                 {
-                    path: '/khach-hangs/:khachHangId',
+                    path: '/khach-hang-chi-tiet/:khachHangId',
                     permission: 'Pages.KhachHang',
                     title: 'Khách hàng',
                     name: 'khachhang',

@@ -224,28 +224,53 @@ class DataMauIn {
     Print = (contentHtml: string) => {
         contentHtml = contentHtml.replaceAll('figure', 'div');
         const style = `<style  type="text/css"> 
+        * {
+        box-sizing: border-box !important;
+        margin: 0!important;
+        padding: 0.2rem!important;
+        font-family: Roboto!important;
+    }
         .ck-content .table table {
             overflow: hidden;
         }
-        .ck-content .table {
-            display: table;
-            margin: .9em auto;
-        }
-        .ck-content .table table {
-            border-collapse: collapse;
-            border-spacing: 0;
-            height: 100%;
-            width: 100%;
-        } 
-        .ck-content .table table td, .ck-content .table table th {
-            padding: 0.4em
-        }
-        .ck-content .table td, .ck-content .table th{
+        
+        .ck-content .table td,
+        .ck-content .table th {
             overflow-wrap: break-word;
             position: relative;
         }
-        </style>`;
-        const allContent = `<html><head>${style}</head> <body><div class="ck-content"> ${contentHtml} </div></body></html>`;
+        
+        .ck-content .table {
+            margin: 0.9em auto;
+            display: table;
+        }
+        
+        .ck-content .table table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+            height: 100%;
+            /* border: 1px double hsl(0, 0%, 70%); */
+        }
+        
+        .ck-content .table table td,
+        .ck-content .table table th {
+            min-width: 2em;
+            /* border: 1px solid hsl(0, 0%, 75%); */
+        }
+        
+        
+        .ck-content .table table th {
+            font-weight: bold;
+            background: hsla(0, 0%, 0%, 5%);
+        } 
+
+        
+        </style> `;
+
+        const link = `<link rel="stylesheet" type="text/css" media="print" href="./styleCkeditor.css" />`;
+        // const allContent = `<html><head>${style}</head> <body><div class="ck-content"> ${contentHtml} </div></body></html>`;
+        const allContent = `<div class="ck-content"> ${link} ${contentHtml} </div>`;
         const newIframe = document.createElement('iframe');
         newIframe.height = '0';
         newIframe.src = 'about:blank';
@@ -261,6 +286,7 @@ class DataMauIn {
         // setTimeout(function () {
         //     pri?.print();
         // }, 1000);
+        // return allContent;
     };
 }
 console.log('datamauin');

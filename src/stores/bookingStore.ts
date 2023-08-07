@@ -14,10 +14,12 @@ class BookingStore {
     idBooking!: string;
     bookingInfoDto!: BookingInfoDto;
     isShowBookingInfo!: boolean;
+    isShowConfirmDelete!: boolean;
     constructor() {
         makeAutoObservable(this);
         this.selectedDate = new Date();
         this.isShowBookingInfo = false;
+        this.isShowConfirmDelete = false;
         this.bookingInfoDto = {
             id: AppConsts.guidEmpty,
             bookingDate: new Date(),

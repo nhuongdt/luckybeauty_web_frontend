@@ -21,18 +21,15 @@ import { Form, Formik } from 'formik';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
-import { SuggestNhomKhachDto } from '../../../services/suggests/dto/SuggestNhomKhachDto';
-import { SuggestNguonKhachDto } from '../../../services/suggests/dto/SuggestNguonKhachDto';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
-import khachHangStore from '../../../stores/khachHangStore';
+import '../customerPage.css';
 import rules from './create-or-edit-customer.validate';
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
     title: string;
     onOk: ({ dataSave }: any) => void;
-    handleChange: (event: any) => void;
     formRef: CreateOrEditKhachHangDto;
 }
 class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {

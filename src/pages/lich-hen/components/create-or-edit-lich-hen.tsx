@@ -488,9 +488,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                 <CreateOrEditCustomerDialog
                     visible={this.state.isShowKhachHangModal}
                     formRef={khachHangStore.createEditKhachHangDto}
-                    handleChange={(e) => {
-                        console.log(e);
-                    }}
                     onCancel={this.onOpenKhachHangModal}
                     onOk={async (e: any) => {
                         await suggestStore.getSuggestKhachHang();

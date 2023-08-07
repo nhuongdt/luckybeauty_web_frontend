@@ -12,7 +12,6 @@ import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import { KhachHangItemDto } from '../../../../services/khach-hang/dto/KhachHangItemDto';
 import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
 
-import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
 import AppConsts, { ISelect } from '../../../../lib/appconst';
@@ -23,6 +22,8 @@ import DataMauIn from './DataMauIn';
 import SelectMauIn from '../../../../components/Menu/SelectMauIn';
 import { number } from 'yup';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+
+import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -159,7 +160,9 @@ export default function PageMauIn({ xx }: any) {
             return;
         }
         BindDataPrint(shtmlNew);
-        setNewMauIn({ ...newMauIn, noiDungMauIn: shtmlNew });
+        setNewMauIn(() => {
+            return { ...newMauIn, noiDungMauIn: shtmlNew };
+        });
     };
 
     return (
@@ -177,7 +180,7 @@ export default function PageMauIn({ xx }: any) {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Grid container gap={2}>
+            <Grid container spacing={2} padding={2}>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs
@@ -190,47 +193,54 @@ export default function PageMauIn({ xx }: any) {
                         </Tabs>
                     </Box>
                 </Grid>
-                <Grid item xs={12} sm={6} md={12} lg={12}>
-                    <Grid container gap={2}>
-                        <Grid item xs={2}>
-                            <Button variant="contained" fullWidth onClick={showModalAddMauIn}>
-                                Thêm mới
-                            </Button>
-                        </Grid>
-                        <Grid item xs={4}>
-                            <SelectMauIn
-                                data={lstMauIn}
-                                idChosed={idMauInChosed}
-                                handleChange={changeMauIn}
-                            />
-                        </Grid>
-                        <Grid item xs={2}>
-                            {idMauInChosed.length === 36 && (
-                                <Stack direction="row" spacing={1}>
-                                    <OpenInNew
-                                        sx={{ width: 40, height: 40, padding: '8px' }}
-                                        onClick={() => {
-                                            setIsShowModalAddMauIn(true);
-                                            setIdMauInUpdate(newMauIn.id);
-                                        }}
-                                    />
+                <Grid item xs={12} sm={12} md={12} lg={12}>
+                    <Grid container paddingRight={2}>
+                        <Grid item xs={12} sm={12} md={6} lg={6}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} sm={3} md={3} lg={3}>
                                     <Button
                                         variant="contained"
-                                        color="secondary"
                                         fullWidth
-                                        onClick={saveMauIn}>
-                                        Lưu
+                                        onClick={showModalAddMauIn}>
+                                        Thêm mới
                                     </Button>
-                                </Stack>
-                            )}
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={6} lg={6}>
+                                    <SelectMauIn
+                                        data={lstMauIn}
+                                        idChosed={idMauInChosed}
+                                        handleChange={changeMauIn}
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={3} md={3} lg={3}>
+                                    {idMauInChosed.length === 36 && (
+                                        <Stack direction="row" spacing={1}>
+                                            <OpenInNew
+                                                sx={{ width: 40, height: 40, padding: '8px' }}
+                                                onClick={() => {
+                                                    setIsShowModalAddMauIn(true);
+                                                    setIdMauInUpdate(newMauIn.id);
+                                                }}
+                                            />
+                                            <Button
+                                                variant="contained"
+                                                color="secondary"
+                                                fullWidth
+                                                onClick={saveMauIn}>
+                                                Lưu
+                                            </Button>
+                                        </Stack>
+                                    )}
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6} md={12} lg={12}>
-                    {/* <CustomCkeditor html={html} handleChange={onChangeCkeditor} /> */}
+                <Grid item xs={12} sm={12} md={6} lg={6}>
+                    <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
                 </Grid>
 
-                <Grid item xs={12} sm={6} md={12} lg={12}>
+                <Grid item xs={12} sm={12} md={6} lg={6}>
                     <div
                         className="ck-content"
                         dangerouslySetInnerHTML={{ __html: dataPrint }}></div>

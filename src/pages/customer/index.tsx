@@ -13,7 +13,7 @@ import {
     SelectChangeEvent,
     Divider
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, WindowRounded } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
@@ -88,7 +88,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             isShowNhomKhachModal: false
         };
     }
-
     componentDidMount(): void {
         this.getData();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
@@ -212,6 +211,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     handleView = () => {
         // Handle View action
         this.handleCloseMenu();
+        window.location.replace(`/khach-hang-chi-tiet/${this.state.selectedRowId}`);
     };
 
     handleEdit = () => {
@@ -803,7 +803,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         visible={this.state.toggle}
                                         onCancel={this.handleToggle}
                                         onOk={this.handleSubmit}
-                                        handleChange={this.handleChange}
                                         title={
                                             this.state.idkhachHang == ''
                                                 ? 'Thêm mới khách hàng'

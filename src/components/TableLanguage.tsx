@@ -30,7 +30,8 @@ export const TextTranslate = {
         `${visibleCount.toLocaleString()} / ${totalCount.toLocaleString()}does nothing`,
     MuiTablePagination: {
         labelDisplayedRows: ({ from, to, count }: { from: number; to: number; count: number }) =>
-            `${from} - ${to} / ${count} hàng`
+            `hiển thị ${from} - ${to} của ${count} mục`,
+        labelRowsPerPage: 'Số hàng tối đa trên mỗi trang '
     },
     labelRowsPerPage: 'Số hàng tối đa trên mỗi trang ',
     footerRowSelected: (count: number) =>

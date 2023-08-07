@@ -74,9 +74,33 @@ class StoreDetail extends Component {
 
         return (
             <Box bgcolor="#fff" padding="24px" borderRadius="8px">
-                <Typography variant="h2" fontSize="24px" fontWeight="700" color="#0C050A" mb="32px">
-                    Chi tiết cửa hàng
-                </Typography>
+                <Box display={'flex'} justifyContent={'space-between'}>
+                    <Typography
+                        variant="h2"
+                        fontSize="24px"
+                        fontWeight="700"
+                        color="#0C050A"
+                        mb="32px">
+                        Chi tiết cửa hàng
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={this.handSubmit}
+                        sx={{
+                            width: 'fit-content',
+                            minWidth: 'unset',
+                            textTransform: 'unset',
+                            fontSize: '14px',
+                            fontWeight: '400',
+                            ml: 'auto',
+
+                            mt: '16px'
+                        }}
+                        className="btn-container-hover">
+                        Cập nhật
+                    </Button>
+                </Box>
+
                 <Grid container spacing={2}>
                     <Grid item xs={4}>
                         <Box padding="20px" border="1px solid #E6E1E6" borderRadius="8px">
@@ -261,22 +285,6 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                         </Grid>
-                        <Button
-                            variant="contained"
-                            onClick={this.handSubmit}
-                            sx={{
-                                width: 'fit-content',
-                                minWidth: 'unset',
-                                textTransform: 'unset',
-                                fontSize: '14px',
-                                fontWeight: '400',
-                                ml: 'auto',
-
-                                mt: '16px'
-                            }}
-                            className="btn-container-hover">
-                            Cập nhật
-                        </Button>
                     </Grid>
                 </Grid>
             </Box>

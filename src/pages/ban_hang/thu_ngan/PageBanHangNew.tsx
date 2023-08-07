@@ -983,7 +983,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 visible={isShowModalAddCus}
                 onCancel={() => setIsShowModalAddCus(false)}
                 onOk={changeCustomer}
-                handleChange={onChangeInputAtModalCustomer}
+                //handleChange={onChangeInputAtModalCustomer}
                 title="Thêm mới khách hàng"
                 formRef={newCus}
                 // suggestNguonKhach={listNguonKhach}

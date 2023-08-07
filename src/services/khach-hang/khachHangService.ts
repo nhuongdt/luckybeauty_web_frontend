@@ -29,8 +29,9 @@ class KhachHangService {
         const result = await http.post('api/services/app/KhachHang/CreateOrEdit', input);
         return result.data.result;
     }
-    public async getDetail(id: Guid) {
-        console.log(1);
+    public async getDetail(id: string) {
+        const response = await http.get(`api/services/app/KhachHang/GetKhachHangDetail?id=${id}`);
+        return response.data.result;
     }
     public async getKhachHang(id: string): Promise<CreateOrEditKhachHangDto> {
         if (utils.checkNull(id)) {
@@ -67,6 +68,18 @@ class KhachHangService {
     }
     async importKhachHang(input: FileUpload) {
         const response = await http.post('api/services/app/KhachHang/ImportExcel', input);
+        return response.data.result;
+    }
+    async lichSuGiaoDich(idKhachHang: string) {
+        const response = await http.post(
+            `api/services/app/KhachHang/LichSuGiaoDich?idKhachHang=${idKhachHang}`
+        );
+        return response.data.result;
+    }
+    async lichSuDatLich(idKhachHang: string) {
+        const response = await http.post(
+            `api/services/app/KhachHang/LichSuDatLich?idKhachHang=${idKhachHang}`
+        );
         return response.data.result;
     }
 }

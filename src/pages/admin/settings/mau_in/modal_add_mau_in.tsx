@@ -49,7 +49,9 @@ export default function ModalAddMauIn({
     const [isCheckMauMacDinh, setIsCheckMauMacDinh] = useState(false);
     const [isClickSave, setIsClickSave] = useState(false);
 
-    const errtenMauIn = isClickSave && utils.checkNull(tenMauIn) ? 'Vui lòng nhập tên mẫu in' : '';
+    // const errtenMauIn = isClickSave && utils.checkNull(tenMauIn) ? 'Vui lòng nhập tên mẫu in' : '';
+    const errtenMauIn = '';
+    console.log('modelmauin');
 
     const BindDataPrint = (html: string) => {
         let dataAfter = DataMauIn.replaceChiTietHoaDon(html);
@@ -139,12 +141,12 @@ export default function ModalAddMauIn({
                     </DialogTitle>
                     <DialogContent>
                         <Grid container spacing={1}>
-                            <Grid item md={6} lg={6}>
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
                                 <Grid container>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={12} sm={2} md={2} lg={2}>
                                         <span className="modal-lable">Tên mẫu in</span>
                                     </Grid>
-                                    <Grid item xs={4}>
+                                    <Grid item xs={12} sm={4} md={4} lg={4}>
                                         <TextField
                                             size="small"
                                             fullWidth
@@ -155,7 +157,7 @@ export default function ModalAddMauIn({
                                             helperText={errtenMauIn}
                                         />
                                     </Grid>
-                                    <Grid item xs={5}>
+                                    <Grid item xs={12} sm={5} md={5} lg={5}>
                                         <Box sx={{ float: 'right' }}>
                                             <Checkbox
                                                 checked={isCheckMauMacDinh}
@@ -172,29 +174,29 @@ export default function ModalAddMauIn({
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item md={6} lg={6}>
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={2}>
+                                    <Grid item xs={12} sm={2} md={2} lg={2}>
                                         <span className="modal-lable">Mẫu gợi ý</span>
                                     </Grid>
-                                    <Grid item xs={8}>
+                                    <Grid item xs={12} sm={8} md={8} lg={8}>
                                         <SelectMauIn
                                             data={lstMauIn}
                                             idChosed={idChosed}
                                             handleChange={changeMauIn}
                                         />
                                     </Grid>
-                                    <Grid item xs={2}>
-                                        <Button variant="contained" onClick={saveMauIn}>
+                                    <Grid item xs={12} md={2} lg={2}>
+                                        <Button variant="contained" onClick={saveMauIn} fullWidth>
                                             Lưu
                                         </Button>
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid item md={6} lg={6}>
+                            <Grid item sm={12} md={6} lg={6}>
                                 <CustomCkeditor html={html} handleChange={onChangeCkeditor} />
                             </Grid>
-                            <Grid item md={6} lg={6}>
+                            <Grid item sm={12} md={6} lg={6}>
                                 <div
                                     className="ck-content"
                                     dangerouslySetInnerHTML={{ __html: dataPrint }}></div>

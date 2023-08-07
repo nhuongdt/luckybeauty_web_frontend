@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { Box, Typography, Button, Grid } from '@mui/material';
 import useWindowWidth from '../../../components/StateWidth';
+import { observer } from 'mobx-react';
 const TabInfor: React.FC = () => {
     const [listBtn, setListBtn] = useState([
         {
@@ -205,4 +206,4 @@ const TabInfor: React.FC = () => {
         </Box>
     );
 };
-export default TabInfor;
+export default observer(TabInfor);
