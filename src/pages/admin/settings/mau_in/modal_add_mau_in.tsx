@@ -113,6 +113,7 @@ export default function ModalAddMauIn({
             return;
         }
         BindDataPrint(shtmlNew);
+        setHtml(() => shtmlNew);
     };
 
     const saveMauIn = () => {
@@ -121,6 +122,7 @@ export default function ModalAddMauIn({
             return;
         }
         const data = {
+            id: idUpdate,
             laMacDinh: isCheckMauMacDinh,
             tenMauIn: tenMauIn,
             noiDungMauIn: html
@@ -137,7 +139,7 @@ export default function ModalAddMauIn({
                     fullWidth
                     maxWidth="xl">
                     <DialogTitle>
-                        Thêm mẫu in <i></i>
+                        {utils.checkNull(idUpdate) ? 'Thêm' : 'Cập nhật'} mẫu in <i></i>
                     </DialogTitle>
                     <DialogContent>
                         <Grid container spacing={1}>
