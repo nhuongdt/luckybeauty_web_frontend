@@ -1,29 +1,62 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import dashboardStore from '../../../../stores/dashboardStore';
+import { observer } from 'mobx-react';
+import { ThongKeDoanhThu } from '../../../../services/dashboard/dto/thongKeDoanhThu';
+function formatCurrency(number: any) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+}
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div>
+                <p className="label">{label}</p>
+                {payload.map((entry: any, index: number) => (
+                    <div>
+                        <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
+                            {entry.name == 'thangTruoc'
+                                ? 'Tháng trước'
+                                : entry.name == 'thangNay'
+                                ? 'Tháng này'
+                                : entry.name}
+                            : {formatCurrency(entry.value)}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    return null;
+};
 const ColumnChartNew: React.FC = () => {
-    const data = [
-        { name: 'Tháng 1', 'Tuần này': 100, 'Tuần trước': 35 },
-        { name: 'Tháng 2', 'Tuần này': 20, 'Tuần trước': 115 },
-        { name: 'Tháng 3', 'Tuần này': 150, 'Tuần trước': 48 },
-        { name: 'Tháng 4', 'Tuần này': 110, 'Tuần trước': 95 },
-        { name: 'Tháng 5', 'Tuần này': 120, 'Tuần trước': 105 },
-        { name: 'Tháng 6', 'Tuần này': 69, 'Tuần trước': 169 },
-        { name: 'Tháng 7', 'Tuần này': 100, 'Tuần trước': 50 },
-        { name: 'Tháng 8', 'Tuần này': 23, 'Tuần trước': 155 },
-        { name: 'Tháng 9', 'Tuần này': 75, 'Tuần trước': 168 },
-        { name: 'Tháng 10', 'Tuần này': 20, 'Tuần trước': 59 },
-        { name: 'Tháng 11', 'Tuần này': 20, 'Tuần trước': 86 },
-        { name: 'Tháng 12', 'Tuần này': 150, 'Tuần trước': 150 }
-    ];
-    const yTicks = [0, 100, 200, 300];
+    const data =
+        dashboardStore.thongKeDoanhThu !== undefined ||
+        dashboardStore.thongKeDoanhThu == ([] as ThongKeDoanhThu[])
+            ? dashboardStore.thongKeDoanhThu
+            : [
+                  { month: 'Tháng 1', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 2', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 3', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 4', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 5', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 6', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 7', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 8', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 9', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 10', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 11', thangNay: 0, thangTruoc: 0 },
+                  { month: 'Tháng 12', thangNay: 0, thangTruoc: 0 }
+              ];
+    //const yTicks = [];
 
     return (
-        <div className="column-chart">
+        <div style={{ marginTop: '30px' }}>
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data} margin={{ right: 29, top: 40, bottom: 0 }}>
+                <BarChart data={data}>
                     <CartesianGrid strokeDasharray="0 0" vertical={false} />
                     <XAxis
-                        dataKey="name"
+                        dataKey="month"
                         tick={{ fontSize: 12, fill: '#666466' }}
                         axisLine={{ stroke: '#E6E1E6' }}
                         tickMargin={9}
@@ -31,20 +64,28 @@ const ColumnChartNew: React.FC = () => {
                     />
                     <YAxis
                         tickCount={4}
-                        ticks={yTicks}
+                        //ticks={yTicks}
                         tick={{ fontSize: 12, fill: '#666466' }}
                         axisLine={{ stroke: 'transparent' }}
                         tickSize={0}
                         tickMargin={9}
                     />
-                    <Tooltip />
+                    <Tooltip
+                        wrapperStyle={{
+                            width: 250,
+                            backgroundColor: '#fff',
+                            border: '1px solid #EFEDEF',
+                            padding: '8px'
+                        }}
+                        content={<CustomTooltip />}
+                    />
 
-                    <Bar dataKey="Tuần trước" stackId="stack" fill="var(--color-bg)" barSize={12} />
-                    <Bar dataKey="Tuần này" stackId="stack" fill="var(--color-main)" barSize={12} />
+                    <Bar dataKey="thangTruoc" stackId="stack" fill="#ff9900" barSize={12} />
+                    <Bar dataKey="thangNay" stackId="stack" fill="var(--color-main)" barSize={12} />
                 </BarChart>
             </ResponsiveContainer>
         </div>
     );
 };
 
-export default ColumnChartNew;
+export default observer(ColumnChartNew);

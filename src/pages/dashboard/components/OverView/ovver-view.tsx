@@ -8,36 +8,16 @@ import incrementIcon from '../../../../images/tang.svg';
 import decrementIcon from '../../../../images/giam.svg';
 import { Box, Grid, Typography } from '@mui/material';
 import './overViewNew.css';
+import dashboardStore from '../../../../stores/dashboardStore';
+import { observer } from 'mobx-react';
 class OverView extends Component {
     render(): ReactNode {
-        const grids = [
-            {
-                icon: sinhnhat,
-                title: 'Khách hàng sinh nhật',
-                number: '5'
-            },
-            {
-                icon: userIcon,
-                title: 'Tổng số khách hàng ',
-                number: '100',
-                ratioText: '+11.01%',
-                ratioIcon: incrementIcon
-            },
-            {
-                icon: calendarIcon,
-                title: 'Tổng cuộc hẹn',
-                number: '150',
-                ratioText: '-5.01%',
-                ratioIcon: decrementIcon
-            },
-            {
-                icon: walletIcon,
-                title: 'Tổng doanh thu ',
-                number: '10,000',
-                ratioText: '+11.01%',
-                ratioIcon: incrementIcon
-            }
-        ];
+        const data = dashboardStore.thongKeSoLuong ?? {
+            tongDoanhThu: 0,
+            tongKhachHang: 0,
+            tongKhachHangSinhNhat: 0,
+            tongLichHen: 0
+        };
         return (
             <div>
                 <Grid container spacing={2}>
@@ -74,7 +54,7 @@ class OverView extends Component {
                                         fontSize: '32px',
                                         fontWeight: '700'
                                     }}>
-                                    100
+                                    {data.tongKhachHangSinhNhat}
                                 </Typography>
                                 <Grid container alignItems={'center'}>
                                     <Grid
@@ -143,7 +123,7 @@ class OverView extends Component {
                                         item
                                         xs={12}
                                         display={'flex'}
-                                        alignItems={'center'}
+                                        alignItems={'start'}
                                         sx={{
                                             color: '#50CD89',
                                             fontFamily: 'Roboto',
@@ -157,7 +137,7 @@ class OverView extends Component {
                                                 fontSize: '24px',
                                                 fontWeight: '700'
                                             }}>
-                                            100
+                                            {data.tongKhachHang}
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -189,7 +169,7 @@ class OverView extends Component {
                                     marginLeft: '12px',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    alignItems: 'center'
+                                    alignItems: 'start'
                                 }}>
                                 <Typography
                                     sx={{
@@ -205,7 +185,7 @@ class OverView extends Component {
                                         item
                                         xs={12}
                                         display={'flex'}
-                                        alignItems={'center'}
+                                        alignItems={'start'}
                                         sx={{
                                             color: '#50CD89',
                                             fontFamily: 'Roboto',
@@ -219,7 +199,7 @@ class OverView extends Component {
                                                 fontSize: '24px',
                                                 fontWeight: '700'
                                             }}>
-                                            100
+                                            {data.tongLichHen}
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -243,7 +223,7 @@ class OverView extends Component {
                                     justifyContent: 'center',
                                     alignItems: 'center'
                                 }}>
-                                <img src={grids[3].icon} />
+                                <img src={walletIcon} />
                             </Box>
                             <Box
                                 sx={{
@@ -251,7 +231,7 @@ class OverView extends Component {
                                     marginLeft: '12px',
                                     flexDirection: 'column',
                                     justifyContent: 'space-between',
-                                    alignItems: 'center'
+                                    alignItems: 'start'
                                 }}>
                                 <Typography
                                     sx={{
@@ -279,7 +259,9 @@ class OverView extends Component {
                                                 fontSize: '24px',
                                                 fontWeight: '700'
                                             }}>
-                                            100,000
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                data.tongDoanhThu
+                                            )}
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -291,4 +273,4 @@ class OverView extends Component {
         );
     }
 }
-export default OverView;
+export default observer(OverView);

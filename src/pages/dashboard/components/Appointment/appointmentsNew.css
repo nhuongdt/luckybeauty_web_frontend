@@ -52,6 +52,7 @@ align-items: center;
     #666466;
     font-size: 16px;
     line-height: 1.6666666666666667vw;
+    float: right;
 }
 .state{
     color: #009EF7;

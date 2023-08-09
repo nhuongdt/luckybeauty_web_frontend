@@ -9,17 +9,47 @@ import {
     ResponsiveContainer
 } from 'recharts';
 import './lineChartNew.css';
+import dashboardStore from '../../../../stores/dashboardStore';
+import { observer } from 'mobx-react';
+import { ThongKeLichHen } from '../../../../services/dashboard/dto/thongKeLichHen';
 
+const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        return (
+            <div>
+                <p className="label">{label}</p>
+                {payload.map((entry: any, index: number) => (
+                    <div>
+                        <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
+                            {entry.name == 'tuanTruoc'
+                                ? 'Tuần trước'
+                                : entry.name == 'tuanNay'
+                                ? 'Tuần này'
+                                : entry.name}
+                            : {entry.value}
+                        </p>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    return null;
+};
 const LineChartNew: React.FC = () => {
-    const data = [
-        { name: 'Thứ 2', 'Tháng này': 20, 'Tháng trước': 0 },
-        { name: 'Thứ 3', 'Tháng này': 28, 'Tháng trước': 23 },
-        { name: 'Thứ 4', 'Tháng này': 31, 'Tháng trước': 22 },
-        { name: 'Thứ 5', 'Tháng này': 34, 'Tháng trước': 21 },
-        { name: 'Thứ 6', 'Tháng này': 47, 'Tháng trước': 38 },
-        { name: 'Thứ 7', 'Tháng này': 28, 'Tháng trước': 39 },
-        { name: 'Chủ nhật', 'Tháng này': 30, 'Tháng trước': 19 }
-    ];
+    const data =
+        dashboardStore.thongKeLichHen !== undefined ||
+        dashboardStore.thongKeLichHen !== ([] as ThongKeLichHen[])
+            ? dashboardStore.thongKeLichHen
+            : [
+                  { tuan: 'Thứ 2', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: 'Thứ 3', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: 'Thứ 4', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: 'Thứ 5', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: 'Thứ 6', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: 'Thứ 7', tuanNay: 0, tuanTruoc: 0 },
+                  { tuan: 'Chủ nhật', tuanNay: 0, tuanTruoc: 0 }
+              ];
 
     const hideZeroFormatter = (value: any) => (value === 0 ? '' : value);
     const renderLineChart = (
@@ -27,7 +57,7 @@ const LineChartNew: React.FC = () => {
             <LineChart data={data} margin={{ top: 8, right: 35, bottom: 24, left: 0 }}>
                 <Line
                     type="monotone"
-                    dataKey="Tháng này"
+                    dataKey="tuanNay"
                     stroke="var(--color-main)"
                     dot={false}
                     activeDot={{ r: 4 }}
@@ -35,7 +65,7 @@ const LineChartNew: React.FC = () => {
                 />
                 <Line
                     type="monotone"
-                    dataKey="Tháng trước"
+                    dataKey={'tuanTruoc'}
                     stroke="#ff9900"
                     dot={false}
                     activeDot={{ r: 4 }}
@@ -43,7 +73,7 @@ const LineChartNew: React.FC = () => {
                 />
                 <CartesianGrid stroke="#E6E1E6" strokeDasharray="0 0 " />
                 <XAxis
-                    dataKey="name"
+                    dataKey="tuan"
                     tickSize={0}
                     tick={{ fontSize: 12, fill: '#666466' }}
                     axisLine={{ stroke: '#E6E1E6' }}
@@ -60,7 +90,15 @@ const LineChartNew: React.FC = () => {
                     tickMargin={18}
                     tickFormatter={hideZeroFormatter}
                 />
-                <Tooltip />
+                <Tooltip
+                    wrapperStyle={{
+                        width: 250,
+                        backgroundColor: '#fff',
+                        border: '1px solid #EFEDEF',
+                        padding: '8px'
+                    }}
+                    content={<CustomTooltip />}
+                />
             </LineChart>
         </ResponsiveContainer>
     );
@@ -69,11 +107,11 @@ const LineChartNew: React.FC = () => {
             <div className="tooltips">
                 <div className="tooltip-item">
                     <div className="tooltip-dot current"></div>
-                    <div className="tooltip-text">Tháng này</div>
+                    <div className="tooltip-text">Tuần này</div>
                 </div>
                 <div className="tooltip-item">
                     <div className="tooltip-dot before"></div>
-                    <div className="tooltip-text">Tháng trước</div>
+                    <div className="tooltip-text">Tuần trước</div>
                 </div>
             </div>
             {renderLineChart}
@@ -81,4 +119,4 @@ const LineChartNew: React.FC = () => {
     );
 };
 
-export default LineChartNew;
+export default observer(LineChartNew);

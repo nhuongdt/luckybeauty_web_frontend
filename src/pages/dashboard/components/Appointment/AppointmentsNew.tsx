@@ -2,66 +2,102 @@ import React from 'react';
 import avatar from '../../../../images/avatar.png';
 import clockIcon from '../../../../images/clock.svg';
 import './appointmentsNew.css';
+import dashboardStore from '../../../../stores/dashboardStore';
+import { observer } from 'mobx-react';
+import { format } from 'date-fns';
+import { Avatar, Box, Typography } from '@mui/material';
 const AppoimentsNew: React.FC = () => {
-    const datas = [
-        {
-            id: 1,
-            avatar: avatar,
-            name: 'Đinh Tuấn Tài',
-            time: '9h00 - 12h30',
-            job: 'Uốn nhuộm ',
-            state: 'Đang chờ',
-            price: '1,000,000'
-        },
-        {
-            id: 2,
-            avatar: avatar,
-            name: 'Đinh Tuấn em',
-            time: '9h00 - 12h30',
-            job: 'Uốn nhuộm ',
-            state: 'Đang chờ',
-            price: '1,000,000'
-        },
-        {
-            id: 3,
-            avatar: avatar,
-            name: 'Đinh Tuấn Anh',
-            time: '9h00 - 12h30',
-            job: 'Uốn nhuộm ',
-            state: 'Đang chờ',
-            price: '1,000,000'
-        }
-    ];
+    const datas = dashboardStore.danhSachLichHen ?? [];
 
     return (
-        <div className="todo-lists">
-            {datas.map((data) => {
-                return (
-                    <div className="todo-item" key={data.id}>
-                        <div className="todo-item_col-1">
-                            <div className="avatar">
-                                <img src={data.avatar} alt="" />
-                            </div>
-                            <div className="todo-content">
-                                <div className="todo-name">{data.name}</div>
-                                <div className="times">
-                                    <div className="time-icon">
+        <Box>
+            {datas.length > 0 ? (
+                datas.map((data) => {
+                    return (
+                        <Box display={'flex'} justifyContent={'space-between'}>
+                            <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
+                                <Avatar src={data.avatar} />
+                                <Box
+                                    sx={{ marginLeft: '24px' }}
+                                    display={'flex'}
+                                    justifyContent={'space-between'}
+                                    flexDirection={'column'}>
+                                    <Typography
+                                        sx={{
+                                            color: '#525F7A',
+                                            fontFamily: 'Roboto',
+                                            fontSize: '14px',
+                                            fontWeight: '400'
+                                        }}>
+                                        {data.tenKhachHang}
+                                    </Typography>
+                                    <Box
+                                        display={'flex'}
+                                        justifyContent={'start'}
+                                        alignItems={'center'}>
                                         <img src={clockIcon} alt="clock" />
-                                    </div>
-                                    <div className="time-text">{data.time}</div>
-                                </div>
-                                <div className="job">{data.job}</div>
-                            </div>
-                        </div>
-                        <div className="todo-item_col-2">
-                            <div className="state">{data.state}</div>
-                            <div className="price">{data.price}</div>
-                        </div>
-                    </div>
-                );
-            })}
-        </div>
+                                        <Typography
+                                            sx={{
+                                                color: '#525F7A',
+                                                fontFamily: 'Roboto',
+                                                fontSize: '14px',
+                                                fontWeight: '400',
+                                                marginLeft: '4px'
+                                            }}>
+                                            {data.startTime != undefined
+                                                ? format(new Date(data.startTime), 'HH:mm')
+                                                : ''}
+                                            {' - '}
+                                            {data.endTime != undefined
+                                                ? format(new Date(data.endTime), 'HH:mm')
+                                                : ''}
+                                        </Typography>
+                                    </Box>
+
+                                    <Typography
+                                        sx={{
+                                            color: '#3D475C',
+                                            fontFamily: 'Roboto',
+                                            fontSize: '16px',
+                                            fontWeight: '700'
+                                        }}>
+                                        {data.dichVu}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                            <Box
+                                display={'flex'}
+                                justifyContent={'end'}
+                                flexDirection={'column'}
+                                alignItems={'end'}>
+                                <Typography
+                                    sx={{
+                                        color: '#009EF7',
+                                        fontFamily: 'Roboto',
+                                        fontSize: '12px',
+                                        fontWeight: '400'
+                                    }}>
+                                    {data.trangThai}
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: '#3D475C',
+                                        fontFamily: 'Roboto',
+                                        fontSize: '16px',
+                                        fontWeight: '700'
+                                    }}>
+                                    {new Intl.NumberFormat('vi-VN').format(data.tongTien ?? 0)}
+                                </Typography>
+                            </Box>
+                        </Box>
+                    );
+                })
+            ) : (
+                <>Không có dữ liệu</>
+            )}
+            {}
+        </Box>
     );
 };
 
-export default AppoimentsNew;
+export default observer(AppoimentsNew);
