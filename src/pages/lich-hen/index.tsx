@@ -36,11 +36,13 @@ import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import datLichService from '../../services/dat-lich/datLichService';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../lib/appconst';
+import * as signalR from '@microsoft/signalr';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
     const [idBooking, setIdBooking] = useState<string>('');
     const [dateView, setDateView] = useState('');
+    const [connection, setConnection] = useState<any>(null);
     const getData = async () => {
         bookingStore.selectedDate = new Date();
         bookingStore.typeView = Cookies.get('Tab-lich-hen') ?? 'week';
@@ -90,6 +92,30 @@ const LichHen: React.FC = () => {
         await getData();
         setModalVisible(!modalVisible);
     };
+    useEffect(() => {
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'booking')
+            .withAutomaticReconnect()
+            .build();
+
+        setConnection(newConnection);
+
+        newConnection
+            .start()
+            .then(() => {
+                console.log('SignalR connected');
+                newConnection.on('ReceiveBookingData', (data: any) => {
+                    console.log(JSON.stringify(data));
+                    bookingStore.listBooking = data;
+                });
+            })
+            .catch((err: any) => console.error('SignalR connection error: ', err));
+
+        return () => {
+            newConnection.off('ReceiveBookingData');
+            newConnection.stop();
+        };
+    }, []);
     const getCurrentDateInVietnamese = (date: Date) => {
         const daysOfWeek = [
             'Chủ nhật',

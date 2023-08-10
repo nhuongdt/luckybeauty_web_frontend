@@ -16,7 +16,7 @@
         "@fullcalendar/list": "^6.1.6",
         "@fullcalendar/react": "^6.1.6",
         "@fullcalendar/timegrid": "^6.1.6",
-        "@microsoft/signalr": "^7.0.7",
+        "@microsoft/signalr": "^7.0.10",
         "@mui/icons-material": "^5.11.16",
         "@mui/lab": "^5.0.0-alpha.128",
         "@mui/material": "^5.13.4",

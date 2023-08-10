@@ -2145,10 +2145,10 @@
   resolved "https://registry.npmjs.org/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
-"@microsoft/signalr@^7.0.7":
-  version "7.0.7"
-  resolved "https://registry.npmjs.org/@microsoft/signalr/-/signalr-7.0.7.tgz"
-  integrity sha512-RMWZLTxnjWPSaS9PYZxXAttql2JDM/+IsSJk0nACFhpLjnSw8UWfvUxOv/QjZSqLxhuksXxzBJ/91xUP6Y7Nvg==
+"@microsoft/signalr@^7.0.10":
+  version "7.0.10"
+  resolved "https://registry.npmjs.org/@microsoft/signalr/-/signalr-7.0.10.tgz"
+  integrity sha512-tOEn32i5EatAx4sZbzmLgcBc2VbKQmx+F4rI2/Ioq2MnBaYcFxbDzOoZgISIS4IR9H1ij/sKoU8zQOAFC8GJKg==
   dependencies:
     abort-controller "^3.0.0"
     eventsource "^2.0.2"
@@ -4764,7 +4764,7 @@ cjs-module-lexer@^1.0.0:
   integrity sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==
 
 "ckeditor5-custom-build@file:./ckeditor5":
-  version "0.0.1"
+  version "0.1.1"
   resolved "file:ckeditor5"
   dependencies:
     "@ckeditor/ckeditor5-alignment" "39.0.0"
