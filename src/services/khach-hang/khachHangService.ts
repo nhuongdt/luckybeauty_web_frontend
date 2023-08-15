@@ -34,8 +34,12 @@ class KhachHangService {
         return response.data.result;
     }
     public async getKhachHang(id: string): Promise<CreateOrEditKhachHangDto> {
-        if (utils.checkNull(id)) {
-            return { id: '', maKhachHang: '', tenKhachHang: '' } as CreateOrEditKhachHangDto;
+        if (utils.checkNull(id) || id === Guid.EMPTY) {
+            return {
+                id: '',
+                maKhachHang: 'KL',
+                tenKhachHang: 'Khách lẻ'
+            } as CreateOrEditKhachHangDto;
         }
         const result = await http.get(`api/services/app/KhachHang/GetKhachHang?id=${id}`);
         return result.data.result;

@@ -125,7 +125,7 @@ class Utils {
     };
     getFirstLetter = (str = '') => {
         return str
-            ?.match(/(?<=(\s|^))[a-z]/gi)
+            ?.match(/(?<=(\s|^))[a-z0-9]/gi)
             ?.join('')
             ?.toUpperCase();
     };

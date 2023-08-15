@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { NumericFormat } from 'react-number-format';
+import storage from '../../services/firebaseConfig';
+import { ref, uploadBytesResumable, getDownloadURL, getStorage } from 'firebase/storage';
 import {
     Dialog,
     DialogTitle,
     DialogActions,
     DialogContent,
     Grid,
+    Stack,
     Typography,
     Button,
     Box,
@@ -29,6 +32,8 @@ import './style.css';
 
 import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
+import { Close } from '@mui/icons-material';
+import Cookies from 'js-cookie';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -36,6 +41,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [product, setProduct] = useState(new ModelHangHoaDto());
     const [wasClickSave, setWasClickSave] = useState(false);
     const [actionProduct, setActionProduct] = useState(1);
+    const tenantName = Cookies.get('TenantName');
+    const [productImage, setProductImage] = useState('');
 
     const [errTenHangHoa, setErrTenHangHoa] = useState(false);
     const [errMaHangHoa, setErrMaHangHoa] = useState(false);
@@ -53,9 +60,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             setProduct((old: any) => {
                 return {
                     ...old,
-                    laHangHoa: old.idLoaiHangHoa === 1
+                    laHangHoa: old.idLoaiHangHoa === 1,
+                    image: ''
                 };
             });
+            GetFile_fromFireBase(obj.image);
 
             // find nhomhang
             const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);
@@ -66,6 +75,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             }
         } else {
             setProduct(new ModelHangHoaDto());
+            setProductImage('');
 
             if (trigger.item.idNhomHangHoa !== undefined) {
                 const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
@@ -150,6 +160,60 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         return true;
     };
 
+    const [fileImage, setFileImage] = useState<File>({} as File);
+
+    const choseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file: File = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                // const avatar = {
+                //     fileBase64: reader.result?.toString().split(',')[1] ?? '',
+                //     fileName: file.name,
+                //     fileType: file.type
+                // };
+                setProductImage(reader.result?.toString() ?? '');
+            };
+            setFileImage(file);
+            setProduct({ ...product, image: `/${tenantName}/product_image/${file.name}` });
+        }
+    };
+
+    const UploadFile_toFireBase = () => {
+        const storageRef = ref(storage, `/${tenantName}/product_image/${fileImage.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, fileImage);
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+
+                // update progress (%)
+                //setPercent(percent);
+            },
+            (err) => console.log(err),
+            () => {
+                // download url
+                getDownloadURL(uploadTask.snapshot.ref);
+            }
+        );
+    };
+
+    const GetFile_fromFireBase = (linkImage: string) => {
+        if (!utils.checkNull(linkImage)) {
+            const storage = getStorage();
+            getDownloadURL(ref(storage, linkImage))
+                .then((url) => {
+                    setProductImage(url);
+                })
+                .catch((error) => {
+                    // Handle any errors
+                });
+        } else {
+            setProductImage('');
+        }
+    };
+
     async function saveProduct() {
         setWasClickSave(true);
 
@@ -160,12 +224,13 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (!check) {
             return;
         }
+        UploadFile_toFireBase();
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
         objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
-
+        console.log('objNew ', objNew);
         objNew.donViQuiDois = [
             {
                 id: objNew.idDonViQuyDoi,
@@ -225,95 +290,108 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             <Box sx={{ height: 50 }} style={{ display: 'none' }}>
                                 <Typography>Thông tin chi tiết</Typography>
                             </Box>
-                            <Grid item sx={{ pb: 2 }} style={{ display: 'none' }}>
-                                <span className="modal-lable">
-                                    Mã {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                </span>
+                            <Grid item sx={{ pb: 2 }}>
+                                <Stack spacing={1}>
+                                    <span className="modal-lable">
+                                        Mã {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                    </span>
 
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    required
-                                    size="small"
-                                    placeholder="Mã tự động"
-                                    value={product.maHangHoa}
-                                    error={errMaHangHoa && wasClickSave}
-                                    helperText={
-                                        errMaHangHoa && wasClickSave
-                                            ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại`
-                                            : ''
-                                    }
-                                    onChange={(event) => {
-                                        setProduct((itemOlds) => {
-                                            return {
-                                                ...itemOlds,
-                                                maHangHoa: event.target.value
-                                            };
-                                        });
-                                        setWasClickSave(false);
-                                    }}
-                                />
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        required
+                                        size="small"
+                                        placeholder="Mã tự động"
+                                        value={product.maHangHoa}
+                                        error={errMaHangHoa && wasClickSave}
+                                        helperText={
+                                            errMaHangHoa && wasClickSave
+                                                ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại`
+                                                : ''
+                                        }
+                                        onChange={(event) => {
+                                            setProduct((itemOlds) => {
+                                                return {
+                                                    ...itemOlds,
+                                                    maHangHoa: event.target.value
+                                                };
+                                            });
+                                            setWasClickSave(false);
+                                        }}
+                                    />
+                                </Stack>
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <span className="modal-lable">
-                                    Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                </span>
-                                <TextField
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    required
-                                    error={wasClickSave && errTenHangHoa}
-                                    helperText={
-                                        wasClickSave && errTenHangHoa
-                                            ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`
-                                            : ''
-                                    }
-                                    value={product.tenHangHoa}
-                                    onChange={(event) => {
-                                        setProduct((itemOlds) => {
-                                            return { ...itemOlds, tenHangHoa: event.target.value };
-                                        });
-                                        setErrTenHangHoa(false);
-                                        setWasClickSave(false);
-                                    }}
-                                />
+                                <Stack spacing={1}>
+                                    <span className="modal-lable">
+                                        Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                    </span>
+                                    <TextField
+                                        variant="outlined"
+                                        size="small"
+                                        fullWidth
+                                        required
+                                        error={wasClickSave && errTenHangHoa}
+                                        helperText={
+                                            wasClickSave && errTenHangHoa
+                                                ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`
+                                                : ''
+                                        }
+                                        value={product.tenHangHoa}
+                                        onChange={(event) => {
+                                            setProduct((itemOlds) => {
+                                                return {
+                                                    ...itemOlds,
+                                                    tenHangHoa: event.target.value
+                                                };
+                                            });
+                                            setErrTenHangHoa(false);
+                                            setWasClickSave(false);
+                                        }}
+                                    />
+                                </Stack>
                             </Grid>
                             <Grid item sx={{ pb: 2 }}>
-                                <span className="modal-lable">
-                                    Nhóm {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                </span>
+                                <Stack spacing={1}>
+                                    <span className="modal-lable">
+                                        Nhóm {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                    </span>
 
-                                <Autocomplete
-                                    size="small"
-                                    fullWidth
-                                    disablePortal
-                                    value={nhomChosed}
-                                    isOptionEqualToValue={(option, value) => option.id === value.id}
-                                    options={dataNhomHang.filter(
-                                        (x: any) => x.id !== null && x.id !== ''
-                                    )}
-                                    onChange={(event, newValue) => handleChangeNhom(newValue)}
-                                    getOptionLabel={(option: any) =>
-                                        option.tenNhomHang ? option.tenNhomHang : ''
-                                    }
-                                    renderInput={(params) => (
-                                        <TextField {...params} placeholder="Chọn nhóm" />
-                                    )}
-                                />
+                                    <Autocomplete
+                                        size="small"
+                                        fullWidth
+                                        disablePortal
+                                        value={nhomChosed}
+                                        isOptionEqualToValue={(option, value) =>
+                                            option.id === value.id
+                                        }
+                                        options={dataNhomHang.filter(
+                                            (x: any) => x.id !== null && x.id !== ''
+                                        )}
+                                        onChange={(event, newValue) => handleChangeNhom(newValue)}
+                                        getOptionLabel={(option: any) =>
+                                            option.tenNhomHang ? option.tenNhomHang : ''
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField {...params} placeholder="Chọn nhóm" />
+                                        )}
+                                    />
+                                </Stack>
                             </Grid>
                             <Grid container sx={{ pb: 2 }} spacing={2}>
                                 <Grid item xs={12} sm={12} md={12} lg={12}>
-                                    <span className="modal-lable">Giá bán</span>
-                                    <NumericFormat
-                                        size="small"
-                                        fullWidth
-                                        value={product.giaBan}
-                                        thousandSeparator={'.'}
-                                        decimalSeparator={','}
-                                        customInput={TextField}
-                                        onChange={(event) => editGiaBan(event)}
-                                    />
+                                    <Stack spacing={1}>
+                                        <span className="modal-lable">Giá bán</span>
+                                        <NumericFormat
+                                            size="small"
+                                            fullWidth
+                                            value={product.giaBan}
+                                            thousandSeparator={'.'}
+                                            decimalSeparator={','}
+                                            customInput={TextField}
+                                            onChange={(event) => editGiaBan(event)}
+                                        />
+                                    </Stack>
                                 </Grid>
                                 {/* <Grid
                                     item
@@ -343,22 +421,24 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </Grid>
 
                             <Grid item sx={{ pb: 2 }}>
-                                <span className="modal-lable">Ghi chú</span>
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    multiline
-                                    rows="2"
-                                    value={product.moTa}
-                                    onChange={(event) =>
-                                        setProduct((itemOlds) => {
-                                            return {
-                                                ...itemOlds,
-                                                moTa: event.target.value
-                                            };
-                                        })
-                                    }
-                                />
+                                <Stack spacing={1}>
+                                    <span className="modal-lable">Ghi chú</span>
+                                    <TextField
+                                        variant="outlined"
+                                        fullWidth
+                                        multiline
+                                        rows="2"
+                                        value={product.moTa}
+                                        onChange={(event) =>
+                                            setProduct((itemOlds) => {
+                                                return {
+                                                    ...itemOlds,
+                                                    moTa: event.target.value
+                                                };
+                                            })
+                                        }
+                                    />
+                                </Stack>
                             </Grid>
                             <Grid item style={{ display: 'none' }}>
                                 <FormGroup>
@@ -396,22 +476,66 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         </Grid>
                         <Grid item xs={12} md={4} sm={4} lg={4}>
                             <Box
-                                display="grid"
+                                // display="grid"
                                 ml={{ xs: 0, sm: 4, md: 4, lg: 4 }}
-                                sx={{ border: '2px dashed #cccc', p: 5 }}
-                                className="text-center">
-                                <Box>
-                                    <InsertDriveFileIcon className="icon-size" />
-                                </Box>
-                                <Box sx={{ pt: 2 }}>
-                                    <CloudDoneIcon
-                                        style={{ paddingRight: '5px', color: 'var(--color-main)' }}
-                                    />
-                                    <Link href="#" underline="always">
-                                        Tải ảnh lên
-                                    </Link>
-                                </Box>
-                                <Typography variant="caption">File định dạng jpeg, png</Typography>
+                                sx={{
+                                    border: '1px solid var(--color-main)',
+                                    p: 1,
+                                    height: 200,
+                                    textAlign: 'center',
+                                    position: 'relative'
+                                }}>
+                                {!utils.checkNull(productImage) ? (
+                                    <Box sx={{ position: 'relative', height: '100%' }}>
+                                        <img
+                                            src={productImage}
+                                            style={{ width: '100%', height: '100%' }}
+                                        />
+                                        <Close
+                                            onClick={() => setProductImage('')}
+                                            sx={{ left: 0, color: 'red', position: 'absolute' }}
+                                        />
+                                    </Box>
+                                ) : (
+                                    <>
+                                        <TextField
+                                            type="file"
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                width: '100%',
+                                                height: '100%',
+                                                opacity: 0,
+                                                '& input': {
+                                                    height: '100%'
+                                                },
+                                                '& div': {
+                                                    height: '100%'
+                                                }
+                                            }}
+                                            onChange={choseImage}
+                                        />
+                                        <Stack spacing={1} paddingTop={2}>
+                                            <Box>
+                                                <InsertDriveFileIcon className="icon-size" />
+                                            </Box>
+
+                                            <Box>
+                                                <CloudDoneIcon
+                                                    style={{
+                                                        paddingRight: '5px',
+                                                        color: 'var(--color-main)'
+                                                    }}
+                                                />
+                                                <Link underline="always">Tải ảnh lên</Link>
+                                            </Box>
+                                            <Typography variant="caption">
+                                                File định dạng jpeg, png
+                                            </Typography>
+                                        </Stack>
+                                    </>
+                                )}
                             </Box>
                         </Grid>
                     </Grid>

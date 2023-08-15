@@ -22,6 +22,7 @@ export class ModelHangHoaDto {
     laDonViTinhChuan?: number = 1;
     idHangHoa?: string;
     laHangHoa?: boolean;
+    image? = '';
 
     donViQuiDois:
         | any[]

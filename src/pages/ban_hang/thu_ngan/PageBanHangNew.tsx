@@ -42,6 +42,7 @@ import HoaDonService from '../../../services/ban_hang/HoaDonService';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import BadgeFistCharOfName from '../../../components/Badge/FistCharOfName';
 
 import { dbDexie } from '../../../lib/dexie/dexieDB';
 
@@ -86,6 +87,7 @@ import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItem
 import MauInServices from '../../../services/mau_in/MauInServices';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { MauInDto } from '../../../services/mau_in/MauInDto';
+import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const chiNhanhCurrent = useContext(ChiNhanhContext);
     const idChiNhanh = Cookies.get('IdChiNhanh');
@@ -102,6 +104,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const [sumTienKhachTra, setSumTienKhachTra] = useState(0);
     const [tienThuaTraKhach, setTienThuaTraKhach] = useState(0);
     const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
+    const [cusChosing, setCusChosing] = useState<CreateOrEditKhachHangDto>();
 
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(
         new PageHoaDonDto({
@@ -254,22 +257,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 const hdctCache = data[0].hoaDonChiTiet ?? [];
                 setHoaDon(data[0]);
                 setHoaDonChiTiet(hdctCache);
-
-                // setPropMauIn((old: any) => {
-                //     return {
-                //         ...old,
-                //         // contentHtml: content,
-                //         hoadon: { ...data[0] },
-                //         khachhang: { ...customerChosed },
-                //         hoadonChiTiet: [...hdctCache],
-                //         chinhanh: {
-                //             ...old.chinhanh,
-                //             tenChiNhanh: 'CTCP SSOFT VIỆT NAM',
-                //             soDienThoai: '0973474985',
-                //             logo: logo
-                //         }
-                //     };
-                // });
             }
         } else {
             // asisgn hoadon
@@ -285,6 +272,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             });
         }
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: customerChosed?.idCheckIn });
+        await GetSetCusChosing(customerChosed.idKhachHang);
+    };
+
+    const GetSetCusChosing = async (idCus: string) => {
+        const dataCus = await khachHangService.getKhachHang(idCus);
+        setCusChosing(dataCus);
     };
 
     const updateCurrentInvoice = async () => {
@@ -592,6 +585,24 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
             await dbDexie.khachCheckIn.add(cusChecking);
             setTriggerAddCheckIn({ ...triggerAddCheckIn, id: dataCheckIn.id });
+
+            setCusChosing({
+                ...cusChosing,
+                id: item?.id,
+                maKhachHang: item?.maKhachHang,
+                tenKhachHang: item?.tenKhachHang,
+                tongTichDiem: item?.tongTichDiem,
+                avatar: item?.avatar ?? ''
+            } as CreateOrEditKhachHangDto);
+        } else {
+            setCusChosing({
+                ...cusChosing,
+                id: '',
+                maKhachHang: 'KL',
+                tenKhachHang: 'Khách lẻ',
+                tongTichDiem: 0,
+                avatar: ''
+            } as CreateOrEditKhachHangDto);
         }
 
         await updateCache_IfChangeCus(cusChecking);
@@ -616,6 +627,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
     const showModalEditCus = async () => {
         if (Object.keys(newCus)) {
+            // check object empty
             // used to first load --> not changeCus
             const dataCus = await khachHangService.getKhachHang(hoadon?.idKhachHang ?? '');
             setNewCus(dataCus);
@@ -686,6 +698,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         }
 
         await updateCache_IfChangeCus(cusChecking);
+
+        await GetSetCusChosing(dataCheckIn.idKhachHang);
     };
 
     // end cutomer
@@ -875,6 +889,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             })
         );
         setTriggerAddCheckIn({ ...triggerAddCheckIn, id: '' });
+        setCusChosing({
+            ...cusChosing,
+            id: '',
+            maKhachHang: 'KL',
+            tenKhachHang: 'Khách lẻ',
+            tongTichDiem: 0,
+            avatar: ''
+        } as CreateOrEditKhachHangDto);
         await RemoveCache();
     };
 
@@ -1490,15 +1512,21 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 paddingBottom: '16px'
                             }}>
                             <Box display="flex" gap="8px" alignItems="center">
-                                <Avatar
-                                    src={
-                                        utils.checkNull(hoadon?.idKhachHang) ||
-                                        hoadon?.idKhachHang === Guid.EMPTY
-                                            ? ''
-                                            : avatar
-                                    }
-                                    sx={{ width: 40, height: 40 }}
-                                />
+                                {utils.checkNull(cusChosing?.id) ||
+                                cusChosing?.id === Guid.EMPTY ? (
+                                    <Avatar sx={{ width: 40, height: 40 }} />
+                                ) : utils.checkNull(cusChosing?.avatar) ? (
+                                    <BadgeFistCharOfName
+                                        firstChar={utils.getFirstLetter(
+                                            cusChosing?.tenKhachHang ?? ''
+                                        )}
+                                    />
+                                ) : (
+                                    <Avatar
+                                        sx={{ width: 40, height: 40 }}
+                                        src={cusChosing?.avatar}
+                                    />
+                                )}
 
                                 <Box onClick={showModalCheckIn}>
                                     <Typography variant="body2" fontSize="14px" color="#3D475C">
