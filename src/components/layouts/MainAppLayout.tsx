@@ -4,12 +4,13 @@ import Header from '../Header';
 import AppSiderMenu from '../SiderMenu/index';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
-import loginService from '../../services/login/loginService';
+import http from '../../services/httpService';
+import sessionStore from '../../stores/sessionStore';
+import { Drawer, useMediaQuery } from '@mui/material';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
@@ -28,7 +29,32 @@ const MainAppLayout: React.FC = () => {
         id: '',
         tenChiNhanh: ''
     });
-
+    const getPermissions = () => {
+        const userId = Cookies.get('userId');
+        const token = Cookies.get('accessToken');
+        const encryptedAccessToken = Cookies.get('encryptedAccessToken');
+        if (userId !== undefined && userId !== null && token !== undefined && token !== null) {
+            http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
+                headers: {
+                    accept: 'text/plain',
+                    Authorization: 'Bearer ' + token,
+                    'X-XSRF-TOKEN': encryptedAccessToken
+                }
+            })
+                .then((response) => {
+                    sessionStore.listPermisson = response.data.result['permissions'];
+                    const item = {
+                        value: response.data.result['permissions']
+                    };
+                    localStorage.setItem('permissions', JSON.stringify(item));
+                })
+                .catch((error) => console.log(error));
+        }
+    };
+    useEffect(() => {
+        // Call API to get list of permissions here
+        getPermissions();
+    }, []);
     const [open, setOpen] = React.useState(!isAuthenticated);
     const navigate = useNavigate();
     useEffect(() => {
@@ -70,7 +96,6 @@ const MainAppLayout: React.FC = () => {
     const changeChiNhanh = (item: SuggestChiNhanhDto) => {
         setChiNhanhCurrent(item);
     };
-
     return (
         <Container maxWidth={false} disableGutters={true}>
             <AppSiderMenu
@@ -79,9 +104,10 @@ const MainAppLayout: React.FC = () => {
                 onHoverChange={handleChildHoverChange}
                 CookieSidebar={CookieSidebar}
             />
+
             <Box
                 sx={{
-                    marginLeft: !collapsed ? '240px' : '72px',
+                    marginLeft: !collapsed ? '240px' : '0px',
                     transition: '.4s'
                 }}>
                 <Header
@@ -94,10 +120,11 @@ const MainAppLayout: React.FC = () => {
                 />
                 <Box
                     sx={{
-                        border: 'solid 0.1rem #e6e1e6',
+                        borderBottom: 'solid 0.1rem #e6e1e6',
+                        borderRight: 'solid 0.1rem #e6e1e6',
+                        borderLeft: 'solid 0.1rem #e6e1e6',
                         marginTop: '70px',
                         minHeight: 'calc(100vh - 70px)',
-
                         bgcolor: 'rgba(248,248,248,1)'
                     }}>
                     <ChiNhanhContext.Provider value={chinhanhCurrent}>

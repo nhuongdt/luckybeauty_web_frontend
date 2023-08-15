@@ -197,7 +197,7 @@ const Header: React.FC<HeaderProps> = (
             sx={{ position: 'fixed', right: '0', top: '0', zIndex: 20 }}>
             {' '}
             <Grid container className={'header-container'} justifyContent="space-between">
-                <Grid item sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
+                <Grid item xs={6} sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
                     <Box display="flex" gap="8px" marginLeft="16px">
                         <LogoNew />
                         <Typography
@@ -251,8 +251,10 @@ const Header: React.FC<HeaderProps> = (
                         />
                     </Button>
                 </Grid>
-                <Grid item sx={{ textAlign: 'right' }}>
-                    <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center' }}>
+                <Grid item xs={6} sx={{ textAlign: 'right', float: 'right' }}>
+                    <Box
+                        display="flex"
+                        sx={{ marginRight: '30px', alignItems: 'center', justifyContent: 'end' }}>
                         <Box display="flex">
                             <LocationIcon />
                             <Select
