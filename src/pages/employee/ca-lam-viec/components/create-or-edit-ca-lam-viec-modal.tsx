@@ -32,6 +32,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
         const { visible, onCancel, title, createOrEditDto } = this.props;
         const initValues = createOrEditDto;
         const handleSubmit = async (values: CreateOrEditCaLamViecDto) => {
+            values.id = createOrEditDto.id;
             const createOrEdit = await caLamViecService.ceateOrEdit(values);
             createOrEdit != null
                 ? values.id === AppConsts.guidEmpty || values.id === ''
@@ -52,7 +53,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
         const date = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="md">
-                <DialogTitle width={648}>
+                <DialogTitle>
                     <div className="row">
                         <Box
                             className="col-8"
@@ -74,7 +75,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                         </Box>
                     </div>
                 </DialogTitle>
-                <DialogContent sx={{ paddingBottom: '0', width: 648 }}>
+                <DialogContent sx={{ paddingBottom: '0' }}>
                     <Formik initialValues={initValues} onSubmit={handleSubmit}>
                         {({ values, handleChange }) => (
                             <Form
@@ -83,50 +84,43 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Field as={TextField} type="text" name="id" hidden />
-                                <TextField
-                                    className="mt-2"
-                                    value={values.maCa}
-                                    type="text"
-                                    name="maCa"
-                                    size="small"
-                                    disabled
-                                    hidden
-                                />
-                                <FormGroup>
-                                    <FormLabel className="modal-lable">Tên ca</FormLabel>
-                                    <TextField
-                                        className="mt-2"
-                                        value={values.tenCa}
-                                        type="text"
-                                        name="tenCa"
-                                        size="small"
-                                        onChange={handleChange}
-                                        placeholder="Nhập tên ca"
-                                    />
-                                </FormGroup>
-                                <FormControlLabel
-                                    sx={{
-                                        '& .MuiFormControlLabel-label': {
-                                            fontSize: '13px!important'
-                                        }
-                                    }}
-                                    control={
-                                        <Checkbox
-                                            sx={{
-                                                color: 'var(--color-main)!important'
-                                            }}
-                                        />
-                                    }
-                                    label="Không cố định thời gian"
-                                />
                                 <Grid
                                     container
                                     direction="row"
                                     spacing={2}
                                     alignItems="center"
+                                    maxWidth={'100%'}
                                     className="mt-2">
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={12}>
+                                        <FormGroup>
+                                            <FormLabel className="modal-lable">Tên ca</FormLabel>
+                                            <TextField
+                                                className="mt-2"
+                                                value={values.tenCa}
+                                                type="text"
+                                                name="tenCa"
+                                                size="small"
+                                                onChange={handleChange}
+                                                placeholder="Nhập tên ca"
+                                            />
+                                        </FormGroup>
+                                        <FormControlLabel
+                                            sx={{
+                                                '& .MuiFormControlLabel-label': {
+                                                    fontSize: '13px!important'
+                                                }
+                                            }}
+                                            control={
+                                                <Checkbox
+                                                    sx={{
+                                                        color: 'var(--color-main)!important'
+                                                    }}
+                                                />
+                                            }
+                                            label="Không cố định thời gian"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={6} sm={6}>
                                         <FormGroup>
                                             <FormLabel className="modal-lable">
                                                 Bắt đầu ca
@@ -142,7 +136,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             />
                                         </FormGroup>
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6}>
                                         <FormGroup>
                                             <FormLabel className="modal-lable">
                                                 Kết thúc ca
@@ -219,21 +213,23 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         zIndex: '5'
                                     }}>
                                     <Button
-                                        variant="contained"
-                                        type="submit"
-                                        className="btn-container-hover">
-                                        Lưu
-                                    </Button>
-                                    <Button
                                         sx={{
                                             color: 'var(--color-main)!important',
-                                            bgcolor: '#fff!important'
+                                            bgcolor: '#fff!important',
+                                            height: '40px'
                                         }}
                                         variant="outlined"
                                         type="button"
                                         onClick={onCancel}
                                         className="btn-cancel-dialog btn-outline-hover">
                                         Hủy
+                                    </Button>
+                                    <Button
+                                        sx={{ height: '40px' }}
+                                        variant="contained"
+                                        type="submit"
+                                        className="btn-container-hover">
+                                        Lưu
                                     </Button>
                                 </DialogActions>
                             </Form>

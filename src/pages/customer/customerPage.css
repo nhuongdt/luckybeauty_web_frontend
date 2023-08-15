@@ -162,9 +162,10 @@
 
 .poppup-title {
     font-size: 24px;
-    line-height: 32px;
-    color: #4c4b4c;
+    font-family: Roboto;
+    color: #3D475C;
     font-weight: 700;
+    font-style: normal;
 }
 
 .poppup-des {

@@ -7,7 +7,8 @@ import {
     FormControlLabel,
     Checkbox,
     InputAdornment,
-    IconButton
+    IconButton,
+    Typography
 } from '@mui/material';
 import './login.css';
 import LoginModel from '../../../models/Login/loginModel';
@@ -73,15 +74,22 @@ const LoginScreen: React.FC = () => {
             <Grid container className="align-items-center justify-content-center mt-2 h-100">
                 <Grid xs={12}>
                     <div className="login-page-inner">
-                        <div className="logo-login">
+                        <div className="logo-login" style={{ padding: '12px 0px' }}>
                             <div className="logo-image">
                                 <img src={logo} alt="Lucky Beauty" />
                             </div>
                             <div className="logo-text">Lucky Beauty</div>
                         </div>
-                        <h1 className="login-label" style={{ marginBottom: '10px' }}>
+                        <Typography
+                            sx={{
+                                textAlign: 'center',
+                                fontSize: '24px',
+                                color: '#00284C',
+                                fontWeight: 700,
+                                fontFamily: 'Roboto'
+                            }}>
                             Đăng nhập
-                        </h1>
+                        </Typography>
                         <form className="login-form" onSubmit={formik.handleSubmit}>
                             <Grid container>
                                 <span className="login-label">ID đăng nhập</span>

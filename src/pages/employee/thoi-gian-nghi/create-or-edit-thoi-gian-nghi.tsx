@@ -36,6 +36,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
         };
 
         const handleSubmit = async (values: CreateOrEditNgayNghiLeDto) => {
+            values.id = createOrEditDto.id;
             const createOrEdit = await ngayNghiLeService.createOrEdit(values);
             createOrEdit != null
                 ? values.id === AppConsts.guidEmpty || values.id === ''
@@ -87,25 +88,28 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Field as={TextField} type="text" name="id" hidden />
-                                <FormGroup>
-                                    <FormLabel className="modal-lable">Tên ngày lễ</FormLabel>
-                                    <TextField
-                                        className="mt-2"
-                                        value={values.tenNgayLe}
-                                        type="text"
-                                        name="tenNgayLe"
-                                        size="small"
-                                        onChange={handleChange}
-                                        placeholder="Nhập tên ngày lễ"
-                                    />
-                                </FormGroup>
                                 <Grid
                                     container
                                     direction="row"
                                     spacing={2}
                                     alignItems="center"
                                     className="mt-2">
+                                    <Grid item xs={12} sm={6}>
+                                        <FormGroup>
+                                            <FormLabel className="modal-lable">
+                                                Tên ngày lễ
+                                            </FormLabel>
+                                            <TextField
+                                                className="mt-2"
+                                                value={values.tenNgayLe}
+                                                type="text"
+                                                name="tenNgayLe"
+                                                size="small"
+                                                onChange={handleChange}
+                                                placeholder="Nhập tên ngày lễ"
+                                            />
+                                        </FormGroup>
+                                    </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
                                             <FormLabel className="modal-lable">Từ ngày</FormLabel>

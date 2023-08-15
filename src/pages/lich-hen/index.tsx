@@ -42,11 +42,13 @@ const LichHen: React.FC = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [idBooking, setIdBooking] = useState<string>('');
     const [dateView, setDateView] = useState('');
-    const [connection, setConnection] = useState<any>(null);
+    const [connection, setConnection] = useState<signalR.HubConnection>();
     const getData = async () => {
         bookingStore.selectedDate = new Date();
         bookingStore.typeView = Cookies.get('Tab-lich-hen') ?? 'week';
         await bookingStore.getData();
+    };
+    const suggestData = async () => {
         await suggestStore.getSuggestKhachHang();
         await suggestStore.getSuggestKyThuatVien();
         await suggestStore.getSuggestDichVu();
@@ -87,35 +89,32 @@ const LichHen: React.FC = () => {
     useEffect(() => {
         getCurrentDateInVietnamese(new Date());
         getData();
+        suggestData();
     }, [chinhanh.id]);
     const handleSubmit = async () => {
         await getData();
         setModalVisible(!modalVisible);
     };
     useEffect(() => {
-        const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'booking')
-            .withAutomaticReconnect()
-            .build();
-
-        setConnection(newConnection);
-
-        newConnection
-            .start()
-            .then(() => {
-                console.log('SignalR connected');
-                newConnection.on('ReceiveBookingData', (data: any) => {
-                    console.log(JSON.stringify(data));
-                    bookingStore.listBooking = data;
-                });
-            })
-            .catch((err: any) => console.error('SignalR connection error: ', err));
-
-        return () => {
-            newConnection.off('ReceiveBookingData');
-            newConnection.stop();
-        };
+        createHubConnection();
     }, []);
+
+    const createHubConnection = async () => {
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'bookingHub') // Điều chỉnh URL hub tại đây
+            .build();
+        try {
+            await newConnection.start();
+            console.log('SignalR connected');
+            setConnection(newConnection);
+            newConnection.on('RecieiveAppointment', () => {
+                getData();
+            });
+        } catch (e) {
+            console.error('SignalR connection error: ', e);
+        }
+    };
+
     const getCurrentDateInVietnamese = (date: Date) => {
         const daysOfWeek = [
             'Chủ nhật',
@@ -210,6 +209,7 @@ const LichHen: React.FC = () => {
                         gap: '8px'
                     }}>
                     <Button
+                        onClick={createHubConnection}
                         variant="outlined"
                         className="btn-outline-hover"
                         sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>

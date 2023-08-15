@@ -126,7 +126,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Grid container spacing={[8, 3]}>
+                                <Grid container>
                                     <Grid item xs={12} sm={5} sx={{ pr: '20px' }}>
                                         {/* <FormGroup> */}
                                         <Autocomplete
@@ -145,7 +145,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 <div
                                                     style={{
                                                         display: 'flex',
-                                                        alignItems: 'center'
+                                                        alignItems: 'center',
+                                                        gap: '8px'
                                                     }}>
                                                     <TextField
                                                         {...params}
@@ -171,8 +172,15 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         sx={{
                                                             color: 'var(--color-main)',
                                                             '& svg': {
-                                                                filter: 'var(--color-hoverIcon)'
-                                                            }
+                                                                filter: 'var(--color-hoverIcon)',
+                                                                width: '24px',
+                                                                height: '24px'
+                                                            },
+                                                            minWidth: '40px',
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            borderRadius: '8px',
+                                                            border: '1px solid #319DFF'
                                                         }}
                                                         onClick={this.onOpenKhachHangModal}>
                                                         <AddIcon />
@@ -216,7 +224,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         item
                                         xs={12}
                                         sm={7}
-                                        rowSpacing={4}
                                         sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
                                         <FormGroup className="mt-4 mb-1">
                                             <Typography

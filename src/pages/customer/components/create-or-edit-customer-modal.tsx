@@ -10,7 +10,10 @@ import {
     TextField,
     TextareaAutosize,
     Typography,
-    Dialog
+    Dialog,
+    RadioGroup,
+    FormControlLabel,
+    Radio
 } from '@mui/material';
 import useWindowWidth from '../../../components/StateWidth';
 import fileIcon from '../../../images/file.svg';
@@ -170,28 +173,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <Typography color="#4C4B4C" variant="subtitle2">
-                                                Giới tính
-                                            </Typography>
-                                            <Select
-                                                id="gender"
-                                                fullWidth
-                                                value={values.gioiTinh ? 'true' : 'false'}
-                                                name="gioiTinh"
-                                                onChange={handleChange}
-                                                sx={{
-                                                    height: '42px',
-                                                    backgroundColor: '#fff',
-                                                    padding: '0',
-                                                    fontSize: '16px',
-                                                    borderColor: '#E6E1E6'
-                                                }}>
-                                                <MenuItem value="">Lựa chọn</MenuItem>
-                                                <MenuItem value="false">Nữ</MenuItem>
-                                                <MenuItem value="true">Nam</MenuItem>
-                                            </Select>
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <Typography color="#4C4B4C" variant="subtitle2">
                                                 Nhóm khách
                                             </Typography>
                                             <Autocomplete
@@ -242,6 +223,34 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     />
                                                 )}
                                             />
+                                        </Grid>
+                                        <Grid item xs={12} sm={6}>
+                                            <Typography color="#4C4B4C" variant="subtitle2">
+                                                Giới tính
+                                            </Typography>
+                                            <RadioGroup
+                                                onChange={handleChange}
+                                                row
+                                                defaultValue={'true'}
+                                                value={values.gioiTinh}
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="gioiTinh">
+                                                <FormControlLabel
+                                                    value="true"
+                                                    control={<Radio />}
+                                                    label="Nam"
+                                                />
+                                                <FormControlLabel
+                                                    value="false"
+                                                    control={<Radio />}
+                                                    label="Nữ"
+                                                />
+                                                <FormControlLabel
+                                                    value=""
+                                                    control={<Radio />}
+                                                    label="Khác"
+                                                />
+                                            </RadioGroup>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Typography color="#4C4B4C" variant="subtitle2">
