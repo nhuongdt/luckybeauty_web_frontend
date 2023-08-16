@@ -34,6 +34,7 @@ import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
 import { Close } from '@mui/icons-material';
 import Cookies from 'js-cookie';
+import uploadFileService from '../../services/uploadFileService';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -64,7 +65,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     image: ''
                 };
             });
-            GetFile_fromFireBase(obj.image);
+            // GetFile_fromFireBase(obj.image);
+            const linkImg = uploadFileService.GetLinkFileOnDrive_byFileId(obj.image);
+            setProductImage(linkImg);
 
             // find nhomhang
             const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);
@@ -162,21 +165,16 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
 
     const [fileImage, setFileImage] = useState<File>({} as File);
 
-    const choseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = () => {
-                // const avatar = {
-                //     fileBase64: reader.result?.toString().split(',')[1] ?? '',
-                //     fileName: file.name,
-                //     fileType: file.type
-                // };
                 setProductImage(reader.result?.toString() ?? '');
             };
+            console.log('file ', file);
             setFileImage(file);
-            setProduct({ ...product, image: `/${tenantName}/product_image/${file.name}` });
         }
     };
 
@@ -224,13 +222,15 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (!check) {
             return;
         }
-        UploadFile_toFireBase();
+        console.log('fileImage ', fileImage);
+        const fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage);
+
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
         objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
-        console.log('objNew ', objNew);
+        objNew.image = fileId;
         objNew.donViQuiDois = [
             {
                 id: objNew.idDonViQuyDoi,
@@ -324,8 +324,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             <Grid item sx={{ pb: 2 }}>
                                 <Stack spacing={1}>
                                     <span className="modal-lable">
-                                        Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                        Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}{' '}
+                                        <span style={{ color: 'red' }}>*</span>
                                     </span>
+
                                     <TextField
                                         variant="outlined"
                                         size="small"

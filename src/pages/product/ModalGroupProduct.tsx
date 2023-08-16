@@ -14,7 +14,7 @@ import {
     Typography,
     Checkbox,
     FormGroup,
-    FormControlLabel
+    Stack
 } from '@mui/material';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -276,82 +276,92 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </FormGroup>
                         </Grid> */}
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <span className="modal-lable">
-                                Tên {groupProduct.sLoaiNhomHang}{' '}
-                                <span style={{ color: 'red' }}>*</span>
-                            </span>
+                            <Stack spacing={1}>
+                                <span className="modal-lable">
+                                    Tên {groupProduct.sLoaiNhomHang}{' '}
+                                    <span style={{ color: 'red' }}>*</span>
+                                </span>
 
-                            <TextField
-                                variant="outlined"
-                                size="small"
-                                fullWidth
-                                required
-                                value={groupProduct.tenNhomHang}
-                                error={errTenNhom && wasClickSave}
-                                helperText={
-                                    errTenNhom && wasClickSave ? 'Tên nhóm không được để trống' : ''
-                                }
-                                onChange={(event) => {
-                                    setGroupProduct((olds: any) => {
-                                        return { ...olds, tenNhomHang: event.target.value };
-                                    });
-                                    setErrTenNhom(false);
-                                    setWasClickSave(false);
-                                }}
-                            />
+                                <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    required
+                                    value={groupProduct.tenNhomHang}
+                                    error={errTenNhom && wasClickSave}
+                                    helperText={
+                                        errTenNhom && wasClickSave
+                                            ? 'Tên nhóm không được để trống'
+                                            : ''
+                                    }
+                                    onChange={(event) => {
+                                        setGroupProduct((olds: any) => {
+                                            return { ...olds, tenNhomHang: event.target.value };
+                                        });
+                                        setErrTenNhom(false);
+                                        setWasClickSave(false);
+                                    }}
+                                />
+                            </Stack>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <span className="modal-lable">Nhóm gốc</span>
+                            <Stack spacing={1}>
+                                <span className="modal-lable">Nhóm gốc</span>
 
-                            <Autocomplete
-                                size="small"
-                                fullWidth
-                                disablePortal
-                                multiple={false}
-                                value={nhomGoc}
-                                onChange={(event: any, newValue: any) => {
-                                    handleChangeNhomGoc(newValue);
-                                }}
-                                options={dataNhomHangFilter}
-                                getOptionLabel={(option: any) =>
-                                    option.tenNhomHang ? option.tenNhomHang : ''
-                                }
-                                renderInput={(params) => <TextField {...params} />}
-                            />
+                                <Autocomplete
+                                    size="small"
+                                    fullWidth
+                                    disablePortal
+                                    multiple={false}
+                                    value={nhomGoc}
+                                    onChange={(event: any, newValue: any) => {
+                                        handleChangeNhomGoc(newValue);
+                                    }}
+                                    options={dataNhomHangFilter}
+                                    getOptionLabel={(option: any) =>
+                                        option.tenNhomHang ? option.tenNhomHang : ''
+                                    }
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </Stack>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <span className="modal-lable">Màu sắc</span>
-                            <TextField
-                                size="small"
-                                onClick={() => setColorToggle(!colorToggle)}
-                                fullWidth
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Box
-                                                className="grid-color"
-                                                sx={{ bgcolor: groupProduct.color }}></Box>
-                                        </InputAdornment>
-                                    )
-                                }}
-                                variant="outlined"
-                            />
-                            {colorToggle && <GridColor handleChoseColor={changeColor} />}
+                            <Stack spacing={1}>
+                                <span className="modal-lable">Màu sắc</span>
+                                <TextField
+                                    size="small"
+                                    onClick={() => setColorToggle(!colorToggle)}
+                                    fullWidth
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Box
+                                                    className="grid-color"
+                                                    sx={{ bgcolor: groupProduct.color }}></Box>
+                                            </InputAdornment>
+                                        )
+                                    }}
+                                    variant="outlined"
+                                />
+                                {colorToggle && <GridColor handleChoseColor={changeColor} />}
+                            </Stack>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <span className="modal-lable">Mô tả</span>
-                            <TextField
-                                variant="outlined"
-                                fullWidth
-                                multiline
-                                rows={2}
-                                value={groupProduct.moTa || ''}
-                                onChange={(event) =>
-                                    setGroupProduct((olds: any) => {
-                                        return { ...olds, moTa: event.target.value };
-                                    })
-                                }
-                            />
+                            <Stack spacing={1}>
+                                <span className="modal-lable">Mô tả</span>
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    multiline
+                                    rows={2}
+                                    value={groupProduct.moTa || ''}
+                                    onChange={(event) =>
+                                        setGroupProduct((olds: any) => {
+                                            return { ...olds, moTa: event.target.value };
+                                        })
+                                    }
+                                />
+                            </Stack>
                         </Grid>
                     </Grid>
                 </DialogContent>

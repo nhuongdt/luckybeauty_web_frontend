@@ -375,15 +375,11 @@ export default function PageProductNew() {
 
             minWidth: 100,
             flex: 1,
-            renderCell: (params) => (
-                <Typography
-                    fontSize="12px"
-                    variant="body2"
-                    color="#333233"
-                    sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value || ''}
-                </Typography>
-            ),
+            // renderCell: (params) => (
+            //     <Box color="#333233" sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            //         {params.value || ''}
+            //     </Box>
+            // ),
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
@@ -395,18 +391,6 @@ export default function PageProductNew() {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
             minWidth: 250,
-            renderCell: (params) => (
-                <Box display="flex" width="100%">
-                    <Typography
-                        fontSize="12px"
-                        variant="body2"
-                        color="#333233"
-                        title={params.value || ''}
-                        sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                        {params.value}
-                    </Typography>
-                </Box>
-            ),
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
                     {params.colDef.headerName}
@@ -429,14 +413,11 @@ export default function PageProductNew() {
         {
             field: 'giaBan',
             headerName: 'Giá bán',
-
             minWidth: 100,
             flex: 1,
             renderCell: (params) => (
                 <Box display="flex" justifyContent="end" width="100%">
-                    <Typography variant="body2" color="#333233" fontSize="12px">
-                        {new Intl.NumberFormat('vi-VN').format(params.value)}
-                    </Typography>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             ),
             renderHeader: (params) => (
@@ -473,8 +454,7 @@ export default function PageProductNew() {
             minWidth: 130,
             flex: 1,
             renderCell: (params) => (
-                <Typography
-                    variant="body2"
+                <Box
                     sx={{
                         fontSize: '12px',
                         padding: '4px 8px',
@@ -483,7 +463,7 @@ export default function PageProductNew() {
                         color: params.row.trangThai === 0 ? '#b16827' : '#009EF7'
                     }}>
                     {params.value || ''}
-                </Typography>
+                </Box>
             ),
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>
@@ -692,9 +672,6 @@ export default function PageProductNew() {
                                     border: 'none!important',
                                     '& .MuiDataGrid-iconButtonContainer': {
                                         display: 'none'
-                                    },
-                                    '& .MuiDataGrid-cellContent': {
-                                        fontSize: '12px'
                                     },
                                     '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                         outline: 'none!important'
