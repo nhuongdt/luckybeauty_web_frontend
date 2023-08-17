@@ -579,9 +579,6 @@ const PageSoQuy = ({ xx }: any) => {
                             '& .MuiDataGrid-columnHeaders .MuiBox-root ': {
                                 fontWeight: '700'
                             },
-                            '& .MuiDataGrid-virtualScroller  .MuiBox-root ': {
-                                fontSize: '12px'
-                            },
                             '& .MuiDataGrid-columnHeaderCheckbox:focus': {
                                 outline: 'none!important'
                             },
