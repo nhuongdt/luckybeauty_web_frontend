@@ -25,7 +25,7 @@ class NhanVienDichVuTab extends Component<NhanVienProps> {
                     <Grid item xs={5}>
                         <Typography>Nhân viên</Typography>
                         <RadioGroup>
-                            {this.props.suggestKyThuatVien.map((item) => {
+                            {this.props.suggestKyThuatVien?.map((item) => {
                                 return (
                                     <FormControlLabel
                                         control={<Radio />}
@@ -39,7 +39,7 @@ class NhanVienDichVuTab extends Component<NhanVienProps> {
                     <Grid item xs={7}>
                         <Typography>Dịch vụ</Typography>
                         <FormGroup>
-                            {this.props.suggestDichVu.map((item) => {
+                            {this.props.suggestDichVu?.map((item) => {
                                 return (
                                     <FormControlLabel
                                         value={item.id}

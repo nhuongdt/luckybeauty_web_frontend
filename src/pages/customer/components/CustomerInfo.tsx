@@ -275,11 +275,11 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                               variant: 'error',
                               autoHideDuration: 3000
                           });
-                    setIsShowEditKhachHang(!isShowDeleteKhachHang);
+                    setIsShowDeleteKhachHang(!isShowDeleteKhachHang);
                     window.location.href = '/khach-hangs';
                 }}
                 onCancel={() => {
-                    setIsShowEditKhachHang(!isShowDeleteKhachHang);
+                    setIsShowDeleteKhachHang(!isShowDeleteKhachHang);
                 }}></ConfirmDelete>
         </Box>
     );

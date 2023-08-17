@@ -200,7 +200,7 @@ class UserScreen extends AppComponentBase {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
@@ -228,7 +228,7 @@ class UserScreen extends AppComponentBase {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
@@ -253,7 +253,7 @@ class UserScreen extends AppComponentBase {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
@@ -285,7 +285,7 @@ class UserScreen extends AppComponentBase {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}

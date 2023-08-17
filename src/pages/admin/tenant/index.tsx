@@ -198,7 +198,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
@@ -223,7 +223,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}

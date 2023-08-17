@@ -27,6 +27,7 @@ class OverView extends Component {
                             display={'flex'}
                             width={'100%'}
                             flexDirection={'row'}
+                            bgcolor={'#FFF'}
                             sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={86}
@@ -86,6 +87,7 @@ class OverView extends Component {
                             padding={'32px 24px'}
                             display={'flex'}
                             flexDirection={'row'}
+                            bgcolor={'#FFF'}
                             sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={56}
@@ -149,6 +151,7 @@ class OverView extends Component {
                             padding={'32px 24px'}
                             display={'flex'}
                             flexDirection={'row'}
+                            bgcolor={'#FFF'}
                             sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={56}
@@ -211,6 +214,7 @@ class OverView extends Component {
                             padding={'32px 24px'}
                             display={'flex'}
                             flexDirection={'row'}
+                            bgcolor={'#FFF'}
                             sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={56}

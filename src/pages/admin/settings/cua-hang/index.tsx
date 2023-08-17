@@ -74,7 +74,7 @@ class StoreDetail extends Component {
 
         return (
             <Box bgcolor="#fff" padding="24px" borderRadius="8px">
-                <Box display={'flex'} justifyContent={'space-between'}>
+                <Box display={'flex'} justifyContent={'space-between'} marginBottom={'16px'}>
                     <Typography
                         variant="h2"
                         fontSize="24px"
@@ -92,9 +92,7 @@ class StoreDetail extends Component {
                             textTransform: 'unset',
                             fontSize: '14px',
                             fontWeight: '400',
-                            ml: 'auto',
-
-                            mt: '16px'
+                            ml: 'auto'
                         }}
                         className="btn-container-hover">
                         Cập nhật
@@ -102,7 +100,7 @@ class StoreDetail extends Component {
                 </Box>
 
                 <Grid container spacing={2}>
-                    <Grid item xs={4}>
+                    <Grid item xs={12} sm={4}>
                         <Box padding="20px" border="1px solid #E6E1E6" borderRadius="8px">
                             <Typography
                                 variant="body1"
@@ -161,7 +159,8 @@ class StoreDetail extends Component {
                     </Grid>
                     <Grid
                         item
-                        xs={8}
+                        xs={12}
+                        sm={8}
                         sx={{
                             display: 'flex',
                             flexDirection: 'column',

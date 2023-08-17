@@ -196,13 +196,13 @@ class RoleScreen extends React.Component<IRoleProps> {
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }} title={params.value}>
+                    <Box sx={{ fontWeight: '700', textAlign: 'left' }} title={params.value}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box width="100%" textAlign="center" fontSize="13px">
+                    <Box width="100%" textAlign="left" fontSize="13px">
                         {params.value}
                     </Box>
                 )
@@ -213,7 +213,9 @@ class RoleScreen extends React.Component<IRoleProps> {
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
+                    <Box
+                        sx={{ fontWeight: '700', textAlign: 'left' }}
+                        title={params.colDef.headerName}>
                         {params.colDef.headerName}
                         <IconSorting className="custom-icon" />{' '}
                     </Box>

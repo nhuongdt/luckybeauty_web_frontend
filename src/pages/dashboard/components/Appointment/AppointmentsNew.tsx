@@ -14,7 +14,10 @@ const AppoimentsNew: React.FC = () => {
             {datas.length > 0 ? (
                 datas.map((data) => {
                     return (
-                        <Box display={'flex'} justifyContent={'space-between'}>
+                        <Box
+                            display={'flex'}
+                            justifyContent={'space-between'}
+                            borderBottom={'1px solid #EEF0F4'}>
                             <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                 <Avatar src={data.avatar} />
                                 <Box

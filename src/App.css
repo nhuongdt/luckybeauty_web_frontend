@@ -217,7 +217,7 @@ body .font-normal {
 
 .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root {
     width: 100%;
-    text-align: center;
+    text-align: left;
 }
 
 .MuiRadio-root.Mui-checked {

@@ -260,8 +260,37 @@ export const appRouters: AppRouteProps = {
                     name: 'dichvu',
                     showInMenu: true,
                     isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/product/pageProductNew'))
+                    children: [
+                        {
+                            path: '/danh-sach-dich-vus',
+                            permission: '',
+                            title: 'Dịch vụ',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            name: 'dichvu',
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(
+                                () => import('../../pages/product/pageProductNew')
+                            )
+                        },
+                        {
+                            path: '/cai-dat-dich-vu-nhan-vien',
+                            permission: '',
+                            title: 'Dịch vụ - Nhân viên',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            name: 'dichvunhanvien',
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(
+                                () => import('../../pages/dichvu_nhanvien')
+                            )
+                        }
+                    ],
+                    component: null
                 },
                 {
                     path: '/thu-chi',
