@@ -16,21 +16,24 @@
     font-weight: 700;
     font-size: 16px;
     line-height: 24px;
-
     color: #ffffff;
 }
+
 .login-page .MuiFormLabel-root {
     font-size: 14px !important;
 }
+
 .login-page input {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border: 0;
     border-radius: 6px;
 }
+
 h1.login-label {
     margin-top: 32px;
 }
+
 .login-label {
     -ms-flex-line-pack: center;
     align-content: center;
@@ -41,7 +44,6 @@ h1.login-label {
     font-weight: 500;
     font-size: 14px;
     line-height: 14px;
-
     color: var(--color-title);
 }
 
@@ -110,7 +112,6 @@ h1.login-label {
     padding: 40px 24px;
     -webkit-box-shadow: 0px 4px 20px 0px rgba(170, 169, 184, 0.1);
     box-shadow: 0px 4px 20px 0px rgba(170, 169, 184, 0.1);
-
     border-radius: 12px;
     background-color: #fff;
     padding-bottom: 48px;
@@ -162,8 +163,7 @@ h1.login-label {
     font-size: 14px !important;
     color: #999699;
     background: #f2f6fa;
-    border: 0;
-    padding: 12px 20px;
+    border: 0 !important;
 }
 
 .login-page #password {
@@ -189,12 +189,6 @@ h1.login-label {
     font-size: 14px;
     color: #666466;
     font-family: Roboto;
-}
-
-.login-form input {
-    background: #f2f6fa;
-    padding: 9.5px 20px;
-    border-width: 0;
 }
 
 .login-form .MuiFormControl-root {
@@ -238,10 +232,6 @@ h1.login-label {
     margin-bottom: 20px;
 }
 
-.login-form input {
-    border: 0 !important;
-}
-
 .form-item:nth-child(2) {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -265,6 +255,7 @@ h1.login-label {
     -ms-flex-align: center;
     align-items: center;
 }
+
 .bg-pw {
     background: #f2f6fa;
     border-radius: 6px;
