@@ -238,6 +238,8 @@ body .font-normal {
     font-size: var(--font-size-main) !important
 }
 
-.MuiMenuItem-root {
-    font-size: var(--font-size-main) !important
+.MuiMenuItem-root,
+.MuiInputBase-formControl {
+    font-size: var(--font-size-main) !important;
+    font-family: var(--font-family-main) !important
 }
