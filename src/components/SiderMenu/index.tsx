@@ -3,15 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { appRouters } from '../routers/index';
 import './sider_menu.css';
 
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
-import http from '../../services/httpService';
-import { List, ListItem, ListItemIcon, ListItemText, Typography, Avatar } from '@mui/material';
+import { Link, useLocation } from 'react-router-dom';
+import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { Box } from '@mui/material';
-import outIcon from '../../images/Logout.svg';
+import { observer } from 'mobx-react';
+import sessionStore from '../../stores/sessionStore';
 
 interface Props {
     collapsed: boolean;
@@ -58,43 +57,11 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
     return menu;
 }
 const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, CookieSidebar }) => {
-    const defaultPermission: string[] = [];
-    const [lstPermission, setListPermission] = useState(defaultPermission);
     const mainAppRoutes = appRouters.mainRoutes[1].routes.filter(
         (item: { showInMenu: boolean }) => item.showInMenu === true
     );
-    const navigate = useNavigate();
     const location = useLocation();
-    const itemMenus = convertMenuItemsToMenu(mainAppRoutes, lstPermission);
-    const getPermissions = () => {
-        const userId = Cookies.get('userId');
-        const token = Cookies.get('accessToken');
-        const encryptedAccessToken = Cookies.get('encryptedAccessToken');
-        if (userId !== undefined && userId !== null && token !== undefined && token !== null) {
-            http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`, {
-                headers: {
-                    accept: 'text/plain',
-                    Authorization: 'Bearer ' + token,
-                    'X-XSRF-TOKEN': encryptedAccessToken
-                }
-            })
-                .then((response) => {
-                    setListPermission(response.data.result['permissions']);
-                    //Cookies.set('permissions', JSON.stringify(response.data.result['permissions']));
-                    const item = {
-                        value: response.data.result['permissions']
-                    };
-                    localStorage.setItem('permissions', JSON.stringify(item));
-                })
-                .catch((error) => console.log(error));
-        }
-        // const permissions = JSON.parse(localStorage.getItem('permissions') || '[]') || [];
-        // setListPermission(Array.isArray(permissions) ? permissions : [permissions]);
-    };
-    useEffect(() => {
-        // Call API to get list of permissions here
-        getPermissions();
-    }, []);
+    const itemMenus = convertMenuItemsToMenu(mainAppRoutes, sessionStore.listPermisson);
 
     const [open, setOpen] = useState<{ [key: number]: boolean }>({});
 
@@ -118,7 +85,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
 
     return (
         <Box
-            onMouseEnter={collapsed ? undefined : handleMouseEnter}
+            // onMouseEnter={collapsed ? undefined : handleMouseEnter}
             onMouseLeave={collapsed ? undefined : handleMouseLeave}
             sx={{
                 overflowY: 'auto',
@@ -131,7 +98,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                 bottom: 0,
                 bgcolor: '#fff',
                 zIndex: '20',
-                width: collapsed || OpenHover ? '240px' : '72px',
+                width: collapsed || OpenHover ? '240px' : '0px',
                 boxShadow: OpenHover ? '0px 0px 40px -12px rgba(124, 51, 103,0.3);' : 'unset',
                 '& .MuiList-root': {
                     display: 'flex',
@@ -383,4 +350,4 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
         </Box>
     );
 };
-export default AppSiderMenu;
+export default observer(AppSiderMenu);

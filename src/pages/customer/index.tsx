@@ -314,7 +314,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box textAlign="center" width="100%" fontSize="13px">
+                    <Box textAlign="left" width="100%" fontSize="13px">
                         {params.value}
                     </Box>
                 )
@@ -355,7 +355,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderCell: (params) => (
-                    <Box textAlign="center" width="100%" fontSize="13px">
+                    <Box textAlign="left" width="100%" fontSize="13px">
                         {params.value}
                     </Box>
                 )
@@ -367,7 +367,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 minWidth: 113,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700', textAlign: 'right' }}>
+                    <Box sx={{ fontWeight: '700' }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -407,7 +407,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         sx={{
                             fontWeight: '700',
                             width: '100%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                             '& svg': {
                                 width: '16px',
                                 height: '16px'
@@ -582,20 +582,27 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         <Grid container spacing={1}>
                             <Grid item lg={2} md={2} sm={3} xs={12}>
                                 <Box
+                                    borderRadius={'8px'}
                                     sx={{
                                         backgroundColor: '#fff',
                                         borderRadius: '8px',
-                                        minHeight: '100%'
+                                        minHeight: '100%',
+                                        border: '1px solid #E6E1E6',
+                                        marginTop: '24px',
+                                        width: '100%'
                                     }}>
                                     <Box
                                         display="flex"
                                         flexDirection={'row'}
                                         justifyContent="space-between"
                                         alignItems={'center'}
-                                        textAlign={'center'}
-                                        borderBottom="1px solid #E6E1E6"
-                                        padding="28px 8px">
-                                        <Typography fontSize="14px" fontWeight="700">
+                                        margin={'16px'}
+                                        textAlign={'center'}>
+                                        <Typography
+                                            fontSize="14px"
+                                            fontFamily={'Roboto'}
+                                            color={'#3D475C'}
+                                            fontWeight="700">
                                             Nhóm khách hàng
                                         </Typography>
                                         <Button
@@ -605,30 +612,29 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 )
                                             }
                                             sx={{
-                                                padding: '0',
-                                                minWidth: 'unset',
+                                                minWidth: '32px',
+                                                padding: '8px',
                                                 bgcolor: '#fff',
-                                                border: '1px solid #D1D7E1'
+                                                border: '1px solid #D1D7E1',
+                                                borderRadius: '4px'
                                             }}>
                                             <Add
                                                 sx={{
                                                     color: '#525F7A',
-                                                    transition: '.4s',
-                                                    height: '30px',
-                                                    cursor: 'pointer',
-                                                    width: '30px',
-                                                    borderRadius: '4px',
-                                                    padding: '4px'
+                                                    width: '14px',
+                                                    height: '14px'
                                                 }}
                                                 onClick={this.onNhomKhachModal}
                                             />
                                         </Button>
                                     </Box>
+                                    <Divider />
                                     <Box
                                         sx={{
                                             overflow: 'auto',
-                                            maxHeight: '66vh',
-                                            padding: '0px 8px',
+                                            padding: '4px 0px',
+                                            gap: '8px',
+                                            margin: '0px 16px 16px 16px',
                                             '&::-webkit-scrollbar': {
                                                 width: '7px'
                                             },
@@ -640,14 +646,15 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 bgcolor: 'var(--color-bg)'
                                             }
                                         }}>
-                                        <Typography
+                                        <Box
                                             sx={{
-                                                padding: '8px',
-                                                fontSize: '14px',
-                                                fontWeight: 500,
-                                                color: '#29303D',
+                                                display: 'flex',
+                                                flexDirection: 'row',
                                                 alignItems: 'center',
-                                                justifyItems: 'center'
+                                                justifyItems: 'center',
+                                                padding: '4px 0px',
+                                                background: '#FFF',
+                                                marginBottom: '8px'
                                             }}>
                                             <CutomerGroupIcon
                                                 style={{
@@ -670,23 +677,28 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 style={{
                                                     fontSize: '14px',
                                                     fontWeight: 500,
-                                                    color: '#29303D'
+                                                    color: '#29303D',
+                                                    textAlign: 'center',
+                                                    fontFamily: 'Roboto'
                                                 }}>
                                                 Tất cả
                                             </span>
-                                        </Typography>
+                                        </Box>
                                         {suggestStore.suggestNhomKhach?.map((item, index) => (
-                                            <>
+                                            <Box key={index}>
                                                 <Divider
                                                     textAlign="right"
                                                     variant="inset"
                                                     component={'div'}
                                                 />
-                                                <Typography
+                                                <Box
                                                     sx={{
-                                                        padding: '8px',
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
                                                         alignItems: 'center',
-                                                        justifyItems: 'center'
+                                                        justifyItems: 'center',
+                                                        padding: '4px 0px',
+                                                        marginBottom: '8px'
                                                     }}>
                                                     <CutomerGroupIcon
                                                         style={{
@@ -709,12 +721,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                         style={{
                                                             fontSize: '14px',
                                                             fontWeight: 500,
-                                                            color: '#29303D'
+                                                            color: '#29303D',
+                                                            textAlign: 'center',
+                                                            fontFamily: 'Roboto'
                                                         }}>
                                                         {item.tenNhomKhach}
                                                     </span>
-                                                </Typography>
-                                            </>
+                                                </Box>
+                                            </Box>
                                         ))}
                                     </Box>
                                 </Box>

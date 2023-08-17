@@ -94,9 +94,9 @@ class ProfileScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box padding={6} bgcolor="#fff">
-                    <Grid container justifyContent="space-evenly">
-                        <Grid item xs={5}>
-                            <Box paddingLeft={5}>
+                    <Grid container spacing={2} justifyContent="space-evenly" alignItems={'center'}>
+                        <Grid item xs={12} sm={5}>
+                            <Box>
                                 <Typography
                                     variant="h1"
                                     fontSize="16px"
@@ -252,8 +252,8 @@ class ProfileScreen extends Component {
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid item xs={7}>
-                            <Box paddingRight={8}>
+                        <Grid item xs={12} sm={7}>
+                            <Box>
                                 <Typography
                                     variant="h1"
                                     fontSize="16px"

@@ -10,7 +10,7 @@ export default function initializeStores() {
         roleStore: roleStore,
         tenantStore: new TenantStore(),
         userStore: userStore,
-        sessionStore: new SessionStore(),
+        sessionStore: SessionStore,
         accountStore: new AccountStore()
     };
 }

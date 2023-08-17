@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import OverViewNew from './components/OverView/overViewNew';
 import './dashboardNew.css';
 import AppoimentsNew from './components/Appointment/AppointmentsNew';
 import LineChartNew from './components/Charts/LineChartNew';
@@ -13,6 +12,7 @@ import AppConsts from '../../lib/appconst';
 import Cookies from 'js-cookie';
 import { observer } from 'mobx-react';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import bookingStore from '../../stores/bookingStore';
 
 const Dashboard: React.FC = () => {
     const [dashboardDateView, setDashboardDateView] = useState('day');
@@ -25,10 +25,11 @@ const Dashboard: React.FC = () => {
         const storedDateType = Cookies.get('dashBoardDateType') ?? 'day';
         dashboardStore.dashboardDateType = storedDateType;
         setDashboardDateView(storedDateType);
-        await dashboardStore.getData({
-            ...dashboardStore.filter,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty
-        });
+        await dashboardStore.onChangeDateType(storedDateType);
+        // await dashboardStore.getData({
+        //     ...dashboardStore.filter,
+        //     idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty
+        // });
     };
     const sumTongTien = dashboardStore.thongKeDoanhThu?.reduce(
         (sum, item) => sum + item.thangNay,
@@ -72,60 +73,58 @@ const Dashboard: React.FC = () => {
                     <MenuItem value="year">Năm</MenuItem>
                 </Select>
             </Box>
-            <div className="page-body">
-                <div
-                    style={{
-                        marginBottom: '14px'
-                    }}>
-                    <OverView />
-                </div>
-                <Grid container spacing={0.5}>
-                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <Box>
-                            <Typography
-                                sx={{
-                                    color: '#29303D',
-                                    fontFamily: 'Roboto',
-                                    fontSize: '18px',
-                                    fontWeight: '700'
-                                }}>
-                                Danh sách cuộc hẹn hôm nay
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    color: '#29303D',
-                                    fontFamily: 'Roboto',
-                                    fontSize: '12px',
-                                    fontWeight: '400'
-                                }}>
-                                Cuộc hẹn mới nhất
-                            </Typography>
-                            <AppoimentsNew />
-                        </Box>
+            <div style={{ padding: '32px', gap: '16px' }}>
+                <OverView />
+                <Box marginTop={'16px'}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                            <Box
+                                bgcolor={'#FFF'}
+                                padding={'16px 24px'}
+                                borderBottom={'1px solid #EEF0F4'}>
+                                <Typography
+                                    sx={{
+                                        color: '#29303D',
+                                        fontFamily: 'Roboto',
+                                        fontSize: '18px',
+                                        fontWeight: '700'
+                                    }}>
+                                    Danh sách cuộc hẹn hôm nay
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: '#29303D',
+                                        fontFamily: 'Roboto',
+                                        fontSize: '12px',
+                                        fontWeight: '400'
+                                    }}>
+                                    Cuộc hẹn mới nhất
+                                </Typography>
+                            </Box>
+                            <Box bgcolor={'#FFF'} padding={'16px 24px'}>
+                                <AppoimentsNew />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                            <Box style={{ background: '#FFF', padding: '16px 24px' }}>
+                                <Typography
+                                    sx={{
+                                        color: '#29303D',
+                                        fontFamily: 'Roboto',
+                                        fontSize: '18px',
+                                        fontWeight: '700'
+                                    }}>
+                                    Tổng số cuộc hẹn hàng tuần
+                                </Typography>
+                                <LineChartNew />
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                        <div className="page-body_row-2_col-2">
-                            <Typography
-                                sx={{
-                                    color: '#29303D',
-                                    fontFamily: 'Roboto',
-                                    fontSize: '18px',
-                                    fontWeight: '700'
-                                }}>
-                                Tổng số cuộc hẹn hàng tuần
-                            </Typography>
-                            <LineChartNew />
-                        </div>
-                    </Grid>
-                </Grid>
-
-                <div
-                    style={{
-                        marginTop: '14px'
-                    }}>
+                </Box>
+                <Box marginTop={'16px'}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
-                            <Grid item>
+                            <Box bgcolor={'#FFF'} padding={'8px 24px'}>
                                 <Typography
                                     sx={{
                                         color: '#29303D',
@@ -144,81 +143,87 @@ const Dashboard: React.FC = () => {
                                     }}>
                                     Doanh thu cửa hàng
                                 </Typography>
-                            </Grid>
-                            <Box display={'flex'} justifyContent={'space-between'}>
-                                <Box width={'100%'}>
-                                    <Typography
-                                        sx={{
-                                            color: '#3D475C',
-                                            fontFamily: 'Roboto',
-                                            fontSize: '24px',
-                                            fontWeight: '700'
-                                        }}>
-                                        {new Intl.NumberFormat('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND'
-                                        }).format(sumTongTien)}
-                                    </Typography>
-                                </Box>
-
-                                <Box
-                                    display={'flex'}
-                                    justifyContent={'space-between'}
-                                    width={'50%'}>
-                                    <Box
-                                        display={'flex'}
-                                        justifyContent={'space-between'}
-                                        alignItems={'center'}>
-                                        <Box
-                                            sx={{
-                                                borderRadius: '50%',
-                                                width: '12px',
-                                                height: '12px',
-                                                bgcolor: 'var(--color-main)'
-                                            }}></Box>
-                                        <Typography
-                                            sx={{
-                                                marginLeft: '8px',
-                                                color: '#29303D',
-                                                fontFamily: 'Roboto',
-                                                fontSize: '12px',
-                                                fontWeight: '400'
-                                            }}>
-                                            Tháng này
-                                        </Typography>
-                                    </Box>
-
-                                    <Box
-                                        display={'flex'}
-                                        justifyContent={'space-between'}
-                                        alignItems={'center'}>
-                                        <Box
-                                            sx={{
-                                                borderRadius: '50%',
-                                                width: '12px',
-                                                height: '12px',
-                                                bgcolor: '#ff9900'
-                                            }}></Box>
-                                        <Typography
-                                            sx={{
-                                                marginLeft: '8px',
-                                                color: '#29303D',
-                                                fontFamily: 'Roboto',
-                                                fontSize: '12px',
-                                                fontWeight: '400'
-                                            }}>
-                                            Tháng trước
-                                        </Typography>
-                                    </Box>
-                                </Box>
                             </Box>
+                            <Grid
+                                container
+                                display={'flex'}
+                                justifyContent={'space-between'}
+                                bgcolor={'#FFF'}
+                                padding={'8px 24px'}>
+                                <Grid item xs={12} sm={6}>
+                                    <Box width={'100%'}>
+                                        <Typography
+                                            sx={{
+                                                color: '#3D475C',
+                                                fontFamily: 'Roboto',
+                                                fontSize: '24px',
+                                                fontWeight: '700'
+                                            }}>
+                                            {new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND'
+                                            }).format(sumTongTien)}
+                                        </Typography>
+                                    </Box>
+                                </Grid>
+                                <Grid item>
+                                    <Box display={'flex'} justifyContent={'end'} width={'100%'}>
+                                        <Box
+                                            display={'flex'}
+                                            justifyContent={'space-between'}
+                                            alignItems={'center'}
+                                            marginRight={'24px'}>
+                                            <Box
+                                                sx={{
+                                                    borderRadius: '50%',
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    bgcolor: 'var(--color-main)'
+                                                }}></Box>
+                                            <Typography
+                                                sx={{
+                                                    marginLeft: '8px',
+                                                    color: '#29303D',
+                                                    fontFamily: 'Roboto',
+                                                    fontSize: '12px',
+                                                    fontWeight: '400'
+                                                }}>
+                                                Tháng này
+                                            </Typography>
+                                        </Box>
 
-                            <Grid item>
-                                <ColumnChartNew />
+                                        <Box
+                                            display={'flex'}
+                                            justifyContent={'space-between'}
+                                            alignItems={'center'}>
+                                            <Box
+                                                sx={{
+                                                    borderRadius: '50%',
+                                                    width: '12px',
+                                                    height: '12px',
+                                                    bgcolor: '#ff9900'
+                                                }}></Box>
+                                            <Typography
+                                                sx={{
+                                                    marginLeft: '8px',
+                                                    color: '#29303D',
+                                                    fontFamily: 'Roboto',
+                                                    fontSize: '12px',
+                                                    fontWeight: '400'
+                                                }}>
+                                                Tháng trước
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                </Grid>
                             </Grid>
+
+                            <Box bgcolor={'#FFF'} padding={'8px 24px'}>
+                                <ColumnChartNew />
+                            </Box>
                         </Grid>
                         <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                            <Box width={'100%'}>
+                            <Box width={'100%'} bgcolor={'#FFF'} padding={'16px 24px'}>
                                 <Typography
                                     sx={{
                                         color: '#29303D',
@@ -232,7 +237,7 @@ const Dashboard: React.FC = () => {
                             </Box>
                         </Grid>
                     </Grid>
-                </div>
+                </Box>
             </div>
         </div>
     );

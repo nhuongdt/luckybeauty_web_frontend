@@ -93,7 +93,7 @@ const LoginScreen: React.FC = () => {
                         <form className="login-form" onSubmit={formik.handleSubmit}>
                             <Grid container>
                                 <span className="login-label">ID đăng nhập</span>
-                                <Grid xs={12} item className="form-item">
+                                <Grid xs={12} item>
                                     <TextField
                                         {...formik.getFieldProps('tenant')}
                                         error={
@@ -118,7 +118,7 @@ const LoginScreen: React.FC = () => {
                                     />
                                 </Grid>
                                 <span className="login-label">Tên đăng nhập</span>
-                                <Grid xs={12} item className="form-item">
+                                <Grid xs={12} item>
                                     <TextField
                                         {...formik.getFieldProps('userNameOrEmail')}
                                         error={
@@ -148,7 +148,7 @@ const LoginScreen: React.FC = () => {
                                     />
                                 </Grid>
                                 <span className="login-label">Mật khẩu</span>
-                                <Grid xs={12} item className="form-item">
+                                <Grid xs={12} item>
                                     <TextField
                                         {...formik.getFieldProps('password')}
                                         onKeyDown={handleKeyDown}

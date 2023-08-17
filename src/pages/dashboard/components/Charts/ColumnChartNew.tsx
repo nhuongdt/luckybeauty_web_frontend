@@ -51,7 +51,7 @@ const ColumnChartNew: React.FC = () => {
     //const yTicks = [];
 
     return (
-        <div style={{ marginTop: '30px' }}>
+        <div style={{ marginTop: '30px', background: '#FFF' }}>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data}>
                     <CartesianGrid strokeDasharray="0 0" vertical={false} />

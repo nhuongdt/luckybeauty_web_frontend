@@ -5,6 +5,7 @@ import sessionService from '../services/session/sessionService';
 
 class SessionStore {
     currentLogin: GetCurrentLoginInformations = new GetCurrentLoginInformations();
+    listPermisson: string[] = [];
     async getCurrentLoginInformations() {
         const result = await sessionService.getCurrentLoginInformations();
         this.currentLogin = result;
@@ -14,4 +15,4 @@ class SessionStore {
     }
 }
 
-export default SessionStore;
+export default new SessionStore();
