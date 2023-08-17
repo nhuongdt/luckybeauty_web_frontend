@@ -1,3 +1,4 @@
+import { util } from 'prettier';
 import utils from '../utils/utils';
 import { IFileDto } from './dto/FileDto';
 import http from './httpService';
@@ -23,12 +24,16 @@ class UpLoadFileService {
         }
         return '';
     };
-    GoogleApi_UploaFileToDrive = async (fileSelect: File) => {
-        const tenantName = Cookies.get('TenantName');
+    GoogleApi_UploaFileToDrive = async (fileSelect: File, subFolder = '') => {
+        // cấu trúc lưu file: luckyBeauty/tenantName/subFolder/fileName
+        let tenantName = Cookies.get('TenantName');
+        if (utils.checkNull(tenantName)) {
+            tenantName = 'Default';
+        }
         const fromData = this.AppendFile_toFormData(fileSelect);
         const data = await http
             .post(
-                `api/services/app/GoogleAPI/GoogleApi_UploaFileToDrive?tenantName=${tenantName}`,
+                `api/services/app/GoogleAPI/GoogleApi_UploaFileToDrive?tenantName=${tenantName}&subFolder=${subFolder}`,
                 fromData
             )
             .then((res) => {
@@ -36,18 +41,16 @@ class UpLoadFileService {
             });
         return data;
     };
-    GoogleApi_UpdateFileIfExist = async (fileSelect: File, fileId: string) => {
-        const tenantName = Cookies.get('TenantName');
-        const fromData = this.AppendFile_toFormData(fileSelect);
-        const data = await http
-            .post(
-                `api/services/app/GoogleAPI/GoogleApi_UploaFileToDrive?fileId=${fileId}&tenantName=${tenantName}`,
-                fromData
-            )
-            .then((res) => {
-                return res.data.result;
-            });
-        return data;
+    GoogleApi_RemoveFile_byId = async (fileId: string) => {
+        if (!utils.checkNull(fileId)) {
+            const data = await http
+                .get(`api/services/app/GoogleAPI/GoogleApi_RemoveFile_byId?fileId=${fileId}`)
+                .then((res) => {
+                    return res.data.result;
+                });
+            return data;
+        }
+        return true;
     };
 }
 
