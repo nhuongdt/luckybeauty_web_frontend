@@ -43,7 +43,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [wasClickSave, setWasClickSave] = useState(false);
     const [actionProduct, setActionProduct] = useState(1);
     const tenantName = Cookies.get('TenantName');
-    const [productImage, setProductImage] = useState('');
+    const [productImage, setProductImage] = useState(''); // url of imge
+    const [fileImage, setFileImage] = useState<File>({} as File); // file image
+    const [googleDrive_fileId, setgoogleDrive_fileId] = useState('');
 
     const [errTenHangHoa, setErrTenHangHoa] = useState(false);
     const [errMaHangHoa, setErrMaHangHoa] = useState(false);
@@ -66,6 +68,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 };
             });
             // GetFile_fromFireBase(obj.image);
+            setgoogleDrive_fileId(obj.image);
             const linkImg = uploadFileService.GetLinkFileOnDrive_byFileId(obj.image);
             setProductImage(linkImg);
 
@@ -79,6 +82,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         } else {
             setProduct(new ModelHangHoaDto());
             setProductImage('');
+            setgoogleDrive_fileId('');
 
             if (trigger.item.idNhomHangHoa !== undefined) {
                 const nhom = dataNhomHang.filter((x: any) => x.id == trigger.item.idNhomHangHoa);
@@ -163,8 +167,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         return true;
     };
 
-    const [fileImage, setFileImage] = useState<File>({} as File);
-
     const choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
@@ -175,6 +177,12 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             };
             console.log('file ', file);
             setFileImage(file);
+        }
+    };
+    const closeImage = async () => {
+        setProductImage('');
+        if (!utils.checkNull(googleDrive_fileId)) {
+            await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
         }
     };
 
@@ -222,8 +230,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (!check) {
             return;
         }
-        console.log('fileImage ', fileImage);
-        const fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage);
+
+        // awlay insert: because iamge was delete before save
+        const fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
 
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
@@ -494,7 +503,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                             style={{ width: '100%', height: '100%' }}
                                         />
                                         <Close
-                                            onClick={() => setProductImage('')}
+                                            onClick={closeImage}
                                             sx={{ left: 0, color: 'red', position: 'absolute' }}
                                         />
                                     </Box>
