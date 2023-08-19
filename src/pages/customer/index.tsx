@@ -41,6 +41,8 @@ import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
 import suggestStore from '../../stores/suggestStore';
 import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
+import { Field } from 'formik';
+import AccordionNhomKhachHang from '../../components/Accordion/NhomKhachHang';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -73,7 +75,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             rowPerPage: 10,
             currentPage: 1,
             keyword: '',
-            sortBy: '',
+            sortBy: 'createTime',
             sortType: 'desc',
             importShow: false,
             totalItems: 0,
@@ -136,6 +138,33 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     }
     onNhomKhachModal = () => {
         this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
+    };
+    onEditNhomKhach = (isEdit: boolean, item: any) => {
+        if (isEdit) {
+            // todo edit
+            this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
+        } else {
+            // filer
+            if (item != null) {
+                this.setState(
+                    {
+                        idNhomKhach: item.id
+                    },
+                    () => {
+                        this.getData();
+                    }
+                );
+            } else {
+                this.setState(
+                    {
+                        idNhomKhach: ''
+                    },
+                    () => {
+                        this.getData();
+                    }
+                );
+            }
+        }
     };
 
     async delete(id: string) {
@@ -235,18 +264,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.setState({ visibilityColumn: column });
     };
     onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
-        await this.setState({
-            sortBy: sortBy,
-            sortType: type
+        await this.setState((prev: any) => {
+            return {
+                ...prev,
+                sortBy: sortBy,
+                sortType: sortType
+            };
         });
         this.getData();
     };
     handleOpenInfor = () => {
         // if (params.column.field !== 'actions') {
         this.setState({ information: true });
-
-        //}
+        // }
     };
     handleCloseInfor = () => {
         this.setState({ information: false });
@@ -255,7 +285,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         const columns: GridColDef[] = [
             {
                 field: 'tenKhachHang',
-                sortable: false,
                 headerName: 'Tên khách hàng',
                 minWidth: 185,
                 flex: 1.2,
@@ -274,8 +303,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             style={{ width: 24, height: 24, marginRight: 8 }}
                         />
                         <Typography
+                            variant="body2"
                             sx={{
-                                fontSize: '13px',
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
                                 width: '100%'
@@ -285,33 +314,16 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenKhachHang');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'soDienThoai',
-                sortable: false,
                 headerName: 'Số điện thoại',
                 minWidth: 114,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'soDienThoai');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params) => (
                     <Box textAlign="left" width="100%" fontSize="13px">
@@ -321,38 +333,20 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             },
             {
                 field: 'tenNhomKhach',
-                sortable: false,
                 headerName: 'Nhóm khách',
                 minWidth: 112,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenNhomKhach');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'gioiTinh',
-                sortable: false,
                 headerName: 'Giới tính',
                 minWidth: 100,
                 flex: 0.8,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'gioiTinh');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params) => (
                     <Box textAlign="left" width="100%" fontSize="13px">
@@ -362,20 +356,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             },
             {
                 field: 'tongChiTieu',
-                sortable: false,
                 headerName: 'Tổng chi tiêu',
                 minWidth: 113,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tongChiTieu');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params) => (
                     <Box title={params.value} fontSize="13px" textAlign="center" width="100%">
@@ -385,7 +370,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             },
             {
                 field: 'cuocHenGanNhat',
-                sortable: false,
                 headerName: 'Cuộc hẹn gần đây',
                 renderCell: (params) => (
                     <Box
@@ -414,12 +398,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             }
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'cuocHenGanNhat');
-                            }}
-                        />
                     </Box>
                 )
             },
@@ -444,10 +422,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -456,11 +431,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         return (
             <>
                 {this.state.information === false ? (
-                    <Box
-                        className="customer-page"
-                        paddingLeft="2.2222222222222223vw"
-                        paddingRight="2.2222222222222223vw"
-                        paddingTop="1.5277777777777777vw">
+                    <Box className="customer-page" paddingTop={2}>
                         <Grid container alignItems="center" justifyContent="space-between">
                             <Grid
                                 item
@@ -579,19 +550,18 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </ButtonGroup>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={1}>
-                            <Grid item lg={2} md={2} sm={3} xs={12}>
+                        <Grid container spacing={2} paddingTop={1}>
+                            <Grid item lg={3} md={3} sm={3} xs={12}>
                                 <Box
                                     borderRadius={'8px'}
                                     sx={{
                                         backgroundColor: '#fff',
                                         borderRadius: '8px',
                                         minHeight: '100%',
-                                        border: '1px solid #E6E1E6',
                                         marginTop: '24px',
                                         width: '100%'
                                     }}>
-                                    <Box
+                                    {/* <Box
                                         display="flex"
                                         flexDirection={'row'}
                                         justifyContent="space-between"
@@ -627,9 +597,54 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 onClick={this.onNhomKhachModal}
                                             />
                                         </Button>
-                                    </Box>
-                                    <Divider />
+                                    </Box> */}
                                     <Box
+                                        display="flex"
+                                        justifyContent="space-between"
+                                        borderBottom="1px solid #E6E1E6"
+                                        padding="16px 24px">
+                                        <Typography fontSize="18px" fontWeight="700">
+                                            Nhóm khách hàng
+                                        </Typography>
+                                        <Button
+                                            sx={{ padding: '0', minWidth: 'unset' }}
+                                            className="btn-container-hover">
+                                            <Add
+                                                sx={{
+                                                    color: '#fff',
+                                                    transition: '.4s',
+                                                    height: '30px',
+                                                    cursor: 'pointer',
+                                                    width: '30px',
+                                                    borderRadius: '4px',
+                                                    padding: '4px'
+                                                }}
+                                                onClick={this.onNhomKhachModal}
+                                            />
+                                        </Button>
+                                    </Box>
+                                    <Box
+                                        sx={{
+                                            overflow: 'auto',
+                                            maxHeight: '66vh',
+                                            // padding: '0px 24px',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '8px'
+                                            },
+                                            '&::-webkit-scrollbar-track': {
+                                                bgcolor: 'var(--color-bg)'
+                                            }
+                                        }}>
+                                        <AccordionNhomKhachHang
+                                            dataNhomKhachHang={suggestStore.suggestNhomKhach}
+                                            clickTreeItem={this.onEditNhomKhach}
+                                        />
+                                    </Box>
+                                    {/* <Box
                                         sx={{
                                             overflow: 'auto',
                                             padding: '4px 0px',
@@ -730,10 +745,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 </Box>
                                             </Box>
                                         ))}
-                                    </Box>
+                                    </Box> */}
                                 </Box>
                             </Grid>
-                            <Grid item lg={10} md={10} sm={9} xs={12}>
+                            <Grid item lg={9} md={9} sm={9} xs={12}>
                                 <div
                                     className="customer-page_row-2"
                                     style={{
@@ -751,48 +766,23 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                                         columnVisibilityModel={this.state.visibilityColumn}
                                         checkboxSelection
-                                        sx={{
-                                            '& .MuiDataGrid-iconButtonContainer': {
-                                                display: 'none'
-                                            },
-                                            '& .MuiDataGrid-cellContent': {
-                                                fontSize: '13px'
-                                            },
-                                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                                outline: 'none!important'
-                                            },
-                                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
-                                                {
-                                                    outline: 'none '
-                                                },
-                                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                                color: 'var(--color-main)'
-                                            },
-                                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover':
-                                                {
-                                                    fill: 'var(--color-main)'
-                                                },
-                                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                                {
-                                                    fill: '#000'
-                                                },
-                                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                                {
-                                                    fill: '#000'
-                                                },
-                                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                                color: 'var(--color-main)!important'
-                                            },
-                                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                                {
-                                                    outline: 'none'
-                                                },
-                                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                                {
-                                                    bgcolor: 'var(--color-bg)'
-                                                }
-                                        }}
                                         localeText={TextTranslate}
+                                        sortingOrder={['desc', 'asc']}
+                                        sortModel={[
+                                            {
+                                                field: this.state.sortBy,
+                                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                                            }
+                                        ]}
+                                        onSortModelChange={(newSortModel) => {
+                                            if (newSortModel.length > 0) {
+                                                this.onSort(
+                                                    newSortModel[0].sort?.toString() ??
+                                                        'creationTime',
+                                                    newSortModel[0].field ?? 'desc'
+                                                );
+                                            }
+                                        }}
                                     />
                                     <ActionMenuTable
                                         selectedRowId={this.state.selectedRowId}

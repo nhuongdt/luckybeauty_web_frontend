@@ -30,12 +30,7 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                 onClose={this.props.handleClose}>
                 <Box>
                     <DialogTitle>
-                        <Typography
-                            variant="h3"
-                            fontSize="24px"
-                            color="#333233"
-                            fontWeight="700"
-                            mb={3}>
+                        <Typography fontSize="24px" color="#333233" fontWeight="700" mb={3}>
                             Thêm mới nhóm khách
                         </Typography>
                         <Button
