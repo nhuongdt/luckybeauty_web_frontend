@@ -1529,10 +1529,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 )}
 
                                 <Box onClick={showModalCheckIn}>
-                                    <Typography variant="body2" fontSize="14px" color="#3D475C">
+                                    <Typography variant="subtitle2" color="#3D475C">
                                         {hoadon?.tenKhachHang}
                                     </Typography>
-                                    <Typography variant="body2" fontSize="12px" color="#525F7A">
+                                    <Typography variant="subtitle2" fontSize="12px" color="#525F7A">
                                         {hoadon?.soDienThoai}
                                     </Typography>
                                 </Box>
