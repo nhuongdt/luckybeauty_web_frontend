@@ -380,35 +380,20 @@ export default function PageProductNew() {
             //         {params.value || ''}
             //     </Box>
             // ),
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
             minWidth: 250,
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
             field: 'tenNhomHang',
             headerName: 'Nhóm dịch vụ',
             minWidth: 176,
             flex: 1,
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
             field: 'giaBan',
@@ -420,12 +405,7 @@ export default function PageProductNew() {
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         // {
         //     field: 'soPhutThucHien',
@@ -465,12 +445,7 @@ export default function PageProductNew() {
                     {params.value || ''}
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         },
         {
             field: 'actions',
@@ -485,7 +460,7 @@ export default function PageProductNew() {
                     handleAction={(action: any) => doActionRow(action, params.row)}
                 />
             ),
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
 
@@ -518,11 +493,7 @@ export default function PageProductNew() {
                 downloadImportTemplate={downloadImportTemplate}
                 importFile={handleImportData}
             />
-            <Grid
-                container
-                className="dich-vu-page"
-                padding="24px 2.2222222222222223vw 24px 2.2222222222222223vw"
-                gap={4}>
+            <Grid container className="dich-vu-page" gap={4} paddingTop={2} paddingRight={2}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" fontSize="16px" variant="h5" fontWeight="700">
@@ -597,7 +568,7 @@ export default function PageProductNew() {
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid container columnSpacing={2}>
+                <Grid container spacing={2}>
                     <Grid item lg={3} md={3} sm={4} xs={12}>
                         <Box
                             sx={{
@@ -634,7 +605,7 @@ export default function PageProductNew() {
                                 sx={{
                                     overflow: 'auto',
                                     maxHeight: '66vh',
-                                    padding: '0px 24px',
+                                    // padding: '0px 24px',
                                     '&::-webkit-scrollbar': {
                                         width: '7px'
                                     },
@@ -668,44 +639,6 @@ export default function PageProductNew() {
                                 columns={columns}
                                 hideFooter
                                 checkboxSelection
-                                sx={{
-                                    border: 'none!important',
-                                    '& .MuiDataGrid-iconButtonContainer': {
-                                        display: 'none'
-                                    },
-                                    '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                        outline: 'none!important'
-                                    },
-                                    '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus':
-                                        {
-                                            outline: 'none '
-                                        },
-                                    '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                        color: 'var(--color-main)'
-                                    },
-                                    '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                        fill: 'var(--color-main)'
-                                    },
-                                    '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                        {
-                                            fill: '#000'
-                                        },
-                                    '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                        {
-                                            fill: '#000'
-                                        },
-                                    '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                        color: 'var(--color-main)!important'
-                                    },
-                                    '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                        {
-                                            outline: 'none'
-                                        },
-                                    '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                        {
-                                            bgcolor: 'var(--color-bg)'
-                                        }
-                                }}
                                 localeText={TextTranslate}
                             />
                             {/* {selectedRow && <CustomRowDetails />} */}

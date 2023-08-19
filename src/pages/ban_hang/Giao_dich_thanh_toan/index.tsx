@@ -250,14 +250,15 @@ const GiaoDichThanhToan: React.FC = () => {
             field: 'maHoaDon',
             headerName: 'Mã hóa đơn',
             minWidth: 100,
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box component="span" title={params.value}>
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'ngayLapHoaDon',
@@ -267,10 +268,7 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 130,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
@@ -280,14 +278,15 @@ const GiaoDichThanhToan: React.FC = () => {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
             minWidth: 140,
-            flex: 1.2,
+            flex: 1.5,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value} component="span" textOverflow={'ellipsis'}>
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'tongTienHang',
@@ -297,10 +296,7 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value}>
@@ -336,14 +332,10 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value}>
-                    {' '}
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
@@ -356,14 +348,10 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value} textAlign="center" width="100%">
-                    {' '}
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
@@ -373,31 +361,25 @@ const GiaoDichThanhToan: React.FC = () => {
             headerName: 'Còn nợ',
             headerAlign: 'right',
             align: 'right',
-            minWidth: 118,
-            flex: 1,
+            minWidth: 100,
+            flex: 0.5,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value} textAlign="center" width="100%">
-                    {' '}
+                <Box title={params.value} component={'span'}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
         {
             field: 'txtTrangThaiHD',
+            headerAlign: 'center',
             headerName: 'Trạng thái',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting />{' '}
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box
@@ -444,7 +426,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
-            <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
+            <Box paddingTop={2} paddingRight={2}>
                 <Grid container justifyContent="space-between">
                     <Grid item md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
@@ -579,7 +561,7 @@ const GiaoDichThanhToan: React.FC = () => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box marginTop="16px">
+                <Box marginTop="16px" paddingTop={2}>
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -588,47 +570,6 @@ const GiaoDichThanhToan: React.FC = () => {
                         hideFooter
                         checkboxSelection
                         onRowClick={(item: any) => choseRow(item)}
-                        sx={{
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeadersInner': {
-                                backgroundColor: 'var(--color-bg)'
-                            },
-                            '& .MuiBox-root': {
-                                maxWidth: '100%',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                fontSize: '12px'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
-                                fontWeight: '700'
-                            },
-                            '& .MuiDataGrid-virtualScroller': {
-                                bgcolor: '#fff'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
-                        }}
                         localeText={TextTranslate}
                     />
                     <CustomTablePagination
