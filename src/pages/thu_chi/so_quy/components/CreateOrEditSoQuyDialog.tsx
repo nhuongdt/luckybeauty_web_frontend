@@ -358,7 +358,7 @@ const CreateOrEditSoQuyDialog = ({
                                             event.preventDefault(); // Prevent form submission
                                         }
                                     }}>
-                                    <Grid container rowGap={1} columnSpacing={2}>
+                                    <Grid container columnSpacing={2} rowSpacing={1}>
                                         <Grid item xs={12} sm={12} lg={12}>
                                             <FormControlLabel
                                                 value="end"
@@ -399,7 +399,7 @@ const CreateOrEditSoQuyDialog = ({
                                         <Grid item xs={12} sm={12}>
                                             <span className="modal-lable">Ngày </span>
                                         </Grid>
-                                        <Grid item xs={12} sm={12}>
+                                        <Grid item xs={12} sm={12} sx={{ pb: 1 }}>
                                             <ThemeProvider theme={themeDate}>
                                                 <DateTimePickerCustom
                                                     defaultVal={quyHoaDon.ngayLapHoaDon}
@@ -418,7 +418,7 @@ const CreateOrEditSoQuyDialog = ({
                                             </ThemeProvider>
                                         </Grid>
 
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={6} sx={{ pb: 1 }}>
                                             <Stack direction="column" rowGap={1}>
                                                 <span className="modal-lable">Mã phiếu </span>
                                                 <TextField
@@ -442,10 +442,10 @@ const CreateOrEditSoQuyDialog = ({
                                                 />
                                             </Stack>
                                         </Grid>
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={6} sx={{ pb: 1 }}>
                                             <Stack
                                                 direction="column"
-                                                rowGap={1}
+                                                spacing={1}
                                                 sx={{
                                                     '& legend': {
                                                         display: 'none'
@@ -464,7 +464,7 @@ const CreateOrEditSoQuyDialog = ({
                                                 />
                                             </Stack>
                                         </Grid>
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid item xs={12} sm={6} sx={{ pb: 1 }}>
                                             <Stack
                                                 direction="column"
                                                 rowGap={1}
@@ -493,7 +493,13 @@ const CreateOrEditSoQuyDialog = ({
                                             item
                                             xs={12}
                                             sm={6}
-                                            pt={{ xs: 2, sm: '28px', lg: '28px' }}>
+                                            sx={{ pb: 1 }}
+                                            pt={{
+                                                xs: '16px!important',
+                                                sm: '30px!important',
+                                                lg: '30px!important',
+                                                md: '30px !important'
+                                            }}>
                                             {quyHoaDon.loaiDoiTuong !== 3 && (
                                                 <>
                                                     <AutocompleteCustomer
@@ -561,7 +567,7 @@ const CreateOrEditSoQuyDialog = ({
                                         <Grid item xs={12} sm={12}>
                                             <span className="modal-lable">Tiền {sLoai} </span>
                                         </Grid>
-                                        <Grid item xs={12} sm={12}>
+                                        <Grid item xs={12} sm={12} sx={{ pb: 1 }}>
                                             <NumericFormat
                                                 fullWidth
                                                 size="small"

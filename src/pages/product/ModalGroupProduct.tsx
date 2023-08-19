@@ -61,7 +61,8 @@ export const GridColor = ({ handleChoseColor }: any) => {
                     position: 'absolute',
                     zIndex: 1,
                     backgroundColor: '#FFFFF0',
-                    borderRadius: 4
+                    borderRadius: 4,
+                    top: '51px'
                 }}
                 sx={{ ml: 0, p: 1.5, border: '1px solid grey' }}>
                 <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 6, sm: 6, md: 6 }}>
@@ -237,7 +238,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     onClick={() => setIsShow(false)}>
                     <CloseIcon />
                 </Button>
-                <DialogContent>
+                <DialogContent sx={{ overflow: 'unset' }}>
                     <Grid container>
                         {/* <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
                             <FormGroup>
@@ -322,11 +323,19 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         option.tenNhomHang ? option.tenNhomHang : ''
                                     }
                                     renderInput={(params) => <TextField {...params} />}
+                                    renderOption={(props, item) => (
+                                        <Box
+                                            component={'li'}
+                                            {...props}
+                                            className="autocomplete-option">
+                                            {item.tenNhomHang}
+                                        </Box>
+                                    )}
                                 />
                             </Stack>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Stack spacing={1}>
+                            <Stack spacing={1} position={'relative'}>
                                 <span className="modal-lable">Màu sắc</span>
                                 <TextField
                                     size="small"

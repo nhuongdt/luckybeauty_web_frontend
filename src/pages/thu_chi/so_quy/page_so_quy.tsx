@@ -21,7 +21,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
 import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { format, lastDayOfMonth } from 'date-fns';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
@@ -232,22 +232,20 @@ const PageSoQuy = ({ xx }: any) => {
         }
     };
 
+    const [sortModel, setSortModel] = useState<GridSortModel>([
+        {
+            field: 'ngayLapHoaDon',
+            sort: 'desc'
+        }
+    ]);
+
     const columns: GridColDef[] = [
         {
             field: 'loaiPhieu',
-            sortable: false,
             headerName: 'Loại phiếu',
-            minWidth: 118,
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'loaiPhieu' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params) => (
                 <Box title={params.value} width="100%">
@@ -257,37 +255,22 @@ const PageSoQuy = ({ xx }: any) => {
         },
         {
             field: 'maHoaDon',
-            sortable: false,
             headerName: 'Mã phiếu',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'maHoaDon' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
             field: 'ngayLapHoaDon',
-            sortable: false,
             headerName: 'Ngày lập',
+            headerAlign: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'ngayLapHoaDon' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value} width="100%" textAlign="center">
@@ -297,7 +280,6 @@ const PageSoQuy = ({ xx }: any) => {
         },
         // {
         //     field: 'tenKhoanThuChi',
-        //     sortable: false,
         //     headerName: 'Loại thu chi',
         //     minWidth: 118,
         //     flex: 1,
@@ -315,37 +297,22 @@ const PageSoQuy = ({ xx }: any) => {
         // },
         {
             field: 'tenNguoiNop',
-            sortable: false,
             headerName: 'Người nộp',
-            minWidth: 118,
-            flex: 1,
+            // minWidth: 118,
+            flex: 1.5,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'tenNguoiNop' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
         },
         {
             field: 'tongTienThu',
-            sortable: false,
             headerName: 'Tổng tiền',
+            headerAlign: 'right',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'tongTienThu' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value} width="100%" textAlign="end">
@@ -355,19 +322,11 @@ const PageSoQuy = ({ xx }: any) => {
         },
         {
             field: 'sHinhThucThanhToan',
-            sortable: false,
             headerName: 'Hình thức',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'sHinhThucThanhToan' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box title={params.value} width="100%">
@@ -377,19 +336,12 @@ const PageSoQuy = ({ xx }: any) => {
         },
         {
             field: 'txtTrangThai',
-            sortable: false,
             headerName: 'Trạng thái',
+            headerAlign: 'center',
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => (
-                <Box title={params.value}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        onClick={() => {
-                            setParamSearch({ ...paramSearch, columnSort: 'trangThai' });
-                        }}
-                    />
-                </Box>
+                <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box
@@ -418,7 +370,8 @@ const PageSoQuy = ({ xx }: any) => {
         },
         {
             field: 'actions',
-            headerName: 'Hành động',
+            headerName: '#',
+            headerAlign: 'center',
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
@@ -427,12 +380,7 @@ const PageSoQuy = ({ xx }: any) => {
                     handleAction={(action: any) => doActionRow(action, params.row)}
                 />
             ),
-            renderHeader: (params) => (
-                <Box sx={{ display: 'none' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
 
@@ -457,7 +405,7 @@ const PageSoQuy = ({ xx }: any) => {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
+            <Box paddingTop={2} paddingRight={2}>
                 <Grid container spacing={1} justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
@@ -561,58 +509,35 @@ const PageSoQuy = ({ xx }: any) => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box marginTop="16px">
+                <Box marginTop="16px" paddingTop={2}>
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
                         rows={pageDataSoQuy.items}
                         columns={columns}
                         checkboxSelection
-                        sx={{
-                            '& .MuiDataGrid-virtualScroller': {
-                                bgcolor: '#fff'
-                            },
-                            '& .MuiDataGrid-columnHeaders': { bgcolor: 'var(--color-bg)' },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeaders .MuiBox-root ': {
-                                fontWeight: '700'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
-                        }}
                         hideFooter
                         localeText={TextTranslate}
+                        sortModel={sortModel}
+                        sortingOrder={['desc', 'asc']}
+                        onSortModelChange={(newSortModel) => {
+                            setSortModel(() => newSortModel);
+                            console.log('newSortModel ', newSortModel);
+                            if (newSortModel.length > 0) {
+                                setParamSearch({
+                                    ...paramSearch,
+                                    columnSort: newSortModel[0].field,
+                                    typeSort: newSortModel[0].sort?.toString()
+                                });
+                            } else {
+                                // vì fistload: mặc dịnh sort 'ngaylapHoaDon decs'
+                                // nên nếu click cột ngaylapHoaDon luôn, thì newSortModel = []
+                                setParamSearch({
+                                    ...paramSearch,
+                                    typeSort: 'asc'
+                                });
+                            }
+                        }}
                     />
 
                     <CustomTablePagination

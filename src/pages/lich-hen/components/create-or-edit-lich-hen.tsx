@@ -188,7 +188,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 </div>
                                             )}
                                         />
-                                        {errors.idKhachHang && (
+                                        {errors.idKhachHang && touched.idKhachHang && (
                                             <small className="text-danger">
                                                 {errors.idKhachHang}
                                             </small>
@@ -230,7 +230,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 variant="body1"
                                                 className="mb-1"
                                                 fontSize="14px">
-                                                Ngày
+                                                Ngày <span className="text-danger">*</span>
                                             </Typography>
                                             <TextField
                                                 sx={{
@@ -243,7 +243,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 name="startTime"
                                                 value={values.startTime}
                                                 onChange={handleChange}></TextField>
-                                            {errors.startTime && (
+                                            {errors.startTime && touched.startTime && (
                                                 <small className="text-danger">
                                                     {errors.startTime}
                                                 </small>
@@ -265,7 +265,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             variant="body1"
                                                             className="mb-2"
                                                             fontSize="14px">
-                                                            Dịch vụ
+                                                            Dịch vụ{' '}
+                                                            <span className="text-danger">*</span>
                                                         </Typography>
                                                         <Autocomplete
                                                             options={suggestStore.suggestDichVu}
@@ -291,11 +292,12 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 />
                                                             )}
                                                         />
-                                                        {errors.idDonViQuiDoi && (
-                                                            <small className="text-danger">
-                                                                {errors.idDonViQuiDoi}
-                                                            </small>
-                                                        )}
+                                                        {errors.idDonViQuiDoi &&
+                                                            touched.idDonViQuiDoi && (
+                                                                <small className="text-danger">
+                                                                    {errors.idDonViQuiDoi}
+                                                                </small>
+                                                            )}
                                                     </FormGroup>
                                                 </Grid>
                                                 <Grid item md={4} xs={12} sm={6}>
@@ -304,7 +306,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             variant="body1"
                                                             className="mb-1"
                                                             fontSize="14px">
-                                                            Thời gian bắt đầu
+                                                            Thời gian bắt đầu{' '}
+                                                            <span className="text-danger">*</span>
                                                         </Typography>
                                                         <TextField
                                                             type="time"
@@ -312,11 +315,12 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             name="startHours"
                                                             value={values.startHours}
                                                             onChange={handleChange}></TextField>
-                                                        {errors.startHours && (
-                                                            <small className="text-danger">
-                                                                {errors.startHours}
-                                                            </small>
-                                                        )}
+                                                        {errors.startHours &&
+                                                            touched.startHours && (
+                                                                <small className="text-danger">
+                                                                    {errors.startHours}
+                                                                </small>
+                                                            )}
                                                     </FormGroup>
                                                 </Grid>
                                             </Grid>

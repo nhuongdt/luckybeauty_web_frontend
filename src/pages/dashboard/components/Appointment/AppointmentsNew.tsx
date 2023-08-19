@@ -1,5 +1,4 @@
 import React from 'react';
-import avatar from '../../../../images/avatar.png';
 import clockIcon from '../../../../images/clock.svg';
 import './appointmentsNew.css';
 import dashboardStore from '../../../../stores/dashboardStore';

@@ -4,8 +4,6 @@ import sinhnhat from '../../../../images/sn.svg';
 import userIcon from '../../../../images/user1.svg';
 import calendarIcon from '../../../../images/calendar-add.svg';
 import walletIcon from '../../../../images/wallet.svg';
-import incrementIcon from '../../../../images/tang.svg';
-import decrementIcon from '../../../../images/giam.svg';
 import { Box, Grid, Typography } from '@mui/material';
 import './overViewNew.css';
 import dashboardStore from '../../../../stores/dashboardStore';

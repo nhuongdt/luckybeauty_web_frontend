@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import PrintIcon from '@mui/icons-material/Print';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
 import Avatar from '../../../images/xinh.png';
@@ -298,6 +299,10 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         }}>
                                         {hoadonChosed?.maHoaDon}
                                     </Box>
+                                    <PrintIcon
+                                        sx={{ color: 'var(--color-main)' }}
+                                        onClick={InHoaDon}
+                                    />
                                 </Stack>
                             </Grid>
                             <Grid item xs="auto">
@@ -478,7 +483,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             />
                                         </ThemeProvider>
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    {/* <Grid item xs={3}>
                                         <Box sx={{ paddingTop: '18px' }}>
                                             <Button
                                                 variant="contained"
@@ -487,7 +492,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                                 In hóa đơn
                                             </Button>
                                         </Box>
-                                    </Grid>
+                                    </Grid> */}
                                 </Grid>
                             </Grid>
                             <Grid xs={12} item>

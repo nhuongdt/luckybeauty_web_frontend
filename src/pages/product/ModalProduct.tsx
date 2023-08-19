@@ -35,6 +35,7 @@ import utils from '../../utils/utils';
 import { Close } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import uploadFileService from '../../services/uploadFileService';
+import { padding } from '@mui/system';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -385,6 +386,14 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         }
                                         renderInput={(params) => (
                                             <TextField {...params} placeholder="Chọn nhóm" />
+                                        )}
+                                        renderOption={(props, item) => (
+                                            <Box
+                                                component={'li'}
+                                                {...props}
+                                                className="autocomplete-option">
+                                                {item.tenNhomHang}
+                                            </Box>
                                         )}
                                     />
                                 </Stack>

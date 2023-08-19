@@ -119,6 +119,8 @@ const MainAppLayout: React.FC = () => {
                     handleChangeChiNhanh={changeChiNhanh}
                 />
                 <Box
+                    padding={2}
+                    paddingTop={0}
                     sx={{
                         borderBottom: 'solid 0.1rem #e6e1e6',
                         borderRight: 'solid 0.1rem #e6e1e6',

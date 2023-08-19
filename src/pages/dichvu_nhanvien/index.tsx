@@ -1,6 +1,4 @@
 import { Component, ReactNode } from 'react';
-import { SuggestDonViQuiDoiDto } from '../../services/suggests/dto/SuggestDonViQuiDoi';
-import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import {
     Avatar,
     Box,
@@ -23,48 +21,39 @@ import {
     Typography
 } from '@mui/material';
 import CreateOrEditDichVuNhanVienModal from './components/create-or-edit-dichVu_nhanVien';
-import NhanVienDichVuTab from './components/nhanVien_DichVu_Modal';
-import DichVuNhanVienTab from './components/dichVu_NhanVien_Modal';
 import suggestStore from '../../stores/suggestStore';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import StarIcon from '@mui/icons-material/Star';
 import { observer } from 'mobx-react';
 import dichVuNhanVienStore from '../../stores/dichVuNhanVienStore';
 import AppConsts from '../../lib/appconst';
 
 class SettingDichVuNhanVien extends Component {
-    // state = {
-    //     visiableModal: false,
-    //     suggestDichVu: [] as SuggestDonViQuiDoiDto[],
-    //     suggestKyThuatVien: [] as SuggestNhanVienDichVuDto[]
-    // };
-
-    // onModal = () => {
-    //     this.setState({ visiableModal: !this.state.visiableModal });
-    // };
-    // handleCloseModal = () => {
-    //     this.setState({ visiableModal: false });
-    // };
+    onModal = () => {
+        this.setState({ visiableModal: !this.state.visiableModal });
+    };
+    handleCloseModal = () => {
+        this.setState({ visiableModal: false });
+    };
     state = {
+        visiableModal: false,
         settingValue: 'Service',
-        suggestDichVu: [] as SuggestDonViQuiDoiDto[],
-        suggestKyThuatVien: [] as SuggestNhanVienDichVuDto[]
+        selectedItemId: null
     };
     componentDidMount(): void {
         this.getData();
     }
     async getData() {
         const kyThuatViens = await suggestStore.getSuggestKyThuatVien();
+        await suggestStore.getSuggestNhanVien();
         const dichVus = await suggestStore.getSuggestDichVu();
         await this.setState({
             suggestDichVus: dichVus,
             suggestkyThuatVien: kyThuatViens
         });
         dichVuNhanVienStore.idNhanVien = suggestStore.suggestKyThuatVien[0].id;
+        this.setState({ selectedItemId: suggestStore.suggestKyThuatVien[0].id });
         await dichVuNhanVienStore.getDichVuNhanVienDetail(
-            suggestStore.suggestKyThuatVien[0].id ?? AppConsts.guidEmpty
+            suggestStore.suggestNhanVien[0].id ?? AppConsts.guidEmpty
         );
     }
     handleSettingChange = async (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
@@ -98,7 +87,7 @@ class SettingDichVuNhanVien extends Component {
                         </RadioGroup>
                     </Box>
                 </Box>
-                <Box padding={'64px 32px'}>
+                <Box padding={'32px 16px'}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={4}>
                             <Box
@@ -115,13 +104,20 @@ class SettingDichVuNhanVien extends Component {
                                         overflow: 'auto',
                                         bgcolor: 'background.paper'
                                     }}>
-                                    {suggestStore.suggestKyThuatVien?.map((item, key) => (
+                                    {suggestStore.suggestNhanVien?.map((item, key) => (
                                         <ListItem
                                             key={key}
                                             onClick={async () => {
                                                 await dichVuNhanVienStore.getDichVuNhanVienDetail(
                                                     item.id
                                                 );
+                                                this.setState({ selectedItemId: item.id });
+                                            }}
+                                            sx={{
+                                                backgroundColor:
+                                                    this.state.selectedItemId === item.id
+                                                        ? '#E6E6E6'
+                                                        : 'transparent' // Apply background color based on selection
                                             }}>
                                             <ListItemAvatar>
                                                 <Avatar src={item.avatar} />
@@ -178,7 +174,7 @@ class SettingDichVuNhanVien extends Component {
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <TableContainer>
+                                <TableContainer sx={{ maxHeight: 300 }}>
                                     <Table>
                                         <TableBody>
                                             {dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens?.map(
@@ -190,7 +186,7 @@ class SettingDichVuNhanVien extends Component {
                                                                 flexDirection={'row'}
                                                                 alignItems={'center'}
                                                                 gap="8px">
-                                                                <Avatar />{' '}
+                                                                <Avatar variant="square" />{' '}
                                                                 <Typography>
                                                                     {item.tenDichVu}
                                                                 </Typography>
@@ -210,97 +206,24 @@ class SettingDichVuNhanVien extends Component {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
-                                {/* <List
-                                    sx={{
-                                        overflow: 'auto',
-                                        marginTop: '8px'
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    onClick={() => {
+                                        this.onModal();
                                     }}>
-                                    {dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens?.map(
-                                        (item, key) => (
-                                            <Box
-                                                key={key}
-                                                display={'flex'}
-                                                flexDirection={'row'}
-                                                justifyContent={'space-between'}
-                                                borderBottom={'1px solid #EBEBEB'}
-                                                borderTop={'1px solid #EBEBEB'}
-                                                padding={'16px'}>
-                                                <Box
-                                                    display={'flex'}
-                                                    flexDirection={'row'}
-                                                    alignItems={'center'}
-                                                    gap="4px">
-                                                    <Avatar />{' '}
-                                                    <Typography>{item.tenDichVu}</Typography>
-                                                </Box>
-                                                <Box
-                                                    display={'flex'}
-                                                    flexDirection={'row'}
-                                                    alignItems={'center'}
-                                                    gap={8}>
-                                                    <Typography>
-                                                        {item.soPhutThucHien} {' phút'}
-                                                    </Typography>
-                                                    <Typography>{item.donGia}</Typography>
-                                                </Box>
-                                            </Box>
-                                        )
-                                    )}
-                                </List> */}
-                                <Button fullWidth variant="contained">
                                     Cập nhật
                                 </Button>
                             </Box>
                         </Grid>
                     </Grid>
                 </Box>
+                <CreateOrEditDichVuNhanVienModal
+                    visiable={this.state.visiableModal}
+                    handleClose={this.handleCloseModal}
+                    handleOk={this.onModal}
+                />
             </Box>
-            // <div>
-            //     {/* //     <Button onClick={this.onModal}>Show</Button>
-            // //     <CreateOrEditDichVuNhanVienModal
-            // //         visiable={this.state.visiableModal}
-            // //         handleClose={this.handleCloseModal}
-            // //         handleOk={this.onModal}
-            // //     /> */}
-            //     <Box display="flex" alignItems="center" padding={'32px'}>
-            //         <Grid container display={'flex'} alignItems={'center'}>
-            //             <Grid item xs={12} md={6}>
-            //                 <Typography style={{ float: 'left' }}>Cài đặt theo</Typography>
-            //             </Grid>
-            //             <Grid item xs={12} md={6}>
-            //                 <RadioGroup
-            //                     style={{ float: 'right' }}
-            //                     row
-            //                     value={this.state.settingValue}
-            //                     onChange={this.handleSettingChange}>
-            //                     <FormControlLabel
-            //                         value={'Service'}
-            //                         control={<Radio />}
-            //                         label={'Dịch vụ'}
-            //                     />
-            //                     <FormControlLabel
-            //                         value={'Employee'}
-            //                         control={<Radio />}
-            //                         label={'Nhân viên'}
-            //                     />
-            //                 </RadioGroup>
-            //             </Grid>
-            //         </Grid>
-            //     </Box>
-            //     <Box padding={'32px'}>
-            //         {this.state.settingValue == 'Employee' ? (
-            //             <NhanVienDichVuTab
-            //                 suggestDichVu={suggestStore.suggestDichVu}
-            //                 suggestKyThuatVien={suggestStore.suggestKyThuatVien}
-            //             />
-            //         ) : (
-            //             <DichVuNhanVienTab
-            //                 suggestDichVu={suggestStore.suggestDichVu}
-            //                 suggestKyThuatVien={suggestStore.suggestKyThuatVien}
-            //             />
-            //         )}
-            //     </Box>
-            // </div>
         );
     }
 }

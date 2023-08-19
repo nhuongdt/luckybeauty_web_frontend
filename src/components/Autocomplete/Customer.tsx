@@ -82,7 +82,12 @@ export default function AutocompleteCustomer({
                 )}
                 renderOption={(props, option) => {
                     return (
-                        <li {...props} key={option.id}>
+                        <li
+                            {...props}
+                            key={option.id}
+                            style={{
+                                borderBottom: '1px dashed var(--border-color)'
+                            }}>
                             <Grid container alignItems="center">
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
@@ -90,7 +95,7 @@ export default function AutocompleteCustomer({
                                 <Grid
                                     item
                                     sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                    <Typography style={{ fontSize: '14px' }}>
+                                    <Typography style={{ fontSize: '13px' }}>
                                         {option.tenKhachHang}
                                     </Typography>
                                     <Box

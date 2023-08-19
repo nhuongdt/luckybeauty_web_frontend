@@ -126,7 +126,9 @@ body .font-normal {
 .MuiTablePagination-displayedRows {
     margin-bottom: 0;
 }
-
+.MuiAutocomplete-option{
+    font-size: 13px;
+}
 
 /* style main button*/
 
@@ -209,21 +211,13 @@ body .font-normal {
     border-radius: 8px;
 }
 
-.MuiDataGrid-columnHeaderTitleContainerContent:not( .MuiDataGrid-columnHeaderCheckbox .MuiDataGrid-columnHeaderTitleContainerContent) {
-    width: 100%;
-}
-
-.MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root {
-    width: 100%;
-    text-align: left;
-}
-
 .MuiRadio-root.Mui-checked {
     color: var(--color-main) !important;
 }
 
 .MuiDataGrid-root {
-    font-size: var(--font-size-main) !important
+    font-size: var(--font-size-main) !important;
+    border: none!important
 }
 
 .MuiTypography-root {
@@ -242,4 +236,52 @@ body .font-normal {
 .MuiInputBase-formControl {
     font-size: var(--font-size-main) !important;
     font-family: var(--font-family-main) !important
+}
+
+
+/* placeholder at autocomple */
+
+.MuiFormControl-root .MuiFormLabel-root {
+    font-size: var(--font-size-main)!important;
+    font-family: var(--font-family-main) !important
+}
+
+
+/* data-grid */
+
+.MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root {
+    font-weight: 700;
+}
+
+.MuiDataGrid-columnHeadersInner {
+    background-color: var(--color-bg)!important
+}
+
+.MuiDataGrid-columnHeader:focus,
+.MuiDataGrid-cell:focus {
+    outline: none!important
+}
+
+.MuiDataGrid-columnHeader:focus-within,
+.MuiDataGrid-cell:focus-within {
+    outline: none!important
+}
+
+.MuiDataGrid-row.Mui-selected,
+.MuiDataGrid-row.Mui-selected:hover,
+.MuiDataGrid-row.Mui-selected.Mui-hovered {
+    background-color: var(--color-bg)!important
+}
+
+.autocomplete-option {
+    border-bottom: 1px dashed var(--border-color);
+    font-size: var(--font-size-main);
+    padding: 10px
+}
+
+
+/* label at radio */
+
+.MuiFormControlLabel-label.MuiTypography-root {
+    font-size: var(--font-size-main)!important;
 }

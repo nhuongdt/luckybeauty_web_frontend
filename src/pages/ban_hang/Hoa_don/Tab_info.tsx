@@ -23,13 +23,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             field: 'tenHangHoa',
             headerName: 'Tên dịch vụ',
             // minWidth: 150,
-            flex: 5,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
+            flex: 2,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -38,13 +33,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'center',
             align: 'center',
             minWidth: 80,
-            flex: 2,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
+            flex: 0.8,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -57,13 +47,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 90,
-            flex: 0.6,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
+            flex: 1,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
                     {' '}
@@ -77,13 +62,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 2,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
+            flex: 0.8,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -115,13 +95,8 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             headerAlign: 'right',
             align: 'right',
             minWidth: 100,
-            flex: 2,
-            renderHeader: (params) => (
-                <Box>
-                    {params.colDef.headerName}
-                    <IconSorting />
-                </Box>
-            ),
+            flex: 1,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -139,61 +114,6 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                         autoHeight
                         columns={columns}
                         rows={chitietHoaDon}
-                        sx={{
-                            '& p': {
-                                mb: 0
-                            },
-                            '& .MuiBox-root': {
-                                maxWidth: '100%',
-                                textOverflow: 'ellipsis',
-                                overflow: 'hidden',
-                                fontSize: '12px'
-                            },
-                            '& .MuiDataGrid-columnHeaders': {
-                                bgcolor: 'var(--color-bg)'
-                            },
-                            '& .MuiDataGrid-footerContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-virtualScroller': {
-                                bgcolor: '#fff'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainerContent .MuiBox-root': {
-                                fontWeight: '700',
-                                fontSize: '12px'
-                            },
-                            '& .MuiIconButton-root': {
-                                display: 'none'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: 'var(--color-main)'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: 'var(--color-main)'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
-                        }}
                         localeText={TextTranslate}
                     />
                 </Grid>

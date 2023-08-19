@@ -5,8 +5,6 @@ import {
     Box,
     Button,
     Grid,
-    MenuItem,
-    Select,
     TextField,
     TextareaAutosize,
     Typography,
@@ -77,7 +75,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             this.setState({ errorPhoneNumber: false, errorTenKhach: false });
                             onOk(createOrEdit);
                         }}>
-                        {({ setFieldValue, values, handleChange, errors }) => (
+                        {({ setFieldValue, values, handleChange, errors, touched }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -94,7 +92,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     <Grid container className="form-container" spacing={2}>
                                         <Grid item xs={12}>
                                             <Typography color="#4C4B4C" variant="subtitle2">
-                                                Họ và tên
+                                                Họ và tên <span className="text-danger">*</span>
                                             </Typography>
                                             <TextField
                                                 size="small"
@@ -103,7 +101,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 value={values.tenKhachHang}
                                                 onChange={handleChange}
                                                 helperText={
-                                                    errors.tenKhachHang ? (
+                                                    errors.tenKhachHang && touched.tenKhachHang ? (
                                                         <small className="text-danger">
                                                             Tên khách hàng không được để trống
                                                         </small>
@@ -117,7 +115,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
                                             <Typography color="#4C4B4C" variant="subtitle2">
-                                                Số điện thoại
+                                                Số điện thoại <span className="text-danger">*</span>
                                             </Typography>
                                             <TextField
                                                 type="tel"
@@ -128,7 +126,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 placeholder="Số điện thoại"
                                                 fullWidth
                                                 helperText={
-                                                    errors.soDienThoai ? (
+                                                    errors.soDienThoai && touched.soDienThoai ? (
                                                         <small className="text-danger">
                                                             Số điện thoại không hợp lệ
                                                         </small>

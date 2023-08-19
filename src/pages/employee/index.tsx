@@ -267,6 +267,7 @@ class EmployeeScreen extends React.Component {
                     />
                     <Typography
                         fontSize="13px"
+                        variant="body2"
                         fontWeight="400"
                         fontFamily={'Roboto'}
                         color="#3D475C"
@@ -278,21 +279,7 @@ class EmployeeScreen extends React.Component {
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'tenNhanVien');
-                        }}
-                    />
-                </Box>
+                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             )
         },
         {
@@ -302,30 +289,10 @@ class EmployeeScreen extends React.Component {
             minWidth: 120,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'soDienThoai');
-                        }}
-                    />{' '}
-                </Box>
+                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params) => (
-                <Box
-                    width="100%"
-                    textAlign="center"
-                    fontSize="13px"
-                    fontWeight="400"
-                    fontFamily={'Roboto'}
-                    color="#3D475C">
+                <Box width="100%" textAlign="center">
                     {params.value}
                 </Box>
             )
@@ -433,12 +400,6 @@ class EmployeeScreen extends React.Component {
                         fontFamily: 'Roboto'
                     }}>
                     {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'diaChi');
-                        }}
-                    />
                 </Box>
             ),
             renderCell: (params) => (
@@ -447,7 +408,6 @@ class EmployeeScreen extends React.Component {
                         width: '100%',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
-                        fontSize: '13px',
                         fontWeight: '400',
                         fontFamily: 'Roboto',
                         color: '#3D475C',
@@ -591,22 +551,13 @@ class EmployeeScreen extends React.Component {
                     <MoreHorizIcon />
                 </IconButton>
             ),
-            renderHeader: (params) => (
-                <Box sx={{ display: 'none' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
-            )
+            renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
         }
     ];
     public render() {
         const { listNhanVien } = NhanVienStore;
         return (
-            <Box
-                className="list-nhan-vien"
-                paddingLeft="2.2222222222222223vw"
-                paddingRight="2.2222222222222223vw"
-                paddingTop="1.5277777777777777vw">
+            <Box className="list-nhan-vien" paddingTop={2}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
@@ -712,52 +663,13 @@ class EmployeeScreen extends React.Component {
                     </Grid>
                 </Grid>
 
-                <Box marginTop="24px" bgcolor="#fff">
+                <Box marginTop="24px" bgcolor="#fff" paddingTop={1}>
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
                         checkboxSelection
-                        sx={{
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-cellContent': {
-                                fontSize: '12px'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
-                        }}
                         hideFooter
                         localeText={TextTranslate}
                     />

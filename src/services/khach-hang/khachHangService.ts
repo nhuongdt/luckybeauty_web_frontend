@@ -22,7 +22,11 @@ class KhachHangService {
         return result.data.result;
     }
     public async createNhomKhach(input: CreateOrEditNhomKhachDto) {
-        const result = await http.post('api/services/app/NhomKhach/CreateNhomKhach', input);
+        const result = await http.post('api/services/app/NhomKhach/CreateOrEditNhomKhach', input);
+        return result.data.result;
+    }
+    public async getForEditNhomKhach(id: string) {
+        const result = await http.post(`api/services/app/NhomKhach/GetForEdit?id=${id}`);
         return result.data.result;
     }
     public async createOrEdit(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
