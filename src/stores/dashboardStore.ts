@@ -72,20 +72,20 @@ class DashboardStore {
         const endDayOfYear = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999); // Lấy ngày cuối năm
 
         if (type === 'day') {
-            this.filter.thoiGianTu = format_date(today, 'MM/dd/yyy').toString();
-            this.filter.thoiGianDen = format_date(today, 'MM/dd/yyy').toString();
+            this.filter.thoiGianTu = format_date(today, 'yyyy/MM/dd').toString();
+            this.filter.thoiGianDen = format_date(today, 'yyyy/MM/dd').toString();
         } else if (type === 'week') {
-            this.filter.thoiGianTu = format_date(firstDayOfWeek, 'MM/dd/yyy').toString();
-            this.filter.thoiGianDen = format_date(endDayOfWeek, 'MM/dd/yyy').toString();
+            this.filter.thoiGianTu = format_date(firstDayOfWeek, 'yyyy/MM/dd').toString();
+            this.filter.thoiGianDen = format_date(endDayOfWeek, 'yyyy/MM/dd').toString();
         } else if (type === 'month') {
-            this.filter.thoiGianTu = format_date(firstDayOfMonth, 'MM/dd/yyy').toString();
-            this.filter.thoiGianDen = format_date(endDayOfMonth, 'MM/dd/yyy').toString();
+            this.filter.thoiGianTu = format_date(firstDayOfMonth, 'yyyy/MM/dd').toString();
+            this.filter.thoiGianDen = format_date(endDayOfMonth, 'yyyy/MM/dd').toString();
         } else if (type === 'year') {
-            this.filter.thoiGianTu = format_date(firstDayOfYear, 'MM/dd/yyy').toString();
-            this.filter.thoiGianDen = format_date(endDayOfYear, 'MM/dd/yyy').toString();
+            this.filter.thoiGianTu = format_date(firstDayOfYear, 'yyyy/MM/dd').toString();
+            this.filter.thoiGianDen = format_date(endDayOfYear, 'yyyy/MM/dd').toString();
         } else {
-            this.filter.thoiGianTu = format_date(today, 'MM/dd/yyy').toString();
-            this.filter.thoiGianDen = format_date(today, 'MM/dd/yyy').toString();
+            this.filter.thoiGianTu = format_date(today, 'yyyy/MM/dd').toString();
+            this.filter.thoiGianDen = format_date(today, 'yyyy/MM/dd').toString();
         }
 
         this.getData(this.filter);
