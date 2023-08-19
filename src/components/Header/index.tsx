@@ -24,7 +24,7 @@ import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
 import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import NotificationIcon from '../../images/notification.svg';
 import Cookies from 'js-cookie';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
@@ -76,7 +76,7 @@ const Header: React.FC<HeaderProps> = (
     const CloseSettingThongBao = () => {
         setSettingThongBao(null);
     };
-
+    const navigate = useNavigate();
     const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
     const [currentChiNhanh, setCurrentChiNhanh] = useState('');
     useEffect(() => {
@@ -198,7 +198,13 @@ const Header: React.FC<HeaderProps> = (
             {' '}
             <Grid container className={'header-container'} justifyContent="space-between">
                 <Grid item xs={6} sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
-                    <Box display="flex" gap="8px" marginLeft="16px">
+                    <Box
+                        display="flex"
+                        gap="8px"
+                        marginLeft="16px"
+                        onClick={() => {
+                            navigate('/home');
+                        }}>
                         <LogoNew />
                         <Typography
                             fontFamily="vinhan"

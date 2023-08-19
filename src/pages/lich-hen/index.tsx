@@ -248,12 +248,12 @@ const LichHen: React.FC = () => {
                 justifyContent="space-between"
                 alignItems="center"
                 sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                     <Autocomplete
                         options={suggestStore.suggestKyThuatVien}
                         getOptionLabel={(option) => `${option.tenNhanVien}`}
                         size="small"
-                        sx={{ width: '45%' }}
+                        sx={{ width: window.screen.width <= 650 ? '100%' : '45%' }}
                         fullWidth
                         disablePortal
                         onChange={async (event, value) => {
@@ -279,7 +279,7 @@ const LichHen: React.FC = () => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12} sm={4}>
                     <Box
                         display="flex"
                         sx={{
@@ -332,7 +332,8 @@ const LichHen: React.FC = () => {
                 </Grid>
                 <Grid
                     item
-                    xs={4}
+                    xs={12}
+                    sm={4}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',

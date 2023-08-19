@@ -226,7 +226,10 @@ class EmployeeHoliday extends Component {
                 renderHeader: (params) => (
                     <Box
                         sx={{
-                            fontWeight: '700'
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
                         <IconSorting
@@ -244,6 +247,9 @@ class EmployeeHoliday extends Component {
                             width: '100%',
                             textOverflow: 'ellipsis',
                             fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
+                            color: '#3D475C',
                             textAlign: 'center'
                         }}>
                         {params.value}
@@ -268,15 +274,21 @@ class EmployeeHoliday extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -305,8 +317,8 @@ class EmployeeHoliday extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
@@ -315,7 +327,10 @@ class EmployeeHoliday extends Component {
                 renderHeader: (params) => (
                     <Box
                         sx={{
-                            fontWeight: '700'
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
                         <IconSorting
@@ -342,15 +357,21 @@ class EmployeeHoliday extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px">
                             {params.value} ngày
                         </Typography>
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -388,7 +409,14 @@ class EmployeeHoliday extends Component {
         return (
             <Box padding="22px 32px" className="thoi-gian-nghi-page">
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
+                    <Grid
+                        item
+                        xs={12}
+                        spacing={2}
+                        md="auto"
+                        display="flex"
+                        gap="10px"
+                        alignItems="center">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                             Quản lý thời gian nghỉ
                         </Typography>

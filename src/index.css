@@ -21,25 +21,25 @@ html {
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Thin.ttf');
     font-weight: 100;
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Light.ttf');
     font-weight: 300;
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Thin.ttf');
     font-weight: 100;
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Regular.ttf');
     font-weight: 400;
 }

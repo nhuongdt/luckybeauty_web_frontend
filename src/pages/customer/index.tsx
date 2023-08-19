@@ -461,7 +461,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         paddingLeft="2.2222222222222223vw"
                         paddingRight="2.2222222222222223vw"
                         paddingTop="1.5277777777777777vw">
-                        <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid
+                            container
+                            spacing={1}
+                            alignItems="center"
+                            justifyContent="space-between">
                             <Grid
                                 item
                                 xs={12}

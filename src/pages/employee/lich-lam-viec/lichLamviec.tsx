@@ -444,12 +444,17 @@ class Calendar extends Component {
                                     bgcolor: '#F2EBF0',
                                     borderRadius: '8px',
                                     padding: '8px',
-                                    fontSize: '12px',
-                                    color: '#333233'
+                                    fontSize: '13px',
+                                    fontWeight: '400',
+                                    color: '#3D475C'
                                 },
                                 '& .bodder-inline': {
                                     borderInline: '1px solid #E6E1E6',
-                                    padding: '4px 4px 20px 4px'
+                                    padding: '4px 4px 20px 4px',
+                                    fontSize: '13px',
+                                    fontWeight: '400',
+                                    fontFamily: 'Roboto',
+                                    color: '#3D475C'
                                 }
                             }}>
                             {this.state.data.map((item) => (
@@ -468,15 +473,17 @@ class Calendar extends Component {
                                             />
                                             <Box>
                                                 <Typography
-                                                    fontSize="14px"
-                                                    color="#4C4B4C"
-                                                    variant="body1">
+                                                    fontSize="13px"
+                                                    fontWeight="400"
+                                                    fontFamily={'Roboto'}
+                                                    color="#3D475C">
                                                     {item.tenNhanVien}
                                                 </Typography>
                                                 <Typography
-                                                    fontSize="12px"
-                                                    color="#999699"
-                                                    variant="body1">
+                                                    fontSize="13px"
+                                                    fontWeight="400"
+                                                    fontFamily={'Roboto'}
+                                                    color="#3D475C">
                                                     {item.tongThoiGian}h
                                                 </Typography>
                                             </Box>

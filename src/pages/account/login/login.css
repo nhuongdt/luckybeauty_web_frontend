@@ -101,7 +101,7 @@ h1.login-label {
 }
 
 .login-page h1 {
-    font-family: Roboto;
+    font-family: 'Roboto';
     font-size: 24px;
     font-weight: 700;
     color: #3b4758;
@@ -161,7 +161,7 @@ h1.login-label {
 }
 
 .login-form input {
-    font-family: Roboto;
+    font-family: 'Roboto';
     font-size: 14px !important;
     color: #999699;
     background: #f2f6fa;
@@ -183,14 +183,14 @@ h1.login-label {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    font-family: Roboto;
+    font-family: 'Roboto';
     color: #319dff;
 }
 
 .remember {
     font-size: 14px;
     color: #666466;
-    font-family: Roboto;
+    font-family: 'Roboto';
 }
 
 .login-form .MuiFormControl-root {
@@ -207,11 +207,11 @@ h1.login-label {
 .text-login {
     font-weight: 500 !important;
     font-size: 16px;
-    font-family: Roboto;
+    font-family: 'Roboto';
 }
 
 .text-support {
-    font-family: Roboto;
+    font-family: 'Roboto';
     font-size: 14px;
     text-align: center;
     margin-bottom: 0;
@@ -224,7 +224,7 @@ h1.login-label {
 .text-register {
     color: #999699;
     font-size: 14px;
-    font-family: Roboto;
+    font-family: 'Roboto';
     text-align: center;
     margin-top: 24px;
     margin-bottom: 0;

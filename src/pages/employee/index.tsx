@@ -268,8 +268,8 @@ class EmployeeScreen extends React.Component {
                     <Typography
                         fontSize="13px"
                         fontWeight="400"
-                        variant="h6"
-                        color="#333233"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
                         lineHeight="16px"
                         title={params.value}
                         sx={{ textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
@@ -278,7 +278,13 @@ class EmployeeScreen extends React.Component {
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"
@@ -296,7 +302,13 @@ class EmployeeScreen extends React.Component {
             minWidth: 120,
             flex: 1,
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"
@@ -307,7 +319,13 @@ class EmployeeScreen extends React.Component {
                 </Box>
             ),
             renderCell: (params) => (
-                <Box width="100%" textAlign="center" fontSize="12px">
+                <Box
+                    width="100%"
+                    textAlign="center"
+                    fontSize="13px"
+                    fontWeight="400"
+                    fontFamily={'Roboto'}
+                    color="#3D475C">
                     {params.value}
                 </Box>
             )
@@ -332,8 +350,8 @@ class EmployeeScreen extends React.Component {
                             <Typography
                                 fontSize="13px"
                                 fontWeight="400"
-                                variant="h6"
-                                color="#333233"
+                                fontFamily={'Roboto'}
+                                color="#3D475C"
                                 lineHeight="16px">
                                 {new Date(params.value).toLocaleDateString('en-GB')}
                             </Typography>
@@ -342,7 +360,13 @@ class EmployeeScreen extends React.Component {
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"
@@ -369,15 +393,21 @@ class EmployeeScreen extends React.Component {
                     <Typography
                         fontSize="13px"
                         fontWeight="400"
-                        variant="h6"
-                        color="#333233"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
                         lineHeight="16px">
                         {params.value == 0 ? '' : params.value == 1 ? 'Nam' : 'Nữ'}
                     </Typography>
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"
@@ -397,7 +427,10 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box
                     sx={{
-                        fontWeight: '700'
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
                     }}>
                     {params.colDef.headerName}
                     <IconSorting
@@ -415,6 +448,9 @@ class EmployeeScreen extends React.Component {
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
                         fontSize: '13px',
+                        fontWeight: '400',
+                        fontFamily: 'Roboto',
+                        color: '#3D475C',
                         textAlign: 'center'
                     }}
                     title={params.value}>
@@ -432,15 +468,21 @@ class EmployeeScreen extends React.Component {
                 <Typography
                     fontSize="13px"
                     fontWeight="400"
-                    variant="h6"
-                    color="#333233"
+                    fontFamily={'Roboto'}
+                    color="#3D475C"
                     lineHeight="16px"
                     sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
                 </Typography>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"
@@ -468,16 +510,22 @@ class EmployeeScreen extends React.Component {
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
                         fontSize="13px"
-                        variant="h6"
                         fontWeight="400"
-                        color="#333233"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
                         lineHeight="16px">
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Typography>
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"
@@ -497,8 +545,7 @@ class EmployeeScreen extends React.Component {
             renderCell: (params) => (
                 <Typography
                     fontSize="13px"
-                    variant="h6"
-                    lineHeight="16px"
+                    fontFamily={'Roboto'}
                     padding="4px 8px"
                     borderRadius="12px"
                     fontWeight="400"
@@ -508,7 +555,13 @@ class EmployeeScreen extends React.Component {
                 </Typography>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
                     {params.colDef.headerName}
                     <IconSorting
                         className="custom-icon"

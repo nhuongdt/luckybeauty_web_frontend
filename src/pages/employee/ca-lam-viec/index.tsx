@@ -179,7 +179,10 @@ class CaLamViecScreen extends Component {
                 renderHeader: (params) => (
                     <Box
                         sx={{
-                            fontWeight: '700'
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
                         <IconSorting
@@ -197,6 +200,9 @@ class CaLamViecScreen extends Component {
                             width: '100%',
                             textOverflow: 'ellipsis',
                             fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
+                            color: '#3D475C',
                             textAlign: 'center'
                         }}
                         title={params.value}>
@@ -215,8 +221,8 @@ class CaLamViecScreen extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px"
                             textAlign="center"
                             width="100%"
@@ -226,7 +232,13 @@ class CaLamViecScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -255,8 +267,8 @@ class CaLamViecScreen extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px"
                             title={params.value}>
                             {format(new Date(params.value), 'HH:mm')}
@@ -264,7 +276,13 @@ class CaLamViecScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -294,8 +312,8 @@ class CaLamViecScreen extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px"
                             title={params.value}>
                             {format(new Date(params.value), 'HH:mm')}
@@ -303,7 +321,13 @@ class CaLamViecScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
@@ -331,15 +355,21 @@ class CaLamViecScreen extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
                             lineHeight="16px">
                             {params.value} giờ
                         </Typography>
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
+                    <Box
+                        sx={{
+                            fontWeight: '500',
+                            color: '#525F7A',
+                            fontSize: '13px',
+                            fontFamily: 'Roboto'
+                        }}>
                         {params.colDef.headerName}
                         <IconSorting
                             className="custom-icon"
