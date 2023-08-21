@@ -8,7 +8,8 @@ import {
     InputAdornment,
     Avatar,
     IconButton,
-    debounce
+    debounce,
+    Stack
 } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
@@ -26,6 +27,8 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 import { format } from 'date-fns';
+import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
+import utils from '../../utils/utils';
 const TabKhachHang = ({ handleChoseCus }: any) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
@@ -153,8 +156,11 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
             <Grid container spacing={2} mt="0">
                 {pageDataCustomer?.map((item, index) => (
                     <Grid item key={index} sm={6} md={4} xs={12}>
-                        <Box
+                        <Stack
                             onClick={() => saveOKCustomer(item)}
+                            justifyContent="space-between"
+                            height={'100%'}
+                            spacing={1}
                             sx={{
                                 padding: '18px',
                                 border: '1px solid #E6E1E6',
@@ -166,61 +172,52 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                                     borderColor: 'var(--color-main)'
                                 }
                             }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Box sx={{ display: 'flex', gap: '8px' }}>
-                                    <Avatar
-                                        sx={{ width: 40, height: 40 }}
-                                        src={item.avatar}
-                                        alt={item.tenKhachHang}
+                            {/* <Box sx={{ justifyContent: 'space-between' }}> */}
+                            <Stack spacing={2} direction={'row'}>
+                                {utils.checkNull(item.avatar) ? (
+                                    <BadgeFistCharOfName
+                                        firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
                                     />
-                                    <Box>
-                                        <Typography variant="body1" fontSize="16px" color="#333233">
-                                            {item.tenKhachHang}
-                                        </Typography>
-                                        <Typography fontSize="12px" variant="body1" color="#999699">
-                                            {item.soDienThoai}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                                <Box>
+                                ) : (
+                                    <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                )}
+                                <Stack
+                                    justifyContent={'space-evenly'}
+                                    maxWidth={'calc(100% - 44px)'}>
+                                    <Typography
+                                        variant="subtitle2"
+                                        className="lableOverflow"
+                                        title={item.tenKhachHang}>
+                                        {item.tenKhachHang}
+                                    </Typography>
+                                    <Typography variant="caption" color="#999699">
+                                        {item.soDienThoai}
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                            {/* <Box>
                                     <IconButton sx={{ padding: '0' }}>
                                         <MoreHorizIcon sx={{ color: '#231F20', width: '15px' }} />
                                     </IconButton>
-                                </Box>
-                            </Box>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    gap: '16px',
-                                    '& p': {
-                                        fontSize: '14px',
-
-                                        color: '#4C4B4C'
-                                    }
-                                }}>
-                                <Box component="p" sx={{ fontWeight: '500' }}>
-                                    Checkin:
-                                </Box>
-                                <Box component="p" sx={{ fontWeight: '700' }}>
-                                    {item.soLanCheckIn} lần
-                                </Box>
-                            </Box>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        fontSize: '14px',
-                                        gap: '12px',
-                                        color: '#4C4B4C'
-                                    }}>
-                                    <Box mr="3px">Gần nhất :</Box>
-                                    <Box ml="3px">
+                                </Box> */}
+                            {/* </Box> */}
+                            <Stack direction={'row'} spacing={2}>
+                                <Stack>
+                                    <Typography variant="body2">Checkin</Typography>
+                                    <Typography variant="body2" mt={'2px'}>
+                                        Gần nhất
+                                    </Typography>
+                                </Stack>
+                                <Stack>
+                                    <Typography variant="body2" fontWeight={700}>
+                                        {item.soLanCheckIn} lần
+                                    </Typography>
+                                    <Typography variant="body2" mt={'2px'}>
                                         {format(new Date(item.cuocHenGanNhat), 'dd/MM/yyyy HH:mm')}
-                                    </Box>
-                                </Box>
-                            </Box>
-                        </Box>
+                                    </Typography>
+                                </Stack>
+                            </Stack>
+                        </Stack>
                     </Grid>
                 ))}
             </Grid>

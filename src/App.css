@@ -79,14 +79,6 @@ body .font-normal {
     border-radius: 16px;
 }
 
-.btn-only-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    border: 2px solid #cccc;
-    padding: 7px;
-}
-
 .btnIcon {
     width: 40px !important;
     height: 40px !important;
@@ -282,4 +274,10 @@ body .font-normal {
 
 .MuiFormControlLabel-label.MuiTypography-root {
     font-size: var(--font-size-main)!important;
+}
+
+.lableOverflow {
+    text-overflow: ellipsis!important;
+    overflow: hidden!important;
+    white-space: nowrap!important;
 }

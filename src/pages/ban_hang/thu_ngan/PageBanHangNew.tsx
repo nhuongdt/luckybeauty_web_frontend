@@ -1030,9 +1030,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             </div> */}
             <Grid
                 container
-                spacing={3}
-                marginTop={showPayment ? '0' : '21px'}
-                paddingLeft="16px"
+                spacing={2}
+                marginTop={showPayment ? '0' : '24px'}
+                // paddingLeft="16px"
                 ml="0"
                 sx={{
                     height: '100%',
@@ -1045,7 +1045,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         item
                         container
                         md={7}
-                        spacing={3}
+                        spacing={2}
                         height="fit-content"
                         marginTop={CoditionLayout ? '-83px' : '-24px'}
                         paddingBottom="0"
@@ -1054,7 +1054,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             item
                             md={CoditionLayout ? 12 : 4}
                             sx={{
-                                paddingLeft: '0!important',
+                                // paddingLeft: '0!important',
                                 display: 'flex',
                                 flexDirection: 'column'
                             }}>
@@ -1095,6 +1095,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 />
                             )}
                             <Box
+                                mt={CoditionLayout ? '8px' : '0px'}
                                 sx={{
                                     scrollBehavior: 'smooth',
                                     backgroundColor: CoditionLayout ? 'transparent' : '#fff',
@@ -1102,7 +1103,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     boxShadow: CoditionLayout
                                         ? 'unset'
                                         : ' 0px 20px 100px 0px #0000000D',
-                                    padding: '16px 24px',
+                                    // padding: '16px 24px',
+                                    padding: '16px',
                                     height: CoditionLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
                                     maxHeight: CoditionLayout ? 'unset' : '88.5vh',
@@ -1364,7 +1366,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         borderRadius: '8px',
                                         height:
                                             CoditionLayout && innerHeight > 600
-                                                ? '74vh'
+                                                ? '75vh'
                                                 : CoditionLayout && innerHeight < 605
                                                 ? '32vh'
                                                 : '88.5vh',
@@ -1479,16 +1481,16 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                     </Grid>
                 )}
                 <Grid item md={5} sx={{ paddingRight: '0' }}>
-                    <Box
+                    <Stack
                         sx={{
                             mt: showDetail ? '-21px' : '-75px',
                             backgroundColor: '#fff',
                             borderRadius: '8px',
 
                             height: '98vh',
-                            padding: '16px',
-                            marginRight: CoditionLayout ? '16px' : '0px',
-                            paddingBottom: '32px',
+                            padding: '16px 0px 16px 16px',
+                            // marginRight: CoditionLayout ? '16px' : '0px',
+                            // paddingBottom: '16px',
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
@@ -1499,15 +1501,17 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 position: 'absolute',
                                 left: '0',
                                 width: '100%',
-                                height: '40px',
-                                bottom: '-15px',
+                                // height: '40px',
+                                bottom: '0px',
                                 bgcolor: '#fff'
                             }
                         }}>
                         <Box
+                            // padding={'0px 0px 16px 0px'}
+                            // paddingBottom={'16px'}
                             sx={{
                                 backgroundColor: '#fff',
-                                radius: '8px',
+                                // radius: '8px',
                                 borderBottom: '1px solid #F2F2F2',
                                 paddingBottom: '16px'
                             }}>
@@ -1595,13 +1599,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             }}>
                             {hoaDonChiTiet?.map((ct: PageHoaDonChiTietDto, index) => (
                                 <Box
-                                    padding="8px 12px"
+                                    padding={
+                                        ct?.nhanVienThucHien !== undefined &&
+                                        ct?.nhanVienThucHien.length > 0
+                                            ? '8px 0px'
+                                            : '16px 0px'
+                                    }
                                     borderBottom="1px solid #E0E4EB"
-                                    marginTop="16px"
+                                    // marginTop="16px"
                                     key={index}>
                                     <Box
                                         display="flex"
-                                        justifyContent="space-between"
+                                        justifyContent="space-evenly"
                                         alignItems="center">
                                         <Box width="55%" paddingRight="20px">
                                             <Typography
@@ -1636,7 +1645,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                     <Box
                                                                         key={index3}
                                                                         sx={{
-                                                                            fontSize: '10px',
+                                                                            fontSize: '11px',
                                                                             lineHeight: '16px',
                                                                             color: '#4C4B4C',
                                                                             alignItems: 'center',
@@ -1717,10 +1726,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         </Box>
                                                     </>
                                                 )}
-
-                                            {/* {ct?.nhanVienThucHien.length > 0 && (
-                                                
-                                            )} */}
                                         </Box>
                                         <Box width="20%">
                                             <Box
@@ -1738,15 +1743,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     },
                                                     '& .price:hover': {
                                                         cursor: 'pointer'
-                                                    },
-                                                    '& .quantity': {
-                                                        color: '#667799'
                                                     }
                                                 }}>
-                                                <Box component="span" className="quantity">
-                                                    {' '}
-                                                    {ct.soLuong + 'x'}{' '}
-                                                </Box>
+                                                <Stack direction={'row'} spacing={1}>
+                                                    <span>{ct.soLuong}</span>
+                                                    <span style={{ fontSize: '13px' }}>x</span>
+                                                </Stack>
                                                 <Box>
                                                     <Box
                                                         component="span"
@@ -1790,7 +1792,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 }}>
                                                 <Typography
                                                     variant="body1"
-                                                    color="#3D475C"
+                                                    // color="#3D475C"
                                                     fontWeight="500"
                                                     fontSize="14px">
                                                     {' '}
@@ -1874,7 +1876,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     pt="16px"
                                     pb="16px"
                                     borderRadius="12px"
-                                    paddingX="16px"
+                                    // paddingX="16px"
                                     bgcolor="#F9F9F9">
                                     <Box display="flex" justifyContent="space-between">
                                         <Typography
@@ -2042,8 +2044,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     <Box
                                         display={tienThuaTraKhach != 0 ? 'flex' : 'none'}
                                         justifyContent="space-between"
-                                        alignItems="center"
-                                        mt="8px">
+                                        alignItems="center">
                                         <Typography
                                             variant="h5"
                                             fontWeight="400"
@@ -2068,7 +2069,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     sx={{
                                         display: 'flex',
                                         alignItems: 'stretch',
-                                        mt: '24px',
+                                        mt: '8px',
                                         gap: '8px'
                                     }}>
                                     <Button
@@ -2098,7 +2099,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 </Box>
                             </Box>
                         </Box>
-                    </Box>
+                    </Stack>
                 </Grid>
             </Grid>
         </>

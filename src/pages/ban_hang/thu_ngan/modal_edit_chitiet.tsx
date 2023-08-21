@@ -666,14 +666,24 @@ export default function ModalEditChiTietGioHang({
                                         <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
                                             <Button
                                                 sx={{
-                                                    bgcolor: ct.laPTChietKhau ? ' #fff' : '#EEF0F4'
+                                                    bgcolor: ct.laPTChietKhau
+                                                        ? 'var(--color-main)'
+                                                        : '#EEF0F4',
+                                                    color: ct.laPTChietKhau
+                                                        ? 'white'
+                                                        : 'var(--color-main)'
                                                 }}
                                                 onClick={() => changeLoaiChietKhau(true, ct.id)}>
                                                 %
                                             </Button>
                                             <Button
                                                 sx={{
-                                                    bgcolor: !ct.laPTChietKhau ? ' #fff' : '#EEF0F4'
+                                                    bgcolor: !ct.laPTChietKhau
+                                                        ? ' var(--color-main)'
+                                                        : '#EEF0F4',
+                                                    color: !ct.laPTChietKhau
+                                                        ? 'white'
+                                                        : 'var(--color-main)'
                                                 }}
                                                 onClick={() => changeLoaiChietKhau(false, ct.id)}>
                                                 đ
@@ -705,7 +715,7 @@ export default function ModalEditChiTietGioHang({
                                                                 ? 'var(--color-main)'
                                                                 : '',
                                                         '&:hover ': {
-                                                            bgcolor: 'var(--bs-primary)',
+                                                            bgcolor: 'var(--color-main)',
                                                             color: 'white'
                                                         }
                                                     }}>

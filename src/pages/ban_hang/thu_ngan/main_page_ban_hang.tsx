@@ -6,6 +6,7 @@ import { Guid } from 'guid-typescript';
 import '../style.css';
 import { ReactComponent as Layout2Icon } from '../../../images/layout2.svg';
 import { ReactComponent as Layout1Icon } from '../../../images/layout1.svg';
+import TableChartIcon from '@mui/icons-material/TableChart';
 
 import CheckInNew from '../../check_in/CheckInNew';
 import PageBanHang from './PageBanHangNew';
@@ -123,15 +124,16 @@ export default function MainPageBanHang() {
                     columnSpacing={2}
                     rowSpacing={2}
                     bgcolor="#f8f8f8"
-                    pr={activeTab === 1 ? '16px' : '0'}>
+                    // pr={activeTab === 1 ? '16px' : '0'}
+                >
                     {!getStateChild ? (
                         <Grid item xs={12} sm={6} md={4} lg={4} xl={4}>
                             <Box display="flex" gap="12px">
                                 <ButtonGroup
                                     sx={{
                                         '& button': {
-                                            fontSize: '16px',
-                                            paddingX: '7px'
+                                            // fontSize: '16px',
+                                            // paddingX: '7px'
                                         }
                                     }}>
                                     <Button

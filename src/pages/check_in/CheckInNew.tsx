@@ -31,11 +31,14 @@ import { dbDexie } from '../../lib/dexie/dexieDB';
 import MauInServices from '../../services/mau_in/MauInServices';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
+import EventIcon from '@mui/icons-material/Event';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
+import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
+
 const shortNameCus = createTheme({
     components: {
         MuiButton: {
@@ -222,13 +225,20 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                         bgcolor: '#f8f8f8',
                         zIndex: '-5'
                     }}></Box>
-                <Grid container justifyContent="end">
+                <Grid container>
                     <Grid item xs={12}>
                         <Stack
-                            spacing={1}
+                            flexWrap="wrap"
+                            useFlexGap
+                            justifyContent={{
+                                md: 'flex-end',
+                                lg: 'flex-end',
+                                sm: 'flex-start',
+                                xs: 'flex-start'
+                            }}
+                            spacing={{ xs: 2, sm: 2, md: 1, lg: 1 }}
                             direction="row"
                             display="flex"
-                            justifyContent="end"
                             alignItems="center">
                             <TextField
                                 sx={{
@@ -238,7 +248,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     maxWidth: '300px'
                                 }}
                                 size="small"
-                                className="search-field"
                                 variant="outlined"
                                 type="search"
                                 placeholder="Tìm kiếm"
@@ -254,28 +263,21 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     setTextSeach(event.target.value);
                                 }}
                             />
-                            <Button
-                                variant="outlined"
-                                size="small"
+                            <EventIcon
                                 sx={{
-                                    minWidth: 'unset',
-                                    '& svg': {
-                                        width: '24px',
-                                        height: '24px',
-                                        bgcolor: '#fff!important'
-                                    }
+                                    width: 38,
+                                    height: 36.5,
+                                    borderRadius: '4px',
+                                    border: '1px solid #cccc',
+                                    padding: '6px'
                                 }}
-                                className="btn-outline-hover">
-                                <DateIcon />
-                            </Button>
+                            />
 
                             <Button
+                                className=" btn-container-hover"
                                 variant="contained"
-                                size="small"
                                 sx={{
-                                    backgroundColor: 'var(--color-main)!important',
-
-                                    fontSize: '14px'
+                                    backgroundColor: 'var(--color-main)!important'
                                 }}
                                 startIcon={<Add />}
                                 onClick={() =>
@@ -283,8 +285,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                         ...triggerAddCheckIn,
                                         isShow: true
                                     })
-                                }
-                                className="btn-container-hover">
+                                }>
                                 Thêm khách
                             </Button>
                         </Stack>
@@ -294,12 +295,19 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
             <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
                 {listCusChecking.map((item: any, index: any) => (
-                    <Grid item lg={3} sm={4} xs={6} key={index} sx={{ position: 'relative' }}>
+                    <Grid
+                        item
+                        xs={12}
+                        sm={4}
+                        md={4}
+                        lg={3}
+                        key={index}
+                        sx={{ position: 'relative' }}>
                         <Button
                             sx={{
                                 position: 'absolute',
                                 top: '16px',
-                                right: '8px',
+                                right: 0,
                                 minWidth: 'unset',
                                 borderRadius: '50%!important'
                             }}>
@@ -317,12 +325,14 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 }}
                             />
                         </Button>
-                        <Box
+                        <Stack
+                            padding={3}
+                            direction="column"
+                            justifyContent={'space-between'}
                             sx={{
                                 boxShadow: '0px 7px 20px 0px #28293D14',
                                 backgroundColor: '#fff',
                                 borderRadius: '8px',
-                                padding: '24px',
                                 height: '100%',
                                 border: '1px solid transparent',
                                 transition: '.4s',
@@ -334,75 +344,68 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             onClick={() => {
                                 handleClickCustomer(item);
                             }}>
-                            <Box display="flex" gap="8px">
-                                <Avatar
-                                    // src={Client.avatar}
-                                    // alt={item.tenKhachHang}
-                                    sx={{ width: 40, height: 40 }}
-                                />
+                            <Stack direction={'row'} spacing={2}>
+                                {utils.checkNull(item.avatar) ? (
+                                    <BadgeFistCharOfName
+                                        firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
+                                    />
+                                ) : (
+                                    <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                )}
+
                                 <div>
-                                    <Typography
-                                        color="#333233"
-                                        variant="subtitle1"
-                                        fontSize="14px"
-                                        title={item.tenKhachHang}>
+                                    <Typography variant="subtitle2" title={item.tenKhachHang}>
                                         {item.tenKhachHang}
                                     </Typography>
-                                    <Typography color="#999699" fontSize="12px">
+                                    <Typography color="#999699" variant="caption">
                                         {item.soDienThoai}
                                     </Typography>
                                 </div>
-                            </Box>
-                            <Box display="flex" gap="8px" marginTop="16px">
-                                <Typography fontSize="14px" color="#4C4B4C">
-                                    Điểm tích lũy:
-                                </Typography>
-                                <Typography fontSize="14px" color="#4C4B4C" fontWeight="700">
-                                    {item.tongTichDiem}
-                                </Typography>
-                            </Box>
-                            <Box
-                                display="flex"
-                                marginTop="16px"
-                                flexDirection={MaxPc1490 ? 'column' : 'row'}>
-                                <Typography variant="subtitle1" color="#666466" fontSize="14px">
-                                    {item.dateCheckIn}
-                                </Typography>
-                                <Box
-                                    display="flex"
-                                    marginTop={MaxPc1490 ? '16px' : '0'}
-                                    marginLeft={MaxPc1490 ? '0' : '13px'}
-                                    flexGrow="1">
-                                    <Typography
-                                        color="#666466"
-                                        fontSize="14px"
-                                        display="flex"
-                                        alignItems="center">
-                                        <QueryBuilder
-                                            style={{
-                                                fontSize: '12px',
-
-                                                marginRight: '5px'
-                                            }}
-                                        />
-                                        {item.timeCheckIn}
-                                    </Typography>
-                                    <Typography
-                                        variant="caption"
-                                        lineHeight="16px"
-                                        className="state"
-                                        sx={{
-                                            padding: '4px 12px ',
-                                            borderRadius: '8px',
-                                            backgroundColor: '#FFF8DD',
-                                            color: '#FFC700',
-                                            marginLeft: 'auto'
-                                        }}>
-                                        {item.txtTrangThaiCheckIn}
+                            </Stack>
+                            <Stack spacing={1}>
+                                <Box display="flex" gap="8px" marginTop="8px">
+                                    <Typography variant="body2">Điểm tích lũy:</Typography>
+                                    <Typography variant="body2" fontWeight="700">
+                                        {item.tongTichDiem}
                                     </Typography>
                                 </Box>
-                            </Box>
-                        </Box>
+                                <Grid container>
+                                    <Grid item xs={7} sm={7} md={7}>
+                                        <Stack spacing={1} direction={'row'}>
+                                            <Typography variant="body2">
+                                                {item.dateCheckIn}
+                                            </Typography>
+                                            <Typography
+                                                display="flex"
+                                                alignItems="center"
+                                                variant="body2">
+                                                <QueryBuilder
+                                                    style={{
+                                                        fontSize: '12px',
+                                                        marginRight: '5px'
+                                                    }}
+                                                />
+                                                {item.timeCheckIn}
+                                            </Typography>
+                                        </Stack>
+                                    </Grid>
+                                    <Grid item xs={5} sm={5} md={5}>
+                                        <Box
+                                            component="span"
+                                            sx={{
+                                                padding: '4px 12px ',
+                                                borderRadius: '20px',
+                                                backgroundColor: '#FFF8DD',
+                                                color: '#FFC700',
+                                                fontSize: '12px',
+                                                float: 'right'
+                                            }}>
+                                            {item.txtTrangThaiCheckIn}
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                            </Stack>
+                        </Stack>
                     </Grid>
                 ))}
             </Grid>

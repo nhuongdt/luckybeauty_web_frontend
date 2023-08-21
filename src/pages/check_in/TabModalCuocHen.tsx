@@ -7,7 +7,7 @@ import {
     Grid,
     InputAdornment,
     Avatar,
-    IconButton,
+    Stack,
     debounce
 } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
@@ -34,6 +34,8 @@ import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHan
 import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
 import SuggestService from '../../services/suggests/SuggestService';
 import suggestStore from '../../stores/suggestStore';
+import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
+import utils from '../../utils/utils';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -219,7 +221,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                             borderRadius: '100px',
                             transition: '.4s',
                             minWidth: 'unset',
-                            color: '#666466',
+                            color: 'var(--font-color-main)',
                             fontSize: '12px',
                             border: `1px solid ${
                                 paramSearch.trangThaiBook === item.id ? 'transparent' : '#E6E1E6'
@@ -236,9 +238,10 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
             <Grid container spacing={2}>
                 {listCusBooking.map((item, indexBooking) => (
                     <Grid item key={indexBooking} sm={6} md={4} xs={12}>
-                        <Box
+                        <Stack
+                            spacing={1}
                             sx={{
-                                padding: '18px',
+                                padding: '16px',
                                 border: '1px solid #E6E1E6',
                                 borderRadius: '8px',
                                 boxShadow: '0px 7px 20px 0px #28293D14',
@@ -249,71 +252,71 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                 },
                                 '& p': {
                                     mb: '0'
-                                }
+                                },
+                                height: '100%',
+                                justifyContent: 'space-between'
                             }}
                             onClick={() => choseBooking(item)}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Box
-                                    sx={{ display: 'flex', gap: '8px', width: '100%' }}
+                            <Box
+                                sx={{
+                                    display: 'flex'
+                                }}>
+                                <Stack
+                                    spacing={2}
+                                    direction={'row'}
+                                    sx={{ width: '100%' }}
                                     title={item.tenKhachHang}>
-                                    <Avatar
-                                        sx={{ width: 40, height: 40 }}
-                                        src=""
-                                        alt={item.maKhachHang}
-                                    />
-                                    <Box sx={{ width: '100%' }}>
+                                    {utils.checkNull(item.avatar) ? (
+                                        <BadgeFistCharOfName
+                                            firstChar={utils.getFirstLetter(
+                                                item?.tenKhachHang ?? ''
+                                            )}
+                                        />
+                                    ) : (
+                                        <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                    )}
+                                    <Stack sx={{ width: '100%' }} justifyContent={'space-evenly'}>
                                         <Typography
-                                            variant="body1"
-                                            fontSize="16px"
-                                            color="#333233"
+                                            variant="subtitle2"
                                             sx={{
                                                 whiteSpace: 'nowrap',
                                                 textOverflow: 'ellipsis',
-                                                overflow: 'hidden',
-                                                maxWidth: '80%'
+                                                overflow: 'hidden'
                                             }}>
                                             {item.tenKhachHang}
                                         </Typography>
-                                        <Typography fontSize="12px" variant="body1" color="#999699">
+                                        <Typography fontSize="12px" color="#999699">
                                             {item.soDienThoai}
                                         </Typography>
-                                    </Box>
-                                </Box>
+                                    </Stack>
+                                </Stack>
                             </Box>
-                            {item.details.map((ct: BookingDetailDto, index2) => (
-                                <div key={index2}>
-                                    <Box
+                            <Stack paddingTop={'4px'}>
+                                {item.details.map((ct: BookingDetailDto, index2) => (
+                                    <Stack
+                                        direction={'row'}
+                                        key={index2}
+                                        mt={'2px'}
                                         sx={{
-                                            display: 'flex',
-                                            height: '42px',
-                                            justifyContent: 'space-between',
-                                            mt: '4px',
-                                            '& p': {
-                                                fontSize: '14px',
-
-                                                color: '#4C4B4C'
-                                            }
+                                            justifyContent: 'space-between'
                                         }}>
-                                        <Box
+                                        <Typography
+                                            maxWidth={'70%'}
                                             title={ct.tenHangHoa}
-                                            component="p"
-                                            sx={{
-                                                fontWeight: '500',
-                                                overflow: 'hidden',
-                                                WebkitBoxOrient: 'vertical',
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: '2'
-                                            }}>
+                                            variant="body2"
+                                            className="lableOverflow">
                                             {ct.tenHangHoa}
-                                        </Box>
-                                        <Box component="p" sx={{ fontWeight: '700' }}>
+                                        </Typography>
+
+                                        <Typography variant="body2" fontWeight={600}>
                                             {new Intl.NumberFormat('vi-VN').format(ct.giaBan)}
-                                        </Box>
-                                    </Box>
-                                </div>
-                            ))}
+                                        </Typography>
+                                    </Stack>
+                                ))}
+                            </Stack>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <Box
+                                <Stack
+                                    direction={'row'}
                                     sx={{
                                         display: 'flex',
                                         alignItems: 'center',
@@ -323,9 +326,14 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                     <Box marginRight="4px">
                                         <ClockIcon />
                                     </Box>
-                                    <Box mr="3px">{format(new Date(item.startTime), 'HH:mm')}</Box>{' '}
-                                    - <Box ml="3px">{format(new Date(item.endTime), 'HH:mm')}</Box>
-                                </Box>
+                                    <Typography variant="caption">
+                                        {format(new Date(item.startTime), 'HH:mm')}
+                                    </Typography>{' '}
+                                    -{' '}
+                                    <Typography variant="caption">
+                                        {format(new Date(item.endTime), 'HH:mm')}
+                                    </Typography>
+                                </Stack>
                                 <Box
                                     sx={{
                                         fontSize: '12px',
@@ -338,7 +346,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                     {item.txtTrangThaiBook}
                                 </Box>
                             </Box>
-                        </Box>
+                        </Stack>
                     </Grid>
                 ))}
             </Grid>
