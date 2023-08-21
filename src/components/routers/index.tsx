@@ -157,7 +157,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     showInMenu: false,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
+                    component: LoadableComponent(() => import('../../pages/dashboard'))
                 },
                 {
                     path: '/home',
@@ -169,7 +169,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
+                    component: LoadableComponent(() => import('../../pages/dashboard'))
                 },
                 {
                     path: '/lich-hens',
@@ -223,7 +223,7 @@ export const appRouters: AppRouteProps = {
                     ],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
+                    component: LoadableComponent(() => import('../../pages/dashboard'))
                 },
                 {
                     path: '/khach-hangs',
@@ -397,7 +397,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: true,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(() => import('../../pages/dashboard/indexNew'))
+                    component: LoadableComponent(() => import('../../pages/dashboard'))
                 },
                 {
                     path: 'admin',

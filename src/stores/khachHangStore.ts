@@ -6,9 +6,11 @@ import { KhachHangDetail } from '../services/khach-hang/dto/KhachHangDetail';
 import { LichSuDatLich } from '../services/khach-hang/dto/LichSuDatLich';
 import { PagedResultDto } from '../services/dto/pagedResultDto';
 import { LichSuGiaoDich } from '../services/khach-hang/dto/LichSuGiaoDich';
+import { CreateOrEditNhomKhachDto } from '../services/khach-hang/dto/CreateOrEditNhomKhachDto';
 
 class KhachHangSrore {
     createEditKhachHangDto!: CreateOrEditKhachHangDto;
+    createOrEditNhomKhachDto!: CreateOrEditNhomKhachDto;
     khachHangDetail!: KhachHangDetail;
     lichSuDatLich!: PagedResultDto<LichSuDatLich>;
     lichSuGiaoDich!: PagedResultDto<LichSuGiaoDich>;
@@ -29,11 +31,16 @@ class KhachHangSrore {
             nguonKhach: '',
             diemThuong: 0
         };
+        this.createNewNhomKhachDto();
         makeAutoObservable(this);
     }
     async getForEdit(id: string) {
         const result = await khachHangService.getKhachHang(id);
         this.createEditKhachHangDto = result;
+    }
+    async getNhomKhachForEdit(id: string) {
+        const result = await khachHangService.getForEditNhomKhach(id);
+        this.createOrEditNhomKhachDto = result;
     }
     async getDetail(id: string) {
         const result = await khachHangService.getDetail(id);
@@ -59,6 +66,15 @@ class KhachHangSrore {
             idNguonKhach: '',
             diaChi: '',
             moTa: ''
+        };
+    }
+    async createNewNhomKhachDto() {
+        this.createOrEditNhomKhachDto = {
+            id: AppConsts.guidEmpty,
+            maNhomKhach: '',
+            tenNhomKhach: '',
+            moTa: '',
+            trangThai: 1
         };
     }
 }

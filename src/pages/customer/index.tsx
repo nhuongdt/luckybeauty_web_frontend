@@ -10,23 +10,20 @@ import {
     TextField,
     IconButton,
     Avatar,
-    SelectChangeEvent,
-    Divider
+    SelectChangeEvent
 } from '@mui/material';
-import { Add, WindowRounded } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 import SearchIcon from '../../images/search-normal.svg';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
-import { ReactComponent as CutomerGroupIcon } from '../../images/customer-group.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import fileDowloadService from '../../services/file-dowload.service';
 import CreateOrEditCustomerDialog from './components/create-or-edit-customer-modal';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
-import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import ActionMenuTable from '../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
@@ -41,7 +38,6 @@ import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
 import suggestStore from '../../stores/suggestStore';
 import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
-import { Field } from 'formik';
 import AccordionNhomKhachHang from '../../components/Accordion/NhomKhachHang';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
@@ -136,12 +132,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             this.handleToggle();
         });
     }
-    onNhomKhachModal = () => {
+    onNhomKhachModal = async () => {
+        await khachHangStore.createNewNhomKhachDto();
         this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
     };
-    onEditNhomKhach = (isEdit: boolean, item: any) => {
+    onEditNhomKhach = async (isEdit: boolean, item: any) => {
         if (isEdit) {
             // todo edit
+            await khachHangStore.getNhomKhachForEdit(item.id);
             this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
         } else {
             // filer
@@ -432,7 +430,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             <>
                 {this.state.information === false ? (
                     <Box className="customer-page" paddingTop={2}>
-                        <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid
+                            container
+                            spacing={1}
+                            alignItems="center"
+                            justifyContent="space-between">
                             <Grid
                                 item
                                 xs={12}

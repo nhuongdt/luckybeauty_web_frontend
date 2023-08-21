@@ -406,8 +406,8 @@ const PageSoQuy = ({ xx }: any) => {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Box paddingTop={2} paddingRight={2}>
-                <Grid container justifyContent="space-between">
-                    <Grid item md="auto" display="flex" alignItems="center" gap="10px">
+                <Grid container spacing={1} justifyContent="space-between">
+                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                             Sổ quỹ
                         </Typography>
@@ -439,7 +439,7 @@ const PageSoQuy = ({ xx }: any) => {
                             />
                         </Box>
                     </Grid>
-                    <Grid item md="auto">
+                    <Grid item xs={12} md="auto">
                         <Box
                             sx={{
                                 display: 'flex',

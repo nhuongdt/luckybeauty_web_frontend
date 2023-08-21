@@ -3,7 +3,6 @@ import { Box, Tab, Typography, Button, IconButton, Tabs } from '@mui/material';
 
 import { ReactComponent as ExportIcon } from '../../../images/download.svg';
 import { ReactComponent as PrintIcon } from '../../../images/printer.svg';
-import Avatar from '../../../images/xinh.png';
 import { ReactComponent as EditIcon } from '../../../images/pencil-fiiled.svg';
 import { ReactComponent as DeleteIcon } from '../../../images/the-bin.svg';
 import { ReactComponent as EditUserIcon } from '../../../images/edituser.svg';

@@ -14,7 +14,8 @@ import {
     Select,
     SelectChangeEvent,
     MenuItem,
-    ButtonGroup
+    ButtonGroup,
+    Grid
 } from '@mui/material';
 import { ReactComponent as EditIcon } from '../../../images/edit-2.svg';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -220,8 +221,8 @@ const Calendar: React.FC = () => {
                 open={openDialog}
                 onClose={handleCloseDialog}
             />
-            <Box mb="16px" display="flex" justifyContent="space-between">
-                <Box>
+            <Grid container mb="16px" display="flex" justifyContent="space-between">
+                <Grid item xs={12} md={'auto'}>
                     <Select
                         onChange={changeEmploy}
                         value={employ}
@@ -247,8 +248,11 @@ const Calendar: React.FC = () => {
                             );
                         })}
                     </Select>
-                </Box>
-                <Box
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    md={'auto'}
                     display="flex"
                     sx={{
                         '& button:not(.btn-to-day)': {
@@ -304,7 +308,7 @@ const Calendar: React.FC = () => {
                         }}>
                         <ChevronRightIcon />
                     </Button>
-                </Box>
+                </Grid>
                 <Box display="flex" alignItems="center" gap="8px">
                     <ButtonGroup
                         variant="outlined"
@@ -352,7 +356,7 @@ const Calendar: React.FC = () => {
                         <MenuItem value="Năm">Năm</MenuItem>
                     </Select>
                 </Box>
-            </Box>
+            </Grid>
             <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
                 <Table size="small">
                     <TableHead>
@@ -404,15 +408,17 @@ const Calendar: React.FC = () => {
                                             />
                                             <Box>
                                                 <Typography
-                                                    fontSize="14px"
-                                                    color="#4C4B4C"
-                                                    variant="body1">
+                                                    fontSize="13px"
+                                                    fontWeight="400"
+                                                    fontFamily={'Roboto'}
+                                                    color="#3D475C">
                                                     {item.tenNhanVien}
                                                 </Typography>
                                                 <Typography
-                                                    fontSize="12px"
-                                                    color="#999699"
-                                                    variant="body1">
+                                                    fontSize="13px"
+                                                    fontWeight="400"
+                                                    fontFamily={'Roboto'}
+                                                    color="#3D475C">
                                                     {item.tongThoiGian}h
                                                 </Typography>
                                             </Box>

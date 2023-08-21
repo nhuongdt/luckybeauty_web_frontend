@@ -31,7 +31,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
         } = this.props;
         return (
             <Grid container sx={{ display: totalRecord > 0 ? '' : 'none' }}>
-                <Grid item xs={3}>
+                <Grid item xs={6} md={3}>
                     <Box
                         sx={{
                             display: 'flex',
@@ -63,7 +63,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                         </FormControl>
                     </Box>
                 </Grid>
-                <Grid item xs={9}>
+                <Grid item xs={12} md={9}>
                     <Box
                         sx={{
                             display: 'flex',

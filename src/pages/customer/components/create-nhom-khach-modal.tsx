@@ -12,10 +12,11 @@ import {
 import { Form, Formik } from 'formik';
 import { Component } from 'react';
 import AppConsts from '../../../lib/appconst';
-import chucVuService from '../../../services/nhan-vien/chuc_vu/chucVuService';
 import suggestStore from '../../../stores/suggestStore';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import khachHangService from '../../../services/khach-hang/khachHangService';
+import { observer } from 'mobx-react';
+import khachHangStore from '../../../stores/khachHangStore';
 interface ModalProps {
     visiable: boolean;
     handleClose: () => void;
@@ -31,7 +32,10 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                 <Box>
                     <DialogTitle>
                         <Typography fontSize="24px" color="#333233" fontWeight="700" mb={3}>
-                            Thêm mới nhóm khách
+                            {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty
+                                ? 'Cập nhật '
+                                : 'Thêm mới '}
+                            nhóm khách
                         </Typography>
                         <Button
                             onClick={this.props.handleClose}
@@ -49,16 +53,12 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                     </DialogTitle>
                     <DialogContent>
                         <Formik
-                            initialValues={{
-                                id: AppConsts.guidEmpty,
-                                maNhomKhach: '1',
-                                tenNhomKhach: '',
-                                moTa: '',
-                                trangThai: 1
-                            }}
+                            initialValues={khachHangStore.createOrEditNhomKhachDto}
                             onSubmit={async (values) => {
+                                values.id = khachHangStore.createOrEditNhomKhachDto.id;
                                 await khachHangService.createNhomKhach(values);
                                 await suggestStore.getSuggestNhomKhach();
+                                await khachHangStore.createNewNhomKhachDto();
                                 this.props.handleClose();
                             }}>
                             {({ handleChange, values }) => (
@@ -74,6 +74,7 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                             <TextField
                                                 fullWidth
                                                 size="small"
+                                                value={values.tenNhomKhach}
                                                 name="tenNhomKhach"
                                                 onChange={handleChange}></TextField>
                                         </Grid>
@@ -87,6 +88,7 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                             <TextField
                                                 fullWidth
                                                 size="small"
+                                                value={values.moTa}
                                                 name="moTa"
                                                 onChange={handleChange}></TextField>
                                         </Grid>
@@ -125,4 +127,4 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
         );
     }
 }
-export default CreateOrEditNhomKhachModal;
+export default observer(CreateOrEditNhomKhachModal);

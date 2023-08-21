@@ -21,7 +21,7 @@ import rules from './createOrEditNhanVien.validate';
 import AppConsts from '../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
 import useWindowWidth from '../../../components/StateWidth';
-import AddBoxIcon from '@mui/icons-material/AddBox';
+import AddIcon from '@mui/icons-material/Add';
 import CreateOrEditChucVuModal from '../chuc-vu/components/create-or-edit-chuc-vu-modal';
 import suggestStore from '../../../stores/suggestStore';
 import { observer } from 'mobx-react';
@@ -110,17 +110,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         <img src={closeIcon} />
                     </Button>
                 </Box>
-
-                <Typography
-                    color="#999699"
-                    fontSize="16px"
-                    fontWeight="700"
-                    variant="h3"
-                    paddingLeft="24px"
-                    marginTop="28px">
-                    Thông tin chi tiết
-                </Typography>
-
                 <Formik
                     initialValues={initValues}
                     validationSchema={rules}
@@ -144,7 +133,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                               });
                         onOk();
                     }}>
-                    {({ handleChange, errors, values, setFieldValue }) => (
+                    {({ handleChange, errors, values, setFieldValue, touched }) => (
                         <Form
                             onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                 if (event.key === 'Enter') {
@@ -155,19 +144,21 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                 display="flex"
                                 flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
                                 justifyContent="space-between"
-                                paddingRight="24px">
+                                padding="12px 24px 0px 24px">
                                 <Grid
                                     container
                                     className="form-container"
-                                    spacing={3}
+                                    spacing={2}
                                     width={useWindowWidth() > 600 ? '70%' : '100%'}
                                     paddingRight={useWindowWidth() > 600 ? '12px' : '0'}
-                                    paddingBottom="5vw"
                                     marginTop="0"
                                     marginLeft="0">
                                     <Grid item xs={12} md={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Họ nhân viên
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
+                                            Họ nhân viên <span className="text-danger">*</span>
                                         </Typography>
                                         <TextField
                                             size="small"
@@ -177,13 +168,16 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                                        {errors.ho && (
+                                        {errors.ho && touched.ho && (
                                             <small className="text-danger">{errors.ho}</small>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Tên nhân viên
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
+                                            Tên nhân viên <span className="text-danger">*</span>
                                         </Typography>
                                         <TextField
                                             size="small"
@@ -193,13 +187,16 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                                        {errors.tenLot && (
+                                        {errors.tenLot && touched.tenLot && (
                                             <small className="text-danger">{errors.tenLot}</small>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Số điện thoại
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
+                                            Số điện thoại <span className="text-danger">*</span>
                                         </Typography>
                                         <TextField
                                             type="tel"
@@ -210,14 +207,17 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             placeholder="Số điện thoại"
                                             fullWidth
                                             sx={{ fontSize: '16px' }}></TextField>
-                                        {errors.soDienThoai && (
+                                        {errors.soDienThoai && touched.soDienThoai && (
                                             <small className="text-danger">
                                                 {errors.soDienThoai}
                                             </small>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
                                             Địa chỉ
                                         </Typography>
                                         <TextField
@@ -231,7 +231,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
                                             Ngày sinh
                                         </Typography>
                                         <TextField
@@ -245,18 +248,21 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             size="small"></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
                                             Giới tính
                                         </Typography>
                                         <Select
                                             id="gender"
+                                            size="small"
                                             fullWidth
                                             name="gioiTinh"
                                             value={values.gioiTinh}
                                             onChange={handleChange}
                                             defaultValue={0}
                                             sx={{
-                                                height: '42px',
                                                 backgroundColor: '#fff',
                                                 padding: '0',
                                                 fontSize: '16px',
@@ -271,44 +277,50 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
 
                                     <Grid item container xs={12}>
                                         <Grid item xs={12}>
-                                            <Typography color="#4C4B4C" variant="subtitle2">
-                                                Vị trí
+                                            <Typography
+                                                color="#4C4B4C"
+                                                variant="subtitle2"
+                                                paddingBottom={'4px'}>
+                                                Vị trí <span className="text-danger">*</span>
                                             </Typography>
                                         </Grid>
-                                        <Grid
-                                            item
-                                            xs={
-                                                abpCustom.isGrandPermission('Pages.ChucVu.Create')
-                                                    ? 11
-                                                    : 12
-                                            }>
-                                            <Autocomplete
-                                                options={suggestStore.suggestChucVu}
-                                                getOptionLabel={(option) => `${option.tenChucVu}`}
-                                                size="small"
-                                                fullWidth
-                                                disablePortal
-                                                onChange={(event, value) => {
-                                                    setFieldValue(
-                                                        'idChucVu',
-                                                        value ? value.idChucVu : ''
-                                                    ); // Cập nhật giá trị id trong Formik
-                                                }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        placeholder="Nhập tên vị trí"
-                                                    />
-                                                )}
-                                            />
+                                        <Grid item xs={12}>
+                                            <Box display={'flex'} flexDirection={'row'} gap={1}>
+                                                <Autocomplete
+                                                    options={suggestStore.suggestChucVu}
+                                                    getOptionLabel={(option) =>
+                                                        `${option.tenChucVu}`
+                                                    }
+                                                    size="small"
+                                                    fullWidth
+                                                    disablePortal
+                                                    onChange={(event, value) => {
+                                                        setFieldValue(
+                                                            'idChucVu',
+                                                            value ? value.idChucVu : ''
+                                                        ); // Cập nhật giá trị id trong Formik
+                                                    }}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder="Nhập tên vị trí"
+                                                        />
+                                                    )}
+                                                />
+                                                <Button
+                                                    onClick={this.onModalChucVu}
+                                                    variant="contained">
+                                                    <AddIcon />
+                                                </Button>
+                                            </Box>
 
-                                            {errors.idChucVu && (
+                                            {errors.idChucVu && touched.idChucVu && (
                                                 <small className="text-danger">
                                                     {errors.idChucVu}
                                                 </small>
                                             )}
                                         </Grid>
-                                        <Grid
+                                        {/* <Grid
                                             item
                                             xs={1}
                                             hidden={
@@ -319,11 +331,14 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                     sx={{ width: '28px', height: '28px' }}
                                                 />
                                             </Button>
-                                        </Grid>
+                                        </Grid> */}
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                        <Typography
+                                            color="#4C4B4C"
+                                            variant="subtitle2"
+                                            paddingBottom={'4px'}>
                                             Ghi chú
                                         </Typography>
                                         <TextareaAutosize

@@ -427,8 +427,8 @@ const GiaoDichThanhToan: React.FC = () => {
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
             <Box paddingTop={2} paddingRight={2}>
-                <Grid container justifyContent="space-between">
-                    <Grid item md="auto" display="flex" alignItems="center" gap="10px">
+                <Grid container spacing={1} justifyContent="space-between">
+                    <Grid xs={12} md={6} item display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                             Giao dịch thanh toán
                         </Typography>
@@ -464,7 +464,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             />
                         </Box>
                     </Grid>
-                    <Grid item md={6}>
+                    <Grid item xs={12} md={6}>
                         <Box
                             sx={{
                                 display: 'flex',

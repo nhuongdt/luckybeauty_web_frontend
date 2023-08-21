@@ -11,6 +11,7 @@ import { OpenInNew, LocalOffer } from '@mui/icons-material';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import utils from '../../utils/utils'; // func common
 import { red } from '@mui/material/colors';
+import abpCustom from '../abp-custom';
 
 export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeItem }: any) {
     const [rowHover, setRowHover] = useState<SuggestNhomKhachDto>({} as SuggestNhomKhachDto);
@@ -138,12 +139,15 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             title={item.tenNhomKhach}>
                             {item.tenNhomKhach}
                         </Typography>
-                        {isHover && item.id !== '' && rowHover.id === item.id && (
-                            <OpenInNew
-                                onClick={() => handleClickTreeItem(true, item.id)}
-                                sx={{ position: 'absolute', right: 16 }}
-                            />
-                        )}
+                        {isHover &&
+                            item.id !== '' &&
+                            rowHover.id === item.id &&
+                            !abpCustom.isGrandPermission('Pages.NhomKhach.Update') && (
+                                <OpenInNew
+                                    onClick={() => handleClickTreeItem(true, item.id)}
+                                    sx={{ position: 'absolute', right: 16 }}
+                                />
+                            )}
                     </AccordionSummary>
                 </Accordion>
             ))}

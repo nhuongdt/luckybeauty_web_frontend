@@ -268,6 +268,10 @@ class EmployeeScreen extends React.Component {
                     <Typography
                         fontSize="13px"
                         variant="body2"
+                        fontWeight="400"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
+                        lineHeight="16px"
                         title={params.value}
                         sx={{ textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                         {params.value}
@@ -310,7 +314,12 @@ class EmployeeScreen extends React.Component {
                     {params.value != null ? (
                         <>
                             <DateIcon style={{ marginRight: 4 }} />
-                            <Typography variant="body2" color="#333233">
+                            <Typography
+                                fontSize="13px"
+                                fontWeight="400"
+                                fontFamily={'Roboto'}
+                                color="#3D475C"
+                                lineHeight="16px">
                                 {new Date(params.value).toLocaleDateString('en-GB')}
                             </Typography>
                         </>
@@ -318,7 +327,21 @@ class EmployeeScreen extends React.Component {
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'ngaySinh');
+                        }}
+                    />
+                </Box>
             )
         },
         {
@@ -334,13 +357,32 @@ class EmployeeScreen extends React.Component {
                         justifyContent: 'center',
                         width: '100%'
                     }}>
-                    <Typography variant="body2" color="#333233">
+                    <Typography
+                        fontSize="13px"
+                        fontWeight="400"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
+                        lineHeight="16px">
                         {params.value == 0 ? '' : params.value == 1 ? 'Nam' : 'Nữ'}
                     </Typography>
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'gioiTinh');
+                        }}
+                    />
+                </Box>
             )
         },
         {
@@ -352,7 +394,10 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box
                     sx={{
-                        fontWeight: '700'
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
                     }}>
                     {params.colDef.headerName}
                 </Box>
@@ -363,6 +408,9 @@ class EmployeeScreen extends React.Component {
                         width: '100%',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
+                        fontWeight: '400',
+                        fontFamily: 'Roboto',
+                        color: '#3D475C',
                         textAlign: 'center'
                     }}
                     title={params.value}>
@@ -380,15 +428,29 @@ class EmployeeScreen extends React.Component {
                 <Typography
                     fontSize="13px"
                     fontWeight="400"
-                    variant="h6"
-                    color="#333233"
+                    fontFamily={'Roboto'}
+                    color="#3D475C"
                     lineHeight="16px"
                     sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
                 </Typography>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'tenChucVu');
+                        }}
+                    />
+                </Box>
             )
         },
         {
@@ -408,16 +470,30 @@ class EmployeeScreen extends React.Component {
                     <DateIcon style={{ marginRight: 4 }} />
                     <Typography
                         fontSize="13px"
-                        variant="h6"
                         fontWeight="400"
-                        color="#333233"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
                         lineHeight="16px">
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Typography>
                 </Box>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'ngayVaoLam');
+                        }}
+                    />
+                </Box>
             )
         },
         {
@@ -429,8 +505,7 @@ class EmployeeScreen extends React.Component {
             renderCell: (params) => (
                 <Typography
                     fontSize="13px"
-                    variant="h6"
-                    lineHeight="16px"
+                    fontFamily={'Roboto'}
                     padding="4px 8px"
                     borderRadius="12px"
                     fontWeight="400"
@@ -440,7 +515,21 @@ class EmployeeScreen extends React.Component {
                 </Typography>
             ),
             renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                    <IconSorting
+                        className="custom-icon"
+                        onClick={() => {
+                            this.onSort(this.state.sortType, 'trangThai');
+                        }}
+                    />
+                </Box>
             )
         },
         {

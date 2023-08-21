@@ -210,14 +210,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         flex: 'unset!important',
                                         '& a': {
                                             fontSize: '14px',
+                                            fontFamily: 'Roboto',
                                             color:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
                                                     (dropdownItem) =>
                                                         location.pathname === dropdownItem.key
                                                 )
-                                                    ? '#333233'
-                                                    : '#3D475C',
+                                                    ? '#00284C'
+                                                    : '#3B4758',
                                             fontWeight:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -235,6 +236,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         paddingY: '4px',
                                         '& span': {
                                             fontSize: '14px',
+                                            fontFamily: 'Roboto !important',
                                             color:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -249,7 +251,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                     (dropdownItem) =>
                                                         location.pathname === dropdownItem.key
                                                 )
-                                                    ? '700'
+                                                    ? '500'
                                                     : '400'
                                         }
                                     }}
@@ -330,11 +332,11 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                             color:
                                                                 location.pathname ===
                                                                 dropdownItem.key
-                                                                    ? 'var(--color-main)'
-                                                                    : '#343234'
+                                                                    ? '#319DFF'
+                                                                    : '#3D475C'
                                                         },
                                                         ':hover a': {
-                                                            color: 'var(--color-main)'
+                                                            color: '#319DFF'
                                                         }
                                                     }}
                                                 />

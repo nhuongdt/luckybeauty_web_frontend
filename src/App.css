@@ -118,7 +118,9 @@ body .font-normal {
 .MuiTablePagination-displayedRows {
     margin-bottom: 0;
 }
-
+.MuiAutocomplete-option{
+    font-size: 13px;
+}
 
 /* style main button*/
 
