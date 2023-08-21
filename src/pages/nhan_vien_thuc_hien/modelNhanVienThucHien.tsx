@@ -32,6 +32,7 @@ import { ReactComponent as CheckIcon } from '../../images/checkIcon.svg';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
+import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
@@ -251,23 +252,39 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                         <CheckCircleIcon sx={{ color: 'var(--color-main)' }} />
                                     </Box>
                                     <div className="person-avatar">
-                                        <Avatar
+                                        {/* <Avatar
                                             src={person.avatar}
                                             alt={person.name}
                                             sx={{ width: '44px', height: '44px' }}
-                                        />
+                                        /> */}
+                                        {utils.checkNull(person?.avatar) ? (
+                                            <BadgeFistCharOfName
+                                                firstChar={utils.getFirstLetter(
+                                                    person?.tenNhanVien ?? ''
+                                                )}
+                                            />
+                                        ) : (
+                                            <Avatar
+                                                sx={{ width: 40, height: 40 }}
+                                                src={person?.avatar}
+                                            />
+                                        )}
                                     </div>
-                                    <div>
+                                    <Stack maxWidth="calc(100% - 100px)">
                                         <Typography
+                                            title={person.tenNhanVien}
                                             variant="subtitle1"
-                                            color="#333233"
-                                            className="person-name">
+                                            className="lableOverflow">
                                             {person.tenNhanVien}
                                         </Typography>
-                                        <Typography variant="caption" className="person-position">
+                                        <Typography
+                                            sx={{ fontStyle: 'italic' }}
+                                            variant="caption"
+                                            className="person-position"
+                                            color={'#333233'}>
                                             {person.tenChucVu}
                                         </Typography>
-                                    </div>
+                                    </Stack>
                                 </Box>
                             </Grid>
                         ))}

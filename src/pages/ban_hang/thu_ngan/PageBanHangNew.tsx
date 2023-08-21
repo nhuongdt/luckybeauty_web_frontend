@@ -30,7 +30,6 @@ import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import { useReactToPrint } from 'react-to-print';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { MauInHoaDon } from '../../../components/Print/MauInHoaDon';
 import DetailHoaDon from './DetailHoaDon';
 import ProductService from '../../../services/product/ProductService';
 import GroupProductService from '../../../services/product/GroupProductService';
@@ -1064,7 +1063,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     sx={{
                                         borderColor: '#CFD3D4!important',
                                         borderWidth: '1px!important',
-                                        maxWidth: '55%',
+                                        maxWidth: { lg: '55%', md: '45%' },
                                         mr: '24px',
                                         boxShadow: ' 0px 20px 100px 0px #0000000D',
                                         maxHeight: '37px',
@@ -1103,7 +1102,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     boxShadow: CoditionLayout
                                         ? 'unset'
                                         : ' 0px 20px 100px 0px #0000000D',
-                                    // padding: '16px 24px',
+                                    // padding: '16px 0px 16px 16px',
                                     padding: '16px',
                                     height: CoditionLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
@@ -1358,7 +1357,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     display="flex"
                                     flexDirection="column"
                                     gap="24px"
-                                    padding="16px"
+                                    padding={2}
                                     marginTop="16px"
                                     sx={{
                                         width: '100%',
@@ -1400,15 +1399,19 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 {nhom.hangHoas.map((item: any) => (
                                                     <Grid
                                                         item
-                                                        xs={CoditionLayout ? 2.4 : 4}
+                                                        xs={6}
+                                                        sm={4}
+                                                        md={4}
+                                                        lg={3}
                                                         key={item.id}>
-                                                        <Box
-                                                            minHeight="104px"
-                                                            padding="8px 12px 9px 12px"
+                                                        <Stack
+                                                            spacing={2}
+                                                            height={'100%'}
+                                                            padding="8px 12px"
                                                             display="flex"
                                                             flexDirection="column"
                                                             justifyContent="space-between"
-                                                            gap="16px"
+                                                            gap="8px"
                                                             borderRadius="4px"
                                                             sx={{
                                                                 border: '1px solid transparent',
@@ -1422,31 +1425,31 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             onClick={() => {
                                                                 choseChiTiet(item, index);
                                                             }}>
-                                                            <Typography
-                                                                variant="h5"
-                                                                fontSize="12px"
-                                                                fontWeight="700"
-                                                                color="#333233"
+                                                            <span
                                                                 title={item.tenHangHoa}
-                                                                sx={{
-                                                                    overflow: 'hidden',
-                                                                    textOverflow: 'ellipsis',
+                                                                style={{
+                                                                    fontSize: '12px',
+                                                                    fontWeight: '700',
+                                                                    color: '#333233',
                                                                     display: '-webkit-box',
                                                                     WebkitBoxOrient: 'vertical',
                                                                     WebkitLineClamp: 2,
-                                                                    maxHeight: '32px'
+                                                                    maxHeight: '32px',
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis'
                                                                 }}>
                                                                 {item.tenHangHoa}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body1"
-                                                                fontSize="14px"
-                                                                color="#333233">
+                                                            </span>
+                                                            <span
+                                                                style={{
+                                                                    fontSize: '13px',
+                                                                    color: '#333233'
+                                                                }}>
                                                                 {Intl.NumberFormat('vi-VN').format(
                                                                     item.giaBan
                                                                 )}
-                                                            </Typography>
-                                                        </Box>
+                                                            </span>
+                                                        </Stack>
                                                     </Grid>
                                                 ))}
                                             </Grid>
@@ -1606,13 +1609,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             : '16px 0px'
                                     }
                                     borderBottom="1px solid #E0E4EB"
-                                    // marginTop="16px"
                                     key={index}>
-                                    <Box
-                                        display="flex"
-                                        justifyContent="space-evenly"
-                                        alignItems="center">
-                                        <Box width="55%" paddingRight="20px">
+                                    <Grid container>
+                                        <Grid item md={12} xs={12} sm={12} lg={7}>
                                             <Typography
                                                 variant="body1"
                                                 fontSize="14px"
@@ -1726,101 +1725,120 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         </Box>
                                                     </>
                                                 )}
-                                        </Box>
-                                        <Box width="20%">
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    gap: '8px',
-                                                    color: '#000',
-                                                    fontSize: '14px',
-                                                    fontWeight: 400,
+                                        </Grid>
+                                        <Grid
+                                            item
+                                            md={12}
+                                            xs={12}
+                                            sm={12}
+                                            lg={5}
+                                            mt={{ xs: 1, sm: 1, md: 1, lg: 0 }}
+                                            pl={{ xs: 5, sm: 5, md: 5, lg: 0 }}>
+                                            <Grid container justifyContent={'flex-end'}>
+                                                <Stack
+                                                    width={'100%'}
+                                                    direction={'row'}
+                                                    justifyContent={'flex-end'}>
+                                                    <Grid item xs={6} sm={6} md={5} lg={5}>
+                                                        <Box
+                                                            sx={{
+                                                                display: 'flex',
+                                                                gap: '8px',
+                                                                color: '#000',
+                                                                fontSize: '14px',
+                                                                fontWeight: 500,
 
-                                                    transition: '.4s',
-                                                    '& .price': {
-                                                        fontSize: '14px',
-                                                        color: 'var(--color-main)'
-                                                    },
-                                                    '& .price:hover': {
-                                                        cursor: 'pointer'
-                                                    }
-                                                }}>
-                                                <Stack direction={'row'} spacing={1}>
-                                                    <span>{ct.soLuong}</span>
-                                                    <span style={{ fontSize: '13px' }}>x</span>
-                                                </Stack>
-                                                <Box>
-                                                    <Box
-                                                        component="span"
-                                                        onClick={() => showPopChiTietGioHang(ct)}
-                                                        className="price">
-                                                        {Intl.NumberFormat('vi-VN').format(
-                                                            ct.donGiaTruocCK
-                                                        )}
-                                                    </Box>
-                                                    {ct?.tienChietKhau !== undefined &&
-                                                        ct?.tienChietKhau > 0 && (
-                                                            <Typography
-                                                                textAlign="center"
-                                                                variant="body1"
-                                                                color="#8492AE"
-                                                                fontSize="10px"
-                                                                fontStyle="italic">
-                                                                <span>Giảm</span>{' '}
-                                                                <span>
-                                                                    {new Intl.NumberFormat(
-                                                                        'vi-VN'
-                                                                    ).format(
-                                                                        ct?.tienChietKhau ?? 0
-                                                                    )}
+                                                                transition: '.4s',
+                                                                '& .price': {
+                                                                    // fontSize: '14px',
+                                                                    color: 'var(--color-main)'
+                                                                },
+                                                                '& .price:hover': {
+                                                                    cursor: 'pointer'
+                                                                }
+                                                            }}>
+                                                            <Stack direction={'row'} spacing={1}>
+                                                                <span>{ct.soLuong}</span>
+                                                                <span
+                                                                    style={{
+                                                                        fontSize: '13px'
+                                                                    }}>
+                                                                    x
                                                                 </span>
-                                                            </Typography>
-                                                        )}
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                        <Box
-                                            display="flex"
-                                            alignItems="center"
-                                            width="25%"
-                                            justifyContent="end">
-                                            <Box
-                                                sx={{
-                                                    marginLeft: '8px',
-                                                    display: 'flex',
-                                                    gap: '10px'
-                                                }}>
-                                                <Typography
-                                                    variant="body1"
-                                                    // color="#3D475C"
-                                                    fontWeight="500"
-                                                    fontSize="14px">
-                                                    {' '}
-                                                    {Intl.NumberFormat('vi-VN').format(
-                                                        ct?.thanhTienSauCK ?? 0
-                                                    )}
-                                                </Typography>
-                                                <Button
-                                                    sx={{
-                                                        minWidth: '0',
-                                                        padding: '0',
-                                                        '&:hover svg': {
-                                                            filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                                                        }
-                                                    }}>
-                                                    <DeleteIcon
-                                                        style={{
-                                                            cursor: 'pointer',
-                                                            color: '#999699'
-                                                        }}
-                                                        onClick={() => {
-                                                            deleteChiTietHoaDon(ct);
-                                                        }}
-                                                    />
-                                                </Button>
-                                            </Box>
-                                        </Box>
-                                    </Box>
+                                                            </Stack>
+                                                            <Box>
+                                                                <Box
+                                                                    component="span"
+                                                                    onClick={() =>
+                                                                        showPopChiTietGioHang(ct)
+                                                                    }
+                                                                    className="price">
+                                                                    {Intl.NumberFormat(
+                                                                        'vi-VN'
+                                                                    ).format(ct.donGiaTruocCK)}
+                                                                </Box>
+                                                                {ct?.tienChietKhau !== undefined &&
+                                                                    ct?.tienChietKhau > 0 && (
+                                                                        <Typography
+                                                                            textAlign="center"
+                                                                            variant="body1"
+                                                                            color="#8492AE"
+                                                                            fontSize="10px"
+                                                                            fontStyle="italic">
+                                                                            <span>Giảm</span>{' '}
+                                                                            <span>
+                                                                                {new Intl.NumberFormat(
+                                                                                    'vi-VN'
+                                                                                ).format(
+                                                                                    ct?.tienChietKhau ??
+                                                                                        0
+                                                                                )}
+                                                                            </span>
+                                                                        </Typography>
+                                                                    )}
+                                                            </Box>
+                                                        </Box>
+                                                    </Grid>
+                                                    <Grid item xs={6} sm={6} md={7} lg={7}>
+                                                        <Box
+                                                            justifyContent={'flex-end'}
+                                                            sx={{
+                                                                display: 'flex',
+                                                                gap: '8px'
+                                                            }}>
+                                                            <span
+                                                                style={{
+                                                                    fontWeight: 500,
+                                                                    fontSize: '14px'
+                                                                }}>
+                                                                {Intl.NumberFormat('vi-VN').format(
+                                                                    ct?.thanhTienSauCK ?? 0
+                                                                )}
+                                                            </span>
+                                                            <Button
+                                                                sx={{
+                                                                    minWidth: '20px',
+                                                                    padding: '0',
+                                                                    '&:hover svg': {
+                                                                        filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                                                    }
+                                                                }}>
+                                                                <DeleteIcon
+                                                                    style={{
+                                                                        cursor: 'pointer',
+                                                                        color: '#999699'
+                                                                    }}
+                                                                    onClick={() => {
+                                                                        deleteChiTietHoaDon(ct);
+                                                                    }}
+                                                                />
+                                                            </Button>
+                                                        </Box>
+                                                    </Grid>
+                                                </Stack>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
                                 </Box>
                             ))}
                         </Box>
@@ -2025,18 +2043,19 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     }
                                                 }}
                                                 customInput={TextField}
-                                                onChange={(event) =>
-                                                    setLstQuyCT(
-                                                        lstQuyCT.map((itemQuy: QuyChiTietDto) => {
+                                                onChange={(event) => {
+                                                    const arrQCT = lstQuyCT.map(
+                                                        (itemQuy: QuyChiTietDto) => {
                                                             return {
                                                                 ...itemQuy,
                                                                 tienThu: utils.formatNumberToFloat(
                                                                     event.target.value
                                                                 )
                                                             };
-                                                        })
-                                                    )
-                                                }
+                                                        }
+                                                    );
+                                                    assignThongTinThanhToan(arrQCT);
+                                                }}
                                             />
                                         </Grid>
                                     </Grid>
