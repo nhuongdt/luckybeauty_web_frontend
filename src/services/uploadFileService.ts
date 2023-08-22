@@ -48,12 +48,16 @@ class UpLoadFileService {
     };
     GoogleApi_RemoveFile_byId = async (fileId: string) => {
         if (!utils.checkNull(fileId)) {
-            const data = await http
-                .get(`api/services/app/GoogleAPI/GoogleApi_RemoveFile_byId?fileId=${fileId}`)
-                .then((res) => {
-                    return res.data.result;
-                });
-            return data;
+            try {
+                const data = await http
+                    .get(`api/services/app/GoogleAPI/GoogleApi_RemoveFile_byId?fileId=${fileId}`)
+                    .then((res) => {
+                        return res.data.result;
+                    });
+                return data;
+            } catch (err: any) {
+                return true;
+            }
         }
         return true;
     };
