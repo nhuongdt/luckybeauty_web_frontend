@@ -118,9 +118,11 @@ body .font-normal {
 .MuiTablePagination-displayedRows {
     margin-bottom: 0;
 }
-.MuiAutocomplete-option{
+
+.MuiAutocomplete-option {
     font-size: 13px;
 }
+
 
 /* style main button*/
 
@@ -162,7 +164,7 @@ body .font-normal {
 }
 
 .modal-lable {
-    font-size: 13px !important;
+    font-size: var(--font-size-main) !important;
     font-weight: 500 !important;
 }
 
