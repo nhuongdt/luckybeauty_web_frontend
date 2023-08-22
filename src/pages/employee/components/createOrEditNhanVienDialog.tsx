@@ -8,12 +8,16 @@ import {
     Grid,
     MenuItem,
     Select,
+    Stack,
     TextField,
     TextareaAutosize,
-    Typography
+    Typography,
+    Link
 } from '@mui/material';
 import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import closeIcon from '../../../images/close-square.svg';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import '../employee.css';
 import { Form, Formik } from 'formik';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
@@ -26,6 +30,12 @@ import CreateOrEditChucVuModal from '../chuc-vu/components/create-or-edit-chuc-v
 import suggestStore from '../../../stores/suggestStore';
 import { observer } from 'mobx-react';
 import abpCustom from '../../../components/abp-custom';
+import utils from '../../../utils/utils';
+import { Close } from '@mui/icons-material';
+import uploadFileService from '../../../services/uploadFileService';
+import { Guid } from 'guid-typescript';
+import khachHangStore from '../../../stores/khachHangStore';
+import nhanVienStore from '../../../stores/nhanVienStore';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -37,13 +47,29 @@ export interface ICreateOrEditUserProps {
 class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     state = {
         avatarFile: '',
-        chucVuVisiable: false
+        chucVuVisiable: false,
+        staffImage: '',
+        googleDrive_fileId: '',
+        fileImage: {} as File
     };
     onModalChucVu = () => {
         this.setState({
             chucVuVisiable: !this.state.chucVuVisiable
         });
     };
+
+    UNSAFE_componentWillReceiveProps(nextProp: any): void {
+        if (nextProp.formRef !== undefined) {
+            const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
+            console.log('objUpdate ', objUpdate);
+            this.setState({
+                staffImage: objUpdate?.avatar ?? '',
+                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
+                    objUpdate?.avatar ?? ''
+                )
+            });
+        }
+    }
 
     onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -60,6 +86,39 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                 this.setState({ avatarFile: reader.result?.toString() });
             };
         }
+    };
+    choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file: File = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => {
+                this.setState((prev) => {
+                    return {
+                        ...prev,
+                        staffImage: reader.result?.toString() ?? ''
+                    };
+                });
+            };
+            this.setState((prev) => {
+                return {
+                    ...prev,
+                    fileImage: file
+                };
+            });
+        }
+    };
+    closeImage = async () => {
+        if (!utils.checkNull(this.state.googleDrive_fileId)) {
+            await uploadFileService.GoogleApi_RemoveFile_byId(this.state.googleDrive_fileId);
+        }
+        this.setState((prev) => {
+            return {
+                ...prev,
+                googleDrive_fileId: '',
+                staffImage: ''
+            };
+        });
     };
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef } = this.props;
@@ -116,6 +175,32 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     onSubmit={async (values) => {
                         values.id = initValues.id;
                         values.tenNhanVien = values.ho + ' ' + values.tenLot;
+                        let fileId = this.state.googleDrive_fileId;
+                        const fileSelect = this.state.fileImage;
+                        console.log(33, this.state.googleDrive_fileId);
+                        if (!utils.checkNull(this.state.staffImage)) {
+                            // nếu cập nhật: chỉ upload nếu chọn lại ảnh
+
+                            if (
+                                utils.checkNull(formRef.id) ||
+                                formRef.id == Guid.EMPTY ||
+                                (!utils.checkNull(formRef.id) &&
+                                    !utils.checkNull(formRef.avatar) &&
+                                    utils.checkNull(this.state.googleDrive_fileId)) ||
+                                utils.checkNull(formRef.avatar)
+                            ) {
+                                // awlay insert: because image was delete before save
+                                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
+                                    fileSelect,
+                                    'NhanVien'
+                                );
+                            }
+                        }
+                        // gán lại image theo id mới
+                        values.avatar =
+                            fileId !== ''
+                                ? `https://drive.google.com/uc?export=view&id=${fileId}`
+                                : '';
                         const createOrEdit = await nhanVienService.createOrEdit(values);
                         createOrEdit != null
                             ? formRef.id === AppConsts.guidEmpty
@@ -362,69 +447,72 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     paddingLeft="12px">
                                     <Grid item xs={12}>
                                         <Box
-                                            height="250px"
-                                            position="relative"
-                                            paddingTop="5.0403vh"
-                                            style={{ textAlign: 'center', borderColor: '#FFFAFF' }}>
-                                            <img
-                                                hidden={
-                                                    this.state.avatarFile == undefined ||
-                                                    this.state.avatarFile == ''
-                                                }
-                                                src={this.state.avatarFile}
-                                                width={'220px'}
-                                                height={'200px'}
-                                            />
-                                            <TextField
-                                                onChange={this.onSelectAvatarFile}
-                                                type="file"
-                                                id="input-file"
-                                                name="avatarFile"
-                                                sx={{
-                                                    position: 'absolute',
-                                                    top: '0',
-                                                    left: '0',
-                                                    width: '100%',
-                                                    border: 'none!important',
-                                                    height: '100%'
-                                                }}
-                                                InputProps={{
-                                                    style: {
-                                                        position: 'absolute',
-                                                        height: '100%',
-                                                        width: '100%',
-                                                        top: '0',
-                                                        left: '0'
-                                                    }
-                                                }}
-                                            />
-                                            <Box
-                                                hidden={
-                                                    this.state.avatarFile != undefined &&
-                                                    this.state.avatarFile != ''
-                                                }
-                                                sx={{
-                                                    display: 'flex',
-                                                    marginTop: '34px',
-                                                    justifyContent: 'center',
-                                                    '& img': {
-                                                        filter: 'var(--color-hoverIcon)'
-                                                    }
-                                                }}>
-                                                <img src={fileSmallIcon} />
-                                                <Typography>Tải ảnh lên</Typography>
-                                            </Box>
-                                            <Box
-                                                style={{ color: '#999699', marginTop: '13px' }}
-                                                hidden={
-                                                    this.state.avatarFile != undefined &&
-                                                    this.state.avatarFile != ''
-                                                }>
-                                                File định dạng{' '}
-                                                <Typography style={{ color: '#333233' }}>
-                                                    jpeg, png
-                                                </Typography>{' '}
-                                            </Box>
+                                            // display="grid"
+                                            ml={{ xs: 0, sm: 4, md: 4, lg: 4 }}
+                                            sx={{
+                                                border: '1px solid var(--color-main)',
+                                                p: 1,
+                                                height: 200,
+                                                textAlign: 'center',
+                                                position: 'relative'
+                                            }}>
+                                            {!utils.checkNull(this.state.staffImage) ? (
+                                                <Box sx={{ position: 'relative', height: '100%' }}>
+                                                    {/* <img
+                                                        src={this.state.staffImage}
+                                                        style={{ width: '100%', height: '100%' }}
+                                                    /> */}
+                                                    <Close
+                                                        onClick={this.closeImage}
+                                                        sx={{
+                                                            left: 0,
+                                                            color: 'red',
+                                                            position: 'absolute'
+                                                        }}
+                                                    />
+                                                </Box>
+                                            ) : (
+                                                <>
+                                                    <TextField
+                                                        type="file"
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            opacity: 0,
+                                                            '& input': {
+                                                                height: '100%'
+                                                            },
+                                                            '& div': {
+                                                                height: '100%'
+                                                            }
+                                                        }}
+                                                        onChange={this.choseImage}
+                                                    />
+                                                    <Stack spacing={1} paddingTop={2}>
+                                                        <Box>
+                                                            <InsertDriveFileIcon className="icon-size" />
+                                                        </Box>
+
+                                                        <Box>
+                                                            <CloudDoneIcon
+                                                                style={{
+                                                                    paddingRight: '5px',
+                                                                    color: 'var(--color-main)'
+                                                                }}
+                                                            />
+                                                            <Link underline="always">
+                                                                Tải ảnh lên
+                                                            </Link>
+                                                        </Box>
+                                                        <Typography variant="caption">
+                                                            File định dạng jpeg, png
+                                                        </Typography>
+                                                    </Stack>
+                                                </>
+                                            )}
                                         </Box>
                                     </Grid>
                                 </Grid>

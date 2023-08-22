@@ -55,14 +55,14 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     componentDidMount(): void {
         this.getSuggest();
     }
-    componentDidUpdate(prevProps: any, prevState: any): void {
-        const objCus = JSON.parse(JSON.stringify(prevProps.formRef));
-        if ((objCus?.avatar ?? '') !== prevState.cusImage) {
-            // assign image
+    UNSAFE_componentWillReceiveProps(nextProp: any): void {
+        if (nextProp.formRef !== undefined) {
+            const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
+            console.log('objUpdate ', objUpdate);
             this.setState({
-                cusImage: objCus?.avatar ?? '',
+                cusImage: objUpdate?.avatar ?? '',
                 googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
-                    objCus?.avatar ?? ''
+                    objUpdate?.avatar ?? ''
                 )
             });
         }
@@ -89,21 +89,16 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         }
     };
     closeImage = async () => {
+        if (!utils.checkNull(this.state.googleDrive_fileId)) {
+            await uploadFileService.GoogleApi_RemoveFile_byId(this.state.googleDrive_fileId);
+        }
         this.setState((prev) => {
             return {
                 ...prev,
+                googleDrive_fileId: '',
                 cusImage: ''
             };
         });
-        if (!utils.checkNull(this.state.googleDrive_fileId)) {
-            await uploadFileService.GoogleApi_RemoveFile_byId(this.state.googleDrive_fileId);
-            this.setState((prev) => {
-                return {
-                    ...prev,
-                    googleDrive_fileId: ''
-                };
-            });
-        }
     };
 
     render(): ReactNode {
@@ -399,7 +394,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     <TextField
                                                         type="file"
                                                         name="avatar"
-                                                        value={values.avatar}
                                                         onChange={this.choseImage}
                                                         id="input-file"
                                                         sx={{
