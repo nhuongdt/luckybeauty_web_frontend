@@ -56,17 +56,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         new PropConfirmOKCancel({ show: false })
     );
 
-    const getFileIdfromLink = (url: string) => {
-        console.log('getFileIdfromLink ', url);
-        if (!utils.checkNull(url)) {
-            const arr = url.split('=');
-            if (arr.length === 3) {
-                return arr[2];
-            }
-        }
-        return '';
-    };
-
     const showModal = async (id: string) => {
         if (id) {
             const obj = await ProductService.GetDetailProduct(id);
@@ -79,7 +68,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 };
             });
             setProductImage(obj.image);
-            setgoogleDrive_fileId(getFileIdfromLink(obj.image));
+            setgoogleDrive_fileId(uploadFileService.GoogleApi_GetFileIdfromLink(obj.image));
 
             // find nhomhang
             const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);

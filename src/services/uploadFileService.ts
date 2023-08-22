@@ -18,12 +18,17 @@ class UpLoadFileService {
         return formData;
     };
 
-    GetLinkFileOnDrive_byFileId = (fileId: string) => {
-        if (!utils.checkNull(fileId)) {
-            return `https://drive.google.com/uc?export=view&id=${fileId}`;
+    GoogleApi_GetFileIdfromLink = (url: string) => {
+        console.log('getFileIdfromLink ', url);
+        if (!utils.checkNull(url)) {
+            const arr = url.split('=');
+            if (arr.length === 3) {
+                return arr[2];
+            }
         }
         return '';
     };
+
     GoogleApi_UploaFileToDrive = async (fileSelect: File, subFolder = '') => {
         // cấu trúc lưu file: luckyBeauty/tenantName/subFolder/fileName
         let tenantName = Cookies.get('TenantName');
