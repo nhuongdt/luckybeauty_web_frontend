@@ -14,6 +14,7 @@ import { SuggestChucVuDto } from './dto/SuggestChucVuDto';
 import { SuggestNhanVienDichVuDto } from './dto/SuggestNhanVienDichVuDto';
 import Cookies from 'js-cookie';
 import { SuggestDichVuDto } from './dto/SuggestDichVuDto';
+import { SuggestNhomHangHoaDto } from './dto/SuggestNhomHangHoaDto';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
@@ -49,6 +50,15 @@ class SuggestService {
     public async SuggestLoaiHangHoa(): Promise<SuggestLoaiHangHoaDto[]> {
         try {
             const result = await http.post('api/services/app/Suggest/SuggestLoaiHangHoas');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting LoaiHangHoas:', error);
+            return [];
+        }
+    }
+    public async SuggestNhomHangHoa(): Promise<SuggestNhomHangHoaDto[]> {
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestNhomHangHoas');
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while suggesting LoaiHangHoas:', error);

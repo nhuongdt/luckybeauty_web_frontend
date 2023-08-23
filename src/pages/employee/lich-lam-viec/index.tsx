@@ -5,7 +5,7 @@ import Calendar from './FullCalendar';
 const LichLamViec: React.FC = () => {
     return (
         <Box>
-            <Box sx={{ padding: '16px 2.2222222222222223vw' }}>
+            <Box sx={{ paddingTop: '16px' }}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs="auto">
                         <Typography variant="h1" color="#0C050A" fontSize="18px" fontWeight="700">

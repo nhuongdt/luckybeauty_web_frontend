@@ -147,7 +147,7 @@ class ChiNhanhScreen extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
+                            fontFamily={'Roboto'}
                             color="#333233"
                             lineHeight="16px"
                             title={params.value}>
@@ -177,12 +177,14 @@ class ChiNhanhScreen extends Component {
                     <Typography
                         variant="caption"
                         fontSize="13px"
+                        fontFamily={'Roboto'}
+                        fontWeight={400}
                         title={params.value}
                         sx={{
                             textOverflow: 'ellipsis',
                             width: '100%',
                             overflow: 'hidden',
-                            textAlign: 'center'
+                            textAlign: 'left'
                         }}>
                         {params.value}
                     </Typography>
@@ -208,9 +210,11 @@ class ChiNhanhScreen extends Component {
                 renderCell: (params: any) => (
                     <Typography
                         width="100%"
-                        textAlign="center"
+                        textAlign="left"
                         variant="caption"
                         fontSize="13px"
+                        fontFamily={'Roboto'}
+                        fontWeight={400}
                         title={params.value}>
                         {params.value}
                     </Typography>
@@ -238,13 +242,13 @@ class ChiNhanhScreen extends Component {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'start',
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="13px"
-                            variant="h6"
+                            fontFamily={'Roboto'}
                             fontWeight="400"
                             color="#333233"
                             lineHeight="16px">
@@ -275,13 +279,13 @@ class ChiNhanhScreen extends Component {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'start',
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="13px"
-                            variant="h6"
+                            fontFamily={'Roboto'}
                             fontWeight="400"
                             color="#333233"
                             lineHeight="16px">
@@ -325,7 +329,7 @@ class ChiNhanhScreen extends Component {
         ];
 
         return (
-            <Box bgcolor="#fff" padding="24px">
+            <Box bgcolor="#fff" paddingTop={'16px'} paddingBottom={'16px'}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
@@ -411,7 +415,7 @@ class ChiNhanhScreen extends Component {
                         </ButtonGroup>
                     </Grid>
                 </Grid>
-                <div className="mt-2">
+                <Box paddingTop="16px">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -424,6 +428,9 @@ class ChiNhanhScreen extends Component {
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 backgroundColor: 'var(--color-bg)'
@@ -492,7 +499,7 @@ class ChiNhanhScreen extends Component {
                         onCLose={this.onCloseModal}
                         onSave={this.handleSubmit}
                     />
-                </div>
+                </Box>
             </Box>
         );
     }

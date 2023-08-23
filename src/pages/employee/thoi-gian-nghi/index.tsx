@@ -250,7 +250,7 @@ class EmployeeHoliday extends Component {
                             fontWeight: '400',
                             fontFamily: 'Roboto',
                             color: '#3D475C',
-                            textAlign: 'center'
+                            textAlign: 'left'
                         }}>
                         {params.value}
                     </Box>
@@ -268,7 +268,7 @@ class EmployeeHoliday extends Component {
                             display: 'flex',
                             alignItems: 'center',
                             width: '100%',
-                            justifyContent: 'center'
+                            justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
@@ -311,7 +311,7 @@ class EmployeeHoliday extends Component {
                             display: 'flex',
                             alignItems: 'center',
                             width: '100%',
-                            justifyContent: 'center'
+                            justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
@@ -352,7 +352,7 @@ class EmployeeHoliday extends Component {
                     <Box
                         sx={{
                             width: '100%',
-                            textAlign: 'center'
+                            textAlign: 'left'
                         }}>
                         <Typography
                             fontSize="13px"
@@ -407,7 +407,7 @@ class EmployeeHoliday extends Component {
             }
         ];
         return (
-            <Box padding="22px 32px" className="thoi-gian-nghi-page">
+            <Box paddingTop="16px" className="thoi-gian-nghi-page">
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid
                         item
@@ -511,7 +511,7 @@ class EmployeeHoliday extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box marginTop="24px" bgcolor="#fff">
+                <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -521,6 +521,9 @@ class EmployeeHoliday extends Component {
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
                             },
                             '& .MuiDataGrid-columnHeadersInner': {
                                 backgroundColor: 'var(--color-bg)'

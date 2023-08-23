@@ -202,7 +202,12 @@ class RoleScreen extends React.Component<IRoleProps> {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box width="100%" textAlign="left" fontSize="13px">
+                    <Box
+                        width="100%"
+                        textAlign="left"
+                        fontSize="13px"
+                        fontWeight={400}
+                        fontFamily={'Roboto'}>
                         {params.value}
                     </Box>
                 )
@@ -225,7 +230,8 @@ class RoleScreen extends React.Component<IRoleProps> {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
@@ -261,9 +267,9 @@ class RoleScreen extends React.Component<IRoleProps> {
             }
         ];
         return (
-            <Box paddingLeft="2.2222222222222223vw" paddingRight="2.2222222222222223vw">
+            <Box>
                 <Box>
-                    <Grid container justifyContent="space-between" paddingTop="22px">
+                    <Grid container justifyContent="space-between" paddingTop="16px">
                         <Grid item>
                             <div>
                                 <Box display="flex" alignItems="center" gap="10px">
@@ -329,7 +335,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box marginTop="24px" bgcolor="#fff" borderRadius="8px">
+                <Box paddingTop="16px" bgcolor="#fff" borderRadius="8px">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight={true}
@@ -342,6 +348,9 @@ class RoleScreen extends React.Component<IRoleProps> {
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 backgroundColor: 'var(--color-bg)'

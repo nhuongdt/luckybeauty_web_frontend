@@ -115,6 +115,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                   variant: 'error',
                                   autoHideDuration: 3000
                               });
+                        onClose();
                     }}>
                     {({ values, handleChange }) => (
                         <Form

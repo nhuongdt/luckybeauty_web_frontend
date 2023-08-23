@@ -292,7 +292,7 @@ class EmployeeScreen extends React.Component {
                 <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params) => (
-                <Box width="100%" textAlign="center">
+                <Box width="100%" textAlign="left">
                     {params.value}
                 </Box>
             )
@@ -308,7 +308,7 @@ class EmployeeScreen extends React.Component {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'start',
                         width: '100%'
                     }}>
                     {params.value != null ? (
@@ -354,7 +354,7 @@ class EmployeeScreen extends React.Component {
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'left',
                         width: '100%'
                     }}>
                     <Typography
@@ -411,7 +411,7 @@ class EmployeeScreen extends React.Component {
                         fontWeight: '400',
                         fontFamily: 'Roboto',
                         color: '#3D475C',
-                        textAlign: 'center'
+                        textAlign: 'left'
                     }}
                     title={params.value}>
                     {params.value}
@@ -464,7 +464,7 @@ class EmployeeScreen extends React.Component {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'start',
                         width: '100%'
                     }}>
                     <DateIcon style={{ marginRight: 4 }} />
@@ -506,11 +506,12 @@ class EmployeeScreen extends React.Component {
                 <Typography
                     fontSize="13px"
                     fontFamily={'Roboto'}
-                    padding="4px 8px"
+                    alignItems={'center'}
                     borderRadius="12px"
                     fontWeight="400"
+                    textAlign={'left'}
                     color="#009EF7"
-                    sx={{ backgroundColor: '#F1FAFF', margin: 'auto' }}>
+                    sx={{ backgroundColor: '#F1FAFF' }}>
                     {params.value}
                 </Typography>
             ),
@@ -663,7 +664,7 @@ class EmployeeScreen extends React.Component {
                     </Grid>
                 </Grid>
 
-                <Box marginTop="24px" bgcolor="#fff" paddingTop={1}>
+                <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -671,6 +672,11 @@ class EmployeeScreen extends React.Component {
                         columns={this.columns}
                         checkboxSelection
                         hideFooter
+                        sx={{
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
+                            }
+                        }}
                         localeText={TextTranslate}
                     />
                     <ActionMenuTable

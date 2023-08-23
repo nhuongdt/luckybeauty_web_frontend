@@ -26,6 +26,7 @@ import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
+import { fontWeight } from '@mui/system';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
@@ -200,7 +201,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             width: '100%',
                             textAlign: 'left',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto'
                         }}
                         title={params.value}>
                         {params.value}
@@ -225,7 +228,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             width: '100%',
                             textAlign: 'left',
                             overflow: 'hidden',
-                            textOverflow: 'ellipsis'
+                            textOverflow: 'ellipsis',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto'
                         }}
                         title={params.value}>
                         {params.value}
@@ -250,8 +255,12 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             borderRadius: '100px',
                             color: 'rgb(0, 158, 247)',
                             bgcolor: 'rgb(241, 250, 255)',
-                            margin: 'auto',
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
+                            textAlign: 'left',
+                            display: 'flex',
+                            justifyContent: 'left'
                         }}>
                         {params.value == true ? 'Hoạt động' : 'Ngừng hoạt động'}
                     </Box>
@@ -285,7 +294,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
             }
         ];
         return (
-            <Box sx={{ padding: '24px 2.2222222222222223vw' }}>
+            <Box sx={{ paddingTop: '16px' }}>
                 <div>
                     <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
@@ -350,7 +359,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     </Grid>
                 </div>
                 <Box
-                    marginTop="24px"
+                    paddingTop="16px"
                     className="page-content "
                     sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
                     <DataGrid
@@ -365,6 +374,9 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 backgroundColor: 'var(--color-bg)'

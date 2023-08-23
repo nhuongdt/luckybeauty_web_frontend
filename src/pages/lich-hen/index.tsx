@@ -185,9 +185,7 @@ const LichHen: React.FC = () => {
     return (
         <Box
             sx={{
-                paddingLeft: '2.2222222222222223vw',
-                paddingRight: '2.2222222222222223vw',
-                paddingTop: '1.5277777777777777vw'
+                padding: '16px'
             }}>
             <Box
                 sx={{

@@ -33,17 +33,28 @@ const Booking: React.FC = () => {
         setOption4(event.target.value);
     };
     return (
-        <Box sx={{ marginTop: '-52px', display: 'flex', flexDirection: 'column' }}>
-            <Button
-                variant="contained"
-                sx={{
-                    mb: '16px',
-                    width: 'fit-content',
-                    marginLeft: 'auto'
-                }}
-                className="btn-container-hover">
-                Cập nhật
-            </Button>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }} paddingTop={'16px'}>
+            <Box
+                sx={{ display: 'flex', flexDirection: 'row' }}
+                paddingRight={'16px'}
+                justifyContent={'space-between'}
+                alignItems={'center'}>
+                <Typography variant="h4" fontSize="18px" fontWeight="700" color="#333233">
+                    Cài đặt booking
+                </Typography>
+                <Button
+                    variant="contained"
+                    sx={{
+                        mb: '16px',
+                        width: 'fit-content',
+                        marginLeft: 'auto',
+                        height: '40px'
+                    }}
+                    className="btn-container-hover">
+                    Cập nhật
+                </Button>
+            </Box>
+
             <Box
                 sx={{
                     display: 'flex',
@@ -51,7 +62,7 @@ const Booking: React.FC = () => {
                     gap: '24px',
                     '& > div': {
                         bgcolor: '#fff',
-                        padding: '24px',
+                        padding: '16px',
                         borderRadius: '8px'
                     }
                 }}>

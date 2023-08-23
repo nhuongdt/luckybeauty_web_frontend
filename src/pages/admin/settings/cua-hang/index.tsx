@@ -73,7 +73,7 @@ class StoreDetail extends Component {
         const { editCuaHang } = this.state;
 
         return (
-            <Box bgcolor="#fff" padding="24px" borderRadius="8px">
+            <Box bgcolor="#fff" paddingTop={'16px'} borderRadius="8px">
                 <Box display={'flex'} justifyContent={'space-between'} marginBottom={'16px'}>
                     <Typography
                         variant="h2"
@@ -91,6 +91,7 @@ class StoreDetail extends Component {
                             minWidth: 'unset',
                             textTransform: 'unset',
                             fontSize: '14px',
+                            height: '40px',
                             fontWeight: '400',
                             ml: 'auto'
                         }}

@@ -53,7 +53,7 @@ const Dashboard: React.FC = () => {
                 display="flex"
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ padding: '0 2.2222222222222223vw', paddingTop: '1.6666666666666667vw' }}>
+                sx={{ paddingTop: '16px' }}>
                 <div className="page-header_col-1">
                     <div className="breadcrumb">Trang chủ</div>
                 </div>
@@ -71,9 +71,9 @@ const Dashboard: React.FC = () => {
                     <MenuItem value="year">Năm</MenuItem>
                 </Select>
             </Box>
-            <div style={{ padding: '32px', gap: '16px' }}>
+            <div style={{ padding: '16px', gap: '16px' }}>
                 <OverView />
-                <Box marginTop={'16px'}>
+                <Box paddingTop={'16px'}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                             <Box

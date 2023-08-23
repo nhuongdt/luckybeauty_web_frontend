@@ -356,9 +356,7 @@ class UserScreen extends AppComponentBase {
         return (
             <Box
                 sx={{
-                    paddingTop: '22px',
-                    paddingRight: '2.2222222222222223vw',
-                    paddingLeft: '2.2222222222222223vw'
+                    paddingTop: '16px'
                 }}>
                 <Box>
                     <Grid
@@ -439,7 +437,7 @@ class UserScreen extends AppComponentBase {
                 </Box>
                 <Box
                     className="page-content"
-                    sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
+                    sx={{ paddingTop: '16px', backgroundColor: '#fff', borderRadius: '8px' }}>
                     <Box>
                         <DataGrid
                             disableRowSelectionOnClick
@@ -451,7 +449,9 @@ class UserScreen extends AppComponentBase {
                                 '& .MuiDataGrid-iconButtonContainer': {
                                     display: 'none'
                                 },
-
+                                '& .MuiDataGrid-columnHeader': {
+                                    background: '#EEF0F4'
+                                },
                                 '& .MuiDataGrid-columnHeaders': {
                                     backgroundColor: 'var(--color-bg)'
                                 },

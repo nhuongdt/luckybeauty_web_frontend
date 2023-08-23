@@ -203,7 +203,7 @@ class CaLamViecScreen extends Component {
                             fontWeight: '400',
                             fontFamily: 'Roboto',
                             color: '#3D475C',
-                            textAlign: 'center'
+                            textAlign: 'left'
                         }}
                         title={params.value}>
                         {params.value}
@@ -224,7 +224,7 @@ class CaLamViecScreen extends Component {
                             fontFamily={'Roboto'}
                             color="#3D475C"
                             lineHeight="16px"
-                            textAlign="center"
+                            textAlign="left"
                             width="100%"
                             title={params.value}>
                             {params.value}
@@ -261,7 +261,7 @@ class CaLamViecScreen extends Component {
                             display: 'flex',
                             alignItems: 'center',
                             width: '100%',
-                            justifyContent: 'center'
+                            justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
@@ -305,7 +305,7 @@ class CaLamViecScreen extends Component {
                             display: 'flex',
                             alignItems: 'center',
                             alignContent: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'start',
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
@@ -349,7 +349,7 @@ class CaLamViecScreen extends Component {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'start',
                             width: '100%'
                         }}>
                         <Typography
@@ -405,7 +405,7 @@ class CaLamViecScreen extends Component {
             }
         ];
         return (
-            <Box padding="22px 32px" className="thoi-gian-nghi-page">
+            <Box paddingTop="16px" className="thoi-gian-nghi-page">
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
@@ -500,7 +500,7 @@ class CaLamViecScreen extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box marginTop="24px" bgcolor="#fff">
+                <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -514,6 +514,9 @@ class CaLamViecScreen extends Component {
                         sx={{
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
                             },
                             '& .MuiDataGrid-columnHeadersInner': {
                                 backgroundColor: 'var(--color-bg)'

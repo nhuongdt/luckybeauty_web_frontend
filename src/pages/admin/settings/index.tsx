@@ -21,7 +21,7 @@ class SettingPages extends Component {
     render(): ReactNode {
         return (
             <Box>
-                <Box padding={'16px 32px'}>
+                <Box paddingTop={'16px'}>
                     <Typography
                         fontWeight="700"
                         fontFamily={'Roboto'}
@@ -30,7 +30,7 @@ class SettingPages extends Component {
                         Cài đặt
                     </Typography>
                 </Box>
-                <Box padding={'16px 32px'}>
+                <Box paddingTop={'16px'}>
                     <Grid container spacing={1}>
                         <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box

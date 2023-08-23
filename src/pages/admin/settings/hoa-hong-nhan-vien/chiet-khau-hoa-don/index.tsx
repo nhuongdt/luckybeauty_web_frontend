@@ -156,7 +156,7 @@ class ChietKhauHoaDonScreen extends Component {
                     container
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ background: 'var(--color-bg)', padding: '8px' }}>
+                    sx={{ background: '#EEF0F4', padding: '8px' }}>
                     <Grid item>
                         <Box className="form-search">
                             <TextField
@@ -199,7 +199,7 @@ class ChietKhauHoaDonScreen extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box>
+                <Box paddingTop={'8px'}>
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -209,7 +209,13 @@ class ChietKhauHoaDonScreen extends Component {
                         checkboxSelection={false}
                         sx={{
                             '& .uiDataGrid-cellContent': {
-                                fontSize: '13px'
+                                fontSize: '13px',
+                                fontFamily: 'Roboto',
+                                fontWeight: '400',
+                                textAlign: 'left'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#FFF'
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'

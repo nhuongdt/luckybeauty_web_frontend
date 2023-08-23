@@ -8,6 +8,7 @@ export interface DichVuNhanVienDetailDto {
     dichVuThucHiens: DichVuNhanVienThucHien[];
 }
 export interface DichVuNhanVienThucHien {
+    idDichVu: string;
     tenDichVu: string;
     avatar: string;
     donGia: number;

@@ -9,7 +9,7 @@ class CaiDatHoaHongScreen extends Component {
     };
     render(): ReactNode {
         return (
-            <Box bgcolor="#fff" padding="24px">
+            <Box bgcolor="#fff" paddingTop={'16px'}>
                 <Box component={'div'}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={6}>

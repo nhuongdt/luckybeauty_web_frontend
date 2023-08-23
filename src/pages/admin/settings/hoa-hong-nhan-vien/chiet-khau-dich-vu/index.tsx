@@ -145,6 +145,9 @@ class ChietKhauDichVuScreen extends Component {
                         title={params.value}>
                         <Typography
                             fontSize="13px"
+                            fontFamily={'Roboto'}
+                            fontWeight={400}
+                            textAlign={'left'}
                             sx={{
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
@@ -190,7 +193,10 @@ class ChietKhauDichVuScreen extends Component {
                             textOverflow: 'ellipsis',
                             overflow: 'hidden',
                             width: '100%',
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: 400,
+                            fontFamily: 'Roboto',
+                            textAlign: 'left'
                         }}>
                         {params.value}
                     </Box>
@@ -236,7 +242,9 @@ class ChietKhauDichVuScreen extends Component {
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             },
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto'
                         }}
                     />
                 )
@@ -272,6 +280,8 @@ class ChietKhauDichVuScreen extends Component {
                         sx={{
                             height: '85%',
                             fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
                             '&>div': {
                                 height: '100%'
                             },
@@ -316,6 +326,8 @@ class ChietKhauDichVuScreen extends Component {
                         }
                         sx={{
                             fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
                             height: '85%',
                             '&>div': {
                                 height: '100%'
@@ -361,7 +373,10 @@ class ChietKhauDichVuScreen extends Component {
                             textOverflow: 'ellipsis',
                             overflow: 'hidden',
                             width: '100%',
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
+                            textAlign: 'right'
                         }}>
                         {params.value}
                     </Box>
@@ -398,7 +413,7 @@ class ChietKhauDichVuScreen extends Component {
                     container
                     sx={{
                         height: '48px',
-                        background: 'var(--color-bg)',
+                        background: '#EEF0F4',
                         alignItems: 'center',
                         paddingX: '8px'
                     }}>
@@ -517,6 +532,9 @@ class ChietKhauDichVuScreen extends Component {
                             },
                             '& .MuiDataGrid-virtualScroller': {
                                 bgcolor: '#fff'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#FFF'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 borderBottom: '1px solid #CDC9CD',
