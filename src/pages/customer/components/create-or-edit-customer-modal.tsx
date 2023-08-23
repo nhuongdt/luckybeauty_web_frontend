@@ -155,7 +155,14 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             this.setState({ errorPhoneNumber: false, errorTenKhach: false });
                             onOk(createOrEdit);
                         }}>
-                        {({ setFieldValue, values, handleChange, errors, touched }) => (
+                        {({
+                            isSubmitting,
+                            setFieldValue,
+                            values,
+                            handleChange,
+                            errors,
+                            touched
+                        }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -446,19 +453,35 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         bottom: '0',
                                         left: '0'
                                     }}>
-                                    <Button
-                                        variant="contained"
-                                        sx={{
-                                            fontSize: '14px',
-                                            textTransform: 'unset',
-                                            color: '#fff',
+                                    {!isSubmitting ? (
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: '#fff',
 
-                                            border: 'none'
-                                        }}
-                                        type="submit"
-                                        className="btn-container-hover">
-                                        Lưu
-                                    </Button>
+                                                border: 'none'
+                                            }}
+                                            type="submit"
+                                            className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: '#fff',
+
+                                                border: 'none'
+                                            }}
+                                            className="btn-container-hover">
+                                            Đang lưu
+                                        </Button>
+                                    )}
+
                                     <Button
                                         variant="outlined"
                                         onClick={onCancel}

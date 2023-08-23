@@ -696,14 +696,25 @@ const CreateOrEditSoQuyDialog = ({
                                             bgcolor: '#fff',
                                             left: '0'
                                         }}>
-                                        <Button
-                                            variant="contained"
-                                            sx={{ bgcolor: '#7C3367' }}
-                                            className="btn-container-hover"
-                                            type="submit"
-                                            disabled={formik.isSubmitting}>
-                                            Lưu
-                                        </Button>
+                                        {!formik.isSubmitting ? (
+                                            <Button
+                                                variant="contained"
+                                                sx={{ bgcolor: '#7C3367' }}
+                                                className="btn-container-hover"
+                                                type="submit">
+                                                Lưu
+                                            </Button>
+                                        ) : (
+                                            formik.isSubmitting && (
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{ bgcolor: '#7C3367' }}
+                                                    className="btn-container-hover"
+                                                    type="submit">
+                                                    Đang lưu
+                                                </Button>
+                                            )
+                                        )}
 
                                         {!utils.checkNull(idQuyHD) && (
                                             <>
