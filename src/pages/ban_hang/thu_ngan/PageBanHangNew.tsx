@@ -1604,7 +1604,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 <Box
                                     padding={
                                         ct?.nhanVienThucHien !== undefined &&
-                                        ct?.nhanVienThucHien.length > 0
+                                        (ct?.nhanVienThucHien.length > 0 ||
+                                            (ct?.tienChietKhau ?? 0) > 0)
                                             ? '8px 0px'
                                             : '16px 0px'
                                     }
@@ -1739,7 +1740,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     width={'100%'}
                                                     direction={'row'}
                                                     justifyContent={'flex-end'}>
-                                                    <Grid item xs={6} sm={6} md={5} lg={5}>
+                                                    <Grid item xs={6} sm={6} md={6} lg={6}>
                                                         <Box
                                                             sx={{
                                                                 display: 'flex',
@@ -1799,7 +1800,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             </Box>
                                                         </Box>
                                                     </Grid>
-                                                    <Grid item xs={6} sm={6} md={7} lg={7}>
+                                                    <Grid item xs={6} sm={6} md={6} lg={6}>
                                                         <Box
                                                             justifyContent={'flex-end'}
                                                             sx={{

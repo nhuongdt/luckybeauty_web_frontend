@@ -70,6 +70,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const GetListCustomer_wasBooking = async (paramSearch: BookingRequestDto) => {
         const data = await datLichService.GetKhachHang_Booking(paramSearch);
         setListCusBooking(data);
+        console.log('GetListCustomer_wasBooking ', data);
     };
 
     const GetAllDichVu = async () => {
@@ -273,7 +274,11 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                             )}
                                         />
                                     ) : (
-                                        <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                        // <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                        <img
+                                            src={item.avatar}
+                                            style={{ width: 40, height: 40, borderRadius: '100%' }}
+                                        />
                                     )}
                                     <Stack sx={{ width: '100%' }} justifyContent={'space-evenly'}>
                                         <Typography

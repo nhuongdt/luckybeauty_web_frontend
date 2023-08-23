@@ -219,7 +219,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                               });
                         onOk();
                     }}>
-                    {({ handleChange, errors, values, setFieldValue, touched }) => (
+                    {({ isSubmitting, handleChange, errors, values, setFieldValue, touched }) => (
                         <Form
                             onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                 if (event.key === 'Enter') {
@@ -468,10 +468,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             }}>
                                             {!utils.checkNull(this.state.staffImage) ? (
                                                 <Box sx={{ position: 'relative', height: '100%' }}>
-                                                    {/* <img
+                                                    <img
                                                         src={this.state.staffImage}
                                                         style={{ width: '100%', height: '100%' }}
-                                                    /> */}
+                                                    />
                                                     <Close
                                                         onClick={this.closeImage}
                                                         sx={{
@@ -539,19 +539,35 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     right: '50px',
                                     justifyContent: 'end'
                                 }}>
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    sx={{
-                                        fontSize: '14px',
-                                        textTransform: 'unset',
-                                        color: '#fff',
+                                {!isSubmitting ? (
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        sx={{
+                                            fontSize: '14px',
+                                            textTransform: 'unset',
+                                            color: '#fff',
 
-                                        border: 'none'
-                                    }}
-                                    className="btn-container-hover">
-                                    Lưu
-                                </Button>
+                                            border: 'none'
+                                        }}
+                                        className="btn-container-hover">
+                                        Lưu
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="contained"
+                                        sx={{
+                                            fontSize: '14px',
+                                            textTransform: 'unset',
+                                            color: '#fff',
+
+                                            border: 'none'
+                                        }}
+                                        className="btn-container-hover">
+                                        Đang lưu
+                                    </Button>
+                                )}
+
                                 <Button
                                     onClick={onCancel}
                                     variant="outlined"

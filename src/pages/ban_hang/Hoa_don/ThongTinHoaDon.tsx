@@ -16,6 +16,8 @@ import {
 } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import AddLogoIcon from '../../../images/add-logo.svg';
+
 import PrintIcon from '@mui/icons-material/Print';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as InIcon } from '../../../images/printer.svg';
@@ -33,6 +35,7 @@ import {
     ChiNhanhContext,
     ChiNhanhContextbyUser
 } from '../../../services/chi_nhanh/ChiNhanhContext';
+
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
 import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
@@ -370,7 +373,24 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             objectFit: 'cover'
                                         }
                                     }}>
-                                    <img width={100} src={Avatar} alt="avatar" />
+                                    {utils.checkNull(hoadonChosed?.avatar) ? (
+                                        <img
+                                            width={100}
+                                            src={AddLogoIcon}
+                                            alt="avatar"
+                                            style={{
+                                                border: '1px solid #cccc',
+                                                padding: '20px'
+                                            }}
+                                        />
+                                    ) : (
+                                        <img
+                                            width={100}
+                                            style={{ backgroundColor: 'var(--color-bg)' }}
+                                            src={hoadonChosed?.avatar}
+                                            alt="avatar"
+                                        />
+                                    )}
                                 </Box>
                             </Grid>
                             <Grid
@@ -393,7 +413,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             fontSize="24px">
                                             {hoadonChosed?.tenKhachHang}
                                         </Typography>
-                                        <ModeEditIcon style={{ color: '#999699' }} />
+                                        <ModeEditIcon
+                                            style={{ color: '#999699', display: 'none' }}
+                                        />
                                     </Stack>
 
                                     <Box
