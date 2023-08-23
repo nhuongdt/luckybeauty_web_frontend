@@ -48,7 +48,8 @@ class OverView extends Component {
                                 }}>
                                 <Typography
                                     sx={{
-                                        color: '#7DC1FF',
+                                        //color: '#7DC1FF',
+                                        color: 'black',
                                         fontFamily: 'Roboto',
                                         fontSize: '32px',
                                         fontWeight: '700'
@@ -68,7 +69,8 @@ class OverView extends Component {
                                         }}>
                                         <Typography
                                             sx={{
-                                                color: '#525F7A',
+                                                //color: '#525F7A',
+                                                color: 'black',
                                                 fontFamily: 'Roboto',
                                                 fontSize: '14px',
                                                 fontWeight: '400'
@@ -110,7 +112,7 @@ class OverView extends Component {
                                 }}>
                                 <Typography
                                     sx={{
-                                        color: '#525F7A',
+                                        //color: '#525F7A',
                                         fontFamily: 'Roboto',
                                         fontSize: '14px',
                                         fontWeight: '400'
@@ -132,7 +134,8 @@ class OverView extends Component {
                                         }}>
                                         <Typography
                                             sx={{
-                                                color: '#3D475C',
+                                                //color: '#3D475C',
+                                                color: 'black',
                                                 fontFamily: 'Roboto',
                                                 fontSize: '24px',
                                                 fontWeight: '700'
@@ -174,7 +177,8 @@ class OverView extends Component {
                                 }}>
                                 <Typography
                                     sx={{
-                                        color: '#525F7A',
+                                        //color: '#525F7A',
+                                        color: 'black',
                                         fontFamily: 'Roboto',
                                         fontSize: '14px',
                                         fontWeight: '400'
@@ -195,7 +199,8 @@ class OverView extends Component {
                                         }}>
                                         <Typography
                                             sx={{
-                                                color: '#3D475C',
+                                                //color: '#3D475C',
+                                                color: 'black',
                                                 fontFamily: 'Roboto',
                                                 fontSize: '24px',
                                                 fontWeight: '700'
@@ -237,7 +242,8 @@ class OverView extends Component {
                                 }}>
                                 <Typography
                                     sx={{
-                                        color: '#525F7A',
+                                        ///color: '#525F7A',
+                                        color: 'black',
                                         fontFamily: 'Roboto',
                                         fontSize: '14px',
                                         fontWeight: '400'
@@ -256,7 +262,8 @@ class OverView extends Component {
                                         }}>
                                         <Typography
                                             sx={{
-                                                color: '#3D475C',
+                                                //color: '#3D475C',
+                                                color: 'black',
                                                 fontFamily: 'Roboto',
                                                 fontSize: '24px',
                                                 fontWeight: '700'

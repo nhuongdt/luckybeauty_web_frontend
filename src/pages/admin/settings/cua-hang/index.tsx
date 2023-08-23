@@ -75,12 +75,7 @@ class StoreDetail extends Component {
         return (
             <Box bgcolor="#fff" paddingTop={'16px'} borderRadius="8px">
                 <Box display={'flex'} justifyContent={'space-between'} marginBottom={'16px'}>
-                    <Typography
-                        variant="h2"
-                        fontSize="24px"
-                        fontWeight="700"
-                        color="#0C050A"
-                        mb="32px">
+                    <Typography variant="h2" fontSize="24px" fontWeight="700" mb="32px">
                         Chi tiết cửa hàng
                     </Typography>
                     <Button
@@ -103,11 +98,7 @@ class StoreDetail extends Component {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={4}>
                         <Box padding="20px" border="1px solid #E6E1E6" borderRadius="8px">
-                            <Typography
-                                variant="body1"
-                                fontSize="14px"
-                                color="#3A3C40"
-                                fontWeight="500">
+                            <Typography variant="body1" fontSize="14px" fontWeight="500">
                                 Logo cửa hàng
                             </Typography>
                             <Box position="relative" sx={{ textAlign: 'center', mt: '20px' }}>
@@ -149,7 +140,6 @@ class StoreDetail extends Component {
                                 variant="h6"
                                 fontWeight="400"
                                 fontSize="12px"
-                                color="#999699"
                                 textAlign="center"
                                 mt="24px"
                                 maxWidth="152px"
@@ -175,12 +165,12 @@ class StoreDetail extends Component {
                                 fontSize: '14px'
                             }
                         }}>
-                        <Typography variant="h3" fontWeight="700" fontSize="16px" color="#4C4B4C">
+                        <Typography variant="h3" fontWeight="700" fontSize="16px">
                             Thông tin cửa hàng
                         </Typography>
                         <Grid container spacing={1} mt="5px" rowSpacing={2}>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="name">Tên cửa hàng</label>
+                                <Typography variant="subtitle2">Tên cửa hàng</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -191,7 +181,7 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="location">Địa chỉ</label>
+                                <Typography variant="subtitle2">Địa chỉ</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -202,7 +192,7 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="phone">Số điện thoại</label>
+                                <Typography variant="subtitle2">Số điện thoại</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -213,7 +203,7 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="code">Mã số thuế</label>
+                                <Typography variant="subtitle2">Mã số thuế</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -231,17 +221,13 @@ class StoreDetail extends Component {
                                     paddingTop: '24px',
                                     mt: '24px'
                                 }}>
-                                <Typography
-                                    variant="h3"
-                                    fontWeight="700"
-                                    fontSize="16px"
-                                    color="#4C4B4C">
+                                <Typography variant="h3" fontWeight="700" fontSize="16px">
                                     Liên kết trực tuyến
                                 </Typography>
                             </Grid>
 
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="code">Website</label>
+                                <Typography variant="subtitle2">Website</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -252,7 +238,7 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="code">Facebook</label>
+                                <Typography variant="subtitle2">Facebook</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -263,7 +249,7 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="code">Instagram</label>
+                                <Typography variant="subtitle2">Instagram</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth
@@ -274,7 +260,7 @@ class StoreDetail extends Component {
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <label htmlFor="code">Twitter</label>
+                                <Typography variant="subtitle2">Twitter</Typography>
                                 <TextField
                                     size="small"
                                     fullWidth

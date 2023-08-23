@@ -72,7 +72,7 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
         return (
             <Dialog open={visiable} fullWidth maxWidth={'md'} onClose={handleClose}>
                 <DialogTitle>
-                    <Typography fontSize="24px" color="#333233" fontWeight="700" mb={3}>
+                    <Typography fontSize="24px" fontWeight="700" mb={3}>
                         {dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien} - Dịch vụ
                     </Typography>
                     <Button
@@ -93,7 +93,7 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                 <DialogContent>
                     <Box padding={'16px'}>
                         <Grid container spacing={1}>
-                            <Grid xs={4}>
+                            {/* <Grid xs={4}>
                                 <Box
                                     display="flex"
                                     flexDirection={'column'}
@@ -113,8 +113,8 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                                         </Box>
                                     ))}
                                 </Box>
-                            </Grid>
-                            <Grid xs={8}>
+                            </Grid> */}
+                            <Grid xs={12}>
                                 <TableContainer>
                                     <Table>
                                         <TableBody>

@@ -147,7 +147,6 @@ class ChiNhanhScreen extends Component {
                             fontSize="13px"
                             fontWeight="400"
                             fontFamily={'Roboto'}
-                            color="#333233"
                             lineHeight="16px"
                             title={params.value}>
                             {params.value}
@@ -222,7 +221,6 @@ class ChiNhanhScreen extends Component {
                             fontSize="13px"
                             fontFamily={'Roboto'}
                             fontWeight="400"
-                            color="#333233"
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('vi-VN')}
                         </Typography>
@@ -248,7 +246,6 @@ class ChiNhanhScreen extends Component {
                             fontSize="13px"
                             fontFamily={'Roboto'}
                             fontWeight="400"
-                            color="#333233"
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('vi-VN')}
                         </Typography>
@@ -280,7 +277,7 @@ class ChiNhanhScreen extends Component {
             <Box bgcolor="#fff" paddingTop={'16px'} paddingBottom={'16px'}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
+                        <Typography variant="h1" fontSize="16px" fontWeight="700">
                             Quản lý chi nhánh
                         </Typography>
                         <Box className="form-search">

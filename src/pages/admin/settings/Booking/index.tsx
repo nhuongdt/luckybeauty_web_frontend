@@ -39,7 +39,7 @@ const Booking: React.FC = () => {
                 paddingRight={'16px'}
                 justifyContent={'space-between'}
                 alignItems={'center'}>
-                <Typography variant="h4" fontSize="18px" fontWeight="700" color="#333233">
+                <Typography variant="h4" fontSize="18px" fontWeight="700">
                     Cài đặt booking
                 </Typography>
                 <Button
@@ -76,19 +76,14 @@ const Booking: React.FC = () => {
                                 filter: 'var(--color-hoverIcon)'
                             }
                         }}>
-                        <Typography variant="h3" fontSize="16px" fontWeight="700" color="#333233">
+                        <Typography variant="h3" fontSize="16px" fontWeight="700">
                             Tùy chọn trang web đặt lịch
                         </Typography>
                         <Box>
                             <HelpIcon />
                         </Box>
                     </Box>
-                    <Typography
-                        variant="body1"
-                        color="#4C4B4C"
-                        fontSize="14px"
-                        fontWeight="500"
-                        marginTop="16px">
+                    <Typography variant="body1" fontSize="14px" fontWeight="500" marginTop="16px">
                         Địa chỉ trang web khách hàng booking
                     </Typography>
                     <TextField
@@ -118,7 +113,7 @@ const Booking: React.FC = () => {
                                 filter: 'var(--color-hoverIcon)'
                             }
                         }}>
-                        <Typography variant="h3" fontSize="16px" fontWeight="700" color="#333233">
+                        <Typography variant="h3" fontSize="16px" fontWeight="700">
                             Thời gian đặt lịch trước
                         </Typography>
                         <Box>
@@ -142,7 +137,6 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                color="#4C4B4C"
                                 fontSize="14px"
                                 fontWeight="500"
                                 marginTop="16px">
@@ -162,7 +156,6 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                color="#4C4B4C"
                                 fontSize="14px"
                                 fontWeight="500"
                                 marginTop="16px">
@@ -182,7 +175,6 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                color="#4C4B4C"
                                 fontSize="14px"
                                 fontWeight="500"
                                 marginTop="16px">
@@ -202,7 +194,6 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                color="#4C4B4C"
                                 fontSize="14px"
                                 fontWeight="500"
                                 marginTop="16px">
@@ -231,7 +222,7 @@ const Booking: React.FC = () => {
                                 filter: 'var(--color-hoverIcon)'
                             }
                         }}>
-                        <Typography variant="h3" fontSize="16px" fontWeight="700" color="#333233">
+                        <Typography variant="h3" fontSize="16px" fontWeight="700">
                             Tùy chọn cuộc hẹn
                         </Typography>
                         <Box>
@@ -261,9 +252,9 @@ const Booking: React.FC = () => {
                             sx={{ width: '100%' }}
                             control={
                                 <Checkbox
-                                    sx={{
-                                        color: 'var(--color-main)!important'
-                                    }}
+                                // sx={{
+                                //     color: 'var(--color-main)!important'
+                                // }}
                                 />
                             }
                             label="Gửi thông báo đến địa chỉ email"
@@ -278,9 +269,9 @@ const Booking: React.FC = () => {
                             sx={{ width: '100%' }}
                             control={
                                 <Checkbox
-                                    sx={{
-                                        color: 'var(--color-main)!important'
-                                    }}
+                                // sx={{
+                                //     color: 'var(--color-main)!important'
+                                // }}
                                 />
                             }
                             label="Các cuộc hẹn sẽ được tự động xác nhận"

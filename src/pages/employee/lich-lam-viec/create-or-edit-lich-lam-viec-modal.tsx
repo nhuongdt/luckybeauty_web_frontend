@@ -71,7 +71,12 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
             sx={{ '& .MuiPaper-root': { width: '71vw' } }}
             maxWidth={false}>
             <DialogTitle>
-                <Typography variant="h3" fontSize="24px" color="#333233" fontWeight="700" mb={3}>
+                <Typography
+                    variant="h3"
+                    fontSize="24px"
+                    // color="#333233"
+                    fontWeight="700"
+                    mb={3}>
                     Đặt ca làm việc thường xuyên
                 </Typography>
                 <Button
@@ -137,7 +142,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         }}>
                                         <Box>
                                             <Typography
-                                                color="#4C4B4C"
+                                                //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Lặp lại
@@ -151,7 +156,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                         transform: 'rotate(180deg)'
                                                     },
                                                     pr: '20px',
-                                                    color: '#4C4B4C',
+                                                    //color: '#4C4B4C',
 
                                                     mt: '8px'
                                                 }}
@@ -165,7 +170,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         </Box>
                                         <Box>
                                             <Typography
-                                                color="#4C4B4C"
+                                                //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Ngày bắt đầu
@@ -211,7 +216,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         </Box>
                                         <Box>
                                             <Typography
-                                                color="#4C4B4C"
+                                                //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Ngày kết thúc
@@ -269,7 +274,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                             <Grid item xs={12}>
                                                 <Box sx={{ padding: '24px 0px' }}>
                                                     <Typography
-                                                        color="#4C4B4C"
+                                                        // color="#4C4B4C"
                                                         fontSize="14px"
                                                         fontWeight="500">
                                                         Ca làm việc
@@ -305,7 +310,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                             <Grid item xs={12}>
                                                 <Box sx={{ padding: '24px 0px' }}>
                                                     <Typography
-                                                        color="#4C4B4C"
+                                                        //color="#4C4B4C"
                                                         fontSize="14px"
                                                         fontWeight="500">
                                                         Ngày làm việc

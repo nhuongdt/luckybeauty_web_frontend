@@ -306,7 +306,7 @@ class UserScreen extends AppComponentBase {
                             display: 'flex',
                             alignItems: 'center',
                             width: '100%',
-                            justifyContent: 'center'
+                            justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography

@@ -117,9 +117,10 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                 <TableCell
                                     colSpan={1}
                                     key={index}
-                                    sx={{
-                                        color: '#29303D'
-                                    }}>
+                                    // sx={{
+                                    //     color: '#29303D'
+                                    // }}
+                                >
                                     {date}
                                 </TableCell>
                             ))}
@@ -142,7 +143,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                 <TableRow key={index}>
                                     <TableCell
                                         sx={{
-                                            color: '#525F7A',
+                                            //color: '#525F7A',
                                             fontSize: '12px',
                                             verticalAlign: 'top',
                                             paddingTop: '8px',

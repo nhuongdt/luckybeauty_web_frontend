@@ -324,8 +324,7 @@ class ChietKhauDichVuScreen extends Component {
                             width: '100%',
                             fontSize: '13px',
                             fontWeight: '400',
-                            fontFamily: 'Roboto',
-                            textAlign: 'right'
+                            fontFamily: 'Roboto'
                         }}>
                         {params.value}
                     </Box>

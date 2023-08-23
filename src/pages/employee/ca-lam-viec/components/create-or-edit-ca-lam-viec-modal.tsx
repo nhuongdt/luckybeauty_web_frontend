@@ -193,9 +193,9 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 key={index}
                                                 control={
                                                     <Checkbox
-                                                        sx={{
-                                                            color: 'var(--color-main)!important'
-                                                        }}
+                                                    // sx={{
+                                                    //     color: 'var(--color-main)!important'
+                                                    // }}
                                                     />
                                                 }
                                                 label={item}

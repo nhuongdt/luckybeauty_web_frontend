@@ -179,7 +179,7 @@ class CaLamViecScreen extends Component {
                     <Box
                         sx={{
                             fontWeight: '500',
-                            color: '#525F7A',
+                            //color: '#525F7A',
                             fontSize: '13px',
                             fontFamily: 'Roboto'
                         }}>
@@ -195,7 +195,7 @@ class CaLamViecScreen extends Component {
                             fontSize: '13px',
                             fontWeight: '400',
                             fontFamily: 'Roboto',
-                            color: '#3D475C',
+                            //color: '#3D475C',
                             textAlign: 'left'
                         }}
                         title={params.value}>
@@ -214,7 +214,7 @@ class CaLamViecScreen extends Component {
                             fontSize="13px"
                             fontWeight="400"
                             fontFamily={'Roboto'}
-                            color="#3D475C"
+                            //color="#3D475C"
                             lineHeight="16px"
                             textAlign="left"
                             width="100%"
@@ -227,7 +227,7 @@ class CaLamViecScreen extends Component {
                     <Box
                         sx={{
                             fontWeight: '500',
-                            color: '#525F7A',
+                            //color: '#525F7A',
                             fontSize: '13px',
                             fontFamily: 'Roboto'
                         }}>
@@ -253,7 +253,7 @@ class CaLamViecScreen extends Component {
                             fontSize="13px"
                             fontWeight="400"
                             fontFamily={'Roboto'}
-                            color="#3D475C"
+                            //color="#3D475C"
                             lineHeight="16px"
                             title={params.value}>
                             {format(new Date(params.value), 'HH:mm')}
@@ -264,7 +264,7 @@ class CaLamViecScreen extends Component {
                     <Box
                         sx={{
                             fontWeight: '500',
-                            color: '#525F7A',
+                            //color: '#525F7A',
                             fontSize: '13px',
                             fontFamily: 'Roboto'
                         }}>
@@ -291,7 +291,7 @@ class CaLamViecScreen extends Component {
                             fontSize="13px"
                             fontWeight="400"
                             fontFamily={'Roboto'}
-                            color="#3D475C"
+                            //color="#3D475C"
                             lineHeight="16px"
                             title={params.value}>
                             {format(new Date(params.value), 'HH:mm')}
@@ -302,7 +302,7 @@ class CaLamViecScreen extends Component {
                     <Box
                         sx={{
                             fontWeight: '500',
-                            color: '#525F7A',
+                            //color: '#525F7A',
                             fontSize: '13px',
                             fontFamily: 'Roboto'
                         }}>
@@ -337,7 +337,7 @@ class CaLamViecScreen extends Component {
                     <Box
                         sx={{
                             fontWeight: '500',
-                            color: '#525F7A',
+                            //color: '#525F7A',
                             fontSize: '13px',
                             fontFamily: 'Roboto'
                         }}>
@@ -370,7 +370,11 @@ class CaLamViecScreen extends Component {
             <Box paddingTop="16px" className="thoi-gian-nghi-page">
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
+                        <Typography
+                            //color="#333233"
+                            variant="h1"
+                            fontSize="16px"
+                            fontWeight="700">
                             Ca làm việc
                         </Typography>
                         <Box className="form-search">

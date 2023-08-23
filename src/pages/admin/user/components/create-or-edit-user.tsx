@@ -148,7 +148,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     <Typography
                         variant="h3"
                         fontSize="24px"
-                        color="rgb(51, 50, 51)"
+                        //color="rgb(51, 50, 51)"
                         fontWeight="700">
                         {modalType}
                     </Typography>
@@ -561,9 +561,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         checked={values.isActive}
                                                         control={
                                                             <Checkbox
-                                                                sx={{
-                                                                    color: 'var(--color-main)!important'
-                                                                }}
+                                                            // sx={{
+                                                            //     color: 'var(--color-main)!important'
+                                                            // }}
                                                             />
                                                         }
                                                         label="Kích hoạt"
@@ -587,9 +587,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 onChange={handleChange}
                                                                 name="roleNames"
                                                                 value={option.value}
-                                                                sx={{
-                                                                    color: 'var(--color-main)!important'
-                                                                }}
+                                                                // sx={{
+                                                                //     color: 'var(--color-main)!important'
+                                                                // }}
                                                             />
                                                         }
                                                         label={option.label}

@@ -13,11 +13,7 @@ class CaiDatHoaHongScreen extends Component {
                 <Box component={'div'}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={6}>
-                            <Typography
-                                fontWeight="700"
-                                fontFamily={'Roboto'}
-                                fontSize="18px"
-                                sx={{ color: '#3D475C' }}>
+                            <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px">
                                 Hoa hồng theo nhân viên
                             </Typography>
                         </Grid>

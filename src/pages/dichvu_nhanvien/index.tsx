@@ -72,7 +72,7 @@ class SettingDichVuNhanVien extends Component {
                     <Typography
                         fontSize={'18px'}
                         fontWeight={700}
-                        color={'#3D475C'}
+                        //color={'#3D475C'}
                         fontFamily={'Roboto'}>
                         Cài đặt dịch vụ nhân viên
                     </Typography>

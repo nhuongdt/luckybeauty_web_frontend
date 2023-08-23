@@ -76,7 +76,7 @@ class LichhenDetail extends Component {
                                     <EventNoteIcon />
                                     <Typography
                                         sx={{
-                                            color: '#525F7A',
+                                            //color: '#525F7A',
                                             fontFamily: 'Roboto',
                                             fontSize: '14px',
                                             fontWeight: '500',
@@ -97,7 +97,7 @@ class LichhenDetail extends Component {
                                     <RoomServiceIcon />
                                     <Typography
                                         sx={{
-                                            color: '#525F7A',
+                                            //color: '#525F7A',
                                             fontFamily: 'Roboto',
                                             fontSize: '14px',
                                             fontWeight: '500',
@@ -112,7 +112,7 @@ class LichhenDetail extends Component {
                                     <PersonOutlineIcon />
                                     <Typography
                                         sx={{
-                                            color: '#525F7A',
+                                            //color: '#525F7A',
                                             fontFamily: 'Roboto',
                                             fontSize: '14px',
                                             fontWeight: '500',
@@ -127,7 +127,7 @@ class LichhenDetail extends Component {
                                     <CommentIcon />
                                     <Typography
                                         sx={{
-                                            color: '#525F7A',
+                                            //color: '#525F7A',
                                             fontFamily: 'Roboto',
                                             fontSize: '14px',
                                             fontWeight: '500',

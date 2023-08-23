@@ -12,6 +12,7 @@ import './lineChartNew.css';
 import dashboardStore from '../../../../stores/dashboardStore';
 import { observer } from 'mobx-react';
 import { ThongKeLichHen } from '../../../../services/dashboard/dto/thongKeLichHen';
+import { Typography } from '@mui/material';
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -107,11 +108,27 @@ const LineChartNew: React.FC = () => {
             <div className="tooltips">
                 <div className="tooltip-item">
                     <div className="tooltip-dot current"></div>
-                    <div className="tooltip-text">Tuần này</div>
+                    <Typography
+                        sx={{
+                            //color: '#29303D',
+                            fontFamily: 'Roboto',
+                            fontSize: '12px',
+                            fontWeight: '400'
+                        }}>
+                        Tuần này
+                    </Typography>
                 </div>
                 <div className="tooltip-item">
                     <div className="tooltip-dot before"></div>
-                    <div className="tooltip-text">Tuần trước</div>
+                    <Typography
+                        sx={{
+                            //color: '#29303D',
+                            fontFamily: 'Roboto',
+                            fontSize: '12px',
+                            fontWeight: '400'
+                        }}>
+                        Tuần trước
+                    </Typography>
                 </div>
             </div>
             {renderLineChart}

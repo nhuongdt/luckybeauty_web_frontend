@@ -38,7 +38,11 @@ const ThemThoiGianChan: React.FC<DialogProps> = ({ open, onClose }) => {
                         alignItems: 'center',
                         mb: '24px'
                     }}>
-                    <Typography variant="h2" color="#333233" fontSize="24px" fontWeight="700">
+                    <Typography
+                        variant="h2"
+                        //color="#333233"
+                        fontSize="24px"
+                        fontWeight="700">
                         Thời gian bị chặn
                     </Typography>
                     <IconButton
@@ -62,13 +66,21 @@ const ThemThoiGianChan: React.FC<DialogProps> = ({ open, onClose }) => {
                     rowSpacing={3}
                     columnSpacing={1}>
                     <Grid item xs={12}>
-                        <Typography variant="body2" color="#666466" fontSize="14px" mb={1}>
+                        <Typography
+                            variant="body2"
+                            //color="#666466"
+                            fontSize="14px"
+                            mb={1}>
                             Ngày
                         </Typography>
                         <DatePickerCustom />
                     </Grid>
                     <Grid item xs={12}>
-                        <Typography variant="body2" color="#666466" fontSize="14px" mb={1}>
+                        <Typography
+                            variant="body2"
+                            //color="#666466"
+                            fontSize="14px"
+                            mb={1}>
                             Nhân viên
                         </Typography>
                         <Autocomplete
@@ -87,13 +99,21 @@ const ThemThoiGianChan: React.FC<DialogProps> = ({ open, onClose }) => {
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body2" color="#666466" fontSize="14px" mb={1}>
+                        <Typography
+                            variant="body2"
+                            //color="#666466"
+                            fontSize="14px"
+                            mb={1}>
                             Thời gian bắt đầu
                         </Typography>
                         <TextField type="time" />
                     </Grid>
                     <Grid item xs={6}>
-                        <Typography variant="body2" color="#666466" fontSize="14px" mb={1}>
+                        <Typography
+                            variant="body2"
+                            // color="#666466"
+                            fontSize="14px"
+                            mb={1}>
                             Thời gian kết thúc
                         </Typography>
                         <TextField type="time" />

@@ -145,7 +145,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                             <ExpandMoreIcon
                                                 className="arrowDown"
                                                 sx={{
-                                                    color: '#666466',
+                                                    //color: '#666466',
                                                     position: 'absolute',
                                                     right: '0',
                                                     bottom: '0',
@@ -162,7 +162,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                             <Typography
                                                 variant="body1"
                                                 fontSize="12px"
-                                                color="#333F48"
+                                                //color="#333F48"
                                                 fontWeight="700"
                                                 sx={{
                                                     display: '-webkit-box',
@@ -174,7 +174,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                             </Typography>
                                             <Typography
                                                 variant="body1"
-                                                color="#70797F"
+                                                //color="#70797F"
                                                 fontSize="12px">
                                                 {item.chucVu}
                                             </Typography>
@@ -193,7 +193,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
                                 <TableRow key={index}>
                                     <TableCell
                                         sx={{
-                                            color: '#999699',
+                                            //color: '#999699',
                                             fontSize: '12px',
                                             verticalAlign: 'top',
                                             paddingTop: '8px',

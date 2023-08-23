@@ -82,7 +82,7 @@ const Dashboard: React.FC = () => {
                                 borderBottom={'1px solid #EEF0F4'}>
                                 <Typography
                                     sx={{
-                                        color: '#29303D',
+                                        //color: '#29303D',
                                         fontFamily: 'Roboto',
                                         fontSize: '18px',
                                         fontWeight: '700'
@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
                                 </Typography>
                                 <Typography
                                     sx={{
-                                        color: '#29303D',
+                                        //color: '#29303D',
                                         fontFamily: 'Roboto',
                                         fontSize: '12px',
                                         fontWeight: '400'
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
                             <Box style={{ background: '#FFF', padding: '16px 24px' }}>
                                 <Typography
                                     sx={{
-                                        color: '#29303D',
+                                        //color: '#29303D',
                                         fontFamily: 'Roboto',
                                         fontSize: '18px',
                                         fontWeight: '700'
@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
                             <Box bgcolor={'#FFF'} padding={'8px 24px'}>
                                 <Typography
                                     sx={{
-                                        color: '#29303D',
+                                        //color: '#29303D',
                                         fontFamily: 'Roboto',
                                         fontSize: '18px',
                                         fontWeight: '700'
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
                                 </Typography>
                                 <Typography
                                     sx={{
-                                        color: '#29303D',
+                                        //color: '#29303D',
                                         fontFamily: 'Roboto',
                                         fontSize: '12px',
                                         fontWeight: '400'
@@ -181,7 +181,7 @@ const Dashboard: React.FC = () => {
                                             <Typography
                                                 sx={{
                                                     marginLeft: '8px',
-                                                    color: '#29303D',
+                                                    //color: '#29303D',
                                                     fontFamily: 'Roboto',
                                                     fontSize: '12px',
                                                     fontWeight: '400'
@@ -204,7 +204,7 @@ const Dashboard: React.FC = () => {
                                             <Typography
                                                 sx={{
                                                     marginLeft: '8px',
-                                                    color: '#29303D',
+                                                    //color: '#29303D',
                                                     fontFamily: 'Roboto',
                                                     fontSize: '12px',
                                                     fontWeight: '400'
@@ -224,7 +224,7 @@ const Dashboard: React.FC = () => {
                             <Box width={'100%'} bgcolor={'#FFF'} padding={'16px 24px'}>
                                 <Typography
                                     sx={{
-                                        color: '#29303D',
+                                        //color: '#29303D',
                                         fontFamily: 'Roboto',
                                         fontSize: '18px',
                                         fontWeight: '700'

@@ -104,11 +104,9 @@ class ChietKhauHoaDonScreen extends Component {
         const columns: GridColDef[] = [
             {
                 field: 'giaTriChietKhau',
-                sortable: false,
                 headerName: 'Hoa hồng',
                 minWidth: 112,
                 flex: 1,
-                align: 'center',
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )

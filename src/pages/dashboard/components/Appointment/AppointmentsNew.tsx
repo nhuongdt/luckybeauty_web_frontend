@@ -26,7 +26,7 @@ const AppoimentsNew: React.FC = () => {
                                     flexDirection={'column'}>
                                     <Typography
                                         sx={{
-                                            color: '#525F7A',
+                                            // color: '#525F7A',
                                             fontFamily: 'Roboto',
                                             fontSize: '14px',
                                             fontWeight: '400'
@@ -40,7 +40,7 @@ const AppoimentsNew: React.FC = () => {
                                         <img src={clockIcon} alt="clock" />
                                         <Typography
                                             sx={{
-                                                color: '#525F7A',
+                                                //color: '#525F7A',
                                                 fontFamily: 'Roboto',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
@@ -58,7 +58,7 @@ const AppoimentsNew: React.FC = () => {
 
                                     <Typography
                                         sx={{
-                                            color: '#3D475C',
+                                            //color: '#3D475C',
                                             fontFamily: 'Roboto',
                                             fontSize: '16px',
                                             fontWeight: '700'
