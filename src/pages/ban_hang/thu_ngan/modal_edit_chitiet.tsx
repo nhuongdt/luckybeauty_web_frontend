@@ -672,7 +672,11 @@ export default function ModalEditChiTietGioHang({
                                                         : '',
                                                     color: ct.laPTChietKhau
                                                         ? 'white'
-                                                        : 'var(--color-main)'
+                                                        : 'var(--color-main)',
+                                                    '&:hover ': {
+                                                        bgcolor: 'var(--color-main)',
+                                                        color: 'white'
+                                                    }
                                                 }}
                                                 onClick={() => changeLoaiChietKhau(true, ct.id)}>
                                                 %
@@ -684,7 +688,11 @@ export default function ModalEditChiTietGioHang({
                                                         : '',
                                                     color: !ct.laPTChietKhau
                                                         ? 'white'
-                                                        : 'var(--color-main)'
+                                                        : 'var(--color-main)',
+                                                    '&:hover ': {
+                                                        bgcolor: 'var(--color-main)',
+                                                        color: 'white'
+                                                    }
                                                 }}
                                                 onClick={() => changeLoaiChietKhau(false, ct.id)}>
                                                 đ

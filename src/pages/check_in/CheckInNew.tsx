@@ -345,12 +345,16 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 handleClickCustomer(item);
                             }}>
                             <Stack direction={'row'} spacing={2}>
-                                {utils.checkNull(item.avatar) ? (
+                                {utils.checkNull(item?.avatar) ? (
                                     <BadgeFistCharOfName
                                         firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
                                     />
                                 ) : (
-                                    <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
+                                    // <Avatar src={item.avatar} />
+                                    <img
+                                        src={item.avatar}
+                                        style={{ width: 40, height: 40, borderRadius: '100%' }}
+                                    />
                                 )}
 
                                 <div>
