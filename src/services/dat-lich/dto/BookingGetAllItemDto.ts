@@ -26,6 +26,7 @@ export class BookingDetail_ofCustomerDto {
     idBooking = '';
     idChiNhanh = '';
     idKhachHang = '';
+    avatar = '';
     startTime = '';
     endTime = '';
     bookingDate = '';

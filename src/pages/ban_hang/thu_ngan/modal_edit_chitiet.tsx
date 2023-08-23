@@ -465,8 +465,8 @@ export default function ModalEditChiTietGioHang({
                                             sx={{
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '8px',
-                                                maxWidth: '80%'
+                                                gap: '8px'
+                                                // maxWidth: '80%'
                                             }}>
                                             <Box
                                                 sx={{
@@ -476,6 +476,7 @@ export default function ModalEditChiTietGioHang({
                                                     borderRadius: '4px'
                                                 }}></Box>
                                             <Typography
+                                                title={ct?.tenHangHoa}
                                                 sx={{
                                                     fontWeight: 400,
                                                     display: formType === 3 ? 'none' : '',
@@ -666,14 +667,24 @@ export default function ModalEditChiTietGioHang({
                                         <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
                                             <Button
                                                 sx={{
-                                                    bgcolor: ct.laPTChietKhau ? ' #fff' : '#EEF0F4'
+                                                    bgcolor: ct.laPTChietKhau
+                                                        ? 'var(--color-main)'
+                                                        : '',
+                                                    color: ct.laPTChietKhau
+                                                        ? 'white'
+                                                        : 'var(--color-main)'
                                                 }}
                                                 onClick={() => changeLoaiChietKhau(true, ct.id)}>
                                                 %
                                             </Button>
                                             <Button
                                                 sx={{
-                                                    bgcolor: !ct.laPTChietKhau ? ' #fff' : '#EEF0F4'
+                                                    bgcolor: !ct.laPTChietKhau
+                                                        ? ' var(--color-main)'
+                                                        : '',
+                                                    color: !ct.laPTChietKhau
+                                                        ? 'white'
+                                                        : 'var(--color-main)'
                                                 }}
                                                 onClick={() => changeLoaiChietKhau(false, ct.id)}>
                                                 đ
@@ -681,37 +692,43 @@ export default function ModalEditChiTietGioHang({
                                         </ButtonGroup>
                                     </Grid>
                                     {ct.laPTChietKhau ? (
-                                        <Grid item xs={12} sx={{ display: 'flex', gap: '8px' }}>
-                                            {chietKhau.map((item, index) => (
-                                                <Button
-                                                    key={index}
-                                                    onClick={() =>
-                                                        onClickPtramChietKhau(item, ct.id)
-                                                    }
-                                                    sx={{
-                                                        minWidth: 'unset',
-                                                        flexGrow: '1',
-                                                        fontSize: '12px',
-                                                        color:
-                                                            ct.ptChietKhau === item
-                                                                ? 'white'
-                                                                : 'var(--color-main)',
-                                                        paddingY: '8px ',
-                                                        textAlign: 'center',
-                                                        border: '1px solid var(--color-main)',
-                                                        borderRadius: '4px',
-                                                        bgcolor:
-                                                            ct.ptChietKhau === item
-                                                                ? 'var(--color-main)'
-                                                                : '',
-                                                        '&:hover ': {
-                                                            bgcolor: 'var(--bs-primary)',
-                                                            color: 'white'
+                                        <Grid item xs={12} md={12}>
+                                            <Stack
+                                                spacing={1}
+                                                direction={'row'}
+                                                flexWrap="wrap"
+                                                useFlexGap>
+                                                {chietKhau.map((item, index) => (
+                                                    <Button
+                                                        key={index}
+                                                        onClick={() =>
+                                                            onClickPtramChietKhau(item, ct.id)
                                                         }
-                                                    }}>
-                                                    {item} %
-                                                </Button>
-                                            ))}
+                                                        sx={{
+                                                            minWidth: 'unset',
+                                                            flexGrow: '1',
+                                                            fontSize: '12px',
+                                                            color:
+                                                                ct.ptChietKhau === item
+                                                                    ? 'white'
+                                                                    : 'var(--color-main)',
+                                                            paddingY: '8px ',
+                                                            textAlign: 'center',
+                                                            border: '1px solid var(--color-main)',
+                                                            borderRadius: '4px',
+                                                            bgcolor:
+                                                                ct.ptChietKhau === item
+                                                                    ? 'var(--color-main)'
+                                                                    : '',
+                                                            '&:hover ': {
+                                                                bgcolor: 'var(--color-main)',
+                                                                color: 'white'
+                                                            }
+                                                        }}>
+                                                        {item} %
+                                                    </Button>
+                                                ))}
+                                            </Stack>
                                         </Grid>
                                     ) : undefined}
                                     <Grid

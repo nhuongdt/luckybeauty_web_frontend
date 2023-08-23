@@ -538,6 +538,11 @@ const PageSoQuy = ({ xx }: any) => {
                                 });
                             }
                         }}
+                        sx={{
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
+                            }
+                        }}
                     />
 
                     <CustomTablePagination

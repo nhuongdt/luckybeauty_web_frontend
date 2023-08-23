@@ -191,7 +191,6 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.value}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -218,7 +217,6 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -245,7 +243,6 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -286,10 +283,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     </Box>
                 ),
                 renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];

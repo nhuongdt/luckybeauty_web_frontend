@@ -133,10 +133,10 @@ class CaLamViecScreen extends Component {
         });
     };
     onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
+        //const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
             sortBy: sortBy,
-            sortType: type
+            sortType: sortType
         });
         this.getData();
     };
@@ -173,7 +173,6 @@ class CaLamViecScreen extends Component {
         const columns: GridColDef[] = [
             {
                 field: 'maCa',
-                sortable: false,
                 headerName: 'Mã ca',
                 flex: 1,
                 renderHeader: (params) => (
@@ -185,12 +184,6 @@ class CaLamViecScreen extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'maCa');
-                            }}
-                        />{' '}
                     </Box>
                 ),
                 renderCell: (params) => (
@@ -213,7 +206,6 @@ class CaLamViecScreen extends Component {
             {
                 field: 'tenCa',
                 headerName: 'Tên ca',
-                sortable: false,
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
@@ -240,19 +232,12 @@ class CaLamViecScreen extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenCa');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'gioVao',
                 headerName: 'Giờ bắt đầu ca',
-                sortable: false,
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
@@ -284,19 +269,12 @@ class CaLamViecScreen extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'gioVao');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'gioRa',
                 headerName: 'Giờ hết ca',
-                sortable: false,
                 // width: 150,
                 flex: 1,
                 renderCell: (params) => (
@@ -329,19 +307,12 @@ class CaLamViecScreen extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'gioRa');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'tongGioCong',
                 headerName: 'Tổng thời gian',
-                sortable: false,
                 // width: 150,
                 flex: 1,
                 renderCell: (params) => (
@@ -371,12 +342,6 @@ class CaLamViecScreen extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tongGioCong');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
@@ -397,10 +362,7 @@ class CaLamViecScreen extends Component {
                     </IconButton>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -511,50 +473,25 @@ class CaLamViecScreen extends Component {
                         }
                         columns={columns}
                         checkboxSelection
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                         sx={{
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
                             '& .MuiDataGrid-columnHeader': {
                                 background: '#EEF0F4'
-                            },
-                            '& .MuiDataGrid-columnHeadersInner': {
-                                backgroundColor: 'var(--color-bg)'
-                            },
-                            '& .MuiDataGrid-cellContent': {
-                                fontSize: '13px'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            }
                         }}
                         hideFooter
                         localeText={TextTranslate}

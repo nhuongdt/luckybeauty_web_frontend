@@ -110,31 +110,16 @@ class ChietKhauHoaDonScreen extends Component {
                 flex: 1,
                 align: 'center',
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'giaTriChietKhau');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'chungTuApDung',
-                sortable: false,
                 headerName: 'Chứng từ áp dụng',
                 minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'chungTuApDung');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
@@ -143,10 +128,7 @@ class ChietKhauHoaDonScreen extends Component {
                 minWidth: 150,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -207,6 +189,21 @@ class ChietKhauHoaDonScreen extends Component {
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
                         checkboxSelection={false}
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                         sx={{
                             '& .uiDataGrid-cellContent': {
                                 fontSize: '13px',

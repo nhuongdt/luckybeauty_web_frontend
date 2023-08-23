@@ -533,7 +533,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         Xuất
                                     </Button>
                                     <Button
-                                        className=" btn-container-hover"
+                                        className="btn-container-hover"
                                         hidden={
                                             !abpCustom.isGrandPermission('Pages.KhachHang.Create')
                                         }
@@ -625,7 +625,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     className="customer-page_row-2"
                                     style={{
                                         width: '100%',
-                                        marginTop: '24px',
+                                        paddingTop: '16px',
                                         backgroundColor: '#fff'
                                     }}>
                                     <DataGrid

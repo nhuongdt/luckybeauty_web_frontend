@@ -41,6 +41,7 @@ import abpCustom from '../../components/abp-custom';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import suggestStore from '../../stores/suggestStore';
+import AppConsts from '../../lib/appconst';
 class EmployeeScreen extends React.Component {
     static contextType = ChiNhanhContext;
     state = {
@@ -50,7 +51,7 @@ class EmployeeScreen extends React.Component {
         maxResultCount: 10,
         skipCount: 0,
         filter: '',
-        sortBy: '',
+        sortBy: 'createTime',
         sortType: 'desc',
         moreOpen: false,
         importShow: false,
@@ -149,7 +150,7 @@ class EmployeeScreen extends React.Component {
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         }
-        this.setState({ IdKhachHang: id });
+        this.setState({ idNhanSu: id });
         this.Modal();
     }
     handleSubmit = async () => {
@@ -244,20 +245,21 @@ class EmployeeScreen extends React.Component {
         fileDowloadService.downloadExportFile(result);
     };
     onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
-        await this.setState({
-            sortBy: sortBy,
-            sortType: type
+        await this.setState((prev: any) => {
+            return {
+                ...prev,
+                sortBy: sortBy,
+                sortType: sortType
+            };
         });
         this.getData();
     };
     columns: GridColDef[] = [
         {
             field: 'tenNhanVien',
-            sortable: false,
             headerName: 'Tên nhân viên',
             minWidth: 171,
-            flex: 1,
+            flex: 1.5,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }} width="100%">
                     <Avatar
@@ -266,12 +268,7 @@ class EmployeeScreen extends React.Component {
                         style={{ width: 24, height: 24, marginRight: 8 }}
                     />
                     <Typography
-                        fontSize="13px"
                         variant="body2"
-                        fontWeight="400"
-                        fontFamily={'Roboto'}
-                        color="#3D475C"
-                        lineHeight="16px"
                         title={params.value}
                         sx={{ textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                         {params.value}
@@ -284,13 +281,13 @@ class EmployeeScreen extends React.Component {
         },
         {
             field: 'soDienThoai',
-            sortable: false,
             headerName: 'Số điện thoại',
             minWidth: 120,
-            flex: 1,
+            flex: 0.8,
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
+
             renderCell: (params) => (
                 <Box width="100%" textAlign="left">
                     {params.value}
@@ -299,10 +296,10 @@ class EmployeeScreen extends React.Component {
         },
         {
             field: 'ngaySinh',
-            sortable: false,
             headerName: 'Ngày sinh',
+            headerAlign: 'center',
             minWidth: 112,
-            flex: 1,
+            flex: 0.8,
             renderCell: (params) => (
                 <Box
                     style={{
@@ -314,41 +311,21 @@ class EmployeeScreen extends React.Component {
                     {params.value != null ? (
                         <>
                             <DateIcon style={{ marginRight: 4 }} />
-                            <Typography
-                                fontSize="13px"
-                                fontWeight="400"
-                                fontFamily={'Roboto'}
-                                color="#3D475C"
-                                lineHeight="16px">
+                            <Typography variant="body2">
                                 {new Date(params.value).toLocaleDateString('en-GB')}
                             </Typography>
                         </>
                     ) : null}
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'ngaySinh');
-                        }}
-                    />
-                </Box>
-            )
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
             field: 'gioiTinh',
-            sortable: false,
             headerName: 'Giới tính',
+            headerAlign: 'center',
             minWidth: 60,
+            flex: 0.7,
             renderCell: (params) => (
                 <Box
                     sx={{
@@ -357,12 +334,7 @@ class EmployeeScreen extends React.Component {
                         justifyContent: 'left',
                         width: '100%'
                     }}>
-                    <Typography
-                        fontSize="13px"
-                        fontWeight="400"
-                        fontFamily={'Roboto'}
-                        color="#3D475C"
-                        lineHeight="16px">
+                    <Typography fontSize="13px" fontWeight="400" lineHeight="16px">
                         {params.value == 0 ? '' : params.value == 1 ? 'Nam' : 'Nữ'}
                     </Typography>
                 </Box>
@@ -371,23 +343,15 @@ class EmployeeScreen extends React.Component {
                 <Box
                     sx={{
                         fontWeight: '500',
-                        color: '#525F7A',
                         fontSize: '13px',
                         fontFamily: 'Roboto'
                     }}>
                     {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'gioiTinh');
-                        }}
-                    />
                 </Box>
             )
         },
         {
             field: 'diaChi',
-            sortable: false,
             headerName: 'Địa chỉ',
             minWidth: 130,
             flex: 1,
@@ -395,7 +359,6 @@ class EmployeeScreen extends React.Component {
                 <Box
                     sx={{
                         fontWeight: '500',
-                        color: '#525F7A',
                         fontSize: '13px',
                         fontFamily: 'Roboto'
                     }}>
@@ -420,7 +383,6 @@ class EmployeeScreen extends React.Component {
         },
         {
             field: 'tenChucVu',
-            sortable: false,
             headerName: 'Vị trí',
             minWidth: 113,
             flex: 1,
@@ -429,7 +391,6 @@ class EmployeeScreen extends React.Component {
                     fontSize="13px"
                     fontWeight="400"
                     fontFamily={'Roboto'}
-                    color="#3D475C"
                     lineHeight="16px"
                     sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
@@ -444,18 +405,12 @@ class EmployeeScreen extends React.Component {
                         fontFamily: 'Roboto'
                     }}>
                     {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'tenChucVu');
-                        }}
-                    />
                 </Box>
             )
         },
+
         {
             field: 'ngayVaoLam',
-            sortable: false,
             headerName: 'Ngày tham gia',
             minWidth: 120,
             flex: 1,
@@ -487,55 +442,55 @@ class EmployeeScreen extends React.Component {
                         fontFamily: 'Roboto'
                     }}>
                     {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'ngayVaoLam');
-                        }}
-                    />
                 </Box>
             )
         },
         {
             field: 'trangThai',
-            sortable: false,
             headerName: 'Trạng thái',
+            headerAlign: 'center',
             minWidth: 116,
-            flex: 1,
+            flex: 0.8,
             renderCell: (params) => (
                 <Typography
-                    fontSize="13px"
-                    fontFamily={'Roboto'}
+                    variant="body2"
                     alignItems={'center'}
                     borderRadius="12px"
+                    sx={{
+                        margin: 'auto',
+                        backgroundColor:
+                            params.row.trangThai === 'Hoạt động'
+                                ? '#E8FFF3'
+                                : params.row.trangThai === 'Ngừng hoạt động'
+                                ? '#FFF8DD'
+                                : '#FFF5F8',
+                        color:
+                            params.row.trangThai === 'Hoạt động'
+                                ? '#50CD89'
+                                : params.row.trangThai === 'Ngừng hoạt động'
+                                ? '#FF9900'
+                                : '#F1416C'
+                    }}
                     fontWeight="400"
                     textAlign={'left'}
-                    color="#009EF7"
-                    sx={{ backgroundColor: '#F1FAFF' }}>
+                    color="#009EF7">
                     {params.value}
                 </Typography>
             ),
             renderHeader: (params) => (
                 <Box
                     sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
+                        fontSize: '12px'
                     }}>
                     {params.colDef.headerName}
-                    <IconSorting
-                        className="custom-icon"
-                        onClick={() => {
-                            this.onSort(this.state.sortType, 'trangThai');
-                        }}
-                    />
                 </Box>
             )
         },
         {
             field: 'actions',
-            headerName: 'Hành động',
+            headerName: '#',
+            headerAlign: 'center',
+            sortable: false,
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
@@ -552,7 +507,7 @@ class EmployeeScreen extends React.Component {
                     <MoreHorizIcon />
                 </IconButton>
             ),
-            renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
     public render() {
@@ -678,6 +633,21 @@ class EmployeeScreen extends React.Component {
                             }
                         }}
                         localeText={TextTranslate}
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                     />
                     <ActionMenuTable
                         selectedRowId={this.state.selectedRowId}
@@ -716,7 +686,9 @@ class EmployeeScreen extends React.Component {
                     }}
                     onOk={this.handleSubmit}
                     title={
-                        this.state.idNhanSu === ''
+                        this.state.idNhanSu === '' ||
+                        this.state.idNhanSu == undefined ||
+                        this.state.idNhanSu === AppConsts.guidEmpty
                             ? 'Thêm mới nhân viên'
                             : 'Cập nhật thông tin nhân viên'
                     }

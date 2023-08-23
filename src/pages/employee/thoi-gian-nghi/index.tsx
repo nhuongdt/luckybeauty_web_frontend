@@ -39,7 +39,7 @@ class EmployeeHoliday extends Component {
         maxResultCount: 10,
         skipCount: 0,
         filter: '',
-        sortBy: '',
+        sortBy: 'createTime',
         moreOpen: false,
         importShow: false,
         anchorEl: null,
@@ -139,10 +139,10 @@ class EmployeeHoliday extends Component {
         this.Modal();
     };
     onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
+        //const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
             sortBy: sortBy,
-            sortType: type
+            sortType: sortType
         });
         this.getListHoliday();
     };
@@ -220,25 +220,10 @@ class EmployeeHoliday extends Component {
         const columns: GridColDef[] = [
             {
                 field: 'tenNgayLe',
-                sortable: false,
                 headerName: 'Tên ngày lễ',
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box
-                        sx={{
-                            fontWeight: '500',
-                            color: '#525F7A',
-                            fontSize: '13px',
-                            fontFamily: 'Roboto'
-                        }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenNgayLe');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params) => (
                     <Box
@@ -259,7 +244,6 @@ class EmployeeHoliday extends Component {
             {
                 field: 'tuNgay',
                 headerName: 'Ngày bắt đầu',
-                sortable: false,
                 // width: 200,
                 flex: 1,
                 renderCell: (params) => (
@@ -290,12 +274,6 @@ class EmployeeHoliday extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tuNgay');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
@@ -333,19 +311,12 @@ class EmployeeHoliday extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'denNgay');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
             {
                 field: 'tongSoNgay',
                 headerName: 'Tổng số ngày',
-                sortable: false,
                 // width: 150,
                 flex: 1,
                 renderCell: (params) => (
@@ -373,12 +344,6 @@ class EmployeeHoliday extends Component {
                             fontFamily: 'Roboto'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tongSoNgay');
-                            }}
-                        />{' '}
                     </Box>
                 )
             },
@@ -399,10 +364,7 @@ class EmployeeHoliday extends Component {
                     </IconButton>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -518,50 +480,25 @@ class EmployeeHoliday extends Component {
                         rows={this.state.listHoliday}
                         columns={columns}
                         checkboxSelection
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                         sx={{
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
                             '& .MuiDataGrid-columnHeader': {
                                 background: '#EEF0F4'
-                            },
-                            '& .MuiDataGrid-columnHeadersInner': {
-                                backgroundColor: 'var(--color-bg)'
-                            },
-                            '& .MuiDataGrid-cellContent': {
-                                fontSize: '13px'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            }
                         }}
                         hideFooter
                         localeText={TextTranslate}

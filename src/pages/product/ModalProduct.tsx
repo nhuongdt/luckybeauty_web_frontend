@@ -64,14 +64,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             setProduct((old: any) => {
                 return {
                     ...old,
-                    laHangHoa: old.idLoaiHangHoa === 1,
-                    image: ''
+                    laHangHoa: old.idLoaiHangHoa === 1
                 };
             });
-            // GetFile_fromFireBase(obj.image);
-            setgoogleDrive_fileId(obj.image);
-            const linkImg = uploadFileService.GetLinkFileOnDrive_byFileId(obj.image);
-            setProductImage(linkImg);
+            setProductImage(obj.image);
+            setgoogleDrive_fileId(uploadFileService.GoogleApi_GetFileIdfromLink(obj.image));
 
             // find nhomhang
             const nhom = dataNhomHang.filter((x: any) => x.id == obj.idNhomHangHoa);
@@ -176,7 +173,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             reader.onload = () => {
                 setProductImage(reader.result?.toString() ?? '');
             };
-            console.log('file ', file);
             setFileImage(file);
         }
     };
@@ -184,6 +180,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         setProductImage('');
         if (!utils.checkNull(googleDrive_fileId)) {
             await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
+            setgoogleDrive_fileId('');
         }
     };
 
@@ -232,15 +229,27 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             return;
         }
 
-        // awlay insert: because iamge was delete before save
-        const fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
+        let fileId = googleDrive_fileId;
+        if (!utils.checkNull(productImage)) {
+            // nếu cập nhật hàng: chỉ upload nếu chọn lại ảnh
+            if (
+                isNew ||
+                (!isNew &&
+                    !utils.checkNull(product.image) &&
+                    utils.checkNull(googleDrive_fileId)) ||
+                utils.checkNull(product.image)
+            ) {
+                // awlay insert: because iamge was delete before save
+                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
+            }
+        }
 
         const objNew = { ...product };
         objNew.giaBan = utils.formatNumberToFloat(product.giaBan);
         objNew.tenHangHoa_KhongDau = utils.strToEnglish(objNew.tenHangHoa ?? '');
         objNew.tenLoaiHangHoa = objNew.idLoaiHangHoa == 1 ? 'Hàng hóa' : 'Dịch vụ';
         objNew.txtTrangThaiHang = objNew.trangThai == 1 ? 'Đang kinh doanh' : 'Ngừng kinh doanh';
-        objNew.image = fileId;
+        objNew.image = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
         objNew.donViQuiDois = [
             {
                 id: objNew.idDonViQuyDoi,
@@ -582,7 +591,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         }}>
                         Khôi phục
                     </Button>
-                    {!(product.trangThai === 0 || isNew) && (
+                    {!(product.trangThai === 0 || isNew) && !wasClickSave && (
                         <Button
                             variant="contained"
                             sx={{
@@ -605,13 +614,25 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     )}
 
                     {product.trangThai !== 0 && (
-                        <Button
-                            variant="contained"
-                            sx={{ bgcolor: '#7C3367' }}
-                            onClick={saveProduct}
-                            className="btn-container-hover">
-                            Lưu
-                        </Button>
+                        <>
+                            {!wasClickSave && (
+                                <Button
+                                    variant="contained"
+                                    sx={{ bgcolor: '#7C3367' }}
+                                    onClick={saveProduct}
+                                    className="btn-container-hover">
+                                    Lưu
+                                </Button>
+                            )}
+                            {wasClickSave && (
+                                <Button
+                                    variant="contained"
+                                    sx={{ bgcolor: '#7C3367' }}
+                                    className="btn-container-hover">
+                                    Đang lưu
+                                </Button>
+                            )}
+                        </>
                     )}
 
                     <Button

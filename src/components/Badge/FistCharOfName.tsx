@@ -4,7 +4,7 @@ export default function BadgeFistCharOfName({ firstChar }: any) {
         <>
             <Box
                 style={{
-                    width: '40px',
+                    minWidth: '40px',
                     height: '40px',
                     display: 'flex',
                     position: 'relative',

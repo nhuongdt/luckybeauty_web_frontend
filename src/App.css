@@ -79,14 +79,6 @@ body .font-normal {
     border-radius: 16px;
 }
 
-.btn-only-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 4px;
-    border: 2px solid #cccc;
-    padding: 7px;
-}
-
 .btnIcon {
     width: 40px !important;
     height: 40px !important;
@@ -126,9 +118,11 @@ body .font-normal {
 .MuiTablePagination-displayedRows {
     margin-bottom: 0;
 }
-.MuiAutocomplete-option{
+
+.MuiAutocomplete-option {
     font-size: 13px;
 }
+
 
 /* style main button*/
 
@@ -170,7 +164,7 @@ body .font-normal {
 }
 
 .modal-lable {
-    font-size: 13px !important;
+    font-size: var(--font-size-main) !important;
     font-weight: 500 !important;
 }
 
@@ -286,4 +280,8 @@ body .font-normal {
     font-size: var(--font-size-main)!important;
 }
 
-/*dataGrid*/
+.lableOverflow {
+    text-overflow: ellipsis!important;
+    overflow: hidden!important;
+    white-space: nowrap!important;
+}

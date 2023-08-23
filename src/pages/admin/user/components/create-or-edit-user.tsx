@@ -17,7 +17,8 @@ import {
     FormControlLabel,
     Select,
     MenuItem,
-    Grid
+    Grid,
+    Autocomplete
 } from '@mui/material';
 import useWindowWidth from '../../../../components/StateWidth';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
@@ -45,7 +46,8 @@ export interface ICreateOrEditUserProps {
 class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
     state = {
         confirmDirty: false,
-        tabIndex: '1'
+        tabIndex: '1',
+        hoVaTen: ''
     };
 
     setConfirmDirty = (value: boolean) => {
@@ -169,7 +171,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                         initialValues={initialValues}
                         onSubmit={this.handleSubmit}
                         validationSchema={rules}>
-                        {({ handleChange, values, errors, touched }) => (
+                        {({ handleChange, values, errors, touched, setFieldValue }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <TabContext value={this.state.tabIndex}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -254,18 +256,133 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     <Typography variant="body1" fontSize="14px">
                                                         Nhân sự đã có
                                                     </Typography>
-                                                    <Select
+                                                    <Autocomplete
+                                                        value={
+                                                            suggestNhanSu.find(
+                                                                (x) => x.id === values.nhanSuId
+                                                            ) || {
+                                                                id: '',
+                                                                avatar: '',
+                                                                chucVu: '',
+                                                                soDienThoai: '',
+                                                                tenNhanVien: ''
+                                                            }
+                                                        }
+                                                        options={suggestNhanSu}
+                                                        getOptionLabel={(option) =>
+                                                            option.tenNhanVien
+                                                        }
+                                                        size="small"
+                                                        fullWidth
+                                                        disablePortal
+                                                        onChange={(event, value) => {
+                                                            setFieldValue(
+                                                                'nhanSuId',
+                                                                value ? value.id : undefined
+                                                            );
+
+                                                            const nhanVien = suggestNhanSu.find(
+                                                                (x) => x.id === value?.id
+                                                            ) || {
+                                                                avatar: '',
+                                                                chucVu: '',
+                                                                id: '',
+                                                                soDienThoai: '',
+                                                                tenNhanVien: ''
+                                                            };
+                                                            setFieldValue(
+                                                                'phoneNumber',
+                                                                nhanVien.soDienThoai || ''
+                                                            );
+
+                                                            const names = nhanVien.tenNhanVien
+                                                                .split(' ')
+                                                                .filter(Boolean);
+                                                            if (names.length > 0) {
+                                                                setFieldValue(
+                                                                    'name',
+                                                                    names[names.length - 1]
+                                                                );
+                                                                setFieldValue(
+                                                                    'surname',
+                                                                    names.slice(0, -1).join(' ') ||
+                                                                        names[names.length - 1]
+                                                                );
+                                                            } else {
+                                                                setFieldValue('name', '');
+                                                                setFieldValue('surname', '');
+                                                            }
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                placeholder="Chọn nhân viên"
+                                                            />
+                                                        )}
+                                                    />
+                                                    {/* <Select
                                                         fullWidth
                                                         name="nhanSuId"
                                                         value={values.nhanSuId}
-                                                        onChange={handleChange}
+                                                        onChange={(e) => {
+                                                            handleChange(e);
+                                                            const nhanVien = suggestNhanSu.filter(
+                                                                (x) => x.id == e.target.value
+                                                            )[0];
+                                                            setFieldValue(
+                                                                'phoneNumber',
+                                                                nhanVien.soDienThoai
+                                                            );
+                                                            this.setState(
+                                                                {
+                                                                    tenNhanVien:
+                                                                        nhanVien.tenNhanVien
+                                                                },
+                                                                () => {
+                                                                    const names =
+                                                                        nhanVien.tenNhanVien
+                                                                            .split(' ')
+                                                                            .filter((o) => o);
+                                                                    if (names.length > 0) {
+                                                                        setFieldValue(
+                                                                            'name',
+                                                                            names[names.length - 1]
+                                                                        );
+
+                                                                        if (names.length > 1) {
+                                                                            let surname = '';
+                                                                            for (
+                                                                                let i = 0;
+                                                                                i <
+                                                                                names.length - 1;
+                                                                                i++
+                                                                            ) {
+                                                                                surname +=
+                                                                                    names[i] + ' ';
+                                                                            }
+                                                                            setFieldValue(
+                                                                                'surname',
+                                                                                surname
+                                                                            );
+                                                                        } else {
+                                                                            setFieldValue(
+                                                                                'surname',
+                                                                                names[
+                                                                                    names.length - 1
+                                                                                ]
+                                                                            );
+                                                                        }
+                                                                    }
+                                                                }
+                                                            );
+                                                        }}
                                                         size="small">
                                                         {suggestNhanSu.map((item) => (
                                                             <MenuItem key={item.id} value={item.id}>
                                                                 {item.tenNhanVien}
                                                             </MenuItem>
                                                         ))}
-                                                    </Select>
+                                                    </Select> */}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <label style={{ fontSize: '14px' }}>
@@ -279,20 +396,20 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         </span>
                                                     </label>
                                                     <TextField
-                                                        name="name"
+                                                        name="surname"
                                                         type="text"
-                                                        value={values.name}
+                                                        value={values.surname}
                                                         fullWidth
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {touched.name && errors.name && (
-                                                        <div>{errors.name}</div>
+                                                    {touched.surname && errors.surname && (
+                                                        <div>{errors.surname}</div>
                                                     )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <label style={{ fontSize: '14px' }}>
-                                                        Tên lót
+                                                        Tên
                                                         <span
                                                             style={{
                                                                 color: 'red',
@@ -303,14 +420,14 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     </label>
                                                     <TextField
                                                         type="text"
-                                                        name="surname"
-                                                        value={values.surname}
+                                                        name="name"
+                                                        value={values.name}
                                                         fullWidth
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {touched.surname && errors.surname && (
-                                                        <div>{errors.surname}</div>
+                                                    {touched.name && errors.name && (
+                                                        <div>{errors.name}</div>
                                                     )}
                                                 </FormGroup>
                                             </Grid>
