@@ -14,7 +14,8 @@ import {
     Radio,
     Stack,
     DialogTitle,
-    DialogContent
+    DialogContent,
+    InputAdornment
 } from '@mui/material';
 import useWindowWidth from '../../../components/StateWidth';
 import fileIcon from '../../../images/file.svg';
@@ -29,10 +30,14 @@ import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
 import '../customerPage.css';
 import rules from './create-or-edit-customer.validate';
-import { fontSize } from '@mui/system';
+import { fontSize, width } from '@mui/system';
 import utils from '../../../utils/utils';
 import uploadFileService from '../../../services/uploadFileService';
+import PersonIcon from '@mui/icons-material/Person';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Close } from '@mui/icons-material';
+import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
+
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
     onCancel: () => void;
@@ -106,7 +111,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         const initValues: CreateOrEditKhachHangDto = formRef;
 
         return (
-            <Dialog open={visible} onClose={onCancel} maxWidth="md" fullWidth>
+            <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
                 <DialogTitle className="poppup-title">{title}</DialogTitle>
                 <DialogContent>
                     <Formik
@@ -178,164 +183,222 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     }}>
                                     <Grid container className="form-container" spacing={2}>
                                         <Grid item xs={12}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Họ và tên <span className="text-danger">*</span>
-                                                </Typography>
-                                                <TextField
-                                                    size="small"
-                                                    name="tenKhachHang"
-                                                    value={values.tenKhachHang}
-                                                    onChange={handleChange}
-                                                    helperText={
-                                                        errors.tenKhachHang &&
-                                                        touched.tenKhachHang ? (
-                                                            <small className="text-danger">
-                                                                Tên khách hàng không được để trống
-                                                            </small>
-                                                        ) : null
-                                                    }
-                                                    fullWidth
-                                                    sx={{
-                                                        fontSize: '16px',
-                                                        color: '#4c4b4c'
-                                                    }}></TextField>
-                                            </Stack>
+                                            <Grid container justifyContent="flex-start">
+                                                <Grid item xs={5}></Grid>
+                                                <Grid item xs={2}>
+                                                    <Stack
+                                                        alignItems="center"
+                                                        position={'relative'}>
+                                                        {!utils.checkNull(this.state.cusImage) ? (
+                                                            <Box
+                                                                sx={{
+                                                                    position: 'relative'
+                                                                }}>
+                                                                <img
+                                                                    src={this.state.cusImage}
+                                                                    style={{
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        maxHeight: 60,
+                                                                        maxWidth: 60,
+                                                                        minWidth: 60,
+                                                                        minHeight: 60,
+                                                                        borderRadius: '100%'
+                                                                    }}
+                                                                />
+                                                                {/* <Close
+                                                            onClick={this.closeImage}
+                                                            sx={{
+                                                                left: 0,
+                                                                color: 'red',
+                                                                position: 'absolute'
+                                                            }}
+                                                        /> */}
+                                                            </Box>
+                                                        ) : (
+                                                            <div>
+                                                                <PersonIcon
+                                                                    sx={{
+                                                                        width: 60,
+                                                                        height: 60,
+                                                                        color: '#dfdcdc',
+                                                                        borderRadius: '100%',
+                                                                        border: '1px solid #cccc',
+                                                                        padding: '10px'
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        <TextField
+                                                            type="file"
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                opacity: 0,
+                                                                '& input': {
+                                                                    height: '100%'
+                                                                },
+                                                                '& div': {
+                                                                    height: '100%'
+                                                                }
+                                                            }}
+                                                            onChange={this.choseImage}
+                                                        />
+                                                    </Stack>
+                                                </Grid>
+                                                <Grid item xs={5}></Grid>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                size="small"
+                                                name="tenKhachHang"
+                                                autoFocus
+                                                value={values.tenKhachHang}
+                                                onChange={handleChange}
+                                                label="Tên khách hàng *"
+                                                helperText={
+                                                    errors.tenKhachHang && touched.tenKhachHang ? (
+                                                        <small className="text-danger">
+                                                            Tên khách hàng không được để trống
+                                                        </small>
+                                                    ) : null
+                                                }
+                                                fullWidth
+                                                sx={{
+                                                    fontSize: '16px',
+                                                    color: '#4c4b4c'
+                                                }}></TextField>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Số điện thoại{' '}
-                                                    <span className="text-danger">*</span>
-                                                </Typography>
-                                                <TextField
-                                                    type="tel"
-                                                    size="small"
-                                                    name="soDienThoai"
-                                                    value={values.soDienThoai}
-                                                    onChange={handleChange}
-                                                    fullWidth
-                                                    helperText={
-                                                        errors.soDienThoai &&
-                                                        touched.soDienThoai ? (
-                                                            <small className="text-danger">
-                                                                Số điện thoại không hợp lệ
-                                                            </small>
-                                                        ) : null
-                                                    }
-                                                    sx={{ fontSize: '13px' }}></TextField>
-                                            </Stack>
+                                            <TextField
+                                                type="tel"
+                                                size="small"
+                                                name="soDienThoai"
+                                                label=" Số điện thoại *"
+                                                value={values.soDienThoai}
+                                                onChange={handleChange}
+                                                fullWidth
+                                                helperText={
+                                                    errors.soDienThoai && touched.soDienThoai ? (
+                                                        <small className="text-danger">
+                                                            Số điện thoại không hợp lệ
+                                                        </small>
+                                                    ) : null
+                                                }
+                                                sx={{ fontSize: '13px' }}></TextField>
                                         </Grid>
                                         <Grid item sm={6} xs={12}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Địa chỉ
-                                                </Typography>
-                                                <TextField
-                                                    type="text"
-                                                    size="small"
-                                                    name="diaChi"
-                                                    value={values.diaChi}
-                                                    onChange={handleChange}
-                                                    fullWidth
-                                                    sx={{ fontSize: '16px' }}></TextField>
-                                            </Stack>
+                                            <DatePickerCustom
+                                                props={{ width: '100%', label: 'Ngày sinh' }}
+                                                defaultVal={values.ngaySinh}
+                                                handleChangeDate={handleChange}
+                                            />
+                                            {/* <TextField
+                                                type="date"
+                                                fullWidth
+                                                size="small"
+                                                label="Ngày sinh"
+                                                name="ngaySinh"
+                                                value={
+                                                    values.ngaySinh != null
+                                                        ? values.ngaySinh
+                                                              ?.toString()
+                                                              .substring(0, 10)
+                                                        : ''
+                                                }
+                                                onChange={handleChange}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <InputAdornment position="start">
+                                                            <CalendarMonthIcon />
+                                                        </InputAdornment>
+                                                    )
+                                                }}
+                                            /> */}
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                type="text"
+                                                size="small"
+                                                name="diaChi"
+                                                label="Địa chỉ"
+                                                value={values.diaChi}
+                                                onChange={handleChange}
+                                                fullWidth
+                                                sx={{ fontSize: '16px' }}></TextField>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Ngày sinh
-                                                </Typography>
-                                                <TextField
-                                                    type="date"
-                                                    fullWidth
-                                                    placeholder="21/04/2004"
-                                                    name="ngaySinh"
-                                                    value={
-                                                        values.ngaySinh != null
-                                                            ? values.ngaySinh
-                                                                  ?.toString()
-                                                                  .substring(0, 10)
-                                                            : ''
-                                                    }
-                                                    onChange={handleChange}
-                                                    sx={{ fontSize: '16px' }}
-                                                    size="small"
-                                                />
-                                            </Stack>
+                                            <Autocomplete
+                                                value={
+                                                    suggestStore.suggestNhomKhach.filter(
+                                                        (x) => x.id == values.idNhomKhach
+                                                    )[0] ?? { id: '', tenNhomKhach: '' }
+                                                }
+                                                options={suggestStore.suggestNhomKhach}
+                                                getOptionLabel={(option) =>
+                                                    `${option.tenNhomKhach}`
+                                                }
+                                                size="small"
+                                                fullWidth
+                                                disablePortal
+                                                onChange={(event, value) => {
+                                                    setFieldValue(
+                                                        'idNhomKhach',
+                                                        value ? value.id : undefined
+                                                    );
+                                                    // Cập nhật giá trị id trong Formik
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="Nhóm khách"
+                                                        // placeholder="Chọn nhóm khách"
+                                                    />
+                                                )}
+                                            />
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Nhóm khách
-                                                </Typography>
-                                                <Autocomplete
-                                                    value={
-                                                        suggestStore.suggestNhomKhach.filter(
-                                                            (x) => x.id == values.idNhomKhach
-                                                        )[0] ?? { id: '', tenNhomKhach: '' }
-                                                    }
-                                                    options={suggestStore.suggestNhomKhach}
-                                                    getOptionLabel={(option) =>
-                                                        `${option.tenNhomKhach}`
-                                                    }
-                                                    size="small"
-                                                    fullWidth
-                                                    disablePortal
-                                                    onChange={(event, value) => {
-                                                        setFieldValue(
-                                                            'idNhomKhach',
-                                                            value ? value.id : undefined
-                                                        );
-                                                        // Cập nhật giá trị id trong Formik
-                                                    }}
-                                                    renderInput={(params) => (
-                                                        <TextField
-                                                            {...params}
-                                                            placeholder="Chọn nhóm khách"
-                                                        />
-                                                    )}
-                                                />
-                                            </Stack>
+                                            <Autocomplete
+                                                value={
+                                                    suggestStore.suggestNguonKhach.filter(
+                                                        (x) => x.id == values.idNguonKhach
+                                                    )[0] ?? { id: '', tenNguonKhach: '' }
+                                                }
+                                                options={suggestStore.suggestNguonKhach}
+                                                getOptionLabel={(option) =>
+                                                    `${option.tenNguonKhach}`
+                                                }
+                                                size="small"
+                                                fullWidth
+                                                disablePortal
+                                                onChange={(event, value) => {
+                                                    setFieldValue(
+                                                        'idNguonKhach',
+                                                        value ? value.id : undefined
+                                                    ); // Cập nhật giá trị id trong Formik
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        label="Nguồn khách"
+                                                        placeholder="Chọn nguồn khách"
+                                                    />
+                                                )}
+                                            />
                                         </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Nguồn khách
-                                                </Typography>
-                                                <Autocomplete
-                                                    value={
-                                                        suggestStore.suggestNguonKhach.filter(
-                                                            (x) => x.id == values.idNguonKhach
-                                                        )[0] ?? { id: '', tenNguonKhach: '' }
-                                                    }
-                                                    options={suggestStore.suggestNguonKhach}
-                                                    getOptionLabel={(option) =>
-                                                        `${option.tenNguonKhach}`
-                                                    }
-                                                    size="small"
-                                                    fullWidth
-                                                    disablePortal
-                                                    onChange={(event, value) => {
-                                                        setFieldValue(
-                                                            'idNguonKhach',
-                                                            value ? value.id : undefined
-                                                        ); // Cập nhật giá trị id trong Formik
-                                                    }}
-                                                    renderInput={(params) => (
-                                                        <TextField
-                                                            {...params}
-                                                            placeholder="Chọn nguồn khách"
-                                                        />
-                                                    )}
-                                                />
-                                            </Stack>
-                                        </Grid>
-                                        <Grid item xs={12} sm={6}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
+
+                                        <Grid item xs={12} sm={12}>
+                                            <Stack spacing={2} direction={'row'}>
+                                                <Stack
+                                                    className="modal-lable "
+                                                    justifyContent={'center'}
+                                                    alignItems={'center'}>
                                                     Giới tính
-                                                </Typography>
+                                                </Stack>
                                                 <RadioGroup
                                                     onChange={handleChange}
                                                     row
@@ -362,147 +425,63 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             </Stack>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Stack spacing={1}>
-                                                <Typography className="modal-lable ">
-                                                    Ghi chú
-                                                </Typography>
-                                                <TextareaAutosize
-                                                    name="moTa"
-                                                    value={values.moTa}
-                                                    onChange={handleChange}
-                                                    maxRows={4}
-                                                    minRows={4}
-                                                    style={{
-                                                        width: '100%',
-                                                        borderColor: '#E6E1E6',
-                                                        borderRadius: '8px',
-                                                        padding: '16px',
-                                                        outline: 'none'
+                                            <TextField
+                                                fullWidth
+                                                name="moTa"
+                                                label="Ghi chú"
+                                                value={values.moTa}
+                                                onChange={handleChange}
+                                                // rows={2}
+                                                // maxRows={2}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Stack
+                                                spacing={1}
+                                                direction={'row'}
+                                                justifyContent={'flex-end'}>
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={onCancel}
+                                                    sx={{
+                                                        fontSize: '14px',
+                                                        textTransform: 'unset',
+                                                        color: '#666466'
                                                     }}
-                                                />
+                                                    className="btn-outline-hover">
+                                                    Hủy
+                                                </Button>
+                                                {!isSubmitting ? (
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={{
+                                                            fontSize: '14px',
+                                                            textTransform: 'unset',
+                                                            color: '#fff',
+
+                                                            border: 'none'
+                                                        }}
+                                                        type="submit"
+                                                        className="btn-container-hover">
+                                                        Lưu
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={{
+                                                            fontSize: '14px',
+                                                            textTransform: 'unset',
+                                                            color: '#fff',
+
+                                                            border: 'none'
+                                                        }}
+                                                        className="btn-container-hover">
+                                                        Đang lưu
+                                                    </Button>
+                                                )}
                                             </Stack>
                                         </Grid>
                                     </Grid>
-                                    <Grid
-                                        container
-                                        sx={{ width: useWindowWidth() > 600 ? '350px' : '100%' }}
-                                        className=" box-1">
-                                        <Grid item xs={12} className="position-relative">
-                                            {!utils.checkNull(this.state.cusImage) ? (
-                                                <Box sx={{ position: 'relative', height: '100%' }}>
-                                                    <img
-                                                        src={this.state.cusImage}
-                                                        style={{ width: '100%', height: '100%' }}
-                                                    />
-                                                    <Close
-                                                        onClick={this.closeImage}
-                                                        sx={{
-                                                            left: 0,
-                                                            color: 'red',
-                                                            position: 'absolute'
-                                                        }}
-                                                    />
-                                                </Box>
-                                            ) : (
-                                                <div
-                                                    className=" inner-box"
-                                                    style={{ textAlign: 'center' }}>
-                                                    <img src={fileIcon} />
-                                                    <TextField
-                                                        type="file"
-                                                        name="avatar"
-                                                        onChange={this.choseImage}
-                                                        id="input-file"
-                                                        sx={{
-                                                            position: 'absolute',
-                                                            top: '0',
-                                                            left: '0',
-                                                            width: '100%',
-                                                            height: '100%'
-                                                        }}
-                                                    />
-                                                    <Box
-                                                        sx={{
-                                                            display: 'flex',
-                                                            marginTop: '34px',
-                                                            fontSize: '12px',
-                                                            justifyContent: 'center',
-                                                            '& img': {
-                                                                filter: 'var(--color-hoverIcon)'
-                                                            }
-                                                        }}>
-                                                        <img src={fileSmallIcon} />
-                                                        <div>Tải ảnh lên</div>
-                                                    </Box>
-                                                    <div
-                                                        style={{
-                                                            marginTop: '12px',
-                                                            fontSize: '12px'
-                                                        }}>
-                                                        File định dạng{' '}
-                                                        <span style={{ color: '#333233' }}>
-                                                            jpeg, png
-                                                        </span>{' '}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Grid>
-                                        <Grid item xs={6}></Grid>
-                                        <Grid item xs={6}></Grid>
-                                    </Grid>
-                                </Box>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        gap: '8px',
-                                        padding: '8px',
-                                        justifyContent: 'end',
-                                        marginTop: useWindowWidth() > 600 ? '0' : '24px',
-                                        bgcolor: '#fff',
-                                        position: useWindowWidth() > 600 ? 'static' : 'sticky',
-                                        bottom: '0',
-                                        left: '0'
-                                    }}>
-                                    {!isSubmitting ? (
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
-
-                                                border: 'none'
-                                            }}
-                                            type="submit"
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
-
-                                                border: 'none'
-                                            }}
-                                            className="btn-container-hover">
-                                            Đang lưu
-                                        </Button>
-                                    )}
-
-                                    <Button
-                                        variant="outlined"
-                                        onClick={onCancel}
-                                        sx={{
-                                            fontSize: '14px',
-                                            textTransform: 'unset',
-                                            color: '#666466'
-                                        }}
-                                        className="btn-outline-hover">
-                                        Hủy
-                                    </Button>
                                 </Box>
                             </Form>
                         )}
@@ -511,8 +490,8 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                         onClick={onCancel}
                         sx={{
                             position: 'absolute',
-                            top: '32px',
-                            right: '28px',
+                            top: '16px',
+                            right: '24px',
                             padding: '0',
                             maxWidth: '24px',
                             minWidth: '0',
