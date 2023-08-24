@@ -10,7 +10,8 @@ import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import http from '../../services/httpService';
 import sessionStore from '../../stores/sessionStore';
-import { Drawer, useMediaQuery } from '@mui/material';
+import ResponsiveDrawer from '../SiderMenu/mobileSideMenu';
+import { appRouters } from '../routers';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
@@ -98,43 +99,76 @@ const MainAppLayout: React.FC = () => {
     };
     return (
         <Container maxWidth={false} disableGutters={true}>
-            <AppSiderMenu
-                collapsed={!collapsed}
-                toggle={toggle}
-                onHoverChange={handleChildHoverChange}
-                CookieSidebar={CookieSidebar}
-            />
-
-            <Box
-                sx={{
-                    marginLeft: !collapsed ? '240px' : '0px',
-                    transition: '.4s'
-                }}>
-                <Header
-                    collapsed={collapsed}
-                    toggle={toggle}
-                    onClick={toggle}
-                    isChildHovered={isChildHovered}
-                    CookieSidebar={CookieSidebar}
-                    handleChangeChiNhanh={changeChiNhanh}
-                />
-                <Box
-                    padding={2}
-                    paddingTop={0}
-                    sx={{
-                        borderBottom: 'solid 0.1rem #e6e1e6',
-                        borderRight: 'solid 0.1rem #e6e1e6',
-                        borderLeft: 'solid 0.1rem #e6e1e6',
-                        marginTop: '70px',
-                        minHeight: 'calc(100vh - 70px)',
-                        bgcolor: 'rgba(248,248,248,1)'
-                    }}>
-                    <ChiNhanhContext.Provider value={chinhanhCurrent}>
-                        <Outlet />
-                    </ChiNhanhContext.Provider>
-                    <LoginAlertDialog open={open} confirmLogin={confirm} />
+            {window.screen.width > 650 ? (
+                <Box>
+                    <AppSiderMenu
+                        collapsed={!collapsed}
+                        toggle={toggle}
+                        onHoverChange={handleChildHoverChange}
+                        CookieSidebar={CookieSidebar}
+                    />
+                    <Box
+                        sx={{
+                            marginLeft: !collapsed ? '240px' : '0px',
+                            transition: '.4s'
+                        }}>
+                        <Header
+                            collapsed={collapsed}
+                            toggle={toggle}
+                            onClick={toggle}
+                            isChildHovered={isChildHovered}
+                            CookieSidebar={CookieSidebar}
+                            handleChangeChiNhanh={changeChiNhanh}
+                        />
+                        <Box
+                            padding={2}
+                            paddingTop={0}
+                            sx={{
+                                borderBottom: 'solid 0.1rem #e6e1e6',
+                                borderRight: 'solid 0.1rem #e6e1e6',
+                                borderLeft: 'solid 0.1rem #e6e1e6',
+                                marginTop: '70px',
+                                minHeight: 'calc(100vh - 70px)',
+                                bgcolor: 'rgba(248,248,248,1)'
+                            }}>
+                            <ChiNhanhContext.Provider value={chinhanhCurrent}>
+                                <Outlet />
+                            </ChiNhanhContext.Provider>
+                            <LoginAlertDialog open={open} confirmLogin={confirm} />
+                        </Box>
+                    </Box>
                 </Box>
-            </Box>
+            ) : (
+                <Box>
+                    <Header
+                        collapsed={collapsed}
+                        toggle={toggle}
+                        onClick={toggle}
+                        isChildHovered={isChildHovered}
+                        CookieSidebar={CookieSidebar}
+                        handleChangeChiNhanh={changeChiNhanh}
+                    />
+                    <Box>
+                        <ResponsiveDrawer isOpen={!collapsed} onOpen={toggle} />
+                        <Box
+                            padding={2}
+                            paddingTop={0}
+                            sx={{
+                                borderBottom: 'solid 0.1rem #e6e1e6',
+                                borderRight: 'solid 0.1rem #e6e1e6',
+                                borderLeft: 'solid 0.1rem #e6e1e6',
+                                marginTop: '70px',
+                                minHeight: 'calc(100vh - 70px)',
+                                bgcolor: 'rgba(248,248,248,1)'
+                            }}>
+                            <ChiNhanhContext.Provider value={chinhanhCurrent}>
+                                <Outlet />
+                            </ChiNhanhContext.Provider>
+                            <LoginAlertDialog open={open} confirmLogin={confirm} />
+                        </Box>
+                    </Box>
+                </Box>
+            )}
         </Container>
     );
 };

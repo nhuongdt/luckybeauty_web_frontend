@@ -2,6 +2,7 @@ export interface UpdateUserInput {
     userName: string;
     name: string;
     surname: string;
+    password: string;
     emailAddress: string;
     phoneNumber: string;
     isActive: boolean;

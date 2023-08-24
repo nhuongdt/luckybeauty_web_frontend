@@ -270,6 +270,7 @@ class EmployeeScreen extends React.Component {
                     <Typography
                         variant="body2"
                         title={params.value}
+                        fontSize="13px"
                         sx={{ textOverflow: 'ellipsis', width: '100%', overflow: 'hidden' }}>
                         {params.value}
                     </Typography>
@@ -289,7 +290,7 @@ class EmployeeScreen extends React.Component {
             ),
 
             renderCell: (params) => (
-                <Box width="100%" textAlign="left">
+                <Box width="100%" textAlign="left" fontSize="13px">
                     {params.value}
                 </Box>
             )
@@ -311,7 +312,7 @@ class EmployeeScreen extends React.Component {
                     {params.value != null ? (
                         <>
                             <DateIcon style={{ marginRight: 4 }} />
-                            <Typography variant="body2">
+                            <Typography variant="body2" fontSize="13px">
                                 {new Date(params.value).toLocaleDateString('en-GB')}
                             </Typography>
                         </>
@@ -367,13 +368,13 @@ class EmployeeScreen extends React.Component {
             ),
             renderCell: (params) => (
                 <Box
+                    fontSize="13px"
                     sx={{
                         width: '100%',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
                         fontWeight: '400',
                         fontFamily: 'Roboto',
-                        color: '#3D475C',
                         textAlign: 'left'
                     }}
                     title={params.value}>
@@ -471,6 +472,7 @@ class EmployeeScreen extends React.Component {
                                 ? '#FF9900'
                                 : '#F1416C'
                     }}
+                    fontSize="13px"
                     fontWeight="400"
                     textAlign={'left'}
                     color="#009EF7">

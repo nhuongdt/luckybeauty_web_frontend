@@ -206,20 +206,22 @@ const Header: React.FC<HeaderProps> = (
                             navigate('/home');
                         }}>
                         <LogoNew />
-                        <Typography
-                            fontFamily="vinhan"
-                            color="var(--color-main)"
-                            fontSize="18px"
-                            sx={{
-                                opacity: collapsed && !isChildHovered ? '0' : '1',
-                                transform:
-                                    collapsed && !isChildHovered
-                                        ? 'translateX(-40px)'
-                                        : 'translateX(0)',
-                                transition: '.4s'
-                            }}>
-                            Lucky Beauty
-                        </Typography>
+                        {window.screen.width <= 650 ? null : (
+                            <Typography
+                                fontFamily="vinhan"
+                                color="var(--color-main)"
+                                fontSize="18px"
+                                sx={{
+                                    opacity: collapsed && !isChildHovered ? '0' : '1',
+                                    transform:
+                                        collapsed && !isChildHovered
+                                            ? 'translateX(-40px)'
+                                            : 'translateX(0)',
+                                    transition: '.4s'
+                                }}>
+                                Lucky Beauty
+                            </Typography>
+                        )}
                     </Box>
                     <Button
                         sx={{

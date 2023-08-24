@@ -437,6 +437,9 @@ class UserScreen extends AppComponentBase {
                             columns={columns}
                             rows={this.state.listUser}
                             checkboxSelection
+                            onCellDoubleClick={(param, value, detail) => {
+                                alert(JSON.stringify(param.row));
+                            }}
                             sx={{
                                 '& .MuiDataGrid-iconButtonContainer': {
                                     display: 'none'

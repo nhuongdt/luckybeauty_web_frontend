@@ -68,7 +68,8 @@ class ProfileScreen extends Component {
                     fontWeight="500"
                     fontFamily="Roboto"
                     fontStyle="normal"
-                    color="#4C4B4C">
+                    //color="#4C4B4C"
+                >
                     {text}
                 </Typography>
             );
@@ -77,34 +78,32 @@ class ProfileScreen extends Component {
             return <CircularProgress />; // Replace Spinner with your loading component
         }
         return (
-            <Box
-                paddingLeft="2.2222222222222223vw"
-                paddingRight="2.2222222222222223vw"
-                paddingTop="1.5277777777777777vw">
+            <Box paddingTop={'16px'}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
-                        <Typography
-                            variant="h1"
-                            marginLeft={5}
-                            fontSize="18px"
-                            fontWeight="700"
-                            color="#0C050A">
+                        <Typography variant="h1" fontSize="18px" fontWeight="700" color="#0C050A">
                             Hồ sơ tài khoản
                         </Typography>
                     </Grid>
                 </Grid>
-                <Box padding={6} bgcolor="#fff">
-                    <Grid container spacing={2} justifyContent="space-evenly" alignItems={'center'}>
+                <Box padding={2} bgcolor="#fff">
+                    <Grid
+                        container
+                        columnSpacing={12}
+                        rowSpacing={4}
+                        justifyContent="space-evenly"
+                        alignItems={'center'}>
                         <Grid item xs={12} sm={5}>
                             <Box>
                                 <Typography
                                     variant="h1"
                                     fontSize="16px"
                                     fontWeight="700"
-                                    color="#212B36">
+                                    //color="#212B36"
+                                >
                                     Thông tin tài khoản
                                 </Typography>
-                                <Typography
+                                {/* <Typography
                                     sx={{ marginTop: 2 }}
                                     variant="h3"
                                     fontSize="14px"
@@ -113,8 +112,8 @@ class ProfileScreen extends Component {
                                     fontStyle="normal"
                                     color="#637381">
                                     Chỉnh sửa thông tin
-                                </Typography>
-                                <Box paddingRight={5}>
+                                </Typography> */}
+                                <Box>
                                     <Formik
                                         initialValues={profileDto}
                                         validationSchema={profileSchema}
@@ -151,6 +150,7 @@ class ProfileScreen extends Component {
                                                             <TextField
                                                                 size="small"
                                                                 name="name"
+                                                                fullWidth
                                                                 value={values.name}
                                                                 onChange={handleChange}
                                                             />
@@ -167,6 +167,7 @@ class ProfileScreen extends Component {
                                                             <TextField
                                                                 size="small"
                                                                 name="surname"
+                                                                fullWidth
                                                                 value={values.surname}
                                                                 onChange={handleChange}
                                                             />
@@ -183,6 +184,7 @@ class ProfileScreen extends Component {
                                                     <TextField
                                                         size="small"
                                                         disabled
+                                                        fullWidth
                                                         name="userName"
                                                         value={values.userName}
                                                         onChange={handleChange}
@@ -197,6 +199,7 @@ class ProfileScreen extends Component {
                                                     {LableForm('Số điện thoại')}
                                                     <TextField
                                                         size="small"
+                                                        fullWidth
                                                         name="phoneNumber"
                                                         value={values.phoneNumber}
                                                         onChange={handleChange}
@@ -211,6 +214,7 @@ class ProfileScreen extends Component {
                                                     {LableForm('Địa chỉ email')}
                                                     <TextField
                                                         size="small"
+                                                        fullWidth
                                                         name="emailAddress"
                                                         value={values.emailAddress}
                                                         onChange={handleChange}
