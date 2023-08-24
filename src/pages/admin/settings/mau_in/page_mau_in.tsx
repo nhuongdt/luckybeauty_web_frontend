@@ -95,7 +95,7 @@ export default function PageMauIn({ xx }: any) {
         if (!utils.checkNull(idMauInChosed)) {
             if (idMauInChosed.toString().length < 36) {
                 // mau txt (k80)
-                GetContentMauInMacDinh();
+                GetContentMauInMacDinh(parseInt(idMauInChosed));
             } else {
                 // mauDB
                 const itEx = lstMauIn.filter((x: MauInDto) => x.id === idMauInChosed);

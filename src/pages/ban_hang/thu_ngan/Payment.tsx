@@ -385,7 +385,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                         variant="h3"
                                         fontWeight="400"
                                         color="#333233">
-                                        {item.text}
+                                        {item?.text}
                                     </Typography>
                                     <Box
                                         sx={{
@@ -449,11 +449,13 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                             color="#000"
                                             fontSize="14px"
                                             fontWeight="700">
-                                            {
-                                                hinhThucThanhToan.filter(
-                                                    (x: any) => x.id === item.hinhThucThanhToan
-                                                )[0].text
-                                            }
+                                            {hinhThucThanhToan.filter(
+                                                (x: any) => x.id === item.hinhThucThanhToan
+                                            ).length > 0
+                                                ? hinhThucThanhToan.filter(
+                                                      (x: any) => x.id === item.hinhThucThanhToan
+                                                  )[0].text
+                                                : ''}
                                         </Typography>
                                     </Box>
                                     {item.hinhThucThanhToan !== 1 && (

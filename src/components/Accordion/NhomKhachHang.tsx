@@ -6,6 +6,7 @@ import {
     Typography,
     Button
 } from '@mui/material';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useState } from 'react';
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
@@ -45,8 +46,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
             <Accordion
                 disableGutters
                 sx={{
-                    border: 'none!important',
-                    marginTop: '12px',
+                    // borderBottom: '1px solid #cccc',
                     boxShadow: 'unset',
                     '&.MuiAccordion-root::before': { content: 'none' }
                 }}>
@@ -54,13 +54,15 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        bgcolor: idChosing === '' ? 'var(--color-bg)' : '',
-                        borderRadius: '8px',
                         '&:hover': {
                             bgcolor: 'var(--color-bg)'
+                        },
+                        '& .MuiAccordionSummary-content': {
+                            marginTop: '8px ',
+                            marginBottom: '8px'
                         }
                     }}>
-                    <LocalOffer sx={{ color: 'var(--color-main)' }} />
+                    <PersonOutlineIcon sx={{ color: 'var(--color-main)' }} />
                     <Typography
                         variant="subtitle1"
                         color="#333233"
@@ -88,8 +90,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                     disableGutters
                     key={index}
                     sx={{
-                        border: 'none!important',
-                        marginTop: '12px',
+                        // borderBottom: '1px solid #cccc',
                         boxShadow: 'unset',
                         '&.MuiAccordion-root::before': { content: 'none' }
                     }}>
@@ -98,9 +99,12 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             display: 'flex',
                             alignItems: 'center',
                             bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
-                            borderRadius: '8px',
                             '&:hover': {
                                 bgcolor: 'var(--color-bg)'
+                            },
+                            '& .MuiAccordionSummary-content': {
+                                marginTop: '4px ',
+                                marginBottom: '4px'
                             }
                         }}
                         onMouseLeave={(event: any) => {
@@ -109,7 +113,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         onMouseEnter={(event: any) => {
                             handleHover(event, item, index);
                         }}>
-                        <LocalOffer
+                        <PersonOutlineIcon
                             sx={{
                                 color:
                                     index % 3 == 1
@@ -120,8 +124,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             }}
                         />
                         <Typography
-                            variant="subtitle1"
-                            color="#333233"
+                            variant="body2"
                             fontSize="14px"
                             fontWeight="700"
                             textTransform="capitalize"
