@@ -46,7 +46,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
             <Accordion
                 disableGutters
                 sx={{
-                    borderBottom: '1px solid #cccc',
+                    // borderBottom: '1px solid #cccc',
                     boxShadow: 'unset',
                     '&.MuiAccordion-root::before': { content: 'none' }
                 }}>
@@ -54,7 +54,6 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        bgcolor: idChosing === '' ? 'var(--color-bg)' : '',
                         '&:hover': {
                             bgcolor: 'var(--color-bg)'
                         },
@@ -91,7 +90,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                     disableGutters
                     key={index}
                     sx={{
-                        borderBottom: '1px solid #cccc',
+                        // borderBottom: '1px solid #cccc',
                         boxShadow: 'unset',
                         '&.MuiAccordion-root::before': { content: 'none' }
                     }}>
