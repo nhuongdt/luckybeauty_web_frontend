@@ -7,6 +7,7 @@ import {
     Typography,
     Grid,
     Box,
+    Stack,
     TextField,
     IconButton,
     Avatar,
@@ -280,6 +281,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.setState({ information: false });
     };
     render(): React.ReactNode {
+        // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
             {
                 field: 'tenKhachHang',
@@ -429,7 +431,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         return (
             <>
                 {this.state.information === false ? (
-                    <Box className="customer-page" paddingTop={2}>
+                    <Grid className="customer-page" container paddingTop={2}>
                         <Grid
                             container
                             spacing={1}
@@ -445,7 +447,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 <Typography
                                     color="#333233"
                                     variant="h1"
-                                    fontSize="16px"
+                                    fontSize="15px"
                                     fontWeight="700">
                                     Danh sách khách hàng
                                 </Typography>
@@ -552,87 +554,45 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </ButtonGroup>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={2} paddingTop={1}>
+                        <Grid container spacing={2} marginTop={3}>
                             <Grid item lg={3} md={3} sm={3} xs={12}>
                                 <Box
                                     borderRadius={'8px'}
                                     sx={{
                                         backgroundColor: '#fff',
                                         borderRadius: '8px',
-                                        minHeight: '100%',
-                                        marginTop: '24px',
-                                        width: '100%'
+                                        height: '75vh'
                                     }}>
-                                    {/* <Box
-                                        display="flex"
-                                        flexDirection={'row'}
-                                        justifyContent="space-between"
-                                        alignItems={'center'}
-                                        margin={'16px'}
-                                        textAlign={'center'}>
-                                        <Typography
-                                            fontSize="14px"
-                                            fontFamily={'Roboto'}
-                                            color={'#3D475C'}
-                                            fontWeight="700">
-                                            Nhóm khách hàng
-                                        </Typography>
-                                        <Button
-                                            hidden={
-                                                !abpCustom.isGrandPermission(
-                                                    'Pages.NhomKhach.Create'
-                                                )
-                                            }
-                                            sx={{
-                                                minWidth: '32px',
-                                                padding: '8px',
-                                                bgcolor: '#fff',
-                                                border: '1px solid #D1D7E1',
-                                                borderRadius: '4px'
-                                            }}>
-                                            <Add
-                                                sx={{
-                                                    color: '#525F7A',
-                                                    width: '14px',
-                                                    height: '14px'
-                                                }}
-                                                onClick={this.onNhomKhachModal}
-                                            />
-                                        </Button>
-                                    </Box> */}
                                     <Box
                                         display="flex"
                                         justifyContent="space-between"
                                         borderBottom="1px solid #E6E1E6"
-                                        padding="16px 24px">
-                                        <Typography fontSize="18px" fontWeight="700">
+                                        sx={{ backgroundColor: 'var(--color-bg)' }}
+                                        padding="12px">
+                                        <Typography fontSize="14px" fontWeight="700">
                                             Nhóm khách hàng
                                         </Typography>
-                                        <Button
-                                            sx={{ padding: '0', minWidth: 'unset' }}
-                                            className="btn-container-hover">
-                                            <Add
-                                                sx={{
-                                                    color: '#fff',
-                                                    transition: '.4s',
-                                                    height: '30px',
-                                                    cursor: 'pointer',
-                                                    width: '30px',
-                                                    borderRadius: '4px',
-                                                    padding: '4px'
-                                                }}
-                                                onClick={this.onNhomKhachModal}
-                                            />
-                                        </Button>
+
+                                        <Add
+                                            sx={{
+                                                // color: '#fff',
+                                                transition: '.4s',
+                                                height: '32px',
+                                                cursor: 'pointer',
+                                                width: '32px',
+                                                borderRadius: '4px',
+                                                padding: '4px 0px',
+                                                border: '1px solid #cccc'
+                                            }}
+                                            onClick={this.onNhomKhachModal}
+                                        />
                                     </Box>
                                     <Box
                                         sx={{
                                             overflow: 'auto',
-                                            maxHeight: '66vh',
-                                            // padding: '0px 24px',
-                                            '&::-webkit-scrollbar': {
-                                                width: '7px'
-                                            },
+                                            // '&::-webkit-scrollbar': {
+                                            //     width: '7px'
+                                            // },
                                             '&::-webkit-scrollbar-thumb': {
                                                 bgcolor: 'rgba(0,0,0,0.1)',
                                                 borderRadius: '8px'
@@ -646,108 +606,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             clickTreeItem={this.onEditNhomKhach}
                                         />
                                     </Box>
-                                    {/* <Box
-                                        sx={{
-                                            overflow: 'auto',
-                                            padding: '4px 0px',
-                                            gap: '8px',
-                                            margin: '0px 16px 16px 16px',
-                                            '&::-webkit-scrollbar': {
-                                                width: '7px'
-                                            },
-                                            '&::-webkit-scrollbar-thumb': {
-                                                bgcolor: 'rgba(0,0,0,0.1)',
-                                                borderRadius: '8px'
-                                            },
-                                            '&::-webkit-scrollbar-track': {
-                                                bgcolor: 'var(--color-bg)'
-                                            }
-                                        }}>
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                flexDirection: 'row',
-                                                alignItems: 'center',
-                                                justifyItems: 'center',
-                                                padding: '4px 0px',
-                                                background: '#FFF',
-                                                marginBottom: '8px'
-                                            }}>
-                                            <CutomerGroupIcon
-                                                style={{
-                                                    width: '18px',
-                                                    height: '18px',
-                                                    marginRight: 4
-                                                }}
-                                            />
-                                            <span
-                                                onClick={() => {
-                                                    this.setState(
-                                                        {
-                                                            idNhomKhach: ''
-                                                        },
-                                                        () => {
-                                                            this.getData();
-                                                        }
-                                                    );
-                                                }}
-                                                style={{
-                                                    fontSize: '14px',
-                                                    fontWeight: 500,
-                                                    color: '#29303D',
-                                                    textAlign: 'center',
-                                                    fontFamily: 'Roboto'
-                                                }}>
-                                                Tất cả
-                                            </span>
-                                        </Box>
-                                        {suggestStore.suggestNhomKhach?.map((item, index) => (
-                                            <Box key={index}>
-                                                <Divider
-                                                    textAlign="right"
-                                                    variant="inset"
-                                                    component={'div'}
-                                                />
-                                                <Box
-                                                    sx={{
-                                                        display: 'flex',
-                                                        flexDirection: 'row',
-                                                        alignItems: 'center',
-                                                        justifyItems: 'center',
-                                                        padding: '4px 0px',
-                                                        marginBottom: '8px'
-                                                    }}>
-                                                    <CutomerGroupIcon
-                                                        style={{
-                                                            width: '18px',
-                                                            height: '18px',
-                                                            marginRight: 4
-                                                        }}
-                                                    />
-                                                    <span
-                                                        onClick={() => {
-                                                            this.setState(
-                                                                {
-                                                                    idNhomKhach: item.id
-                                                                },
-                                                                () => {
-                                                                    this.getData();
-                                                                }
-                                                            );
-                                                        }}
-                                                        style={{
-                                                            fontSize: '14px',
-                                                            fontWeight: 500,
-                                                            color: '#29303D',
-                                                            textAlign: 'center',
-                                                            fontFamily: 'Roboto'
-                                                        }}>
-                                                        {item.tenNhomKhach}
-                                                    </span>
-                                                </Box>
-                                            </Box>
-                                        ))}
-                                    </Box> */}
                                 </Box>
                             </Grid>
                             <Grid item lg={9} md={9} sm={9} xs={12}>
@@ -755,12 +613,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     className="customer-page_row-2"
                                     style={{
                                         width: '100%',
-                                        marginTop: '24px',
-                                        backgroundColor: '#fff'
+                                        backgroundColor: '#fff',
+                                        height: '75vh'
                                     }}>
                                     <DataGrid
                                         disableRowSelectionOnClick
-                                        autoHeight
+                                        rowHeight={46}
+                                        sx={{ maxHeight: 'calc(100% - 32px)' }} // trừ chiều cao của phân trang
                                         rows={this.state.rowTable}
                                         columns={columns}
                                         onRowClick={() => this.handleOpenInfor}
@@ -840,7 +699,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             downloadImportTemplate={this.downloadImportTemplate}
                             importFile={this.handleImportData}
                         />
-                    </Box>
+                    </Grid>
                 ) : (
                     <CustomerInfo onClose={this.handleCloseInfor} />
                 )}
