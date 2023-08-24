@@ -21,6 +21,7 @@ const AppConsts = {
     remoteServiceBaseUrl: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
     guidEmpty: '00000000-0000-0000-0000-000000000000',
     pageOption: [
+        { value: 5, text: '5/ trang' },
         { value: 10, text: '10/ trang' },
         { value: 20, text: '20/ trang' }
     ],
