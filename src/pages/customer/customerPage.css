@@ -26,9 +26,10 @@
     height: fit-content;
 }
 
-.customer-page .MuiDataGrid-columnHeaders {
+
+/* .customer-page .MuiDataGrid-columnHeaders {
     background-color: var(--color-bg);
-}
+} */
 
 .poppup-add input {
     border-radius: 8px;
@@ -44,12 +45,13 @@
     outline: none;
 }
 
-.form-container label {
+
+/* .form-container label {
     color: #4c4b4c;
     font-weight: 500;
     margin-bottom: 8px;
     font-size: 14px;
-}
+} */
 
 #input-file {
     position: absolute;
