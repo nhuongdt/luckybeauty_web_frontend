@@ -6,6 +6,7 @@ import {
     DialogContent,
     DialogTitle,
     Grid,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
@@ -26,7 +27,7 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
         return (
             <Dialog
                 fullWidth
-                maxWidth="sm"
+                maxWidth="xs"
                 open={this.props.visiable}
                 onClose={this.props.handleClose}>
                 <Box>
@@ -34,8 +35,7 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                         <Typography
                             fontSize="24px"
                             //color="#333233"
-                            fontWeight="700"
-                            mb={3}>
+                            fontWeight="700">
                             {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty
                                 ? 'Cập nhật '
                                 : 'Thêm mới '}
@@ -67,61 +67,59 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                             }}>
                             {({ handleChange, values }) => (
                                 <Form>
-                                    <Grid container spacing={1}>
+                                    <Grid container spacing={2} paddingTop={2}>
                                         <Grid item xs={12}>
-                                            <Typography
+                                            {/* <Typography
                                                 //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Tên nhóm khách
-                                            </Typography>
+                                            </Typography> */}
                                             <TextField
+                                                autoFocus
                                                 fullWidth
+                                                label="Tên nhóm khách"
                                                 size="small"
                                                 value={values.tenNhomKhach}
                                                 name="tenNhomKhach"
                                                 onChange={handleChange}></TextField>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Typography
+                                            {/* <Typography
                                                 //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Mô tả
-                                            </Typography>
+                                            </Typography> */}
                                             <TextField
                                                 fullWidth
+                                                label=" Mô tả"
                                                 size="small"
                                                 value={values.moTa}
                                                 name="moTa"
                                                 onChange={handleChange}></TextField>
                                         </Grid>
+                                        <Grid item xs={12}>
+                                            <Stack
+                                                spacing={1}
+                                                direction={'row'}
+                                                justifyContent={'flex-end'}>
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    className="btn-container-hover">
+                                                    Lưu
+                                                </Button>
+                                                <Button
+                                                    onClick={this.props.handleClose}
+                                                    variant="outlined"
+                                                    sx={{ color: 'var(--color-main)!important' }}
+                                                    className="btn-outline-hover">
+                                                    Hủy
+                                                </Button>
+                                            </Stack>
+                                        </Grid>
                                     </Grid>
-                                    <DialogActions>
-                                        <Box
-                                            display="flex"
-                                            marginLeft="auto"
-                                            gap="8px"
-                                            sx={{
-                                                '& button': {
-                                                    textTransform: 'unset!important'
-                                                }
-                                            }}>
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                                className="btn-container-hover">
-                                                Lưu
-                                            </Button>
-                                            <Button
-                                                onClick={this.props.handleClose}
-                                                variant="outlined"
-                                                sx={{ color: 'var(--color-main)!important' }}
-                                                className="btn-outline-hover">
-                                                Hủy
-                                            </Button>
-                                        </Box>
-                                    </DialogActions>
                                 </Form>
                             )}
                         </Formik>
