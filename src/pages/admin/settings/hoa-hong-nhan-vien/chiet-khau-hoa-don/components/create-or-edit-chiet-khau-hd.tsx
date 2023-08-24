@@ -99,7 +99,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 }}>
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
+                                        <Typography variant="subtitle2">
                                             Chứng từ áp dụng
                                         </Typography>
                                         <Select
@@ -128,9 +128,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                         </Select>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Loại chiết khấu
-                                        </Typography>
+                                        <Typography variant="subtitle2">Loại chiết khấu</Typography>
                                         <RadioGroup
                                             name="loaiChietKhau"
                                             value={values.loaiChietKhau}
@@ -172,9 +170,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                         </RadioGroup>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Giá trị
-                                        </Typography>
+                                        <Typography variant="subtitle2">Giá trị</Typography>
                                         <TextField
                                             size="small"
                                             name="giaTriChietKhau"

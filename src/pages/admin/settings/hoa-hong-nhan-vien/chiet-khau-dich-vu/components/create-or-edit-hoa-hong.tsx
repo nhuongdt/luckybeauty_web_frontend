@@ -99,9 +99,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         name="idNhanVien"
                                         value={idNhanVien}></TextField>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Dịch vụ
-                                        </Typography>
+                                        <Typography variant="subtitle2">Dịch vụ</Typography>
                                         <Select
                                             size="small"
                                             name="idDonViQuiDoi"
@@ -123,9 +121,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Loại chiết khấu
-                                        </Typography>
+                                        <Typography variant="subtitle2">Loại chiết khấu</Typography>
                                         <RadioGroup
                                             value={values.loaiChietKhau}
                                             defaultValue={values.loaiChietKhau}
@@ -177,9 +173,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         </RadioGroup>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Giá trị
-                                        </Typography>
+                                        <Typography variant="subtitle2">Giá trị</Typography>
                                         <TextField
                                             size="small"
                                             name="giaTri"
@@ -199,13 +193,13 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             name="laPhanTram"
                                             control={
                                                 <Checkbox
-                                                    // checked={values.laPhanTram ? true : false}
-                                                    sx={{
-                                                        color: '#7C3367',
-                                                        '&.Mui-checked': {
-                                                            color: '#7C3367'
-                                                        }
-                                                    }}
+                                                // checked={values.laPhanTram ? true : false}
+                                                // sx={{
+                                                //     color: '#7C3367',
+                                                //     '&.Mui-checked': {
+                                                //         color: '#7C3367'
+                                                //     }
+                                                // }}
                                                 />
                                             }
                                         />

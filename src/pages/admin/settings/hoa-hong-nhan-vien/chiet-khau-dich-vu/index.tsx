@@ -103,9 +103,9 @@ class ChietKhauDichVuScreen extends Component {
     };
 
     onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
+        //const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
-            sortType: type,
+            sortType: sortType,
             sortBy: sortBy
         });
         this.getDataAccordingByNhanVien(this.state.idNhanVien);
@@ -130,7 +130,6 @@ class ChietKhauDichVuScreen extends Component {
         const columns: GridColDef[] = [
             {
                 field: 'tenDichVu',
-                sortable: false,
                 headerName: 'Tên dịch vụ ',
                 minWidth: 140,
                 flex: 1,
@@ -145,6 +144,9 @@ class ChietKhauDichVuScreen extends Component {
                         title={params.value}>
                         <Typography
                             fontSize="13px"
+                            fontFamily={'Roboto'}
+                            fontWeight={400}
+                            textAlign={'left'}
                             sx={{
                                 textOverflow: 'ellipsis',
                                 overflow: 'hidden',
@@ -155,33 +157,16 @@ class ChietKhauDichVuScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenDichVu');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'tenNhomDichVu',
-                sortable: false,
                 headerName: 'Nhóm dịch vụ',
                 minWidth: 114,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenNhomDichVu');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params: any) => (
                     <Box
@@ -190,7 +175,10 @@ class ChietKhauDichVuScreen extends Component {
                             textOverflow: 'ellipsis',
                             overflow: 'hidden',
                             width: '100%',
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: 400,
+                            fontFamily: 'Roboto',
+                            textAlign: 'left'
                         }}>
                         {params.value}
                     </Box>
@@ -198,20 +186,11 @@ class ChietKhauDichVuScreen extends Component {
             },
             {
                 field: 'hoaHongThucHien',
-                sortable: false,
                 headerName: 'Hoa hồng thực hiện',
                 minWidth: 150,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'hoaHongThucHien');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params: any) => (
                     <TextField
@@ -236,27 +215,20 @@ class ChietKhauDichVuScreen extends Component {
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             },
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto'
                         }}
                     />
                 )
             },
             {
                 field: 'hoaHongYeuCauThucHien',
-                sortable: false,
                 headerName: 'Hoa hồng theo yêu cầu',
                 minWidth: 170,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'hoaHongYeuCauThucHien');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params: any) => (
                     <TextField
@@ -272,6 +244,8 @@ class ChietKhauDichVuScreen extends Component {
                         sx={{
                             height: '85%',
                             fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
                             '&>div': {
                                 height: '100%'
                             },
@@ -293,15 +267,7 @@ class ChietKhauDichVuScreen extends Component {
                 minWidth: 130,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'hoaHongTuVan');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params: any) => (
                     <TextField
@@ -316,6 +282,8 @@ class ChietKhauDichVuScreen extends Component {
                         }
                         sx={{
                             fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
                             height: '85%',
                             '&>div': {
                                 height: '100%'
@@ -333,7 +301,6 @@ class ChietKhauDichVuScreen extends Component {
             },
             {
                 field: 'giaDichVu',
-                sortable: false,
                 headerName: 'Giá bán',
                 minWidth: 85,
                 flex: 0.6,
@@ -346,12 +313,6 @@ class ChietKhauDichVuScreen extends Component {
                             width: '100%'
                         }}>
                         {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'giaDichVu ');
-                            }}
-                        />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -361,7 +322,9 @@ class ChietKhauDichVuScreen extends Component {
                             textOverflow: 'ellipsis',
                             overflow: 'hidden',
                             width: '100%',
-                            fontSize: '13px'
+                            fontSize: '13px',
+                            fontWeight: '400',
+                            fontFamily: 'Roboto'
                         }}>
                         {params.value}
                     </Box>
@@ -385,10 +348,7 @@ class ChietKhauDichVuScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -398,7 +358,7 @@ class ChietKhauDichVuScreen extends Component {
                     container
                     sx={{
                         height: '48px',
-                        background: 'var(--color-bg)',
+                        background: '#EEF0F4',
                         alignItems: 'center',
                         paddingX: '8px'
                     }}>
@@ -508,6 +468,21 @@ class ChietKhauDichVuScreen extends Component {
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
                         checkboxSelection={false}
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                         sx={{
                             '& .uiDataGrid-cellContent': {
                                 fontSize: '13px'
@@ -517,6 +492,9 @@ class ChietKhauDichVuScreen extends Component {
                             },
                             '& .MuiDataGrid-virtualScroller': {
                                 bgcolor: '#fff'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#FFF'
                             },
                             '& .MuiDataGrid-columnHeaders': {
                                 borderBottom: '1px solid #CDC9CD',

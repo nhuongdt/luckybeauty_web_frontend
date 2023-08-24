@@ -185,9 +185,7 @@ const LichHen: React.FC = () => {
     return (
         <Box
             sx={{
-                paddingLeft: '2.2222222222222223vw',
-                paddingRight: '2.2222222222222223vw',
-                paddingTop: '1.5277777777777777vw'
+                padding: '16px'
             }}>
             <Box
                 sx={{
@@ -197,7 +195,11 @@ const LichHen: React.FC = () => {
                     borderBottom: '1px solid #E6E1E6',
                     paddingBottom: '1.5277777777777777vw'
                 }}>
-                <Typography marginTop="4px" color="#0C050A" fontSize="16px" fontWeight="700">
+                <Typography
+                    marginTop="4px"
+                    //color="#0C050A"
+                    fontSize="16px"
+                    fontWeight="700">
                     Lịch hẹn
                 </Typography>
                 <Box
@@ -317,7 +319,7 @@ const LichHen: React.FC = () => {
                             }}>
                             Hôm nay
                         </Button>
-                        <Typography color="#333233" fontSize="16px" fontWeight="700">
+                        <Typography fontSize="16px" fontWeight="700">
                             {dateView}
                         </Typography>
                         <Button

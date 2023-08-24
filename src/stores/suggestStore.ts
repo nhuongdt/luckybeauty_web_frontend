@@ -7,10 +7,12 @@ import { SuggestNhomKhachDto } from '../services/suggests/dto/SuggestNhomKhachDt
 import { SuggestNhanSuDto } from '../services/suggests/dto/SuggestNhanSuDto';
 import { SuggestNguonKhachDto } from '../services/suggests/dto/SuggestNguonKhachDto';
 import { SuggestKhachHangDto } from '../services/suggests/dto/SuggestKhachHangDto';
+import { SuggestNhomHangHoaDto } from '../services/suggests/dto/SuggestNhomHangHoaDto';
 
 class SuggestStore {
     suggestKyThuatVien!: SuggestNhanVienDichVuDto[];
     suggestDichVu!: SuggestDichVuDto[];
+    suggestNhomHangHoa!: SuggestNhomHangHoaDto[];
     suggestChucVu!: SuggestChucVuDto[];
     suggestNhomKhach!: SuggestNhomKhachDto[];
     suggestNguonKhach!: SuggestNguonKhachDto[];
@@ -30,6 +32,10 @@ class SuggestStore {
     async getSuggestNhanVien() {
         const data = await SuggestService.SuggestNhanSu();
         this.suggestNhanVien = data;
+    }
+    async getSuggestNhomHangHoa() {
+        const data = await SuggestService.SuggestNhomHangHoa();
+        this.suggestNhomHangHoa = data;
     }
     async getSuggestDichVu() {
         const data = await SuggestService.SuggestDichVu();

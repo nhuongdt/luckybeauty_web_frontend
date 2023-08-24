@@ -17,12 +17,14 @@ import {
     Checkbox
 } from '@mui/material';
 import React, { Component } from 'react';
-import { SuggestDonViQuiDoiDto } from '../../../services/suggests/dto/SuggestDonViQuiDoi';
-import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
 import dichVuNhanVienStore from '../../../stores/dichVuNhanVienStore';
+import { DichVuNhanVienThucHien } from '../../../services/dichvu_nhanvien/dto/DichVuNhanVienDetailDto';
+import dichVuNhanVienService from '../../../services/dichvu_nhanvien/dichVuNhanVienService';
+import { enqueueSnackbar } from 'notistack';
+import { LocalOffer } from '@mui/icons-material';
 interface ModalProps {
     visiable: boolean;
     handleClose: () => void;
@@ -31,20 +33,35 @@ interface ModalProps {
 class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
     state = {
         settingValue: 'Service',
-        suggestDichVu: [] as SuggestDonViQuiDoiDto[],
-        suggestKyThuatVien: [] as SuggestNhanVienDichVuDto[]
+        selectedIdService: [] as string[]
     };
     componentDidMount(): void {
         this.getData();
-    }
-    async getData() {
-        const kyThuatViens = await suggestStore.getSuggestKyThuatVien();
-        const dichVus = await suggestStore.getSuggestDichVu();
-        await this.setState({
-            suggestDichVus: dichVus,
-            suggestkyThuatVien: kyThuatViens
+
+        this.setState({
+            selectedIdService: dichVuNhanVienStore.selectedIdService
         });
     }
+    async getData() {
+        await suggestStore.getSuggestKyThuatVien();
+        await suggestStore.getSuggestDichVu();
+    }
+    handleCheckboxClick = (id: string) => {
+        const { selectedIdService } = dichVuNhanVienStore;
+
+        // Check if the clicked service is already selected
+        const isSelected = selectedIdService?.includes(id);
+
+        if (isSelected) {
+            // Remove the service from the selectedIdService array
+            const updatedSelectedIdService = selectedIdService?.filter((item) => item !== id);
+            dichVuNhanVienStore.selectedIdService = updatedSelectedIdService;
+        } else {
+            // Add the service to the selectedIdService array
+
+            dichVuNhanVienStore.selectedIdService.push(id);
+        }
+    };
     handleSettingChange = async (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
         await this.setState({
             settingValue: value
@@ -55,7 +72,7 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
         return (
             <Dialog open={visiable} fullWidth maxWidth={'md'} onClose={handleClose}>
                 <DialogTitle>
-                    <Typography fontSize="24px" color="#333233" fontWeight="700" mb={3}>
+                    <Typography fontSize="24px" fontWeight="700" mb={3}>
                         {dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien} - Dịch vụ
                     </Typography>
                     <Button
@@ -76,8 +93,28 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                 <DialogContent>
                     <Box padding={'16px'}>
                         <Grid container spacing={1}>
-                            <Grid xs={4}></Grid>
-                            <Grid xs={8}>
+                            {/* <Grid xs={4}>
+                                <Box
+                                    display="flex"
+                                    flexDirection={'column'}
+                                    alignItems={'start'}
+                                    justifyContent={'space-between'}
+                                    padding={'0px 4px'}
+                                    sx={{
+                                        overflow: 'auto',
+                                        overflowX: 'hidden'
+                                    }}>
+                                    {suggestStore.suggestNhomHangHoa?.map((item) => (
+                                        <Box key={item.idNhomHang} display={'flex'} mb={'8px'}>
+                                            <LocalOffer
+                                                sx={{ color: 'var(--color-main)', mr: '5px' }}
+                                            />
+                                            <Typography>{item.tenNhomHang}</Typography>
+                                        </Box>
+                                    ))}
+                                </Box>
+                            </Grid> */}
+                            <Grid xs={12}>
                                 <TableContainer>
                                     <Table>
                                         <TableBody>
@@ -85,22 +122,11 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                                                 <TableRow key={index}>
                                                     <TableCell>
                                                         <Checkbox
-                                                            checked={
-                                                                dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens.find(
-                                                                    (x) =>
-                                                                        x.tenDichVu ===
-                                                                        item.tenDichVu
-                                                                ) !== undefined
-                                                            }
+                                                            checked={dichVuNhanVienStore.selectedIdService.includes(
+                                                                item.id
+                                                            )}
                                                             onClick={() => {
-                                                                dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens.push(
-                                                                    {
-                                                                        avatar: '',
-                                                                        donGia: item.donGia,
-                                                                        soPhutThucHien: '0',
-                                                                        tenDichVu: item.tenDichVu
-                                                                    }
-                                                                );
+                                                                this.handleCheckboxClick(item.id);
                                                             }}
                                                         />
                                                     </TableCell>
@@ -134,6 +160,14 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                 <DialogActions>
                     <Button
                         type="button"
+                        onClick={async () => {
+                            const result = await dichVuNhanVienStore.createOrEditByEmployee();
+                            enqueueSnackbar(result.message, {
+                                variant: result.status,
+                                autoHideDuration: 3000
+                            });
+                            this.props.handleClose();
+                        }}
                         variant="contained"
                         sx={{
                             fontSize: '14px',

@@ -122,10 +122,10 @@ class ChiNhanhScreen extends Component {
     };
 
     onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
+        //const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
             sortBy: sortBy,
-            sortType: type
+            sortType: sortType
         });
         this.InitData();
     };
@@ -133,7 +133,6 @@ class ChiNhanhScreen extends Component {
         const columns = [
             {
                 field: 'tenChiNhanh',
-                sortable: false,
                 headerName: 'Tên chi nhánh',
                 minWidth: 140,
                 flex: 0.8,
@@ -147,8 +146,7 @@ class ChiNhanhScreen extends Component {
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
-                            variant="h6"
-                            color="#333233"
+                            fontFamily={'Roboto'}
                             lineHeight="16px"
                             title={params.value}>
                             {params.value}
@@ -156,20 +154,11 @@ class ChiNhanhScreen extends Component {
                     </Box>
                 ),
                 renderHeader: (params: any) => (
-                    <Box fontWeight="700">
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tenChiNhanh');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box fontWeight="700">{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'diaChi',
-                sortable: false,
                 headerName: 'Địa chỉ',
                 minWidth: 180,
                 flex: 1.2,
@@ -177,59 +166,45 @@ class ChiNhanhScreen extends Component {
                     <Typography
                         variant="caption"
                         fontSize="13px"
+                        fontFamily={'Roboto'}
+                        fontWeight={400}
                         title={params.value}
                         sx={{
                             textOverflow: 'ellipsis',
                             width: '100%',
                             overflow: 'hidden',
-                            textAlign: 'center'
+                            textAlign: 'left'
                         }}>
                         {params.value}
                     </Typography>
                 ),
                 renderHeader: (params: any) => (
-                    <Box fontWeight="700">
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'diaChi');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box fontWeight="700">{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'soDienThoai',
-                sortable: false,
                 headerName: 'Số điện thoại',
                 minWidth: 110,
                 flex: 0.8,
                 renderCell: (params: any) => (
                     <Typography
                         width="100%"
-                        textAlign="center"
+                        textAlign="left"
                         variant="caption"
                         fontSize="13px"
+                        fontFamily={'Roboto'}
+                        fontWeight={400}
                         title={params.value}>
                         {params.value}
                     </Typography>
                 ),
                 renderHeader: (params: any) => (
-                    <Box fontWeight="700">
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'soDienThoai');
-                            }}
-                        />{' '}
-                    </Box>
+                    <Box fontWeight="700">{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'ngayApDung',
-                sortable: false,
                 headerName: 'Ngày áp dụng',
                 minWidth: 130,
                 flex: 0.8,
@@ -238,35 +213,23 @@ class ChiNhanhScreen extends Component {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'start',
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="13px"
-                            variant="h6"
+                            fontFamily={'Roboto'}
                             fontWeight="400"
-                            color="#333233"
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('vi-VN')}
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'ngayApDung');
-                            }}
-                        />{' '}
-                    </Box>
-                )
+                renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>
             },
             {
                 field: 'ngayHetHan',
-                sortable: false,
                 headerName: 'Ngày hết hạn',
                 minWidth: 130,
                 flex: 0.8,
@@ -275,31 +238,20 @@ class ChiNhanhScreen extends Component {
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center',
+                            justifyContent: 'start',
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
                             fontSize="13px"
-                            variant="h6"
+                            fontFamily={'Roboto'}
                             fontWeight="400"
-                            color="#333233"
                             lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('vi-VN')}
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            className="custom-icon"
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'ngayHetHan');
-                            }}
-                        />{' '}
-                    </Box>
-                )
+                renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>
             },
             {
                 field: 'actions',
@@ -316,19 +268,16 @@ class ChiNhanhScreen extends Component {
                     </IconButton>
                 ),
                 renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
 
         return (
-            <Box bgcolor="#fff" padding="24px">
+            <Box bgcolor="#fff" paddingTop={'16px'} paddingBottom={'16px'}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
+                        <Typography variant="h1" fontSize="16px" fontWeight="700">
                             Quản lý chi nhánh
                         </Typography>
                         <Box className="form-search">
@@ -411,60 +360,32 @@ class ChiNhanhScreen extends Component {
                         </ButtonGroup>
                     </Grid>
                 </Grid>
-                <div className="mt-2">
+                <Box paddingTop="16px">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
                         columns={columns}
                         rows={this.state.listChiNhanh}
                         checkboxSelection
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                         sx={{
-                            '& .uiDataGrid-cellContent': {
-                                fontSize: '13px'
-                            },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: 'var(--color-bg)'
-                            },
-                            '& p': {
-                                mb: 0
-                            },
-                            '& .MuiDataGrid-virtualScroller': {
-                                bgcolor: '#fff'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
+                            }
                         }}
                         onColumnVisibilityModelChange={this.handleColumnVisibilityChange}
                         columnBuffer={0}
@@ -492,7 +413,7 @@ class ChiNhanhScreen extends Component {
                         onCLose={this.onCloseModal}
                         onSave={this.handleSubmit}
                     />
-                </div>
+                </Box>
             </Box>
         );
     }

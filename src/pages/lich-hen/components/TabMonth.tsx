@@ -174,7 +174,7 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                         <Box
                                             sx={{
                                                 fontSize: '14px',
-                                                color: '#4C4B4C',
+                                                //color: '#4C4B4C',
                                                 height: '100%',
                                                 display: 'flex',
                                                 width: '100%',
@@ -238,7 +238,8 @@ const TabMonth: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                     variant="body1"
                                                     fontSize="12px"
                                                     whiteSpace="nowrap"
-                                                    color="#000">
+                                                    //color="#000"
+                                                >
                                                     Không có lịch đặt
                                                 </Typography>
                                             )}

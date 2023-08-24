@@ -35,7 +35,7 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                         <Typography
                             variant="h3"
                             fontSize="24px"
-                            color="#333233"
+                            //color="#333233"
                             fontWeight="700"
                             mb={3}>
                             Thêm mới chức vụ
@@ -73,7 +73,7 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                     <Grid container spacing={1}>
                                         <Grid item xs={12}>
                                             <Typography
-                                                color="#4C4B4C"
+                                                //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Tên chức vụ
@@ -86,7 +86,7 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Typography
-                                                color="#4C4B4C"
+                                                //color="#4C4B4C"
                                                 fontSize="14px"
                                                 fontWeight="500">
                                                 Mô tả

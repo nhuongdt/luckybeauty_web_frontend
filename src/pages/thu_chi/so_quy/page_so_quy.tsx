@@ -405,7 +405,7 @@ const PageSoQuy = ({ xx }: any) => {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Box paddingTop={2} paddingRight={2}>
+            <Box paddingTop={2}>
                 <Grid container spacing={1} justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
@@ -509,7 +509,7 @@ const PageSoQuy = ({ xx }: any) => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box marginTop="16px" paddingTop={2}>
+                <Box paddingTop={2}>
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -536,6 +536,11 @@ const PageSoQuy = ({ xx }: any) => {
                                     ...paramSearch,
                                     typeSort: 'asc'
                                 });
+                            }
+                        }}
+                        sx={{
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
                             }
                         }}
                     />

@@ -292,7 +292,7 @@ class SoQuyScreen extends Component {
         ];
         const { lstSoQuy } = soQuyStore;
         return (
-            <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
+            <Box paddingTop="16px">
                 <Grid container justifyContent="space-between">
                     <Grid item md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">

@@ -26,7 +26,7 @@ class SettingPages extends Component {
                         fontWeight="700"
                         fontFamily={'Roboto'}
                         fontSize="18px"
-                        sx={{ color: '#3D475C' }}>
+                        sx={{ color: 'black' }}>
                         Cài đặt
                     </Typography>
                 </Box>
@@ -64,7 +64,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -83,7 +83,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -102,7 +102,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -145,7 +145,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -188,7 +188,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -205,7 +205,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -246,7 +246,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'
@@ -263,7 +263,7 @@ class SettingPages extends Component {
                                         }>
                                         <ListItemText
                                             sx={{
-                                                color: '#525F7A',
+                                                color: 'black',
                                                 fontSize: '14px',
                                                 fontWeight: '400',
                                                 fontFamily: 'Roboto'

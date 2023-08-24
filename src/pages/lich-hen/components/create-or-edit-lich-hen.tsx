@@ -96,7 +96,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                     <Typography
                         variant="h3"
                         fontSize="24px"
-                        color="rgb(51, 50, 51)"
+                        //color="rgb(51, 50, 51)"
                         fontWeight="700">
                         {idLichHen ? 'Cập nhật lịch hẹn' : 'Thêm cuộc hẹn'}
                     </Typography>
@@ -205,13 +205,12 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 <Typography
                                                     variant="body1"
                                                     fontSize="20px"
-                                                    fontWeight="500"
-                                                    color="#000">
+                                                    fontWeight="500">
                                                     Thêm khách hàng
                                                 </Typography>
                                                 <Typography
                                                     variant="body1"
-                                                    color="#8B8D97"
+                                                    //color="#8B8D97"
                                                     fontSize="14px"
                                                     fontWeight="400"
                                                     mt="12px">

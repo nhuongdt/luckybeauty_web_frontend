@@ -36,6 +36,7 @@ import uploadFileService from '../../../services/uploadFileService';
 import { Guid } from 'guid-typescript';
 import khachHangStore from '../../../stores/khachHangStore';
 import nhanVienStore from '../../../stores/nhanVienStore';
+import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -372,6 +373,15 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         <Grid item xs={12}>
                                             <Box display={'flex'} flexDirection={'row'} gap={1}>
                                                 <Autocomplete
+                                                    value={
+                                                        suggestStore.suggestChucVu.filter(
+                                                            (x) => x.idChucVu == values.idChucVu
+                                                        )[0] ??
+                                                        ({
+                                                            idChucVu: '',
+                                                            tenChucVu: ''
+                                                        } as SuggestChucVuDto)
+                                                    }
                                                     options={suggestStore.suggestChucVu}
                                                     getOptionLabel={(option) =>
                                                         `${option.tenChucVu}`

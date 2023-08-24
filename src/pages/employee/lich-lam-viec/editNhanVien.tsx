@@ -42,7 +42,7 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) =
                             variant="h3"
                             fontSize="14px"
                             fontWeight="500"
-                            color="#4C4B4C"
+                            //color="#4C4B4C"
                             mb="8px">
                             Thời gian bắt đầu
                         </Typography>
@@ -59,7 +59,7 @@ const Edit: React.FC<DialogComponentProps> = ({ open, onClose, openEditLich }) =
                             variant="h3"
                             fontSize="14px"
                             fontWeight="500"
-                            color="#4C4B4C"
+                            /// color="#4C4B4C"
                             mb="8px">
                             Thời gian kết thúc
                         </Typography>

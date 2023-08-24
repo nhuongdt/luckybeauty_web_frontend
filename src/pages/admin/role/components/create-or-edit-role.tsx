@@ -266,11 +266,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
                 <DialogTitle>
-                    <Typography
-                        variant="h3"
-                        fontSize="24px"
-                        color="rgb(51, 50, 51)"
-                        fontWeight="700">
+                    <Typography variant="h3" fontSize="24px" fontWeight="700">
                         {modalType}
                     </Typography>
                     <IconButton

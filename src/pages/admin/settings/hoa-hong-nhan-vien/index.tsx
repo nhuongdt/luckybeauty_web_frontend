@@ -9,15 +9,11 @@ class CaiDatHoaHongScreen extends Component {
     };
     render(): ReactNode {
         return (
-            <Box bgcolor="#fff" padding="24px">
+            <Box bgcolor="#fff" paddingTop={'16px'}>
                 <Box component={'div'}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={6}>
-                            <Typography
-                                fontWeight="700"
-                                fontFamily={'Roboto'}
-                                fontSize="18px"
-                                sx={{ color: '#3D475C' }}>
+                            <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px">
                                 Hoa hồng theo nhân viên
                             </Typography>
                         </Grid>

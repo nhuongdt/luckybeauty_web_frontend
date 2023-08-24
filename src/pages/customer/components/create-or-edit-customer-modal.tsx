@@ -270,6 +270,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     Nhóm khách
                                                 </Typography>
                                                 <Autocomplete
+                                                    value={
+                                                        suggestStore.suggestNhomKhach.filter(
+                                                            (x) => x.id == values.idNhomKhach
+                                                        )[0] ?? { id: '', tenNhomKhach: '' }
+                                                    }
                                                     options={suggestStore.suggestNhomKhach}
                                                     getOptionLabel={(option) =>
                                                         `${option.tenNhomKhach}`
@@ -299,6 +304,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     Nguồn khách
                                                 </Typography>
                                                 <Autocomplete
+                                                    value={
+                                                        suggestStore.suggestNguonKhach.filter(
+                                                            (x) => x.id == values.idNguonKhach
+                                                        )[0] ?? { id: '', tenNguonKhach: '' }
+                                                    }
                                                     options={suggestStore.suggestNguonKhach}
                                                     getOptionLabel={(option) =>
                                                         `${option.tenNguonKhach}`

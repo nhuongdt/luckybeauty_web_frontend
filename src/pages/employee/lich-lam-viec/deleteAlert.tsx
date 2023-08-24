@@ -54,7 +54,11 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                     padding: '28px 24px'
                 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography fontSize="24px" color="#4C4B4C" fontWeight="700" variant="h2">
+                    <Typography
+                        fontSize="24px"
+                        //color="#4C4B4C"
+                        fontWeight="700"
+                        variant="h2">
                         Xóa tất cả ca làm việc
                     </Typography>
                     <Button
@@ -69,7 +73,11 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                         <CloseIcon />
                     </Button>
                 </Box>
-                <Typography color="#4C4B4C" fontSize="14px" fontWeight="500" variant="body1">
+                <Typography
+                    // color="#4C4B4C"
+                    fontSize="14px"
+                    fontWeight="500"
+                    variant="body1">
                     Từ
                 </Typography>
                 <Select

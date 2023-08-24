@@ -62,9 +62,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                 }}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Mã chi nhánh
-                                        </Typography>
+                                        <Typography variant="subtitle2">Mã chi nhánh</Typography>
                                         <TextField
                                             size="small"
                                             name="maChiNhanh"
@@ -75,9 +73,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Tên chi nhánh
-                                        </Typography>
+                                        <Typography variant="subtitle2">Tên chi nhánh</Typography>
                                         <TextField
                                             size="small"
                                             placeholder="Nhập tên chi nhánh"
@@ -88,9 +84,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Số điện thoại
-                                        </Typography>
+                                        <Typography variant="subtitle2">Số điện thoại</Typography>
                                         <TextField
                                             size="small"
                                             name="soDienThoai"
@@ -101,9 +95,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Địa chỉ
-                                        </Typography>
+                                        <Typography variant="subtitle2">Địa chỉ</Typography>
                                         <TextField
                                             size="small"
                                             placeholder="Nhập địa chỉ"
@@ -114,9 +106,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Ngày áp dụng
-                                        </Typography>
+                                        <Typography variant="subtitle2">Ngày áp dụng</Typography>
                                         <TextField
                                             size="small"
                                             type="date"
@@ -127,9 +117,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Ngày hết hạn
-                                        </Typography>
+                                        <Typography variant="subtitle2">Ngày hết hạn</Typography>
                                         <TextField
                                             size="small"
                                             type="date"
@@ -140,9 +128,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography color="#4C4B4C" variant="subtitle2">
-                                            Ghi chú
-                                        </Typography>
+                                        <Typography variant="subtitle2">Ghi chú</Typography>
                                         <TextField
                                             size="small"
                                             rows={4}

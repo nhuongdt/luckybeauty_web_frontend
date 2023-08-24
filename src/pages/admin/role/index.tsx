@@ -198,11 +198,15 @@ class RoleScreen extends React.Component<IRoleProps> {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700', textAlign: 'left' }} title={params.value}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box width="100%" textAlign="left" fontSize="13px">
+                    <Box
+                        width="100%"
+                        textAlign="left"
+                        fontSize="13px"
+                        fontWeight={400}
+                        fontFamily={'Roboto'}>
                         {params.value}
                     </Box>
                 )
@@ -217,7 +221,6 @@ class RoleScreen extends React.Component<IRoleProps> {
                         sx={{ fontWeight: '700', textAlign: 'left' }}
                         title={params.colDef.headerName}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -225,7 +228,8 @@ class RoleScreen extends React.Component<IRoleProps> {
                         sx={{
                             fontSize: '13px',
                             width: '100%',
-
+                            fontWeight: '400',
+                            fontFamily: 'Roboto',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
@@ -253,17 +257,14 @@ class RoleScreen extends React.Component<IRoleProps> {
                     </Box>
                 ),
                 renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
         return (
-            <Box paddingLeft="2.2222222222222223vw" paddingRight="2.2222222222222223vw">
+            <Box>
                 <Box>
-                    <Grid container justifyContent="space-between" paddingTop="22px">
+                    <Grid container justifyContent="space-between" paddingTop="16px">
                         <Grid item>
                             <div>
                                 <Box display="flex" alignItems="center" gap="10px">
@@ -329,7 +330,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box marginTop="24px" bgcolor="#fff" borderRadius="8px">
+                <Box paddingTop="16px" bgcolor="#fff" borderRadius="8px">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight={true}
@@ -337,49 +338,9 @@ class RoleScreen extends React.Component<IRoleProps> {
                         rows={this.state.listRole}
                         checkboxSelection
                         sx={{
-                            '& .uiDataGrid-cellContent': {
-                                fontSize: '13px'
-                            },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: 'var(--color-bg)'
-                            },
-                            '& p': {
-                                mb: 0
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
+                            }
                         }}
                         hideFooter
                         hideFooterPagination

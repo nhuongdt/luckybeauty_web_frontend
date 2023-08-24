@@ -104,37 +104,20 @@ class ChietKhauHoaDonScreen extends Component {
         const columns: GridColDef[] = [
             {
                 field: 'giaTriChietKhau',
-                sortable: false,
                 headerName: 'Hoa hồng',
                 minWidth: 112,
                 flex: 1,
-                align: 'center',
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'giaTriChietKhau');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
                 field: 'chungTuApDung',
-                sortable: false,
                 headerName: 'Chứng từ áp dụng',
                 minWidth: 120,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'chungTuApDung');
-                            }}
-                        />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             },
             {
@@ -143,10 +126,7 @@ class ChietKhauHoaDonScreen extends Component {
                 minWidth: 150,
                 flex: 1,
                 renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>
-                        {params.colDef.headerName}
-                        <IconSorting />
-                    </Box>
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -156,7 +136,7 @@ class ChietKhauHoaDonScreen extends Component {
                     container
                     justifyContent="space-between"
                     alignItems="center"
-                    sx={{ background: 'var(--color-bg)', padding: '8px' }}>
+                    sx={{ background: '#EEF0F4', padding: '8px' }}>
                     <Grid item>
                         <Box className="form-search">
                             <TextField
@@ -199,7 +179,7 @@ class ChietKhauHoaDonScreen extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box>
+                <Box paddingTop={'8px'}>
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -207,9 +187,30 @@ class ChietKhauHoaDonScreen extends Component {
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
                         checkboxSelection={false}
+                        sortingOrder={['desc', 'asc']}
+                        sortModel={[
+                            {
+                                field: this.state.sortBy,
+                                sort: this.state.sortType == 'desc' ? 'desc' : 'asc'
+                            }
+                        ]}
+                        onSortModelChange={(newSortModel) => {
+                            if (newSortModel.length > 0) {
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
+                            }
+                        }}
                         sx={{
                             '& .uiDataGrid-cellContent': {
-                                fontSize: '13px'
+                                fontSize: '13px',
+                                fontFamily: 'Roboto',
+                                fontWeight: '400',
+                                textAlign: 'left'
+                            },
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#FFF'
                             },
                             '& .MuiDataGrid-iconButtonContainer': {
                                 display: 'none'

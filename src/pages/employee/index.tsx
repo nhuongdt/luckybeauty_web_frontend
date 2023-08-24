@@ -41,6 +41,7 @@ import abpCustom from '../../components/abp-custom';
 import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import suggestStore from '../../stores/suggestStore';
+import AppConsts from '../../lib/appconst';
 class EmployeeScreen extends React.Component {
     static contextType = ChiNhanhContext;
     state = {
@@ -149,7 +150,7 @@ class EmployeeScreen extends React.Component {
                 createOrEditNhanSu: NhanVienStore.createEditNhanVien
             });
         }
-        this.setState({ IdKhachHang: id });
+        this.setState({ idNhanSu: id });
         this.Modal();
     }
     handleSubmit = async () => {
@@ -286,7 +287,12 @@ class EmployeeScreen extends React.Component {
             renderHeader: (params) => (
                 <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
-            renderCell: (params) => <Box width="100%">{params.value}</Box>
+
+            renderCell: (params) => (
+                <Box width="100%" textAlign="left">
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'ngaySinh',
@@ -299,7 +305,7 @@ class EmployeeScreen extends React.Component {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'start',
                         width: '100%'
                     }}>
                     {params.value != null ? (
@@ -325,7 +331,7 @@ class EmployeeScreen extends React.Component {
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'left',
                         width: '100%'
                     }}>
                     <Typography fontSize="13px" fontWeight="400" lineHeight="16px">
@@ -365,7 +371,10 @@ class EmployeeScreen extends React.Component {
                         width: '100%',
                         textOverflow: 'ellipsis',
                         overflow: 'hidden',
-                        fontWeight: '400'
+                        fontWeight: '400',
+                        fontFamily: 'Roboto',
+                        color: '#3D475C',
+                        textAlign: 'left'
                     }}
                     title={params.value}>
                     {params.value}
@@ -399,42 +408,43 @@ class EmployeeScreen extends React.Component {
                 </Box>
             )
         },
-        // {
-        //     field: 'ngayVaoLam',
-        //     headerName: 'Ngày tham gia',
-        //     headerAlign: 'center',
-        //     minWidth: 120,
-        //     flex: 1,
-        //     renderCell: (params) => (
-        //         <Box
-        //             style={{
-        //                 display: 'flex',
-        //                 alignItems: 'center',
-        //                 justifyContent: 'center',
-        //                 width: '100%'
-        //             }}>
-        //             <DateIcon style={{ marginRight: 4 }} />
-        //             <Typography
-        //                 fontSize="13px"
-        //                 fontWeight="400"
-        //                 fontFamily={'Roboto'}
-        //                 lineHeight="16px">
-        //                 {new Date(params.value).toLocaleDateString('en-GB')}
-        //             </Typography>
-        //         </Box>
-        //     ),
-        //     renderHeader: (params) => (
-        //         <Box
-        //             sx={{
-        //                 fontWeight: '500',
-        //                 color: '#525F7A',
-        //                 fontSize: '13px',
-        //                 fontFamily: 'Roboto'
-        //             }}>
-        //             {params.colDef.headerName}
-        //         </Box>
-        //     )
-        // },
+
+        {
+            field: 'ngayVaoLam',
+            headerName: 'Ngày tham gia',
+            minWidth: 120,
+            flex: 1,
+            renderCell: (params) => (
+                <Box
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'start',
+                        width: '100%'
+                    }}>
+                    <DateIcon style={{ marginRight: 4 }} />
+                    <Typography
+                        fontSize="13px"
+                        fontWeight="400"
+                        fontFamily={'Roboto'}
+                        color="#3D475C"
+                        lineHeight="16px">
+                        {new Date(params.value).toLocaleDateString('en-GB')}
+                    </Typography>
+                </Box>
+            ),
+            renderHeader: (params) => (
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                </Box>
+            )
+        },
         {
             field: 'trangThai',
             headerName: 'Trạng thái',
@@ -444,7 +454,7 @@ class EmployeeScreen extends React.Component {
             renderCell: (params) => (
                 <Typography
                     variant="body2"
-                    padding="4px 8px"
+                    alignItems={'center'}
                     borderRadius="12px"
                     sx={{
                         margin: 'auto',
@@ -460,7 +470,10 @@ class EmployeeScreen extends React.Component {
                                 : params.row.trangThai === 'Ngừng hoạt động'
                                 ? '#FF9900'
                                 : '#F1416C'
-                    }}>
+                    }}
+                    fontWeight="400"
+                    textAlign={'left'}
+                    color="#009EF7">
                     {params.value}
                 </Typography>
             ),
@@ -606,7 +619,7 @@ class EmployeeScreen extends React.Component {
                     </Grid>
                 </Grid>
 
-                <Box marginTop="24px" bgcolor="#fff" paddingTop={1}>
+                <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
@@ -614,6 +627,11 @@ class EmployeeScreen extends React.Component {
                         columns={this.columns}
                         checkboxSelection
                         hideFooter
+                        sx={{
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
+                            }
+                        }}
                         localeText={TextTranslate}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
@@ -668,7 +686,9 @@ class EmployeeScreen extends React.Component {
                     }}
                     onOk={this.handleSubmit}
                     title={
-                        this.state.idNhanSu === ''
+                        this.state.idNhanSu === '' ||
+                        this.state.idNhanSu == undefined ||
+                        this.state.idNhanSu === AppConsts.guidEmpty
                             ? 'Thêm mới nhân viên'
                             : 'Cập nhật thông tin nhân viên'
                     }

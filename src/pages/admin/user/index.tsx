@@ -192,7 +192,6 @@ class UserScreen extends AppComponentBase {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.value}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -220,7 +219,6 @@ class UserScreen extends AppComponentBase {
                         title={params.colDef.headerName}
                         width="100%">
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -245,7 +243,6 @@ class UserScreen extends AppComponentBase {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -277,7 +274,6 @@ class UserScreen extends AppComponentBase {
                         }}
                         title={params.colDef.headerName}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -302,7 +298,6 @@ class UserScreen extends AppComponentBase {
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
                     </Box>
                 ),
                 renderCell: (params: any) => (
@@ -311,7 +306,7 @@ class UserScreen extends AppComponentBase {
                             display: 'flex',
                             alignItems: 'center',
                             width: '100%',
-                            justifyContent: 'center'
+                            justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
@@ -345,10 +340,7 @@ class UserScreen extends AppComponentBase {
                     </Box>
                 ),
                 renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -356,9 +348,7 @@ class UserScreen extends AppComponentBase {
         return (
             <Box
                 sx={{
-                    paddingTop: '22px',
-                    paddingRight: '2.2222222222222223vw',
-                    paddingLeft: '2.2222222222222223vw'
+                    paddingTop: '16px'
                 }}>
                 <Box>
                     <Grid
@@ -439,7 +429,7 @@ class UserScreen extends AppComponentBase {
                 </Box>
                 <Box
                     className="page-content"
-                    sx={{ marginTop: '24px', backgroundColor: '#fff', borderRadius: '8px' }}>
+                    sx={{ paddingTop: '16px', backgroundColor: '#fff', borderRadius: '8px' }}>
                     <Box>
                         <DataGrid
                             disableRowSelectionOnClick
@@ -451,7 +441,9 @@ class UserScreen extends AppComponentBase {
                                 '& .MuiDataGrid-iconButtonContainer': {
                                     display: 'none'
                                 },
-
+                                '& .MuiDataGrid-columnHeader': {
+                                    background: '#EEF0F4'
+                                },
                                 '& .MuiDataGrid-columnHeaders': {
                                     backgroundColor: 'var(--color-bg)'
                                 },

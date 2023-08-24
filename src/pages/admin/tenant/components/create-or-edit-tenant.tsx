@@ -212,9 +212,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                             }}
                                                             control={
                                                                 <Checkbox
-                                                                    sx={{
-                                                                        color: 'var(--color-main)!important'
-                                                                    }}
+                                                                // sx={{
+                                                                //     color: 'var(--color-main)!important'
+                                                                // }}
                                                                 />
                                                             }
                                                             label="Dùng chung cơ sở dữ liệu với Host"
@@ -263,9 +263,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     checked={values.isActive}
                                                     control={
                                                         <Checkbox
-                                                            sx={{
-                                                                color: 'var(--color-main)!important'
-                                                            }}
+                                                        // sx={{
+                                                        //     color: 'var(--color-main)!important'
+                                                        // }}
                                                         />
                                                     }
                                                     label="IsActive"
