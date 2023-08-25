@@ -18,7 +18,8 @@ import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
-import SearchIcon from '../../images/search-normal.svg';
+// import SearchIcon from '../../images/search-normal.svg';
+import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import khachHangService from '../../services/khach-hang/khachHangService';
@@ -432,58 +433,49 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             <>
                 {this.state.information === false ? (
                     <Grid className="customer-page" container paddingTop={2}>
-                        <Grid
-                            container
-                            spacing={1}
-                            alignItems="center"
-                            justifyContent="space-between">
-                            <Grid
-                                item
-                                xs={12}
-                                md="auto"
-                                display="flex"
-                                alignItems="center"
-                                gap="12px">
-                                <span className="page-title">Danh sách khách hàng</span>
-                                <Box className="form-search">
-                                    <TextField
-                                        sx={{
-                                            backgroundColor: '#fff',
-                                            borderColor: '#CDC9CD',
-                                            '& .MuiOutlinedInput-root': {
-                                                paddingLeft: '0'
-                                            }
-                                        }}
-                                        className="search-field"
-                                        variant="outlined"
-                                        type="search"
-                                        onChange={async (e) => {
-                                            await this.setState({ keyword: e.target.value });
-                                        }}
-                                        onKeyDown={(event) => {
-                                            if (event.key === 'Enter') {
-                                                this.getData();
-                                            }
-                                        }}
-                                        placeholder="Tìm kiếm"
-                                        InputProps={{
-                                            startAdornment: (
-                                                <IconButton
-                                                    type="button"
-                                                    onClick={() => {
-                                                        this.setState({ currentPage: 1 });
-                                                        this.getData();
-                                                    }}>
-                                                    <img src={SearchIcon} />
-                                                </IconButton>
-                                            )
-                                        }}
-                                    />
-                                </Box>
+                        <Grid container spacing={1} alignItems="center">
+                            <Grid item xs={12} md={6} lg={6}>
+                                <Grid container alignItems="center">
+                                    <Grid item xs={6} sm={6} lg={4}>
+                                        <span className="page-title">Danh sách khách hàng</span>
+                                    </Grid>
+                                    <Grid item xs={6} sm={6} lg={8}>
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            sx={{
+                                                backgroundColor: '#fff',
+                                                borderColor: '#CDC9CD'
+                                            }}
+                                            variant="outlined"
+                                            onChange={async (e) => {
+                                                await this.setState({ keyword: e.target.value });
+                                            }}
+                                            onKeyDown={(event) => {
+                                                if (event.key === 'Enter') {
+                                                    this.getData();
+                                                }
+                                            }}
+                                            placeholder="Tìm kiếm"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            this.setState({ currentPage: 1 });
+                                                            this.getData();
+                                                        }}>
+                                                        <SearchIcon />
+                                                    </IconButton>
+                                                )
+                                            }}
+                                        />
+                                    </Grid>
+                                </Grid>
                             </Grid>
                             <Grid
                                 xs={12}
-                                md="auto"
+                                md={6}
+                                lg={6}
                                 item
                                 display="flex"
                                 gap="8px"
@@ -550,18 +542,13 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         </Grid>
                         <Grid container spacing={2} marginTop={3}>
                             <Grid item lg={3} md={3} sm={3} xs={12}>
-                                <Box
-                                    borderRadius={'8px'}
-                                    sx={{
-                                        backgroundColor: '#fff',
-                                        borderRadius: '8px',
-                                        height: '75vh'
-                                    }}>
+                                <Box className="page-box-left">
                                     <Box
                                         display="flex"
                                         justifyContent="space-between"
                                         borderBottom="1px solid #E6E1E6"
-                                        sx={{ backgroundColor: 'var(--color-bg)' }}
+                                        borderRadius={'4px'}
+                                        sx={{ backgroundColor: 'var(--color-header-table)' }}
                                         padding="12px">
                                         <Typography fontSize="14px" fontWeight="700">
                                             Nhóm khách hàng
@@ -603,17 +590,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </Box>
                             </Grid>
                             <Grid item lg={9} md={9} sm={9} xs={12}>
-                                <div
-                                    className="customer-page_row-2"
-                                    style={{
-                                        width: '100%',
-                                        backgroundColor: '#fff',
-                                        height: '75vh'
-                                    }}>
+                                <div className="page-box-right">
                                     <DataGrid
                                         disableRowSelectionOnClick
                                         rowHeight={46}
-                                        sx={{ maxHeight: 'calc(100% - 32px)' }} // trừ chiều cao của phân trang
                                         className="data-grid-row"
                                         rows={this.state.rowTable}
                                         columns={columns}
@@ -651,6 +631,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         handleDelete={this.showConfirmDelete}
                                         permissionDelete="Pages.KhachHang.Delete"
                                     />
+
                                     <CustomTablePagination
                                         currentPage={this.state.currentPage}
                                         rowPerPage={this.state.rowPerPage}
@@ -659,6 +640,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         handlePerPageChange={this.handlePerPageChange}
                                         handlePageChange={this.handlePageChange}
                                     />
+
                                     <CreateOrEditCustomerDialog
                                         visible={this.state.toggle}
                                         onCancel={this.handleToggle}
