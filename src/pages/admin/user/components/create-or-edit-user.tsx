@@ -76,6 +76,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     phoneNumber: values.phoneNumber,
                     isActive: values.isActive,
                     name: values.name,
+                    password: values.password,
                     surname: values.surname,
                     userName: values.userName,
                     roleNames: values.roleNames

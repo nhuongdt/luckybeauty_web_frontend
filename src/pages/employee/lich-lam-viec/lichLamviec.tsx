@@ -441,7 +441,7 @@ class Calendar extends Component {
                                 '& .custom-time': {
                                     fontFamily: 'Roboto',
                                     height: '32px',
-                                    bgcolor: '#F2EBF0',
+                                    //bgcolor: '#F2EBF0',
                                     borderRadius: '8px',
                                     padding: '8px',
                                     fontSize: '13px',

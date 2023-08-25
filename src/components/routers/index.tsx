@@ -253,7 +253,7 @@ export const appRouters: AppRouteProps = {
                 },
                 {
                     path: '/dich-vus',
-                    permission: '',
+                    permission: 'Pages.DM_HangHoa',
                     title: 'Dịch vụ',
                     icon: <ServicesIcon width="20px" />,
                     iconActive: <ServiceActive width="20px" />,
@@ -263,7 +263,7 @@ export const appRouters: AppRouteProps = {
                     children: [
                         {
                             path: '/danh-sach-dich-vus',
-                            permission: '',
+                            permission: 'Pages.DM_HangHoa',
                             title: 'Dịch vụ',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
@@ -277,7 +277,7 @@ export const appRouters: AppRouteProps = {
                         },
                         {
                             path: '/cai-dat-dich-vu-nhan-vien',
-                            permission: '',
+                            permission: 'Pages.NhanVienDichVu',
                             title: 'Dịch vụ - Nhân viên',
                             icon: <BsDot style={{ fontSize: 20 }} />,
                             iconActive: null,
