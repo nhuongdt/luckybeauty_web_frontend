@@ -1,0 +1,32 @@
+@media screen and (min-height:600px) and (max-height:750px) {
+    .data-grid-row {
+        min-height: calc(65vh - 44px)!important;
+        max-height: calc(65vh - 44px)!important;
+    }
+    .page-box-left {
+        max-height: calc(65vh + 4px)!important;
+        min-height: calc(65vh + 4px)!important;
+    }
+}
+
+@media screen and (min-height:750px) and (max-height:900px) {
+    .data-grid-row {
+        min-height: calc(75vh - 44px)!important;
+        max-height: calc(75vh - 44px)!important;
+    }
+    .page-box-left {
+        max-height: calc(75vh + 4px)!important;
+        min-height: calc(75vh + 4px)!important;
+    }
+}
+
+@media screen and (min-height:900px) and (max-height:1200px) {
+    .data-grid-row {
+        min-height: calc(80vh - 44px)!important;
+        max-height: calc(80vh - 44px)!important;
+    }
+    .page-box-left {
+        max-height: calc(80vh + 4px)!important;
+        min-height: calc(80vh + 4px)!important;
+    }
+}

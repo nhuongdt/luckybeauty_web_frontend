@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import './custom.css';
 import './App.css';
+import './responsive.css';
 import reportWebVitals from './reportWebVitals';
 import initializeStores from './stores/storeInitializer';
 import registerServiceWorker from './registerServiceWorker';
