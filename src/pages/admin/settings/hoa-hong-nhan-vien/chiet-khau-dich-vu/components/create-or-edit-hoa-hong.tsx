@@ -86,7 +86,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                             });
                             await onSave();
                         }}>
-                        {({ values, handleChange, errors, setFieldValue }) => (
+                        {({ values, handleChange, errors, touched, setFieldValue }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -99,8 +99,15 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         name="idNhanVien"
                                         value={idNhanVien}></TextField>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Dịch vụ</Typography>
                                         <Select
+                                            label={
+                                                <Typography variant="subtitle2">Dịch vụ</Typography>
+                                            }
+                                            error={
+                                                errors.idDonViQuiDoi && touched.idDonViQuiDoi
+                                                    ? true
+                                                    : false
+                                            }
                                             size="small"
                                             name="idDonViQuiDoi"
                                             value={values.idDonViQuiDoi}
@@ -173,8 +180,10 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         </RadioGroup>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography variant="subtitle2">Giá trị</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">Giá trị</Typography>
+                                            }
                                             size="small"
                                             name="giaTri"
                                             value={values.giaTri}
@@ -186,22 +195,11 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         <FormControlLabel
                                             label={'Là phần trăm'}
                                             value={values.laPhanTram == true ? true : false}
-                                            //checked={values.laPhanTram == true ? true : false}
                                             onChange={(e, checked) => {
                                                 setFieldValue('laPhanTram', checked);
                                             }}
                                             name="laPhanTram"
-                                            control={
-                                                <Checkbox
-                                                // checked={values.laPhanTram ? true : false}
-                                                // sx={{
-                                                //     color: '#7C3367',
-                                                //     '&.Mui-checked': {
-                                                //         color: '#7C3367'
-                                                //     }
-                                                // }}
-                                                />
-                                            }
+                                            control={<Checkbox />}
                                         />
                                     </Grid>
                                 </Grid>

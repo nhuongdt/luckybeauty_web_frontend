@@ -119,59 +119,13 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 }
                                             }}>
                                             <FormGroup>
-                                                <label>
-                                                    Id Tenant
-                                                    <span
-                                                        style={{
-                                                            color: 'red',
-                                                            marginLeft: '3px'
-                                                        }}>
-                                                        *
-                                                    </span>
-                                                </label>
                                                 <TextField
                                                     disabled={
                                                         this.props.tenantId == 0 ? false : true
                                                     }
-                                                    type="text"
-                                                    size="small"
-                                                    name="tenancyName"
-                                                    value={values.tenancyName}
-                                                    onChange={handleChange}
-                                                    fullWidth
-                                                />
-                                                {touched.tenancyName && errors.tenancyName && (
-                                                    <div>{errors.tenancyName}</div>
-                                                )}
-                                            </FormGroup>
-                                            <FormGroup>
-                                                <label htmlFor="name2">
-                                                    Tên cửa hàng
-                                                    <span
-                                                        style={{
-                                                            color: 'red',
-                                                            marginLeft: '3px'
-                                                        }}>
-                                                        *
-                                                    </span>
-                                                </label>
-                                                <TextField
-                                                    type="text"
-                                                    size="small"
-                                                    name="name"
-                                                    value={values.name}
-                                                    onChange={handleChange}
-                                                    fullWidth
-                                                />
-                                                {touched.name && errors.name && (
-                                                    <div>{errors.name}</div>
-                                                )}
-                                            </FormGroup>
-                                            {tenantId !== 0 ? null : (
-                                                <>
-                                                    <FormGroup>
-                                                        <label htmlFor="email">
-                                                            Email quản trị
+                                                    label={
+                                                        <label>
+                                                            Id Tenant
                                                             <span
                                                                 style={{
                                                                     color: 'red',
@@ -180,7 +134,85 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                                 *
                                                             </span>
                                                         </label>
+                                                    }
+                                                    error={
+                                                        touched.tenancyName && errors.tenancyName
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    helperText={
+                                                        touched.tenancyName &&
+                                                        errors.tenancyName && (
+                                                            <span>{errors.tenancyName}</span>
+                                                        )
+                                                    }
+                                                    type="text"
+                                                    size="small"
+                                                    name="tenancyName"
+                                                    value={values.tenancyName}
+                                                    onChange={handleChange}
+                                                    fullWidth
+                                                />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <TextField
+                                                    label={
+                                                        <label>
+                                                            Tên cửa hàng
+                                                            <span
+                                                                style={{
+                                                                    color: 'red',
+                                                                    marginLeft: '3px'
+                                                                }}>
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                    }
+                                                    error={
+                                                        touched.name && errors.name ? true : false
+                                                    }
+                                                    helperText={
+                                                        touched.name &&
+                                                        errors.name && <span>{errors.name}</span>
+                                                    }
+                                                    type="text"
+                                                    size="small"
+                                                    name="name"
+                                                    value={values.name}
+                                                    onChange={handleChange}
+                                                    fullWidth
+                                                />
+                                            </FormGroup>
+                                            {tenantId !== 0 ? null : (
+                                                <>
+                                                    <FormGroup>
                                                         <TextField
+                                                            label={
+                                                                <label htmlFor="email">
+                                                                    Email quản trị
+                                                                    <span
+                                                                        style={{
+                                                                            color: 'red',
+                                                                            marginLeft: '3px'
+                                                                        }}>
+                                                                        *
+                                                                    </span>
+                                                                </label>
+                                                            }
+                                                            error={
+                                                                touched.adminEmailAddress &&
+                                                                errors.adminEmailAddress
+                                                                    ? true
+                                                                    : false
+                                                            }
+                                                            helperText={
+                                                                touched.adminEmailAddress &&
+                                                                errors.adminEmailAddress && (
+                                                                    <div>
+                                                                        {errors.adminEmailAddress}
+                                                                    </div>
+                                                                )
+                                                            }
                                                             type="email"
                                                             size="small"
                                                             name="adminEmailAddress"
@@ -188,12 +220,6 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                             onChange={handleChange}
                                                             fullWidth
                                                         />
-                                                        {touched.adminEmailAddress &&
-                                                            errors.adminEmailAddress && (
-                                                                <div>
-                                                                    {errors.adminEmailAddress}
-                                                                </div>
-                                                            )}
                                                     </FormGroup>
                                                     <FormGroup>
                                                         <FormControlLabel
@@ -224,10 +250,24 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                             )}
                                             {isHostDatabase || tenantId !== 0 ? null : (
                                                 <FormGroup>
-                                                    <label htmlFor="chuoi-ket-noi">
-                                                        Chuỗi kết nối
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label htmlFor="chuoi-ket-noi">
+                                                                Chuỗi kết nối
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.connectionString &&
+                                                            errors.connectionString
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.connectionString &&
+                                                            errors.connectionString && (
+                                                                <div>{errors.connectionString}</div>
+                                                            )
+                                                        }
                                                         id="chuoi-ket-noi"
                                                         type="text"
                                                         size="small"
@@ -236,10 +276,6 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         onChange={handleChange}
                                                         fullWidth
                                                     />
-                                                    {touched.connectionString &&
-                                                        errors.connectionString && (
-                                                            <div>{errors.connectionString}</div>
-                                                        )}
                                                 </FormGroup>
                                             )}
                                             {tenantId !== 0 ? null : (

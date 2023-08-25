@@ -294,7 +294,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         initialValues={initialValues}
                         onSubmit={this.handleSubmit}
                         validationSchema={rules}>
-                        {({ values, handleChange, errors }) => (
+                        {({ values, handleChange, errors, touched }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <Box>
                                     <TabContext value={this.state.tabIndex}>
@@ -339,48 +339,71 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 marginTop: '16px'
                                             }}>
                                             <FormGroup>
-                                                <label htmlFor="name" className="modal-lable">
-                                                    Tên vai trò
-                                                    <span
-                                                        style={{
-                                                            color: 'red',
-                                                            marginRight: '3px'
-                                                        }}>
-                                                        *
-                                                    </span>
-                                                </label>
                                                 <TextField
                                                     className="mt-2"
+                                                    label={
+                                                        <label
+                                                            htmlFor="name"
+                                                            className="modal-lable">
+                                                            Tên vai trò
+                                                            <span
+                                                                style={{
+                                                                    color: 'red',
+                                                                    marginRight: '3px'
+                                                                }}>
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                    }
                                                     fullWidth
                                                     size="small"
                                                     id="name"
                                                     type="text"
+                                                    error={
+                                                        errors.name && touched.name ? true : false
+                                                    }
+                                                    helperText={
+                                                        errors.name && (
+                                                            <small className="text-danger">
+                                                                {errors.name}
+                                                            </small>
+                                                        )
+                                                    }
                                                     name="name"
                                                     value={values.name}
                                                     onChange={handleChange}
                                                 />
-                                                {errors.name && (
-                                                    <small className="text-danger">
-                                                        {errors.name}
-                                                    </small>
-                                                )}
                                             </FormGroup>
                                             <FormGroup>
-                                                <label
-                                                    htmlFor="displayName"
-                                                    className="modal-lable">
-                                                    Tên hiển thị
-                                                    <span
-                                                        style={{
-                                                            color: 'red',
-                                                            marginRight: '3px'
-                                                        }}>
-                                                        *
-                                                    </span>
-                                                </label>
                                                 <TextField
                                                     className="mt-2"
                                                     fullWidth
+                                                    label={
+                                                        <label
+                                                            htmlFor="displayName"
+                                                            className="modal-lable">
+                                                            Tên hiển thị
+                                                            <span
+                                                                style={{
+                                                                    color: 'red',
+                                                                    marginRight: '3px'
+                                                                }}>
+                                                                *
+                                                            </span>
+                                                        </label>
+                                                    }
+                                                    error={
+                                                        errors.displayName && touched.displayName
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    helperText={
+                                                        errors.displayName && (
+                                                            <small className="text-danger">
+                                                                {errors.displayName}
+                                                            </small>
+                                                        )
+                                                    }
                                                     size="small"
                                                     id="displayName"
                                                     type="text"
@@ -388,21 +411,18 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     value={values.displayName}
                                                     onChange={handleChange}
                                                 />
-                                                {errors.displayName && (
-                                                    <small className="text-danger">
-                                                        {errors.displayName}
-                                                    </small>
-                                                )}
                                             </FormGroup>
                                             <FormGroup>
-                                                <label
-                                                    htmlFor="description"
-                                                    className="modal-lable">
-                                                    Mô tả
-                                                </label>
                                                 <TextField
                                                     className="mt-2"
                                                     fullWidth
+                                                    label={
+                                                        <label
+                                                            htmlFor="description"
+                                                            className="modal-lable">
+                                                            Mô tả
+                                                        </label>
+                                                    }
                                                     size="small"
                                                     id="description"
                                                     type="text"

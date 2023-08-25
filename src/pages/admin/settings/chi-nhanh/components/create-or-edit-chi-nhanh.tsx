@@ -62,8 +62,12 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                 }}>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Mã chi nhánh</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">
+                                                    Mã chi nhánh
+                                                </Typography>
+                                            }
                                             size="small"
                                             name="maChiNhanh"
                                             placeholder="Nhập mã chi nhánh"
@@ -73,8 +77,12 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Tên chi nhánh</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">
+                                                    Tên chi nhánh
+                                                </Typography>
+                                            }
                                             size="small"
                                             placeholder="Nhập tên chi nhánh"
                                             name="tenChiNhanh"
@@ -84,8 +92,12 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Số điện thoại</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">
+                                                    Số điện thoại
+                                                </Typography>
+                                            }
                                             size="small"
                                             name="soDienThoai"
                                             placeholder="Nhập số điện thoại"
@@ -95,8 +107,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Địa chỉ</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">Địa chỉ</Typography>
+                                            }
                                             size="small"
                                             placeholder="Nhập địa chỉ"
                                             name="diaChi"
@@ -106,8 +120,12 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Ngày áp dụng</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">
+                                                    Ngày áp dụng
+                                                </Typography>
+                                            }
                                             size="small"
                                             type="date"
                                             name="ngayApDung"
@@ -117,8 +135,12 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Ngày hết hạn</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">
+                                                    Ngày hết hạn
+                                                </Typography>
+                                            }
                                             size="small"
                                             type="date"
                                             name="ngayHetHan"
@@ -128,8 +150,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography variant="subtitle2">Ghi chú</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">Ghi chú</Typography>
+                                            }
                                             size="small"
                                             rows={4}
                                             multiline
