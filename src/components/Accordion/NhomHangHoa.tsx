@@ -7,8 +7,9 @@ import {
     Button
 } from '@mui/material';
 import { useState } from 'react';
-import { OpenInNew, LocalOffer } from '@mui/icons-material';
+import { OpenInNew, LocalOfferOutlined } from '@mui/icons-material';
 import { ModelNhomHangHoa } from '../../services/product/dto';
+// import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 
 export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: any) {
     const [rowHover, setRowHover] = useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
@@ -37,17 +38,15 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                     disableGutters
                     key={index}
                     sx={{
-                        border: 'none!important',
-                        marginTop: '12px',
                         boxShadow: 'unset',
-                        '&.MuiAccordion-root::before': { content: 'none' }
+                        '&.MuiAccordion-root::before': { content: 'none' },
+                        '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
                     }}>
                     <AccordionSummary
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
-                            borderRadius: '8px',
+                            // bgcolor: idChosing === item.id ? 'var(--color-bg)' : '',
                             '&:hover': {
                                 bgcolor: 'var(--color-bg)'
                             }
@@ -58,11 +57,9 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         onMouseEnter={(event: any) => {
                             handleHover(event, item, index);
                         }}>
-                        <LocalOffer sx={{ color: item.color }} />
+                        <LocalOfferOutlined sx={{ color: item.color, width: 20, height: 20 }} />
                         <Typography
-                            variant="subtitle1"
-                            color="#333233"
-                            fontSize="14px"
+                            variant="body2"
                             fontWeight="700"
                             textTransform="capitalize"
                             sx={{
@@ -96,7 +93,6 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                 alignItems: 'center',
                                 margin: 'auto',
                                 bgcolor: idChosing === child.id ? '#F2EBF0' : '',
-                                borderRadius: '8px',
                                 '&:hover': {
                                     bgcolor: '#F2EBF0'
                                 }
@@ -107,11 +103,11 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                             onMouseEnter={(event: any) => {
                                 handleHover(event, child, index2);
                             }}>
-                            <LocalOffer sx={{ color: item.color, opacity: '0' }} />
+                            <LocalOfferOutlined
+                                sx={{ color: item.color, opacity: '0', width: 20, height: 20 }}
+                            />
                             <Typography
-                                variant="subtitle1"
-                                color="#333233"
-                                fontSize="14px"
+                                variant="body2"
                                 textTransform="capitalize"
                                 sx={{
                                     cursor: 'poitner',

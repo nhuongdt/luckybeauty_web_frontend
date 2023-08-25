@@ -48,7 +48,8 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                 sx={{
                     // borderBottom: '1px solid #cccc',
                     boxShadow: 'unset',
-                    '&.MuiAccordion-root::before': { content: 'none' }
+                    '&.MuiAccordion-root::before': { content: 'none' },
+                    '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
                 }}>
                 <AccordionSummary
                     sx={{
@@ -58,15 +59,12 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             bgcolor: 'var(--color-bg)'
                         },
                         '& .MuiAccordionSummary-content': {
-                            marginTop: '8px ',
-                            marginBottom: '8px'
+                            alignItems: 'end'
                         }
                     }}>
                     <PersonOutlineIcon sx={{ color: 'var(--color-main)' }} />
                     <Typography
-                        variant="subtitle1"
-                        color="#333233"
-                        fontSize="14px"
+                        variant="body2"
                         fontWeight="700"
                         textTransform="capitalize"
                         sx={{
@@ -92,7 +90,8 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                     sx={{
                         // borderBottom: '1px solid #cccc',
                         boxShadow: 'unset',
-                        '&.MuiAccordion-root::before': { content: 'none' }
+                        '&.MuiAccordion-root::before': { content: 'none' },
+                        '& .MuiAccordionSummary-root': { minHeight: '46px', maxHeight: '46px' }
                     }}>
                     <AccordionSummary
                         sx={{
@@ -103,8 +102,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                                 bgcolor: 'var(--color-bg)'
                             },
                             '& .MuiAccordionSummary-content': {
-                                marginTop: '4px ',
-                                marginBottom: '4px'
+                                alignItems: 'end'
                             }
                         }}
                         onMouseLeave={(event: any) => {
