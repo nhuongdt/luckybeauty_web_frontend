@@ -242,7 +242,7 @@ body .font-normal {
 }
 
 .MuiDataGrid-columnHeadersInner {
-    background-color: var(--color-bg)!important
+    background-color: var(--color-header-table) !important
 }
 
 .MuiDataGrid-columnHeader:focus,
@@ -311,22 +311,17 @@ body .font-normal {
     border-radius: 100%!important;
 }
 
-
-/*  todo
-@media (min-height:600) {
-    .data-grid-row {
-        max-height: calc(100% - 68px)!important;
-    }
+.filter-left-title {
+    background-color: var(--color-header-table) !important
 }
 
-@media (min-height:900) {
-    .data-grid-row {
-        max-height: calc(100% - 32px)!important;
-    }
+.page-box-left {
+    border-radius: 4px;
+    background-color: white;
 }
 
-@media(min-height:1200) {
-    .data-grid-row {
-        max-height: calc(100% - 32px)!important;
-    }
-} */
+.page-box-right {
+    border-radius: 4px;
+    background-color: white;
+    min-height: 100%;
+}
