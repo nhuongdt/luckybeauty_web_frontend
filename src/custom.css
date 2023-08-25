@@ -10,6 +10,7 @@
     --font-size-main: 0.8125rem;
     --font-family-main: "Helvetica Neue", Helvetica, Arial, sans-serif;
     --color-hoverIcon: brightness(0) saturate(100%) invert(45%) sepia(84%) saturate(2392%) hue-rotate(174deg) brightness(98%) contrast(103%);
+    --color-header-table: #EEF0F4;
 }
 
 .btn-import {
