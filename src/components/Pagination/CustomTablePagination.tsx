@@ -30,7 +30,10 @@ class CustomTablePagination extends Component<TablePaginationProps> {
             handlePerPageChange
         } = this.props;
         return (
-            <Grid container sx={{ display: totalRecord > 0 ? '' : 'none' }} padding="0px 16px">
+            <Grid
+                container
+                sx={{ display: totalRecord > 0 ? '' : 'none', backgroundColor: '#fff' }}
+                padding="0px 16px">
                 <Grid item xs={6} md={3}>
                     <Box
                         sx={{
