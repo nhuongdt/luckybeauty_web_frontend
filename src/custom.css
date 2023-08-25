@@ -298,7 +298,6 @@
 }
 
 .MuiDataGrid-cell {
-    /* color: #3d475c; */
     color: var(--font-color-main)
 }
 

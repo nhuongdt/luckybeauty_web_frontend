@@ -444,13 +444,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 display="flex"
                                 alignItems="center"
                                 gap="12px">
-                                <Typography
-                                    color="#333233"
-                                    variant="h1"
-                                    fontSize="15px"
-                                    fontWeight="700">
-                                    Danh sách khách hàng
-                                </Typography>
+                                <span className="page-title">Danh sách khách hàng</span>
                                 <Box className="form-search">
                                     <TextField
                                         sx={{
@@ -620,6 +614,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         disableRowSelectionOnClick
                                         rowHeight={46}
                                         sx={{ maxHeight: 'calc(100% - 32px)' }} // trừ chiều cao của phân trang
+                                        className="data-grid-row"
                                         rows={this.state.rowTable}
                                         columns={columns}
                                         onRowClick={() => this.handleOpenInfor}
