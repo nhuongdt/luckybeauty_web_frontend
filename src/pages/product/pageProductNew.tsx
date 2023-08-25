@@ -493,48 +493,45 @@ export default function PageProductNew() {
                 downloadImportTemplate={downloadImportTemplate}
                 importFile={handleImportData}
             />
-            <Grid container className="dich-vu-page" gap={4} paddingTop={2} paddingRight={2}>
+            <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
-                        <Typography color="#333233" fontSize="16px" variant="h5" fontWeight="700">
-                            Danh mục dịch vụ
-                        </Typography>
-                        <Box>
-                            <TextField
-                                size="small"
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    '& input': {
-                                        paddingLeft: '16px'
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                        paddingLeft: '0'
+                    <Grid item xs={12} md={6} lg={6} alignItems="center">
+                        <Grid container alignItems="center">
+                            <Grid item xs={6} sm={6} lg={4}>
+                                <span className="page-title"> Danh mục dịch vụ</span>
+                            </Grid>
+                            <Grid item xs={6} sm={6} lg={8}>
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    sx={{
+                                        backgroundColor: '#fff'
+                                    }}
+                                    variant="outlined"
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <IconButton onClick={hanClickIconSearch}>
+                                                <Search />
+                                            </IconButton>
+                                        )
+                                    }}
+                                    onChange={(event) =>
+                                        setFilterPageProduct((itemOlds: any) => {
+                                            return {
+                                                ...itemOlds,
+                                                textSearch: event.target.value
+                                            };
+                                        })
                                     }
-                                }}
-                                variant="outlined"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton onClick={hanClickIconSearch}>
-                                            <SeasrchIcon />
-                                        </IconButton>
-                                    )
-                                }}
-                                onChange={(event) =>
-                                    setFilterPageProduct((itemOlds: any) => {
-                                        return {
-                                            ...itemOlds,
-                                            textSearch: event.target.value
-                                        };
-                                    })
-                                }
-                                onKeyDown={(event) => {
-                                    handleKeyDownTextSearch(event);
-                                }}
-                            />
-                        </Box>
+                                    onKeyDown={(event) => {
+                                        handleKeyDownTextSearch(event);
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
+                    <Grid item xs={12} md={6} lg={6} display="flex" gap="8px" justifyContent="end">
                         <Button
                             size="small"
                             onClick={onImportShow}
@@ -568,38 +565,32 @@ export default function PageProductNew() {
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2}>
+                <Grid container spacing={2} paddingTop={1}>
                     <Grid item lg={3} md={3} sm={4} xs={12}>
-                        <Box
-                            sx={{
-                                backgroundColor: '#fff',
-                                borderRadius: '8px',
-                                minHeight: '100%'
-                            }}>
+                        <Box className="page-box-left">
                             <Box
                                 display="flex"
                                 justifyContent="space-between"
                                 borderBottom="1px solid #E6E1E6"
-                                padding="16px 24px">
-                                <Typography fontSize="18px" fontWeight="700">
+                                padding="12px"
+                                borderRadius={'4px'}
+                                sx={{ backgroundColor: 'var(--color-header-table)' }}>
+                                <Typography fontSize="14px" fontWeight="700">
                                     Nhóm dịch vụ
                                 </Typography>
-                                <Button
-                                    sx={{ padding: '0', minWidth: 'unset' }}
-                                    className="btn-container-hover">
-                                    <Add
-                                        sx={{
-                                            color: '#fff',
-                                            transition: '.4s',
-                                            height: '30px',
-                                            cursor: 'pointer',
-                                            width: '30px',
-                                            borderRadius: '4px',
-                                            padding: '4px'
-                                        }}
-                                        onClick={() => showModalAddNhomHang()}
-                                    />
-                                </Button>
+
+                                <Add
+                                    sx={{
+                                        transition: '.4s',
+                                        height: '32px',
+                                        cursor: 'pointer',
+                                        width: '32px',
+                                        borderRadius: '4px',
+                                        padding: '4px 0px',
+                                        border: '1px solid #cccc'
+                                    }}
+                                    onClick={() => showModalAddNhomHang()}
+                                />
                             </Box>
                             <Box
                                 sx={{
@@ -611,7 +602,7 @@ export default function PageProductNew() {
                                     },
                                     '&::-webkit-scrollbar-thumb': {
                                         bgcolor: 'rgba(0,0,0,0.1)',
-                                        borderRadius: '8px'
+                                        borderRadius: '4px'
                                     },
                                     '&::-webkit-scrollbar-track': {
                                         bgcolor: 'var(--color-bg)'
@@ -625,30 +616,23 @@ export default function PageProductNew() {
                         </Box>
                     </Grid>
                     <Grid item lg={9} md={9} sm={8} xs={12}>
-                        <Box
-                            sx={{
-                                backgroundColor: '#fff',
-                                borderRadius: '8px',
-                                minHeight: '100%',
-                                position: 'relative'
-                            }}>
+                        <Box className="page-box-right">
                             <DataGrid
+                                className="data-grid-row"
                                 disableRowSelectionOnClick
-                                autoHeight
+                                rowHeight={46}
                                 rows={pageDataProduct.items}
                                 columns={columns}
                                 hideFooter
                                 checkboxSelection
                                 localeText={TextTranslate}
                             />
-                            {/* {selectedRow && <CustomRowDetails />} */}
 
                             <Grid
                                 container
                                 style={{
                                     display: pageDataProduct.totalCount > 0 ? 'flex' : 'none',
                                     paddingLeft: '16px',
-                                    // position: 'absolute',
                                     bottom: '16px'
                                 }}>
                                 <Grid item xs={4} md={4} lg={4} sm={4}>
