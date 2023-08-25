@@ -378,12 +378,14 @@ const Calendar: React.FC = () => {
                         sx={{
                             '& .custom-time': {
                                 fontFamily: 'Roboto',
+                                fontWeight: '400',
                                 height: '32px',
-                                bgcolor: 'var(--color-bg)',
+                                //bgcolor: 'var(--color-bg)',
                                 borderRadius: '8px',
                                 padding: '8px',
-                                fontSize: '12px',
-                                color: '#333233'
+                                fontSize: '13px',
+                                textAlign: 'center',
+                                color: 'black'
                             },
                             '& .bodder-inline': {
                                 borderInline: '1px solid #E6E1E6',

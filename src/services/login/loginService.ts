@@ -66,6 +66,15 @@ class LoginService {
                         Cookies.set('IdNhanVien', apiResult.data.result['idNhanVien'], {
                             expires: tokenExpireDate
                         });
+                        Cookies.set('fullname', apiResult.data.result['fullName'], {
+                            expires: tokenExpireDate
+                        });
+                        Cookies.set('email', apiResult.data.result['email'], {
+                            expires: tokenExpireDate
+                        });
+                        Cookies.set('avatar', apiResult.data.result['avatar'], {
+                            expires: tokenExpireDate
+                        });
                         loginModel.rememberMe
                             ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
                             : Cookies.set('isRememberMe', 'false');

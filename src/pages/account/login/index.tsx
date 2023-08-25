@@ -50,7 +50,7 @@ const LoginScreen: React.FC = () => {
                     const remember = Cookies.get('isRememberMe') === 'true' ? true : false;
                     await LoginService.GetPermissionByUserId(parseInt(userId, 0), remember);
                     navigate('/home');
-                    window.location.reload();
+                    //window.location.reload();
                 } else {
                     formik.setFieldError('userNameOrEmail', 'Tài khoản hoặc mật khẩu không đúng');
                     formik.setFieldError('password', 'Tài khoản hoặc mật khẩu không đúng');

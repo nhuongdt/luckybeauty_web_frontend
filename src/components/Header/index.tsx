@@ -569,7 +569,11 @@ const Header: React.FC<HeaderProps> = (
                             aria-expanded={open ? 'true' : undefined}
                             onClick={handleClick}
                             sx={{ pr: '25px', mr: '-20px' }}>
-                            <Avatar src={avatar} sx={{ height: 36, width: 36 }} alt={'profile'} />
+                            <Avatar
+                                src={Cookies.get('avatar') ?? ''}
+                                sx={{ height: 36, width: 36 }}
+                                alt={'profile'}
+                            />
                         </Button>
 
                         <Menu
@@ -602,7 +606,7 @@ const Header: React.FC<HeaderProps> = (
                             <MenuItem>
                                 <Box sx={{ display: 'flex', gap: '12px' }}>
                                     <Avatar
-                                        src={avatar}
+                                        src={Cookies.get('avatar') ?? ''}
                                         alt="avatar"
                                         sx={{ width: 40, height: 40 }}
                                     />
@@ -619,8 +623,8 @@ const Header: React.FC<HeaderProps> = (
                                                 fontSize: '12px'
                                             }
                                         }}>
-                                        <Box component="h2">Nail salon</Box>
-                                        <Box component="p">nailsalon@mail.com</Box>
+                                        <Box component="h2">{Cookies.get('fullname') ?? ''}</Box>
+                                        <Box component="p">{Cookies.get('email') ?? ''}</Box>
                                     </Box>
                                 </Box>
                             </MenuItem>

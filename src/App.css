@@ -192,6 +192,7 @@ body .font-normal {
 
 .MuiOutlinedInput-root {
     font-size: 14px;
+    border-radius: 8px !important;
 }
 
 

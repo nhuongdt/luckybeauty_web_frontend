@@ -235,115 +235,149 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     container
                                     className="form-container"
                                     spacing={2}
+                                    rowSpacing={4}
                                     width={useWindowWidth() > 600 ? '70%' : '100%'}
                                     paddingRight={useWindowWidth() > 600 ? '12px' : '0'}
                                     marginTop="0"
                                     marginLeft="0">
                                     <Grid item xs={12} md={6}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Họ nhân viên <span className="text-danger">*</span>
-                                        </Typography>
                                         <TextField
-                                            size="small"
                                             name="ho"
                                             value={values.ho}
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Họ nhân viên{' '}
+                                                    <span className="text-danger">*</span>
+                                                </Typography>
+                                            }
+                                            error={errors.ho && touched.ho ? true : false}
+                                            helperText={
+                                                errors.ho &&
+                                                touched.ho && (
+                                                    <small className="text-danger">
+                                                        {errors.ho}
+                                                    </small>
+                                                )
+                                            }
                                             placeholder="Họ nhân viên"
                                             onChange={handleChange}
                                             fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                                        {errors.ho && touched.ho && (
-                                            <small className="text-danger">{errors.ho}</small>
-                                        )}
+                                            sx={{
+                                                fontSize: '16px',
+                                                height: '40px'
+                                            }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Tên nhân viên <span className="text-danger">*</span>
-                                        </Typography>
                                         <TextField
-                                            size="small"
                                             name="tenLot"
                                             value={values.tenLot}
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Tên nhân viên{' '}
+                                                    <span className="text-danger">*</span>
+                                                </Typography>
+                                            }
                                             placeholder="Tên nhân viên"
+                                            error={errors.tenLot && touched.tenLot ? true : false}
+                                            helperText={
+                                                errors.tenLot &&
+                                                touched.tenLot && (
+                                                    <small className="text-danger">
+                                                        {errors.tenLot}
+                                                    </small>
+                                                )
+                                            }
                                             onChange={handleChange}
                                             fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
-                                        {errors.tenLot && touched.tenLot && (
-                                            <small className="text-danger">{errors.tenLot}</small>
-                                        )}
+                                            sx={{
+                                                fontSize: '16px',
+                                                color: '#4c4b4c',
+                                                height: '40px'
+                                            }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Số điện thoại <span className="text-danger">*</span>
-                                        </Typography>
                                         <TextField
                                             type="tel"
                                             name="soDienThoai"
                                             value={values.soDienThoai}
-                                            size="small"
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Số điện thoại
+                                                </Typography>
+                                            }
                                             onChange={handleChange}
                                             placeholder="Số điện thoại"
+                                            error={
+                                                errors.soDienThoai && touched.soDienThoai
+                                                    ? true
+                                                    : false
+                                            }
+                                            helperText={
+                                                errors.soDienThoai &&
+                                                touched.soDienThoai && (
+                                                    <small className="text-danger">
+                                                        {errors.soDienThoai}
+                                                    </small>
+                                                )
+                                            }
                                             fullWidth
-                                            sx={{ fontSize: '16px' }}></TextField>
-                                        {errors.soDienThoai && touched.soDienThoai && (
-                                            <small className="text-danger">
-                                                {errors.soDienThoai}
-                                            </small>
-                                        )}
+                                            sx={{ fontSize: '16px', height: '40px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Địa chỉ
-                                        </Typography>
                                         <TextField
                                             type="text"
-                                            size="small"
                                             name="diaChi"
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Địa chỉ
+                                                </Typography>
+                                            }
                                             value={values.diaChi}
                                             onChange={handleChange}
                                             placeholder="Nhập địa chỉ của nhân viên"
                                             fullWidth
-                                            sx={{ fontSize: '16px' }}></TextField>
+                                            sx={{ fontSize: '16px', height: '40px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Ngày sinh
-                                        </Typography>
                                         <TextField
                                             type="date"
                                             fullWidth
                                             name="ngaySinh"
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Ngày sinh
+                                                </Typography>
+                                            }
                                             value={values.ngaySinh?.substring(0, 10)}
                                             onChange={handleChange}
                                             placeholder="21/04/2004"
-                                            sx={{ fontSize: '16px' }}
-                                            size="small"></TextField>
+                                            sx={{
+                                                fontSize: '16px',
+                                                height: '40px',
+                                                padding: '0px !important'
+                                            }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Giới tính
-                                        </Typography>
                                         <Select
                                             id="gender"
-                                            size="small"
                                             fullWidth
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Giới tính
+                                                </Typography>
+                                            }
                                             name="gioiTinh"
                                             value={values.gioiTinh}
                                             onChange={handleChange}
@@ -353,7 +387,8 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 padding: '0',
                                                 fontSize: '16px',
                                                 borderRadius: '8px',
-                                                borderColor: '#E6E1E6'
+                                                borderColor: '#E6E1E6',
+                                                height: '50px'
                                             }}>
                                             <MenuItem value={0}>Lựa chọn</MenuItem>
                                             <MenuItem value={2}>Nữ</MenuItem>
@@ -361,82 +396,83 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         </Select>
                                     </Grid>
 
-                                    <Grid item container xs={12}>
-                                        <Grid item xs={12}>
-                                            <Typography
-                                                color="#4C4B4C"
-                                                variant="subtitle2"
-                                                paddingBottom={'4px'}>
-                                                Vị trí <span className="text-danger">*</span>
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Box display={'flex'} flexDirection={'row'} gap={1}>
-                                                <Autocomplete
-                                                    value={
-                                                        suggestStore.suggestChucVu.filter(
-                                                            (x) => x.idChucVu == values.idChucVu
-                                                        )[0] ??
-                                                        ({
-                                                            idChucVu: '',
-                                                            tenChucVu: ''
-                                                        } as SuggestChucVuDto)
-                                                    }
-                                                    options={suggestStore.suggestChucVu}
-                                                    getOptionLabel={(option) =>
-                                                        `${option.tenChucVu}`
-                                                    }
-                                                    size="small"
-                                                    fullWidth
-                                                    disablePortal
-                                                    onChange={(event, value) => {
-                                                        setFieldValue(
-                                                            'idChucVu',
-                                                            value ? value.idChucVu : ''
-                                                        ); // Cập nhật giá trị id trong Formik
-                                                    }}
-                                                    renderInput={(params) => (
-                                                        <TextField
-                                                            {...params}
-                                                            placeholder="Nhập tên vị trí"
-                                                        />
-                                                    )}
-                                                />
-                                                <Button
-                                                    onClick={this.onModalChucVu}
-                                                    variant="contained">
-                                                    <AddIcon />
-                                                </Button>
-                                            </Box>
-
-                                            {errors.idChucVu && touched.idChucVu && (
-                                                <small className="text-danger">
-                                                    {errors.idChucVu}
-                                                </small>
-                                            )}
-                                        </Grid>
-                                        {/* <Grid
-                                            item
-                                            xs={1}
-                                            hidden={
-                                                !abpCustom.isGrandPermission('Pages.ChucVu.Create')
-                                            }>
-                                            <Button fullWidth onClick={this.onModalChucVu}>
-                                                <AddBoxIcon
-                                                    sx={{ width: '28px', height: '28px' }}
-                                                />
+                                    <Grid item xs={12}>
+                                        <Box display={'flex'} flexDirection={'row'} gap={1}>
+                                            <Autocomplete
+                                                value={
+                                                    suggestStore.suggestChucVu.filter(
+                                                        (x) => x.idChucVu == values.idChucVu
+                                                    )[0] ??
+                                                    ({
+                                                        idChucVu: '',
+                                                        tenChucVu: ''
+                                                    } as SuggestChucVuDto)
+                                                }
+                                                options={suggestStore.suggestChucVu}
+                                                getOptionLabel={(option) => `${option.tenChucVu}`}
+                                                fullWidth
+                                                disablePortal
+                                                onChange={(event, value) => {
+                                                    setFieldValue(
+                                                        'idChucVu',
+                                                        value ? value.idChucVu : ''
+                                                    ); // Cập nhật giá trị id trong Formik
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        sx={{ height: '40px' }}
+                                                        label={
+                                                            <Typography
+                                                                //color="#4C4B4C"
+                                                                variant="subtitle2">
+                                                                Vị trí{' '}
+                                                                <span className="text-danger">
+                                                                    *
+                                                                </span>
+                                                            </Typography>
+                                                        }
+                                                        error={
+                                                            errors.idChucVu && touched.idChucVu
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            errors.idChucVu &&
+                                                            touched.idChucVu && (
+                                                                <small className="text-danger">
+                                                                    {errors.idChucVu}
+                                                                </small>
+                                                            )
+                                                        }
+                                                        placeholder="Nhập tên vị trí"
+                                                    />
+                                                )}
+                                            />
+                                            <Button
+                                                hidden={
+                                                    !abpCustom.isGrandPermission(
+                                                        'Pages.ChucVu.Create'
+                                                    )
+                                                }
+                                                sx={{ height: '48px' }}
+                                                onClick={this.onModalChucVu}
+                                                variant="contained">
+                                                <AddIcon />
                                             </Button>
-                                        </Grid> */}
+                                        </Box>
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Typography
-                                            color="#4C4B4C"
-                                            variant="subtitle2"
-                                            paddingBottom={'4px'}>
-                                            Ghi chú
-                                        </Typography>
-                                        <TextareaAutosize
+                                        <TextField
+                                            multiline
+                                            label={
+                                                <Typography
+                                                    //color="#4C4B4C"
+                                                    variant="subtitle2">
+                                                    Ghi chú
+                                                </Typography>
+                                            }
                                             placeholder="Điền"
                                             name="ghiChu"
                                             value={values.ghiChu?.toString()}
@@ -444,9 +480,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             minRows={4}
                                             style={{
                                                 width: '100%',
-                                                borderColor: '#E6E1E6',
-                                                borderRadius: '8px',
-                                                padding: '16px'
+                                                borderRadius: '8px'
                                             }}
                                         />
                                     </Grid>

@@ -299,6 +299,7 @@ class EmployeeScreen extends React.Component {
             field: 'ngaySinh',
             headerName: 'Ngày sinh',
             headerAlign: 'center',
+            align: 'center',
             minWidth: 112,
             flex: 0.8,
             renderCell: (params) => (
@@ -306,7 +307,7 @@ class EmployeeScreen extends React.Component {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'start',
+                        justifyContent: 'center',
                         width: '100%'
                     }}>
                     {params.value != null ? (
@@ -332,7 +333,7 @@ class EmployeeScreen extends React.Component {
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'left',
+                        justifyContent: 'center',
                         width: '100%'
                     }}>
                     <Typography fontSize="13px" fontWeight="400" lineHeight="16px">
