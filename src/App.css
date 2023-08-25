@@ -184,12 +184,6 @@ body .font-normal {
     font-size: 14px;
 }
 
-.dialog-title {
-    font-size: 24px;
-    color: #333233;
-    font-weight: 700;
-}
-
 .MuiOutlinedInput-root {
     font-size: 14px;
 }
@@ -218,7 +212,7 @@ body .font-normal {
     font-family: var(--font-family-main) !important
 }
 
-.MuiPaper-root {
+.MuiPaper-root:not(.MuiDialog-paper) {
     color: var(--font-color) !important;
 }
 
@@ -285,3 +279,54 @@ body .font-normal {
     overflow: hidden!important;
     white-space: nowrap!important;
 }
+
+.page-title {
+    font-size: 15px!important;
+    font-weight: 700!important;
+    color: #333233;
+}
+
+.modal-title {
+    /* ~ 21px*/
+    font-size: 1.25rem!important;
+    font-weight: 700!important;
+}
+
+.user-icon-upload {
+    width: 80px!important;
+    height: 80px!important;
+    color: #dfdcdc!important;
+    border-radius: 100%!important;
+    border: 1px solid #cccc;
+    padding: 10px!important;
+}
+
+.user-image-upload {
+    width: 100%!important;
+    height: 100%!important;
+    min-width: 80px!important;
+    min-height: 80px!important;
+    max-width: 80px!important;
+    max-height: 80px!important;
+    border-radius: 100%!important;
+}
+
+
+/*  todo
+@media (min-height:600) {
+    .data-grid-row {
+        max-height: calc(100% - 68px)!important;
+    }
+}
+
+@media (min-height:900) {
+    .data-grid-row {
+        max-height: calc(100% - 32px)!important;
+    }
+}
+
+@media(min-height:1200) {
+    .data-grid-row {
+        max-height: calc(100% - 32px)!important;
+    }
+} */

@@ -112,7 +112,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
 
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
-                <DialogTitle className="poppup-title">{title}</DialogTitle>
+                <DialogTitle className="modal-title">{title}</DialogTitle>
                 <DialogContent>
                     <Formik
                         initialValues={initValues}
@@ -175,7 +175,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     }
                                 }}>
                                 <Box
-                                    className="form-add"
+                                    // className="form-add"
                                     sx={{
                                         '& .text-danger': {
                                             fontSize: '12px'
@@ -196,15 +196,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                                 }}>
                                                                 <img
                                                                     src={this.state.cusImage}
-                                                                    style={{
-                                                                        width: '100%',
-                                                                        height: '100%',
-                                                                        maxHeight: 60,
-                                                                        maxWidth: 60,
-                                                                        minWidth: 60,
-                                                                        minHeight: 60,
-                                                                        borderRadius: '100%'
-                                                                    }}
+                                                                    className="user-image-upload"
                                                                 />
                                                                 {/* <Close
                                                             onClick={this.closeImage}
@@ -217,16 +209,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                             </Box>
                                                         ) : (
                                                             <div>
-                                                                <PersonIcon
-                                                                    sx={{
-                                                                        width: 60,
-                                                                        height: 60,
-                                                                        color: '#dfdcdc',
-                                                                        borderRadius: '100%',
-                                                                        border: '1px solid #cccc',
-                                                                        padding: '10px'
-                                                                    }}
-                                                                />
+                                                                <PersonIcon className="user-icon-upload" />
                                                             </div>
                                                         )}
                                                         <TextField

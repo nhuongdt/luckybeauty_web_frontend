@@ -160,12 +160,13 @@
     opacity: 1;
 }
 
-.poppup-title {
-    font-size: 24px;
+
+/* .poppup-title {
+    font-size: 20px;
     color: #3D475C;
     font-weight: 700;
     font-style: normal;
-}
+} */
 
 .poppup-des {
     color: #999699;
