@@ -186,7 +186,7 @@ body .font-normal {
 
 .MuiOutlinedInput-root {
     font-size: 14px;
-    border-radius: 8px !important;
+    border-radius: 4px !important;
 }
 
 
@@ -197,7 +197,7 @@ body .font-normal {
 }
 
 .inputEdit .MuiOutlinedInput-root {
-    border-radius: 8px;
+    border-radius: 4px !important;
 }
 
 .MuiRadio-root.Mui-checked {

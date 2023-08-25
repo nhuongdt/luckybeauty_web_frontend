@@ -47,7 +47,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
     state = {
         confirmDirty: false,
         tabIndex: '1',
-        hoVaTen: ''
+        hoVaTen: '',
+        avatar: ''
     };
 
     setConfirmDirty = (value: boolean) => {
@@ -86,6 +87,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     autoHideDuration: 3000
                 });
             }
+            this.setState({ avatar: '' });
             onOk();
         } catch (error) {
             enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
@@ -144,7 +146,14 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     : Yup.string()
         });
         return (
-            <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
+            <Dialog
+                open={visible}
+                onClose={() => {
+                    onCancel();
+                    this.setState({ avatar: '' });
+                }}
+                fullWidth
+                maxWidth="sm">
                 <DialogTitle>
                     <Typography
                         variant="h3"
@@ -155,7 +164,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     </Typography>
                     <IconButton
                         aria-label="close"
-                        onClick={onCancel}
+                        onClick={() => {
+                            onCancel();
+                            this.setState({ avatar: '' });
+                        }}
                         sx={{
                             position: 'absolute',
                             right: 8,
@@ -191,59 +203,18 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             />
                                         </TabList>
                                     </Box>
-                                    <TabPanel value="1" sx={{ padding: '0' }}>
-                                        <Grid container sx={{ '& label': { marginBottom: '4px' } }}>
-                                            <Grid item sm={4} xs={12} position="relative">
-                                                <Box
-                                                    padding="20px"
-                                                    position={
-                                                        useWindowWidth() > 600
-                                                            ? 'absolute'
-                                                            : 'static'
-                                                    }
-                                                    textAlign="center">
-                                                    <img src={fileIcon} alt="file icon" />
-                                                    <Box
-                                                        display="flex"
-                                                        gap="10px"
-                                                        sx={{
-                                                            '& img': {
-                                                                filter: 'var(--color-hoverIcon)'
-                                                            }
-                                                        }}
-                                                        justifyContent={
-                                                            useWindowWidth() > 600
-                                                                ? 'unset'
-                                                                : 'center'
-                                                        }>
-                                                        <img src={fileUpload} alt="file upload" />
-                                                        <Typography
-                                                            variant="body1"
-                                                            fontSize="14px"
-                                                            fontWeight="500"
-                                                            color="var(--color-main)"
-                                                            marginTop="16px">
-                                                            Tải ảnh lên
-                                                        </Typography>
-                                                    </Box>
-                                                    <input
-                                                        type="file"
-                                                        style={{
-                                                            position: 'absolute',
-                                                            top: '0',
-                                                            left: '0',
-                                                            height: '100%',
-                                                            width: '100%',
-                                                            opacity: '0',
-                                                            cursor: 'pointer'
-                                                        }}
+                                    <TabPanel value="1" sx={{ padding: '16px' }}>
+                                        <Grid
+                                            container
+                                            sx={{ '& label': { marginBottom: '4px' } }}
+                                            spacing={2}>
+                                            <Grid item sm={4} xs={12}>
+                                                <Box textAlign={'center'}>
+                                                    <img
+                                                        src={this.state.avatar}
+                                                        width={150}
+                                                        height={150}
                                                     />
-                                                    <Typography variant="body1" fontSize="14px">
-                                                        File định dạng{' '}
-                                                        <b style={{ display: 'block' }}>
-                                                            jpeg, png
-                                                        </b>
-                                                    </Typography>
                                                 </Box>
                                             </Grid>
                                             <Grid
@@ -254,9 +225,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                 flexDirection="column"
                                                 gap="16px">
                                                 <FormGroup>
-                                                    <Typography variant="body1" fontSize="14px">
-                                                        Nhân sự đã có
-                                                    </Typography>
                                                     <Autocomplete
                                                         value={
                                                             suggestNhanSu.find(
@@ -281,7 +249,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 'nhanSuId',
                                                                 value ? value.id : undefined
                                                             );
-
+                                                            this.setState({
+                                                                avatar: value?.avatar
+                                                            });
                                                             const nhanVien = suggestNhanSu.find(
                                                                 (x) => x.id === value?.id
                                                             ) || {
@@ -317,86 +287,43 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
+                                                                label={
+                                                                    <Typography
+                                                                        variant="body1"
+                                                                        fontSize="14px">
+                                                                        Chọn nhân sự đã có
+                                                                    </Typography>
+                                                                }
                                                                 placeholder="Chọn nhân viên"
                                                             />
                                                         )}
                                                     />
-                                                    {/* <Select
-                                                        fullWidth
-                                                        name="nhanSuId"
-                                                        value={values.nhanSuId}
-                                                        onChange={(e) => {
-                                                            handleChange(e);
-                                                            const nhanVien = suggestNhanSu.filter(
-                                                                (x) => x.id == e.target.value
-                                                            )[0];
-                                                            setFieldValue(
-                                                                'phoneNumber',
-                                                                nhanVien.soDienThoai
-                                                            );
-                                                            this.setState(
-                                                                {
-                                                                    tenNhanVien:
-                                                                        nhanVien.tenNhanVien
-                                                                },
-                                                                () => {
-                                                                    const names =
-                                                                        nhanVien.tenNhanVien
-                                                                            .split(' ')
-                                                                            .filter((o) => o);
-                                                                    if (names.length > 0) {
-                                                                        setFieldValue(
-                                                                            'name',
-                                                                            names[names.length - 1]
-                                                                        );
-
-                                                                        if (names.length > 1) {
-                                                                            let surname = '';
-                                                                            for (
-                                                                                let i = 0;
-                                                                                i <
-                                                                                names.length - 1;
-                                                                                i++
-                                                                            ) {
-                                                                                surname +=
-                                                                                    names[i] + ' ';
-                                                                            }
-                                                                            setFieldValue(
-                                                                                'surname',
-                                                                                surname
-                                                                            );
-                                                                        } else {
-                                                                            setFieldValue(
-                                                                                'surname',
-                                                                                names[
-                                                                                    names.length - 1
-                                                                                ]
-                                                                            );
-                                                                        }
-                                                                    }
-                                                                }
-                                                            );
-                                                        }}
-                                                        size="small">
-                                                        {suggestNhanSu.map((item) => (
-                                                            <MenuItem key={item.id} value={item.id}>
-                                                                {item.tenNhanVien}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select> */}
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <label style={{ fontSize: '14px' }}>
-                                                        Họ
-                                                        <span
-                                                            style={{
-                                                                color: 'red',
-                                                                marginLeft: '2px'
-                                                            }}>
-                                                            *
-                                                        </span>
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Họ
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.surname && errors.surname
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.surname &&
+                                                            errors.surname && (
+                                                                <div>{errors.surname}</div>
+                                                            )
+                                                        }
                                                         name="surname"
                                                         type="text"
                                                         value={values.surname}
@@ -404,22 +331,30 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {touched.surname && errors.surname && (
-                                                        <div>{errors.surname}</div>
-                                                    )}
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <label style={{ fontSize: '14px' }}>
-                                                        Tên
-                                                        <span
-                                                            style={{
-                                                                color: 'red',
-                                                                marginLeft: '2px'
-                                                            }}>
-                                                            *
-                                                        </span>
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Tên
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.name && errors.name
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.name &&
+                                                            errors.name && <div>{errors.name}</div>
+                                                        }
                                                         type="text"
                                                         name="name"
                                                         value={values.name}
@@ -427,9 +362,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {touched.name && errors.name && (
-                                                        <div>{errors.name}</div>
-                                                    )}
                                                 </FormGroup>
                                             </Grid>
                                             <Grid
@@ -439,17 +371,31 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                 flexDirection="column"
                                                 gap="16px">
                                                 <FormGroup>
-                                                    <label style={{ fontSize: '14px' }}>
-                                                        Email
-                                                        <span
-                                                            style={{
-                                                                color: 'red',
-                                                                marginLeft: '2px'
-                                                            }}>
-                                                            *
-                                                        </span>
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Email
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress && (
+                                                                <div>{errors.emailAddress}</div>
+                                                            )
+                                                        }
                                                         type="email"
                                                         name="emailAddress"
                                                         value={values.emailAddress}
@@ -457,16 +403,19 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {touched.emailAddress &&
-                                                        errors.emailAddress && (
-                                                            <div>{errors.emailAddress}</div>
-                                                        )}
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <label style={{ fontSize: '14px' }}>
-                                                        Số điện thoại
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Số điện thoại
+                                                            </label>
+                                                        }
+                                                        helperText={
+                                                            errors.phoneNumber && (
+                                                                <div>{errors.phoneNumber}</div>
+                                                            )
+                                                        }
                                                         type="text"
                                                         name="phoneNumber"
                                                         value={values.phoneNumber}
@@ -474,24 +423,32 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {errors.phoneNumber && (
-                                                        <div>{errors.phoneNumber}</div>
-                                                    )}
                                                 </FormGroup>
                                                 <FormGroup>
-                                                    <label
-                                                        htmlFor="email"
-                                                        style={{ fontSize: '14px' }}>
-                                                        Tên truy cập
-                                                        <span
-                                                            style={{
-                                                                color: 'red',
-                                                                marginLeft: '2px'
-                                                            }}>
-                                                            *
-                                                        </span>
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Tên truy cập
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.userName && errors.userName
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.userName &&
+                                                            errors.userName && (
+                                                                <div>{errors.userName}</div>
+                                                            )
+                                                        }
                                                         disabled={userId === 0 ? false : true}
                                                         type="text"
                                                         name="userName"
@@ -500,23 +457,29 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {touched.userName && errors.userName && (
-                                                        <div>{errors.userName}</div>
-                                                    )}
                                                 </FormGroup>
 
                                                 <FormGroup hidden={userId === 0 ? false : true}>
-                                                    <label style={{ fontSize: '14px' }}>
-                                                        Mật khẩu
-                                                        <span
-                                                            style={{
-                                                                color: 'red',
-                                                                marginLeft: '2px'
-                                                            }}>
-                                                            *
-                                                        </span>
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Mật khẩu
+                                                                <span className="text-danger">
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.password && errors.password
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.password &&
+                                                            errors.password && (
+                                                                <span>{errors.password}</span>
+                                                            )
+                                                        }
                                                         type="text"
                                                         name="password"
                                                         value={values.password}
@@ -524,24 +487,31 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         fullWidth
                                                         size="small"
                                                     />
-                                                    {touched.password && errors.password && (
-                                                        <div>{errors.password}</div>
-                                                    )}
                                                 </FormGroup>
                                                 <FormGroup hidden={userId === 0 ? false : true}>
-                                                    <label
-                                                        htmlFor="email"
-                                                        style={{ fontSize: '14px' }}>
-                                                        Nhập lại mật khẩu
-                                                        <span
-                                                            style={{
-                                                                color: 'red',
-                                                                marginLeft: '2px'
-                                                            }}>
-                                                            *
-                                                        </span>
-                                                    </label>
                                                     <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Nhập lại mật khẩu
+                                                                <span className="text-danger">
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.confirmPassword &&
+                                                            errors.confirmPassword
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.confirmPassword &&
+                                                            errors.confirmPassword && (
+                                                                <span>
+                                                                    {errors.confirmPassword}
+                                                                </span>
+                                                            )
+                                                        }
                                                         type="text"
                                                         fullWidth
                                                         name="confirmPassword"
@@ -549,10 +519,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                    {touched.confirmPassword &&
-                                                        errors.confirmPassword && (
-                                                            <div>{errors.confirmPassword}</div>
-                                                        )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     <FormControlLabel
@@ -624,7 +590,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             sx={{
                                                 color: 'var(--color-main)'
                                             }}
-                                            onClick={onCancel}
+                                            onClick={() => {
+                                                onCancel();
+                                                this.setState({ avatar: '' });
+                                            }}
                                             className="btn-outline-hover">
                                             Hủy
                                         </Button>

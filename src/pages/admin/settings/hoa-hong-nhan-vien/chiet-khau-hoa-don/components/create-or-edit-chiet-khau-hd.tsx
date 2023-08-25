@@ -99,10 +99,12 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 }}>
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">
-                                            Chứng từ áp dụng
-                                        </Typography>
                                         <Select
+                                            label={
+                                                <Typography variant="subtitle2">
+                                                    Chứng từ áp dụng
+                                                </Typography>
+                                            }
                                             size="small"
                                             name="chungTuApDung"
                                             multiple
@@ -170,8 +172,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                         </RadioGroup>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <Typography variant="subtitle2">Giá trị</Typography>
                                         <TextField
+                                            label={
+                                                <Typography variant="subtitle2">Giá trị</Typography>
+                                            }
                                             size="small"
                                             name="giaTriChietKhau"
                                             value={values.giaTriChietKhau}

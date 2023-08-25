@@ -13,7 +13,9 @@ import {
     TextField,
     Typography,
     Autocomplete,
-    InputAdornment
+    InputAdornment,
+    InputLabel,
+    FormControl
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as AddIcon } from '../../../images/add.svg';
@@ -126,11 +128,11 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Grid container>
-                                    <Grid item xs={12} sm={5} sx={{ pr: '20px' }}>
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} sm={5}>
                                         {/* <FormGroup> */}
                                         <Autocomplete
-                                            sx={{ pt: '24px' }}
+                                            sx={{ pt: '16px' }}
                                             options={suggestStore.suggestKhachHang}
                                             getOptionLabel={(option) =>
                                                 `${option.tenKhachHang} (${option.soDienThoai})`
@@ -193,31 +195,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 {errors.idKhachHang}
                                             </small>
                                         )}
-                                        {/* </FormGroup> */}
-                                        <Box
-                                            textAlign="center"
-                                            mt="5vw"
-                                            display={useWindowWidth() < 600 ? 'none' : 'block'}>
-                                            <Box>
-                                                <IconMore />
-                                            </Box>
-                                            <Box mt="2.7777777777777777vw">
-                                                <Typography
-                                                    variant="body1"
-                                                    fontSize="20px"
-                                                    fontWeight="500">
-                                                    Thêm khách hàng
-                                                </Typography>
-                                                <Typography
-                                                    variant="body1"
-                                                    //color="#8B8D97"
-                                                    fontSize="14px"
-                                                    fontWeight="400"
-                                                    mt="12px">
-                                                    Sử dụng tìm kiếm để thêm khách hàng
-                                                </Typography>
-                                            </Box>
-                                        </Box>
                                     </Grid>
                                     <Grid
                                         item
@@ -225,113 +202,131 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         sm={7}
                                         sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
                                         <FormGroup className="mt-4 mb-1">
-                                            <Typography
-                                                variant="body1"
-                                                className="mb-1"
-                                                fontSize="14px">
-                                                Ngày <span className="text-danger">*</span>
-                                            </Typography>
                                             <TextField
+                                                label={
+                                                    <Typography variant="body1" fontSize="14px">
+                                                        Ngày <span className="text-danger">*</span>
+                                                    </Typography>
+                                                }
                                                 sx={{
                                                     '& .MuiInputBase-root': {
                                                         bgcolor: '#fff'
                                                     }
                                                 }}
+                                                error={
+                                                    errors.startTime && touched.startTime
+                                                        ? true
+                                                        : false
+                                                }
+                                                InputLabelProps={{
+                                                    shrink: true
+                                                }}
+                                                helperText={
+                                                    errors.startTime &&
+                                                    touched.startTime && (
+                                                        <span className="text-danger">
+                                                            {errors.startTime}
+                                                        </span>
+                                                    )
+                                                }
                                                 type="date"
                                                 size="small"
                                                 name="startTime"
                                                 value={values.startTime}
                                                 onChange={handleChange}></TextField>
-                                            {errors.startTime && touched.startTime && (
-                                                <small className="text-danger">
-                                                    {errors.startTime}
-                                                </small>
-                                            )}
                                         </FormGroup>
-                                        <Grid
-                                            container
-                                            item
-                                            sx={{
-                                                bgcolor: '#fff',
-                                                padding: '12px',
-                                                borderRadius: '8px',
-                                                position: 'relative'
-                                            }}>
-                                            <Grid container item spacing={2}>
-                                                <Grid item md={8} sm={6} xs={12}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-2"
-                                                            fontSize="14px">
-                                                            Dịch vụ{' '}
-                                                            <span className="text-danger">*</span>
-                                                        </Typography>
-                                                        <Autocomplete
-                                                            options={suggestStore.suggestDichVu}
-                                                            getOptionLabel={(option) =>
-                                                                `${option.tenDichVu}`
-                                                            }
-                                                            size="small"
-                                                            fullWidth
-                                                            disablePortal
-                                                            onChange={async (event, value) => {
-                                                                setFieldValue(
-                                                                    'idDonViQuiDoi',
-                                                                    value ? value.id : ''
-                                                                ); // Cập nhật giá trị id trong Formik
-                                                                await suggestStore.getSuggestKyThuatVienByIdDichVu(
-                                                                    value ? value.id : ''
-                                                                );
-                                                            }}
-                                                            renderInput={(params) => (
-                                                                <TextField
-                                                                    {...params}
-                                                                    placeholder="Nhập tên dịch vụ"
-                                                                />
-                                                            )}
-                                                        />
-                                                        {errors.idDonViQuiDoi &&
-                                                            touched.idDonViQuiDoi && (
-                                                                <small className="text-danger">
-                                                                    {errors.idDonViQuiDoi}
-                                                                </small>
-                                                            )}
-                                                    </FormGroup>
-                                                </Grid>
-                                                <Grid item md={4} xs={12} sm={6}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-1"
-                                                            fontSize="14px">
-                                                            Thời gian bắt đầu{' '}
-                                                            <span className="text-danger">*</span>
-                                                        </Typography>
-                                                        <TextField
-                                                            type="time"
-                                                            size="small"
-                                                            name="startHours"
-                                                            value={values.startHours}
-                                                            onChange={handleChange}></TextField>
-                                                        {errors.startHours &&
+                                        <Grid container spacing={2} sx={{ marginTop: '4px' }}>
+                                            <Grid item md={8} sm={6} xs={12}>
+                                                <FormGroup>
+                                                    <Autocomplete
+                                                        options={suggestStore.suggestDichVu}
+                                                        getOptionLabel={(option) =>
+                                                            `${option.tenDichVu}`
+                                                        }
+                                                        size="small"
+                                                        fullWidth
+                                                        disablePortal
+                                                        onChange={async (event, value) => {
+                                                            setFieldValue(
+                                                                'idDonViQuiDoi',
+                                                                value ? value.id : ''
+                                                            ); // Cập nhật giá trị id trong Formik
+                                                            await suggestStore.getSuggestKyThuatVienByIdDichVu(
+                                                                value ? value.id : ''
+                                                            );
+                                                        }}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                label={
+                                                                    <Typography
+                                                                        variant="subtitle2"
+                                                                        fontSize="14px">
+                                                                        Dịch vụ{' '}
+                                                                        <span className="text-danger">
+                                                                            *
+                                                                        </span>
+                                                                    </Typography>
+                                                                }
+                                                                error={
+                                                                    errors.idDonViQuiDoi &&
+                                                                    touched.idDonViQuiDoi
+                                                                        ? true
+                                                                        : false
+                                                                }
+                                                                helperText={
+                                                                    errors.idDonViQuiDoi &&
+                                                                    touched.idDonViQuiDoi && (
+                                                                        <small className="text-danger">
+                                                                            {errors.idDonViQuiDoi}
+                                                                        </small>
+                                                                    )
+                                                                }
+                                                                placeholder="Nhập tên dịch vụ"
+                                                            />
+                                                        )}
+                                                    />
+                                                </FormGroup>
+                                            </Grid>
+                                            <Grid item md={4} xs={12} sm={6}>
+                                                <FormGroup>
+                                                    <TextField
+                                                        label={
+                                                            <Typography
+                                                                variant="subtitle2"
+                                                                fontSize="14px">
+                                                                Thời gian bắt đầu{' '}
+                                                                <span className="text-danger">
+                                                                    *
+                                                                </span>
+                                                            </Typography>
+                                                        }
+                                                        error={
+                                                            errors.startHours && touched.startHours
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            errors.startHours &&
                                                             touched.startHours && (
-                                                                <small className="text-danger">
+                                                                <span className="text-danger">
                                                                     {errors.startHours}
-                                                                </small>
-                                                            )}
-                                                    </FormGroup>
-                                                </Grid>
+                                                                </span>
+                                                            )
+                                                        }
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                        type="time"
+                                                        size="small"
+                                                        name="startHours"
+                                                        value={values.startHours}
+                                                        onChange={handleChange}></TextField>
+                                                </FormGroup>
                                             </Grid>
                                             <Grid container item spacing={[4, 2]}>
                                                 <Grid item md={8} sm={6} xs={12}>
-                                                    <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-1"
-                                                            fontSize="14px">
-                                                            Nhân viên
-                                                        </Typography>
+                                                    <FormGroup>
                                                         <Autocomplete
                                                             options={
                                                                 suggestStore.suggestKyThuatVien
@@ -351,6 +346,13 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             renderInput={(params) => (
                                                                 <TextField
                                                                     {...params}
+                                                                    label={
+                                                                        <Typography
+                                                                            variant="body1"
+                                                                            fontSize="14px">
+                                                                            Nhân viên
+                                                                        </Typography>
+                                                                    }
                                                                     placeholder="Nhập tên nhân viên"
                                                                 />
                                                             )}
@@ -359,57 +361,33 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 </Grid>
                                                 <Grid item md={4} sm={6} xs={12}>
                                                     <FormGroup className="mt-2 mb-1">
-                                                        <Typography
-                                                            variant="body1"
-                                                            className="mb-1"
-                                                            fontSize="14px">
-                                                            Thời gian làm
-                                                        </Typography>
                                                         <TextField
+                                                            label={
+                                                                <Typography
+                                                                    variant="subtitle2"
+                                                                    fontSize="14px">
+                                                                    Thời gian làm
+                                                                </Typography>
+                                                            }
                                                             type="number"
                                                             size="small"></TextField>
                                                     </FormGroup>
                                                 </Grid>
                                             </Grid>
-                                            <IconButton
-                                                onClick={undefined}
-                                                sx={{
-                                                    position: 'absolute',
-                                                    right: '0',
-                                                    top: '0',
-                                                    '& svg': {
-                                                        width: '12px',
-                                                        height: '12px'
-                                                    }
-                                                }}>
-                                                <CloseIcon />
-                                            </IconButton>
                                         </Grid>
-
-                                        <Button
-                                            startIcon={<AddIcon />}
-                                            variant="text"
-                                            sx={{
-                                                color: 'var(--color-main)',
-                                                '& svg': {
-                                                    filter: 'var(--color-hoverIcon)'
-                                                },
-                                                '& .MuiButton-startIcon': {
-                                                    marginRight: '4px',
-                                                    marginBottom: '3px'
-                                                }
-                                            }}>
-                                            Thêm dịch vụ
-                                        </Button>
-                                        <Grid item>
-                                            <FormGroup className="mt-2 mb-1">
-                                                <Typography
-                                                    variant="body1"
-                                                    className="mb-1"
-                                                    fontSize="14px">
-                                                    Trạng thái
-                                                </Typography>
+                                        <Grid item sx={{ marginTop: '16px' }}>
+                                            <FormControl fullWidth>
+                                                <InputLabel>
+                                                    <Typography fontSize="14px">
+                                                        Trạng thái
+                                                    </Typography>
+                                                </InputLabel>
                                                 <Select
+                                                    label={
+                                                        <Typography fontSize="14px">
+                                                            Trạng thái
+                                                        </Typography>
+                                                    }
                                                     fullWidth
                                                     size="small"
                                                     name="trangThai"
@@ -423,17 +401,18 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
-                                            </FormGroup>
+                                            </FormControl>
                                         </Grid>
-                                        <Grid item>
+                                        <Grid item sx={{ marginTop: '16px' }}>
                                             <FormGroup className="mt-2 mb-4">
-                                                <Typography
-                                                    variant="body1"
-                                                    className="mb-1"
-                                                    fontSize="14px">
-                                                    Ghi chú
-                                                </Typography>
                                                 <TextField
+                                                    label={
+                                                        <Typography
+                                                            variant="subtitle2"
+                                                            fontSize="14px">
+                                                            Ghi chú
+                                                        </Typography>
+                                                    }
                                                     type="text"
                                                     multiline
                                                     rows={4}
