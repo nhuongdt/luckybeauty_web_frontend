@@ -6,18 +6,14 @@ import {
     Button,
     Dialog,
     Grid,
-    MenuItem,
-    Select,
     Stack,
     TextField,
-    TextareaAutosize,
     Typography,
-    Link
+    RadioGroup,
+    FormControlLabel,
+    Radio
 } from '@mui/material';
-import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import closeIcon from '../../../images/close-square.svg';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import '../employee.css';
 import { Form, Formik } from 'formik';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
@@ -31,12 +27,14 @@ import suggestStore from '../../../stores/suggestStore';
 import { observer } from 'mobx-react';
 import abpCustom from '../../../components/abp-custom';
 import utils from '../../../utils/utils';
-import { Close } from '@mui/icons-material';
 import uploadFileService from '../../../services/uploadFileService';
 import { Guid } from 'guid-typescript';
-import khachHangStore from '../../../stores/khachHangStore';
-import nhanVienStore from '../../../stores/nhanVienStore';
 import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
+import PersonIcon from '@mui/icons-material/Person';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import vi from 'date-fns/locale/vi';
+import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -53,6 +51,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
         googleDrive_fileId: '',
         fileImage: {} as File
     };
+
     onModalChucVu = () => {
         this.setState({
             chucVuVisiable: !this.state.chucVuVisiable
@@ -74,39 +73,17 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
 
     onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (event) => {
-                const avatar = {
-                    fileBase64: reader.result?.toString().split(',')[1],
-                    fileName: file.name,
-                    fileType: file.type
-                };
-                this.props.formRef.avatarFile = avatar;
-                this.setState({ avatarFile: reader.result?.toString() });
-            };
-        }
-    };
-    choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
             const reader = new FileReader();
             reader.readAsDataURL(file);
+
             reader.onload = () => {
-                this.setState((prev) => {
-                    return {
-                        ...prev,
-                        staffImage: reader.result?.toString() ?? ''
-                    };
-                });
-            };
-            this.setState((prev) => {
-                return {
+                this.setState((prev) => ({
                     ...prev,
+                    staffImage: reader.result?.toString() ?? '',
                     fileImage: file
-                };
-            });
+                }));
+            };
         }
     };
     closeImage = async () => {
@@ -129,12 +106,11 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
             <Dialog
                 open={visible}
                 onClose={onCancel}
-                className="poppup-them-nhan-vien"
+                maxWidth="md"
+                //className="poppup-them-nhan-vien"
                 sx={{
                     borderRadius: '12px',
-
-                    width: '100%',
-                    padding: '28px 24px'
+                    padding: '24px'
                 }}>
                 <Box
                     sx={{
@@ -148,7 +124,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     <Typography
                         variant="h3"
                         fontSize="24px"
-                        color="#333233"
+                        //color="#333233"
                         fontWeight="700"
                         paddingLeft="24px"
                         marginTop="28px">
@@ -175,29 +151,16 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     validationSchema={rules}
                     onSubmit={async (values) => {
                         values.id = initValues.id;
-                        values.tenNhanVien = values.ho + ' ' + values.tenLot;
                         let fileId = this.state.googleDrive_fileId;
                         const fileSelect = this.state.fileImage;
-                        console.log(33, this.state.googleDrive_fileId);
                         if (!utils.checkNull(this.state.staffImage)) {
-                            // nếu cập nhật: chỉ upload nếu chọn lại ảnh
-
-                            if (
-                                utils.checkNull(formRef.id) ||
-                                formRef.id == Guid.EMPTY ||
-                                (!utils.checkNull(formRef.id) &&
-                                    !utils.checkNull(formRef.avatar) &&
-                                    utils.checkNull(this.state.googleDrive_fileId)) ||
-                                utils.checkNull(formRef.avatar)
-                            ) {
-                                // awlay insert: because image was delete before save
+                            if (this.state.staffImage !== formRef.avatar) {
                                 fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
                                     fileSelect,
                                     'NhanVien'
                                 );
                             }
                         }
-                        // gán lại image theo id mới
                         values.avatar =
                             fileId !== ''
                                 ? `https://drive.google.com/uc?export=view&id=${fileId}`
@@ -230,77 +193,89 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                 display="flex"
                                 flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
                                 justifyContent="space-between"
-                                padding="12px 24px 0px 24px">
+                                padding="0px 24px 0px 24px">
                                 <Grid
                                     container
                                     className="form-container"
                                     spacing={2}
-                                    rowSpacing={4}
-                                    width={useWindowWidth() > 600 ? '70%' : '100%'}
-                                    paddingRight={useWindowWidth() > 600 ? '12px' : '0'}
+                                    rowSpacing={2}
                                     marginTop="0"
                                     marginLeft="0">
-                                    <Grid item xs={12} md={6}>
+                                    <Grid item xs={12}>
+                                        <Box>
+                                            <Stack alignItems="center" position={'relative'}>
+                                                {!utils.checkNull(this.state.staffImage) ? (
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative'
+                                                        }}>
+                                                        <img
+                                                            src={this.state.staffImage}
+                                                            className="user-image-upload"
+                                                        />
+                                                    </Box>
+                                                ) : (
+                                                    <div>
+                                                        <PersonIcon className="user-icon-upload" />
+                                                    </div>
+                                                )}
+                                                <TextField
+                                                    type="file"
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        opacity: 0,
+                                                        '& input': {
+                                                            height: '100%'
+                                                        },
+                                                        '& div': {
+                                                            height: '100%'
+                                                        }
+                                                    }}
+                                                    onChange={this.onSelectAvatarFile}
+                                                />
+                                            </Stack>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12}>
                                         <TextField
-                                            name="ho"
-                                            value={values.ho}
+                                            name="tenNhanVien"
+                                            size="small"
+                                            value={values.tenNhanVien}
                                             label={
                                                 <Typography
                                                     //color="#4C4B4C"
                                                     variant="subtitle2">
-                                                    Họ nhân viên{' '}
+                                                    Họ và tên
                                                     <span className="text-danger">*</span>
                                                 </Typography>
                                             }
-                                            error={errors.ho && touched.ho ? true : false}
-                                            helperText={
-                                                errors.ho &&
-                                                touched.ho && (
-                                                    <small className="text-danger">
-                                                        {errors.ho}
-                                                    </small>
-                                                )
+                                            error={
+                                                errors.tenNhanVien && touched.tenNhanVien
+                                                    ? true
+                                                    : false
                                             }
-                                            placeholder="Họ nhân viên"
-                                            onChange={handleChange}
-                                            fullWidth
-                                            sx={{
-                                                fontSize: '16px',
-                                                height: '40px'
-                                            }}></TextField>
-                                    </Grid>
-                                    <Grid item xs={12} md={6}>
-                                        <TextField
-                                            name="tenLot"
-                                            value={values.tenLot}
-                                            label={
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Tên nhân viên{' '}
-                                                    <span className="text-danger">*</span>
-                                                </Typography>
-                                            }
-                                            placeholder="Tên nhân viên"
-                                            error={errors.tenLot && touched.tenLot ? true : false}
                                             helperText={
-                                                errors.tenLot &&
-                                                touched.tenLot && (
+                                                errors.tenNhanVien &&
+                                                touched.tenNhanVien && (
                                                     <small className="text-danger">
-                                                        {errors.tenLot}
+                                                        {errors.tenNhanVien}
                                                     </small>
                                                 )
                                             }
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{
-                                                fontSize: '16px',
-                                                color: '#4c4b4c',
-                                                height: '40px'
+                                                fontSize: '16px'
                                             }}></TextField>
                                     </Grid>
+
                                     <Grid item xs={12} md={6}>
                                         <TextField
+                                            size="small"
                                             type="tel"
                                             name="soDienThoai"
                                             value={values.soDienThoai}
@@ -327,10 +302,11 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 )
                                             }
                                             fullWidth
-                                            sx={{ fontSize: '16px', height: '40px' }}></TextField>
+                                            sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <TextField
+                                            size="small"
                                             type="text"
                                             name="diaChi"
                                             label={
@@ -344,10 +320,11 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             onChange={handleChange}
                                             placeholder="Nhập địa chỉ của nhân viên"
                                             fullWidth
-                                            sx={{ fontSize: '16px', height: '40px' }}></TextField>
+                                            sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <TextField
+                                            size="small"
                                             type="date"
                                             fullWidth
                                             name="ngaySinh"
@@ -358,42 +335,52 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                     Ngày sinh
                                                 </Typography>
                                             }
+                                            InputLabelProps={{
+                                                shrink: true
+                                            }}
                                             value={values.ngaySinh?.substring(0, 10)}
                                             onChange={handleChange}
                                             placeholder="21/04/2004"
                                             sx={{
-                                                fontSize: '16px',
-                                                height: '40px',
-                                                padding: '0px !important'
+                                                fontSize: '16px'
                                             }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <Select
-                                            id="gender"
-                                            fullWidth
-                                            label={
+                                        <Stack spacing={1} direction={'row'}>
+                                            <Stack
+                                                className="modal-lable "
+                                                justifyContent={'center'}
+                                                alignItems={'center'}>
                                                 <Typography
                                                     //color="#4C4B4C"
                                                     variant="subtitle2">
                                                     Giới tính
                                                 </Typography>
-                                            }
-                                            name="gioiTinh"
-                                            value={values.gioiTinh}
-                                            onChange={handleChange}
-                                            defaultValue={0}
-                                            sx={{
-                                                backgroundColor: '#fff',
-                                                padding: '0',
-                                                fontSize: '16px',
-                                                borderRadius: '8px',
-                                                borderColor: '#E6E1E6',
-                                                height: '50px'
-                                            }}>
-                                            <MenuItem value={0}>Lựa chọn</MenuItem>
-                                            <MenuItem value={2}>Nữ</MenuItem>
-                                            <MenuItem value={1}>Nam</MenuItem>
-                                        </Select>
+                                            </Stack>
+                                            <RadioGroup
+                                                onChange={handleChange}
+                                                row
+                                                defaultValue={'true'}
+                                                value={values.gioiTinh}
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="gioiTinh">
+                                                <FormControlLabel
+                                                    value={1}
+                                                    control={<Radio />}
+                                                    label="Nam"
+                                                />
+                                                <FormControlLabel
+                                                    value={2}
+                                                    control={<Radio />}
+                                                    label="Nữ"
+                                                />
+                                                <FormControlLabel
+                                                    value={0}
+                                                    control={<Radio />}
+                                                    label="Khác"
+                                                />
+                                            </RadioGroup>
+                                        </Stack>
                                     </Grid>
 
                                     <Grid item xs={12}>
@@ -421,7 +408,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 renderInput={(params) => (
                                                     <TextField
                                                         {...params}
-                                                        sx={{ height: '40px' }}
+                                                        size="small"
                                                         label={
                                                             <Typography
                                                                 //color="#4C4B4C"
@@ -455,7 +442,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                         'Pages.ChucVu.Create'
                                                     )
                                                 }
-                                                sx={{ height: '48px' }}
+                                                sx={{ maxHeight: '38px' }}
                                                 onClick={this.onModalChucVu}
                                                 variant="contained">
                                                 <AddIcon />
@@ -466,6 +453,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     <Grid item xs={12}>
                                         <TextField
                                             multiline
+                                            size="small"
                                             label={
                                                 <Typography
                                                     //color="#4C4B4C"
@@ -483,81 +471,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 borderRadius: '8px'
                                             }}
                                         />
-                                    </Grid>
-                                </Grid>
-                                <Grid
-                                    container
-                                    width={useWindowWidth() > 600 ? '30%' : '100%'}
-                                    paddingLeft="12px">
-                                    <Grid item xs={12}>
-                                        <Box
-                                            // display="grid"
-                                            ml={{ xs: 0, sm: 4, md: 4, lg: 4 }}
-                                            sx={{
-                                                border: '1px solid var(--color-main)',
-                                                p: 1,
-                                                height: 200,
-                                                textAlign: 'center',
-                                                position: 'relative'
-                                            }}>
-                                            {!utils.checkNull(this.state.staffImage) ? (
-                                                <Box sx={{ position: 'relative', height: '100%' }}>
-                                                    <img
-                                                        src={this.state.staffImage}
-                                                        style={{ width: '100%', height: '100%' }}
-                                                    />
-                                                    <Close
-                                                        onClick={this.closeImage}
-                                                        sx={{
-                                                            left: 0,
-                                                            color: 'red',
-                                                            position: 'absolute'
-                                                        }}
-                                                    />
-                                                </Box>
-                                            ) : (
-                                                <>
-                                                    <TextField
-                                                        type="file"
-                                                        sx={{
-                                                            position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            opacity: 0,
-                                                            '& input': {
-                                                                height: '100%'
-                                                            },
-                                                            '& div': {
-                                                                height: '100%'
-                                                            }
-                                                        }}
-                                                        onChange={this.choseImage}
-                                                    />
-                                                    <Stack spacing={1} paddingTop={2}>
-                                                        <Box>
-                                                            <InsertDriveFileIcon className="icon-size" />
-                                                        </Box>
-
-                                                        <Box>
-                                                            <CloudDoneIcon
-                                                                style={{
-                                                                    paddingRight: '5px',
-                                                                    color: 'var(--color-main)'
-                                                                }}
-                                                            />
-                                                            <Link underline="always">
-                                                                Tải ảnh lên
-                                                            </Link>
-                                                        </Box>
-                                                        <Typography variant="caption">
-                                                            File định dạng jpeg, png
-                                                        </Typography>
-                                                    </Stack>
-                                                </>
-                                            )}
-                                        </Box>
                                     </Grid>
                                 </Grid>
                             </Box>

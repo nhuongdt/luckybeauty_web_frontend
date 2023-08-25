@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import Header from '../Header';
 import AppSiderMenu from '../SiderMenu/index';
 import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
@@ -11,7 +10,7 @@ import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhD
 import http from '../../services/httpService';
 import sessionStore from '../../stores/sessionStore';
 import ResponsiveDrawer from '../SiderMenu/mobileSideMenu';
-import { appRouters } from '../routers';
+import Header from '../Header';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
