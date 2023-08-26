@@ -324,9 +324,7 @@ const CreateOrEditSoQuyDialog = ({
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onClose}>
                 <DialogTitle>
                     <div className="row">
-                        <Box
-                            className="col-8"
-                            sx={{ float: 'left', fontSize: '24px', fontWeight: '700' }}>
+                        <Box className="modal-title" sx={{ float: 'left' }}>
                             {utils.checkNull(idQuyHD) ? 'Thêm mới' : 'Cập nhật'} sổ quỹ
                         </Box>
                         <Box
@@ -344,7 +342,7 @@ const CreateOrEditSoQuyDialog = ({
                         </Box>
                     </div>
                 </DialogTitle>
-                <DialogContent sx={{ paddingBottom: '0' }}>
+                <DialogContent>
                     <Formik
                         initialValues={quyHoaDon}
                         validationSchema={validate}
@@ -358,7 +356,7 @@ const CreateOrEditSoQuyDialog = ({
                                             event.preventDefault(); // Prevent form submission
                                         }
                                     }}>
-                                    <Grid container columnSpacing={2} rowSpacing={1}>
+                                    <Grid container spacing={2}>
                                         <Grid item xs={12} sm={12} lg={12}>
                                             <FormControlLabel
                                                 value="end"
@@ -397,12 +395,10 @@ const CreateOrEditSoQuyDialog = ({
                                             />
                                         </Grid>
                                         <Grid item xs={12} sm={12}>
-                                            <span className="modal-lable">Ngày </span>
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} sx={{ pb: 1 }}>
                                             <ThemeProvider theme={themeDate}>
                                                 <DateTimePickerCustom
                                                     defaultVal={quyHoaDon.ngayLapHoaDon}
+                                                    labelText="Ngày lập phiếu"
                                                     handleChangeDate={(dt: string) => {
                                                         formik.setFieldValue('ngayLapHoaDon', dt);
                                                         setQuyHoaDon({
@@ -418,88 +414,55 @@ const CreateOrEditSoQuyDialog = ({
                                             </ThemeProvider>
                                         </Grid>
 
-                                        <Grid item xs={12} sm={6} sx={{ pb: 1 }}>
-                                            <Stack direction="column" rowGap={1}>
-                                                <span className="modal-lable">Mã phiếu </span>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    value={quyHoaDon.maHoaDon}
-                                                    onChange={(e) => {
-                                                        formik.setFieldValue(
-                                                            'maHoaDon',
-                                                            e.target.value
-                                                        );
-                                                        setQuyHoaDon({
-                                                            ...quyHoaDon,
-                                                            maHoaDon: e.target.value
-                                                        });
-                                                    }}
-                                                    helperText={
-                                                        formik.touched.maHoaDon &&
-                                                        formik.errors.maHoaDon
-                                                    }
-                                                />
-                                            </Stack>
+                                        <Grid item xs={12} sm={6}>
+                                            <TextField
+                                                size="small"
+                                                fullWidth
+                                                label="Mã phiếu"
+                                                value={quyHoaDon.maHoaDon}
+                                                onChange={(e) => {
+                                                    formik.setFieldValue(
+                                                        'maHoaDon',
+                                                        e.target.value
+                                                    );
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        maHoaDon: e.target.value
+                                                    });
+                                                }}
+                                                helperText={
+                                                    formik.touched.maHoaDon &&
+                                                    formik.errors.maHoaDon
+                                                }
+                                            />
                                         </Grid>
-                                        <Grid item xs={12} sm={6} sx={{ pb: 1 }}>
-                                            <Stack
-                                                direction="column"
-                                                spacing={1}
-                                                sx={{
-                                                    '& legend': {
-                                                        display: 'none'
-                                                    }
-                                                }}>
-                                                <span className="modal-lable">Hình thức </span>
-                                                <SelectWithData
-                                                    data={AppConsts.hinhThucThanhToan}
-                                                    idChosed={quyHoaDon?.hinhThucThanhToan}
-                                                    handleChange={(item: ISelect) =>
-                                                        setQuyHoaDon({
-                                                            ...quyHoaDon,
-                                                            hinhThucThanhToan: item.value
-                                                        })
-                                                    }
-                                                />
-                                            </Stack>
+                                        <Grid item xs={12} sm={6}>
+                                            <SelectWithData
+                                                label="Hình thức"
+                                                data={AppConsts.hinhThucThanhToan}
+                                                idChosed={quyHoaDon?.hinhThucThanhToan}
+                                                handleChange={(item: ISelect) =>
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        hinhThucThanhToan: item.value
+                                                    })
+                                                }
+                                            />
                                         </Grid>
-                                        <Grid item xs={12} sm={6} sx={{ pb: 1 }}>
-                                            <Stack
-                                                direction="column"
-                                                rowGap={1}
-                                                sx={{
-                                                    '& legend': {
-                                                        display: 'none'
-                                                    }
-                                                }}>
-                                                <span className="modal-lable">
-                                                    {utils.FirstChar_UpperCase(sLoai)}{' '}
-                                                    {quyHoaDon?.idLoaiChungTu == 11 ? 'của' : 'cho'}
-                                                </span>
-                                                <SelectWithData
-                                                    data={doiTuongNopTien}
-                                                    idChosed={quyHoaDon?.loaiDoiTuong}
-                                                    handleChange={(item: any) =>
-                                                        setQuyHoaDon({
-                                                            ...quyHoaDon,
-                                                            loaiDoiTuong: item.value
-                                                        })
-                                                    }
-                                                />
-                                            </Stack>
+                                        <Grid item xs={12} sm={6}>
+                                            <SelectWithData
+                                                label="Đối tượng nộp"
+                                                data={doiTuongNopTien}
+                                                idChosed={quyHoaDon?.loaiDoiTuong}
+                                                handleChange={(item: any) =>
+                                                    setQuyHoaDon({
+                                                        ...quyHoaDon,
+                                                        loaiDoiTuong: item.value
+                                                    })
+                                                }
+                                            />
                                         </Grid>
-                                        <Grid
-                                            item
-                                            xs={12}
-                                            sm={6}
-                                            sx={{ pb: 1 }}
-                                            pt={{
-                                                xs: '16px!important',
-                                                sm: '30px!important',
-                                                lg: '30px!important',
-                                                md: '30px !important'
-                                            }}>
+                                        <Grid item xs={12} sm={6}>
                                             {quyHoaDon.loaiDoiTuong !== 3 && (
                                                 <>
                                                     <AutocompleteCustomer
@@ -565,13 +528,11 @@ const CreateOrEditSoQuyDialog = ({
                                             )}
                                         </Grid>
                                         <Grid item xs={12} sm={12}>
-                                            <span className="modal-lable">Tiền {sLoai} </span>
-                                        </Grid>
-                                        <Grid item xs={12} sm={12} sx={{ pb: 1 }}>
                                             <NumericFormat
                                                 fullWidth
                                                 size="small"
                                                 name="tongTienThu"
+                                                label={`Tiền ${sLoai}`}
                                                 thousandSeparator={'.'}
                                                 decimalSeparator={','}
                                                 value={quyHoaDon?.tongTienThu}
@@ -643,14 +604,12 @@ const CreateOrEditSoQuyDialog = ({
                                         )}
 
                                         <Grid item xs={12} sm={12}>
-                                            <span className="modal-lable">Nội dung {sLoai} </span>
-                                        </Grid>
-                                        <Grid item xs={12} sm={12}>
                                             <TextField
                                                 size="small"
                                                 multiline
                                                 rows={3}
                                                 fullWidth
+                                                label={`Nội dung ${sLoai}`}
                                                 value={quyHoaDon?.noiDungThu}
                                                 onChange={(e: any) =>
                                                     setQuyHoaDon({
@@ -687,67 +646,66 @@ const CreateOrEditSoQuyDialog = ({
                                                 />
                                             </FormGroup>
                                         </Grid>
+                                        <Grid item xs={12}>
+                                            <Stack
+                                                spacing={1}
+                                                direction={'row'}
+                                                justifyContent={'flex-end'}>
+                                                <Button
+                                                    variant="outlined"
+                                                    sx={{ color: 'var(--color-main)' }}
+                                                    className="btn-outline-hover"
+                                                    onClick={onClose}>
+                                                    Hủy
+                                                </Button>
+                                                {!formik.isSubmitting ? (
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={{ bgcolor: '#7C3367' }}
+                                                        className="btn-container-hover"
+                                                        type="submit">
+                                                        Lưu
+                                                    </Button>
+                                                ) : (
+                                                    formik.isSubmitting && (
+                                                        <Button
+                                                            variant="contained"
+                                                            sx={{ bgcolor: '#7C3367' }}
+                                                            className="btn-container-hover"
+                                                            type="submit">
+                                                            Đang lưu
+                                                        </Button>
+                                                    )
+                                                )}
+
+                                                {!utils.checkNull(idQuyHD) && (
+                                                    <>
+                                                        <Button
+                                                            variant="contained"
+                                                            sx={{ bgcolor: 'red' }}
+                                                            className="btn-container-hover"
+                                                            onClick={() => {
+                                                                setinforDelete(
+                                                                    new PropConfirmOKCancel({
+                                                                        show: true,
+                                                                        title: 'Xác nhận xóa',
+                                                                        mes: `Bạn có chắc chắn muốn xóa ${
+                                                                            quyHoaDon?.loaiPhieu ??
+                                                                            ' '
+                                                                        }  ${
+                                                                            quyHoaDon?.maHoaDon ??
+                                                                            ' '
+                                                                        } không?`
+                                                                    })
+                                                                );
+                                                            }}>
+                                                            Xóa
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            </Stack>
+                                        </Grid>
                                     </Grid>
-                                    <DialogActions
-                                        sx={{
-                                            paddingRight: '0!important',
-                                            position: 'sticky',
-                                            bottom: '0',
-                                            bgcolor: '#fff',
-                                            left: '0'
-                                        }}>
-                                        {!formik.isSubmitting ? (
-                                            <Button
-                                                variant="contained"
-                                                sx={{ bgcolor: '#7C3367' }}
-                                                className="btn-container-hover"
-                                                type="submit">
-                                                Lưu
-                                            </Button>
-                                        ) : (
-                                            formik.isSubmitting && (
-                                                <Button
-                                                    variant="contained"
-                                                    sx={{ bgcolor: '#7C3367' }}
-                                                    className="btn-container-hover"
-                                                    type="submit">
-                                                    Đang lưu
-                                                </Button>
-                                            )
-                                        )}
-
-                                        {!utils.checkNull(idQuyHD) && (
-                                            <>
-                                                <Button
-                                                    variant="contained"
-                                                    sx={{ bgcolor: 'red' }}
-                                                    className="btn-container-hover"
-                                                    onClick={() => {
-                                                        setinforDelete(
-                                                            new PropConfirmOKCancel({
-                                                                show: true,
-                                                                title: 'Xác nhận xóa',
-                                                                mes: `Bạn có chắc chắn muốn xóa ${
-                                                                    quyHoaDon?.loaiPhieu ?? ' '
-                                                                }  ${
-                                                                    quyHoaDon?.maHoaDon ?? ' '
-                                                                } không?`
-                                                            })
-                                                        );
-                                                    }}>
-                                                    Xóa
-                                                </Button>
-                                            </>
-                                        )}
-
-                                        <Button
-                                            variant="outlined"
-                                            sx={{ color: 'var(--color-main)' }}
-                                            className="btn-outline-hover"
-                                            onClick={onClose}>
-                                            Hủy
-                                        </Button>
-                                    </DialogActions>
                                 </Form>
                             </>
                         )}
