@@ -7,7 +7,7 @@ import { DateValidationError } from '@mui/x-date-pickers/models';
 import { format } from 'date-fns';
 import vi from 'date-fns/locale/vi';
 
-export default function DateTimePickerCustom({ defaultVal, handleChangeDate }: any) {
+export default function DateTimePickerCustom({ defaultVal, handleChangeDate, labelText }: any) {
     const [value, setValue] = useState(new Date());
     const [error, setError] = useState<DateValidationError | null>(null);
     const changeDate = (newVal: any) => {
@@ -60,7 +60,8 @@ export default function DateTimePickerCustom({ defaultVal, handleChangeDate }: a
                     onChange={(newVal) => changeDate(newVal)}
                     slotProps={{
                         textField: {
-                            helperText: errorMessage
+                            helperText: errorMessage,
+                            label: labelText
                         }
                     }}
                 />
