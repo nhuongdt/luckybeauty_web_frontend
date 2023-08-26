@@ -228,9 +228,9 @@ body .font-normal {
 }
 
 
-/* placeholder at autocomple */
+/* placeholder (not MuiInputLabel-shrink: label when focus)  */
 
-.MuiFormControl-root .MuiFormLabel-root {
+.MuiFormControl-root .MuiFormLabel-root:not(.MuiInputLabel-shrink) {
     font-size: var(--font-size-main)!important;
     font-family: var(--font-family-main) !important
 }
