@@ -21,6 +21,7 @@ import {
     Checkbox
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
+import { Add } from '@mui/icons-material';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import CloudDoneIcon from '@mui/icons-material/CloudDone';
 import { ModelNhomHangHoa, ModelHangHoaDto } from '../../services/product/dto';
@@ -35,7 +36,6 @@ import utils from '../../utils/utils';
 import { Close } from '@mui/icons-material';
 import Cookies from 'js-cookie';
 import uploadFileService from '../../services/uploadFileService';
-import { padding } from '@mui/system';
 
 export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [open, setOpen] = useState(false);
@@ -284,7 +284,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 onCancel={() =>
                     setInforDeleteProduct({ ...inforDeleteProduct, show: false })
                 }></ConfirmDelete>
-            <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
+            <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
                 <Button
                     onClick={() => setOpen(false)}
                     sx={{
@@ -298,219 +298,19 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     }}>
                     <CloseIcon />
                 </Button>
-                <DialogTitle fontSize="24px!important" color="#333233" fontWeight="700!important">
+                <DialogTitle className="modal-title">
                     {' '}
                     {isNew ? 'Thêm ' : 'Cập nhật '}
                     {product.tenLoaiHangHoa?.toLocaleLowerCase()}
                 </DialogTitle>
                 <DialogContent>
-                    <Grid container>
-                        <Grid item xs={12} md={8} sm={8} lg={8}>
-                            <Box sx={{ height: 50 }} style={{ display: 'none' }}>
-                                <Typography>Thông tin chi tiết</Typography>
-                            </Box>
-                            <Grid item sx={{ pb: 2 }}>
-                                <Stack spacing={1}>
-                                    <span className="modal-lable">
-                                        Mã {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                    </span>
-
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        required
-                                        size="small"
-                                        placeholder="Mã tự động"
-                                        value={product.maHangHoa}
-                                        error={errMaHangHoa && wasClickSave}
-                                        helperText={
-                                            errMaHangHoa && wasClickSave
-                                                ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại`
-                                                : ''
-                                        }
-                                        onChange={(event) => {
-                                            setProduct((itemOlds) => {
-                                                return {
-                                                    ...itemOlds,
-                                                    maHangHoa: event.target.value
-                                                };
-                                            });
-                                            setWasClickSave(false);
-                                        }}
-                                    />
-                                </Stack>
-                            </Grid>
-                            <Grid item sx={{ pb: 2 }}>
-                                <Stack spacing={1}>
-                                    <span className="modal-lable">
-                                        Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}{' '}
-                                        <span style={{ color: 'red' }}>*</span>
-                                    </span>
-
-                                    <TextField
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        required
-                                        error={wasClickSave && errTenHangHoa}
-                                        helperText={
-                                            wasClickSave && errTenHangHoa
-                                                ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`
-                                                : ''
-                                        }
-                                        value={product.tenHangHoa}
-                                        onChange={(event) => {
-                                            setProduct((itemOlds) => {
-                                                return {
-                                                    ...itemOlds,
-                                                    tenHangHoa: event.target.value
-                                                };
-                                            });
-                                            setErrTenHangHoa(false);
-                                            setWasClickSave(false);
-                                        }}
-                                    />
-                                </Stack>
-                            </Grid>
-                            <Grid item sx={{ pb: 2 }}>
-                                <Stack spacing={1}>
-                                    <span className="modal-lable">
-                                        Nhóm {product.tenLoaiHangHoa?.toLocaleLowerCase()}
-                                    </span>
-
-                                    <Autocomplete
-                                        size="small"
-                                        fullWidth
-                                        disablePortal
-                                        value={nhomChosed}
-                                        isOptionEqualToValue={(option, value) =>
-                                            option.id === value.id
-                                        }
-                                        options={dataNhomHang.filter(
-                                            (x: any) => x.id !== null && x.id !== ''
-                                        )}
-                                        onChange={(event, newValue) => handleChangeNhom(newValue)}
-                                        getOptionLabel={(option: any) =>
-                                            option.tenNhomHang ? option.tenNhomHang : ''
-                                        }
-                                        renderInput={(params) => (
-                                            <TextField {...params} placeholder="Chọn nhóm" />
-                                        )}
-                                        renderOption={(props, item) => (
-                                            <Box
-                                                component={'li'}
-                                                {...props}
-                                                className="autocomplete-option">
-                                                {item.tenNhomHang}
-                                            </Box>
-                                        )}
-                                    />
-                                </Stack>
-                            </Grid>
-                            <Grid container sx={{ pb: 2 }} spacing={2}>
-                                <Grid item xs={12} sm={12} md={12} lg={12}>
-                                    <Stack spacing={1}>
-                                        <span className="modal-lable">Giá bán</span>
-                                        <NumericFormat
-                                            size="small"
-                                            fullWidth
-                                            value={product.giaBan}
-                                            thousandSeparator={'.'}
-                                            decimalSeparator={','}
-                                            customInput={TextField}
-                                            onChange={(event) => editGiaBan(event)}
-                                        />
-                                    </Stack>
-                                </Grid>
-                                {/* <Grid
-                                    item
-                                    xs={12}
-                                    sm={6}
-                                    md={6}
-                                    lg={6}
-                                    pt={{ xs: 2, md: 0, lg: 0, sm: 0 }}>
-                                    <span className="modal-lable">Số phút</span>
-                                    <TextField
-                                        variant="outlined"
-                                        size="small"
-                                        fullWidth
-                                        placeholder="0"
-                                        type="number"
-                                        value={product.soPhutThucHien}
-                                        onChange={(event) =>
-                                            setProduct((itemOlds) => {
-                                                return {
-                                                    ...itemOlds,
-                                                    soPhutThucHien: event.target.value
-                                                };
-                                            })
-                                        }
-                                    />
-                                </Grid> */}
-                            </Grid>
-
-                            <Grid item sx={{ pb: 2 }}>
-                                <Stack spacing={1}>
-                                    <span className="modal-lable">Ghi chú</span>
-                                    <TextField
-                                        variant="outlined"
-                                        fullWidth
-                                        multiline
-                                        rows="2"
-                                        value={product.moTa}
-                                        onChange={(event) =>
-                                            setProduct((itemOlds) => {
-                                                return {
-                                                    ...itemOlds,
-                                                    moTa: event.target.value
-                                                };
-                                            })
-                                        }
-                                    />
-                                </Stack>
-                            </Grid>
-                            <Grid item style={{ display: 'none' }}>
-                                <FormGroup>
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                size="small"
-                                                checked={product.laHangHoa}
-                                                onChange={(event) => {
-                                                    setProduct((olds: any) => {
-                                                        return {
-                                                            ...olds,
-                                                            laHangHoa: event.target.checked,
-                                                            idLoaiHangHoa: event.target.checked
-                                                                ? 2
-                                                                : 1,
-                                                            tenLoaiHangHoa: event.target.checked
-                                                                ? 'hàng hóa'
-                                                                : 'dịch vụ'
-                                                        };
-                                                    });
-                                                }}
-                                                sx={{
-                                                    color: '#7C3367',
-                                                    '&.Mui-checked': {
-                                                        color: '#7C3367'
-                                                    }
-                                                }}
-                                            />
-                                        }
-                                        label="Là hàng hóa"
-                                    />
-                                </FormGroup>
-                            </Grid>
-                        </Grid>
-                        <Grid item xs={12} md={4} sm={4} lg={4}>
+                    <Grid container spacing={2} paddingTop={2}>
+                        <Grid item xs={12} sm={4} md={4} lg={4}>
                             <Box
-                                // display="grid"
-                                ml={{ xs: 0, sm: 4, md: 4, lg: 4 }}
                                 sx={{
                                     border: '1px solid var(--color-main)',
                                     p: 1,
-                                    height: 200,
+                                    height: '100%',
                                     textAlign: 'center',
                                     position: 'relative'
                                 }}>
@@ -557,7 +357,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                                         color: 'var(--color-main)'
                                                     }}
                                                 />
-                                                <Link underline="always">Tải ảnh lên</Link>
+                                                <Link underline="always" fontSize={'13px'}>
+                                                    Tải ảnh lên
+                                                </Link>
                                             </Box>
                                             <Typography variant="caption">
                                                 File định dạng jpeg, png
@@ -567,9 +369,194 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 )}
                             </Box>
                         </Grid>
+                        <Grid item xs={12} sm={8} md={8} lg={8}>
+                            <Stack spacing={2}>
+                                <TextField
+                                    variant="outlined"
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Mã tự động"
+                                    value={product.maHangHoa}
+                                    error={errMaHangHoa && wasClickSave}
+                                    label={`Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`}
+                                    helperText={
+                                        errMaHangHoa && wasClickSave
+                                            ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại`
+                                            : ''
+                                    }
+                                    onChange={(event) => {
+                                        setProduct((itemOlds) => {
+                                            return {
+                                                ...itemOlds,
+                                                maHangHoa: event.target.value
+                                            };
+                                        });
+                                        setWasClickSave(false);
+                                    }}
+                                />
+                                <TextField
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    required
+                                    autoFocus
+                                    label={`Tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`}
+                                    error={wasClickSave && errTenHangHoa}
+                                    helperText={
+                                        wasClickSave && errTenHangHoa
+                                            ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`
+                                            : ''
+                                    }
+                                    value={product.tenHangHoa}
+                                    onChange={(event) => {
+                                        setProduct((itemOlds) => {
+                                            return {
+                                                ...itemOlds,
+                                                tenHangHoa: event.target.value
+                                            };
+                                        });
+                                        setErrTenHangHoa(false);
+                                        setWasClickSave(false);
+                                    }}
+                                />
+                                <Stack direction={'row'} spacing={1}>
+                                    <Autocomplete
+                                        size="small"
+                                        fullWidth
+                                        disablePortal
+                                        value={nhomChosed}
+                                        isOptionEqualToValue={(option, value) =>
+                                            option.id === value.id
+                                        }
+                                        options={dataNhomHang.filter(
+                                            (x: any) => x.id !== null && x.id !== ''
+                                        )}
+                                        onChange={(event, newValue) => handleChangeNhom(newValue)}
+                                        getOptionLabel={(option: any) =>
+                                            option.tenNhomHang ? option.tenNhomHang : ''
+                                        }
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                label={`Nhóm ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`}
+                                            />
+                                        )}
+                                        renderOption={(props, item) => (
+                                            <Box
+                                                component={'li'}
+                                                {...props}
+                                                className="autocomplete-option">
+                                                {item.tenNhomHang}
+                                            </Box>
+                                        )}
+                                    />
+                                    <Add
+                                        sx={{
+                                            width: 36,
+                                            display: 'none',
+                                            height: 36,
+                                            padding: 0.5,
+                                            border: '1px solid #ccc',
+                                            borderRadius: '4px'
+                                        }}
+                                    />
+                                </Stack>
+                                <NumericFormat
+                                    size="small"
+                                    fullWidth
+                                    label="Giá bán"
+                                    value={product.giaBan}
+                                    thousandSeparator={'.'}
+                                    decimalSeparator={','}
+                                    customInput={TextField}
+                                    onChange={(event) => editGiaBan(event)}
+                                />
+                                <TextField
+                                    style={{ display: 'none' }}
+                                    variant="outlined"
+                                    size="small"
+                                    fullWidth
+                                    label="Số phút thực hiện"
+                                    placeholder="0"
+                                    type="number"
+                                    value={product.soPhutThucHien}
+                                    onChange={(event) =>
+                                        setProduct((itemOlds) => {
+                                            return {
+                                                ...itemOlds,
+                                                soPhutThucHien: event.target.value
+                                            };
+                                        })
+                                    }
+                                />
+                            </Stack>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2} paddingTop={2}>
+                        <Grid item xs={4}></Grid>
+                        <Grid item xs={8} sm={8} md={8} lg={8} alignItems={'center'}>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                multiline
+                                rows="2"
+                                label="Ghi chú"
+                                value={product.moTa}
+                                onChange={(event) =>
+                                    setProduct((itemOlds) => {
+                                        return {
+                                            ...itemOlds,
+                                            moTa: event.target.value
+                                        };
+                                    })
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Grid item xs={12} sm={12} md={12} lg={12} style={{ display: 'none' }}>
+                                <FormGroup>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={product.laHangHoa}
+                                                onChange={(event) => {
+                                                    setProduct((olds: any) => {
+                                                        return {
+                                                            ...olds,
+                                                            laHangHoa: event.target.checked,
+                                                            idLoaiHangHoa: event.target.checked
+                                                                ? 2
+                                                                : 1,
+                                                            tenLoaiHangHoa: event.target.checked
+                                                                ? 'hàng hóa'
+                                                                : 'dịch vụ'
+                                                        };
+                                                    });
+                                                }}
+                                                sx={{
+                                                    color: '#7C3367',
+                                                    '&.Mui-checked': {
+                                                        color: '#7C3367'
+                                                    }
+                                                }}
+                                            />
+                                        }
+                                        label="Là hàng hóa"
+                                    />
+                                </FormGroup>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
+                    <Button
+                        variant="outlined"
+                        sx={{ color: 'var(--color-main)' }}
+                        onClick={() => setOpen(false)}
+                        className="btn-outline-hover">
+                        Hủy
+                    </Button>
                     <Button
                         variant="contained"
                         sx={{
@@ -634,14 +621,6 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             )}
                         </>
                     )}
-
-                    <Button
-                        variant="outlined"
-                        sx={{ color: 'var(--color-main)' }}
-                        onClick={() => setOpen(false)}
-                        className="btn-outline-hover">
-                        Hủy
-                    </Button>
                 </DialogActions>
             </Dialog>
         </>

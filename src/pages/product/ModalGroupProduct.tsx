@@ -214,15 +214,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 open={isShow}
                 onClose={() => setIsShow(false)}
                 aria-labelledby="draggable-dialog-title"
-                fullWidth>
-                <DialogTitle
-                    sx={{
-                        cursor: 'move',
-                        fontSize: '24px!important',
-                        color: '#333233',
-                        fontWeight: '700!important'
-                    }}
-                    id="draggable-dialog-title">
+                maxWidth="xs">
+                <DialogTitle className="modal-title" id="draggable-dialog-title">
                     {isNew ? 'Thêm' : 'Cập nhật'} {groupProduct.sLoaiNhomHang}
                 </DialogTitle>
                 <Button
@@ -239,7 +232,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     <CloseIcon />
                 </Button>
                 <DialogContent sx={{ overflow: 'unset' }}>
-                    <Grid container>
+                    <Grid container spacing={2}>
                         {/* <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
                             <FormGroup>
                                 <FormControlLabel
@@ -276,69 +269,60 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 />
                             </FormGroup>
                         </Grid> */}
-                        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Stack spacing={1}>
-                                <span className="modal-lable">
-                                    Tên {groupProduct.sLoaiNhomHang}{' '}
-                                    <span style={{ color: 'red' }}>*</span>
-                                </span>
-
-                                <TextField
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    required
-                                    value={groupProduct.tenNhomHang}
-                                    error={errTenNhom && wasClickSave}
-                                    helperText={
-                                        errTenNhom && wasClickSave
-                                            ? 'Tên nhóm không được để trống'
-                                            : ''
-                                    }
-                                    onChange={(event) => {
-                                        setGroupProduct((olds: any) => {
-                                            return { ...olds, tenNhomHang: event.target.value };
-                                        });
-                                        setErrTenNhom(false);
-                                        setWasClickSave(false);
-                                    }}
-                                />
-                            </Stack>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <TextField
+                                variant="outlined"
+                                size="small"
+                                fullWidth
+                                required
+                                autoFocus
+                                label={`Tên ${groupProduct.sLoaiNhomHang}`}
+                                value={groupProduct.tenNhomHang}
+                                error={errTenNhom && wasClickSave}
+                                helperText={
+                                    errTenNhom && wasClickSave ? 'Tên nhóm không được để trống' : ''
+                                }
+                                onChange={(event) => {
+                                    setGroupProduct((olds: any) => {
+                                        return { ...olds, tenNhomHang: event.target.value };
+                                    });
+                                    setErrTenNhom(false);
+                                    setWasClickSave(false);
+                                }}
+                            />
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Stack spacing={1}>
-                                <span className="modal-lable">Nhóm gốc</span>
-
-                                <Autocomplete
-                                    size="small"
-                                    fullWidth
-                                    disablePortal
-                                    multiple={false}
-                                    value={nhomGoc}
-                                    onChange={(event: any, newValue: any) => {
-                                        handleChangeNhomGoc(newValue);
-                                    }}
-                                    options={dataNhomHangFilter}
-                                    getOptionLabel={(option: any) =>
-                                        option.tenNhomHang ? option.tenNhomHang : ''
-                                    }
-                                    renderInput={(params) => <TextField {...params} />}
-                                    renderOption={(props, item) => (
-                                        <Box
-                                            component={'li'}
-                                            {...props}
-                                            className="autocomplete-option">
-                                            {item.tenNhomHang}
-                                        </Box>
-                                    )}
-                                />
-                            </Stack>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <Autocomplete
+                                size="small"
+                                fullWidth
+                                disablePortal
+                                multiple={false}
+                                value={nhomGoc}
+                                onChange={(event: any, newValue: any) => {
+                                    handleChangeNhomGoc(newValue);
+                                }}
+                                options={dataNhomHangFilter}
+                                getOptionLabel={(option: any) =>
+                                    option.tenNhomHang ? option.tenNhomHang : ''
+                                }
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Chọn nhóm" />
+                                )}
+                                renderOption={(props, item) => (
+                                    <Box
+                                        component={'li'}
+                                        {...props}
+                                        className="autocomplete-option">
+                                        {item.tenNhomHang}
+                                    </Box>
+                                )}
+                            />
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
                             <Stack spacing={1} position={'relative'}>
-                                <span className="modal-lable">Màu sắc</span>
                                 <TextField
                                     size="small"
+                                    label="Màu sắc"
                                     onClick={() => setColorToggle(!colorToggle)}
                                     fullWidth
                                     InputProps={{
@@ -355,26 +339,33 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 {colorToggle && <GridColor handleChoseColor={changeColor} />}
                             </Stack>
                         </Grid>
-                        <Grid item xs={12} sm={12} md={12} lg={12} sx={{ pb: 2 }}>
-                            <Stack spacing={1}>
-                                <span className="modal-lable">Mô tả</span>
-                                <TextField
-                                    variant="outlined"
-                                    fullWidth
-                                    multiline
-                                    rows={2}
-                                    value={groupProduct.moTa || ''}
-                                    onChange={(event) =>
-                                        setGroupProduct((olds: any) => {
-                                            return { ...olds, moTa: event.target.value };
-                                        })
-                                    }
-                                />
-                            </Stack>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <TextField
+                                variant="outlined"
+                                fullWidth
+                                multiline
+                                label="Mô tả"
+                                rows={2}
+                                value={groupProduct.moTa || ''}
+                                onChange={(event) =>
+                                    setGroupProduct((olds: any) => {
+                                        return { ...olds, moTa: event.target.value };
+                                    })
+                                }
+                            />
                         </Grid>
                     </Grid>
                 </DialogContent>
                 <DialogActions>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            color: 'var(--color-main)'
+                        }}
+                        onClick={() => setIsShow(false)}
+                        className="btn-outline-hover">
+                        Hủy
+                    </Button>
                     <Button
                         variant="contained"
                         sx={{ bgcolor: 'red', display: isNew ? 'none' : '' }}
@@ -397,15 +388,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         onClick={saveNhomHangHoa}
                         className="btn-container-hover">
                         Lưu
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            color: 'var(--color-main)'
-                        }}
-                        onClick={() => setIsShow(false)}
-                        className="btn-outline-hover">
-                        Hủy
                     </Button>
                 </DialogActions>
             </Dialog>
