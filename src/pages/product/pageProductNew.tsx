@@ -46,7 +46,7 @@ import fileDowloadService from '../../services/file-dowload.service';
 import { enqueueSnackbar } from 'notistack';
 import uploadFileService from '../../services/uploadFileService';
 import { FileUpload } from '../../services/dto/FileUpload';
-import ImportExcel from '../../components/ImportComponent';
+import ImportExcel from '../../components/ImportComponent/ImportExcel';
 
 export default function PageProductNew() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -361,6 +361,7 @@ export default function PageProductNew() {
             variant: result.status == 'success' ? 'success' : result.status,
             autoHideDuration: 3000
         });
+        setShowImport(false);
     };
     const downloadImportTemplate = async () => {
         const result = await uploadFileService.downloadImportTemplate(
@@ -488,6 +489,7 @@ export default function PageProductNew() {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <ImportExcel
+                tieude={'Nhập file dịch vụ'}
                 isOpen={isShowImport}
                 onClose={onImportShow}
                 downloadImportTemplate={downloadImportTemplate}

@@ -34,7 +34,7 @@ import khachHangStore from '../../stores/khachHangStore';
 import { enqueueSnackbar } from 'notistack';
 import Cookies from 'js-cookie';
 import CustomerInfo from './components/CustomerInfo';
-import ImportExcel from '../../components/ImportComponent';
+import ImportExcel from '../../components/ImportComponent/ImportExcel';
 import { FileUpload } from '../../services/dto/FileUpload';
 import uploadFileService from '../../services/uploadFileService';
 import abpCustom from '../../components/abp-custom';
@@ -671,6 +671,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             onOk={this.onOkDelete}
                             onCancel={this.showConfirmDelete}></ConfirmDelete>
                         <ImportExcel
+                            tieude={'Nhập file khách hàng'}
                             isOpen={this.state.importShow}
                             onClose={this.onImportShow}
                             downloadImportTemplate={this.downloadImportTemplate}
