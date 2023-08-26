@@ -120,7 +120,7 @@ body .font-normal {
 }
 
 .MuiAutocomplete-option {
-    font-size: 13px;
+    font-size: var(--font-size-main) !important;
 }
 
 
@@ -176,18 +176,20 @@ body .font-normal {
     color: red !important;
 }
 
-.MuiInputBase-input::placeholder {
+
+/* .MuiInputBase-input::placeholder {
     font-size: 14px;
 }
 
 .MuiFormControlLabel-label {
     font-size: 14px;
-}
+} */
 
-.MuiOutlinedInput-root {
+
+/* .MuiOutlinedInput-root {
     font-size: 14px;
     border-radius: 4px !important;
-}
+} */
 
 
 /* text input */
@@ -196,9 +198,10 @@ body .font-normal {
     font-size: var(--font-size-main) !important;
 }
 
-.inputEdit .MuiOutlinedInput-root {
+
+/* .inputEdit .MuiOutlinedInput-root {
     border-radius: 4px !important;
-}
+} */
 
 .MuiRadio-root.Mui-checked {
     color: var(--color-main) !important;
@@ -233,6 +236,13 @@ body .font-normal {
 .MuiFormControl-root .MuiFormLabel-root:not(.MuiInputLabel-shrink) {
     font-size: var(--font-size-main)!important;
     font-family: var(--font-family-main) !important
+}
+
+
+/* dịnh dang label khi focus vao input (vẫn giữ nguyên font mặc định = Roboto*/
+
+.MuiFormControl-root .MuiFormLabel-root.MuiInputLabel-shrink {
+    font-size: 15px!important
 }
 
 
