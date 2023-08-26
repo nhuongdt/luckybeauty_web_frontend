@@ -120,8 +120,7 @@ export default function ImportExcel({
                                 Tải về file mẫu (.xlsx) hoặc nhập file dữ liệu sẵn có
                             </Typography>
                             <Typography variant="body2">
-                                Hệ thống chỉ cho phép nhập tối đa 10000 {tieude} dòng mỗi lần từ
-                                file
+                                Hệ thống chỉ cho phép nhập tối đa 10000 dòng mỗi lần từ file
                             </Typography>
                             <Button
                                 variant="outlined"
