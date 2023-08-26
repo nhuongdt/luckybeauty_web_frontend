@@ -73,6 +73,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
         }
     }
     choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        await this.closeImage();
         if (e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
             const reader = new FileReader();
