@@ -8,7 +8,7 @@ import {
     Button,
     SelectChangeEvent
 } from '@mui/material';
-import SearchIcon from '../../../images/search-normal.svg';
+import { Search } from '@mui/icons-material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
@@ -426,50 +426,53 @@ const GiaoDichThanhToan: React.FC = () => {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
-            <Box paddingTop={2} paddingRight={2}>
-                <Grid container spacing={1} justifyContent="space-between">
-                    <Grid xs={12} md={6} item display="flex" alignItems="center" gap="10px">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
-                            Giao dịch thanh toán
-                        </Typography>
-                        <Box className="form-search">
-                            <TextField
-                                size="small"
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    borderColor: '#CDC9CD!important'
-                                }}
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                                onChange={(event) =>
-                                    setParamSearch((itemOlds: any) => {
-                                        return {
-                                            ...itemOlds,
-                                            textSearch: event.target.value
-                                        };
-                                    })
-                                }
-                                onKeyDown={(event) => {
-                                    handleKeyDownTextSearch(event);
-                                }}
-                            />
-                        </Box>
+            <Box paddingTop={2}>
+                <Grid container spacing={1}>
+                    <Grid item xs={12} sm={12} md={12} lg={6} alignItems="center" gap="10px">
+                        <Grid container alignItems="center">
+                            <Grid item xs={12} sm={6} md={4}>
+                                <span className="page-title"> Giao dịch thanh toán</span>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={6}>
+                                <TextField
+                                    size="small"
+                                    fullWidth
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderColor: '#CDC9CD!important'
+                                    }}
+                                    className="search-field"
+                                    variant="outlined"
+                                    type="search"
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <IconButton type="button">
+                                                <Search />
+                                            </IconButton>
+                                        )
+                                    }}
+                                    onChange={(event) =>
+                                        setParamSearch((itemOlds: any) => {
+                                            return {
+                                                ...itemOlds,
+                                                textSearch: event.target.value
+                                            };
+                                        })
+                                    }
+                                    onKeyDown={(event) => {
+                                        handleKeyDownTextSearch(event);
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={12} md={12} lg={6}>
                         <Box
                             sx={{
                                 display: 'flex',
                                 gap: '8px',
-                                justifyContent: 'end'
+                                justifyContent: { lg: 'end' }
                             }}>
                             <Box
                                 sx={{
@@ -561,10 +564,11 @@ const GiaoDichThanhToan: React.FC = () => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box marginTop="16px" paddingTop={2}>
+                <Box marginTop={5} className="page-box-right">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        className="data-grid-row"
+                        rowHeight={46}
                         columns={columns}
                         rows={pageDataHoaDon.items}
                         hideFooter

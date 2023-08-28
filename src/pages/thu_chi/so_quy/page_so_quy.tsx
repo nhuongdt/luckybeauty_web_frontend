@@ -28,7 +28,7 @@ import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import utils from '../../../utils/utils';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
-import { Add } from '@mui/icons-material';
+import { Add, Search } from '@mui/icons-material';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../../services/file-dowload.service';
@@ -406,40 +406,47 @@ const PageSoQuy = ({ xx }: any) => {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Box paddingTop={2}>
-                <Grid container spacing={1} justifyContent="space-between">
-                    <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
-                            Sổ quỹ
-                        </Typography>
-                        <Box className="form-search">
-                            <TextField
-                                size="small"
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    borderColor: '#CDC9CD!important',
-                                    '& .MuiInputBase-root': {
-                                        pl: '0'
-                                    }
-                                }}
-                                onChange={(e: any) => {
-                                    setParamSearch({ ...paramSearch, textSearch: e.target.value });
-                                }}
-                                onKeyDown={handleKeyDownTextSearch}
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} lg={6} md={12}>
+                        <Grid container alignItems="center">
+                            <Grid item xs={4} sm={5} lg={2} md={2}>
+                                <span className="page-title"> Sổ quỹ</span>
+                            </Grid>
+                            <Grid item xs={8} sm={7} lg={6} md={6}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderColor: '#CDC9CD!important',
+                                        '& .MuiInputBase-root': {
+                                            pl: '0'
+                                        }
+                                    }}
+                                    onChange={(e: any) => {
+                                        setParamSearch({
+                                            ...paramSearch,
+                                            textSearch: e.target.value
+                                        });
+                                    }}
+                                    onKeyDown={handleKeyDownTextSearch}
+                                    className="search-field"
+                                    variant="outlined"
+                                    type="search"
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <IconButton>
+                                                <Search />
+                                            </IconButton>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} md="auto">
+
+                    <Grid item xs={12} sm={12} lg={6} md={12}>
                         <Box
                             sx={{
                                 display: 'flex',
@@ -454,7 +461,7 @@ const PageSoQuy = ({ xx }: any) => {
                                     bgcolor: '#fff',
                                     alignItems: 'center',
                                     border: '1px solid #E6E1E6',
-                                    borderRadius: '8px',
+                                    borderRadius: '4px',
                                     '& .MuiOutlinedInput-notchedOutline': {
                                         border: 'none'
                                     },
@@ -509,10 +516,11 @@ const PageSoQuy = ({ xx }: any) => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box paddingTop={2}>
+                <Box marginTop={5} className="page-box-right">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        className="data-grid-row"
+                        rowHeight={46}
                         rows={pageDataSoQuy.items}
                         columns={columns}
                         checkboxSelection
@@ -522,7 +530,6 @@ const PageSoQuy = ({ xx }: any) => {
                         sortingOrder={['desc', 'asc']}
                         onSortModelChange={(newSortModel) => {
                             setSortModel(() => newSortModel);
-                            console.log('newSortModel ', newSortModel);
                             if (newSortModel.length > 0) {
                                 setParamSearch({
                                     ...paramSearch,
