@@ -47,6 +47,7 @@ import { enqueueSnackbar } from 'notistack';
 import uploadFileService from '../../services/uploadFileService';
 import { FileUpload } from '../../services/dto/FileUpload';
 import ImportExcel from '../../components/ImportComponent/ImportExcel';
+import utils from '../../utils/utils';
 
 export default function PageProductNew() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -64,6 +65,7 @@ export default function PageProductNew() {
     const [isShowImport, setShowImport] = useState<boolean>(false);
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
+    const [treeSearchNhomHangHoa, setTreeSearchNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
 
     const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
         totalCount: 0,
@@ -105,6 +107,7 @@ export default function PageProductNew() {
             color: 'var(--color-main)'
         });
         setTreeNhomHangHoa([obj, ...list.items]);
+        setTreeSearchNhomHangHoa([obj, ...list.items]);
     };
 
     const PageLoad = () => {
@@ -161,6 +164,26 @@ export default function PageProductNew() {
                 };
             });
         }
+    };
+    const searchNhomHang = (textSearch: string) => {
+        let txt = textSearch;
+        let txtUnsign = '';
+        if (!utils.checkNull(txt)) {
+            txt = txt.trim();
+            txtUnsign = utils.strToEnglish(txt);
+        }
+        const arr = treeNhomHangHoa.filter(
+            (x: ModelNhomHangHoa) =>
+                (x.tenNhomHang ?? '').indexOf(txt) > -1 ||
+                utils.strToEnglish(x.tenNhomHang ?? '').indexOf(txtUnsign) > -1
+        );
+        const obj = new ModelNhomHangHoa({
+            id: '',
+            tenNhomHang: 'Tất cả',
+            color: 'var(--color-main)'
+        });
+        arr.unshift(obj);
+        setTreeSearchNhomHangHoa(arr);
     };
 
     function saveNhomHang(objNew: ModelNhomHangHoa, isDelete = false) {
@@ -610,10 +633,19 @@ export default function PageProductNew() {
                                         bgcolor: 'var(--color-bg)'
                                     }
                                 }}>
-                                <AccordionNhomHangHoa
-                                    dataNhomHang={treeNhomHangHoa}
-                                    clickTreeItem={editNhomHangHoa}
-                                />
+                                <Stack spacing={1} paddingTop={1}>
+                                    <TextField
+                                        variant="standard"
+                                        fullWidth
+                                        placeholder="Tìm kiếm nhóm"
+                                        InputProps={{ startAdornment: <Search /> }}
+                                        onChange={(e) => searchNhomHang(e.target.value)}
+                                    />
+                                    <AccordionNhomHangHoa
+                                        dataNhomHang={treeSearchNhomHangHoa}
+                                        clickTreeItem={editNhomHangHoa}
+                                    />
+                                </Stack>
                             </Box>
                         </Box>
                     </Grid>

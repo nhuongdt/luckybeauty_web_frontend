@@ -41,6 +41,8 @@ import abpCustom from '../../components/abp-custom';
 import suggestStore from '../../stores/suggestStore';
 import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
 import AccordionNhomKhachHang from '../../components/Accordion/NhomKhachHang';
+import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
+import utils from '../../utils/utils';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -61,6 +63,7 @@ interface CustomerScreenState {
     information: boolean;
     idNhomKhach: string;
     isShowNhomKhachModal: boolean;
+    listNhomKhachSearch: SuggestNhomKhachDto[];
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -85,13 +88,17 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             visibilityColumn: {},
             information: false,
             idNhomKhach: '',
-            isShowNhomKhachModal: false
+            isShowNhomKhachModal: false,
+            listNhomKhachSearch: []
         };
     }
     componentDidMount(): void {
         this.getData();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
-        this.setState({ visibilityColumn: visibilityColumn });
+        this.setState({
+            visibilityColumn: visibilityColumn,
+            listNhomKhachSearch: suggestStore.suggestNhomKhach
+        });
     }
 
     async getData() {
@@ -281,6 +288,21 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     handleCloseInfor = () => {
         this.setState({ information: false });
     };
+    searchNhomKhach = (textSearch: string) => {
+        let txt = textSearch;
+        let txtUnsign = '';
+        if (!utils.checkNull(txt)) {
+            txt = txt.trim();
+            txtUnsign = utils.strToEnglish(txt);
+        }
+        const arr = suggestStore.suggestNhomKhach.filter(
+            (x: SuggestNhomKhachDto) =>
+                (x.tenNhomKhach ?? '').indexOf(txt) > -1 ||
+                utils.strToEnglish(x.tenNhomKhach ?? '').indexOf(txtUnsign) > -1
+        );
+
+        this.setState({ listNhomKhachSearch: arr });
+    };
     render(): React.ReactNode {
         // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
@@ -427,7 +449,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             }
         ];
-        //const { createOrEditKhachHang, suggestNguonKhach, suggestNhomKhach } = this.state;
 
         return (
             <>
@@ -439,7 +460,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     <Grid item xs={6} sm={6} lg={4}>
                                         <span className="page-title">Danh sách khách hàng</span>
                                     </Grid>
-                                    <Grid item xs={6} sm={6} lg={8}>
+                                    <Grid item xs={6} sm={6} lg={6}>
                                         <TextField
                                             fullWidth
                                             size="small"
@@ -582,10 +603,21 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 bgcolor: 'var(--color-bg)'
                                             }
                                         }}>
-                                        <AccordionNhomKhachHang
-                                            dataNhomKhachHang={suggestStore.suggestNhomKhach}
-                                            clickTreeItem={this.onEditNhomKhach}
-                                        />
+                                        <Stack spacing={1} paddingTop={1}>
+                                            <TextField
+                                                variant="standard"
+                                                fullWidth
+                                                placeholder="Tìm kiếm nhóm"
+                                                InputProps={{ startAdornment: <SearchIcon /> }}
+                                                onChange={(e) =>
+                                                    this.searchNhomKhach(e.target.value)
+                                                }
+                                            />
+                                            <AccordionNhomKhachHang
+                                                dataNhomKhachHang={this.state.listNhomKhachSearch}
+                                                clickTreeItem={this.onEditNhomKhach}
+                                            />
+                                        </Stack>
                                     </Box>
                                 </Box>
                             </Grid>
