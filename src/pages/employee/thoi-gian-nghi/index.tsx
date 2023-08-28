@@ -529,7 +529,7 @@ class EmployeeHoliday extends Component {
                     onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditThoiGianNghi
                     visible={this.state.modalVisible}
-                    title={this.state.IdHoliday == '' ? 'Thêm mới' : 'Cập nhật'}
+                    title={this.state.IdHoliday == '' ? 'Thêm mới ngày lễ' : 'Cập nhật này lễ'}
                     onCancel={() => {
                         this.Modal();
                     }}

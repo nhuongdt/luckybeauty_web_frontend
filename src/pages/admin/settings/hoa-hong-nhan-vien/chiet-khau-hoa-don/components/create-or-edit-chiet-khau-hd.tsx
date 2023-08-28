@@ -193,6 +193,18 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             right: '50px'
                                         }}>
                                         <Button
+                                            className="btn-outline-hover"
+                                            variant="outlined"
+                                            onClick={onClose}
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: 'var(--color-main)',
+                                                borderColor: '#965C85'
+                                            }}>
+                                            Hủy
+                                        </Button>
+                                        <Button
                                             className="btn-container-hover"
                                             variant="contained"
                                             sx={{
@@ -204,18 +216,6 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             }}
                                             type="submit">
                                             Lưu
-                                        </Button>
-                                        <Button
-                                            className="btn-outline-hover"
-                                            variant="outlined"
-                                            onClick={onClose}
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: 'var(--color-main)',
-                                                borderColor: '#965C85'
-                                            }}>
-                                            Hủy
                                         </Button>
                                     </Box>
                                 </DialogActions>

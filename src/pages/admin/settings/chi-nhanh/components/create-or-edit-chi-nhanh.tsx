@@ -182,17 +182,6 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             right: '50px'
                                         }}>
                                         <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff'
-                                            }}
-                                            type="submit"
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
-                                        <Button
                                             variant="outlined"
                                             sx={{
                                                 fontSize: '14px',
@@ -202,6 +191,17 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             onClick={this.props.onCLose}
                                             className="btn-outline-hover">
                                             Hủy
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: '#fff'
+                                            }}
+                                            type="submit"
+                                            className="btn-container-hover">
+                                            Lưu
                                         </Button>
                                     </Box>
                                 </DialogActions>

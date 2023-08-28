@@ -535,8 +535,8 @@ class CaLamViecScreen extends Component {
                     title={
                         caLamViecStore.createOrEditDto.id == AppConsts.guidEmpty ||
                         caLamViecStore.createOrEditDto.id == ''
-                            ? 'Thêm mới'
-                            : 'Cập nhật'
+                            ? 'Thêm mới ca làm việc'
+                            : 'Cập nhật ca làm việc'
                     }
                     onCancel={() => {
                         this.Modal();

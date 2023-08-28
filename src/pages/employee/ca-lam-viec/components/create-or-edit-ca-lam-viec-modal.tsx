@@ -14,7 +14,10 @@ import {
     Grid,
     Select,
     MenuItem,
-    TextField
+    TextField,
+    Typography,
+    FormControl,
+    InputLabel
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { Field, Form, Formik } from 'formik';
@@ -89,13 +92,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     direction="row"
                                     spacing={2}
                                     alignItems="center"
-                                    maxWidth={'100%'}
-                                    className="mt-2">
-                                    <Grid item xs={12}>
+                                    maxWidth={'100%'}>
+                                    <Grid item xs={12} sx={{ marginTop: '8px' }}>
                                         <FormGroup>
-                                            <FormLabel className="modal-lable">Tên ca</FormLabel>
                                             <TextField
-                                                className="mt-2"
+                                                label={<Typography>Tên ca</Typography>}
                                                 value={values.tenCa}
                                                 type="text"
                                                 name="tenCa"
@@ -122,35 +123,52 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     </Grid>
                                     <Grid item xs={6} sm={6}>
                                         <FormGroup>
-                                            <FormLabel className="modal-lable">
-                                                Bắt đầu ca
-                                            </FormLabel>
                                             <TextField
-                                                className="mt-2"
+                                                label={<Typography>Bắt đầu ca</Typography>}
                                                 type="time"
                                                 size="small"
                                                 name="gioVao"
                                                 value={values.gioVao}
                                                 onChange={handleChange}
+                                                InputLabelProps={{
+                                                    shrink: true
+                                                }}
                                                 placeholder="Nhập từ ngày"
                                             />
                                         </FormGroup>
                                     </Grid>
                                     <Grid item xs={6} sm={6}>
                                         <FormGroup>
-                                            <FormLabel className="modal-lable">
-                                                Kết thúc ca
-                                            </FormLabel>
                                             <TextField
+                                                label={<Typography>Kết thúc ca</Typography>}
                                                 type="time"
-                                                className="mt-2"
                                                 size="small"
                                                 name="gioRa"
                                                 value={values.gioRa}
                                                 onChange={handleChange}
+                                                InputLabelProps={{
+                                                    shrink: true
+                                                }}
                                                 placeholder="Nhập từ ngày"
                                             />
                                         </FormGroup>
+                                    </Grid>
+
+                                    <Grid item xs={12}>
+                                        <FormControl fullWidth>
+                                            <InputLabel>
+                                                <Typography>Lặp lại</Typography>
+                                            </InputLabel>
+                                            <Select
+                                                label={<Typography>Lặp lại</Typography>}
+                                                defaultValue="1"
+                                                size="small"
+                                                fullWidth>
+                                                <MenuItem value="1">Hàng tuần</MenuItem>
+                                                <MenuItem value="2">Hàng ngày</MenuItem>
+                                                <MenuItem value="3">Hàng tháng</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormGroup
@@ -161,28 +179,15 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                     borderRadius: '8px'
                                                 }
                                             }}>
-                                            <FormLabel className="modal-lable">Mô tả</FormLabel>
-                                            <textarea className="mt-2"></textarea>
+                                            <TextField
+                                                label={<Typography>Mô tả</Typography>}
+                                                multiline
+                                                maxRows={3}
+                                                minRows={2}></TextField>
                                         </FormGroup>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <FormLabel className="modal-lable">Lặp lại</FormLabel>
-                                        <Select
-                                            className="mt-2"
-                                            defaultValue="1"
-                                            size="small"
-                                            fullWidth
-                                            sx={{
-                                                '& .MuiSelect-select': {
-                                                    paddingY: '12.5px'
-                                                }
-                                            }}>
-                                            <MenuItem value="1">Hàng tuần</MenuItem>
-                                            <MenuItem value="2">Hàng ngày</MenuItem>
-                                            <MenuItem value="3">Hàng tháng</MenuItem>
-                                        </Select>
-                                    </Grid>
-                                    <Grid item xs={12}>
+                                        <Typography>Ngày làm việc</Typography>
                                         {date.map((item, index) => (
                                             <FormControlLabel
                                                 sx={{

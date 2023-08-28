@@ -37,6 +37,7 @@ import datLichService from '../../services/dat-lich/datLichService';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../lib/appconst';
 import * as signalR from '@microsoft/signalr';
+import notificationStore from '../../stores/notificationStore';
 const LichHen: React.FC = () => {
     const chinhanh = useContext(ChiNhanhContext);
     const [modalVisible, setModalVisible] = useState(false);
@@ -94,6 +95,7 @@ const LichHen: React.FC = () => {
     const handleSubmit = async () => {
         await getData();
         setModalVisible(!modalVisible);
+        await notificationStore.GetUserNotification();
     };
     useEffect(() => {
         createHubConnection();

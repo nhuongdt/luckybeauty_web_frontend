@@ -486,6 +486,17 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     right: '50px',
                                     justifyContent: 'end'
                                 }}>
+                                <Button
+                                    onClick={onCancel}
+                                    variant="outlined"
+                                    sx={{
+                                        fontSize: '14px',
+                                        textTransform: 'unset',
+                                        color: 'var(--color-main)'
+                                    }}
+                                    className="btn-outline-hover">
+                                    Hủy
+                                </Button>
                                 {!isSubmitting ? (
                                     <Button
                                         type="submit"
@@ -514,18 +525,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         Đang lưu
                                     </Button>
                                 )}
-
-                                <Button
-                                    onClick={onCancel}
-                                    variant="outlined"
-                                    sx={{
-                                        fontSize: '14px',
-                                        textTransform: 'unset',
-                                        color: 'var(--color-main)'
-                                    }}
-                                    className="btn-outline-hover">
-                                    Hủy
-                                </Button>
                             </Box>
                         </Form>
                     )}
