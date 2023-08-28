@@ -499,10 +499,10 @@ export default function PageProductNew() {
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md={6} lg={6} alignItems="center">
                         <Grid container alignItems="center">
-                            <Grid item xs={6} sm={6} lg={4}>
+                            <Grid item xs={6} sm={6} lg={4} md={4}>
                                 <span className="page-title"> Danh mục dịch vụ</span>
                             </Grid>
-                            <Grid item xs={6} sm={6} lg={8}>
+                            <Grid item xs={6} sm={6} lg={6} md={6}>
                                 <TextField
                                     size="small"
                                     fullWidth
