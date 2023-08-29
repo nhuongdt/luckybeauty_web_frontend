@@ -4,6 +4,7 @@ import { Box, Grid, Tabs, Tab, Stack, Button, Select, IconButton } from '@mui/ma
 import { useEffect, useRef, useState } from 'react';
 import TabPanel from '../../../../components/TabPanel/TabPanel';
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
@@ -25,12 +26,14 @@ import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import { Guid } from 'guid-typescript';
+import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
+import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
+import TokenMauIn from './TokenMauIn';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
     const [dataPrint, setdataPrint] = useState('');
     const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
-    const firstLoad = useRef(true);
     const chinhanhCurrent = useContext(ChiNhanhContext);
 
     const [lstMauIn, setListMauIn] = useState<MauInDto[]>([]);
@@ -40,6 +43,10 @@ export default function PageMauIn({ xx }: any) {
     const [newMauIn, setNewMauIn] = useState<MauInDto>({} as MauInDto);
     const [idMauInUpdate, setIdMauInUpdate] = useState('');
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
+    const [isShowToken, setIsShowToken] = useState(false);
 
     useEffect(() => {
         GetAllMauIn_byChiNhanh();
@@ -161,6 +168,37 @@ export default function PageMauIn({ xx }: any) {
         }
     }, [idMauInChosed]);
 
+    const AssignAgainListMauIn_afterSave = (objMauIn: MauInDto) => {
+        setListMauIn(() =>
+            lstMauIn.map((x: MauInDto) => {
+                if (x.id === objMauIn.id) {
+                    return {
+                        ...x,
+                        laMacDinh: objMauIn.laMacDinh,
+                        tenMauIn: objMauIn.tenMauIn,
+                        noiDungMauIn: objMauIn.noiDungMauIn
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+        setAllMauIn(() =>
+            lstMauIn.map((x: MauInDto) => {
+                if (x.id === objMauIn.id) {
+                    return {
+                        ...x,
+                        laMacDinh: objMauIn.laMacDinh,
+                        tenMauIn: objMauIn.tenMauIn,
+                        noiDungMauIn: objMauIn.noiDungMauIn
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+    };
+
     const saveMauIn = async (dataMauIn: any) => {
         setIsShowModalAddMauIn(false);
 
@@ -180,6 +218,7 @@ export default function PageMauIn({ xx }: any) {
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu in thành công' });
 
             setListMauIn(() => [dataNew, ...lstMauIn]);
+            setAllMauIn(() => [dataNew, ...allMauIn]);
             setIdMauInChosed(data.id);
 
             setNewMauIn(() => {
@@ -204,27 +243,14 @@ export default function PageMauIn({ xx }: any) {
                     noiDungMauIn: dataMauIn.noiDungMauIn
                 };
             });
-
-            setListMauIn(() =>
-                lstMauIn.map((x: MauInDto) => {
-                    if (x.id === dataNew.id) {
-                        return {
-                            ...x,
-                            laMacDinh: dataNew.laMacDinh,
-                            tenMauIn: dataNew.tenMauIn,
-                            noiDungMauIn: dataNew.noiDungMauIn
-                        };
-                    } else {
-                        return x;
-                    }
-                })
-            );
+            AssignAgainListMauIn_afterSave(dataNew);
         }
     };
 
     const UpdateMauIn = async () => {
         await MauInServices.UpdatetMauIn(newMauIn);
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật mẫu in thành công' });
+        AssignAgainListMauIn_afterSave(newMauIn);
     };
 
     const tenLoaiChungTu = () => {
@@ -258,6 +284,30 @@ export default function PageMauIn({ xx }: any) {
         });
     };
 
+    const deleteMauIn = async () => {
+        await MauInServices.DeleteMauIn(newMauIn.id);
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Xóa mẫu in thành công'
+        });
+        setListMauIn((old: MauInDto[]) => {
+            return old.filter((x: MauInDto) => x.id !== newMauIn.id);
+        });
+        setAllMauIn((old: MauInDto[]) => {
+            return old.filter((x: MauInDto) => x.id !== newMauIn.id);
+        });
+        setInforObjDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+        // set default to mauin macdinh
+        setIdMauInChosed('1');
+    };
+
     return (
         <>
             <ModalAddMauIn
@@ -267,7 +317,17 @@ export default function PageMauIn({ xx }: any) {
                 tenLoaiChungTu={tenLoaiChungTu().toString()}
                 handleSave={saveMauIn}
                 onClose={() => setIsShowModalAddMauIn(false)}
+                onDelete={deleteMauIn}
             />
+            <TokenMauIn isShow={isShowToken} onClose={() => setIsShowToken(false)} />
+            <ConfirmDelete
+                isShow={inforObjDelete.show}
+                title={inforObjDelete.title}
+                mes={inforObjDelete.mes}
+                onOk={deleteMauIn}
+                onCancel={() =>
+                    setInforObjDelete({ ...inforObjDelete, show: false })
+                }></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -279,7 +339,18 @@ export default function PageMauIn({ xx }: any) {
                         <Tabs
                             value={idLoaiChungTu}
                             onChange={handleChange}
+                            sx={{
+                                '& .MuiTabs-flexContainer': {
+                                    alignItems: 'center' /*căn giữa text cho the span */
+                                }
+                            }}
                             aria-label="basic tabs example">
+                            <InfoOutlinedIcon
+                                titleAccess="Danh sách token mẫu in"
+                                sx={{ color: 'chocolate' }}
+                                onClick={() => setIsShowToken(true)}
+                            />
+
                             <Tab label="Hóa đơn" value={1} />
                             <Tab label="Phiếu thu" value={11} />
                             <Tab label="Phiếu chi" value={12} />
@@ -287,7 +358,7 @@ export default function PageMauIn({ xx }: any) {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
-                    <Grid container paddingRight={2}>
+                    <Grid container>
                         <Grid item xs={12} sm={12} md={6} lg={6}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={3} md={3} lg={3}>
@@ -315,18 +386,40 @@ export default function PageMauIn({ xx }: any) {
                                                     setIdMauInUpdate(newMauIn.id);
                                                 }}
                                             />
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                fullWidth
-                                                onClick={UpdateMauIn}>
-                                                Lưu
-                                            </Button>
                                         </Stack>
                                     )}
                                 </Grid>
                             </Grid>
                         </Grid>
+                        {idMauInChosed.length === 36 && (
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
+                                <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={UpdateMauIn}>
+                                        Lưu mẫu in
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ bgcolor: '#854545' }}
+                                        onClick={() => {
+                                            setInforObjDelete(
+                                                new PropConfirmOKCancel({
+                                                    show: true,
+                                                    title: 'Xác nhận xóa',
+                                                    mes: `Bạn có chắc chắn muốn xóa mẫu in ${newMauIn?.tenMauIn} không?`
+                                                })
+                                            );
+                                        }}>
+                                        Xóa mẫu in
+                                    </Button>
+                                    <Button variant="contained" sx={{ display: 'none' }}>
+                                        Sao chép
+                                    </Button>
+                                </Stack>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6}>

@@ -35,6 +35,14 @@ class MauInServices {
             });
         return xx;
     };
+    DeleteMauIn = async (idMauIn: string) => {
+        const xx = await http
+            .get(`api/services/app/MauIn/DeleteMauIn?id=${idMauIn}`)
+            .then((res: { data: { result: any } }) => {
+                return res.data.result;
+            });
+        return xx;
+    };
     GetAllMauIn_byChiNhanh = async (idChiNhanh: string | null = null, idLoaiChungTu = 0) => {
         if (utils.checkNull(idChiNhanh)) {
             const xx = await http
