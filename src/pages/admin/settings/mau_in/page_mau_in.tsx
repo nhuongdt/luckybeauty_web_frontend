@@ -29,6 +29,7 @@ import { Guid } from 'guid-typescript';
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
     const [dataPrint, setdataPrint] = useState('');
+    const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
     const firstLoad = useRef(true);
     const chinhanhCurrent = useContext(ChiNhanhContext);
 
@@ -44,21 +45,73 @@ export default function PageMauIn({ xx }: any) {
         GetAllMauIn_byChiNhanh();
     }, []);
 
+    const GetAllMauIn_byChiNhanh = async () => {
+        const data = await MauInServices.GetAllMauIn_byChiNhanh();
+        setAllMauIn(data);
+        setListMauInHoaDon(data);
+    };
+
     const BindDataPrint = (shtml: string) => {
-        // !import: repace cthd --> hoadon
-        let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
-        dataAfter = DataMauIn.replaceHoaDon(dataAfter);
-        setdataPrint(dataAfter);
+        // !import: replace cthd --> hoadon
+        switch (idLoaiChungTu) {
+            case 1:
+                {
+                    let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
+                    dataAfter = DataMauIn.replaceChiNhanh(dataAfter);
+                    dataAfter = DataMauIn.replaceHoaDon(dataAfter);
+                    setdataPrint(dataAfter);
+                }
+                break;
+            case 11:
+            case 12:
+                {
+                    let dataAfter = DataMauIn.replaceChiNhanh(shtml);
+                    dataAfter = DataMauIn.replacePhieuThuChi(dataAfter);
+                    setdataPrint(dataAfter);
+                }
+                break;
+        }
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setIdLoaiChungTu(newValue);
+        switch (newValue) {
+            case 1:
+                {
+                    setListMauInHoaDon(allMauIn);
+                }
+                break;
+            case 11:
+            case 12:
+                {
+                    const mauInByLoaiChungTu = allMauIn.filter(
+                        (x: MauInDto) => x.loaiChungTu === newValue
+                    );
+                    const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
+                    const tempK80: MauInDto = {
+                        id: '1',
+                        tenMauIn: 'Mẫu mặc định',
+                        laMacDinh: false
+                    } as MauInDto;
+                    if (mauMacDinh.length === 0) {
+                        tempK80.laMacDinh = true;
+                        setListMauIn([tempK80, ...mauInByLoaiChungTu]);
+                        setIdMauInChosed('1');
+                    } else {
+                        setListMauIn([...mauInByLoaiChungTu, tempK80]);
+                        setIdMauInChosed(mauMacDinh[0].id);
+                        setNewMauIn(mauMacDinh[0]);
+                    }
+                }
+                break;
+            default:
+                setListMauInHoaDon(allMauIn);
+                break;
+        }
     };
 
-    const GetAllMauIn_byChiNhanh = async () => {
-        const data = await MauInServices.GetAllMauIn_byChiNhanh();
-
-        const mauInByLoaiChungTu = data.filter((x: MauInDto) => x.loaiChungTu === idLoaiChungTu);
+    const setListMauInHoaDon = (allMauIn: MauInDto[]) => {
+        const mauInByLoaiChungTu = allMauIn.filter((x: MauInDto) => x.loaiChungTu === 1);
         const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
         const tempK80: MauInDto = {
             id: '1',
@@ -101,7 +154,6 @@ export default function PageMauIn({ xx }: any) {
                 const itEx = lstMauIn.filter((x: MauInDto) => x.id === idMauInChosed);
                 if (itEx.length > 0) {
                     setHtml(itEx[0].noiDungMauIn);
-                    BindDataPrint(itEx[0].noiDungMauIn);
                 } else {
                     setHtml('');
                 }
@@ -181,6 +233,12 @@ export default function PageMauIn({ xx }: any) {
             case 1:
                 sLoai = 'HD';
                 break;
+            case 11:
+                sLoai = 'SQPT';
+                break;
+            case 12:
+                sLoai = 'SQPC';
+                break;
         }
         return sLoai;
     };
@@ -190,14 +248,10 @@ export default function PageMauIn({ xx }: any) {
         //Loai (1.k80,2.a4)
         const data = await MauInServices.GetContentMauInMacDinh(loai, tenLoaiChungTu().toString());
         setHtml(data);
-        BindDataPrint(data);
     };
 
+    // this func onChangeCkeditor: alway render
     const onChangeCkeditor = (shtmlNew: string) => {
-        if (firstLoad.current) {
-            firstLoad.current = false;
-            return;
-        }
         BindDataPrint(shtmlNew);
         setNewMauIn(() => {
             return { ...newMauIn, noiDungMauIn: shtmlNew };
@@ -219,7 +273,7 @@ export default function PageMauIn({ xx }: any) {
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Grid container spacing={2} padding={2}>
+            <Grid container spacing={2} padding={2} paddingLeft={0}>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs
@@ -228,7 +282,7 @@ export default function PageMauIn({ xx }: any) {
                             aria-label="basic tabs example">
                             <Tab label="Hóa đơn" value={1} />
                             <Tab label="Phiếu thu" value={11} />
-                            <Tab label="Phiếu chi" value={11} />
+                            <Tab label="Phiếu chi" value={12} />
                         </Tabs>
                     </Box>
                 </Grid>
