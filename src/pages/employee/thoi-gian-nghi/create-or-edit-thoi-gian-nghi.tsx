@@ -9,7 +9,9 @@ import {
     FormLabel,
     Grid,
     TextField,
-    Box
+    Box,
+    FormControl,
+    Typography
 } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
@@ -88,19 +90,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Grid
-                                    container
-                                    direction="row"
-                                    spacing={2}
-                                    alignItems="center"
-                                    className="mt-2">
-                                    <Grid item xs={12} sm={6}>
+                                <Grid container direction="row" spacing={3} alignItems="center">
+                                    <Grid item xs={12}>
                                         <FormGroup>
-                                            <FormLabel className="modal-lable">
-                                                Tên ngày lễ
-                                            </FormLabel>
                                             <TextField
-                                                className="mt-2"
+                                                label={<Typography>Tên ngày lễ</Typography>}
+                                                sx={{ marginTop: '16px' }}
                                                 value={values.tenNgayLe}
                                                 type="text"
                                                 name="tenNgayLe"
@@ -112,8 +107,8 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <FormLabel className="modal-lable">Từ ngày</FormLabel>
                                             <TextField
+                                                label={<Typography>Từ ngày</Typography>}
                                                 className="mt-2"
                                                 type="date"
                                                 size="small"
@@ -126,8 +121,8 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <FormLabel className="modal-lable">Đến ngày</FormLabel>
                                             <TextField
+                                                label={<Typography>Đến ngày</Typography>}
                                                 type="date"
                                                 className="mt-2"
                                                 size="small"
@@ -141,12 +136,6 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                 </Grid>
                                 <DialogActions sx={{ paddingRight: '0!important' }}>
                                     <Button
-                                        variant="contained"
-                                        type="submit"
-                                        className="btn-container-hover">
-                                        Lưu
-                                    </Button>
-                                    <Button
                                         sx={{
                                             color: 'var(--color-main)!important',
                                             bgcolor: '#fff!important'
@@ -156,6 +145,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         onClick={onCancel}
                                         className="btn-outline-hover">
                                         Hủy
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        className="btn-container-hover">
+                                        Lưu
                                     </Button>
                                 </DialogActions>
                             </Form>

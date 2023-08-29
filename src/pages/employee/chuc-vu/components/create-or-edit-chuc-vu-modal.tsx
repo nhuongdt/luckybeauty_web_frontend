@@ -109,17 +109,17 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                                 }
                                             }}>
                                             <Button
-                                                type="submit"
-                                                variant="contained"
-                                                className="btn-container-hover">
-                                                Lưu
-                                            </Button>
-                                            <Button
                                                 onClick={this.props.handleClose}
                                                 variant="outlined"
                                                 sx={{ color: 'var(--color-main)!important' }}
                                                 className="btn-outline-hover">
                                                 Hủy
+                                            </Button>
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                                className="btn-container-hover">
+                                                Lưu
                                             </Button>
                                         </Box>
                                     </DialogActions>

@@ -472,13 +472,6 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 }
                                             }}>
                                             <Button
-                                                variant="contained"
-                                                type="submit"
-                                                size="small"
-                                                className="btn-container-hover">
-                                                Lưu
-                                            </Button>
-                                            <Button
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
@@ -493,6 +486,13 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 }}
                                                 className="btn-outline-hover">
                                                 Hủy
+                                            </Button>
+                                            <Button
+                                                variant="contained"
+                                                type="submit"
+                                                size="small"
+                                                className="btn-container-hover">
+                                                Lưu
                                             </Button>
                                         </Box>
                                     </DialogActions>

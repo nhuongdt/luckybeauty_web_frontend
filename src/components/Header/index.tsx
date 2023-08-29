@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-// import avatar from '../../images/user.png';
-import avatar from '../../images/xinh.png';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
+import { formatDistanceToNow } from 'date-fns';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {
     Grid,
@@ -36,9 +38,13 @@ import { ReactComponent as SettingIcon } from '../../images/settingIcon.svg';
 import { ReactComponent as LogoutIcon } from '../../images/logoutInner.svg';
 import { ReactComponent as RestartIcon } from '../../images/restart_alt.svg';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
-import CakeIcon from '../../images/cake.svg';
-import avatarThongBao from '../../images/xinh.png';
 import useWindowWidth from '../StateWidth';
+import * as signalR from '@microsoft/signalr';
+import notificationStore from '../../stores/notificationStore';
+import { observer } from 'mobx-react';
+import NotificationSeverity from '../../enum/NotificationSeverity';
+import UserNotificationState from '../../enum/UserNotificationState';
+import NotificationService from '../../services/notification/NotificationService';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -79,6 +85,24 @@ const Header: React.FC<HeaderProps> = (
     const navigate = useNavigate();
     const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
     const [currentChiNhanh, setCurrentChiNhanh] = useState('');
+    useEffect(() => {
+        createHubConnection();
+        notificationStore.GetUserNotification();
+    }, []);
+
+    const createHubConnection = async () => {
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'notifications') // Điều chỉnh URL hub tại đây
+            .build();
+        try {
+            await newConnection.start();
+            newConnection.on('ReceiveNotification', async () => {
+                await notificationStore.GetUserNotification();
+            });
+        } catch (e) {
+            console.error('SignalR connection error: ', e);
+        }
+    };
     useEffect(() => {
         // Call API to get list of permissions here
 
@@ -124,26 +148,7 @@ const Header: React.FC<HeaderProps> = (
         //window.location.reload();
         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
     };
-    const dataThongBao = [
-        {
-            title: '2 khách hàng sinh nhật hôm nay',
-            description: 'Khách hàng Lương Tuệ Nhi và Hồng có sinh nhật hôm nay.',
-            image: CakeIcon,
-            time: '30min'
-        },
-        {
-            title: 'Phan Thị Quỳnh',
-            description: 'Đã đặt lịch uốn tóc với Tài Đinh',
-            image: avatarThongBao,
-            time: '1day'
-        },
-        {
-            title: 'Lê Nữ Quỳnh Nho',
-            description: 'Đã thanh toán hóa đơn',
-            image: avatarThongBao,
-            time: '8h'
-        }
-    ];
+
     const dataSettingThongBao = [
         {
             title: 'Lịch hẹn',
@@ -295,12 +300,9 @@ const Header: React.FC<HeaderProps> = (
 
                         <Badge
                             color="error"
-                            variant="dot"
+                            badgeContent={notificationStore.notifications?.unreadCount ?? 0}
                             sx={{
-                                '& .MuiBadge-dot.MuiBadge-badge': {
-                                    top: '5px!important',
-                                    right: '5px!important'
-                                }
+                                marginRight: '5px'
                             }}>
                             <Button
                                 id="btnThongBao"
@@ -326,128 +328,169 @@ const Header: React.FC<HeaderProps> = (
                             onClose={handleCloseThongBao}
                             MenuListProps={{
                                 'aria-labelledby': 'btnThongBao'
-                            }}
-                            sx={{
-                                '& ul': { width: '400px' }
                             }}>
-                            <MenuItem
-                                sx={{
-                                    cursor: 'auto!important',
-                                    bgcolor: 'transparent!important',
-                                    '&> .MuiTouchRipple-root': {
-                                        display: 'none'
-                                    }
-                                }}>
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        width: '100%',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        padding: '18px 0',
-                                        borderBottom: '1px solid #F2F2F2'
-                                    }}>
-                                    <Box
+                            <Box
+                                display={'flex'}
+                                justifyContent={'space-between'}
+                                maxWidth={'450px'}
+                                flexDirection={'column'}>
+                                <Box alignItems={'start'}>
+                                    <MenuItem
                                         sx={{
-                                            display: 'flex',
-                                            gap: '3px',
-                                            aignItems: 'center'
-                                        }}>
-                                        <Typography
-                                            variant="body1"
-                                            color="#4C4B4C"
-                                            fontWeight="700">
-                                            Thông báo
-                                        </Typography>
-                                        <Box
-                                            sx={{
-                                                width: '16px',
-                                                height: '16px',
-                                                borderRadius: '50%',
-                                                bgcolor: '#F1416C',
-                                                color: '#fff',
-                                                fontSize: '12px',
-                                                textAlign: 'center',
-                                                lineHeight: '16px',
-                                                margin: 'auto'
-                                            }}>
-                                            4
-                                        </Box>
-                                    </Box>
-                                    <IconButton
-                                        onClick={handleSettingClick}
-                                        sx={{
-                                            '&:hover svg': {
-                                                filter: 'var(--color-hoverIcon)'
+                                            cursor: 'auto!important',
+                                            bgcolor: 'transparent!important',
+                                            '&> .MuiTouchRipple-root': {
+                                                display: 'none'
                                             }
                                         }}>
-                                        <SettingIcon />
-                                    </IconButton>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                width: '100%',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                borderBottom: '1px solid #F2F2F2'
+                                            }}>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    gap: '3px',
+                                                    aignItems: 'center'
+                                                }}>
+                                                <Typography
+                                                    variant="body1"
+                                                    color="#4C4B4C"
+                                                    fontWeight="700">
+                                                    Thông báo
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        width: '16px',
+                                                        height: '16px',
+                                                        borderRadius: '50%',
+                                                        bgcolor: '#F1416C',
+                                                        color: '#fff',
+                                                        fontSize: '12px',
+                                                        textAlign: 'center',
+                                                        lineHeight: '16px',
+                                                        margin: 'auto'
+                                                    }}>
+                                                    {notificationStore.notifications?.unreadCount ??
+                                                        0}
+                                                </Box>
+                                            </Box>
+                                            <IconButton
+                                                onClick={handleSettingClick}
+                                                sx={{
+                                                    '&:hover svg': {
+                                                        filter: 'var(--color-hoverIcon)'
+                                                    }
+                                                }}>
+                                                <SettingIcon />
+                                            </IconButton>
+                                        </Box>
+                                    </MenuItem>
                                 </Box>
-                            </MenuItem>
-                            {dataThongBao.map((item, index) => (
+                                <Box alignItems={'center'}>
+                                    {notificationStore.notifications?.items.map((item, index) => (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                padding: '0px 16px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between'
+                                            }}>
+                                            <Box marginRight={'10px'}>
+                                                {item.notification.severity ===
+                                                NotificationSeverity.Info ? (
+                                                    <InfoOutlinedIcon color="info" />
+                                                ) : null}
+                                                {item.notification.severity ===
+                                                NotificationSeverity.Error ? (
+                                                    <ErrorOutlineOutlinedIcon color="error" />
+                                                ) : null}
+                                                {item.notification.severity ===
+                                                NotificationSeverity.Fatal
+                                                    ? null
+                                                    : null}
+                                                {item.notification.severity ===
+                                                NotificationSeverity.Success ? (
+                                                    <CheckCircleOutlineOutlinedIcon color="success" />
+                                                ) : null}
+                                                {item.notification.severity ===
+                                                NotificationSeverity.Warn ? (
+                                                    <WarningAmberOutlinedIcon color="warning" />
+                                                ) : null}
+                                            </Box>
+                                            <Box
+                                                sx={{
+                                                    width: '100%',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    gap: '10px',
+                                                    paddingY: '8px',
+                                                    borderBottom: '1px solid #F2F2F2'
+                                                }}>
+                                                <Typography fontSize="16px" fontWeight="500">
+                                                    {item.notification.notificationName}
+                                                </Typography>
+                                                <Typography fontSize="13px">
+                                                    {item.notification.content}
+                                                </Typography>
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        flexDirection: 'row',
+                                                        justifyContent: 'space-between',
+                                                        alignItems: 'center'
+                                                    }}>
+                                                    <Typography
+                                                        sx={{
+                                                            fontSize: '10px',
+                                                            fontWeight: '300',
+                                                            float: 'left'
+                                                        }}>
+                                                        {formatDistanceToNow(
+                                                            new Date(
+                                                                item.notification.creationTime
+                                                            ),
+                                                            {
+                                                                addSuffix: true
+                                                            }
+                                                        )}
+                                                    </Typography>
+                                                    {item.state === UserNotificationState.Unread ? (
+                                                        <Button
+                                                            onClick={async () => {
+                                                                await NotificationService.SetNotificationAsRead(
+                                                                    item.id
+                                                                );
+                                                                await notificationStore.GetUserNotification();
+                                                            }}>
+                                                            Đánh dấu đã đọc
+                                                        </Button>
+                                                    ) : null}
+                                                </Box>
+                                            </Box>
+                                        </Box>
+                                    ))}
+                                </Box>
                                 <MenuItem
-                                    key={index}
-                                    onClick={handleCloseThongBao}
-                                    sx={{ whiteSpace: 'normal' }}>
-                                    <Box
-                                        sx={{
-                                            width: '100%',
-                                            display: 'flex',
-
-                                            gap: '10px',
-                                            paddingY: '16px',
-                                            borderBottom: '1px solid #F2F2F2'
-                                        }}>
-                                        <Box
-                                            sx={{
-                                                '& img': {
-                                                    height: '32px',
-                                                    width: '32px',
-                                                    borderRadius: index === 0 ? '0' : '50%'
-                                                }
-                                            }}>
-                                            <img src={item.image} alt="image" />
-                                        </Box>
-                                        <Box sx={{ maxWidth: '75%' }}>
-                                            <Typography
-                                                variant="body1"
-                                                fontSize="14px"
-                                                fontWeight="500"
-                                                color="#4C4B4C">
-                                                {item.title}
-                                            </Typography>
-                                            <Typography
-                                                variant="body1"
-                                                color="#666466"
-                                                fontSize="14px">
-                                                {item.description}
-                                            </Typography>
-                                        </Box>
-                                        <Box
-                                            sx={{
-                                                marginLeft: 'auto',
-                                                fontSize: '10px',
-                                                color: '#666466',
-                                                fontWeight: '300'
-                                            }}>
-                                            {item.time}
-                                        </Box>
-                                    </Box>
+                                    sx={{
+                                        cursor: 'auto!important',
+                                        bgcolor: 'transparent!important',
+                                        '&> .MuiTouchRipple-root': {
+                                            display: 'none'
+                                        }
+                                    }}>
+                                    <Button
+                                        variant="text"
+                                        sx={{ color: '#319DFF', margin: 'auto' }}>
+                                        Xem tất cả
+                                    </Button>
                                 </MenuItem>
-                            ))}
-                            <MenuItem
-                                sx={{
-                                    cursor: 'auto!important',
-                                    bgcolor: 'transparent!important',
-                                    '&> .MuiTouchRipple-root': {
-                                        display: 'none'
-                                    }
-                                }}>
-                                <Button variant="text" sx={{ color: '#319DFF', margin: 'auto' }}>
-                                    Xem tất cả
-                                </Button>
-                            </MenuItem>
+                            </Box>
                         </Menu>
                         <Menu
                             id="setting-thongbao"
@@ -698,4 +741,4 @@ const Header: React.FC<HeaderProps> = (
         </Box>
     );
 };
-export default Header;
+export default observer(Header);

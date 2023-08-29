@@ -13,7 +13,9 @@ import {
     ToggleButton,
     DialogTitle,
     DialogContent,
-    DialogActions
+    DialogActions,
+    FormControl,
+    InputLabel
 } from '@mui/material';
 
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
@@ -140,14 +142,14 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                             padding: '24px',
                                             borderRadius: '8px'
                                         }}>
-                                        <Box>
-                                            <Typography
-                                                //color="#4C4B4C"
-                                                fontSize="14px"
-                                                fontWeight="500">
-                                                Lặp lại
-                                            </Typography>
+                                        <FormControl fullWidth>
+                                            <InputLabel>
+                                                <Typography fontSize="14px">Lặp lại</Typography>
+                                            </InputLabel>
                                             <Select
+                                                label={
+                                                    <Typography fontSize="14px">Lặp lại</Typography>
+                                                }
                                                 value={curent}
                                                 onChange={handleChange}
                                                 sx={{
@@ -160,22 +162,20 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
 
                                                     mt: '8px'
                                                 }}
-                                                displayEmpty
                                                 size="small"
                                                 IconComponent={() => <ArrowDown />}>
                                                 <MenuItem value="">Mỗi tuần</MenuItem>
                                                 <MenuItem value={1}>Mỗi ngày</MenuItem>
                                                 <MenuItem value={3}>Mỗi tháng</MenuItem>
                                             </Select>
-                                        </Box>
+                                        </FormControl>
                                         <Box>
-                                            <Typography
-                                                //color="#4C4B4C"
-                                                fontSize="14px"
-                                                fontWeight="500">
-                                                Ngày bắt đầu
-                                            </Typography>
                                             <TextField
+                                                label={
+                                                    <Typography fontSize="13px" fontWeight="500">
+                                                        Ngày bắt đầu
+                                                    </Typography>
+                                                }
                                                 type="date"
                                                 value={values.tuNgay}
                                                 name={'tuNgay'}
@@ -215,13 +215,12 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                             />
                                         </Box>
                                         <Box>
-                                            <Typography
-                                                //color="#4C4B4C"
-                                                fontSize="14px"
-                                                fontWeight="500">
-                                                Ngày kết thúc
-                                            </Typography>
                                             <TextField
+                                                label={
+                                                    <Typography fontSize="13px" fontWeight="500">
+                                                        Ngày kết thúc
+                                                    </Typography>
+                                                }
                                                 type="date"
                                                 value={values.denNgay}
                                                 name={'denNgay'}
@@ -273,38 +272,44 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         <Grid container item>
                                             <Grid item xs={12}>
                                                 <Box sx={{ padding: '24px 0px' }}>
-                                                    <Typography
-                                                        // color="#4C4B4C"
-                                                        fontSize="14px"
-                                                        fontWeight="500">
-                                                        Ca làm việc
-                                                    </Typography>
-                                                    <Select
-                                                        value={values.idCaLamViec}
-                                                        onChange={handleChange}
-                                                        name="idCaLamViec"
-                                                        sx={{
-                                                            width: '100%',
-                                                            '[aria-expanded="true"] ~ svg': {
-                                                                transform: 'rotate(180deg)'
-                                                            },
-                                                            pr: '20px',
-                                                            color: '#4C4B4C',
+                                                    <FormControl fullWidth>
+                                                        <InputLabel>
+                                                            <Typography fontSize="14px">
+                                                                Ca làm việc
+                                                            </Typography>
+                                                        </InputLabel>
+                                                        <Select
+                                                            label={
+                                                                <Typography fontSize="14px">
+                                                                    Ca làm việc
+                                                                </Typography>
+                                                            }
+                                                            value={values.idCaLamViec}
+                                                            onChange={handleChange}
+                                                            name="idCaLamViec"
+                                                            sx={{
+                                                                width: '100%',
+                                                                '[aria-expanded="true"] ~ svg': {
+                                                                    transform: 'rotate(180deg)'
+                                                                },
+                                                                pr: '20px',
+                                                                color: '#4C4B4C',
 
-                                                            mt: '8px'
-                                                        }}
-                                                        displayEmpty
-                                                        size="small"
-                                                        IconComponent={() => <ArrowDown />}>
-                                                        {Array.isArray(suggestCaLamViec) &&
-                                                            suggestCaLamViec.map((item) => (
-                                                                <MenuItem
-                                                                    key={item.id}
-                                                                    value={item.id}>
-                                                                    {item.tenCa}
-                                                                </MenuItem>
-                                                            ))}
-                                                    </Select>
+                                                                mt: '8px'
+                                                            }}
+                                                            displayEmpty
+                                                            size="small"
+                                                            IconComponent={() => <ArrowDown />}>
+                                                            {Array.isArray(suggestCaLamViec) &&
+                                                                suggestCaLamViec.map((item) => (
+                                                                    <MenuItem
+                                                                        key={item.id}
+                                                                        value={item.id}>
+                                                                        {item.tenCa}
+                                                                    </MenuItem>
+                                                                ))}
+                                                        </Select>
+                                                    </FormControl>
                                                 </Box>
                                             </Grid>
                                             <Grid item xs={12}>
@@ -452,17 +457,17 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         }
                                     }}>
                                     <Button
-                                        type="submit"
-                                        variant="contained"
-                                        className="btn-container-hover">
-                                        Lưu
-                                    </Button>
-                                    <Button
                                         onClick={onClose}
                                         variant="outlined"
                                         sx={{ color: 'var(--color-main)!important' }}
                                         className="btn-outline-hover">
                                         Hủy
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        className="btn-container-hover">
+                                        Lưu
                                     </Button>
                                 </Box>
                             </DialogActions>

@@ -212,6 +212,18 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             right: '50px'
                                         }}>
                                         <Button
+                                            variant="outlined"
+                                            onClick={onClose}
+                                            sx={{
+                                                fontSize: '14px',
+                                                textTransform: 'unset',
+                                                color: '#965C85',
+                                                borderColor: '#965C85'
+                                            }}
+                                            className="btn-outline-hover">
+                                            Hủy
+                                        </Button>
+                                        <Button
                                             variant="contained"
                                             type="submit"
                                             sx={{
@@ -223,18 +235,6 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             }}
                                             className="btn-container-hover">
                                             Lưu
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            onClick={onClose}
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#965C85',
-                                                borderColor: '#965C85'
-                                            }}
-                                            className="btn-outline-hover">
-                                            Hủy
                                         </Button>
                                     </Box>
                                 </DialogActions>
