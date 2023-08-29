@@ -28,6 +28,7 @@ export default class QuyHoaDonDto {
     loaiPhieu? = '';
     maNguoiNop? = '';
     tenNguoiNop? = '';
+    sdtNguoiNop? = '';
     tenChiNhanh? = '';
     tenNhanVien? = '';
     txtTrangThai? = '';
