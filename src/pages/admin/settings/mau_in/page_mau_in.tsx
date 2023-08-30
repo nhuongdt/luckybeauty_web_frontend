@@ -256,8 +256,6 @@ export default function PageMauIn({ xx }: any) {
 
     const tenLoaiChungTu = () => {
         let sLoai = '';
-        console.log('newValue ', idLoaiChungTu);
-
         switch (idLoaiChungTu) {
             case 1:
                 sLoai = 'HD';
@@ -275,7 +273,6 @@ export default function PageMauIn({ xx }: any) {
 
     const GetContentMauInMacDinh = async (loai = 1) => {
         //Loai (1.k80,2.a4)
-        console.log('GetContentMauInMacDinh ', idLoaiChungTu, tenLoaiChungTu().toString());
         const data = await MauInServices.GetContentMauInMacDinh(loai, tenLoaiChungTu().toString());
         setHtml(data);
     };
