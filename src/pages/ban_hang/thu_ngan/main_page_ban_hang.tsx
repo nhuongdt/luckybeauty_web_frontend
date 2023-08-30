@@ -235,7 +235,6 @@ export default function MainPageBanHang() {
                     {activeTab === 1 && <CheckInNew hanleChoseCustomer={choseCustomer} />}
                     {activeTab === 2 && (
                         <PageBanHang
-                            setHtmlElement={handleHtmlValue}
                             customerChosed={cusChosing}
                             CoditionLayout={layout}
                             onPaymentChild={handleShow}
