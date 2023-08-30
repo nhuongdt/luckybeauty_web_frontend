@@ -58,13 +58,14 @@ import { ReactComponent as UserIcon } from '../../../images/user.svg';
 import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
 import nhanVienService from '../../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlElement }: any) => {
-    const chiNhanhCurrent = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = Cookies.get('IdChiNhanh');
     const [txtSearch, setTxtSearch] = useState('');
     const isFirstRender = useRef(true);
