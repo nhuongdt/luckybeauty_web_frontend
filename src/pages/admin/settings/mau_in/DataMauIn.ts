@@ -100,7 +100,7 @@ class DataMauIn {
     replaceChiNhanh = (shtml: string) => {
         let data = shtml;
         data = data.replaceAll('{TenCuaHang}', this.congty.tenCongTy.toUpperCase());
-        data = data.replaceAll('{LogoCuaHang}', this.congty.logo);
+        data = data.replaceAll('{LogoCuaHang}', `<img src=${this.congty.logo ?? congty.logo} />`);
         data = data.replaceAll('{DiaChiCuaHang}', this.congty.diaChi);
         data = data.replaceAll('{DienThoaiCuaHang}', this.congty.soDienThoai);
         data = data.replaceAll(
@@ -115,9 +115,9 @@ class DataMauIn {
     replacePhieuThuChi = (shtml: string) => {
         let data = shtml;
         console.log('replacePhieuThuChi ');
-        data = data.replaceAll('{MaHoaDon}', this.phieuthu?.maHoaDon ?? '');
+        data = data.replaceAll('{MaPhieuThuChi}', this.phieuthu?.maHoaDon ?? '');
         data = data.replaceAll(
-            '{NgayLapHoaDon}',
+            '{NgayLapPhieu}',
             format(new Date(this.phieuthu?.ngayLapHoaDon ?? ''), 'dd/MM/yyyy HH:mm:ss')
         );
         data = data.replaceAll('{NguoiNopTien}', this.phieuthu?.tenNguoiNop ?? '');
@@ -295,53 +295,8 @@ class DataMauIn {
 
     Print = (contentHtml: string) => {
         contentHtml = contentHtml.replaceAll('figure', 'div');
-        const style = `<style  type="text/css"> 
-        * {
-        box-sizing: border-box !important;
-        margin: 0!important;
-        padding: 0.2rem!important;
-        font-family: Roboto!important;
-    }
-        .ck-content .table table {
-            overflow: hidden;
-        }
-        
-        .ck-content .table td,
-        .ck-content .table th {
-            overflow-wrap: break-word;
-            position: relative;
-        }
-        
-        .ck-content .table {
-            margin: 0.9em auto;
-            display: table;
-        }
-        
-        .ck-content .table table {
-            border-collapse: collapse;
-            border-spacing: 0;
-            width: 100%;
-            height: 100%;
-            /* border: 1px double hsl(0, 0%, 70%); */
-        }
-        
-        .ck-content .table table td,
-        .ck-content .table table th {
-            min-width: 2em;
-            /* border: 1px solid hsl(0, 0%, 75%); */
-        }
-        
-        
-        .ck-content .table table th {
-            font-weight: bold;
-            background: hsla(0, 0%, 0%, 5%);
-        } 
-
-        
-        </style> `;
 
         const link = `<link rel="stylesheet" type="text/css" media="print" href="./styleCkeditor.css" />`;
-        // const allContent = `<html><head>${style}</head> <body><div class="ck-content"> ${contentHtml} </div></body></html>`;
         const allContent = `<div class="ck-content"> ${link} ${contentHtml} </div>`;
         const newIframe = document.createElement('iframe');
         newIframe.height = '0';
@@ -355,6 +310,9 @@ class DataMauIn {
         pri?.document.close();
         pri?.focus();
         pri?.print();
+
+        newIframe.style.display = 'none';
+
         // setTimeout(function () {
         //     pri?.print();
         // }, 1000);
