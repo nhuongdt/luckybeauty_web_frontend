@@ -1,5 +1,6 @@
 export interface CreateOrEditCaLamViecDto {
     id: string;
+    idChiNhanh: string;
     maCa: string;
     tenCa: string;
     gioVao: string;

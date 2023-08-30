@@ -63,7 +63,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     UNSAFE_componentWillReceiveProps(nextProp: any): void {
         if (nextProp.formRef !== undefined) {
             const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
-            console.log('objUpdate ', objUpdate);
             this.setState({
                 cusImage: objUpdate?.avatar ?? '',
                 googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
@@ -176,7 +175,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     }
                                 }}>
                                 <Box
-                                    // className="form-add"
                                     sx={{
                                         '& .text-danger': {
                                             fontSize: '12px'
@@ -199,14 +197,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                                     src={this.state.cusImage}
                                                                     className="user-image-upload"
                                                                 />
-                                                                {/* <Close
-                                                            onClick={this.closeImage}
-                                                            sx={{
-                                                                left: 0,
-                                                                color: 'red',
-                                                                position: 'absolute'
-                                                            }}
-                                                        /> */}
                                                             </Box>
                                                         ) : (
                                                             <div>
@@ -281,28 +271,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 defaultVal={values.ngaySinh}
                                                 handleChangeDate={handleChange}
                                             />
-                                            {/* <TextField
-                                                type="date"
-                                                fullWidth
-                                                size="small"
-                                                label="Ngày sinh"
-                                                name="ngaySinh"
-                                                value={
-                                                    values.ngaySinh != null
-                                                        ? values.ngaySinh
-                                                              ?.toString()
-                                                              .substring(0, 10)
-                                                        : ''
-                                                }
-                                                onChange={handleChange}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <InputAdornment position="start">
-                                                            <CalendarMonthIcon />
-                                                        </InputAdornment>
-                                                    )
-                                                }}
-                                            /> */}
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField

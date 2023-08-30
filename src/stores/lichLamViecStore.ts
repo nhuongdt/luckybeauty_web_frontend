@@ -8,7 +8,11 @@ import { CreateOrEditLichLamViecDto } from '../services/nhan-vien/lich_lam_viec/
 import AppConsts from '../lib/appconst';
 
 class LichLamViecStore {
-    listLichLamViec!: PagedResultDto<LichLamViecNhanVienDto>;
+    listLichLamViec: PagedResultDto<LichLamViecNhanVienDto> = {
+        items: [],
+        totalCount: 0,
+        totalPage: 0
+    };
     createLichLamViecDto: CreateOrEditLichLamViecDto = {
         id: AppConsts.guidEmpty,
         giaTriLap: 0,
@@ -35,6 +39,7 @@ class LichLamViecStore {
         this.maxResultCount = 10;
     }
     async getLichLamViecNhanVienWeek(input: PagedRequestLichLamViecDto) {
+        this.listLichLamViec.items = [];
         const result = await lichLamViecService.getAllLichLamViecWeek({
             ...input,
             skipCount: this.skipCount,

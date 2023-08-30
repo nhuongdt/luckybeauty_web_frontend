@@ -30,6 +30,7 @@ import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { observer } from 'mobx-react';
 import dichVuNhanVienStore from '../../stores/dichVuNhanVienStore';
 import AppConsts from '../../lib/appconst';
+import { maxHeight } from '@mui/system';
 
 class SettingDichVuNhanVien extends Component {
     onModal = () => {
@@ -77,7 +78,7 @@ class SettingDichVuNhanVien extends Component {
                         Cài đặt dịch vụ nhân viên
                     </Typography>
                 </Box>
-                <Box padding={'0px 16px'}>
+                <Box padding={'16px 16px'}>
                     <Grid container spacing={2} padding={'0px 8px'}>
                         {window.screen.width <= 650 ? (
                             <Grid item xs={12}>
@@ -142,13 +143,24 @@ class SettingDichVuNhanVien extends Component {
                                         borderRadius: '8px',
                                         border: '1px solid #E6E1E6'
                                     }}>
-                                    <List
+                                    <Box
+                                        className="page-box-left"
                                         sx={{
                                             width: '100%',
-                                            minHeight: '550px',
-                                            maxHeight: '550px',
+                                            // minHeight: '550px',
+                                            // maxHeight: '550px',
                                             overflow: 'auto',
-                                            bgcolor: 'background.paper'
+                                            bgcolor: 'background.paper',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '4px'
+                                            },
+                                            '&::-webkit-scrollbar-track': {
+                                                bgcolor: 'var(--color-bg)'
+                                            }
                                         }}>
                                         {suggestStore.suggestNhanVien?.map((item, key) => (
                                             <ListItem
@@ -175,20 +187,19 @@ class SettingDichVuNhanVien extends Component {
                                                 />
                                             </ListItem>
                                         ))}
-                                    </List>
+                                    </Box>
                                 </Box>
                             </Grid>
                         )}
 
                         <Grid item xs={12} md={8}>
                             <Box
+                                className="page-box-right"
                                 sx={{
                                     backgroundColor: '#fff',
                                     borderRadius: '8px',
                                     border: '1px solid #E6E1E6',
-                                    padding: '8px',
-                                    minHeight: '550px',
-                                    maxHeight: '550px'
+                                    padding: '8px'
                                 }}>
                                 <Box
                                     display={'flex'}
@@ -225,52 +236,72 @@ class SettingDichVuNhanVien extends Component {
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <TableContainer style={{ height: '350px' }}>
-                                    <Table>
-                                        <TableBody>
-                                            {dichVuNhanVienStore.dichVuNhanVienDetail
-                                                ?.dichVuThucHiens.length > 0 ? (
-                                                dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens?.map(
-                                                    (item, index) => (
-                                                        <TableRow key={index}>
-                                                            <TableCell align="left">
-                                                                <Box
-                                                                    display={'flex'}
-                                                                    flexDirection={'row'}
-                                                                    alignItems={'center'}
-                                                                    gap="8px">
-                                                                    <Avatar variant="square" />{' '}
+                                <Box>
+                                    <TableContainer
+                                        sx={{
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px'
+                                            },
+                                            '&::-webkit-scrollbar-thumb': {
+                                                bgcolor: 'rgba(0,0,0,0.1)',
+                                                borderRadius: '4px'
+                                            },
+                                            '&::-webkit-scrollbar-track': {
+                                                bgcolor: 'var(--color-bg)'
+                                            },
+                                            maxHeight: '400px'
+                                        }}>
+                                        <Table>
+                                            <TableBody>
+                                                {dichVuNhanVienStore.dichVuNhanVienDetail
+                                                    ?.dichVuThucHiens.length > 0 ? (
+                                                    dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens?.map(
+                                                        (item, index) => (
+                                                            <TableRow key={index}>
+                                                                <TableCell align="left">
+                                                                    <Box
+                                                                        display={'flex'}
+                                                                        flexDirection={'row'}
+                                                                        alignItems={'center'}
+                                                                        gap="8px">
+                                                                        <Avatar
+                                                                            src={item.avatar}
+                                                                            variant="square"
+                                                                        />{' '}
+                                                                        <Typography>
+                                                                            {item.tenDichVu}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                </TableCell>
+                                                                <TableCell align={'right'}>
                                                                     <Typography>
-                                                                        {item.tenDichVu}
+                                                                        {item.soPhutThucHien}{' '}
+                                                                        {' phút'}
                                                                     </Typography>
-                                                                </Box>
-                                                            </TableCell>
-                                                            <TableCell align={'right'}>
-                                                                <Typography>
-                                                                    {item.soPhutThucHien} {' phút'}
-                                                                </Typography>
-                                                            </TableCell>
-                                                            <TableCell align={'right'}>
-                                                                <Typography>
-                                                                    {item.donGia}
-                                                                </Typography>
-                                                            </TableCell>
-                                                        </TableRow>
+                                                                </TableCell>
+                                                                <TableCell align={'right'}>
+                                                                    <Typography>
+                                                                        {item.donGia}
+                                                                    </Typography>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
                                                     )
-                                                )
-                                            ) : (
-                                                <Box
-                                                    display={'flex'}
-                                                    alignItems="center"
-                                                    justifyContent={'center'}
-                                                    textAlign={'center'}
-                                                    padding={'32px'}>
-                                                    Không có bản ghi nào được hiển thị
-                                                </Box>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                                ) : (
+                                                    <Box
+                                                        display={'flex'}
+                                                        alignItems="center"
+                                                        justifyContent={'center'}
+                                                        textAlign={'center'}
+                                                        padding={'32px'}>
+                                                        Không có bản ghi nào được hiển thị
+                                                    </Box>
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Box>
+
                                 <Button
                                     fullWidth
                                     variant="contained"

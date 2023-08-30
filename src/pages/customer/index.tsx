@@ -571,9 +571,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     <Box
                                         sx={{
                                             overflow: 'auto',
-                                            // '&::-webkit-scrollbar': {
-                                            //     width: '7px'
-                                            // },
+                                            maxHeight: '66vh',
+                                            '&::-webkit-scrollbar': {
+                                                width: '7px'
+                                            },
                                             '&::-webkit-scrollbar-thumb': {
                                                 bgcolor: 'rgba(0,0,0,0.1)',
                                                 borderRadius: '8px'

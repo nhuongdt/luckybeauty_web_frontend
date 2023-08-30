@@ -44,6 +44,8 @@ const LichHen: React.FC = () => {
     const [idBooking, setIdBooking] = useState<string>('');
     const [dateView, setDateView] = useState('');
     const [connection, setConnection] = useState<signalR.HubConnection>();
+    const [notificationConnectionHub, setNotificationConnectionHub] =
+        useState<signalR.HubConnection>();
     const getData = async () => {
         bookingStore.selectedDate = new Date();
         bookingStore.typeView = Cookies.get('Tab-lich-hen') ?? 'week';
@@ -95,6 +97,7 @@ const LichHen: React.FC = () => {
     const handleSubmit = async () => {
         await getData();
         setModalVisible(!modalVisible);
+        await sendNotification();
         await notificationStore.GetUserNotification();
     };
     useEffect(() => {
@@ -116,7 +119,22 @@ const LichHen: React.FC = () => {
             console.error('SignalR connection error: ', e);
         }
     };
-
+    const sendNotification = async () => {
+        if (notificationConnectionHub) {
+            // Khởi động kết nối nếu chưa kết nối hoặc đang trong trạng thái khác "Connected"
+            if (notificationConnectionHub.state !== 'Connected') {
+                await notificationConnectionHub.start();
+            }
+            notificationConnectionHub
+                .invoke('SendNotification')
+                .then(() => {
+                    console.log('Bắt đầu gửi thông báo');
+                })
+                .catch((error) => {
+                    console.error('Error invoking SendNotification:', error);
+                });
+        }
+    };
     const getCurrentDateInVietnamese = (date: Date) => {
         const daysOfWeek = [
             'Chủ nhật',

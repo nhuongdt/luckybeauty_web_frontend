@@ -121,6 +121,10 @@ const Calendar: React.FC = () => {
     const handleCloseDialog = () => {
         setOpenDialog(false);
     };
+    const handleSubmit = () => {
+        handleCloseDialog();
+        getData();
+    };
     const [openDelete, setOpenDelete] = useState(false);
     const handleOpenDelete = () => {
         setOpenDelete(true);
@@ -219,7 +223,7 @@ const Calendar: React.FC = () => {
             <CreateOeEditLichLamViecModal
                 idNhanVien={idNhanVien}
                 open={openDialog}
-                onClose={handleCloseDialog}
+                onClose={handleSubmit}
             />
             <Grid container mb="16px" display="flex" justifyContent="space-between">
                 <Grid item xs={12} md={'auto'}>
@@ -392,107 +396,105 @@ const Calendar: React.FC = () => {
                                 padding: '4px 4px 20px 4px'
                             }
                         }}>
-                        {lichLamViecStore.listLichLamViec &&
-                            lichLamViecStore.listLichLamViec.items &&
-                            lichLamViecStore.listLichLamViec.items.map((item) => (
-                                <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
-                                    <TableCell sx={{ border: '0!important', width: '20%' }}>
-                                        <Box
+                        {lichLamViecStore.listLichLamViec?.items?.map((item) => (
+                            <TableRow key={item.tenNhanVien.replace(/\s/g, '')}>
+                                <TableCell sx={{ border: '0!important', width: '20%' }}>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px'
+                                        }}>
+                                        <Avatar
+                                            sx={{ width: 32, height: 32 }}
+                                            src={item.avatar}
+                                            alt={item.tenNhanVien}
+                                        />
+                                        <Box>
+                                            <Typography
+                                                fontSize="13px"
+                                                fontWeight="400"
+                                                fontFamily={'Roboto'}
+                                                color="#3D475C">
+                                                {item.tenNhanVien}
+                                            </Typography>
+                                            <Typography
+                                                fontSize="13px"
+                                                fontWeight="400"
+                                                fontFamily={'Roboto'}
+                                                color="#3D475C">
+                                                {item.tongThoiGian}h
+                                            </Typography>
+                                        </Box>
+                                        <Button
+                                            onClick={(e) => {
+                                                handleOpenCustom(e);
+                                                setIdNhanVien(item.idNhanVien);
+                                                setSelectedId(item.id);
+                                            }}
+                                            variant="text"
                                             sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '5px'
+                                                minWidth: 'unset',
+                                                ml: 'auto',
+                                                '&:hover svg': {
+                                                    filter: 'var(--color-hoverIcon)'
+                                                }
                                             }}>
-                                            <Avatar
-                                                sx={{ width: 32, height: 32 }}
-                                                src={item.avatar}
-                                                alt={item.tenNhanVien}
-                                            />
-                                            <Box>
-                                                <Typography
-                                                    fontSize="13px"
-                                                    fontWeight="400"
-                                                    fontFamily={'Roboto'}
-                                                    color="#3D475C">
-                                                    {item.tenNhanVien}
-                                                </Typography>
-                                                <Typography
-                                                    fontSize="13px"
-                                                    fontWeight="400"
-                                                    fontFamily={'Roboto'}
-                                                    color="#3D475C">
-                                                    {item.tongThoiGian}h
-                                                </Typography>
-                                            </Box>
-                                            <Button
-                                                onClick={(e) => {
-                                                    handleOpenCustom(e);
-                                                    setIdNhanVien(item.idNhanVien);
-                                                    setSelectedId(item.id);
-                                                }}
-                                                variant="text"
-                                                sx={{
-                                                    minWidth: 'unset',
-                                                    ml: 'auto',
-                                                    '&:hover svg': {
-                                                        filter: 'var(--color-hoverIcon)'
-                                                    }
-                                                }}>
-                                                <EditIcon />
-                                            </Button>
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.monday === '' || item.monday === null
-                                                ? 'Trống'
-                                                : item.monday}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.tuesday === '' || item.tuesday === null
-                                                ? 'Trống'
-                                                : item.tuesday}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.wednesday === '' || item.wednesday === null
-                                                ? 'Trống'
-                                                : item.wednesday}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.thursday === '' || item.thursday === null
-                                                ? 'Trống'
-                                                : item.thursday}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.friday === '' || item.friday === null
-                                                ? 'Trống'
-                                                : item.friday}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.saturday === '' || item.saturday === null
-                                                ? 'Trống'
-                                                : item.saturday}
-                                        </Box>
-                                    </TableCell>
-                                    <TableCell className="bodder-inline">
-                                        <Box className="custom-time">
-                                            {item.sunday === '' || item.sunday === null
-                                                ? 'Trống'
-                                                : item.sunday}
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                            <EditIcon />
+                                        </Button>
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.monday === '' || item.monday === null
+                                            ? 'Trống'
+                                            : item.monday}
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.tuesday === '' || item.tuesday === null
+                                            ? 'Trống'
+                                            : item.tuesday}
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.wednesday === '' || item.wednesday === null
+                                            ? 'Trống'
+                                            : item.wednesday}
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.thursday === '' || item.thursday === null
+                                            ? 'Trống'
+                                            : item.thursday}
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.friday === '' || item.friday === null
+                                            ? 'Trống'
+                                            : item.friday}
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.saturday === '' || item.saturday === null
+                                            ? 'Trống'
+                                            : item.saturday}
+                                    </Box>
+                                </TableCell>
+                                <TableCell className="bodder-inline">
+                                    <Box className="custom-time">
+                                        {item.sunday === '' || item.sunday === null
+                                            ? 'Trống'
+                                            : item.sunday}
+                                    </Box>
+                                </TableCell>
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

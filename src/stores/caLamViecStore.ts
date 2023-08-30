@@ -5,10 +5,12 @@ import { CaLamViecDto } from '../services/nhan-vien/ca_lam_viec/dto/caLamViecDto
 import { CreateOrEditCaLamViecDto } from '../services/nhan-vien/ca_lam_viec/dto/createOrEditCaLamViecDto';
 import { PagedRequestDto } from '../services/dto/pagedRequestDto';
 import caLamViecService from '../services/nhan-vien/ca_lam_viec/caLamViecService';
+import Cookies from 'js-cookie';
 
 class CaLamViecStore {
     createOrEditDto: CreateOrEditCaLamViecDto = {
         id: AppConsts.guidEmpty,
+        idChiNhanh: AppConsts.guidEmpty,
         gioRa: '',
         gioVao: '',
         maCa: '',
@@ -22,6 +24,7 @@ class CaLamViecStore {
     async createCaLamViecDto() {
         this.createOrEditDto = {
             id: AppConsts.guidEmpty,
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
             gioRa: '',
             gioVao: '',
             maCa: '',

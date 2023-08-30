@@ -39,7 +39,6 @@ import { ReactComponent as LogoutIcon } from '../../images/logoutInner.svg';
 import { ReactComponent as RestartIcon } from '../../images/restart_alt.svg';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import useWindowWidth from '../StateWidth';
-import * as signalR from '@microsoft/signalr';
 import notificationStore from '../../stores/notificationStore';
 import { observer } from 'mobx-react';
 import NotificationSeverity from '../../enum/NotificationSeverity';
@@ -86,23 +85,14 @@ const Header: React.FC<HeaderProps> = (
     const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
     const [currentChiNhanh, setCurrentChiNhanh] = useState('');
     useEffect(() => {
-        createHubConnection();
+        getNotification();
         notificationStore.GetUserNotification();
     }, []);
 
-    const createHubConnection = async () => {
-        const newConnection = new signalR.HubConnectionBuilder()
-            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'notifications') // Điều chỉnh URL hub tại đây
-            .build();
-        try {
-            await newConnection.start();
-            newConnection.on('ReceiveNotification', async () => {
-                await notificationStore.GetUserNotification();
-            });
-        } catch (e) {
-            console.error('SignalR connection error: ', e);
-        }
+    const getNotification = async () => {
+        await notificationStore.createHubConnection();
     };
+
     useEffect(() => {
         // Call API to get list of permissions here
 
@@ -333,6 +323,20 @@ const Header: React.FC<HeaderProps> = (
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 maxWidth={'450px'}
+                                sx={{
+                                    overflow: 'auto',
+                                    maxHeight: '66vh',
+                                    '&::-webkit-scrollbar': {
+                                        width: '7px'
+                                    },
+                                    '&::-webkit-scrollbar-thumb': {
+                                        bgcolor: 'rgba(0,0,0,0.1)',
+                                        borderRadius: '8px'
+                                    },
+                                    '&::-webkit-scrollbar-track': {
+                                        bgcolor: 'var(--color-bg)'
+                                    }
+                                }}
                                 flexDirection={'column'}>
                                 <Box alignItems={'start'}>
                                     <MenuItem
@@ -671,7 +675,12 @@ const Header: React.FC<HeaderProps> = (
                                     </Box>
                                 </Box>
                             </MenuItem>
-                            <MenuItem onClick={handleClose} className="hover">
+                            <MenuItem
+                                onClick={() => {
+                                    handleClose();
+                                    navigate('/account/profile');
+                                }}
+                                className="hover">
                                 <Link
                                     to="/account/profile"
                                     style={{ textDecoration: 'none', listStyle: 'none' }}>
@@ -682,7 +691,12 @@ const Header: React.FC<HeaderProps> = (
                                     </Box>
                                 </Link>
                             </MenuItem>
-                            <MenuItem className="hover">
+                            <MenuItem
+                                className="hover"
+                                onClick={() => {
+                                    handleClose();
+                                    navigate('/settings');
+                                }}>
                                 <Box component="a" sx={{ textDecoration: 'none' }}>
                                     <SettingIcon />
                                     <Box component="button" className="typo">
@@ -691,7 +705,18 @@ const Header: React.FC<HeaderProps> = (
                                 </Box>
                             </MenuItem>
 
-                            <MenuItem onClick={handleClose} className="hover">
+                            <MenuItem
+                                className="hover"
+                                onClick={() => {
+                                    Object.keys(Cookies.get()).forEach((cookieName) => {
+                                        if (cookieName !== 'TenantName') {
+                                            Cookies.remove(cookieName);
+                                        }
+                                    });
+                                    localStorage.clear();
+                                    handleClose();
+                                    navigate('/login');
+                                }}>
                                 <Link
                                     to="/login"
                                     style={{ textDecoration: 'none', listStyle: 'none' }}
