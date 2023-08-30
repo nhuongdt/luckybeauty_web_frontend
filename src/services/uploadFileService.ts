@@ -19,7 +19,6 @@ class UpLoadFileService {
     };
 
     GoogleApi_GetFileIdfromLink = (url: string) => {
-        console.log('getFileIdfromLink ', url);
         if (!utils.checkNull(url)) {
             const arr = url.split('=');
             if (arr.length === 3) {
