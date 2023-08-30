@@ -24,7 +24,7 @@ import TabWeek from './components/TabWeek';
 import TabMonth from './components/TabMonth';
 import { BookingGetAllItemDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
 import bookingStore from '../../stores/bookingStore';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 import abpCustom from '../../components/abp-custom';
@@ -39,7 +39,8 @@ import AppConsts from '../../lib/appconst';
 import * as signalR from '@microsoft/signalr';
 import notificationStore from '../../stores/notificationStore';
 const LichHen: React.FC = () => {
-    const chinhanh = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
     const [modalVisible, setModalVisible] = useState(false);
     const [idBooking, setIdBooking] = useState<string>('');
     const [dateView, setDateView] = useState('');

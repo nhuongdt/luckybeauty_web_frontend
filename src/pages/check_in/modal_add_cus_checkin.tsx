@@ -19,7 +19,7 @@ import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto
 import KhachHangService from '../../services/khach-hang/khachHangService';
 import CheckinService from '../../services/check_in/CheckinService';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../utils/utils'; // func common
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
@@ -33,7 +33,8 @@ import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import utils from '../../utils/utils';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
-    const chiNhanhCurrent = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [errPhone, setErrPhone] = useState(false);

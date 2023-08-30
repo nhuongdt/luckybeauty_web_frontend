@@ -18,7 +18,7 @@ import { MauInDto } from '../../../../services/mau_in/MauInDto';
 import AppConsts, { ISelect } from '../../../../lib/appconst';
 import ModalAddMauIn from './modal_add_mau_in';
 import utils from '../../../../utils/utils';
-import { ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import DataMauIn from './DataMauIn';
 import SelectMauIn from '../../../../components/Menu/SelectMauIn';
 import { number } from 'yup';
@@ -34,7 +34,8 @@ export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
     const [dataPrint, setdataPrint] = useState('');
     const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
-    const chinhanhCurrent = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanhCurrent = appContext.chinhanhCurrent;
 
     const [lstMauIn, setListMauIn] = useState<MauInDto[]>([]);
     const [idMauInChosed, setIdMauInChosed] = useState<string>('');

@@ -33,10 +33,10 @@ import { observer } from 'mobx-react';
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext, IAppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../../services/suggests/dto/SuggestChiNhanhDto';
 class Calendar extends Component {
-    static contextType = ChiNhanhContext;
+    static contextType = AppContext;
     state = {
         weekDates: [],
         data: [] as LichLamViecNhanVienDto[],
@@ -68,7 +68,8 @@ class Calendar extends Component {
         this.getSuggestNhanVien();
     }
     componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
-        const chiNhanhContext = this.context as SuggestChiNhanhDto;
+        const appContext = this.context as IAppContext;
+        const chiNhanhContext = appContext.chinhanhCurrent;
         if (this.state.idChiNhanh !== chiNhanhContext.id) {
             // ChiNhanhContext has changed, update the component
             this.setState({
@@ -99,7 +100,8 @@ class Calendar extends Component {
     };
 
     getData = async () => {
-        const chiNhanhContext = this.context as SuggestChiNhanhDto;
+        const appContext = this.context as IAppContext;
+        const chiNhanhContext = appContext.chinhanhCurrent;
         await lichLamViecStore.getLichLamViecNhanVienWeek({
             dateFrom: this.state.dateFrom,
             dateTo: this.state.dateFrom,

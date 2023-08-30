@@ -63,7 +63,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     UNSAFE_componentWillReceiveProps(nextProp: any): void {
         if (nextProp.formRef !== undefined) {
             const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
-            console.log('objUpdate ', objUpdate);
             this.setState({
                 cusImage: objUpdate?.avatar ?? '',
                 googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(

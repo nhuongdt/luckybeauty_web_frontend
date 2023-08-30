@@ -32,7 +32,7 @@ import { useFormik, useFormikContext } from 'formik';
 import { addDays, format, isDate, parse } from 'date-fns';
 import AppConsts, { ISelect } from '../../../../lib/appconst';
 import { Guid } from 'guid-typescript';
-import { ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext, ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import nhanVienService from '../../../../services/nhan-vien/nhanVienService';
 import NhanSuItemDto from '../../../../services/nhan-vien/dto/nhanSuItemDto';
 import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
@@ -80,7 +80,8 @@ const CreateOrEditSoQuyDialog = ({
     console.log('CreateOrEditSoQuyDialog ');
 
     const formRef = useRef();
-    const chinhanh = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
     const [errMaHoadon, setErrMaHoaDon] = useState('');
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [bankAccount, setBankAccount] = useState<TaiKhoanNganHangDto[]>([]);

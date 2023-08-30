@@ -5,12 +5,15 @@ import Cookies from 'js-cookie';
 import LoginAlertDialog from '../AlertDialog/LoginAlert';
 import { Container } from '@mui/system';
 import Box from '@mui/material/Box';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext, ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import http from '../../services/httpService';
 import sessionStore from '../../stores/sessionStore';
 import ResponsiveDrawer from '../SiderMenu/mobileSideMenu';
 import Header from '../Header';
+import { CuaHangDto } from '../../services/cua_hang/Dto/CuaHangDto';
+import cuaHangService from '../../services/cua_hang/cuaHangService';
+import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
@@ -29,6 +32,14 @@ const MainAppLayout: React.FC = () => {
         id: '',
         tenChiNhanh: ''
     });
+
+    const [congty, setCongTy] = useState<CuaHangDto>({} as CuaHangDto);
+    const GetAllCongTy = async () => {
+        const data = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
+        if (data.length > 0) {
+            setCongTy(data[0]);
+        }
+    };
     const getPermissions = () => {
         const userId = Cookies.get('userId');
         const token = Cookies.get('accessToken');
@@ -54,6 +65,7 @@ const MainAppLayout: React.FC = () => {
     useEffect(() => {
         // Call API to get list of permissions here
         getPermissions();
+        GetAllCongTy();
     }, []);
     const [open, setOpen] = React.useState(!isAuthenticated);
     const navigate = useNavigate();
@@ -130,9 +142,9 @@ const MainAppLayout: React.FC = () => {
                                 minHeight: 'calc(100vh - 70px)',
                                 bgcolor: 'rgba(248,248,248,1)'
                             }}>
-                            <ChiNhanhContext.Provider value={chinhanhCurrent}>
+                            <AppContext.Provider value={{ chinhanhCurrent, congty }}>
                                 <Outlet />
-                            </ChiNhanhContext.Provider>
+                            </AppContext.Provider>
                             <LoginAlertDialog open={open} confirmLogin={confirm} />
                         </Box>
                     </Box>
@@ -160,9 +172,9 @@ const MainAppLayout: React.FC = () => {
                                 minHeight: 'calc(100vh - 70px)',
                                 bgcolor: 'rgba(248,248,248,1)'
                             }}>
-                            <ChiNhanhContext.Provider value={chinhanhCurrent}>
+                            <AppContext.Provider value={{ chinhanhCurrent, congty }}>
                                 <Outlet />
-                            </ChiNhanhContext.Provider>
+                            </AppContext.Provider>
                             <LoginAlertDialog open={open} confirmLogin={confirm} />
                         </Box>
                     </Box>

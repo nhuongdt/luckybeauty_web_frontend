@@ -19,7 +19,7 @@ import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../../components/TableLanguage';
 import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
-import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { format, lastDayOfMonth } from 'date-fns';
 import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
@@ -37,7 +37,8 @@ import abpCustom from '../../../components/abp-custom';
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
     const firstLoad = useRef(true);
-    const chinhanh = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
     const [isShowModal, setisShowModal] = useState(false);
     const [selectedRowId, setSelectedRowId] = useState('');
     const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({

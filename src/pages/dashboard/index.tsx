@@ -10,11 +10,12 @@ import { Grid, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/mate
 import dashboardStore from '../../stores/dashboardStore';
 import Cookies from 'js-cookie';
 import { observer } from 'mobx-react';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 
 const Dashboard: React.FC = () => {
     const [dashboardDateView, setDashboardDateView] = useState('day');
-    const chinhanh = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
     useEffect(() => {
         getData(); // This will be called when chinhanh.id changes
     }, [chinhanh.id]);

@@ -26,7 +26,7 @@ import { format } from 'date-fns';
 import { dbDexie } from '../../lib/dexie/dexieDB';
 import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
 import CreateOrEditLichHenModal from '../lich-hen/components/create-or-edit-lich-hen';
 import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
@@ -52,7 +52,8 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
         }
     ];
 
-    const chiNhanhCurrent = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
     const lstNhanVien = useContext(ListNhanVienDataContext) as unknown as SuggestNhanVienDichVuDto;
 
     const [isShowModalLichHen, setIsShowModalLichHen] = useState(false);

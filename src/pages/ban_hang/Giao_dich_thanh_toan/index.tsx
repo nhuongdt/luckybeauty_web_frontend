@@ -17,10 +17,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import ThongTinHoaDon from '../Hoa_don/ThongTinHoaDon';
-import {
-    ChiNhanhContext,
-    ChiNhanhContextbyUser
-} from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 
@@ -39,7 +36,8 @@ import MauInServices from '../../../services/mau_in/MauInServices';
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
-    const chinhanhCurrent = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanhCurrent = appContext.chinhanhCurrent;
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
@@ -101,6 +99,7 @@ const GiaoDichThanhToan: React.FC = () => {
 
     useEffect(() => {
         setParamSearch({ ...paramSearch, idChiNhanhs: [chinhanhCurrent.id] });
+        console.log('chinhanhHD ', chinhanhCurrent);
     }, [chinhanhCurrent.id]);
 
     useEffect(() => {
