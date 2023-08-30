@@ -66,7 +66,7 @@ import { ReactComponent as VoucherIcon } from '../../../images/voucherIcon.svg';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { ChiNhanhContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import Payments from './Payment';
 import { PagedNhanSuRequestDto } from '../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
@@ -87,8 +87,12 @@ import MauInServices from '../../../services/mau_in/MauInServices';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { MauInDto } from '../../../services/mau_in/MauInDto';
 import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
+import cuaHangService from '../../../services/cua_hang/cuaHangService';
+import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
+import { CuaHangDto } from '../../../services/cua_hang/Dto/CuaHangDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
-    const chiNhanhCurrent = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chiNhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = Cookies.get('IdChiNhanh');
     const [txtSearch, setTxtSearch] = useState('');
     const isFirstRender = useRef(true);
@@ -109,7 +113,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         new PageHoaDonDto({
             idKhachHang: null,
             tenKhachHang: 'Khách lẻ',
-            idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id
+            idChiNhanh: utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id
         })
     );
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
@@ -158,7 +162,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     };
 
     const getInforChiNhanh_byID = async () => {
-        const idChinhanh = utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id;
+        const idChinhanh = utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id;
         const data = await chiNhanhService.GetDetail(idChinhanh ?? '');
         return data;
     };
@@ -240,9 +244,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 const dataHD: PageHoaDonDto = {
                     ...hoadon,
                     id: Guid.create().toString(),
-                    idChiNhanh: utils.checkNull(chiNhanhCurrent.id)
+                    idChiNhanh: utils.checkNull(chiNhanhCurrent?.id)
                         ? idChiNhanh
-                        : chiNhanhCurrent.id,
+                        : chiNhanhCurrent?.id,
                     idKhachHang: customerChosed.idKhachHang,
                     maKhachHang: customerChosed.maKhachHang,
                     tenKhachHang: customerChosed.tenKhachHang ?? 'Khách lẻ',
@@ -576,7 +580,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
             const objCheckIn: KHCheckInDto = new KHCheckInDto({
                 idKhachHang: cusChecking.idKhachHang as string,
-                idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id
+                idChiNhanh: utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id
             });
             const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
             cusChecking.idCheckIn = dataCheckIn.id;
@@ -850,7 +854,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         }, 0);
         if (tongThu > 0) {
             const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
-                idChiNhanh: utils.checkNull(chiNhanhCurrent.id) ? idChiNhanh : chiNhanhCurrent.id,
+                idChiNhanh: utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id,
                 idLoaiChungTu: 11,
                 ngayLapHoaDon: hoadon.ngayLapHoaDon,
                 tongTienThu: tongThu
@@ -880,6 +884,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setShowPayment(false);
 
         setHoaDonChiTiet([]);
+        setLstQuyCT([new QuyChiTietDto({ hinhThucThanhToan: 1 })]);
         setHoaDon(
             new PageHoaDonDto({
                 id: Guid.create().toString(),
@@ -908,8 +913,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         } else {
             tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
         }
-        // const tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+
+        const allCongTy = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
+        let congty = {} as CuaHangDto;
+        if (allCongTy.length > 0) {
+            congty = allCongTy[0];
+        }
         DataMauIn.chinhanh = chinhanhPrint;
+        DataMauIn.congty = congty;
         DataMauIn.hoadon = hoadon;
         DataMauIn.hoadon.maHoaDon = mahoadon;
         DataMauIn.hoadon.daThanhToan = daThanhToan;
@@ -922,7 +933,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         } as KhachHangItemDto;
 
         let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+        newHtml = DataMauIn.replaceChiNhanh(newHtml);
         newHtml = DataMauIn.replaceHoaDon(newHtml);
+        newHtml = DataMauIn.replacePhieuThuChi(newHtml);
         DataMauIn.Print(newHtml);
     };
 
@@ -985,13 +998,22 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
     useEffect(() => {
         if (!afterRender.current) return;
+        const hinhThucTT = lstQuyCT.length === 1 ? lstQuyCT[0].hinhThucThanhToan : 0;
         setLstQuyCT(
             lstQuyCT.map((itemCT: QuyChiTietDto) => {
-                return { ...itemCT, tienThu: hoadon.tongThanhToan };
+                if (itemCT.hinhThucThanhToan === hinhThucTT) {
+                    return {
+                        ...itemCT,
+                        tienThu: hoadon.tongThanhToan
+                    };
+                } else {
+                    return { ...itemCT };
+                }
             })
         );
         setSumTienKhachTra(hoadon?.tongThanhToan ?? 0);
         setTienThuaTraKhach(0);
+        console.log('tongTT ', lstQuyCT);
     }, [hoadon.tongThanhToan]);
 
     // end thanhtoan new
