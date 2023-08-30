@@ -43,6 +43,7 @@ import CreateOrEditNhomKhachModal from './components/create-nhom-khach-modal';
 import AccordionNhomKhachHang from '../../components/Accordion/NhomKhachHang';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import utils from '../../utils/utils';
+import SuggestService from '../../services/suggests/SuggestService';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -63,6 +64,7 @@ interface CustomerScreenState {
     information: boolean;
     idNhomKhach: string;
     isShowNhomKhachModal: boolean;
+    listAllNhomKhach: SuggestNhomKhachDto[];
     listNhomKhachSearch: SuggestNhomKhachDto[];
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
@@ -89,6 +91,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             information: false,
             idNhomKhach: '',
             isShowNhomKhachModal: false,
+            listAllNhomKhach: [],
             listNhomKhachSearch: []
         };
     }
@@ -96,8 +99,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.getData();
         const visibilityColumn = localStorage.getItem('visibilityColumn') ?? {};
         this.setState({
-            visibilityColumn: visibilityColumn,
-            listNhomKhachSearch: suggestStore.suggestNhomKhach
+            visibilityColumn: visibilityColumn
         });
     }
 
@@ -116,6 +118,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             rowTable: khachHangs.items,
             totalItems: khachHangs.totalCount,
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
+        });
+        const lstNhomKhach = await SuggestService.SuggestNhomKhach();
+        this.setState((prev) => {
+            return { ...prev, listAllNhomKhach: lstNhomKhach, listNhomKhachSearch: lstNhomKhach };
         });
     }
     handleChange = (event: any) => {
@@ -295,12 +301,11 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             txt = txt.trim();
             txtUnsign = utils.strToEnglish(txt);
         }
-        const arr = suggestStore.suggestNhomKhach.filter(
+        const arr = this.state.listAllNhomKhach.filter(
             (x: SuggestNhomKhachDto) =>
                 (x.tenNhomKhach ?? '').indexOf(txt) > -1 ||
                 utils.strToEnglish(x.tenNhomKhach ?? '').indexOf(txtUnsign) > -1
         );
-
         this.setState({ listNhomKhachSearch: arr });
     };
     render(): React.ReactNode {
