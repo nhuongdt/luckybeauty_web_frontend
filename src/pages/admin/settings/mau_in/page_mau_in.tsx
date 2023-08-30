@@ -167,7 +167,7 @@ export default function PageMauIn({ xx }: any) {
                 }
             }
         }
-    }, [idMauInChosed]);
+    }, [idMauInChosed, idLoaiChungTu]);
 
     const AssignAgainListMauIn_afterSave = (objMauIn: MauInDto) => {
         setListMauIn(() =>
@@ -316,6 +316,7 @@ export default function PageMauIn({ xx }: any) {
                 idUpdate={idMauInUpdate}
                 isShowModal={isShowModalAddMauIn}
                 tenLoaiChungTu={tenLoaiChungTu().toString()}
+                idLoaiChungTu={idLoaiChungTu}
                 handleSave={saveMauIn}
                 onClose={() => setIsShowModalAddMauIn(false)}
                 onDelete={deleteMauIn}

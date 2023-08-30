@@ -436,9 +436,8 @@ export default function ModalEditChiTietGioHang({
                         <Grid
                             container
                             key={index}
-                            padding={0}
-                            // paddingLeft={formType === 1 ? '20px' : '10px'}
-
+                            padding={2}
+                            borderBottom={formType === 1 ? '' : '1px dashed green'}
                             borderRadius={1}
                             marginBottom={formType === 1 ? 0 : '10px'}>
                             <Grid
@@ -447,7 +446,9 @@ export default function ModalEditChiTietGioHang({
                                 sm={formType === 1 ? 0 : 1}
                                 md={formType === 1 ? 0 : 1}
                                 lg={formType === 1 ? 0 : 1}
-                                sx={{ display: displayComponent }}>
+                                sx={{
+                                    display: displayComponent
+                                }}>
                                 <Close
                                     sx={{ width: 40, height: 40, color: 'red', padding: '8px' }}
                                     onClick={() => xoaChiTietHoaDon(ct)}
@@ -468,17 +469,17 @@ export default function ModalEditChiTietGioHang({
                                                 gap: '8px'
                                                 // maxWidth: '80%'
                                             }}>
-                                            <Box
+                                            {/* <Box
                                                 sx={{
                                                     bgcolor: '#E5F3FF',
                                                     width: 40,
                                                     height: 40,
                                                     borderRadius: '4px'
-                                                }}></Box>
+                                                }}></Box> */}
                                             <Typography
                                                 title={ct?.tenHangHoa}
                                                 sx={{
-                                                    fontWeight: 400,
+                                                    fontWeight: 600,
                                                     display: formType === 3 ? 'none' : '',
                                                     color: '#3B4758',
                                                     maxWidth: 'calc(100% - 48px)',
@@ -699,7 +700,7 @@ export default function ModalEditChiTietGioHang({
                                             </Button>
                                         </ButtonGroup>
                                     </Grid>
-                                    {ct.laPTChietKhau ? (
+                                    {formType === 1 && (
                                         <Grid item xs={12} md={12}>
                                             <Stack
                                                 spacing={1}
@@ -738,7 +739,7 @@ export default function ModalEditChiTietGioHang({
                                                 ))}
                                             </Stack>
                                         </Grid>
-                                    ) : undefined}
+                                    )}
                                     <Grid
                                         item
                                         xs={12}

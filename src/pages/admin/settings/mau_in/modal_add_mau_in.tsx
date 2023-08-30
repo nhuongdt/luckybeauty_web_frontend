@@ -43,6 +43,7 @@ export default function ModalAddMauIn({
     isShowModal,
     idUpdate = '',
     tenLoaiChungTu,
+    idLoaiChungTu,
     handleSave,
     onClose,
     onDelete
@@ -52,6 +53,7 @@ export default function ModalAddMauIn({
     const [dataPrint, setDataPrint] = useState('');
     const [tenMauIn, setTenMauIn] = useState('');
     const [isCheckMauMacDinh, setIsCheckMauMacDinh] = useState(false);
+    const [txtLoaiChungTu, setTxtLoaiChungTu] = useState('');
     const [isClickSave, setIsClickSave] = useState(false);
     const [isShowToken, setIsShowToken] = useState(false);
     const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(
@@ -111,6 +113,20 @@ export default function ModalAddMauIn({
                 }
             }
             setIsClickSave(false);
+
+            let txt = '';
+            switch (idLoaiChungTu) {
+                case 11:
+                    txt = 'phiếu thu';
+                    break;
+                case 12:
+                    txt = 'phiếu chi';
+                    break;
+                default:
+                    txt = 'hóa đơn';
+                    break;
+            }
+            setTxtLoaiChungTu(txt);
         }
     }, [isShowModal]);
 
@@ -176,7 +192,11 @@ export default function ModalAddMauIn({
                     maxWidth="xl">
                     <DialogTitle>
                         <Stack spacing={1} direction={'row'}>
-                            <span> {utils.checkNull(idUpdate) ? 'Thêm' : 'Cập nhật'} mẫu in</span>
+                            <span>
+                                {' '}
+                                {utils.checkNull(idUpdate) ? 'Thêm' : 'Cập nhật'} mẫu in{' '}
+                                {txtLoaiChungTu}
+                            </span>
                             <InfoOutlinedIcon
                                 titleAccess="Danh sách token mẫu in"
                                 sx={{ color: 'chocolate' }}

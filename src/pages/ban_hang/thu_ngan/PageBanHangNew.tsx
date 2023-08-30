@@ -882,6 +882,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setClickSave(false);
         setFormShow(0);
         setShowPayment(false);
+        sendDataToParent(false); // nếu đang mở form DetailHoaDon, thfi phải đóng nó lại (show = false)
 
         setHoaDonChiTiet([]);
         setLstQuyCT([new QuyChiTietDto({ hinhThucThanhToan: 1 })]);
@@ -1013,7 +1014,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         );
         setSumTienKhachTra(hoadon?.tongThanhToan ?? 0);
         setTienThuaTraKhach(0);
-        console.log('tongTT ', lstQuyCT);
     }, [hoadon.tongThanhToan]);
 
     // end thanhtoan new
@@ -1486,10 +1486,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                         item
                         md={7}
                         className="normal"
-                        sx={{
-                            pt: '0!important',
-                            marginTop: '-24px'
-                        }}>
+                        sx={
+                            {
+                                // pt: '0!important',
+                                // marginTop: '-24px'
+                            }
+                        }>
                         {/* <Payments
                             tongPhaiTra={hoadon?.tongThanhToan}
                             handleClickPrev={onPrevPayment}
