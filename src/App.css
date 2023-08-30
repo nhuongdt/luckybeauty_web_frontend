@@ -336,3 +336,9 @@ body .font-normal {
     background-color: white;
     min-height: 100%;
 }
+
+.token-mau-in label {
+    font-size: 14px;
+    font-family: var(--font-family-main) !important;
+    font-weight: 600;
+}

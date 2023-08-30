@@ -6,6 +6,8 @@ import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
 import { CuaHangDto } from '../../../../services/cua_hang/Dto/CuaHangDto';
 import utils from '../../../../utils/utils';
 import { format } from 'date-fns';
+import QuyHoaDonDto from '../../../../services/so_quy/QuyHoaDonDto';
+import QuyChiTietDto from '../../../../services/so_quy/QuyChiTietDto';
 
 const dv1 = new PageHoaDonChiTietDto({
     maHangHoa: 'DV01',
@@ -61,19 +63,46 @@ hoadon.ptThueHD = 0.8;
 hoadon.daThanhToan = 500000;
 hoadon.tenNhanVien = 'TN01';
 
+const phieuthu = new QuyHoaDonDto({
+    maHoaDon: 'SQPT001',
+    ngayLapHoaDon: new Date().toString(),
+    tongTienThu: 50000,
+    noiDungThu: 'Thu bán hàng'
+});
+phieuthu.maNguoiNop = khachhang.maKhachHang;
+phieuthu.tenNguoiNop = khachhang.tenKhachHang;
+phieuthu.sdtNguoiNop = khachhang.soDienThoai;
+phieuthu.quyHoaDon_ChiTiet = [
+    { hinhThucThanhToan: 1, tienThu: 10000 } as QuyChiTietDto,
+    {
+        hinhThucThanhToan: 2,
+        tienThu: 20000,
+        tenChuThe: 'Nguyễn Huyền Trang',
+        soTaiKhoan: '000222555',
+        tenNganHang: 'Techcombank'
+    } as QuyChiTietDto,
+    {
+        hinhThucThanhToan: 3,
+        tienThu: 30000,
+        tenChuThe: 'Nguyễn Linh Châu',
+        soTaiKhoan: '000111555',
+        tenNganHang: 'MBBank'
+    } as QuyChiTietDto
+];
+
 class DataMauIn {
     congty = congty;
     khachhang = khachhang;
     chinhanh = chinhanh;
     hoadon = hoadon;
+    phieuthu = phieuthu;
     hoadonChiTiet = [dv1, dv2];
-    replaceHoaDon = (shtml: string) => {
+    replaceChiNhanh = (shtml: string) => {
         let data = shtml;
         data = data.replaceAll('{TenCuaHang}', this.congty.tenCongTy.toUpperCase());
-        data = data.replaceAll('{LogoCuaHang}', this.congty.logo);
+        data = data.replaceAll('{LogoCuaHang}', `<img src=${this.congty.logo ?? congty.logo} />`);
         data = data.replaceAll('{DiaChiCuaHang}', this.congty.diaChi);
         data = data.replaceAll('{DienThoaiCuaHang}', this.congty.soDienThoai);
-
         data = data.replaceAll(
             '{LogoChiNhanh}',
             `<img src=${this.chinhanh.logo ?? chinhanh.logo} />`
@@ -81,7 +110,49 @@ class DataMauIn {
         data = data.replaceAll('{TenChiNhanh}', this.chinhanh.tenChiNhanh.toUpperCase());
         data = data.replaceAll('{DienThoaiChiNhanh}', this.chinhanh.soDienThoai ?? '');
         data = data.replaceAll('{DiaChiChiNhanh}', this.chinhanh.diaChi ?? '');
+        return data;
+    };
+    replacePhieuThuChi = (shtml: string) => {
+        let data = shtml;
+        console.log('replacePhieuThuChi ');
+        data = data.replaceAll('{MaPhieuThuChi}', this.phieuthu?.maHoaDon ?? '');
+        data = data.replaceAll(
+            '{NgayLapPhieu}',
+            format(new Date(this.phieuthu?.ngayLapHoaDon ?? ''), 'dd/MM/yyyy HH:mm:ss')
+        );
+        data = data.replaceAll('{NguoiNopTien}', this.phieuthu?.tenNguoiNop ?? '');
+        data = data.replaceAll('{SDTNguoiNop}', this.phieuthu?.sdtNguoiNop ?? '');
+        data = data.replaceAll(
+            '{GiaTriPhieu}',
+            new Intl.NumberFormat('vi-VN').format(this.phieuthu?.tongTienThu)
+        );
+        data = data.replaceAll('{NoiDungThu}', this.phieuthu?.noiDungThu ?? '');
+        data = data.replaceAll('{TienBangChu}', utils.DocSo(this.phieuthu.tongTienThu));
+        if (
+            this.phieuthu.quyHoaDon_ChiTiet !== undefined &&
+            this.phieuthu.quyHoaDon_ChiTiet?.length > 0
+        ) {
+            const tienMat = this.phieuthu.quyHoaDon_ChiTiet[0].tienThu ?? 0;
+            const tienPOS = this.phieuthu.quyHoaDon_ChiTiet[1].tienThu ?? 0;
+            const tienCK = this.phieuthu.quyHoaDon_ChiTiet[2].tienThu ?? 0;
+            data = data.replaceAll('{TienMat}', new Intl.NumberFormat('vi-VN').format(tienMat));
+            data = data.replaceAll('{TienPOS}', new Intl.NumberFormat('vi-VN').format(tienPOS));
+            data = data.replaceAll(
+                '{TienChuyenKhoan}',
+                new Intl.NumberFormat('vi-VN').format(tienCK)
+            );
+            data = data.replaceAll('{TienMat_BangChu}', utils.DocSo(tienMat));
+            data = data.replaceAll('{TienPOS_BangChu}', utils.DocSo(tienPOS));
+            data = data.replaceAll('{TienChuyenKhoan_BangChu}', utils.DocSo(tienCK));
+        }
 
+        data = data.replaceAll('{HoaDonLienQuan}', this.hoadon?.maHoaDon ?? '');
+        return data;
+    };
+
+    replaceHoaDon = (shtml: string) => {
+        let data = shtml;
+        console.log('replaceHoaDon ');
         data = data.replaceAll('{TenKhachHang}', this.khachhang.tenKhachHang);
         data = data.replaceAll('{DiaChiKhachHang}', this.khachhang.diaChi ?? '');
         data = data.replaceAll('{DienThoaiKhachHang}', this.khachhang.soDienThoai ?? '');
@@ -143,6 +214,7 @@ class DataMauIn {
     };
     replaceChiTietHoaDon = (shtml: string) => {
         let data = shtml;
+        console.log('replaceChiTietHoaDon ');
         // find table contain cthd
         let cthd_from = data.lastIndexOf('tbody', data.indexOf('{TenHangHoa')) - 1;
         let cthd_to = data.indexOf('tbody', data.indexOf('{TenHangHoa')) + 6;
@@ -223,53 +295,8 @@ class DataMauIn {
 
     Print = (contentHtml: string) => {
         contentHtml = contentHtml.replaceAll('figure', 'div');
-        const style = `<style  type="text/css"> 
-        * {
-        box-sizing: border-box !important;
-        margin: 0!important;
-        padding: 0.2rem!important;
-        font-family: Roboto!important;
-    }
-        .ck-content .table table {
-            overflow: hidden;
-        }
-        
-        .ck-content .table td,
-        .ck-content .table th {
-            overflow-wrap: break-word;
-            position: relative;
-        }
-        
-        .ck-content .table {
-            margin: 0.9em auto;
-            display: table;
-        }
-        
-        .ck-content .table table {
-            border-collapse: collapse;
-            border-spacing: 0;
-            width: 100%;
-            height: 100%;
-            /* border: 1px double hsl(0, 0%, 70%); */
-        }
-        
-        .ck-content .table table td,
-        .ck-content .table table th {
-            min-width: 2em;
-            /* border: 1px solid hsl(0, 0%, 75%); */
-        }
-        
-        
-        .ck-content .table table th {
-            font-weight: bold;
-            background: hsla(0, 0%, 0%, 5%);
-        } 
-
-        
-        </style> `;
 
         const link = `<link rel="stylesheet" type="text/css" media="print" href="./styleCkeditor.css" />`;
-        // const allContent = `<html><head>${style}</head> <body><div class="ck-content"> ${contentHtml} </div></body></html>`;
         const allContent = `<div class="ck-content"> ${link} ${contentHtml} </div>`;
         const newIframe = document.createElement('iframe');
         newIframe.height = '0';
@@ -283,6 +310,9 @@ class DataMauIn {
         pri?.document.close();
         pri?.focus();
         pri?.print();
+
+        newIframe.style.display = 'none';
+
         // setTimeout(function () {
         //     pri?.print();
         // }, 1000);

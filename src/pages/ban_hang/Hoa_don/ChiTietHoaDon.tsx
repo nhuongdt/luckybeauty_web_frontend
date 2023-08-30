@@ -27,6 +27,7 @@ import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePic
 import { ReactComponent as ArrowDown } from '../.././../images/arow-down.svg';
 
 import {
+    AppContext,
     ChiNhanhContext,
     ChiNhanhContextbyUser
 } from '../../../services/chi_nhanh/ChiNhanhContext';
@@ -58,7 +59,8 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
 
-    const current = useContext(ChiNhanhContext);
+    const appContext = useContext(AppContext);
+    const chinhanhCurrent = appContext.chinhanhCurrent;
     const allChiNhanh = useContext(ChiNhanhContextbyUser);
 
     // todo change chinhanh --> back to list

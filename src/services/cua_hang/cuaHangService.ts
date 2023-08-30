@@ -3,6 +3,8 @@ import http from '../httpService';
 import { CreateCuaHangDto } from './Dto/CreateCuaHangDto';
 import { CuaHangDto } from './Dto/CuaHangDto';
 import { EditCuaHangDto } from './Dto/EditCuaHangDto';
+import qs from 'qs';
+import { PagedRequestDto } from '../dto/pagedRequestDto';
 
 class CuaHangService {
     async Create(input: CreateCuaHangDto): Promise<CuaHangDto> {
@@ -23,6 +25,12 @@ class CuaHangService {
         );
         Cookies.set('IdCuaHang', result.data.result['id'], { expires: 1 });
         return result.data.result;
+    }
+    async GetAllCongTy(input: PagedRequestDto): Promise<EditCuaHangDto[]> {
+        const param = qs.stringify(input);
+        const result = await http.get(`api/services/app/CuaHang/GetAllCongTy?${param}`);
+        if (result.data.success) return result.data.result.items;
+        return [] as EditCuaHangDto[];
     }
 }
 export default new CuaHangService();

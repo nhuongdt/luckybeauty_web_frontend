@@ -31,10 +31,7 @@ import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
 import { ReactComponent as ArrowDown } from '../.././../images/arow-down.svg';
-import {
-    ChiNhanhContext,
-    ChiNhanhContextbyUser
-} from '../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import AutocompleteChiNhanh from '../../../components/Autocomplete/ChiNhanh';
 import ModalEditChiTietGioHang from '../thu_ngan/modal_edit_chitiet';
@@ -71,6 +68,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
     const [openDialog, setOpenDialog] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [isShowModalThanhToan, setIsShowModalThanhToan] = useState(false);
+    const appContext = useContext(AppContext);
 
     const [hoadonChosed, setHoaDonChosed] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [chitietHoaDon, setChiTietHoaDon] = useState<PageHoaDonChiTietDto[]>([]);
@@ -79,7 +77,6 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
     const [idCTHDChosing, setIdCTHDChosing] = useState('');
     const [typeAction, setTypeAction] = useState(0); // 1.update, 2.delete, 0. khong lam gi
 
-    const current = useContext(ChiNhanhContext);
     const allChiNhanh = useContext(ChiNhanhContextbyUser);
 
     const GetChiTietHoaDon_byIdHoaDon = async () => {
@@ -208,6 +205,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
             soDienThoai: hoadon?.soDienThoai
         } as KhachHangItemDto;
         DataMauIn.chinhanh = { tenChiNhanh: hoadon?.tenChiNhanh } as ChiNhanhDto;
+        DataMauIn.congty = appContext.congty;
         let tempMauIn = '';
         const mauInMacDinh = listMauIn.filter((x: MauInDto) => x.laMacDinh);
         if (mauInMacDinh.length > 0) {
@@ -217,7 +215,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
         }
         // const tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
         let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+        newHtml = DataMauIn.replaceChiNhanh(newHtml);
         newHtml = DataMauIn.replaceHoaDon(newHtml);
+        newHtml = DataMauIn.replacePhieuThuChi(newHtml);
         DataMauIn.Print(newHtml);
     };
 

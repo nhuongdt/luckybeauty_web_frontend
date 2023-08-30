@@ -492,9 +492,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                             </Stack>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={2} paddingTop={2}>
-                        <Grid item xs={4}></Grid>
-                        <Grid item xs={8} sm={8} md={8} lg={8} alignItems={'center'}>
+                    <Grid container spacing={2} paddingTop={{ xs: 0, md: 2 }}>
+                        <Grid item xs={0} sm={4} md={4} lg={4}></Grid>
+                        <Grid item xs={12} sm={8} md={8} lg={8} alignItems={'center'}>
                             <TextField
                                 variant="outlined"
                                 fullWidth

@@ -14,12 +14,17 @@ import {
     ThemeProvider
 } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import DataMauIn from './DataMauIn';
 import utils from '../../../../utils/utils';
 import SelectMauIn from '../../../../components/Menu/SelectMauIn';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
+import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
+import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
+import TokenMauIn from './TokenMauIn';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
 const zIndexDialog = createTheme({
     components: {
@@ -39,36 +44,52 @@ export default function ModalAddMauIn({
     idUpdate = '',
     tenLoaiChungTu,
     handleSave,
-    onClose
+    onClose,
+    onDelete
 }: any) {
-    const firstLoad = useRef(true);
     const [idChosed, setIdChosed] = useState('');
     const [html, setHtml] = useState('');
     const [dataPrint, setDataPrint] = useState('');
     const [tenMauIn, setTenMauIn] = useState('');
     const [isCheckMauMacDinh, setIsCheckMauMacDinh] = useState(false);
     const [isClickSave, setIsClickSave] = useState(false);
-
+    const [isShowToken, setIsShowToken] = useState(false);
+    const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
     // const errtenMauIn = isClickSave && utils.checkNull(tenMauIn) ? 'Vui lòng nhập tên mẫu in' : '';
     const errtenMauIn = '';
     console.log('modelmauin');
 
     const BindDataPrint = (html: string) => {
-        let dataAfter = DataMauIn.replaceChiTietHoaDon(html);
-        dataAfter = DataMauIn.replaceHoaDon(dataAfter);
-        setDataPrint(() => dataAfter);
+        switch (tenLoaiChungTu) {
+            case 'SQPT':
+            case 'SQPC':
+                {
+                    let dataAfter = DataMauIn.replaceChiNhanh(html);
+                    dataAfter = DataMauIn.replacePhieuThuChi(dataAfter);
+                    setDataPrint(() => dataAfter);
+                }
+                break;
+            default:
+                {
+                    let dataAfter = DataMauIn.replaceChiTietHoaDon(html);
+                    dataAfter = DataMauIn.replaceChiNhanh(dataAfter);
+                    dataAfter = DataMauIn.replaceHoaDon(dataAfter);
+                    setDataPrint(() => dataAfter);
+                }
+                break;
+        }
     };
 
     const GetContentMauInMacDinh = async (loai = 1) => {
         //Loai (1.k80,2.a4)
         const data = await MauInServices.GetContentMauInMacDinh(loai, tenLoaiChungTu);
         setHtml(data);
-        BindDataPrint(data);
     };
 
     useEffect(() => {
         if (isShowModal) {
-            console.log('idUpdate');
             if (utils.checkNull(idUpdate)) {
                 // insert
                 setIdChosed('1');
@@ -82,7 +103,6 @@ export default function ModalAddMauIn({
                 const itEx = lstMauIn.filter((x: MauInDto) => x.id === idUpdate);
                 if (itEx.length > 0) {
                     setHtml(itEx[0].noiDungMauIn);
-                    BindDataPrint(itEx[0].noiDungMauIn);
 
                     setTenMauIn(itEx[0].tenMauIn);
                     setIsCheckMauMacDinh(itEx[0].laMacDinh);
@@ -102,18 +122,13 @@ export default function ModalAddMauIn({
             const itEx = lstMauIn.filter((x: MauInDto) => x.id === item.id);
             if (itEx.length > 0) {
                 setHtml(itEx[0].noiDungMauIn);
-                BindDataPrint(itEx[0].noiDungMauIn);
             }
         }
     };
 
     const onChangeCkeditor = (shtmlNew: string) => {
-        if (firstLoad.current) {
-            firstLoad.current = false;
-            return;
-        }
         BindDataPrint(shtmlNew);
-        setHtml(() => shtmlNew);
+        setHtml(() => shtmlNew); // gán lại để cập nhật html + lưu
     };
 
     const saveMauIn = () => {
@@ -129,8 +144,29 @@ export default function ModalAddMauIn({
         };
         handleSave(data);
     };
+
+    const deleteMauIn = () => {
+        setInforObjDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+        onClose();
+        onDelete();
+    };
     return (
         <>
+            <TokenMauIn isShow={isShowToken} onClose={() => setIsShowToken(false)} />
+            <ConfirmDelete
+                isShow={inforObjDelete.show}
+                title={inforObjDelete.title}
+                mes={inforObjDelete.mes}
+                onOk={deleteMauIn}
+                onCancel={() =>
+                    setInforObjDelete({ ...inforObjDelete, show: false })
+                }></ConfirmDelete>
             <ThemeProvider theme={zIndexDialog}>
                 <Dialog
                     disableEnforceFocus
@@ -139,7 +175,27 @@ export default function ModalAddMauIn({
                     fullWidth
                     maxWidth="xl">
                     <DialogTitle>
-                        {utils.checkNull(idUpdate) ? 'Thêm' : 'Cập nhật'} mẫu in <i></i>
+                        <Stack spacing={1} direction={'row'}>
+                            <span> {utils.checkNull(idUpdate) ? 'Thêm' : 'Cập nhật'} mẫu in</span>
+                            <InfoOutlinedIcon
+                                titleAccess="Danh sách token mẫu in"
+                                sx={{ color: 'chocolate' }}
+                                onClick={() => setIsShowToken(true)}
+                            />
+                        </Stack>
+                        <Stack
+                            onClick={onClose}
+                            sx={{
+                                minWidth: 'unset',
+                                position: 'absolute',
+                                top: '16px',
+                                right: '16px',
+                                '&:hover svg': {
+                                    filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
+                                }
+                            }}>
+                            <CloseOutlinedIcon sx={{ width: 30, height: 30 }} />
+                        </Stack>
                     </DialogTitle>
                     <DialogContent>
                         <Grid container spacing={1}>
@@ -181,17 +237,45 @@ export default function ModalAddMauIn({
                                     <Grid item xs={12} sm={2} md={2} lg={2}>
                                         <span className="modal-lable">Mẫu gợi ý</span>
                                     </Grid>
-                                    <Grid item xs={12} sm={8} md={8} lg={8}>
+                                    <Grid item xs={12} sm={8} md={5} lg={5}>
                                         <SelectMauIn
                                             data={lstMauIn}
                                             idChosed={idChosed}
                                             handleChange={changeMauIn}
                                         />
                                     </Grid>
-                                    <Grid item xs={12} md={2} lg={2}>
-                                        <Button variant="contained" onClick={saveMauIn} fullWidth>
-                                            Lưu
-                                        </Button>
+                                    <Grid item xs={12} md={5} lg={5}>
+                                        <Stack
+                                            direction={'row'}
+                                            spacing={1}
+                                            justifyContent={'flex-end'}>
+                                            <Button variant="contained" onClick={saveMauIn}>
+                                                Lưu mẫu in
+                                            </Button>
+                                            {!utils.checkNull(idUpdate) && (
+                                                <Stack spacing={1} direction={'row'}>
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={{ bgcolor: '#854545' }}
+                                                        onClick={() => {
+                                                            setInforObjDelete(
+                                                                new PropConfirmOKCancel({
+                                                                    show: true,
+                                                                    title: 'Xác nhận xóa',
+                                                                    mes: `Bạn có chắc chắn muốn xóa mẫu in ${tenMauIn} không?`
+                                                                })
+                                                            );
+                                                        }}>
+                                                        Xóa mẫu in
+                                                    </Button>
+                                                    <Button
+                                                        variant="contained"
+                                                        sx={{ display: 'none' }}>
+                                                        Sao chép
+                                                    </Button>
+                                                </Stack>
+                                            )}
+                                        </Stack>
                                     </Grid>
                                 </Grid>
                             </Grid>

@@ -54,7 +54,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
     }, []);
     const getSuggestCaLamViec = async () => {
         const result = await SuggestService.SuggestCaLamViec();
-        if (result) {
+        if (result && result.length > 0) {
             setIdCaLamViec(result[0].id);
             setSuggestCaLamViec(result);
         }

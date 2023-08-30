@@ -4,6 +4,7 @@ import { Box, Grid, Tabs, Tab, Stack, Button, Select, IconButton } from '@mui/ma
 import { useEffect, useRef, useState } from 'react';
 import TabPanel from '../../../../components/TabPanel/TabPanel';
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
@@ -17,7 +18,7 @@ import { MauInDto } from '../../../../services/mau_in/MauInDto';
 import AppConsts, { ISelect } from '../../../../lib/appconst';
 import ModalAddMauIn from './modal_add_mau_in';
 import utils from '../../../../utils/utils';
-import { ChiNhanhContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import DataMauIn from './DataMauIn';
 import SelectMauIn from '../../../../components/Menu/SelectMauIn';
 import { number } from 'yup';
@@ -25,12 +26,16 @@ import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 
 import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import { Guid } from 'guid-typescript';
+import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
+import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
+import TokenMauIn from './TokenMauIn';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
     const [dataPrint, setdataPrint] = useState('');
-    const firstLoad = useRef(true);
-    const chinhanhCurrent = useContext(ChiNhanhContext);
+    const [allMauIn, setAllMauIn] = useState<MauInDto[]>([]);
+    const appContext = useContext(AppContext);
+    const chinhanhCurrent = appContext.chinhanhCurrent;
 
     const [lstMauIn, setListMauIn] = useState<MauInDto[]>([]);
     const [idMauInChosed, setIdMauInChosed] = useState<string>('');
@@ -39,26 +44,82 @@ export default function PageMauIn({ xx }: any) {
     const [newMauIn, setNewMauIn] = useState<MauInDto>({} as MauInDto);
     const [idMauInUpdate, setIdMauInUpdate] = useState('');
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
+    const [isShowToken, setIsShowToken] = useState(false);
 
     useEffect(() => {
         GetAllMauIn_byChiNhanh();
     }, []);
 
+    const GetAllMauIn_byChiNhanh = async () => {
+        const data = await MauInServices.GetAllMauIn_byChiNhanh();
+        setAllMauIn(data);
+        setListMauInHoaDon(data);
+    };
+
     const BindDataPrint = (shtml: string) => {
-        // !import: repace cthd --> hoadon
-        let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
-        dataAfter = DataMauIn.replaceHoaDon(dataAfter);
-        setdataPrint(dataAfter);
+        // !import: replace cthd --> hoadon
+        switch (idLoaiChungTu) {
+            case 1:
+                {
+                    let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
+                    dataAfter = DataMauIn.replaceChiNhanh(dataAfter);
+                    dataAfter = DataMauIn.replaceHoaDon(dataAfter);
+                    setdataPrint(dataAfter);
+                }
+                break;
+            case 11:
+            case 12:
+                {
+                    let dataAfter = DataMauIn.replaceChiNhanh(shtml);
+                    dataAfter = DataMauIn.replacePhieuThuChi(dataAfter);
+                    setdataPrint(dataAfter);
+                }
+                break;
+        }
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setIdLoaiChungTu(newValue);
+        switch (newValue) {
+            case 1:
+                {
+                    setListMauInHoaDon(allMauIn);
+                }
+                break;
+            case 11:
+            case 12:
+                {
+                    const mauInByLoaiChungTu = allMauIn.filter(
+                        (x: MauInDto) => x.loaiChungTu === newValue
+                    );
+                    const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
+                    const tempK80: MauInDto = {
+                        id: '1',
+                        tenMauIn: 'Mẫu mặc định',
+                        laMacDinh: false
+                    } as MauInDto;
+                    if (mauMacDinh.length === 0) {
+                        tempK80.laMacDinh = true;
+                        setListMauIn([tempK80, ...mauInByLoaiChungTu]);
+                        setIdMauInChosed('1');
+                    } else {
+                        setListMauIn([...mauInByLoaiChungTu, tempK80]);
+                        setIdMauInChosed(mauMacDinh[0].id);
+                        setNewMauIn(mauMacDinh[0]);
+                    }
+                }
+                break;
+            default:
+                setListMauInHoaDon(allMauIn);
+                break;
+        }
     };
 
-    const GetAllMauIn_byChiNhanh = async () => {
-        const data = await MauInServices.GetAllMauIn_byChiNhanh();
-
-        const mauInByLoaiChungTu = data.filter((x: MauInDto) => x.loaiChungTu === idLoaiChungTu);
+    const setListMauInHoaDon = (allMauIn: MauInDto[]) => {
+        const mauInByLoaiChungTu = allMauIn.filter((x: MauInDto) => x.loaiChungTu === 1);
         const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
         const tempK80: MauInDto = {
             id: '1',
@@ -101,13 +162,43 @@ export default function PageMauIn({ xx }: any) {
                 const itEx = lstMauIn.filter((x: MauInDto) => x.id === idMauInChosed);
                 if (itEx.length > 0) {
                     setHtml(itEx[0].noiDungMauIn);
-                    BindDataPrint(itEx[0].noiDungMauIn);
                 } else {
                     setHtml('');
                 }
             }
         }
     }, [idMauInChosed]);
+
+    const AssignAgainListMauIn_afterSave = (objMauIn: MauInDto) => {
+        setListMauIn(() =>
+            lstMauIn.map((x: MauInDto) => {
+                if (x.id === objMauIn.id) {
+                    return {
+                        ...x,
+                        laMacDinh: objMauIn.laMacDinh,
+                        tenMauIn: objMauIn.tenMauIn,
+                        noiDungMauIn: objMauIn.noiDungMauIn
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+        setAllMauIn(() =>
+            lstMauIn.map((x: MauInDto) => {
+                if (x.id === objMauIn.id) {
+                    return {
+                        ...x,
+                        laMacDinh: objMauIn.laMacDinh,
+                        tenMauIn: objMauIn.tenMauIn,
+                        noiDungMauIn: objMauIn.noiDungMauIn
+                    };
+                } else {
+                    return x;
+                }
+            })
+        );
+    };
 
     const saveMauIn = async (dataMauIn: any) => {
         setIsShowModalAddMauIn(false);
@@ -128,6 +219,7 @@ export default function PageMauIn({ xx }: any) {
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu in thành công' });
 
             setListMauIn(() => [dataNew, ...lstMauIn]);
+            setAllMauIn(() => [dataNew, ...allMauIn]);
             setIdMauInChosed(data.id);
 
             setNewMauIn(() => {
@@ -152,27 +244,14 @@ export default function PageMauIn({ xx }: any) {
                     noiDungMauIn: dataMauIn.noiDungMauIn
                 };
             });
-
-            setListMauIn(() =>
-                lstMauIn.map((x: MauInDto) => {
-                    if (x.id === dataNew.id) {
-                        return {
-                            ...x,
-                            laMacDinh: dataNew.laMacDinh,
-                            tenMauIn: dataNew.tenMauIn,
-                            noiDungMauIn: dataNew.noiDungMauIn
-                        };
-                    } else {
-                        return x;
-                    }
-                })
-            );
+            AssignAgainListMauIn_afterSave(dataNew);
         }
     };
 
     const UpdateMauIn = async () => {
         await MauInServices.UpdatetMauIn(newMauIn);
         setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật mẫu in thành công' });
+        AssignAgainListMauIn_afterSave(newMauIn);
     };
 
     const tenLoaiChungTu = () => {
@@ -180,6 +259,12 @@ export default function PageMauIn({ xx }: any) {
         switch (idLoaiChungTu) {
             case 1:
                 sLoai = 'HD';
+                break;
+            case 11:
+                sLoai = 'SQPT';
+                break;
+            case 12:
+                sLoai = 'SQPC';
                 break;
         }
         return sLoai;
@@ -190,18 +275,38 @@ export default function PageMauIn({ xx }: any) {
         //Loai (1.k80,2.a4)
         const data = await MauInServices.GetContentMauInMacDinh(loai, tenLoaiChungTu().toString());
         setHtml(data);
-        BindDataPrint(data);
     };
 
+    // this func onChangeCkeditor: alway render
     const onChangeCkeditor = (shtmlNew: string) => {
-        if (firstLoad.current) {
-            firstLoad.current = false;
-            return;
-        }
         BindDataPrint(shtmlNew);
         setNewMauIn(() => {
             return { ...newMauIn, noiDungMauIn: shtmlNew };
         });
+    };
+
+    const deleteMauIn = async () => {
+        await MauInServices.DeleteMauIn(newMauIn.id);
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Xóa mẫu in thành công'
+        });
+        setListMauIn((old: MauInDto[]) => {
+            return old.filter((x: MauInDto) => x.id !== newMauIn.id);
+        });
+        setAllMauIn((old: MauInDto[]) => {
+            return old.filter((x: MauInDto) => x.id !== newMauIn.id);
+        });
+        setInforObjDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+        // set default to mauin macdinh
+        setIdMauInChosed('1');
     };
 
     return (
@@ -213,27 +318,48 @@ export default function PageMauIn({ xx }: any) {
                 tenLoaiChungTu={tenLoaiChungTu().toString()}
                 handleSave={saveMauIn}
                 onClose={() => setIsShowModalAddMauIn(false)}
+                onDelete={deleteMauIn}
             />
+            <TokenMauIn isShow={isShowToken} onClose={() => setIsShowToken(false)} />
+            <ConfirmDelete
+                isShow={inforObjDelete.show}
+                title={inforObjDelete.title}
+                mes={inforObjDelete.mes}
+                onOk={deleteMauIn}
+                onCancel={() =>
+                    setInforObjDelete({ ...inforObjDelete, show: false })
+                }></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Grid container spacing={2} padding={2}>
+            <Grid container spacing={2} padding={2} paddingLeft={0}>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs
                             value={idLoaiChungTu}
                             onChange={handleChange}
+                            sx={{
+                                '& .MuiTabs-flexContainer': {
+                                    alignItems: 'center' /*căn giữa text cho the span */
+                                }
+                            }}
                             aria-label="basic tabs example">
+                            <InfoOutlinedIcon
+                                titleAccess="Danh sách token mẫu in"
+                                sx={{ color: 'chocolate' }}
+                                onClick={() => setIsShowToken(true)}
+                            />
+
                             <Tab label="Hóa đơn" value={1} />
                             <Tab label="Phiếu thu" value={11} />
-                            <Tab label="Phiếu chi" value={11} />
+                            <Tab label="Phiếu chi" value={12} />
                         </Tabs>
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={12} md={12} lg={12}>
-                    <Grid container paddingRight={2}>
+                    <Grid container>
                         <Grid item xs={12} sm={12} md={6} lg={6}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={3} md={3} lg={3}>
@@ -261,18 +387,40 @@ export default function PageMauIn({ xx }: any) {
                                                     setIdMauInUpdate(newMauIn.id);
                                                 }}
                                             />
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                fullWidth
-                                                onClick={UpdateMauIn}>
-                                                Lưu
-                                            </Button>
                                         </Stack>
                                     )}
                                 </Grid>
                             </Grid>
                         </Grid>
+                        {idMauInChosed.length === 36 && (
+                            <Grid item xs={12} sm={12} md={6} lg={6}>
+                                <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={UpdateMauIn}>
+                                        Lưu mẫu in
+                                    </Button>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ bgcolor: '#854545' }}
+                                        onClick={() => {
+                                            setInforObjDelete(
+                                                new PropConfirmOKCancel({
+                                                    show: true,
+                                                    title: 'Xác nhận xóa',
+                                                    mes: `Bạn có chắc chắn muốn xóa mẫu in ${newMauIn?.tenMauIn} không?`
+                                                })
+                                            );
+                                        }}>
+                                        Xóa mẫu in
+                                    </Button>
+                                    <Button variant="contained" sx={{ display: 'none' }}>
+                                        Sao chép
+                                    </Button>
+                                </Stack>
+                            </Grid>
+                        )}
                     </Grid>
                 </Grid>
                 <Grid item xs={12} sm={12} md={6} lg={6}>

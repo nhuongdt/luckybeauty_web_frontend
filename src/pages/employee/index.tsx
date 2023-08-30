@@ -38,12 +38,12 @@ import uploadFileService from '../../services/uploadFileService';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import ImportExcel from '../../components/ImportComponent';
 import abpCustom from '../../components/abp-custom';
-import { ChiNhanhContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import { AppContext, IAppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import suggestStore from '../../stores/suggestStore';
 import AppConsts from '../../lib/appconst';
 class EmployeeScreen extends React.Component {
-    static contextType = ChiNhanhContext;
+    static contextType = AppContext;
     state = {
         idNhanSu: '',
         avatarFile: '',
@@ -65,11 +65,12 @@ class EmployeeScreen extends React.Component {
         isShowConfirmDelete: false,
         idChiNhanh: Cookies.get('IdChiNhanh')
     };
-    async componentDidMount() {
+    async UNSAFE_componentWillMount() {
         await this.getData();
     }
-    componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
-        const chiNhanhContext = this.context as SuggestChiNhanhDto;
+    UNSAFE_componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
+        const appContext = this.context as IAppContext;
+        const chiNhanhContext = appContext.chinhanhCurrent;
 
         if (this.state.idChiNhanh !== chiNhanhContext.id) {
             // ChiNhanhContext has changed, update the component
@@ -94,7 +95,8 @@ class EmployeeScreen extends React.Component {
         });
     }
     async getData() {
-        const chiNhanhContext = this.context as SuggestChiNhanhDto;
+        const appContext = this.context as IAppContext;
+        const chiNhanhContext = appContext.chinhanhCurrent;
         const suggestChucVus = await SuggestService.SuggestChucVu();
         await suggestStore.getSuggestChucVu();
         this.setState({
@@ -105,7 +107,8 @@ class EmployeeScreen extends React.Component {
     }
     async getListNhanVien() {
         const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
-        const chiNhanhContext = this.context as SuggestChiNhanhDto;
+        const appContext = this.context as IAppContext;
+        const chiNhanhContext = appContext.chinhanhCurrent;
         await NhanVienStore.getAll({
             maxResultCount: maxResultCount,
             skipCount: currentPage,
