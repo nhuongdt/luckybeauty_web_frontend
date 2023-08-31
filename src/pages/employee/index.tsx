@@ -9,7 +9,6 @@ import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
 import SuggestService from '../../services/suggests/SuggestService';
-import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import {
     Avatar,
@@ -65,10 +64,10 @@ class EmployeeScreen extends React.Component {
         isShowConfirmDelete: false,
         idChiNhanh: Cookies.get('IdChiNhanh')
     };
-    async UNSAFE_componentWillMount() {
+    async componentDidMount() {
         await this.getData();
     }
-    UNSAFE_componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
+    componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
         const appContext = this.context as IAppContext;
         const chiNhanhContext = appContext.chinhanhCurrent;
 
@@ -96,7 +95,7 @@ class EmployeeScreen extends React.Component {
     }
     async getData() {
         const appContext = this.context as IAppContext;
-        const chiNhanhContext = appContext.chinhanhCurrent;
+        const chiNhanhContext = appContext.chinhanhCurrent as SuggestChiNhanhDto;
         const suggestChucVus = await SuggestService.SuggestChucVu();
         await suggestStore.getSuggestChucVu();
         this.setState({

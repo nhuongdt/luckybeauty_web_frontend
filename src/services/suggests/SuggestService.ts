@@ -136,7 +136,9 @@ class SuggestService {
 
     public async SuggestNhanSu(): Promise<SuggestNhanSuDto[]> {
         try {
-            const result = await http.post('api/services/app/Suggest/SuggestNhanSus');
+            const result = await http.post(
+                `api/services/app/Suggest/SuggestNhanSus?idChiNhanh=${Cookies.get('IdChiNhanh')}`
+            );
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while suggesting NhanSus:', error);

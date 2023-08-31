@@ -28,7 +28,7 @@ import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import Cookies from 'js-cookie';
 import CreateOrEditLichHenModal from './components/create-or-edit-lich-hen';
 import abpCustom from '../../components/abp-custom';
-import LichhenDetail from './components/lich-hen-detail';
+import LichhenDetail from './components/lich-hen-detail-new';
 import { observer } from 'mobx-react';
 import '../customer/customerPage.css';
 import suggestStore from '../../stores/suggestStore';
@@ -185,6 +185,7 @@ const LichHen: React.FC = () => {
     };
     const Modal = () => {
         setModalVisible(!modalVisible);
+        bookingStore.isShowCreateOrEdit = !bookingStore.isShowCreateOrEdit;
     };
     const handleCreateUpdateShow = (idLichHen: string) => {
         setIdBooking(idLichHen);
@@ -257,8 +258,9 @@ const LichHen: React.FC = () => {
                         hidden={!abpCustom.isGrandPermission('Pages.Booking.Create')}
                         startIcon={<AddIcon />}
                         variant="contained"
-                        onClick={() => {
+                        onClick={async () => {
                             handleCreateUpdateShow('');
+                            await bookingStore.createNewBookingDto();
                         }}
                         className="btn-container-hover"
                         sx={{ bgcolor: 'var(--color-main)', fontSize: '14px', fontWeight: '400' }}>
@@ -271,12 +273,12 @@ const LichHen: React.FC = () => {
                 justifyContent="space-between"
                 alignItems="center"
                 sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                     <Autocomplete
                         options={suggestStore.suggestKyThuatVien}
                         getOptionLabel={(option) => `${option.tenNhanVien}`}
                         size="small"
-                        sx={{ width: window.screen.width <= 650 ? '100%' : '45%' }}
+                        sx={{ width: window.screen.width <= 650 ? '100%' : '60%' }}
                         fullWidth
                         disablePortal
                         onChange={async (event, value) => {
@@ -302,7 +304,7 @@ const LichHen: React.FC = () => {
                         )}
                     />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={6}>
                     <Box
                         display="flex"
                         sx={{
@@ -356,7 +358,7 @@ const LichHen: React.FC = () => {
                 <Grid
                     item
                     xs={12}
-                    sm={4}
+                    sm={3}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -394,7 +396,7 @@ const LichHen: React.FC = () => {
                     <Autocomplete
                         options={suggestStore.suggestDichVu}
                         getOptionLabel={(option) => `${option.tenDichVu}`}
-                        sx={{ width: '40%' }}
+                        sx={{ width: '70%' }}
                         size="small"
                         fullWidth
                         disablePortal
@@ -436,9 +438,10 @@ const LichHen: React.FC = () => {
                 />
             ) : undefined}
             <CreateOrEditLichHenModal
-                visible={modalVisible}
+                visible={bookingStore.isShowCreateOrEdit}
                 onCancel={() => {
                     setModalVisible(!modalVisible);
+                    bookingStore.isShowCreateOrEdit = false;
                 }}
                 onOk={handleSubmit}
                 idLichHen={idBooking}></CreateOrEditLichHenModal>

@@ -4,6 +4,7 @@ import datLichService from '../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
 import { BookingInfoDto } from '../services/dat-lich/dto/BookingInfoDto';
 import AppConsts from '../lib/appconst';
+import { CreateBookingDto } from '../services/dat-lich/dto/CreateBookingDto';
 
 class BookingStore {
     selectedDate: Date = new Date();
@@ -13,6 +14,8 @@ class BookingStore {
     idService!: string;
     idBooking!: string;
     bookingInfoDto!: BookingInfoDto;
+    createOrEditBookingDto!: CreateBookingDto;
+    isShowCreateOrEdit!: boolean;
     isShowBookingInfo!: boolean;
     isShowConfirmDelete!: boolean;
     constructor() {
@@ -20,6 +23,8 @@ class BookingStore {
         this.selectedDate = new Date();
         this.isShowBookingInfo = false;
         this.isShowConfirmDelete = false;
+        this.isShowCreateOrEdit = false;
+        this.createNewBookingDto();
         this.bookingInfoDto = {
             id: AppConsts.guidEmpty,
             bookingDate: new Date(),
@@ -31,8 +36,33 @@ class BookingStore {
             nhanVienThucHien: '',
             soDienThoai: '',
             tenDichVu: '',
-            tenKhachHang: ''
+            tenKhachHang: '',
+            avatarKhachHang: '',
+            trangThai: 1
         };
+    }
+    async createNewBookingDto() {
+        this.createOrEditBookingDto = {
+            id: AppConsts.guidEmpty,
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            idDonViQuiDoi: '',
+            idKhachHang: '',
+            idNhanVien: '',
+            startHours: '',
+            startTime: '',
+            ghiChu: '',
+            trangThai: 1
+        };
+    }
+    async getForEditBooking(id: string) {
+        const result = await datLichService.GetForEdit(id);
+        this.createOrEditBookingDto = result;
+    }
+    async onCreateOrEditBooking(input: CreateBookingDto) {
+        const result = await datLichService.CreateOrEditBooking(input);
+        this.isShowCreateOrEdit = false;
+        await this.createNewBookingDto();
+        return result;
     }
     async onShowBookingInfo() {
         this.isShowBookingInfo = !this.isShowBookingInfo;

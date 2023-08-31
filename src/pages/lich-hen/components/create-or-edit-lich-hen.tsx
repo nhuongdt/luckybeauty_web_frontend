@@ -33,11 +33,16 @@ import khachHangStore from '../../../stores/khachHangStore';
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
+import bookingStore from '../../../stores/bookingStore';
+import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
+import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
+import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
+import { values } from 'lodash';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
     idLichHen: string;
-    onOk: (idBooking: string) => void;
+    onOk: () => void;
 }
 
 class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
@@ -52,45 +57,37 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
         this.setState({ isShowKhachHangModal: !this.state.isShowKhachHangModal });
     };
     handleSubmit = async (values: any) => {
-        let createResult = { id: '' };
-        if (this.props.idLichHen === '') {
-            createResult = await datLichService.CreateBooking({
-                idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-                idDonViQuiDoi: values.idDonViQuiDoi,
-                idKhachHang: values.idKhachHang,
-                idNhanVien: values.idNhanVien,
-                startHours: values.startHours,
-                startTime: values.startTime,
-                ghiChu: values.ghiChu,
-                trangThai: values.trangThai
-            });
-            const saveOK = createResult != null;
-            saveOK
-                ? enqueueSnackbar('Thêm mới thành công', {
+        const createResult = await bookingStore.onCreateOrEditBooking({
+            id: values.id,
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            idDonViQuiDoi: values.idDonViQuiDoi,
+            idKhachHang: values.idKhachHang,
+            idNhanVien: values.idNhanVien,
+            startHours: values.startHours,
+            startTime: values.startTime,
+            ghiChu: values.ghiChu,
+            trangThai: values.trangThai
+        });
+        const saveOK = createResult != null;
+        saveOK
+            ? enqueueSnackbar(
+                  values.id !== AppConsts.guidEmpty || values.id !== ''
+                      ? 'Cập nhật thành công'
+                      : 'Thêm mới thành công',
+                  {
                       variant: 'success',
                       autoHideDuration: 3000
-                  })
-                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
-                      variant: 'error',
-                      autoHideDuration: 3000
-                  });
-        }
-        this.props.onOk(createResult.id);
+                  }
+              )
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
+        this.props.onOk();
     };
     render(): ReactNode {
-        const { visible, onCancel, idLichHen } = this.props;
-        const initialValues = {
-            id: '',
-            idChiNhanh: '',
-            startTime: '',
-            startHours: '',
-            trangThai: 0,
-            ghiChu: '',
-            idKhachHang: '',
-            idNhanVien: '',
-            idDonViQuiDoi: ''
-        };
-        //const options = [...suggestStore.suggestKhachHang];
+        const { visible, onCancel } = this.props;
+        const initialValues = bookingStore.createOrEditBookingDto;
 
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">
@@ -100,7 +97,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                         fontSize="24px"
                         //color="rgb(51, 50, 51)"
                         fontWeight="700">
-                        {idLichHen ? 'Cập nhật lịch hẹn' : 'Thêm cuộc hẹn'}
+                        {initialValues.id !== '' || initialValues.id !== AppConsts.guidEmpty
+                            ? 'Cập nhật lịch hẹn'
+                            : 'Thêm cuộc hẹn'}
                     </Typography>
                     <IconButton
                         aria-label="close"
@@ -135,7 +134,21 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             sx={{ pt: '16px' }}
                                             options={suggestStore.suggestKhachHang}
                                             getOptionLabel={(option) =>
-                                                `${option.tenKhachHang} (${option.soDienThoai})`
+                                                `${option.tenKhachHang} ${
+                                                    option.soDienThoai !== ''
+                                                        ? option.soDienThoai
+                                                        : ''
+                                                }`
+                                            }
+                                            value={
+                                                suggestStore.suggestKhachHang?.filter(
+                                                    (x) => x.id == values.idKhachHang
+                                                )?.[0] ??
+                                                ({
+                                                    id: '',
+                                                    soDienThoai: '',
+                                                    tenKhachHang: ''
+                                                } as SuggestKhachHangDto)
                                             }
                                             size="small"
                                             fullWidth
@@ -243,6 +256,16 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         getOptionLabel={(option) =>
                                                             `${option.tenDichVu}`
                                                         }
+                                                        value={
+                                                            suggestStore.suggestDichVu?.filter(
+                                                                (x) => x.id == values.idDonViQuiDoi
+                                                            )?.[0] ??
+                                                            ({
+                                                                id: '',
+                                                                donGia: 0,
+                                                                tenDichVu: ''
+                                                            } as SuggestDichVuDto)
+                                                        }
                                                         size="small"
                                                         fullWidth
                                                         disablePortal
@@ -333,6 +356,18 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             }
                                                             getOptionLabel={(option) =>
                                                                 `${option.tenNhanVien}`
+                                                            }
+                                                            value={
+                                                                suggestStore.suggestKyThuatVien?.filter(
+                                                                    (x) => x.id == values.idNhanVien
+                                                                )?.[0] ??
+                                                                ({
+                                                                    id: '',
+                                                                    avatar: '',
+                                                                    chucVu: '',
+                                                                    soDienThoai: '',
+                                                                    tenNhanVien: ''
+                                                                } as SuggestNhanVienDichVuDto)
                                                             }
                                                             size="small"
                                                             fullWidth
@@ -445,17 +480,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     }
                                                 }}>
                                                 <Button
-                                                    className="btn-container-hover"
-                                                    variant="contained"
-                                                    size="small"
-                                                    type="submit"
-                                                    sx={{
-                                                        backgroundColor:
-                                                            'var(--color-main)!important'
-                                                    }}>
-                                                    Lưu
-                                                </Button>
-                                                <Button
                                                     className="btn-outline-hover"
                                                     variant="outlined"
                                                     size="small"
@@ -465,6 +489,17 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     }}
                                                     onClick={onCancel}>
                                                     Hủy
+                                                </Button>
+                                                <Button
+                                                    className="btn-container-hover"
+                                                    variant="contained"
+                                                    size="small"
+                                                    type="submit"
+                                                    sx={{
+                                                        backgroundColor:
+                                                            'var(--color-main)!important'
+                                                    }}>
+                                                    Lưu
                                                 </Button>
                                             </Box>
                                         </Grid>

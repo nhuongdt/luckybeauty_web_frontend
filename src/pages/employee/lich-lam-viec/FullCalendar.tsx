@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -15,7 +15,9 @@ import {
     SelectChangeEvent,
     MenuItem,
     ButtonGroup,
-    Grid
+    Grid,
+    TextField,
+    Autocomplete
 } from '@mui/material';
 import { ReactComponent as EditIcon } from '../../../images/edit-2.svg';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -33,7 +35,11 @@ import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDt
 import SuggestService from '../../../services/suggests/SuggestService';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import CreateOeEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
+import AppConsts from '../../../lib/appconst';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 const Calendar: React.FC = () => {
+    const appContext = useContext(AppContext);
+    const chinhanhContext = appContext.chinhanhCurrent;
     const [weekDates, setWeekDates] = useState<any[]>([]);
     const [filter, setFilter] = useState('');
     const [skipCount, setSkipCount] = useState(1);
@@ -48,7 +54,7 @@ const Calendar: React.FC = () => {
         getWeekDate(new Date());
         getData();
         getSuggestNhanVien();
-    }, []);
+    }, [chinhanhContext.id]);
     const getSuggestNhanVien = async () => {
         const result = await SuggestService.SuggestNhanSu();
         setSuggestNhanVien(result);
@@ -225,33 +231,39 @@ const Calendar: React.FC = () => {
                 open={openDialog}
                 onClose={handleSubmit}
             />
-            <Grid container mb="16px" display="flex" justifyContent="space-between">
-                <Grid item xs={12} md={'auto'}>
-                    <Select
-                        onChange={changeEmploy}
-                        value={employ}
-                        displayEmpty
+            <Grid container mb="16px" display="flex" justifyContent="space-between" spacing={1}>
+                <Grid item xs={12} md={4}>
+                    <Autocomplete
+                        fullWidth
+                        onChange={(event, value) => {
+                            setEmploy(value?.id ?? '');
+                            lichLamViecStore.updateIdNhanVien(value?.id ?? AppConsts.guidEmpty);
+                            getData();
+                        }}
+                        value={suggestNhanVien[0]}
+                        options={[
+                            { id: '', tenNhanVien: 'Tất cả nhân viên' }, // Option for all employees
+                            ...suggestNhanVien
+                        ]}
+                        getOptionLabel={(item) => item.tenNhanVien}
                         size="small"
                         sx={{
-                            '& svg': {
-                                position: 'relative',
-                                left: '-10px'
+                            '& .MuiAutocomplete-root': {
+                                backgroundColor: '#fff',
+                                '& .MuiSvgIcon-root': {
+                                    position: 'relative',
+                                    left: '-10px'
+                                },
+                                '&[aria-expanded="true"] .MuiSvgIcon-root': {
+                                    transform: 'rotate(180deg)'
+                                }
                             },
-                            bgcolor: '#fff',
-                            '[aria-expanded="true"] ~ svg': {
-                                transform: 'rotate(180deg)'
-                            }
+                            maxWidth: window.screen.width <= 650 ? '100%' : '55%'
                         }}
-                        IconComponent={() => <ArrowDown />}>
-                        <MenuItem value="">Tất cả nhân viên</MenuItem>
-                        {suggestNhanVien.map((item) => {
-                            return (
-                                <MenuItem value={item.id} key={item.id}>
-                                    {item.tenNhanVien}
-                                </MenuItem>
-                            );
-                        })}
-                    </Select>
+                        renderInput={(params: any) => (
+                            <TextField fullWidth {...params} label="Nhân viên" variant="outlined" />
+                        )}
+                    />
                 </Grid>
                 <Grid
                     item
@@ -313,53 +325,59 @@ const Calendar: React.FC = () => {
                         <ChevronRightIcon />
                     </Button>
                 </Grid>
-                <Box display="flex" alignItems="center" gap="8px">
-                    <ButtonGroup
-                        variant="outlined"
-                        sx={{
-                            '& button': {
-                                minWidth: 'unset!important',
-                                paddingX: '6px!important',
-                                height: '32px',
-                                borderColor: '#E6E1E6!important'
-                            }
-                        }}>
-                        <Button className="btn-outline-hover" sx={{ mr: '1px' }}>
-                            <CalendarIcon />
-                        </Button>
-                        <Button className="btn-outline-hover">
-                            <ListIcon />
-                        </Button>
-                    </ButtonGroup>
-                    <Select
-                        onChange={changeValue}
-                        value={value}
-                        IconComponent={() => <ArrowDown />}
-                        displayEmpty
-                        size="small"
-                        sx={{
-                            '& .MuiSelect-select': {
-                                lineHeight: '32px',
-                                p: '0',
-                                height: '32px',
-                                pl: '10px'
-                            },
-                            bgcolor: '#fff',
-                            '& svg': {
-                                position: 'relative',
-                                left: '-10px',
-                                width: '20px',
-                                height: '20px'
-                            },
-                            '[aria-expanded="true"] ~ svg': {
-                                transform: 'rotate(180deg)'
-                            }
-                        }}>
-                        <MenuItem value="">Tuần</MenuItem>
-                        <MenuItem value="Tháng">Tháng</MenuItem>
-                        <MenuItem value="Năm">Năm</MenuItem>
-                    </Select>
-                </Box>
+                <Grid item xs={12} md={4}>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent={window.screen.width <= 650 ? 'start' : 'end'}
+                        gap="8px">
+                        <ButtonGroup
+                            variant="outlined"
+                            sx={{
+                                '& button': {
+                                    minWidth: 'unset!important',
+                                    paddingX: '6px!important',
+                                    height: '32px',
+                                    borderColor: '#E6E1E6!important'
+                                }
+                            }}>
+                            <Button className="btn-outline-hover" sx={{ mr: '1px' }}>
+                                <CalendarIcon />
+                            </Button>
+                            <Button className="btn-outline-hover">
+                                <ListIcon />
+                            </Button>
+                        </ButtonGroup>
+                        <Select
+                            onChange={changeValue}
+                            value={value}
+                            IconComponent={() => <ArrowDown />}
+                            displayEmpty
+                            size="small"
+                            sx={{
+                                '& .MuiSelect-select': {
+                                    lineHeight: '32px',
+                                    p: '0',
+                                    height: '32px',
+                                    pl: '10px'
+                                },
+                                bgcolor: '#fff',
+                                '& svg': {
+                                    position: 'relative',
+                                    left: '-10px',
+                                    width: '20px',
+                                    height: '20px'
+                                },
+                                '[aria-expanded="true"] ~ svg': {
+                                    transform: 'rotate(180deg)'
+                                }
+                            }}>
+                            <MenuItem value="">Tuần</MenuItem>
+                            <MenuItem value="Tháng">Tháng</MenuItem>
+                            <MenuItem value="Năm">Năm</MenuItem>
+                        </Select>
+                    </Box>
+                </Grid>
             </Grid>
             <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
                 <Table size="small">

@@ -31,8 +31,11 @@ import { observer } from 'mobx-react';
 import dichVuNhanVienStore from '../../stores/dichVuNhanVienStore';
 import AppConsts from '../../lib/appconst';
 import { maxHeight } from '@mui/system';
+import { AppContext, IAppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import Cookies from 'js-cookie';
 
 class SettingDichVuNhanVien extends Component {
+    static contextType = AppContext;
     onModal = () => {
         this.setState({ visiableModal: !this.state.visiableModal });
     };
@@ -42,19 +45,31 @@ class SettingDichVuNhanVien extends Component {
     state = {
         visiableModal: false,
         settingValue: 'Service',
-        selectedItemId: null
+        selectedItemId: null,
+        idChiNhanh: Cookies.get('IdChiNhanh')
     };
     componentDidMount(): void {
         this.getData();
+    }
+    componentDidUpdate(prevProps: any, prevState: any, snapshot?: any): void {
+        const appContext = this.context as IAppContext;
+        const chiNhanhContext = appContext.chinhanhCurrent;
+        if (this.state.idChiNhanh !== chiNhanhContext.id) {
+            // ChiNhanhContext has changed, update the component
+            this.setState({
+                idChiNhanh: chiNhanhContext.id
+            });
+            this.getData();
+        }
     }
     async getData() {
         await suggestStore.getSuggestNhanVien();
         await suggestStore.getSuggestDichVu();
         await suggestStore.getSuggestNhomHangHoa();
-        dichVuNhanVienStore.idNhanVien = suggestStore.suggestNhanVien[0].id;
-        this.setState({ selectedItemId: suggestStore.suggestNhanVien[0].id });
+        dichVuNhanVienStore.idNhanVien = suggestStore.suggestNhanVien[0]?.id;
+        this.setState({ selectedItemId: suggestStore.suggestNhanVien[0]?.id });
         await dichVuNhanVienStore.getDichVuNhanVienDetail(
-            suggestStore.suggestNhanVien[0].id ?? AppConsts.guidEmpty
+            suggestStore.suggestNhanVien[0]?.id ?? AppConsts.guidEmpty
         );
     }
     handleSettingChange = async (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
@@ -167,7 +182,7 @@ class SettingDichVuNhanVien extends Component {
                                                 key={key}
                                                 onClick={async () => {
                                                     await dichVuNhanVienStore.getDichVuNhanVienDetail(
-                                                        item.id
+                                                        item.id ?? AppConsts.guidEmpty
                                                     );
                                                     dichVuNhanVienStore.idNhanVien = item.id;
                                                     this.setState({ selectedItemId: item.id });
