@@ -1,12 +1,4 @@
-import {
-    Box,
-    Grid,
-    Typography,
-    TextField,
-    IconButton,
-    Button,
-    SelectChangeEvent
-} from '@mui/material';
+import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent } from '@mui/material';
 import { useContext, useEffect, useRef, useState } from 'react';
 
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
@@ -408,7 +400,7 @@ const PageSoQuy = ({ xx }: any) => {
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Box paddingTop={2}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={12} lg={6} md={12}>
+                    <Grid item xs={12} sm={12} lg={5} md={12}>
                         <Grid container alignItems="center">
                             <Grid item xs={4} sm={5} lg={2} md={2}>
                                 <span className="page-title"> Sổ quỹ</span>
@@ -447,11 +439,12 @@ const PageSoQuy = ({ xx }: any) => {
                         </Grid>
                     </Grid>
 
-                    <Grid item xs={12} sm={12} lg={6} md={12}>
-                        <Box
+                    <Grid item xs={12} sm={12} lg={7} md={12}>
+                        <Stack
+                            direction={'row'}
+                            spacing={1}
+                            justifyContent={'flex-end'}
                             sx={{
-                                display: 'flex',
-                                gap: '8px',
                                 '& button': {
                                     height: '40px'
                                 }
@@ -514,7 +507,7 @@ const PageSoQuy = ({ xx }: any) => {
                                 }}>
                                 Lập phiếu
                             </Button>
-                        </Box>
+                        </Stack>
                     </Grid>
                 </Grid>
                 <Box marginTop={5} className="page-box-right">
