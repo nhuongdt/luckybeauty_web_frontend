@@ -458,7 +458,7 @@ export const appRouters: AppRouteProps = {
                     name: 'caidat',
                     icon: <SettingIcon width="20px" />,
                     iconActive: <SetingActive width="20px" />,
-                    showInMenu: true,
+                    showInMenu: false,
                     isLayout: false,
                     children: [],
                     component: LoadableComponent(() => import('../../pages/admin/settings'))

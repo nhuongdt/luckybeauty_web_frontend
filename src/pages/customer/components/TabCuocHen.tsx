@@ -1,11 +1,12 @@
 import React from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, SelectChangeEvent } from '@mui/material';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import { TextTranslate } from '../../../components/TableLanguage';
 import { observer } from 'mobx-react';
 import khachHangStore from '../../../stores/khachHangStore';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import { format as formatDate } from 'date-fns';
 const TabCuocHen: React.FC = () => {
     const handlePageChange = async (event: any, newPage: number) => {
         console.log(newPage);
@@ -22,12 +23,11 @@ const TabCuocHen: React.FC = () => {
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value} sx={{ width: '100%', textAlign: 'center' }}>
-                    {params.value}
+                <Box title={params.value} sx={{ width: '100%' }}>
+                    {formatDate(new Date(params.value), 'dd/MM/yyyy')}
                 </Box>
             )
         },
@@ -38,7 +38,6 @@ const TabCuocHen: React.FC = () => {
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
@@ -53,31 +52,31 @@ const TabCuocHen: React.FC = () => {
             field: 'thoiGianThucHien',
             headerName: 'Thời gian',
             flex: 0.8,
+            headerAlign: 'left',
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value} sx={{ width: '100%', textAlign: 'center' }}>
-                    {params.value}
+                <Box title={params.value} sx={{ width: '100%' }}>
+                    {params.value} phút
                 </Box>
             )
         },
         {
             field: 'donGia',
-            headerName: 'Gía',
+            headerName: 'Giá',
             flex: 0.8,
+            headerAlign: 'left',
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value} sx={{ width: '100%', textAlign: 'center' }}>
-                    {params.value}
+                <Box title={params.value} sx={{ width: '100%' }}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -95,7 +94,6 @@ const TabCuocHen: React.FC = () => {
                     }}
                     title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
@@ -104,24 +102,23 @@ const TabCuocHen: React.FC = () => {
             field: 'trangThai',
             headerName: 'Tình trạng',
             flex: 0.8,
+            headerAlign: 'left',
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
                 <Box
                     sx={{
-                        margin: 'auto',
-                        color: params.value == 'Hoàn thành' ? '#50CD89' : '#F1416C',
-                        backgroundColor: params.value == 'Hoàn thành' ? '#E8FFF3' : '#FFF5F8'
+                        color: params.value == 'Hủy' ? '#F1416C' : '#50CD89',
+                        backgroundColor: params.value == 'Hủy' ? '#FFF5F8' : '#E8FFF3'
                     }}>
                     {params.value}
                 </Box>
             )
         }
-    ];
+    ] as GridColDef[];
     return (
         <>
             <Box mt="24px">
@@ -146,43 +143,7 @@ const TabCuocHen: React.FC = () => {
                     sx={{
                         '& .MuiDataGrid-columnHeaders': {
                             bgcolor: '#F2EBF0'
-                        },
-                        '& .MuiDataGrid-iconButtonContainer': {
-                            display: 'none'
-                        },
-                        '& .MuiBox-root': {
-                            fontSize: '12px'
-                        },
-                        '& .MuiDataGrid-virtualScroller': {
-                            bgcolor: '#fff'
-                        },
-                        '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                            outline: 'none!important'
-                        },
-                        '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                            outline: 'none '
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                            color: '#7C3367'
-                        },
-                        '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                            fill: '#7C3367'
-                        },
-                        '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                            {
-                                fill: '#000'
-                            },
-                        '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                            {
-                                fill: '#000'
-                            },
-                        '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                            color: '#7C3367!important'
-                        },
-                        '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                            {
-                                outline: 'none'
-                            }
+                        }
                     }}
                 />
             </Box>

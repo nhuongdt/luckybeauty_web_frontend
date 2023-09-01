@@ -22,7 +22,8 @@ class LichhenDetail extends Component {
                     await bookingStore.onShowBookingInfo();
                     bookingStore.idBooking = AppConsts.guidEmpty;
                 }}
-                maxWidth="sm">
+                fullWidth
+                maxWidth="md">
                 <Box
                     sx={{
                         background: bookingStore.bookingInfoDto.color

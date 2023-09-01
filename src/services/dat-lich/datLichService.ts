@@ -17,8 +17,8 @@ class BookingServices {
         const result = await http.get('api/services/app/Booking/GetAll', { params: input });
         return result.data.result;
     }
-    public async CreateBooking(input: CreateBookingDto) {
-        const result = await http.post('api/services/app/Booking/CreateBooking', input);
+    public async CreateOrEditBooking(input: CreateBookingDto) {
+        const result = await http.post('api/services/app/Booking/CreateOrEditBooking', input);
         return result.data.result;
     }
     public async GetKhachHang_Booking(input: BookingRequestDto) {
@@ -26,11 +26,15 @@ class BookingServices {
         const xx = await http.get(`api/services/app/Booking/GetKhachHang_Booking?${param}`);
         return xx.data.result;
     }
-    public async UpdateTrangThaiBooking(idBooking: string, trangthai = 1) {
-        const xx = await http.get(
+    public async UpdateTrangThaiBooking(idBooking: string, trangthai: number) {
+        const xx = await http.post(
             `api/services/app/Booking/UpdateTrangThaiBooking?idBooking=${idBooking}&trangThai=${trangthai}`
         );
         return xx.data.result;
+    }
+    public async GetForEdit(id: string) {
+        const response = await http.get(`api/services/app/Booking/GetForEdit?id=${id}`);
+        return response.data.result;
     }
     GetInforBooking_byID = async (idBooking: string) => {
         if (utils.checkNull(idBooking) || idBooking == Guid.EMPTY) return null;

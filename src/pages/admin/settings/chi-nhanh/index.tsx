@@ -28,12 +28,19 @@ import { DataGrid, GridApi } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
+import ActionMenuTable from '../../../../components/Menu/ActionMenuTable';
+import cuaHangService from '../../../../services/cua_hang/cuaHangService';
+import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
+import ViewChiNhanhModal from './components/view-chi-nhanh-modal';
 
 class ChiNhanhScreen extends Component {
     dataGridRef: RefObject<any> = React.createRef<GridApi>();
     state = {
         idChiNhanh: '',
+        anchorEl: null as any,
         isShowModal: false,
+        isShowView: false,
+        isShowConfirmDelete: false,
         currentPage: 1,
         rowPerPage: 10,
         filter: '',
@@ -50,6 +57,8 @@ class ChiNhanhScreen extends Component {
     }
 
     async InitData() {
+        const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? '';
+        await cuaHangService.getCongTyEdit(idChiNhanh);
         const lstChiNhanh = await chiNhanhService.GetAll({
             keyword: this.state.filter,
             maxResultCount: this.state.rowPerPage,
@@ -67,8 +76,24 @@ class ChiNhanhScreen extends Component {
         await this.InitData();
         this.Modal();
     };
+    handleDelete = () => {
+        // Handle Delete action
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete
+        });
+    };
+    onOkDelete = async () => {
+        await chiNhanhService.Delete(this.state.idChiNhanh);
+        await this.setState({ idChiNhanh: '' });
+        this.handleDelete();
+        this.handleCloseMenu();
+        this.InitData();
+    };
     Modal = () => {
         this.setState({ isShowModal: !this.state.isShowModal });
+    };
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, idChiNhanh: rowId });
     };
     createOrEditShowModal = async (idChiNhanh: string) => {
         if (idChiNhanh === '') {
@@ -87,7 +112,7 @@ class ChiNhanhScreen extends Component {
                     ghiChu: '',
                     ngayHetHan: new Date(),
                     ngayApDung: new Date(),
-                    trangThai: 0
+                    trangThai: 1
                 }
             });
         } else {
@@ -98,6 +123,20 @@ class ChiNhanhScreen extends Component {
             });
         }
         this.Modal();
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrEditShowModal(this.state.idChiNhanh ?? '');
+        this.handleCloseMenu();
+    };
+    handleView = async () => {
+        const createOrEdit = await chiNhanhService.GetForEdit(this.state.idChiNhanh ?? '');
+        this.setState({
+            createOrEditChiNhanhDto: createOrEdit,
+            isShowView: true
+        });
+        alert(JSON.stringify(this.state.createOrEditChiNhanhDto));
+        this.handleCloseMenu();
     };
     onCloseModal = () => {
         this.setState({ isShowModal: false });
@@ -120,7 +159,9 @@ class ChiNhanhScreen extends Component {
         // console.log(this.dataGridRef.current.getVisibleColumns());
         console.log('');
     };
-
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, idChiNhanh: '' });
+    };
     onSort = async (sortType: string, sortBy: string) => {
         //const type = sortType === 'desc' ? 'asc' : 'desc';
         await this.setState({
@@ -263,7 +304,10 @@ class ChiNhanhScreen extends Component {
                     <IconButton
                         aria-label="Actions"
                         aria-controls={`actions-menu-${params.row.id}`}
-                        aria-haspopup="true">
+                        aria-haspopup="true"
+                        onClick={(event) => {
+                            this.handleOpenMenu(event, params.row.id);
+                        }}>
                         <MoreHorizIcon />
                     </IconButton>
                 ),
@@ -398,6 +442,17 @@ class ChiNhanhScreen extends Component {
                         }
                         localeText={TextTranslate}
                     />
+                    <ActionMenuTable
+                        selectedRowId={this.state.idChiNhanh}
+                        anchorEl={this.state.anchorEl}
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleEdit}
+                        permissionView="Pages.ChiNhanh.View"
+                        handleEdit={this.handleEdit}
+                        permissionEdit="Pages.ChiNhanh.Edit"
+                        handleDelete={this.handleDelete}
+                        permissionDelete="Pages.ChiNhanh.Delete"
+                    />
                     <CustomTablePagination
                         currentPage={this.state.currentPage}
                         rowPerPage={this.state.rowPerPage}
@@ -406,8 +461,16 @@ class ChiNhanhScreen extends Component {
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.handleDelete}></ConfirmDelete>
                     <CreateOrEditChiNhanhModal
-                        title={this.state.idChiNhanh == '' ? 'Thêm mới' : 'Cập nhật'}
+                        title={
+                            this.state.idChiNhanh == ''
+                                ? 'Thêm mới chi nhánh'
+                                : 'Cập nhật chi nhánh'
+                        }
                         formRef={this.state.createOrEditChiNhanhDto}
                         isShow={this.state.isShowModal}
                         onCLose={this.onCloseModal}

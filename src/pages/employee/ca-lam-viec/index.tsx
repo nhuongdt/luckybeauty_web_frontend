@@ -540,6 +540,7 @@ class CaLamViecScreen extends Component {
                     }
                     onCancel={() => {
                         this.Modal();
+                        this.getData();
                     }}
                     createOrEditDto={caLamViecStore.createOrEditDto}></CreateOrEditCaLamViecDialog>
             </Box>

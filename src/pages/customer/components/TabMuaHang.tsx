@@ -6,6 +6,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import khachHangStore from '../../../stores/khachHangStore';
 import { observer } from 'mobx-react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import { format as formatDate } from 'date-fns';
 const TabMuaHang: React.FC = () => {
     const handlePageChange = async (event: any, newPage: number) => {
         console.log(newPage);
@@ -20,10 +21,7 @@ const TabMuaHang: React.FC = () => {
             minWidth: 70,
             flex: 1.2,
             renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
+                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
                 <Box
@@ -34,18 +32,15 @@ const TabMuaHang: React.FC = () => {
             )
         },
         {
-            field: 'ngayLapHoaDon   ',
+            field: 'ngayLapHoaDon',
             headerName: 'Ngày bán',
             flex: 1.2,
             renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
+                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
-                <Box sx={{ width: '100%', textAlign: 'center' }} title={params.value}>
-                    {params.value}
+                <Box sx={{ width: '100%' }} title={params.value}>
+                    {formatDate(new Date(params.value), 'dd/MM/yyyy')}
                 </Box>
             )
         },
@@ -54,14 +49,11 @@ const TabMuaHang: React.FC = () => {
             headerName: 'Tổng tiền hàng',
             flex: 1,
             renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
+                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
-                <Box sx={{ width: '100%', textAlign: 'center' }} title={params.value}>
-                    {params.value}
+                <Box sx={{ width: '100%' }} title={params.value}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -70,14 +62,11 @@ const TabMuaHang: React.FC = () => {
             headerName: 'Tổng giảm giá',
             flex: 1,
             renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>
-                    {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
-                </Box>
+                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value} sx={{ width: '100%', textAlign: 'center' }}>
-                    {params.value}
+                <Box title={params.value} sx={{ width: '100%' }}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -88,12 +77,11 @@ const TabMuaHang: React.FC = () => {
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box margin="auto" title={params.value}>
-                    {params.value}
+                <Box title={params.value}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -104,16 +92,11 @@ const TabMuaHang: React.FC = () => {
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box
-                    title={params.value}
-                    sx={{
-                        margin: 'auto'
-                    }}>
-                    {params.value}
+                <Box title={params.value}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -124,16 +107,11 @@ const TabMuaHang: React.FC = () => {
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box
-                    title={params.value}
-                    sx={{
-                        margin: 'auto'
-                    }}>
-                    {params.value}
+                <Box title={params.value}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
         },
@@ -144,14 +122,12 @@ const TabMuaHang: React.FC = () => {
             renderHeader: (params: any) => (
                 <Box sx={{ fontWeight: '700' }} title={params.value}>
                     {params.colDef.headerName}
-                    <IconSorting className="custom-icon" />{' '}
                 </Box>
             ),
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
                     sx={{
-                        margin: 'auto',
                         color:
                             params.value == 'Hoàn thành'
                                 ? '#50CD89'

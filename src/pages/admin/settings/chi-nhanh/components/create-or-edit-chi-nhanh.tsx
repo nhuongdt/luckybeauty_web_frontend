@@ -8,14 +8,19 @@ import {
     IconButton,
     TextField,
     Typography,
-    Box
+    Box,
+    FormControl,
+    FormControlLabel,
+    Checkbox
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
-
+import rules from './createOrEditChiNhanh.validate';
 import { ReactComponent as CloseIcon } from '../../../../../images/close-square.svg';
 import { CreateOrEditChiNhanhDto } from '../../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import { Form, Formik } from 'formik';
 import chiNhanhService from '../../../../../services/chi_nhanh/chiNhanhService';
+import { string } from 'yup';
+import AppConsts from '../../../../../lib/appconst';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;
@@ -49,11 +54,13 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                 <DialogContent dividers>
                     <Formik
                         initialValues={initValues}
+                        validationSchema={rules}
                         onSubmit={async (values) => {
+                            values.id = values.id == '' ? AppConsts.guidEmpty : values.id;
                             await chiNhanhService.CreateOrEdit(values);
                             onSave();
                         }}>
-                        {({ handleChange, values, errors }) => (
+                        {({ handleChange, values, errors, touched, setFieldValue }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -83,6 +90,19 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                     Tên chi nhánh
                                                 </Typography>
                                             }
+                                            error={
+                                                errors.tenChiNhanh && touched.tenChiNhanh
+                                                    ? true
+                                                    : false
+                                            }
+                                            helperText={
+                                                errors.tenChiNhanh &&
+                                                touched.tenChiNhanh && (
+                                                    <span className="text-danger">
+                                                        {errors.tenChiNhanh}
+                                                    </span>
+                                                )
+                                            }
                                             size="small"
                                             placeholder="Nhập tên chi nhánh"
                                             name="tenChiNhanh"
@@ -97,6 +117,19 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                 <Typography variant="subtitle2">
                                                     Số điện thoại
                                                 </Typography>
+                                            }
+                                            error={
+                                                errors.soDienThoai && touched.soDienThoai
+                                                    ? true
+                                                    : false
+                                            }
+                                            helperText={
+                                                errors.soDienThoai &&
+                                                touched.soDienThoai && (
+                                                    <span className="text-danger">
+                                                        {errors.soDienThoai}
+                                                    </span>
+                                                )
                                             }
                                             size="small"
                                             name="soDienThoai"
@@ -126,10 +159,19 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                     Ngày áp dụng
                                                 </Typography>
                                             }
+                                            error={touched.ngayApDung && Boolean(errors.ngayApDung)}
+                                            helperText={
+                                                touched.ngayApDung &&
+                                                Boolean(errors.ngayApDung) && (
+                                                    <span className="text-danger">
+                                                        {String(errors.ngayApDung)}
+                                                    </span>
+                                                )
+                                            }
                                             size="small"
                                             type="date"
                                             name="ngayApDung"
-                                            value={values.ngayApDung}
+                                            value={values.ngayApDung.toString().substring(0, 10)}
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
@@ -141,13 +183,35 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                     Ngày hết hạn
                                                 </Typography>
                                             }
+                                            error={touched.ngayHetHan && Boolean(errors.ngayHetHan)}
+                                            helperText={
+                                                touched.ngayHetHan &&
+                                                Boolean(errors.ngayHetHan) && (
+                                                    <span className="text-danger">
+                                                        {String(errors.ngayHetHan)}
+                                                    </span>
+                                                )
+                                            }
                                             size="small"
                                             type="date"
                                             name="ngayHetHan"
-                                            value={values.ngayHetHan}
+                                            value={values.ngayHetHan.toString().substring(0, 10)}
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <FormControl fullWidth>
+                                            <FormControlLabel
+                                                label="Trạng thái"
+                                                onChange={(e, v) => {
+                                                    setFieldValue('trangThai', v === true ? 1 : 0);
+                                                }}
+                                                value={values.trangThai === 1 ? true : false}
+                                                checked={values.trangThai === 1 ? true : false}
+                                                control={<Checkbox />}
+                                            />
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
