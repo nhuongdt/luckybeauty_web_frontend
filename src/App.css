@@ -80,8 +80,9 @@ body .font-normal {
 }
 
 .btnIcon {
-    width: 40px !important;
-    height: 40px !important;
+    /* do dộ rông của ô text nhập giá bán nó như thế này */
+    width: 35.69px !important;
+    height: 35.69px !important;
     border-radius: 4px !important;
     border: 1px solid #cccc !important;
     padding: 10px !important;
