@@ -107,6 +107,7 @@ export default function TabDiary({ idHoaDon }: any) {
             <DataGrid
                 disableRowSelectionOnClick
                 autoHeight
+                hideFooter
                 columns={columns}
                 rows={phieuThuChi}
                 localeText={TextTranslate}

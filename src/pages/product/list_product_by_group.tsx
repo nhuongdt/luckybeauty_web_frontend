@@ -4,8 +4,8 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
     return (
         <>
             {listProduct.map((nhom: any, index: any) => (
-                <Grid container paddingTop={2} gap={2}>
-                    <Grid item xs={12} key={index} padding=" 8px 8px 8px 0px">
+                <Grid container paddingTop={2} spacing={2}>
+                    <Grid item xs={12} key={index}>
                         <span
                             style={{
                                 fontSize: '16px',
@@ -24,21 +24,21 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
                             sm={4}
                             md={3}
                             lg={3}
-                            sx={{
-                                border: '1px solid transparent',
-                                cursor: 'pointer',
-                                transition: '.4s',
-                                backgroundColor: 'var(--color-bg)',
-                                '&:hover': {
-                                    borderColor: 'var(--color-main)'
-                                }
-                            }}
                             onClick={() => handleChoseItem(item)}>
                             <Stack
                                 direction="column"
                                 padding={2}
                                 spacing={2}
-                                justifyContent="space-around">
+                                justifyContent="space-around"
+                                sx={{
+                                    border: '1px solid transparent',
+                                    cursor: 'pointer',
+                                    transition: '.4s',
+                                    backgroundColor: 'var(--color-bg)',
+                                    '&:hover': {
+                                        borderColor: 'var(--color-main)'
+                                    }
+                                }}>
                                 <Box
                                     height={40}
                                     style={{
