@@ -32,9 +32,11 @@ import khachHangService from '../../services/khach-hang/khachHangService';
 import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import utils from '../../utils/utils';
+import Cookies from 'js-cookie';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
+    const idChiNhanh = chiNhanhCurrent?.id ?? Cookies.get('IdChiNhanh');
     const [isShow, setIsShow] = useState(false);
     const [isSave, setIsSave] = useState(false);
     const [errPhone, setErrPhone] = useState(false);
@@ -100,7 +102,7 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         });
         const objCheckIn: KHCheckInDto = new KHCheckInDto({
             idKhachHang: cusChosed.id,
-            idChiNhanh: chiNhanhCurrent.id
+            idChiNhanh: idChiNhanh
         });
         const dataCheckIn = await CheckinService.InsertCustomerCheckIn(objCheckIn);
         const objCheckInNew: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({

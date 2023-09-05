@@ -36,6 +36,7 @@ import SuggestService from '../../services/suggests/SuggestService';
 import suggestStore from '../../stores/suggestStore';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
+import Cookies from 'js-cookie';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -54,6 +55,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
 
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
+    const idChiNhanh = chiNhanhCurrent?.id ?? Cookies.get('IdChiNhanh');
     const lstNhanVien = useContext(ListNhanVienDataContext) as unknown as SuggestNhanVienDichVuDto;
 
     const [isShowModalLichHen, setIsShowModalLichHen] = useState(false);
@@ -120,7 +122,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                 tongTienHang += itFor.giaBan;
             }
             const hoadon = new PageHoaDonDto({
-                idChiNhanh: chiNhanhCurrent.id,
+                idChiNhanh: idChiNhanh,
                 idKhachHang: itemBook.idKhachHang,
                 maKhachHang: itemBook.maKhachHang,
                 tenKhachHang: itemBook.tenKhachHang,
@@ -281,7 +283,9 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                             style={{ width: 40, height: 40, borderRadius: '100%' }}
                                         />
                                     )}
-                                    <Stack sx={{ width: '100%' }} justifyContent={'space-evenly'}>
+                                    <Stack
+                                        sx={{ width: 'calc(100% - 40px)' }}
+                                        justifyContent={'space-evenly'}>
                                         <Typography
                                             variant="subtitle2"
                                             sx={{
