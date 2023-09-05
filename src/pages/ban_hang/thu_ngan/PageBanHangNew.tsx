@@ -1052,8 +1052,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             <Grid
                 container
                 spacing={2}
+                width={'100%'} // width={'100%'}: khong duoc xoa dong nay: fix loi MUI tự động set width calc(100% + 16px)
                 marginTop={showPayment ? '0' : '24px'}
-                // paddingLeft="16px"
                 ml="0"
                 sx={{
                     height: '100%',
