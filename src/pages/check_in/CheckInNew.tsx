@@ -269,7 +269,8 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                     height: 36.5,
                                     borderRadius: '4px',
                                     border: '1px solid #cccc',
-                                    padding: '6px'
+                                    padding: '6px',
+                                    display: 'none'
                                 }}
                             />
 
@@ -368,14 +369,16 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             </Stack>
                             <Stack spacing={1}>
                                 <Box display="flex" gap="8px" marginTop="8px">
-                                    <Typography variant="body2">Điểm tích lũy:</Typography>
+                                    <Typography variant="body2" color={'#3D475C'}>
+                                        Điểm tích lũy:
+                                    </Typography>
                                     <Typography variant="body2" fontWeight="700">
                                         {item.tongTichDiem}
                                     </Typography>
                                 </Box>
                                 <Grid container>
                                     <Grid item xs={7} sm={7} md={7}>
-                                        <Stack spacing={1} direction={'row'}>
+                                        <Stack spacing={1} direction={'row'} color={'#3D475C'}>
                                             <Typography variant="body2">
                                                 {item.dateCheckIn}
                                             </Typography>

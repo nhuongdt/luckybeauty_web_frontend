@@ -35,7 +35,7 @@ import { FileUpload } from '../../services/dto/FileUpload';
 import fileDowloadService from '../../services/file-dowload.service';
 import uploadFileService from '../../services/uploadFileService';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
-import ImportExcel from '../../components/ImportComponent';
+import ImportExcel from '../../components/ImportComponent/ImportExcel';
 import abpCustom from '../../components/abp-custom';
 import { AppContext, IAppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
@@ -626,6 +626,7 @@ class EmployeeScreen extends React.Component {
 
                 <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
+                        className="data-grid-row"
                         disableRowSelectionOnClick
                         autoHeight
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
@@ -679,6 +680,7 @@ class EmployeeScreen extends React.Component {
                     onOk={this.onOkDelete}
                     onCancel={this.handleDelete}></ConfirmDelete>
                 <ImportExcel
+                    tieude={'Nhập file nhân viên'}
                     isOpen={this.state.importShow}
                     onClose={this.onImportShow}
                     downloadImportTemplate={this.downloadImportTemplate}

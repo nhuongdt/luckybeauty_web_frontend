@@ -87,7 +87,13 @@ export default function ModalEditChiTietGioHang({
 
     React.useEffect(() => {
         setIsSave(false);
-        setLstCTHoaDon(hoadonChiTiet);
+        const arr = hoadonChiTiet.map((ct: PageHoaDonChiTietDto) => {
+            return {
+                ...ct,
+                laPTChietKhau: (ct?.ptChietKhau ?? 0) > 0 || (ct?.tienChietKhau ?? 0) === 0
+            };
+        });
+        setLstCTHoaDon(arr);
 
         if (formType === 0) {
             setLstCTHoaDon(
@@ -450,7 +456,13 @@ export default function ModalEditChiTietGioHang({
                                     display: displayComponent
                                 }}>
                                 <Close
-                                    sx={{ width: 40, height: 40, color: 'red', padding: '8px' }}
+                                    sx={{
+                                        width: 40,
+                                        height: 40,
+                                        color: 'red',
+                                        padding: '8px',
+                                        marginTop: '-10px'
+                                    }}
                                     onClick={() => xoaChiTietHoaDon(ct)}
                                 />
                             </Grid>
@@ -665,7 +677,16 @@ export default function ModalEditChiTietGioHang({
                                         sx={{
                                             display: itemVisibility[index] ? '' : 'none'
                                         }}>
-                                        <ButtonGroup style={{ paddingTop: '28px' }} fullWidth>
+                                        <ButtonGroup
+                                            sx={{
+                                                paddingTop: '26.58px',
+                                                maxWidth: '100%',
+                                                '& button': {
+                                                    minWidth: '38px !important',
+                                                    height: '35.69px'
+                                                }
+                                            }}
+                                            fullWidth>
                                             <Button
                                                 sx={{
                                                     bgcolor: ct.laPTChietKhau
@@ -700,7 +721,7 @@ export default function ModalEditChiTietGioHang({
                                             </Button>
                                         </ButtonGroup>
                                     </Grid>
-                                    {formType === 1 && (
+                                    {formType === 1 && ct.laPTChietKhau && (
                                         <Grid item xs={12} md={12}>
                                             <Stack
                                                 spacing={1}
@@ -842,7 +863,11 @@ export default function ModalEditChiTietGioHang({
                                     }
                                 }}>
                                 <Link
-                                    sx={{ fontSize: '14px' }}
+                                    sx={{
+                                        fontSize: '14px',
+                                        display: 'flex',
+                                        alignContent: 'center'
+                                    }}
                                     onClick={() => setShowModalSeachProduct(true)}>
                                     <Add />
                                     Thêm dịch vụ
@@ -852,15 +877,24 @@ export default function ModalEditChiTietGioHang({
                     </Grid>
 
                     {/* end 1 row */}
+
+                    <Grid item xs={12} md={12} paddingRight={2}>
+                        <Stack spacing={1} direction={'row'} justifyContent={'flex-end'}>
+                            <Button
+                                variant="contained"
+                                className="button-container"
+                                onClick={agrreGioHang}>
+                                Lưu
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                className="button-outline"
+                                onClick={closeModal}>
+                                Hủy
+                            </Button>
+                        </Stack>
+                    </Grid>
                 </DialogContent>
-                <DialogActions>
-                    <Button variant="contained" className="button-container" onClick={agrreGioHang}>
-                        Lưu
-                    </Button>
-                    <Button variant="outlined" className="button-outline" onClick={closeModal}>
-                        Hủy
-                    </Button>
-                </DialogActions>
             </Dialog>
         </>
     );
