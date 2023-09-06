@@ -907,14 +907,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
 
     const GetDataPrint = async (mahoadon = '', daThanhToan = 0) => {
         const chinhanhPrint = await getInforChiNhanh_byID();
-        let tempMauIn = '';
-        const mauInMacDinh = allMauIn.filter((x: MauInDto) => x.loaiChungTu === 1 && x.laMacDinh);
-        if (mauInMacDinh.length > 0) {
-            tempMauIn = mauInMacDinh[0].noiDungMauIn;
-        } else {
-            tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
-        }
-
+        const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
         const allCongTy = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
         let congty = {} as CuaHangDto;
         if (allCongTy.length > 0) {
