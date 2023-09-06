@@ -2,6 +2,7 @@ import * as Yup from 'yup';
 
 const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 const phoneRegex = /^\d{10,13}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
 
 const rules = Yup.object().shape({
     userId: Yup.number(),
@@ -14,7 +15,10 @@ const rules = Yup.object().shape({
     password: Yup.string().when('userId', (userId: any, schema) => {
         return userId === 0
             ? schema
-                  .min(6, 'Mật khẩu phải tối thiểu 6 ký tự')
+                  .matches(
+                      passwordRegex,
+                      'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                  )
                   .required('Mật khẩu không được để trống')
             : schema;
     }),

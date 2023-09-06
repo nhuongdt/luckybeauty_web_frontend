@@ -9,4 +9,5 @@ export interface UpdateUserInput {
     roleNames: string[];
     id: number;
     nhanSuId: string;
+    isAdmin: boolean;
 }

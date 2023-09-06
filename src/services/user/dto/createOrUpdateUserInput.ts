@@ -9,4 +9,5 @@ export interface CreateOrUpdateUserInput {
     password: string;
     id: number;
     nhanSuId: string;
+    isAdmin: boolean;
 }
