@@ -1510,14 +1510,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 <Grid item md={5} sx={{ paddingRight: '0' }}>
                     <Stack
                         sx={{
-                            mt: showDetail ? '-21px' : '-75px',
+                            width: 'calc(100% + 16px)',
+                            mt: showDetail ? '-21px' : '-79px',
                             backgroundColor: '#fff',
-                            borderRadius: '8px',
-
-                            height: '98vh',
-                            padding: '16px 0px 16px 16px',
-                            // marginRight: CoditionLayout ? '16px' : '0px',
-                            // paddingBottom: '16px',
+                            // borderRadius: '8px',
+                            height: 'calc(100vh - 16px)',
+                            padding: '16px',
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
@@ -1528,7 +1526,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 position: 'absolute',
                                 left: '0',
                                 width: '100%',
-                                // height: '40px',
                                 bottom: '0px',
                                 bgcolor: '#fff'
                             }
