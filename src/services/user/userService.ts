@@ -83,7 +83,7 @@ class UserService {
         return response.data.result;
     }
     public async updatePassword(input: ChangePasswordDto) {
-        const response = await http.post('api/services/app/User/ChangePassword', input);
+        const response = await http.post('api/services/app/User/ChangeUserPassword', input);
         return response.data.result;
     }
     public async getAll(

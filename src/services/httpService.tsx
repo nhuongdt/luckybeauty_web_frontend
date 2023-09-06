@@ -38,92 +38,94 @@ http.interceptors.response.use(
             !!error.response.data.error.message &&
             error.response.data.error.details
         ) {
-            enqueueSnackbar(
-                <>
-                    <div>
-                        <div>Lỗi</div>
-                        <span>
-                            {error.response.data.error.message}:{error.response.data.error.details}
-                        </span>
-                    </div>
-                </>,
-                {
-                    variant: 'error',
-                    anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'center'
-                    },
-                    autoHideDuration: 3000
-                }
-            );
+            // enqueueSnackbar(
+            //     <>
+            //         <div>
+            //             <div>Lỗi</div>
+            //             <span>
+            //                 {error.response.data.error.message}:{error.response.data.error.details}
+            //             </span>
+            //         </div>
+            //     </>,
+            //     {
+            //         variant: 'error',
+            //         anchorOrigin: {
+            //             vertical: 'top',
+            //             horizontal: 'center'
+            //         },
+            //         autoHideDuration: 3000
+            //     }
+            // );
         } else if (
             !!error.response &&
             !!error.response.data.error &&
             !!error.response.data.error.message
         ) {
             error.response.status == 401
-                ? enqueueSnackbar(
-                      <>
-                          <div>
-                              <div>Lỗi</div>
-                              <span>Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại!</span>
-                          </div>
-                      </>,
-                      {
-                          variant: 'error',
-                          anchorOrigin: {
-                              vertical: 'top',
-                              horizontal: 'center'
-                          },
-                          action: (key) => (
-                              <>
-                                  <IconButton
-                                      onClick={() => {
-                                          window.location.href = '/login';
-                                      }}>
-                                      <CloseOutlinedIcon sx={{ color: '#FFFFFF' }} />
-                                  </IconButton>
-                              </>
-                          )
-                      }
-                  )
-                : enqueueSnackbar(
-                      <>
-                          <div>
-                              <div>Lỗi</div>
-                              <span>
-                                  {error.response.data.error.message}:
-                                  {error.response.data.error.details}
-                              </span>
-                          </div>
-                      </>,
-                      {
-                          variant: 'error',
-                          anchorOrigin: {
-                              vertical: 'top',
-                              horizontal: 'center'
-                          },
-                          autoHideDuration: 3000
-                      }
-                  );
+                ? (window.location.href = '/login')
+                : // ? enqueueSnackbar(
+                  //       <>
+                  //           <div>
+                  //               <div>Lỗi</div>
+                  //               <span>Phiên làm việc đã hết hiệu lực vui lòng đăng nhập lại!</span>
+                  //           </div>
+                  //       </>,
+                  //       {
+                  //           variant: 'error',
+                  //           anchorOrigin: {
+                  //               vertical: 'top',
+                  //               horizontal: 'center'
+                  //           },
+                  //           action: (key) => (
+                  //               <>
+                  //                   <IconButton
+                  //                       onClick={() => {
+                  //                           window.location.href = '/login';
+                  //                       }}>
+                  //                       <CloseOutlinedIcon sx={{ color: '#FFFFFF' }} />
+                  //                   </IconButton>
+                  //               </>
+                  //           )
+                  //       }
+                  //   )
+                  '';
+            // enqueueSnackbar(
+            //       <>
+            //           <div>
+            //               <div>Lỗi</div>
+            //               <span>
+            //                   {error.response.data.error.message}:
+            //                   {error.response.data.error.details}
+            //               </span>
+            //           </div>
+            //       </>,
+            //       {
+            //           variant: 'error',
+            //           anchorOrigin: {
+            //               vertical: 'top',
+            //               horizontal: 'center'
+            //           },
+            //           autoHideDuration: 3000
+            //       }
+            //   );
         } else if (!error.response) {
             // Hiển thị thông báo lỗi sử dụng toastify
-            (
-                <>
-                    <div>
-                        <div>Error</div>
-                        <span>UnknownError</span>
-                    </div>
-                </>
-            ),
-                {
-                    variant: 'error',
-                    anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'center'
-                    },
-                    autoHideDuration: 3000
-                };
+            // (
+            //     <>
+            //         <div>
+            //             <div>Error</div>
+            //             <span>UnknownError</span>
+            //         </div>
+            //     </>
+            // ),
+            //     {
+            //         variant: 'error',
+            //         anchorOrigin: {
+            //             vertical: 'top',
+            //             horizontal: 'center'
+            //         },
+            //         autoHideDuration: 3000
+            //     };
         }
         return Promise.reject(error);
     }

@@ -51,7 +51,8 @@ class UserScreen extends AppComponentBase {
             roleNames: [],
             password: '',
             id: 0,
-            nhanSuId: ''
+            nhanSuId: '',
+            isAdmin: false
         } as CreateOrUpdateUserInput,
         isShowConfirmDelete: false,
         roles: [] as GetRoles[],

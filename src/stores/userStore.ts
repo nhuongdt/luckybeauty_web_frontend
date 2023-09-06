@@ -60,6 +60,7 @@ class UserStore {
             emailAddress: '',
             phoneNumber: '',
             isActive: false,
+            isAdmin: false,
             roleNames: [],
             password: '',
             nhanSuId: '',

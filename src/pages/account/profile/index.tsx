@@ -53,7 +53,10 @@ class ProfileScreen extends Component {
         const changePasswordSchema = Yup.object({
             currentPassword: Yup.string().required('Vui lòng nhập mật khẩu hiện tại.'),
             newPassword: Yup.string()
-                .min(6, 'Mật khẩu phải tối thiểu 6 ký tự')
+                .matches(
+                    AppConsts.passwordRegex,
+                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                )
                 .required('Mật khẩu không được để trống'),
             confirmPassword: Yup.string()
                 .oneOf([Yup.ref('newPassword'), ''], 'Mật khẩu xác nhận phải trùng khớp')
@@ -273,18 +276,13 @@ class ProfileScreen extends Component {
                                             currentPassword: values.currentPassword,
                                             newPassword: values.newPassword
                                         });
-                                        createOrEdit === true
-                                            ? enqueueSnackbar('Cập nhật mật khẩu thành công', {
-                                                  variant: 'success',
-                                                  autoHideDuration: 3000
-                                              })
-                                            : enqueueSnackbar(
-                                                  'Có lỗi sảy ra vui lòng thử lại sau',
-                                                  {
-                                                      variant: 'error',
-                                                      autoHideDuration: 3000
-                                                  }
-                                              );
+                                        enqueueSnackbar(createOrEdit.message, {
+                                            variant: createOrEdit.status,
+                                            autoHideDuration: 3000
+                                        });
+                                        values.confirmPassword = '';
+                                        values.currentPassword = '';
+                                        values.newPassword = '';
                                     }}>
                                     {({ handleChange, values, errors }) => (
                                         <Form

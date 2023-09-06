@@ -32,6 +32,7 @@ import { SuggestNhanSuDto } from '../../../../services/suggests/dto/SuggestNhanS
 import { GetRoles } from '../../../../services/user/dto/getRolesOuput';
 import TabList from '@mui/lab/TabList';
 import { enqueueSnackbar } from 'notistack';
+import AppConsts from '../../../../lib/appconst';
 //import rules from './createOrUpdateUser.validation';
 export interface ICreateOrEditUserProps {
     visible: boolean;
@@ -80,7 +81,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     password: values.password,
                     surname: values.surname,
                     userName: values.userName,
-                    roleNames: values.roleNames
+                    roleNames: values.roleNames,
+                    isAdmin: values.isAdmin
                 });
                 enqueueSnackbar('Cập nhật thành công!', {
                     variant: 'success',
@@ -120,30 +122,26 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             password: formRef.password,
             confirmPassword: formRef.password,
             isActive: formRef.isActive,
-            roleNames: formRef.roleNames
+            roleNames: formRef.roleNames,
+            isAdmin: formRef.isAdmin
         };
-        const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-        const phoneRegex = /^\d{10,13}$/;
+
         const rules = Yup.object().shape({
             surname: Yup.string().required('Tên là bắt buộc'),
             name: Yup.string().required('Họ là bắt buộc'),
             emailAddress: Yup.string()
-                .matches(emailRegex, 'Email không hợp lệ')
+                .matches(AppConsts.emailRegex, 'Email không hợp lệ')
                 .required('Email là bắt buộc'),
             userName: Yup.string().required('Tên truy cập là bắt buộc'),
-            phoneNumber: Yup.string().matches(phoneRegex, 'Số điện thoại không hợp lệ'),
-            password:
-                userId === 0
-                    ? Yup.string()
-                          .min(6, 'Mật khẩu tối thiểu 6 ký tự')
-                          .required('Mật khẩu không được để trống')
-                    : Yup.string(),
-            confirmPassword:
-                userId === 0
-                    ? Yup.string()
-                          .oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')
-                          .required('Xác nhận mật khẩu là bắt buộc')
-                    : Yup.string()
+            phoneNumber: Yup.string().matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ'),
+            password: Yup.string().matches(
+                AppConsts.passwordRegex,
+                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+            ),
+            confirmPassword: Yup.string().oneOf(
+                [Yup.ref('password'), ''],
+                'Mật khẩu xác nhận phải trùng khớp'
+            )
         });
         return (
             <Dialog
@@ -459,14 +457,14 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     />
                                                 </FormGroup>
 
-                                                <FormGroup hidden={userId === 0 ? false : true}>
+                                                <FormGroup>
                                                     <TextField
                                                         label={
                                                             <label style={{ fontSize: '14px' }}>
                                                                 Mật khẩu
-                                                                <span className="text-danger">
+                                                                {/* <span className="text-danger">
                                                                     *
-                                                                </span>
+                                                                </span> */}
                                                             </label>
                                                         }
                                                         error={
@@ -480,22 +478,25 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 <span>{errors.password}</span>
                                                             )
                                                         }
-                                                        type="text"
+                                                        type="password"
                                                         name="password"
                                                         value={values.password}
                                                         onChange={handleChange}
+                                                        onClick={() => {
+                                                            setFieldValue('password', '');
+                                                        }}
                                                         fullWidth
                                                         size="small"
                                                     />
                                                 </FormGroup>
-                                                <FormGroup hidden={userId === 0 ? false : true}>
+                                                <FormGroup>
                                                     <TextField
                                                         label={
                                                             <label style={{ fontSize: '14px' }}>
                                                                 Nhập lại mật khẩu
-                                                                <span className="text-danger">
+                                                                {/* <span className="text-danger">
                                                                     *
-                                                                </span>
+                                                                </span> */}
                                                             </label>
                                                         }
                                                         error={
@@ -512,30 +513,47 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span>
                                                             )
                                                         }
-                                                        type="text"
+                                                        type="password"
                                                         fullWidth
                                                         name="confirmPassword"
                                                         value={values.confirmPassword}
                                                         onChange={handleChange}
+                                                        onClick={() => {
+                                                            setFieldValue('confirmPassword', '');
+                                                        }}
                                                         size="small"
                                                     />
                                                 </FormGroup>
-                                                <FormGroup>
-                                                    <FormControlLabel
-                                                        name="isActive"
-                                                        value={values.isActive}
-                                                        onChange={handleChange}
-                                                        checked={values.isActive}
-                                                        control={
-                                                            <Checkbox
-                                                            // sx={{
-                                                            //     color: 'var(--color-main)!important'
-                                                            // }}
-                                                            />
-                                                        }
-                                                        label="Kích hoạt"
-                                                    />
-                                                </FormGroup>
+                                                <Grid item xs={12}>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            name="isAdmin"
+                                                            value={values.isAdmin}
+                                                            onChange={handleChange}
+                                                            checked={values.isAdmin}
+                                                            control={<Checkbox />}
+                                                            label="Là quản trị viên"
+                                                        />
+                                                    </FormGroup>
+                                                </Grid>
+                                                <Grid xs={12} item>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            name="isActive"
+                                                            value={values.isActive}
+                                                            onChange={handleChange}
+                                                            checked={values.isActive}
+                                                            control={
+                                                                <Checkbox
+                                                                // sx={{
+                                                                //     color: 'var(--color-main)!important'
+                                                                // }}
+                                                                />
+                                                            }
+                                                            label="Kích hoạt"
+                                                        />
+                                                    </FormGroup>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
                                     </TabPanel>
