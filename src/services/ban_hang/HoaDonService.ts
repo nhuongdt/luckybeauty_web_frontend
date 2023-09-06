@@ -70,6 +70,13 @@ class HoaDonService {
         const result = await http.post(`api/services/app/HoaDon/DeleteHoaDon?id=${idHoaDon}`);
         return result.data.result;
     };
+    Delete_MultipleHoaDon = async (lstId: any) => {
+        if (lstId !== null && lstId !== undefined && lstId.length > 0) {
+            const result = await http.post(`api/services/app/HoaDon/Delete_MultipleHoaDon`, lstId);
+            return result.data.result;
+        }
+        return false;
+    };
     ExportToExcel = async (input: HoaDonRequestDto): Promise<IFileDto> => {
         const result = await http.post('api/services/app/HoaDon/ExportDanhSach', input);
         return result.data.result;
