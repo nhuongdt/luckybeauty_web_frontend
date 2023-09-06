@@ -62,7 +62,7 @@ export const GridColor = ({ handleChoseColor }: any) => {
                     zIndex: 1,
                     backgroundColor: '#FFFFF0',
                     borderRadius: 4,
-                    top: '51px'
+                    top: '22px'
                 }}
                 sx={{ ml: 0, p: 1.5, border: '1px solid grey' }}>
                 <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 6, sm: 6, md: 6 }}>
