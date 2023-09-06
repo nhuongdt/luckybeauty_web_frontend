@@ -248,13 +248,13 @@ const GiaoDichThanhToan: React.FC = () => {
                                 tenChiNhanh: hoadon?.tenChiNhanh
                             } as ChiNhanhDto;
                             DataMauIn.congty = appContext.congty;
-                            let tempMauIn = '';
-                            const mauInMacDinh = lstMauIn.filter((x: MauInDto) => x.laMacDinh);
-                            if (mauInMacDinh.length > 0) {
-                                tempMauIn = mauInMacDinh[0].noiDungMauIn;
-                            } else {
-                                tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
-                            }
+                            const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
+                            // const mauInMacDinh = lstMauIn.filter((x: MauInDto) => x.laMacDinh);
+                            // if (mauInMacDinh.length > 0) {
+                            //     tempMauIn = mauInMacDinh[0].noiDungMauIn;
+                            // } else {
+                            //     tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+                            // }
                             let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
                             newHtml = DataMauIn.replaceChiNhanh(newHtml);
                             newHtml = DataMauIn.replaceHoaDon(newHtml);

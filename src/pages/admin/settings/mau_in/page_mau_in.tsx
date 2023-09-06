@@ -273,7 +273,7 @@ export default function PageMauIn({ xx }: any) {
 
     const GetContentMauInMacDinh = async (loai = 1) => {
         //Loai (1.k80,2.a4)
-        const data = await MauInServices.GetContentMauInMacDinh(loai, tenLoaiChungTu().toString());
+        const data = await MauInServices.GetContentMauInMacDinh(loai, idLoaiChungTu);
         setHtml(data);
     };
 

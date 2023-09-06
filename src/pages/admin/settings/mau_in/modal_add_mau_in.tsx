@@ -86,7 +86,7 @@ export default function ModalAddMauIn({
 
     const GetContentMauInMacDinh = async (loai = 1) => {
         //Loai (1.k80,2.a4)
-        const data = await MauInServices.GetContentMauInMacDinh(loai, tenLoaiChungTu);
+        const data = await MauInServices.GetContentMauInMacDinh(loai, idLoaiChungTu);
         setHtml(data);
     };
 
