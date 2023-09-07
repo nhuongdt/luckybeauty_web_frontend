@@ -1,9 +1,6 @@
 import {
     Button,
     IconButton,
-    Select,
-    MenuItem,
-    FormControl,
     Grid,
     Box,
     TextField,
@@ -13,7 +10,6 @@ import {
     InputAdornment
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
-import { ReactComponent as IconSorting } from '../../../../../images/column-sorting.svg';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DownloadIcon from '../../../../../images/download.svg';
@@ -62,6 +58,7 @@ class ChietKhauDichVuScreen extends Component {
         // if (suggestNhanVien.length > 0) {
         //     await this.setState({ idNhanVien: suggestNhanVien[0].id });
         // }
+        await suggestStore.getSuggestDichVu();
         const suggestDonViQuiDoi = await SuggestService.SuggestDonViQuiDoi();
         await this.setState({ suggestDonViQuiDoi: suggestDonViQuiDoi });
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);

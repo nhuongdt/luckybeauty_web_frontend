@@ -11,7 +11,11 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
+import suggestStore from '../../../../../stores/suggestStore';
+import ActionMenuTable from '../../../../../components/Menu/ActionMenuTable';
+import ConfirmDelete from '../../../../../components/AlertDialog/ConfirmDelete';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,
@@ -22,14 +26,16 @@ class ChietKhauHoaDonScreen extends Component {
         sortType: 'desc',
         skipCount: 1,
         maxResultCount: 10,
+        anchorEl: null,
         totalCount: 0,
         totalPage: 0,
         createOrEditModel: {
             id: AppConsts.guidEmpty,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
-            chungTuApDung: [],
+            chungTuApDung: '',
             giaTriChietKhau: 0,
-            loaiChietKhau: 0
+            loaiChietKhau: 0,
+            idNhanViens: []
         } as CreateOrEditChietKhauHoaDonDto
     };
     componentDidMount(): void {
@@ -43,16 +49,18 @@ class ChietKhauHoaDonScreen extends Component {
             sortBy: this.state.sortBy,
             sortType: this.state.sortType
         });
+        await suggestStore.getSuggestChucVu();
+        await suggestStore.getSuggestNhanVien();
     };
     Modal = () => {
-        this.setState({ visited: !this.state.visited });
+        this.setState({ visited: !this.state.visited, idChietKhauHD: '' });
     };
-    createOrEditShowModal = (id: string) => {
+    createOrEditShowModal = async (id: string) => {
         if (id === '') {
-            const newModel = chietKhauHoaDonStore.createModel();
+            const newModel = await chietKhauHoaDonStore.createModel();
             this.setState({ createOrEditModel: newModel });
         } else {
-            const model = chietKhauHoaDonStore.getForEdit(id);
+            const model = await chietKhauHoaDonStore.getForEdit(id);
             this.setState({ createOrEditModel: model });
         }
         this.setState({ idChietKhauHD: id });
@@ -60,17 +68,20 @@ class ChietKhauHoaDonScreen extends Component {
     };
     handleCreate = async () => {
         await this.getAll();
+        await chietKhauHoaDonStore.createModel();
         this.Modal();
     };
     delete = async (id: string) => {
         await chietKhauHoaDonStore.delete(id);
+        this.setState({ idChietKhauHD: '' });
+
+        this.getAll();
     };
     onShowDeleteConfirm = () => {
         this.setState({ isShowConfirmDelete: !this.state.isShowConfirmDelete });
     };
     onOkDelete = async () => {
         this.delete(this.state.idChietKhauHD);
-        await this.getAll();
         this.onShowDeleteConfirm();
     };
     onCancelDelete = () => {
@@ -80,7 +91,6 @@ class ChietKhauHoaDonScreen extends Component {
         await this.setState({
             skipCount: value
         });
-        console.log(value);
         this.getAll();
     };
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
@@ -98,6 +108,25 @@ class ChietKhauHoaDonScreen extends Component {
             sortBy: sortBy
         });
         this.getAll();
+    };
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, idChietKhauHD: rowId });
+    };
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, idChietKhauHD: '' });
+        //await this.getData();
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrEditShowModal(this.state.idChietKhauHD ?? '');
+        this.handleCloseMenu();
+    };
+    handleDelete = () => {
+        // Handle Delete action
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete,
+            anchorEl: null
+        });
     };
     render(): ReactNode {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
@@ -127,6 +156,29 @@ class ChietKhauHoaDonScreen extends Component {
                 flex: 1,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                )
+            },
+            {
+                field: 'actions',
+                headerName: 'Hành động',
+                maxWidth: 48,
+                flex: 1,
+                disableColumnMenu: true,
+                renderCell: (params) => (
+                    <Box>
+                        <IconButton
+                            aria-label="Actions"
+                            aria-controls={`actions-menu-${params.row.id}`}
+                            aria-haspopup="true"
+                            onClick={(event: any) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
+                            <MoreHorizIcon />
+                        </IconButton>
+                    </Box>
+                ),
+                renderHeader: (params) => (
+                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
         ];
@@ -170,7 +222,7 @@ class ChietKhauHoaDonScreen extends Component {
                         <Button
                             variant="contained"
                             onClick={() => {
-                                this.setState({ visited: true });
+                                this.createOrEditShowModal('');
                             }}
                             sx={{ height: 32, color: '#FFFAFF' }}
                             startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
@@ -203,52 +255,29 @@ class ChietKhauHoaDonScreen extends Component {
                             }
                         }}
                         sx={{
-                            '& .uiDataGrid-cellContent': {
-                                fontSize: '13px',
-                                fontFamily: 'Roboto',
-                                fontWeight: '400',
-                                textAlign: 'left'
-                            },
                             '& .MuiDataGrid-columnHeader': {
                                 background: '#FFF'
-                            },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: 'var(--color-main)'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: 'var(--color-main)'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            }
                         }}
                         hideFooter
                     />
+                    <ActionMenuTable
+                        selectedRowId={this.state.idChietKhauHD}
+                        anchorEl={this.state.anchorEl}
+                        closeMenu={this.handleCloseMenu}
+                        handleView={() => {
+                            console.log('chưa phát triển');
+                        }}
+                        permissionView=""
+                        handleEdit={this.handleEdit}
+                        permissionEdit="Pages.ChietKhauHoaDon.Edit"
+                        handleDelete={this.handleDelete}
+                        permissionDelete="PPages.ChietKhauHoaDon.Delete"
+                    />
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
                     <CustomTablePagination
                         currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
@@ -268,7 +297,12 @@ class ChietKhauHoaDonScreen extends Component {
                         onClose={this.Modal}
                         onSave={this.handleCreate}
                         visited={this.state.visited}
-                        title={this.state.idChietKhauHD === '' ? 'Thêm mới' : 'Cập nhật'}
+                        title={
+                            this.state.idChietKhauHD === '' ||
+                            this.state.idChietKhauHD === AppConsts.guidEmpty
+                                ? 'Thêm mới hoa hồng theo hóa đơn'
+                                : 'Cập nhật hoa hồng theo hóa đơn'
+                        }
                     />
                 </Box>
             </Box>

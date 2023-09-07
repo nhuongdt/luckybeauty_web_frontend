@@ -39,9 +39,10 @@ class ChietKhauHoaDonStore {
         this.createOrEditDto = {
             id: AppConsts.guidEmpty,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
-            chungTuApDung: [],
+            chungTuApDung: '',
             giaTriChietKhau: 0,
-            loaiChietKhau: 0
+            loaiChietKhau: 0,
+            idNhanViens: []
         };
     }
 }

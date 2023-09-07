@@ -17,7 +17,7 @@ class ChietKhauHoaDonService {
         return result.data.result;
     }
     public async GetForEdit(id: string): Promise<CreateOrEditChietKhauHoaDonDto> {
-        const result = await http.get(`api/services/app/ChietKhauHoaDon/GetForEdit${id}`);
+        const result = await http.get(`api/services/app/ChietKhauHoaDon/GetForEdit?id=${id}`);
         return result.data.result;
     }
     public async CreateOrEdit(input: CreateOrEditChietKhauHoaDonDto) {
@@ -25,7 +25,7 @@ class ChietKhauHoaDonService {
         return result.data.result;
     }
     public async Delete(id: string): Promise<ChietKhauHoaDonDto> {
-        const result = await http.post(`api/services/app/ChietKhauHoaDon/Delete${id}`);
+        const result = await http.post(`api/services/app/ChietKhauHoaDon/Delete?id=${id}`);
         return result.data.result;
     }
 }

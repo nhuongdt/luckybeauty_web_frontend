@@ -5,7 +5,7 @@ import ChietKhauHoaDonScreen from '../hoa-hong-nhan-vien/chiet-khau-hoa-don/inde
 
 class CaiDatHoaHongScreen extends Component {
     state = {
-        isChietKhauHoaDon: true
+        isChietKhauDichVu: true
     };
     render(): ReactNode {
         return (
@@ -14,7 +14,9 @@ class CaiDatHoaHongScreen extends Component {
                     <Grid container rowSpacing={2}>
                         <Grid item xs={6}>
                             <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px">
-                                Hoa hồng theo nhân viên
+                                {!this.state.isChietKhauDichVu
+                                    ? 'Hoa hồng theo hóa đơn'
+                                    : 'Hoa hồng theo dịch vụ'}
                             </Typography>
                         </Grid>
                         <Grid item xs={6}>
@@ -31,58 +33,58 @@ class CaiDatHoaHongScreen extends Component {
                                 }}>
                                 <Button
                                     variant={
-                                        this.state.isChietKhauHoaDon ? 'outlined' : 'contained'
+                                        this.state.isChietKhauDichVu ? 'outlined' : 'contained'
                                     }
                                     sx={{
                                         fontSize: '16px',
                                         textTransform: 'unset',
                                         borderRadius: '8px 0px 0px 8px',
-                                        color: this.state.isChietKhauHoaDon ? '#FFF' : '#666466',
-                                        backgroundColor: this.state.isChietKhauHoaDon
+                                        color: this.state.isChietKhauDichVu ? '#FFF' : '#666466',
+                                        backgroundColor: this.state.isChietKhauDichVu
                                             ? 'var(--color-main)!important'
                                             : '#FFFFFF!important',
                                         borderColor: 'transparent!important',
                                         boxShadow: 'none!important',
                                         '&:hover': {
-                                            color: this.state.isChietKhauHoaDon
+                                            color: this.state.isChietKhauDichVu
                                                 ? '#fff'
                                                 : 'var(--color-main)'
                                         }
                                     }}
                                     onClick={() => {
-                                        this.setState({ isChietKhauHoaDon: true });
+                                        this.setState({ isChietKhauDichVu: true });
                                     }}>
                                     Theo dịch vụ
                                 </Button>
                                 <Button
                                     variant={
-                                        this.state.isChietKhauHoaDon ? 'contained' : 'outlined'
+                                        this.state.isChietKhauDichVu ? 'contained' : 'outlined'
                                     }
                                     sx={{
                                         fontSize: '16px',
                                         textTransform: 'unset',
                                         borderRadius: '0px 8px 8px 0px',
-                                        color: this.state.isChietKhauHoaDon ? '#666466' : '#fff',
-                                        backgroundColor: this.state.isChietKhauHoaDon
+                                        color: this.state.isChietKhauDichVu ? '#666466' : '#fff',
+                                        backgroundColor: this.state.isChietKhauDichVu
                                             ? '#FFFFFF!important'
                                             : 'var(--color-main)!important',
                                         border: 'none!important',
                                         boxShadow: 'none!important',
                                         '&:hover': {
-                                            color: this.state.isChietKhauHoaDon
+                                            color: this.state.isChietKhauDichVu
                                                 ? 'var(--color-main)'
                                                 : '#fff'
                                         }
                                     }}
                                     onClick={() => {
-                                        this.setState({ isChietKhauHoaDon: false });
+                                        this.setState({ isChietKhauDichVu: false });
                                     }}>
                                     Theo hóa đơn
                                 </Button>
                             </ButtonGroup>
                         </Grid>
                         <Grid item xs={12}>
-                            {this.state.isChietKhauHoaDon ? (
+                            {this.state.isChietKhauDichVu ? (
                                 <ChietKhauDichVuScreen />
                             ) : (
                                 <ChietKhauHoaDonScreen />
