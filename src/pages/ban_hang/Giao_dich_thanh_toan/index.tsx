@@ -6,10 +6,15 @@ import {
     TextField,
     IconButton,
     Button,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Stack,
+    Select,
+    MenuItem
 } from '@mui/material';
+import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
+import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { Search } from '@mui/icons-material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
@@ -32,6 +37,11 @@ import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../../services/file-dowload.service';
 import { MauInDto } from '../../../services/mau_in/MauInDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
+import ActionRowSelect from '../../../components/DataGrid/ActionRowSelect';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
+import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
+import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -44,10 +54,13 @@ const GiaoDichThanhToan: React.FC = () => {
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
     const [lstMauIn, setLstMauIn] = useState<MauInDto[]>([]);
+    const [inforDelete, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
-        idChiNhanhs: [chinhanhCurrent.id],
+        idChiNhanhs: [chinhanhCurrent?.id],
         currentPage: 1,
         pageSize: 5,
         columnSort: 'NgayLapHoaDon',
@@ -61,6 +74,7 @@ const GiaoDichThanhToan: React.FC = () => {
         totalPage: 0,
         items: []
     });
+    const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
     const GetListHoaDon = async () => {
         const data = await HoaDonService.GetListHoaDon(paramSearch);
@@ -72,7 +86,7 @@ const GiaoDichThanhToan: React.FC = () => {
     };
 
     const GetlstMauIn_byChiNhanh = async () => {
-        const data = await MauInServices.GetAllMauIn_byChiNhanh(chinhanhCurrent.id, 1);
+        const data = await MauInServices.GetAllMauIn_byChiNhanh(chinhanhCurrent?.id, 1);
         setLstMauIn(data);
     };
 
@@ -99,7 +113,6 @@ const GiaoDichThanhToan: React.FC = () => {
 
     useEffect(() => {
         setParamSearch({ ...paramSearch, idChiNhanhs: [chinhanhCurrent.id] });
-        console.log('chinhanhHD ', chinhanhCurrent);
     }, [chinhanhCurrent.id]);
 
     useEffect(() => {
@@ -199,50 +212,84 @@ const GiaoDichThanhToan: React.FC = () => {
             default:
                 break;
         }
-        // if (hoadonAfterChange !== null) {
-        //     if (
-        //         hoadonAfterChange.trangThai === 0 ||
-        //         hoadonAfterChange.idChiNhanh !== hoadon?.idChiNhanh
-        //     ) {
-        //         if (hoadonAfterChange.trangThai === 0) {
-        //             setPageDataHoaDon({
-        //                 ...pageDataHoaDon,
-        //                 items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
-        //                     if (itemHD.id === hoadonAfterChange.id) {
-        //                         return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
-        //                     } else {
-        //                         return itemHD;
-        //                     }
-        //                 })
-        //             });
-        //             setObjAlert({ ...objAlert, show: true, mes: 'Hủy hóa đơn thành công' });
-        //         } else {
-        //             // remove if huyhoadon or change chinhanh
-        //             setPageDataHoaDon({
-        //                 ...pageDataHoaDon,
-        //                 items: pageDataHoaDon.items.filter(
-        //                     (x: any) => x.id !== hoadonAfterChange.id
-        //                 )
-        //             });
-        //         }
-        //     } else {
-        //         // update
-        //         setPageDataHoaDon({
-        //             ...pageDataHoaDon,
-        //             items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto, index: number) => {
-        //                 if (itemHD.id === hoadonAfterChange.id) {
-        //                     return hoadonAfterChange;
-        //                 } else {
-        //                     return itemHD;
-        //                 }
-        //             })
-        //         });
-        //     }
-        // }
     };
     const exportToExcel = async () => {
         const data = await HoaDonService.ExportToExcel(paramSearch);
         fileDowloadService.downloadExportFile(data);
+    };
+    console.log('apgeHoaDon');
+
+    const DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1:
+                setInforDeleteProduct({
+                    ...inforDelete,
+                    show: true,
+                    mes: 'Bạn có chắc chắn muốn xóa những hóa đơn này không?'
+                });
+                break;
+            case 2:
+                {
+                    let htmlPrint = '';
+                    for (let i = 0; i < rowSelectionModel.length; i++) {
+                        const idHoaDon = rowSelectionModel[i].toString();
+                        const dataHoaDon = await HoaDonService.GetInforHoaDon_byId(idHoaDon);
+                        const dataCTHD = await HoaDonService.GetChiTietHoaDon_byIdHoaDon(idHoaDon);
+
+                        if (dataHoaDon.length > 0) {
+                            DataMauIn.hoadon = dataHoaDon[0];
+                            DataMauIn.hoadonChiTiet = dataCTHD;
+                            DataMauIn.khachhang = {
+                                maKhachHang: dataHoaDon[0]?.maKhachHang,
+                                tenKhachHang: dataHoaDon[0]?.tenKhachHang,
+                                soDienThoai: hoadon?.soDienThoai
+                            } as KhachHangItemDto;
+                            DataMauIn.chinhanh = {
+                                tenChiNhanh: hoadon?.tenChiNhanh
+                            } as ChiNhanhDto;
+                            DataMauIn.congty = appContext.congty;
+                            const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
+                            // const mauInMacDinh = lstMauIn.filter((x: MauInDto) => x.laMacDinh);
+                            // if (mauInMacDinh.length > 0) {
+                            //     tempMauIn = mauInMacDinh[0].noiDungMauIn;
+                            // } else {
+                            //     tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+                            // }
+                            let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
+                            newHtml = DataMauIn.replaceChiNhanh(newHtml);
+                            newHtml = DataMauIn.replaceHoaDon(newHtml);
+                            newHtml = DataMauIn.replacePhieuThuChi(newHtml);
+                            if (i < rowSelectionModel.length - 1) {
+                                htmlPrint = htmlPrint.concat(
+                                    newHtml,
+                                    `<p style="page-break-before:always;"></p>`
+                                );
+                            } else {
+                                htmlPrint = htmlPrint.concat(newHtml);
+                            }
+                        }
+                    }
+                    DataMauIn.Print(htmlPrint);
+                }
+                break;
+        }
+    };
+
+    const Delete_MultipleHoaDon = async () => {
+        await HoaDonService.Delete_MultipleHoaDon(rowSelectionModel);
+        setInforDeleteProduct({ ...inforDelete, show: false });
+        setObjAlert({ show: true, mes: 'Xóa thành công', type: 1 });
+
+        setPageDataHoaDon({
+            ...pageDataHoaDon,
+            items: pageDataHoaDon.items.map((itemHD: PageHoaDonDto) => {
+                if (rowSelectionModel.toString().indexOf(itemHD.id) > -1) {
+                    return { ...itemHD, trangThai: 0, txtTrangThaiHD: 'Đã hủy' };
+                } else {
+                    return itemHD;
+                }
+            })
+        });
     };
     const columns: GridColDef[] = [
         {
@@ -425,6 +472,15 @@ const GiaoDichThanhToan: React.FC = () => {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
 
+            <ConfirmDelete
+                isShow={inforDelete.show}
+                title={inforDelete.title}
+                mes={inforDelete.mes}
+                onOk={Delete_MultipleHoaDon}
+                onCancel={() =>
+                    setInforDeleteProduct({ ...inforDelete, show: false })
+                }></ConfirmDelete>
+
             <Box paddingTop={2}>
                 <Grid container spacing={1}>
                     <Grid item xs={12} sm={12} md={12} lg={6} alignItems="center" gap="10px">
@@ -563,10 +619,40 @@ const GiaoDichThanhToan: React.FC = () => {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box marginTop={5} className="page-box-right">
+
+                {rowSelectionModel.length > 0 && (
+                    <ActionRowSelect
+                        lstOption={[
+                            {
+                                id: '1',
+                                text: 'Xóa hóa đơn',
+                                icon: (
+                                    <DeleteSweepOutlinedIcon
+                                        sx={{ width: '1rem', height: '1rem' }}
+                                    />
+                                )
+                            },
+                            {
+                                id: '2',
+                                text: 'In hóa đơn',
+                                icon: <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
+                            }
+                        ]}
+                        countRowSelected={rowSelectionModel.length}
+                        title="hóa đơn"
+                        choseAction={DataGrid_handleAction}
+                    />
+                )}
+
+                <Stack
+                    marginTop={rowSelectionModel.length > 0 ? 1 : 5}
+                    className="page-box-right"
+                    spacing={1}>
                     <DataGrid
                         disableRowSelectionOnClick
-                        className="data-grid-row"
+                        className={
+                            rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
+                        }
                         rowHeight={46}
                         columns={columns}
                         rows={pageDataHoaDon.items}
@@ -574,6 +660,10 @@ const GiaoDichThanhToan: React.FC = () => {
                         checkboxSelection
                         onRowClick={(item: any) => choseRow(item)}
                         localeText={TextTranslate}
+                        onRowSelectionModelChange={(newRowSelectionModel) => {
+                            setRowSelectionModel(newRowSelectionModel);
+                        }}
+                        rowSelectionModel={rowSelectionModel}
                     />
                     <CustomTablePagination
                         currentPage={paramSearch.currentPage ?? 1}
@@ -583,7 +673,7 @@ const GiaoDichThanhToan: React.FC = () => {
                         handlePerPageChange={handlePerPageChange}
                         handlePageChange={handleChangePage}
                     />
-                </Box>
+                </Stack>
             </Box>
         </>
     );

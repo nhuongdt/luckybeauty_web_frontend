@@ -206,14 +206,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
         } as KhachHangItemDto;
         DataMauIn.chinhanh = { tenChiNhanh: hoadon?.tenChiNhanh } as ChiNhanhDto;
         DataMauIn.congty = appContext.congty;
-        let tempMauIn = '';
-        const mauInMacDinh = listMauIn.filter((x: MauInDto) => x.laMacDinh);
-        if (mauInMacDinh.length > 0) {
-            tempMauIn = mauInMacDinh[0].noiDungMauIn;
-        } else {
-            tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
-        }
-        // const tempMauIn = await MauInServices.GetFileMauIn('K80_HoaDonBan.txt');
+        const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
         let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
         newHtml = DataMauIn.replaceChiNhanh(newHtml);
         newHtml = DataMauIn.replaceHoaDon(newHtml);

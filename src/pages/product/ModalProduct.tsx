@@ -308,7 +308,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         <Grid item xs={12} sm={4} md={4} lg={4}>
                             <Box
                                 sx={{
-                                    border: '1px solid var(--color-main)',
+                                    border: '1px solid #cccc',
                                     p: 1,
                                     height: '100%',
                                     textAlign: 'center',

@@ -339,12 +339,9 @@ const DetailHoaDon = ({
             <Box
                 sx={{
                     padding: '24px',
-
                     boxShadow: '1px 5px 22px 4px #00000026',
-                    width: '90%',
                     height: '100%',
                     marginX: 'auto',
-
                     borderRadius: '12px',
                     bgcolor: '#fff',
                     display: 'flex',
@@ -354,12 +351,10 @@ const DetailHoaDon = ({
                     '&::after': {
                         content: '""',
                         position: 'absolute',
-                        bottom: '-15px',
                         pointerEvents: 'none',
                         height: '40px',
                         left: '0',
-                        width: '100%',
-                        bgcolor: '#fff'
+                        width: '100%'
                     }
                 }}>
                 <Box
