@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes } from './components/routers';
 import { SnackbarProvider, MaterialDesignContent } from 'notistack';
 import { ReactComponent as SuccessIcon } from './images/success.svg';
