@@ -6,7 +6,7 @@ import { IconButton } from '@mui/material';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 const http = axios.create({
     baseURL: process.env.REACT_APP_REMOTE_SERVICE_BASE_URL,
-    timeout: 30000,
+    timeout: 60000,
     paramsSerializer: function (params) {
         return qs.stringify(params, {
             encode: false
