@@ -36,7 +36,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
         try {
             if (this.props.tenantId === 0) {
                 await tenantService.create(values);
-                enqueueSnackbar('Thêm mới thành công', {
+                enqueueSnackbar('Thêm mới thành công!', {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
@@ -47,14 +47,14 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     name: values.name,
                     tenancyName: values.tenancyName
                 });
-                enqueueSnackbar('Cập nhật thông tin thành công', {
+                enqueueSnackbar('Cập nhật thông tin thành công!', {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
             }
             this.props.onOk();
         } catch (error) {
-            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
+            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
                 variant: 'error',
                 autoHideDuration: 3000
             });
@@ -248,7 +248,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     </FormGroup>
                                                 </>
                                             )}
-                                            {isHostDatabase || tenantId !== 0 ? null : (
+                                            {isHostDatabase ? null : (
                                                 <FormGroup>
                                                     <TextField
                                                         label={
@@ -271,6 +271,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         id="chuoi-ket-noi"
                                                         type="text"
                                                         size="small"
+                                                        multiline
+                                                        minRows={2}
                                                         name="connectionString"
                                                         value={values.connectionString}
                                                         onChange={handleChange}

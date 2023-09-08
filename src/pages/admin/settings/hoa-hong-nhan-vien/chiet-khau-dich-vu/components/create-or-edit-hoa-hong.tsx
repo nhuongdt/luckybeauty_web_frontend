@@ -14,7 +14,8 @@ import {
     Checkbox,
     Select,
     Box,
-    MenuItem
+    MenuItem,
+    Autocomplete
 } from '@mui/material';
 
 import { ReactComponent as CloseIcon } from '../../../../../../images/close-square.svg';
@@ -27,6 +28,10 @@ import * as Yup from 'yup';
 import chietKhauDichVuService from '../../../../../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
 import AppConsts from '../../../../../../lib/appconst';
 import { enqueueSnackbar } from 'notistack';
+import chietKhauDichVuStore from '../../../../../../stores/chietKhauDichVuStore';
+import { observer } from 'mobx-react';
+import suggestStore from '../../../../../../stores/suggestStore';
+import { values } from 'lodash';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;
@@ -38,13 +43,17 @@ interface DialogProps {
 }
 class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
     render(): ReactNode {
-        const { title, onClose, onSave, visited, formRef, suggestDonViQuiDoi, idNhanVien } =
-            this.props;
-        const initialValues: CreateOrEditChietKhauDichVuDto = formRef;
+        const { title, onClose, onSave, visited } = this.props;
+        const initialValues: CreateOrEditChietKhauDichVuDto = chietKhauDichVuStore.createOrEditDto;
         const rules = Yup.object().shape({
-            idDonViQuiDoi: Yup.string()
-                .min(3, 'Dịch vụ là bắt buộc')
-                .required('Dịch vụ là bắt buộc')
+            idDonViQuiDoi: Yup.string().required('Dịch vụ là bắt buộc'),
+            idNhanVien: Yup.string().required('Vui lòng chọn nhân viên'),
+            loaiChietKhau: Yup.number().required('Vui lòng chọn loại chiết khấu'),
+            giaTri: Yup.number()
+                .required('Vui lòng nhập giá trị chiết khấu')
+                .test('non-zero', 'Giá trị chiết khấu phải khác 0', function (value) {
+                    return value !== 0;
+                })
         });
         return (
             <Dialog open={visited} fullWidth maxWidth="md">
@@ -53,7 +62,6 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                         fontSize: '24px',
                         fontWeight: '700'
                     }}>
-                    {title}
                     {onClose ? (
                         <IconButton
                             aria-label="close"
@@ -76,9 +84,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                         validationSchema={rules}
                         onSubmit={async (values) => {
                             values.id = values.id ?? AppConsts.guidEmpty;
-                            values.idNhanVien = idNhanVien;
                             values.idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
-                            values.idDonViQuiDoi = values.idDonViQuiDoi ?? suggestDonViQuiDoi[0].id;
                             const createOrEdit = await chietKhauDichVuService.CreateOrEdit(values);
                             enqueueSnackbar(createOrEdit.message, {
                                 variant: createOrEdit.status,
@@ -94,99 +100,143 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                     }
                                 }}>
                                 <Grid container spacing={4} rowSpacing={2}>
-                                    <TextField
-                                        hidden
-                                        name="idNhanVien"
-                                        value={idNhanVien}></TextField>
-                                    <Grid item xs={12} sm={6}>
-                                        <Select
-                                            label={
-                                                <Typography variant="subtitle2">Dịch vụ</Typography>
+                                    <Grid item xs={12} sm={6} marginTop={2}>
+                                        <Autocomplete
+                                            options={suggestStore?.suggestNhanVien}
+                                            getOptionLabel={(item) => item.tenNhanVien}
+                                            value={
+                                                suggestStore.suggestNhanVien?.find(
+                                                    (item) => item.id === values?.idNhanVien
+                                                ) || null
                                             }
-                                            error={
-                                                errors.idDonViQuiDoi && touched.idDonViQuiDoi
-                                                    ? true
-                                                    : false
+                                            disabled={
+                                                values.id === AppConsts.guidEmpty ? false : true
                                             }
-                                            size="small"
-                                            name="idDonViQuiDoi"
-                                            value={values.idDonViQuiDoi}
-                                            defaultValue={suggestDonViQuiDoi[0].id}
-                                            onChange={handleChange}
+                                            onChange={(event, newValue) => {
+                                                handleChange({
+                                                    target: {
+                                                        name: 'idNhanVien',
+                                                        value: newValue ? newValue.id : '' // Set the value to the selected item's id or an empty string if nothing is selected
+                                                    }
+                                                });
+                                            }}
                                             fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}>
-                                            {suggestDonViQuiDoi.map((item) => (
-                                                <MenuItem key={item.id} value={item.id}>
-                                                    {item.tenDonVi}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                        {errors.idDonViQuiDoi && (
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label={
+                                                        <Typography variant="subtitle2">
+                                                            Nhân viên
+                                                        </Typography>
+                                                    }
+                                                    error={
+                                                        errors.idNhanVien && touched.idNhanVien
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    size="small"
+                                                    sx={{ fontSize: '16px', color: '#4c4b4c' }}
+                                                />
+                                            )}
+                                        />
+                                        {errors.idNhanVien && touched.idNhanVien && (
+                                            <small className="text-danger">
+                                                {errors.idNhanVien}
+                                            </small>
+                                        )}
+                                    </Grid>
+                                    <Grid item xs={12} sm={6} marginTop={2}>
+                                        <Autocomplete
+                                            options={suggestStore?.suggestDichVu}
+                                            getOptionLabel={(item) => item.tenDichVu}
+                                            value={
+                                                suggestStore.suggestDichVu?.find(
+                                                    (item) => item.id === values?.idDonViQuiDoi
+                                                ) || null
+                                            }
+                                            onChange={(event, newValue) => {
+                                                handleChange({
+                                                    target: {
+                                                        name: 'idDonViQuiDoi',
+                                                        value: newValue ? newValue.id : '' // Set the value to the selected item's id or an empty string if nothing is selected
+                                                    }
+                                                });
+                                            }}
+                                            fullWidth
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    label={
+                                                        <Typography variant="subtitle2">
+                                                            Dịch vụ
+                                                        </Typography>
+                                                    }
+                                                    error={
+                                                        errors.idDonViQuiDoi &&
+                                                        touched.idDonViQuiDoi
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    size="small"
+                                                    sx={{ fontSize: '16px', color: '#4c4b4c' }}
+                                                />
+                                            )}
+                                        />
+                                        {errors.idDonViQuiDoi && touched.idDonViQuiDoi && (
                                             <small className="text-danger">
                                                 {errors.idDonViQuiDoi}
                                             </small>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <Typography variant="subtitle2">Loại chiết khấu</Typography>
+                                        {/* <Typography variant="subtitle2">Loại chiết khấu</Typography> */}
                                         <RadioGroup
-                                            value={values.loaiChietKhau}
-                                            defaultValue={values.loaiChietKhau}
+                                            value={values?.loaiChietKhau}
+                                            defaultValue={values?.loaiChietKhau}
+                                            title="Loại chiết khấu"
                                             name="loaiChietKhau"
                                             onChange={handleChange}
                                             sx={{ display: 'flex', flexDirection: 'row' }}>
                                             <FormControlLabel
                                                 value={1}
-                                                control={
-                                                    <Radio
-                                                        sx={{
-                                                            color: '#7C3367',
-                                                            '&.Mui-checked': {
-                                                                color: '#7C3367'
-                                                            }
-                                                        }}
-                                                    />
-                                                }
+                                                control={<Radio />}
                                                 label="Thực hiện"
                                             />
                                             <FormControlLabel
                                                 value={2}
-                                                control={
-                                                    <Radio
-                                                        sx={{
-                                                            color: '#7C3367',
-                                                            '&.Mui-checked': {
-                                                                color: '#7C3367'
-                                                            }
-                                                        }}
-                                                    />
-                                                }
+                                                control={<Radio />}
                                                 label="Yêu cầu"
                                             />
                                             <FormControlLabel
                                                 value={3}
-                                                control={
-                                                    <Radio
-                                                        sx={{
-                                                            color: '#7C3367',
-                                                            '&.Mui-checked': {
-                                                                color: '#7C3367'
-                                                            }
-                                                        }}
-                                                    />
-                                                }
+                                                control={<Radio />}
                                                 label="Tư vấn"
                                             />
                                         </RadioGroup>
+                                        {errors.loaiChietKhau && touched.loaiChietKhau && (
+                                            <small className="text-danger">
+                                                {errors.loaiChietKhau}
+                                            </small>
+                                        )}
                                     </Grid>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={12} sm={6}>
                                         <TextField
                                             label={
                                                 <Typography variant="subtitle2">Giá trị</Typography>
                                             }
+                                            type="number"
                                             size="small"
                                             name="giaTri"
-                                            value={values.giaTri}
+                                            value={values?.giaTri}
+                                            error={errors.giaTri && touched.giaTri ? true : false}
+                                            helperText={
+                                                errors.giaTri &&
+                                                touched.giaTri && (
+                                                    <small className="text-danger">
+                                                        {errors.giaTri}
+                                                    </small>
+                                                )
+                                            }
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
@@ -194,7 +244,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                     <Grid item xs={12}>
                                         <FormControlLabel
                                             label={'Là phần trăm'}
-                                            value={values.laPhanTram == true ? true : false}
+                                            value={values?.laPhanTram == true ? true : false}
                                             onChange={(e, checked) => {
                                                 setFieldValue('laPhanTram', checked);
                                             }}
@@ -246,4 +296,4 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
         );
     }
 }
-export default CreateOrEditChietKhauDichVuModal;
+export default observer(CreateOrEditChietKhauDichVuModal);

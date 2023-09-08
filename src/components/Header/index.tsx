@@ -24,7 +24,7 @@ import {
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
 // import { ReactComponent as ToggleIcon } from '../../images/btntoggle.svg';
-import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
+//import { ReactComponent as SuportIcon } from '../../images/messageChat.svg';
 import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import NotificationIcon from '../../images/notification.svg';
@@ -741,7 +741,7 @@ const Header: React.FC<HeaderProps> = (
                     </Box>
                 </Grid>
             </Grid>
-            <Button
+            {/* <Button
                 variant="contained"
                 sx={{
                     position: 'fixed',
@@ -750,7 +750,7 @@ const Header: React.FC<HeaderProps> = (
                     top: `${position.y}px`,
                     width: '48px',
                     height: '48px',
-                    paddingX: '12px!important',
+                    paddingX: '12px!important',  
                     minWidth: 'unset',
                     borderRadius: '50%',
                     bgcolor: 'var(--color-main)!important',
@@ -761,8 +761,8 @@ const Header: React.FC<HeaderProps> = (
                 }}
                 onMouseDown={handleMouseDown}
                 onMouseUp={handleMouseUp}>
-                <SuportIcon />
-            </Button>
+                <SuportIcon /> 
+            </Button> */}
         </Box>
     );
 };

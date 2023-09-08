@@ -11,8 +11,8 @@ class ChietKhauDichVuService {
         const result = await http.post('api/services/app/ChietKhauDichVu/CreateOrEdit', input);
         return result.data.result;
     }
-    public async Delete(id: string): Promise<ChietKhauDichVuDto> {
-        const result = await http.post('api/services/app/ChietKhauDichVu/Delete', id);
+    public async Delete(id: string) {
+        const result = await http.post(`api/services/app/ChietKhauDichVu/Delete?id=${id}`);
         return result.data.result;
     }
     public async GetForEdit(id: string): Promise<CreateOrEditChietKhauDichVuDto> {

@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: var(--font-family-main)
+    font-family: var(--font-family-main);
 }
 
 body {
@@ -34,39 +34,38 @@ html {
 
 @font-face {
     font-family: 'Roboto';
-    src: url('./font/Roboto-Thin.ttf');
-    font-weight: 100;
-}
-
-@font-face {
-    font-family: 'Roboto';
     src: url('./font/Roboto-Regular.ttf');
     font-weight: 400;
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Medium.ttf');
     font-weight: 500;
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Bold.ttf');
     font-weight: 700;
 }
 
 @font-face {
-    font-family: Roboto;
+    font-family: 'Roboto';
     src: url('./font/Roboto-Black.ttf');
     font-weight: 900;
 }
 
 @font-face {
-    font-family: vinhan;
+    font-family: 'vinhan';
     src: url('./font/vni.common.VINHAN.ttf');
 }
 
 .text-danger {
     color: #DC3545;
 }
+
+
+
+
+

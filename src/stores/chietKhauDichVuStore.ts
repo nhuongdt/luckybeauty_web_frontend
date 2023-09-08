@@ -33,7 +33,7 @@ class ChietKhauDichVuStore {
             idDonViQuiDoi: '',
             idNhanVien: '',
             laPhanTram: false,
-            loaiChietKhau: 0
+            loaiChietKhau: 1
         };
     }
     async createOrEdit(input: CreateOrEditChietKhauDichVuDto) {

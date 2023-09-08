@@ -32,6 +32,7 @@ import ActionMenuTable from '../../../../components/Menu/ActionMenuTable';
 import cuaHangService from '../../../../services/cua_hang/cuaHangService';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import ViewChiNhanhModal from './components/view-chi-nhanh-modal';
+import abpCustom from '../../../../components/abp-custom';
 
 class ChiNhanhScreen extends Component {
     dataGridRef: RefObject<any> = React.createRef<GridApi>();
@@ -393,6 +394,7 @@ class ChiNhanhScreen extends Component {
                                     this.createOrEditShowModal('');
                                 }}
                                 variant="contained"
+                                hidden={!abpCustom.isGrandPermission('Pages.ChiNhanh.Create')}
                                 startIcon={<img src={AddIcon} />}
                                 sx={{
                                     textTransform: 'capitalize',
@@ -407,7 +409,7 @@ class ChiNhanhScreen extends Component {
                 <Box paddingTop="16px">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         columns={columns}
                         rows={this.state.listChiNhanh}
                         checkboxSelection
@@ -424,11 +426,6 @@ class ChiNhanhScreen extends Component {
                                     newSortModel[0].sort?.toString() ?? 'creationTime',
                                     newSortModel[0].field ?? 'desc'
                                 );
-                            }
-                        }}
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                background: '#EEF0F4'
                             }
                         }}
                         onColumnVisibilityModelChange={this.handleColumnVisibilityChange}

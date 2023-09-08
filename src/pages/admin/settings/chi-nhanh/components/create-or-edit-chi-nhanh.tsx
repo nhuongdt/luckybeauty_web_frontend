@@ -11,7 +11,8 @@ import {
     Box,
     FormControl,
     FormControlLabel,
-    Checkbox
+    Checkbox,
+    Stack
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import rules from './createOrEditChiNhanh.validate';
@@ -19,8 +20,10 @@ import { ReactComponent as CloseIcon } from '../../../../../images/close-square.
 import { CreateOrEditChiNhanhDto } from '../../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import { Form, Formik } from 'formik';
 import chiNhanhService from '../../../../../services/chi_nhanh/chiNhanhService';
-import { string } from 'yup';
+import PersonIcon from '@mui/icons-material/Person';
 import AppConsts from '../../../../../lib/appconst';
+import uploadFileService from '../../../../../services/uploadFileService';
+import utils from '../../../../../utils/utils';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;
@@ -29,6 +32,38 @@ interface ChiNhanhProps {
     title: React.ReactNode;
 }
 class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
+    state = {
+        branchLogo: '',
+        googleDrive_fileId: '',
+        fileImage: {} as File
+    };
+    UNSAFE_componentWillReceiveProps(nextProp: any): void {
+        if (nextProp.formRef !== undefined) {
+            const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
+            this.setState({
+                branchLogo: objUpdate?.logo ?? '',
+                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
+                    objUpdate?.logo ?? ''
+                )
+            });
+        }
+    }
+
+    onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file: File = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = () => {
+                this.setState((prev) => ({
+                    ...prev,
+                    branchLogo: reader.result?.toString() ?? '',
+                    fileImage: file
+                }));
+            };
+        }
+    };
     render(): ReactNode {
         const { formRef, onSave, onCLose, title, isShow } = this.props;
         const initValues: CreateOrEditChiNhanhDto = formRef;
@@ -57,10 +92,31 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                         validationSchema={rules}
                         onSubmit={async (values) => {
                             values.id = values.id == '' ? AppConsts.guidEmpty : values.id;
+                            let fileId = this.state.googleDrive_fileId;
+                            const fileSelect = this.state.fileImage;
+                            if (!utils.checkNull(this.state.branchLogo)) {
+                                if (this.state.branchLogo !== formRef.logo) {
+                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
+                                        fileSelect,
+                                        'ChiNhanh'
+                                    );
+                                }
+                            }
+                            values.logo =
+                                fileId !== ''
+                                    ? `https://drive.google.com/uc?export=view&id=${fileId}`
+                                    : '';
                             await chiNhanhService.CreateOrEdit(values);
                             onSave();
                         }}>
-                        {({ handleChange, values, errors, touched, setFieldValue }) => (
+                        {({
+                            handleChange,
+                            values,
+                            errors,
+                            touched,
+                            setFieldValue,
+                            isSubmitting
+                        }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -68,6 +124,45 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                     }
                                 }}>
                                 <Grid container spacing={2}>
+                                    <Grid item xs={12}>
+                                        <Box>
+                                            <Stack alignItems="center" position={'relative'}>
+                                                {!utils.checkNull(this.state.branchLogo) ? (
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative'
+                                                        }}>
+                                                        <img
+                                                            src={this.state.branchLogo}
+                                                            className="user-image-upload"
+                                                        />
+                                                    </Box>
+                                                ) : (
+                                                    <div>
+                                                        <PersonIcon className="user-icon-upload" />
+                                                    </div>
+                                                )}
+                                                <TextField
+                                                    type="file"
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        opacity: 0,
+                                                        '& input': {
+                                                            height: '100%'
+                                                        },
+                                                        '& div': {
+                                                            height: '100%'
+                                                        }
+                                                    }}
+                                                    onChange={this.onSelectAvatarFile}
+                                                />
+                                            </Stack>
+                                        </Box>
+                                    </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
                                             label={
@@ -256,17 +351,33 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             className="btn-outline-hover">
                                             Hủy
                                         </Button>
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff'
-                                            }}
-                                            type="submit"
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
+
+                                        {!isSubmitting ? (
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    textTransform: 'unset',
+                                                    color: '#fff'
+                                                }}
+                                                type="submit"
+                                                className="btn-container-hover">
+                                                Lưu
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    textTransform: 'unset',
+                                                    color: '#fff',
+
+                                                    border: 'none'
+                                                }}
+                                                className="btn-container-hover">
+                                                Đang lưu
+                                            </Button>
+                                        )}
                                     </Box>
                                 </DialogActions>
                             </Form>

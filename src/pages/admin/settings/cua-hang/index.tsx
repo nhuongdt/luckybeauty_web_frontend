@@ -7,6 +7,7 @@ import { EditCuaHangDto } from '../../../../services/cua_hang/Dto/EditCuaHangDto
 import { enqueueSnackbar } from 'notistack';
 import utils from '../../../../utils/utils';
 import uploadFileService from '../../../../services/uploadFileService';
+import abpCustom from '../../../../components/abp-custom';
 class StoreDetail extends Component {
     state = {
         fileSelect: {} as File,
@@ -136,38 +137,40 @@ class StoreDetail extends Component {
                                     Chi tiết cửa hàng
                                 </Typography>
                                 <Stack>
-                                    {this.state.isSaving ? (
-                                        <Button
-                                            variant="contained"
-                                            sx={{
-                                                width: 'fit-content',
-                                                minWidth: 'unset',
-                                                textTransform: 'unset',
-                                                fontSize: '14px',
-                                                height: '40px',
-                                                fontWeight: '400',
-                                                ml: 'auto'
-                                            }}
-                                            className="btn-container-hover">
-                                            Đang lưu
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            variant="contained"
-                                            onClick={this.handSubmit}
-                                            sx={{
-                                                width: 'fit-content',
-                                                minWidth: 'unset',
-                                                textTransform: 'unset',
-                                                fontSize: '14px',
-                                                height: '40px',
-                                                fontWeight: '400',
-                                                ml: 'auto'
-                                            }}
-                                            className="btn-container-hover">
-                                            Cập nhật
-                                        </Button>
-                                    )}
+                                    {abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create') ? (
+                                        this.state.isSaving ? (
+                                            <Button
+                                                variant="contained"
+                                                sx={{
+                                                    width: 'fit-content',
+                                                    minWidth: 'unset',
+                                                    textTransform: 'unset',
+                                                    fontSize: '14px',
+                                                    height: '40px',
+                                                    fontWeight: '400',
+                                                    ml: 'auto'
+                                                }}
+                                                className="btn-container-hover">
+                                                Đang lưu
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                onClick={this.handSubmit}
+                                                sx={{
+                                                    width: 'fit-content',
+                                                    minWidth: 'unset',
+                                                    textTransform: 'unset',
+                                                    fontSize: '14px',
+                                                    height: '40px',
+                                                    fontWeight: '400',
+                                                    ml: 'auto'
+                                                }}
+                                                className="btn-container-hover">
+                                                Cập nhật
+                                            </Button>
+                                        )
+                                    ) : null}
                                 </Stack>
                             </Stack>
                         </Grid>

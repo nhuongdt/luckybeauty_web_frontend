@@ -39,6 +39,17 @@ class TenantService {
             throw error;
         }
     }
+    public async getForEdit(entityDto: number): Promise<GetTenantOutput> {
+        try {
+            const result = await http.get(
+                `api/services/app/Tenant/GetTenantForEdit?Id=${entityDto}`
+            );
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while retrieving tenant:', error);
+            throw error;
+        }
+    }
 
     public async getAll(
         pagedFilterAndSortedRequest: PagedTenantResultRequestDto

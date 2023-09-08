@@ -460,6 +460,7 @@ class EmployeeHoliday extends Component {
                             onClick={() => {
                                 this.createOrUpdateModalOpen('');
                             }}
+                            hidden={!abpCustom.isGrandPermission('NhanSu_NgayNghiLe.Create')}
                             startIcon={<img src={AddIcon} />}
                             sx={{
                                 textTransform: 'capitalize',
@@ -476,7 +477,7 @@ class EmployeeHoliday extends Component {
                 <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         rows={this.state.listHoliday}
                         columns={columns}
                         checkboxSelection
@@ -507,8 +508,8 @@ class EmployeeHoliday extends Component {
                         selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
-                        handleView={this.handleView}
-                        permissionView=""
+                        handleView={this.handleEdit}
+                        permissionView="Pages.NhanSu_NgayNghLe.Edit"
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.NhanSu_NgayNghiLe.Edit"
                         handleDelete={this.showConfirmDelete}
