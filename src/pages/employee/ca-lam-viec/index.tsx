@@ -469,7 +469,7 @@ class CaLamViecScreen extends Component {
                 <Box paddingTop="16px" bgcolor="#fff">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         rows={
                             caLamViecStore.caLamViecs === undefined
                                 ? []

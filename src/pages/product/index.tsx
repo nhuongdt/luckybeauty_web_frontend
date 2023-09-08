@@ -49,7 +49,7 @@ import { FileUpload } from '../../services/dto/FileUpload';
 import ImportExcel from '../../components/ImportComponent/ImportExcel';
 import utils from '../../utils/utils';
 
-export default function PageProductNew() {
+export default function PageProduct() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
     const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })

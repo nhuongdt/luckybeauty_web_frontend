@@ -1,352 +1,487 @@
-import {
-    Box,
-    Button,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    TextField,
-    Typography
-} from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Component, ReactNode } from 'react';
+import { Box, Grid, Stack, TextField, IconButton, Button, SelectChangeEvent } from '@mui/material';
+import { useContext, useEffect, useRef, useState } from 'react';
+
 import { ReactComponent as FilterIcon } from '../../../images/filter-icon.svg';
 import { ReactComponent as UploadIcon } from '../../../images/upload.svg';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
 import SearchIcon from '../../../images/search-normal.svg';
-import { TextTranslate } from '../../../components/TableLanguage';
-import { observer } from 'mobx-react';
-import soQuyStore from '../../../stores/soQuyStore';
-import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+
+import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CreateOrEditSoQuyDialog from './components/CreateOrEditSoQuyDialog';
-import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
+import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import { TextTranslate } from '../../../components/TableLanguage';
+import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import { format, lastDayOfMonth } from 'date-fns';
+import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
+import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
-class SoQuyScreen extends Component {
-    state = {
-        keyword: '',
-        skipCount: 1,
-        maxResultCount: 10,
-        data: [] as GetAllQuyHoaDonItemDto[],
-        sortBy: '',
-        sortType: 'desc',
-        totalPage: 0,
+import SoQuyServices from '../../../services/so_quy/SoQuyServices';
+import utils from '../../../utils/utils';
+import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
+import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
+import { Add, Search } from '@mui/icons-material';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import fileDowloadService from '../../../services/file-dowload.service';
+import abpCustom from '../../../components/abp-custom';
+
+const PageSoQuy = ({ xx }: any) => {
+    const today = new Date();
+    const firstLoad = useRef(true);
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
+    const [isShowModal, setisShowModal] = useState(false);
+    const [selectedRowId, setSelectedRowId] = useState('');
+    const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
+        show: false,
+        title: '',
+        type: 1,
+        mes: ''
+    });
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
+        textSearch: '',
+        currentPage: 1,
+        columnSort: 'ngayLapHoaDon',
+        typeSort: 'desc',
+        idChiNhanhs: chinhanh.id === '' ? [] : [chinhanh.id],
+        fromDate: format(today, 'yyyy-MM-01'),
+        toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
+    });
+    const [pageDataSoQuy, setPageDataSoQuy] = useState<PagedResultDto<GetAllQuyHoaDonItemDto>>({
         totalCount: 0,
-        moreOpen: false,
-        anchorEl: null,
-        selectedRowId: null,
-        isShowModal: false,
-        isShowConfirmDelete: false
-    };
+        totalPage: 0,
+        items: []
+    });
 
-    componentDidMount() {
-        this.getAll();
-    }
-
-    getAll = async () => {
-        this.setState({ data: [] });
-        // await soQuyStore.getAll({
-        //     filter: this.state.keyword,
-        //     maxResultCount: this.state.maxResultCount,
-        //     skipCount: this.state.skipCount,
-        //     idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-        //     sortBy: this.state.sortBy,
-        //     sortType: this.state.sortType
-        // });
-        // this.setState({
-        //     data: soQuyStore.lstSoQuy.items,
-        //     totalPage: Math.ceil(soQuyStore.lstSoQuy.totalCount / this.state.maxResultCount),
-        //     totalCount: soQuyStore.lstSoQuy.totalCount
-        // });
-    };
-
-    handlePageChange = async (event: any, value: any) => {
-        await this.setState({
-            skipCount: value
+    const GetListSoQuy = async () => {
+        const data = await SoQuyServices.getAll(paramSearch);
+        setPageDataSoQuy({
+            totalCount: data.totalCount,
+            totalPage: utils.getTotalPage(data.totalCount, paramSearch.pageSize),
+            items: data.items
         });
-        this.getAll();
     };
-
-    onSort = async (sortType: string, sortBy: string) => {
-        const type = sortType === 'desc' ? 'asc' : 'desc';
-        await this.setState({
-            sortBy: sortBy,
-            sortType: type
-        });
-        this.getAll();
+    const PageLoad = () => {
+        GetListSoQuy();
     };
+    useEffect(() => {
+        PageLoad();
+    }, []);
 
-    handlePerPageChange = async (event: SelectChangeEvent<number>) => {
-        await this.setState({
-            maxResultCount: parseInt(event.target.value.toString(), 10),
-            skipCount: 1
-        });
-        this.getAll();
-    };
+    useEffect(() => {
+        setParamSearch({ ...paramSearch, idChiNhanhs: chinhanh.id === '' ? [] : [chinhanh.id] });
+    }, [chinhanh.id]);
 
-    handleKeyDown = async (event: any) => {
-        if (event.key === 'Enter') {
-            await this.setState({
-                maxResultCount: 10,
-                skipCount: 1
-            });
-            this.getAll();
+    useEffect(() => {
+        if (firstLoad.current) {
+            firstLoad.current = false;
+            return;
+        }
+        GetListSoQuy();
+    }, [
+        paramSearch.currentPage,
+        paramSearch.pageSize,
+        paramSearch.fromDate,
+        paramSearch.toDate,
+        paramSearch.idChiNhanhs,
+        paramSearch.columnSort,
+        paramSearch.typeSort
+    ]);
+
+    const handleKeyDownTextSearch = (event: any) => {
+        if (event.keyCode === 13) {
+            hanClickIconSearch();
         }
     };
-    doActionRow = (action: any, rowItem: any) => {
-        this.setState({ selectedRowId: rowItem.id });
+
+    const hanClickIconSearch = () => {
+        if (paramSearch.currentPage !== 1) {
+            setParamSearch({
+                ...paramSearch,
+                currentPage: 1
+            });
+        } else {
+            GetListSoQuy();
+        }
     };
-    render(): ReactNode {
-        const columns: GridColDef[] = [
-            {
-                field: 'loaiPhieu',
-                sortable: false,
-                headerName: 'Loại phiếu',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'loaiPhieu');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params) => (
-                    <Box title={params.value} width="100%" textAlign="center">
-                        {params.value}
-                    </Box>
-                )
-            },
-            {
-                field: 'maPhieu',
-                sortable: false,
-                headerName: 'Mã phiếu',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'maPhieu');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params) => (
-                    <Box title={params.value} textAlign="center" width="100%">
-                        {params.value}
-                    </Box>
-                )
-            },
-            {
-                field: 'thoiGianTao',
-                sortable: false,
-                headerName: 'Thời gian',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'thoiGianTao');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params: any) => (
-                    <Box title={params.value} width="100%" textAlign="center">
-                        {new Date(params.value).toLocaleDateString('en-GB', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}
-                    </Box>
-                )
-            },
-            {
-                field: 'loaiThuChi',
-                sortable: false,
-                headerName: 'Loại thu chi',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'loaiThuChi');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
-            },
-            {
-                field: 'tongTienThu',
-                sortable: false,
-                headerName: 'Tổng tiền',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'tongTienThu');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params: any) => (
-                    <Box title={params.value} width="100%" textAlign="center">
-                        {new Intl.NumberFormat('vi-VN').format(params.value)}
-                    </Box>
-                )
-            },
-            {
-                field: 'hinhThucThanhToan',
-                sortable: false,
-                headerName: 'Hình thức',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'hinhThucThanhToan');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params: any) => (
-                    <Box title={params.value} width="100%" textAlign="center">
-                        {params.value}
-                    </Box>
-                )
-            },
-            {
-                field: 'trangThai',
-                sortable: false,
-                headerName: 'Trạng thái',
-                minWidth: 118,
-                flex: 1,
-                renderHeader: (params: any) => (
-                    <Box title={params.value}>
-                        {params.colDef.headerName}
-                        <IconSorting
-                            onClick={() => {
-                                this.onSort(this.state.sortType, 'trangThai');
-                            }}
-                        />
-                    </Box>
-                ),
-                renderCell: (params: any) => (
-                    <Box
-                        title={params.value}
-                        sx={{
-                            padding: '4px 8px',
-                            borderRadius: '100px',
-                            backgroundColor:
-                                params.value === 'Đã thanh toán'
-                                    ? '#E8FFF3'
-                                    : params.value === 'Chưa thanh toán'
-                                    ? '#FFF8DD'
-                                    : '#FFF5F8',
-                            color:
-                                params.value === 'Đã thanh toán'
-                                    ? '#50CD89'
-                                    : params.value === 'Chưa thanh toán'
-                                    ? '#FF9900'
-                                    : '#F1416C',
-                            margin: 'auto'
-                        }}
-                        className="state-thanh-toan">
-                        {params.value}
-                    </Box>
-                )
-            },
-            {
-                field: 'actions',
-                headerName: 'Hành động',
-                width: 48,
-                flex: 0.4,
-                disableColumnMenu: true,
-                renderCell: (params) => (
-                    <ActionViewEditDelete
-                    // handleAction={(action: any) => doActionRow(action, params.row)}
-                    />
-                ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>
-                        {params.colDef.headerName}
-                        <IconSorting className="custom-icon" />{' '}
-                    </Box>
-                )
+    const exportToExcel = async () => {
+        const param = { ...paramSearch };
+        param.pageSize = pageDataSoQuy.totalCount;
+        param.currentPage = 1;
+        const data = await SoQuyServices.ExportToExcel(param);
+        fileDowloadService.downloadExportFile(data);
+    };
+    const handleChangePage = (event: any, value: number) => {
+        setParamSearch({
+            ...paramSearch,
+            currentPage: value
+        });
+    };
+    const handlePerPageChange = (event: SelectChangeEvent<number>) => {
+        setParamSearch({
+            ...paramSearch,
+            currentPage: 1,
+            pageSize: parseInt(event.target.value.toString(), 10)
+        });
+    };
+
+    const doActionRow = (action: number, itemSQ: GetAllQuyHoaDonItemDto) => {
+        setSelectedRowId(itemSQ?.id);
+        if (action < 2) {
+            if (utils.checkNull(itemSQ?.idHoaDonLienQuan)) {
+                setisShowModal(true);
             }
-        ];
-        const { lstSoQuy } = soQuyStore;
-        return (
-            <Box paddingTop="16px">
-                <Grid container justifyContent="space-between">
-                    <Grid item md="auto" display="flex" alignItems="center" gap="10px">
-                        <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
-                            Sổ quỹ
-                        </Typography>
-                        <Box className="form-search">
-                            <TextField
-                                size="small"
-                                sx={{
-                                    backgroundColor: '#fff',
-                                    borderColor: '#CDC9CD!important',
-                                    '& .MuiInputBase-root': {
-                                        pl: '0'
-                                    }
-                                }}
-                                onChange={(e: any) => {
-                                    this.setState({ keyword: e.target.value });
-                                }}
-                                onKeyDown={this.handleKeyDown}
-                                className="search-field"
-                                variant="outlined"
-                                type="search"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button">
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
+        } else {
+            setinforDelete(
+                new PropConfirmOKCancel({
+                    show: true,
+                    title: 'Xác nhận xóa',
+                    mes: `Bạn có chắc chắn muốn xóa ${itemSQ?.loaiPhieu ?? ' '}  ${
+                        itemSQ?.maHoaDon ?? ' '
+                    } không?`
+                })
+            );
+        }
+    };
+
+    const deleteProduct = async (dataSave: any) => {
+        await SoQuyServices.DeleteSoQuy(selectedRowId);
+        setPageDataSoQuy({
+            ...pageDataSoQuy,
+            items: pageDataSoQuy.items.filter((x: any) => x.id !== selectedRowId),
+            totalCount: pageDataSoQuy.totalCount - 1,
+            totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - 1, paramSearch.pageSize)
+        });
+        setObjAlert({
+            show: true,
+            type: 1,
+            mes: 'Hủy thành công'
+        });
+        setinforDelete(
+            new PropConfirmOKCancel({
+                show: false,
+                title: '',
+                mes: ''
+            })
+        );
+    };
+
+    const saveSoQuy = async (dataSave: any, type: number) => {
+        setisShowModal(false);
+        switch (type) {
+            case 1: // insert
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    items: [dataSave, ...pageDataSoQuy.items],
+                    totalCount: pageDataSoQuy.totalCount + 1,
+                    totalPage: utils.getTotalPage(
+                        pageDataSoQuy.totalCount + 1,
+                        paramSearch.pageSize
+                    )
+                });
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Thêm ' + dataSave.loaiPhieu + ' thành công'
+                });
+                break;
+            case 2:
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    items: pageDataSoQuy.items.map((item: any) => {
+                        if (item.id === selectedRowId) {
+                            return {
+                                ...item,
+                                maHoaDon: dataSave.maHoaDon,
+                                ngayLapHoaDon: dataSave.ngayLapHoaDon,
+                                idLoaiChungTu: dataSave.idLoaiChungTu,
+                                loaiPhieu: dataSave.loaiPhieu,
+                                hinhThucThanhToan: dataSave.hinhThucThanhToan,
+                                sHinhThucThanhToan: dataSave.sHinhThucThanhToan,
+                                tongTienThu: dataSave.tongTienThu,
+                                maNguoiNop: dataSave.maNguoiNop,
+                                tenNguoiNop: dataSave.tenNguoiNop,
+                                idKhoanThuChi: dataSave.idKhoanThuChi,
+                                tenKhoanThuChi: dataSave.tenKhoanThuChi,
+                                txtTrangThai: dataSave.txtTrangThai,
+                                trangThai: dataSave.trangThai
+                            };
+                        } else {
+                            return item;
+                        }
+                    })
+                });
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật ' + dataSave.loaiPhieu + ' thành công'
+                });
+                break;
+            case 3:
+                await deleteProduct(dataSave);
+                break;
+        }
+    };
+
+    const [sortModel, setSortModel] = useState<GridSortModel>([
+        {
+            field: 'ngayLapHoaDon',
+            sort: 'desc'
+        }
+    ]);
+
+    const columns: GridColDef[] = [
+        {
+            field: 'loaiPhieu',
+            headerName: 'Loại phiếu',
+            flex: 0.8,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params) => (
+                <Box title={params.value} width="100%">
+                    {params.value}
+                </Box>
+            )
+        },
+        {
+            field: 'maHoaDon',
+            headerName: 'Mã phiếu',
+            minWidth: 118,
+            flex: 1,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params) => <Box title={params.value}>{params.value}</Box>
+        },
+        {
+            field: 'ngayLapHoaDon',
+            headerName: 'Ngày lập',
+            headerAlign: 'center',
+            minWidth: 118,
+            flex: 1,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params: any) => (
+                <Box title={params.value} width="100%" textAlign="center">
+                    {format(new Date(params.value), 'dd/MM/yyyy HH:mm')}
+                </Box>
+            )
+        },
+        // {
+        //     field: 'tenKhoanThuChi',
+        //     headerName: 'Loại thu chi',
+        //     minWidth: 118,
+        //     flex: 1,
+        //     renderHeader: (params: any) => (
+        //         <Box title={params.value}>
+        //             {params.colDef.headerName}
+        //             <IconSorting
+        //                 onClick={() => {
+        //                     setParamSearch({ ...paramSearch, columnSort: 'tenKhoanThuChi' });
+        //                 }}
+        //             />
+        //         </Box>
+        //     ),
+        //     renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+        // },
+        {
+            field: 'tenNguoiNop',
+            headerName: 'Người nộp',
+            // minWidth: 118,
+            flex: 1.5,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
+        },
+        {
+            field: 'tongTienThu',
+            headerName: 'Tổng tiền',
+            headerAlign: 'right',
+            minWidth: 118,
+            flex: 1,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params: any) => (
+                <Box title={params.value} width="100%" textAlign="end">
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
+            )
+        },
+        {
+            field: 'sHinhThucThanhToan',
+            headerName: 'Hình thức',
+            minWidth: 118,
+            flex: 1,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params: any) => (
+                <Box title={params.value} width="100%">
+                    {params.value}
+                </Box>
+            )
+        },
+        {
+            field: 'txtTrangThai',
+            headerName: 'Trạng thái',
+            headerAlign: 'center',
+            minWidth: 118,
+            flex: 1,
+            renderHeader: (params: any) => (
+                <Box title={params.value}>{params.colDef.headerName}</Box>
+            ),
+            renderCell: (params: any) => (
+                <Box
+                    title={params.value}
+                    sx={{
+                        padding: '4px 8px',
+                        borderRadius: '100px',
+                        backgroundColor:
+                            params.value === 'Đã thanh toán'
+                                ? '#E8FFF3'
+                                : params.value === 'Chưa thanh toán'
+                                ? '#FFF8DD'
+                                : '#FFF5F8',
+                        color:
+                            params.value === 'Đã thanh toán'
+                                ? '#50CD89'
+                                : params.value === 'Chưa thanh toán'
+                                ? '#FF9900'
+                                : '#F1416C',
+                        margin: 'auto'
+                    }}
+                    className="state-thanh-toan">
+                    {params.value}
+                </Box>
+            )
+        },
+        {
+            field: 'actions',
+            headerName: '#',
+            headerAlign: 'center',
+            width: 48,
+            flex: 0.4,
+            disableColumnMenu: true,
+            renderCell: (params) => (
+                <ActionViewEditDelete
+                    handleAction={(action: any) => doActionRow(action, params.row)}
+                />
+            ),
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
+        }
+    ];
+
+    return (
+        <>
+            <CreateOrEditSoQuyDialog
+                onClose={() => {
+                    setisShowModal(false);
+                }}
+                onOk={saveSoQuy}
+                visiable={isShowModal}
+                idQuyHD={selectedRowId}
+            />
+            <ConfirmDelete
+                isShow={inforDelete.show}
+                title={inforDelete.title}
+                mes={inforDelete.mes}
+                onOk={deleteProduct}
+                onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
+            <Box paddingTop={2}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={12} lg={5} md={12}>
+                        <Grid container alignItems="center">
+                            <Grid item xs={4} sm={5} lg={2} md={2}>
+                                <span className="page-title"> Sổ quỹ</span>
+                            </Grid>
+                            <Grid item xs={8} sm={7} lg={6} md={6}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    sx={{
+                                        backgroundColor: '#fff',
+                                        borderColor: '#CDC9CD!important',
+                                        '& .MuiInputBase-root': {
+                                            pl: '0'
+                                        }
+                                    }}
+                                    onChange={(e: any) => {
+                                        setParamSearch({
+                                            ...paramSearch,
+                                            textSearch: e.target.value
+                                        });
+                                    }}
+                                    onKeyDown={handleKeyDownTextSearch}
+                                    className="search-field"
+                                    variant="outlined"
+                                    type="search"
+                                    placeholder="Tìm kiếm"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <IconButton>
+                                                <Search />
+                                            </IconButton>
+                                        )
+                                    }}
+                                />
+                            </Grid>
+                        </Grid>
                     </Grid>
-                    <Grid item md="auto">
-                        <Box
+
+                    <Grid item xs={12} sm={12} lg={7} md={12}>
+                        <Stack
+                            direction={'row'}
+                            spacing={1}
+                            justifyContent={'flex-end'}
                             sx={{
-                                display: 'flex',
-                                gap: '8px',
                                 '& button': {
                                     height: '40px'
                                 }
                             }}>
-                            <Button
-                                variant="outlined"
+                            <Box
                                 sx={{
-                                    borderColor: '#CDC9CD!important',
-                                    bgcolor: '#fff!important',
-                                    color: '#333233',
-                                    fontSize: '14px'
+                                    display: 'flex',
+                                    bgcolor: '#fff',
+                                    alignItems: 'center',
+                                    border: '1px solid #E6E1E6',
+                                    borderRadius: '4px',
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: 'none'
+                                    },
+                                    '& .MuiInputBase-root': {
+                                        paddingRight: '0',
+                                        flexDirection: 'row-reverse'
+                                    }
                                 }}>
-                                30 tháng 6, 2023 - 30 tháng 6, 2023{' '}
-                            </Button>
+                                <DatePickerCustom
+                                    defaultVal={paramSearch.fromDate}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, fromDate: newVal })
+                                    }
+                                />
+                                <Box>-</Box>
+                                <DatePickerCustom
+                                    defaultVal={paramSearch.toDate}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, toDate: newVal })
+                                    }
+                                />
+                            </Box>
                             <Button
+                                hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Export')}
                                 variant="outlined"
+                                onClick={exportToExcel}
                                 startIcon={<UploadIcon />}
                                 sx={{
                                     borderColor: '#CDC9CD!important',
@@ -358,95 +493,71 @@ class SoQuyScreen extends Component {
                                 Xuất{' '}
                             </Button>
                             <Button
+                                hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Create')}
                                 variant="contained"
-                                startIcon={<FilterIcon />}
+                                startIcon={<Add />}
                                 sx={{
-                                    bgcolor: 'var(--color-main)!important',
                                     color: '#fff',
                                     fontSize: '14px'
                                 }}
                                 className="btn-container-hover"
-                                onClick={() => this.setState({ isShowModal: true })}>
+                                onClick={() => {
+                                    setisShowModal(true);
+                                    setSelectedRowId('');
+                                }}>
                                 Lập phiếu
                             </Button>
-                        </Box>
+                        </Stack>
                     </Grid>
                 </Grid>
-                <Box marginTop="16px">
+                <Box marginTop={5} className="page-box-right">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
-                        rows={this.state.data}
+                        className="data-grid-row"
+                        rowHeight={46}
+                        rows={pageDataSoQuy.items}
                         columns={columns}
                         checkboxSelection
-                        sx={{
-                            '& .MuiDataGrid-columnHeaders': { bgcolor: 'var(--color-bg)' },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeaders .MuiBox-root ': {
-                                fontWeight: '700'
-                            },
-                            '& .MuiDataGrid-virtualScroller  .MuiBox-root ': {
-                                fontSize: '12px'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: '#var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: '#faf2f8'
-                                }
-                        }}
                         hideFooter
                         localeText={TextTranslate}
-                    />
-                    <CreateOrEditSoQuyDialog
-                        onClose={() => {
-                            this.setState({ isShowModal: false });
+                        sortModel={sortModel}
+                        sortingOrder={['desc', 'asc']}
+                        onSortModelChange={(newSortModel) => {
+                            setSortModel(() => newSortModel);
+                            if (newSortModel.length > 0) {
+                                setParamSearch({
+                                    ...paramSearch,
+                                    columnSort: newSortModel[0].field,
+                                    typeSort: newSortModel[0].sort?.toString()
+                                });
+                            } else {
+                                // vì fistload: mặc dịnh sort 'ngaylapHoaDon decs'
+                                // nên nếu click cột ngaylapHoaDon luôn, thì newSortModel = []
+                                setParamSearch({
+                                    ...paramSearch,
+                                    typeSort: 'asc'
+                                });
+                            }
                         }}
-                        onOk={() => {
-                            console.log('đóng');
-                            this.setState({ isShowModal: false });
+                        sx={{
+                            '& .MuiDataGrid-columnHeader': {
+                                background: '#EEF0F4'
+                            }
                         }}
-                        visiable={this.state.isShowModal}
-                        idQuyHD={this.state.selectedRowId}
                     />
+
                     <CustomTablePagination
-                        currentPage={this.state.skipCount}
-                        rowPerPage={this.state.maxResultCount}
-                        totalRecord={this.state.totalCount}
-                        totalPage={this.state.totalPage}
-                        handlePerPageChange={this.handlePerPageChange}
-                        handlePageChange={this.handlePageChange}
+                        currentPage={paramSearch.currentPage ?? 0}
+                        rowPerPage={paramSearch.pageSize ?? 10}
+                        totalRecord={pageDataSoQuy.totalCount ?? 0}
+                        totalPage={pageDataSoQuy.totalPage}
+                        handlePerPageChange={handlePerPageChange}
+                        handlePageChange={handleChangePage}
                     />
                 </Box>
             </Box>
-        );
-    }
-}
-export default observer(SoQuyScreen);
+        </>
+    );
+};
+
+export default PageSoQuy;

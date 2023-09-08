@@ -79,12 +79,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         tabIndex: '1',
         selectedChucVuId: '',
         listIdEmployeeSelected: [] as string[],
-        listEmployee: suggestStore.suggestNhanVien?.filter(
-            (x) => !chietKhauHoaDonStore.createOrEditDto.idNhanViens?.includes(x.id)
-        ) as SuggestNhanSuDto[],
-        listEmployeeSelected: suggestStore.suggestNhanVien?.filter((x) =>
-            chietKhauHoaDonStore.createOrEditDto.idNhanViens?.includes(x.id)
-        ) as SuggestNhanSuDto[]
+        listEmployee: [] as SuggestNhanSuDto[],
+        listEmployeeSelected: [] as SuggestNhanSuDto[]
     };
     handleMoveAllRight = () => {
         this.setState({

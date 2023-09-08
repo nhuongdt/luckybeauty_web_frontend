@@ -333,15 +333,10 @@ class RoleScreen extends React.Component<IRoleProps> {
                 <Box paddingTop="16px" bgcolor="#fff" borderRadius="8px">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight={true}
+                        rowHeight={46}
                         columns={columns}
                         rows={this.state.listRole}
                         checkboxSelection
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                background: '#EEF0F4'
-                            }
-                        }}
                         hideFooter
                         hideFooterPagination
                         localeText={TextTranslate}

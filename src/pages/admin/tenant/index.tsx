@@ -122,14 +122,14 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                 }
             });
         } else {
-            const createOrEdit = await tenantService.get(entityDto);
+            const createOrEdit = await tenantService.getForEdit(entityDto);
             await this.setState({
                 createOrEditTenant: {
                     isActive: createOrEdit.isActive,
                     name: createOrEdit.name,
                     tenancyName: createOrEdit.tenancyName,
                     adminEmailAddress: '',
-                    connectionString: ''
+                    connectionString: createOrEdit.connectionString
                 }
             });
         }
@@ -358,57 +358,14 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         columns={columns}
                         rows={this.state.listTenant}
                         checkboxSelection
                         sx={{
-                            '& .uiDataGrid-cellContent': {
-                                fontSize: '13px'
-                            },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
                             '& .MuiDataGrid-columnHeader': {
                                 background: '#EEF0F4'
-                            },
-                            '& .MuiDataGrid-columnHeaders': {
-                                backgroundColor: 'var(--color-bg)'
-                            },
-                            '& p': {
-                                mb: 0
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path::nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path::nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            }
                         }}
                         hideFooter
                         localeText={TextTranslate}

@@ -628,7 +628,7 @@ class EmployeeScreen extends React.Component {
                     <DataGrid
                         className="data-grid-row"
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
                         checkboxSelection

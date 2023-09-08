@@ -271,9 +271,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/product/pageProductNew')
-                            )
+                            component: LoadableComponent(() => import('../../pages/product/index'))
                         },
                         {
                             path: '/cai-dat-dich-vu-nhan-vien',
@@ -312,9 +310,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/thu_chi/so_quy/page_so_quy')
-                            )
+                            component: LoadableComponent(() => import('../../pages/thu_chi/so_quy'))
                         }
                     ],
                     component: null

@@ -29,6 +29,12 @@ import { SuggestDonViQuiDoiDto } from '../../../../../services/suggests/dto/Sugg
 import Cookies from 'js-cookie';
 import CustomTablePagination from '../../../../../components/Pagination/CustomTablePagination';
 import suggestStore from '../../../../../stores/suggestStore';
+import ActionMenuTable from '../../../../../components/Menu/ActionMenuTable';
+import ConfirmDelete from '../../../../../components/AlertDialog/ConfirmDelete';
+import dichVuNhanVienService from '../../../../../services/dichvu_nhanvien/dichVuNhanVienService';
+import chietKhauDichVuService from '../../../../../services/hoa_hong/chiet_khau_dich_vu/chietKhauDichVuService';
+import { enqueueSnackbar } from 'notistack';
+import abpCustom from '../../../../../components/abp-custom';
 
 class ChietKhauDichVuScreen extends Component {
     state = {
@@ -39,9 +45,12 @@ class ChietKhauDichVuScreen extends Component {
         sortBy: '',
         sortType: 'desc',
         skipCount: 1,
+        isShowConfirmDelete: false,
         maxResultCount: 10,
         totalPage: 0,
         totalCount: 0,
+        selectedRowId: null,
+        anchorEl: null,
         createOrEditDto: { laPhanTram: false } as CreateOrEditChietKhauDichVuDto,
         suggestNhanSu: [] as SuggestNhanSuDto[],
         suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[],
@@ -55,9 +64,8 @@ class ChietKhauDichVuScreen extends Component {
     async InitData() {
         const suggestNhanVien = await SuggestService.SuggestNhanSu();
         await this.setState({ suggestNhanSu: suggestNhanVien });
-        // if (suggestNhanVien.length > 0) {
-        //     await this.setState({ idNhanVien: suggestNhanVien[0].id });
-        // }
+
+        await suggestStore.getSuggestNhanVien();
         await suggestStore.getSuggestDichVu();
         const suggestDonViQuiDoi = await SuggestService.SuggestDonViQuiDoi();
         await this.setState({ suggestDonViQuiDoi: suggestDonViQuiDoi });
@@ -92,11 +100,17 @@ class ChietKhauDichVuScreen extends Component {
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
         this.onModal();
     };
+    async createOrUpdateModalOpen(id: string) {
+        if (id === '') {
+            await chietKhauDichVuStore.createModel();
+        } else {
+            await chietKhauDichVuStore.getForEdit(id);
+        }
+        this.setState({ idNhanSu: id });
+        this.onModal();
+    }
     onModal = () => {
         this.setState({ visited: !this.state.visited });
-    };
-    onCloseModal = () => {
-        this.setState({ visited: false });
     };
 
     onSort = async (sortType: string, sortBy: string) => {
@@ -120,6 +134,37 @@ class ChietKhauDichVuScreen extends Component {
         this.setState({
             focusField: RowId
         });
+    };
+    handleOpenMenu = (event: any, rowId: any) => {
+        this.setState({ anchorEl: event.currentTarget, selectedRowId: rowId });
+    };
+    handleCloseMenu = async () => {
+        await this.setState({ anchorEl: null, selectedRowId: null });
+    };
+    handleEdit = () => {
+        // Handle Edit action
+        this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
+        this.handleCloseMenu();
+    };
+    handleDelete = () => {
+        // Handle Delete action
+        this.setState({
+            isShowConfirmDelete: !this.state.isShowConfirmDelete,
+            anchorEl: null
+        });
+    };
+    onShowDeleteConfirm = () => {
+        this.setState({ isShowConfirmDelete: !this.state.isShowConfirmDelete });
+    };
+    onOkDelete = async () => {
+        const result = await chietKhauDichVuService.Delete(this.state.selectedRowId ?? '');
+        enqueueSnackbar(result.message, {
+            variant: result.status,
+            autoHideDuration: 3000
+        });
+        this.setState({ selectedRowId: '' });
+        await this.getDataAccordingByNhanVien(this.state.idNhanVien);
+        await this.onShowDeleteConfirm();
     };
     render(): ReactNode {
         const { listChietKhauDichVu } = chietKhauDichVuStore;
@@ -339,7 +384,10 @@ class ChietKhauDichVuScreen extends Component {
                         <IconButton
                             aria-label="Actions"
                             aria-controls={`actions-menu-${params.row.id}`}
-                            aria-haspopup="true">
+                            aria-haspopup="true"
+                            onClick={(event: any) => {
+                                this.handleOpenMenu(event, params.row.id);
+                            }}>
                             <MoreHorizIcon />
                         </IconButton>
                     </Box>
@@ -434,24 +482,15 @@ class ChietKhauDichVuScreen extends Component {
                                 }
                             }}>
                             <Button
-                                startIcon={<img src={DownloadIcon} />}
-                                variant="outlined"
-                                className="btn-outline-hover">
-                                Nhập
-                            </Button>
-                            <Button
-                                startIcon={<img src={UploadIcon} />}
-                                variant="outlined"
-                                className="btn-outline-hover">
-                                Xuất
-                            </Button>
-                            <Button
                                 startIcon={<img src={AddIcon} />}
                                 variant="contained"
                                 sx={{ bgcolor: '#7C3367' }}
                                 onClick={() => {
-                                    this.onModal();
+                                    this.createOrUpdateModalOpen('');
                                 }}
+                                hidden={
+                                    !abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Create')
+                                }
                                 className="btn-container-hover">
                                 Thêm mới
                             </Button>
@@ -461,7 +500,7 @@ class ChietKhauDichVuScreen extends Component {
                 <Box marginTop="8px">
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
                         checkboxSelection={false}
@@ -481,59 +520,9 @@ class ChietKhauDichVuScreen extends Component {
                             }
                         }}
                         sx={{
-                            '& .uiDataGrid-cellContent': {
-                                fontSize: '13px'
-                            },
-                            '& p': {
-                                mb: 0
-                            },
-                            '& .MuiDataGrid-virtualScroller': {
-                                bgcolor: '#fff'
-                            },
                             '& .MuiDataGrid-columnHeader': {
                                 background: '#FFF'
-                            },
-                            '& .MuiDataGrid-columnHeaders': {
-                                borderBottom: '1px solid #CDC9CD',
-                                bgcolor: '#fff'
-                            },
-                            '& .MuiDataGrid-iconButtonContainer': {
-                                display: 'none'
-                            },
-                            '& + .MuiTablePagination-root': {
-                                display: 'none'
-                            },
-                            '& .MuiDataGrid-columnHeaderCheckbox:focus': {
-                                outline: 'none!important'
-                            },
-                            '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
-                                outline: 'none '
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
-                                color: 'var(--color-main)'
-                            },
-                            '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
-                                fill: 'var(--color-main)'
-                            },
-                            '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path::nth-of-type(2)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path::nth-of-type(1)':
-                                {
-                                    fill: '#000'
-                                },
-                            '& .Mui-checked, &.MuiCheckbox-indeterminate': {
-                                color: 'var(--color-main)!important'
-                            },
-                            '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                                {
-                                    outline: 'none'
-                                },
-                            '& .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover,.MuiDataGrid-row.Mui-selected.Mui-hovered':
-                                {
-                                    bgcolor: 'var(--color-bg)'
-                                }
+                            }
                         }}
                         localeText={TextTranslate}
                         hideFooter
@@ -554,15 +543,34 @@ class ChietKhauDichVuScreen extends Component {
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
+                    <ActionMenuTable
+                        selectedRowId={this.state.selectedRowId}
+                        anchorEl={this.state.anchorEl}
+                        closeMenu={this.handleCloseMenu}
+                        handleView={this.handleEdit}
+                        permissionView="Pages.ChietKhauDichVu.Edit"
+                        handleEdit={this.handleEdit}
+                        permissionEdit="Pages.ChietKhauDichVu.Edit"
+                        handleDelete={this.handleDelete}
+                        permissionDelete="Pages.ChietKhauDichVu.Delete"
+                    />
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
                 </Box>
                 <CreateOrEditChietKhauDichVuModal
                     formRef={this.state.createOrEditDto}
-                    onClose={this.onCloseModal}
+                    onClose={this.onModal}
                     onSave={this.handleSubmit}
                     idNhanVien={this.state.idNhanVien}
                     suggestDonViQuiDoi={this.state.suggestDonViQuiDoi}
                     visited={this.state.visited}
-                    title="Thêm mới"
+                    title={
+                        this.state.selectedRowId === '' || this.state.selectedRowId == null
+                            ? 'Thêm mới chiết khấu dịch vụ'
+                            : 'Cập nhật chiết khấu dịch vụ'
+                    }
                 />
             </div>
         );

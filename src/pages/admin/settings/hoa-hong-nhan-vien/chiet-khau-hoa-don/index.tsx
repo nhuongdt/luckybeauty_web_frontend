@@ -16,6 +16,7 @@ import CustomTablePagination from '../../../../../components/Pagination/CustomTa
 import suggestStore from '../../../../../stores/suggestStore';
 import ActionMenuTable from '../../../../../components/Menu/ActionMenuTable';
 import ConfirmDelete from '../../../../../components/AlertDialog/ConfirmDelete';
+import abpCustom from '../../../../../components/abp-custom';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,
@@ -51,6 +52,7 @@ class ChietKhauHoaDonScreen extends Component {
         });
         await suggestStore.getSuggestChucVu();
         await suggestStore.getSuggestNhanVien();
+        await chietKhauHoaDonStore.createModel();
     };
     Modal = () => {
         this.setState({ visited: !this.state.visited, idChietKhauHD: '' });
@@ -226,6 +228,7 @@ class ChietKhauHoaDonScreen extends Component {
                             }}
                             sx={{ height: 32, color: '#FFFAFF' }}
                             startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
+                            hidden={!abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create')}
                             className="btn-container-hover">
                             Thêm mới
                         </Button>
@@ -234,7 +237,7 @@ class ChietKhauHoaDonScreen extends Component {
                 <Box paddingTop={'8px'}>
                     <DataGrid
                         disableRowSelectionOnClick
-                        autoHeight
+                        rowHeight={46}
                         columns={columns}
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
@@ -265,9 +268,7 @@ class ChietKhauHoaDonScreen extends Component {
                         selectedRowId={this.state.idChietKhauHD}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
-                        handleView={() => {
-                            console.log('chưa phát triển');
-                        }}
+                        handleView={this.handleEdit}
                         permissionView=""
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.ChietKhauHoaDon.Edit"
