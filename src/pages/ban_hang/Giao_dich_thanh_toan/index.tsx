@@ -54,7 +54,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
     const [lstMauIn, setLstMauIn] = useState<MauInDto[]>([]);
-    const [inforDelete, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+    const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
 
@@ -222,7 +222,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const DataGrid_handleAction = async (item: any) => {
         switch (parseInt(item.id)) {
             case 1:
-                setInforDeleteProduct({
+                setInforDelete({
                     ...inforDelete,
                     show: true,
                     mes: 'Bạn có chắc chắn muốn xóa những hóa đơn này không?'
@@ -277,7 +277,7 @@ const GiaoDichThanhToan: React.FC = () => {
 
     const Delete_MultipleHoaDon = async () => {
         await HoaDonService.Delete_MultipleHoaDon(rowSelectionModel);
-        setInforDeleteProduct({ ...inforDelete, show: false });
+        setInforDelete({ ...inforDelete, show: false });
         setObjAlert({ show: true, mes: 'Xóa thành công', type: 1 });
 
         setPageDataHoaDon({
@@ -477,9 +477,7 @@ const GiaoDichThanhToan: React.FC = () => {
                 title={inforDelete.title}
                 mes={inforDelete.mes}
                 onOk={Delete_MultipleHoaDon}
-                onCancel={() =>
-                    setInforDeleteProduct({ ...inforDelete, show: false })
-                }></ConfirmDelete>
+                onCancel={() => setInforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
 
             <Box paddingTop={2}>
                 <Grid container spacing={1}>
@@ -621,27 +619,31 @@ const GiaoDichThanhToan: React.FC = () => {
                 </Grid>
 
                 {rowSelectionModel.length > 0 && (
-                    <ActionRowSelect
-                        lstOption={[
-                            {
-                                id: '1',
-                                text: 'Xóa hóa đơn',
-                                icon: (
-                                    <DeleteSweepOutlinedIcon
-                                        sx={{ width: '1rem', height: '1rem' }}
-                                    />
-                                )
-                            },
-                            {
-                                id: '2',
-                                text: 'In hóa đơn',
-                                icon: <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
-                            }
-                        ]}
-                        countRowSelected={rowSelectionModel.length}
-                        title="hóa đơn"
-                        choseAction={DataGrid_handleAction}
-                    />
+                    <div style={{ marginTop: '24px' }}>
+                        <ActionRowSelect
+                            lstOption={[
+                                {
+                                    id: '1',
+                                    text: 'Xóa hóa đơn',
+                                    icon: (
+                                        <DeleteSweepOutlinedIcon
+                                            sx={{ width: '1rem', height: '1rem' }}
+                                        />
+                                    )
+                                },
+                                {
+                                    id: '2',
+                                    text: 'In hóa đơn',
+                                    icon: (
+                                        <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
+                                    )
+                                }
+                            ]}
+                            countRowSelected={rowSelectionModel.length}
+                            title="hóa đơn"
+                            choseAction={DataGrid_handleAction}
+                        />
+                    </div>
                 )}
 
                 <Stack
