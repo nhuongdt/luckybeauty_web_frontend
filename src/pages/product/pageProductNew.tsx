@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { DataGrid, GridColDef, useGridApiRef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel, useGridApiRef } from '@mui/x-data-grid';
 import {
     Grid,
     Box,
@@ -9,12 +9,14 @@ import {
     Stack,
     Button,
     Pagination,
-    IconButton
+    IconButton,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions
 } from '@mui/material';
-import { Add, FileDownload, Search } from '@mui/icons-material';
+import { Add, LocalOfferOutlined, Search } from '@mui/icons-material';
 
-import { ReactComponent as IconSorting } from '../../images/column-sorting.svg';
-import { ReactComponent as ClockIcon } from '../../images/clock.svg';
 // prop for send data from parent to child
 import { PropModal, PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import { TextTranslate } from '../../components/TableLanguage';
@@ -48,6 +50,48 @@ import uploadFileService from '../../services/uploadFileService';
 import { FileUpload } from '../../services/dto/FileUpload';
 import ImportExcel from '../../components/ImportComponent/ImportExcel';
 import utils from '../../utils/utils';
+import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
+import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
+import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import CmpIListData from '../../components/ListData/CmpIListData';
+import { IList } from '../../services/dto/IList';
+import DialogButtonClose from '../../components/Dialog/ButtonClose';
+
+export function ModalChuyenNhomHang({ isOpen, onClose, lstData, agreeNhomHang }: any) {
+    const [itemChosed, setItemChosed] = useState<IList>();
+    const choseNhom = (isEdit: boolean, item: any) => {
+        setItemChosed(item);
+    };
+    const clickAgree = () => {
+        agreeNhomHang(itemChosed);
+    };
+    return (
+        <>
+            <Dialog open={isOpen} fullWidth maxWidth="xs" onClose={onClose}>
+                <DialogTitle>
+                    Chuyển nhóm dịch vụ
+                    <DialogButtonClose onClose={onClose} />
+                </DialogTitle>
+                <DialogContent>
+                    <CmpIListData
+                        Icon={<LocalOfferOutlined />}
+                        lst={lstData}
+                        clickTreeItem={choseNhom}
+                        isShowAll={false}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={onClose}>
+                        Đóng
+                    </Button>
+                    <Button variant="contained" onClick={clickAgree}>
+                        Đồng ý
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
+}
 
 export default function PageProductNew() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -66,6 +110,9 @@ export default function PageProductNew() {
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
     const [treeSearchNhomHangHoa, setTreeSearchNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
+    const [lstErrImport, setLstErrImport] = useState<BangBaoLoiFileimportDto[]>([]);
+    const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+    const [isShowModalChuyenNhom, setIsShowModalChuyenNhom] = useState(false);
 
     const [pageDataProduct, setPageDataProduct] = useState<PagedResultDto<ModelHangHoaDto>>({
         totalCount: 0,
@@ -89,7 +136,6 @@ export default function PageProductNew() {
             totalPage: Utils.getTotalPage(list.totalCount, filterPageProduct.pageSize),
             items: list.items
         });
-        console.log('list ', list);
     };
 
     const GetListNhomHangHoa = async () => {
@@ -340,11 +386,42 @@ export default function PageProductNew() {
                     })
                 };
             });
+        } else {
+            if (rowSelectionModel.length > 0) {
+                const result = await ProductService.DeleteMultipleProduct(rowSelectionModel);
+
+                if (result) {
+                    setObjAlert({
+                        show: true,
+                        type: 1,
+                        mes: `Xóa ${rowSelectionModel.length} dịch vụ thành công`
+                    });
+                } else {
+                    setObjAlert({
+                        show: true,
+                        type: 2,
+                        mes: `Xóa ${rowSelectionModel.length} dịch vụ thất bại`
+                    });
+                }
+
+                setInforDeleteProduct({ ...inforDeleteProduct, show: false });
+                setPageDataProduct({
+                    ...pageDataProduct,
+                    items: pageDataProduct.items.map((item: ModelHangHoaDto) => {
+                        if (rowSelectionModel.toString().indexOf(item.id ?? '') > -1) {
+                            return { ...item, trangThai: 0, txtTrangThaiHang: 'Ngừng kinh doanh' };
+                        } else {
+                            return item;
+                        }
+                    })
+                });
+                setRowSelectionModel([]);
+            }
         }
     };
 
     const restoreProduct = async () => {
-        await ProductService.DeleteProduct_byIDHangHoa(rowHover?.idHangHoa ?? '');
+        await ProductService.RestoreProduct_byIdHangHoa(rowHover?.idHangHoa ?? '');
         setObjAlert({
             show: true,
             type: 1,
@@ -376,15 +453,27 @@ export default function PageProductNew() {
     };
     const onImportShow = () => {
         setShowImport(!isShowImport);
-        GetListHangHoa();
+        setLstErrImport([]);
     };
     const handleImportData = async (input: FileUpload) => {
-        const result = await ProductService.importHangHoa(input);
-        enqueueSnackbar(result.message, {
-            variant: result.status == 'success' ? 'success' : result.status,
-            autoHideDuration: 3000
-        });
+        const data = await ProductService.importHangHoa(input);
+        setLstErrImport(data);
+        if (data.length === 0) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Import thành công' });
+        } else {
+            const errImport = data.filter((x: BangBaoLoiFileimportDto) => x.loaiErr === 2).length;
+            if (errImport > 0) {
+                // import 1 số thành côg, 1 số thất bại
+                setObjAlert({
+                    ...objAlert,
+                    show: true,
+                    mes: `Import thành công, ${errImport} thất bại`
+                });
+            }
+        }
         setShowImport(false);
+        GetListHangHoa();
+        GetTreeNhomHangHoa();
     };
     const downloadImportTemplate = async () => {
         const result = await uploadFileService.downloadImportTemplate(
@@ -392,6 +481,34 @@ export default function PageProductNew() {
         );
         fileDowloadService.downloadExportFile(result);
     };
+
+    const DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1: // chuyennhom
+                setIsShowModalChuyenNhom(true);
+                break;
+            case 2:
+                {
+                    setInforDeleteProduct({
+                        ...inforDeleteProduct,
+                        show: true,
+                        mes: `Bạn có chắc chắn muốn xóa ${rowSelectionModel.length} dịch vụ này không?`
+                    });
+                }
+                break;
+        }
+    };
+
+    const chuyenNhomHang = async (item: IList) => {
+        setIsShowModalChuyenNhom(false);
+        const result = await ProductService.ChuyenNhomHang(rowSelectionModel, item.id);
+        if (result) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Chuyển nhóm dịch vụ thành công' });
+        }
+        setRowSelectionModel([]);
+        GetListHangHoa();
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'maHangHoa',
@@ -517,6 +634,22 @@ export default function PageProductNew() {
                 onClose={onImportShow}
                 downloadImportTemplate={downloadImportTemplate}
                 importFile={handleImportData}
+            />
+            <BangBaoLoiFileImport
+                isOpen={lstErrImport.length > 0}
+                lstError={lstErrImport}
+                onClose={() => setLstErrImport([])}
+                clickImport={() => console.log(lstErrImport)}
+            />
+            <ModalChuyenNhomHang
+                isOpen={isShowModalChuyenNhom}
+                lstData={treeNhomHangHoa
+                    .filter((x) => !utils.checkNull(x.id))
+                    .map((item: any) => {
+                        return { id: item.id, text: item.tenNhomHang, color: item?.color };
+                    })}
+                onClose={() => setIsShowModalChuyenNhom(false)}
+                agreeNhomHang={chuyenNhomHang}
             />
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
                 <Grid container alignItems="center" justifyContent="space-between">
@@ -650,9 +783,33 @@ export default function PageProductNew() {
                         </Box>
                     </Grid>
                     <Grid item lg={9} md={9} sm={8} xs={12}>
-                        <Box className="page-box-right">
+                        {rowSelectionModel.length > 0 && (
+                            <ActionRowSelect
+                                lstOption={[
+                                    {
+                                        id: '1',
+                                        text: 'Chuyển nhóm'
+                                    },
+                                    {
+                                        id: '2',
+                                        text: 'Xóa dịch vụ'
+                                    }
+                                ]}
+                                countRowSelected={rowSelectionModel.length}
+                                title="dịch vụ"
+                                choseAction={DataGrid_handleAction}
+                            />
+                        )}
+
+                        <Box
+                            className="page-box-right"
+                            marginTop={rowSelectionModel.length > 0 ? 1 : 0}>
                             <DataGrid
-                                className="data-grid-row"
+                                className={
+                                    rowSelectionModel.length > 0
+                                        ? 'data-grid-row-chosed'
+                                        : 'data-grid-row'
+                                }
                                 disableRowSelectionOnClick
                                 rowHeight={46}
                                 rows={pageDataProduct.items}
@@ -660,6 +817,10 @@ export default function PageProductNew() {
                                 hideFooter
                                 checkboxSelection
                                 localeText={TextTranslate}
+                                onRowSelectionModelChange={(newRowSelectionModel) => {
+                                    setRowSelectionModel(newRowSelectionModel);
+                                }}
+                                rowSelectionModel={rowSelectionModel}
                             />
 
                             <Grid
