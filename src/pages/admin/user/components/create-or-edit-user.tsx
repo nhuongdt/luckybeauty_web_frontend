@@ -82,7 +82,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     surname: values.surname,
                     userName: values.userName,
                     roleNames: values.roleNames,
-                    isAdmin: values.isAdmin
+                    isAdmin: values.isAdmin ?? false
                 });
                 enqueueSnackbar('Cập nhật thành công!', {
                     variant: 'success',
@@ -528,9 +528,17 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     <FormGroup>
                                                         <FormControlLabel
                                                             name="isAdmin"
-                                                            value={values.isAdmin}
+                                                            value={
+                                                                values.isAdmin === true
+                                                                    ? true
+                                                                    : false
+                                                            }
                                                             onChange={handleChange}
-                                                            checked={values.isAdmin}
+                                                            checked={
+                                                                values.isAdmin === true
+                                                                    ? true
+                                                                    : false
+                                                            }
                                                             control={<Checkbox />}
                                                             label="Là quản trị viên"
                                                         />

@@ -139,9 +139,7 @@ const LoginScreen: React.FC = () => {
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 '& fieldset': {
-                                                    border: formik.errors.userNameOrEmail
-                                                        ? '1px solid red!important'
-                                                        : 'none!important'
+                                                    border: 'none!important'
                                                 }
                                             }
                                         }}
@@ -168,9 +166,7 @@ const LoginScreen: React.FC = () => {
                                                 display: 'block',
                                                 paddingRight: '0',
                                                 '& fieldset': {
-                                                    border: formik.errors.password
-                                                        ? '1px solid red!important'
-                                                        : 'none!important'
+                                                    border: 'none!important'
                                                 }
                                             },
                                             '& .MuiInputBase-root ': {

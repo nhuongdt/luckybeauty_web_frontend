@@ -106,7 +106,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                 onSubmit={(e) => {
                                     console.log(e);
                                 }}>
-                                {({ handleChange, values, errors, touched }) => (
+                                {({ handleChange, values, errors, touched, isSubmitting }) => (
                                     <Form onKeyPress={this.handleFormKeyPress}>
                                         <Box
                                             display="flex"
@@ -321,15 +321,30 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 className="btn-outline-hover">
                                                 Hủy
                                             </Button>
-                                            <Button
-                                                variant="contained"
-                                                size="small"
-                                                onClick={() => {
-                                                    this.handleSubmit(values);
-                                                }}
-                                                className="btn-container-hover">
-                                                Lưu
-                                            </Button>
+                                            {!isSubmitting ? (
+                                                <Button
+                                                    variant="contained"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        this.handleSubmit(values);
+                                                    }}
+                                                    className="btn-container-hover">
+                                                    Lưu
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{
+                                                        fontSize: '14px',
+                                                        textTransform: 'unset',
+                                                        color: '#fff',
+
+                                                        border: 'none'
+                                                    }}
+                                                    className="btn-container-hover">
+                                                    Đang lưu
+                                                </Button>
+                                            )}
                                         </DialogActions>
                                     </Form>
                                 )}

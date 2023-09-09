@@ -266,11 +266,31 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 sx={{ fontSize: '13px' }}></TextField>
                                         </Grid>
                                         <Grid item sm={6} xs={12}>
-                                            <DatePickerCustom
+                                            {/* <DatePickerCustom
                                                 props={{ width: '100%', label: 'Ngày sinh' }}
                                                 defaultVal={values.ngaySinh}
                                                 handleChangeDate={handleChange}
-                                            />
+                                            /> */}
+                                            <TextField
+                                                size="small"
+                                                type="date"
+                                                fullWidth
+                                                name="ngaySinh"
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Ngày sinh
+                                                    </Typography>
+                                                }
+                                                InputLabelProps={{
+                                                    shrink: true
+                                                }}
+                                                value={values.ngaySinh?.toString().substring(0, 10)}
+                                                onChange={handleChange}
+                                                sx={{
+                                                    fontSize: '16px'
+                                                }}></TextField>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField

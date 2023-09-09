@@ -149,13 +149,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     }
     onNhomKhachModal = async () => {
         await khachHangStore.createNewNhomKhachDto();
-        this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
+
+        this.setState({
+            isShowNhomKhachModal: !this.state.isShowNhomKhachModal,
+            listNhomKhachSearch: suggestStore.suggestNhomKhach
+        });
     };
     onEditNhomKhach = async (isEdit: boolean, item: any) => {
         if (isEdit) {
             // todo edit
             await khachHangStore.getNhomKhachForEdit(item.id);
-            this.setState({ isShowNhomKhachModal: !this.state.isShowNhomKhachModal });
+            this.setState({
+                isShowNhomKhachModal: !this.state.isShowNhomKhachModal
+            });
         } else {
             // filer
             if (item != null) {
