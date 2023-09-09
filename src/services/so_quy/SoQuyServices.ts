@@ -23,6 +23,13 @@ class SoQuyServices {
         const result = await http.get('api/services/app/QuyHoaDon/Delete?id=' + id);
         return result.data.result;
     };
+    DeleteMultiple_QuyHoaDon = async (lstId: any) => {
+        const result = await http.post(
+            'api/services/app/QuyHoaDon/DeleteMultiple_QuyHoaDon',
+            lstId
+        );
+        return result.data.success;
+    };
     GetNhatKyThanhToan_ofHoaDon = async (idHoaDonLienQuan: string): Promise<QuyHoaDonDto[]> => {
         if (utils.checkNull(idHoaDonLienQuan)) return [];
         const result = await http.get(
@@ -37,7 +44,7 @@ class SoQuyServices {
         );
         return result.data.result;
     };
-    async getAll(input: RequestFromToDto): Promise<PagedResultDto<GetAllQuyHoaDonItemDto>> {
+    async getAll(input: RequestFromToDto): Promise<PagedResultDto<QuyHoaDonDto>> {
         const response = await http.get('api/services/app/QuyHoaDon/GetAll', {
             params: input
         });
@@ -48,8 +55,14 @@ class SoQuyServices {
         const response = await http.post('api/services/app/QuyHoaDon/ExportExcelQuyHoaDon', input);
         return response.data.result;
     }
-    async GetForEdit(idQuyHD: string): Promise<QuyHoaDonDto> {
+    async GetInforQuyHoaDon_byId(idQuyHD: string): Promise<QuyHoaDonDto> {
         const response = await http.get(`api/services/app/QuyHoaDon/GetForEdit?id=${idQuyHD}`);
+        return response.data.result;
+    }
+    async GetQuyChiTiet_byIQuyHoaDon(idQuyHD: string): Promise<QuyChiTietDto[]> {
+        const response = await http.get(
+            `api/services/app/QuyHoaDon/GetQuyChiTiet_byIQuyHoaDon?idQuyHoaDon=${idQuyHD}`
+        );
         return response.data.result;
     }
     CheckExistsMaPhieuThuChi = async (maHoaDon: string, idQuy: string | null = null) => {
