@@ -73,8 +73,9 @@ phieuthu.maNguoiNop = khachhang.maKhachHang;
 phieuthu.tenNguoiNop = khachhang.tenKhachHang;
 phieuthu.sdtNguoiNop = khachhang.soDienThoai;
 phieuthu.quyHoaDon_ChiTiet = [
-    { hinhThucThanhToan: 1, tienThu: 10000 } as QuyChiTietDto,
+    { maHoaDonLienQuan: 'HD001', hinhThucThanhToan: 1, tienThu: 10000 } as QuyChiTietDto,
     {
+        maHoaDonLienQuan: 'HD001',
         hinhThucThanhToan: 2,
         tienThu: 20000,
         tenChuThe: 'Nguyễn Huyền Trang',
@@ -82,6 +83,7 @@ phieuthu.quyHoaDon_ChiTiet = [
         tenNganHang: 'Techcombank'
     } as QuyChiTietDto,
     {
+        maHoaDonLienQuan: 'HD002',
         hinhThucThanhToan: 3,
         tienThu: 30000,
         tenChuThe: 'Nguyễn Linh Châu',
@@ -132,9 +134,18 @@ class DataMauIn {
             this.phieuthu.quyHoaDon_ChiTiet !== undefined &&
             this.phieuthu.quyHoaDon_ChiTiet?.length > 0
         ) {
-            const tienMat = this.phieuthu.quyHoaDon_ChiTiet[0].tienThu ?? 0;
-            const tienPOS = this.phieuthu.quyHoaDon_ChiTiet[1].tienThu ?? 0;
-            const tienCK = this.phieuthu.quyHoaDon_ChiTiet[2].tienThu ?? 0;
+            const quyTM = this.phieuthu.quyHoaDon_ChiTiet.filter(
+                (x: QuyChiTietDto) => x.hinhThucThanhToan === 1
+            );
+            const tienMat = quyTM.length > 0 ? quyTM[0].tienThu : 0;
+            const quyPos = this.phieuthu.quyHoaDon_ChiTiet.filter(
+                (x: QuyChiTietDto) => x.hinhThucThanhToan === 2
+            );
+            const tienPOS = quyPos.length > 0 ? quyPos[0].tienThu : 0;
+            const quyCK = this.phieuthu.quyHoaDon_ChiTiet.filter(
+                (x: QuyChiTietDto) => x.hinhThucThanhToan === 3
+            );
+            const tienCK = quyCK.length > 0 ? quyCK[0].tienThu : 0;
             data = data.replaceAll('{TienMat}', new Intl.NumberFormat('vi-VN').format(tienMat));
             data = data.replaceAll('{TienPOS}', new Intl.NumberFormat('vi-VN').format(tienPOS));
             data = data.replaceAll(
@@ -146,7 +157,20 @@ class DataMauIn {
             data = data.replaceAll('{TienChuyenKhoan_BangChu}', utils.DocSo(tienCK));
         }
 
-        data = data.replaceAll('{HoaDonLienQuan}', this.hoadon?.maHoaDon ?? '');
+        let sHoaDonLienQuan = '';
+        const arrHDLienQuan = this.phieuthu.quyHoaDon_ChiTiet?.filter(
+            (x: QuyChiTietDto) => !utils.checkNull(x?.maHoaDonLienQuan)
+        );
+        if (arrHDLienQuan !== undefined && arrHDLienQuan?.length > 0) {
+            const arrMa = arrHDLienQuan
+                ?.map((item: QuyChiTietDto) => {
+                    return item.maHoaDonLienQuan;
+                })
+                .sort();
+            sHoaDonLienQuan = Array.from(new Set(arrMa))?.toString();
+            console.log('arrHDLienQuan', arrMa);
+        }
+        data = data.replaceAll('{HoaDonLienQuan}', sHoaDonLienQuan);
         return data;
     };
 
