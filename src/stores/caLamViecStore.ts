@@ -15,7 +15,8 @@ class CaLamViecStore {
         gioVao: '',
         maCa: '',
         tenCa: '',
-        tongSoGioCong: 0
+        tongSoGioCong: 0,
+        laNghiGiuaCa: false
     };
     caLamViecs!: PagedResultDto<CaLamViecDto>;
     constructor() {
@@ -29,7 +30,8 @@ class CaLamViecStore {
             gioVao: '',
             maCa: '',
             tenCa: '',
-            tongSoGioCong: 0
+            tongSoGioCong: 0,
+            laNghiGiuaCa: false
         };
     }
     async getAll(input: PagedRequestDto) {

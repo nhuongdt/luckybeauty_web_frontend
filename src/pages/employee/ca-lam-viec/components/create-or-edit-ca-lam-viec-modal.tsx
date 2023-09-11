@@ -33,6 +33,9 @@ interface CreateOrEditProps {
     createOrEditDto: CreateOrEditCaLamViecDto;
 }
 class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
+    state = {
+        isNghiGiuaCa: false
+    };
     render(): ReactNode {
         const { visible, onCancel, title, createOrEditDto } = this.props;
         const initValues = createOrEditDto;
@@ -155,23 +158,63 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             />
                                         </FormGroup>
                                     </Grid>
-
                                     <Grid item xs={12}>
-                                        <FormControl fullWidth>
-                                            <InputLabel>
-                                                <Typography>Lặp lại</Typography>
-                                            </InputLabel>
-                                            <Select
-                                                label={<Typography>Lặp lại</Typography>}
-                                                defaultValue="1"
-                                                size="small"
-                                                fullWidth>
-                                                <MenuItem value="1">Hàng tuần</MenuItem>
-                                                <MenuItem value="2">Hàng ngày</MenuItem>
-                                                <MenuItem value="3">Hàng tháng</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                        <FormControlLabel
+                                            sx={{
+                                                '& .MuiFormControlLabel-label': {
+                                                    fontSize: '13px!important'
+                                                }
+                                            }}
+                                            name="laNghiGiuaCa"
+                                            value={values?.laNghiGiuaCa}
+                                            checked={values?.laNghiGiuaCa}
+                                            onChange={handleChange}
+                                            control={
+                                                <Checkbox
+                                                    sx={{
+                                                        color: 'var(--color-main)!important'
+                                                    }}
+                                                />
+                                            }
+                                            label="Nghỉ giữa ca"
+                                        />
                                     </Grid>
+                                    {values.laNghiGiuaCa == true ? (
+                                        <>
+                                            <Grid item xs={6} sm={6}>
+                                                <FormGroup>
+                                                    <TextField
+                                                        label={<Typography>Giờ nghỉ từ</Typography>}
+                                                        type="time"
+                                                        size="small"
+                                                        name="gioNghiTu"
+                                                        value={values.gioNghiTu}
+                                                        onChange={handleChange}
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                    />
+                                                </FormGroup>
+                                            </Grid>
+                                            <Grid item xs={6} sm={6}>
+                                                <FormGroup>
+                                                    <TextField
+                                                        label={
+                                                            <Typography>Giờ nghỉ đến</Typography>
+                                                        }
+                                                        type="time"
+                                                        size="small"
+                                                        name="gioNghiDen"
+                                                        value={values.gioNghiDen}
+                                                        onChange={handleChange}
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                    />
+                                                </FormGroup>
+                                            </Grid>
+                                        </>
+                                    ) : null}
                                     <Grid item xs={12}>
                                         <FormGroup
                                             sx={{
@@ -187,27 +230,6 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 maxRows={3}
                                                 minRows={2}></TextField>
                                         </FormGroup>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Typography>Ngày làm việc</Typography>
-                                        {date.map((item, index) => (
-                                            <FormControlLabel
-                                                sx={{
-                                                    '& .MuiFormControlLabel-label': {
-                                                        fontSize: '13px!important'
-                                                    }
-                                                }}
-                                                key={index}
-                                                control={
-                                                    <Checkbox
-                                                    // sx={{
-                                                    //     color: 'var(--color-main)!important'
-                                                    // }}
-                                                    />
-                                                }
-                                                label={item}
-                                            />
-                                        ))}
                                     </Grid>
                                 </Grid>
                                 <DialogActions

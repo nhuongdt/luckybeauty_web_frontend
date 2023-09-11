@@ -107,7 +107,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
         const { visible, onCancel, modalType, userId, roles, suggestNhanSu, formRef } = this.props;
 
         const options = roles.map((x) => ({
-            label: x.displayName,
+            label: x.name,
             value: x.normalizedName
         }));
 

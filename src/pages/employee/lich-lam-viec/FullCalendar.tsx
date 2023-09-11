@@ -116,8 +116,9 @@ const Calendar: React.FC = () => {
         setAnchorEl(event.currentTarget);
         setSelectedId(event.currentTarget.className);
     };
-    const handleClose = () => {
+    const handleCloseMenu = () => {
         setAnchorEl(null);
+        setSelectedId('');
     };
 
     const [openDialog, setOpenDialog] = useState(false);
@@ -141,6 +142,7 @@ const Calendar: React.FC = () => {
     const [openEdit, setOpenEdit] = useState(false);
     const handleOpenEdit = () => {
         setOpenEdit(true);
+        handleCloseMenu();
     };
     const handleCloseEdit = () => {
         setOpenEdit(false);
@@ -215,7 +217,7 @@ const Calendar: React.FC = () => {
         <Box>
             <CustomEmployee
                 open={open}
-                handleClose={handleClose}
+                handleClose={handleCloseMenu}
                 anchorEl={anchorEl}
                 selectedRowId={selectedId}
                 handleOpenDelete={handleOpenDelete}

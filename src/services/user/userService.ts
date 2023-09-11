@@ -74,16 +74,16 @@ class UserService {
         }
     }
     public async getForUpdateProfile(): Promise<ProfileDto> {
-        const response = await http.get('api/services/app/User/GetForUpdateProfile');
+        const response = await http.get('api/services/app/UserProfile/GetForUpdateProfile');
         return response.data.result;
     }
 
     public async updateProfile(input: ProfileDto): Promise<boolean> {
-        const response = await http.post('api/services/app/User/UpdateProfile', input);
+        const response = await http.post('api/services/app/UserProfile/UpdateProfile', input);
         return response.data.result;
     }
     public async updatePassword(input: ChangePasswordDto) {
-        const response = await http.post('api/services/app/User/ChangeUserPassword', input);
+        const response = await http.post('api/services/app/UserProfile/ChangeUserPassword', input);
         return response.data.result;
     }
     public async getAll(

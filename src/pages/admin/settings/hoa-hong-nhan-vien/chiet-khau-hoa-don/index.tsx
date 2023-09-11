@@ -270,11 +270,11 @@ class ChietKhauHoaDonScreen extends Component {
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
                         handleView={this.handleEdit}
-                        permissionView=""
+                        permissionView="Pages.ChietKhauHoaDon.Edit"
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.ChietKhauHoaDon.Edit"
                         handleDelete={this.handleDelete}
-                        permissionDelete="PPages.ChietKhauHoaDon.Delete"
+                        permissionDelete="Pages.ChietKhauHoaDon.Delete"
                     />
                     <ConfirmDelete
                         isShow={this.state.isShowConfirmDelete}

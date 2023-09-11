@@ -6,4 +6,7 @@ export interface CreateOrEditCaLamViecDto {
     gioVao: string;
     gioRa: string;
     tongSoGioCong: number;
+    gioNghiTu?: string;
+    gioNghiDen?: string;
+    laNghiGiuaCa: boolean;
 }

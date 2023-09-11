@@ -52,8 +52,6 @@ class ChietKhauDichVuScreen extends Component {
         selectedRowId: null,
         anchorEl: null,
         createOrEditDto: { laPhanTram: false } as CreateOrEditChietKhauDichVuDto,
-        suggestNhanSu: [] as SuggestNhanSuDto[],
-        suggestDonViQuiDoi: [] as SuggestDonViQuiDoiDto[],
         activeButton: '',
         focusField: '',
         showButton: false
@@ -62,14 +60,11 @@ class ChietKhauDichVuScreen extends Component {
         this.InitData();
     }
     async InitData() {
-        const suggestNhanVien = await SuggestService.SuggestNhanSu();
-        await this.setState({ suggestNhanSu: suggestNhanVien });
-
         await suggestStore.getSuggestNhanVien();
         await suggestStore.getSuggestDichVu();
-        const suggestDonViQuiDoi = await SuggestService.SuggestDonViQuiDoi();
-        await this.setState({ suggestDonViQuiDoi: suggestDonViQuiDoi });
-        await this.getDataAccordingByNhanVien(this.state.idNhanVien);
+        suggestStore.suggestNhanVien?.length > 0
+            ? await this.getDataAccordingByNhanVien(suggestStore.suggestNhanVien[0].id)
+            : await this.getDataAccordingByNhanVien(this.state.idNhanVien);
     }
     getDataAccordingByNhanVien = async (idNhanVien: any) => {
         await chietKhauDichVuStore.getAccordingByNhanVien(
@@ -409,8 +404,16 @@ class ChietKhauDichVuScreen extends Component {
                     }}>
                     <Grid item xs={3}>
                         <Autocomplete
-                            options={this.state.suggestNhanSu}
+                            options={suggestStore.suggestNhanVien}
                             getOptionLabel={(option) => `${option.tenNhanVien}`}
+                            value={
+                                suggestStore.suggestNhanVien?.find(
+                                    (x) => x.id === this.state.idNhanVien
+                                ) ||
+                                (suggestStore.suggestNhanVien?.length > 0
+                                    ? suggestStore.suggestNhanVien[0]
+                                    : null)
+                            }
                             size="small"
                             sx={{ width: '75%' }}
                             fullWidth
@@ -564,7 +567,6 @@ class ChietKhauDichVuScreen extends Component {
                     onClose={this.onModal}
                     onSave={this.handleSubmit}
                     idNhanVien={this.state.idNhanVien}
-                    suggestDonViQuiDoi={this.state.suggestDonViQuiDoi}
                     visited={this.state.visited}
                     title={
                         this.state.selectedRowId === '' || this.state.selectedRowId == null

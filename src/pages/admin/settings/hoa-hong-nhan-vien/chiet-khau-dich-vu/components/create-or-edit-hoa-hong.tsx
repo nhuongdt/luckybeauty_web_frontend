@@ -39,7 +39,6 @@ interface DialogProps {
     onSave: () => void;
     idNhanVien: string;
     formRef: CreateOrEditChietKhauDichVuDto;
-    suggestDonViQuiDoi: SuggestDonViQuiDoiDto[];
 }
 class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
     render(): ReactNode {
