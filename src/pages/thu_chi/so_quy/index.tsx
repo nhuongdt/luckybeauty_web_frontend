@@ -13,7 +13,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import { format, lastDayOfMonth } from 'date-fns';
-import { DataGrid, GridColDef, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridSortModel, GridRowSelectionModel } from '@mui/x-data-grid';
 import { PagedResultDto } from '../../../services/dto/pagedResultDto';
 import { GetAllQuyHoaDonItemDto } from '../../../services/so_quy/Dto/QuyHoaDonViewItemDto';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
@@ -25,6 +25,13 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import fileDowloadService from '../../../services/file-dowload.service';
 import abpCustom from '../../../components/abp-custom';
+import ActionRowSelect from '../../../components/DataGrid/ActionRowSelect';
+import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
+import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import MauInServices from '../../../services/mau_in/MauInServices';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
+import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -49,11 +56,18 @@ const PageSoQuy = ({ xx }: any) => {
         fromDate: format(today, 'yyyy-MM-01'),
         toDate: format(lastDayOfMonth(today), 'yyyy-MM-dd')
     });
-    const [pageDataSoQuy, setPageDataSoQuy] = useState<PagedResultDto<GetAllQuyHoaDonItemDto>>({
+    const [pageDataSoQuy, setPageDataSoQuy] = useState<PagedResultDto<QuyHoaDonDto>>({
         totalCount: 0,
         totalPage: 0,
         items: []
     });
+    const [sortModel, setSortModel] = useState<GridSortModel>([
+        {
+            field: 'ngayLapHoaDon',
+            sort: 'desc'
+        }
+    ]);
+    const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
 
     const GetListSoQuy = async () => {
         const data = await SoQuyServices.getAll(paramSearch);
@@ -146,19 +160,48 @@ const PageSoQuy = ({ xx }: any) => {
         }
     };
 
-    const deleteProduct = async (dataSave: any) => {
-        await SoQuyServices.DeleteSoQuy(selectedRowId);
-        setPageDataSoQuy({
-            ...pageDataSoQuy,
-            items: pageDataSoQuy.items.filter((x: any) => x.id !== selectedRowId),
-            totalCount: pageDataSoQuy.totalCount - 1,
-            totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - 1, paramSearch.pageSize)
-        });
-        setObjAlert({
-            show: true,
-            type: 1,
-            mes: 'Hủy thành công'
-        });
+    const deleteSoQuy = async () => {
+        if (rowSelectionModel.length > 0) {
+            const ok = await SoQuyServices.DeleteMultiple_QuyHoaDon(rowSelectionModel);
+            if (ok) {
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: `Hủy ${rowSelectionModel.length} sổ quỹ thành công`
+                });
+                setPageDataSoQuy({
+                    ...pageDataSoQuy,
+                    items: pageDataSoQuy.items.filter(
+                        (x: any) => !rowSelectionModel.toString().includes(x.id)
+                    ),
+                    totalCount: pageDataSoQuy.totalCount - rowSelectionModel.length,
+                    totalPage: utils.getTotalPage(
+                        pageDataSoQuy.totalCount - rowSelectionModel.length,
+                        paramSearch.pageSize
+                    )
+                });
+                setRowSelectionModel([]);
+            } else {
+                setObjAlert({
+                    show: true,
+                    type: 2,
+                    mes: `Hủy ${rowSelectionModel.length} sổ quỹ thất bại`
+                });
+            }
+        } else {
+            await SoQuyServices.DeleteSoQuy(selectedRowId);
+            setPageDataSoQuy({
+                ...pageDataSoQuy,
+                items: pageDataSoQuy.items.filter((x: any) => x.id !== selectedRowId),
+                totalCount: pageDataSoQuy.totalCount - 1,
+                totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - 1, paramSearch.pageSize)
+            });
+            setObjAlert({
+                show: true,
+                type: 1,
+                mes: 'Hủy thành công'
+            });
+        }
         setinforDelete(
             new PropConfirmOKCancel({
                 show: false,
@@ -220,17 +263,66 @@ const PageSoQuy = ({ xx }: any) => {
                 });
                 break;
             case 3:
-                await deleteProduct(dataSave);
+                await deleteSoQuy();
                 break;
         }
     };
 
-    const [sortModel, setSortModel] = useState<GridSortModel>([
-        {
-            field: 'ngayLapHoaDon',
-            sort: 'desc'
+    const DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1:
+                setinforDelete({
+                    ...inforDelete,
+                    show: true,
+                    mes: `Bạn có chắc chắn muốn xóa ${rowSelectionModel.length} sổ quỹ này không?`
+                });
+                break;
+            case 2:
+                {
+                    let htmlPrint = '';
+                    for (let i = 0; i < rowSelectionModel.length; i++) {
+                        const idSoquy = rowSelectionModel[i].toString();
+                        // select dataQuyHoaDon from page
+                        const quyHD = pageDataSoQuy.items.filter((x: any) => x.id === idSoquy);
+                        const quyCT = await SoQuyServices.GetQuyChiTiet_byIQuyHoaDon(idSoquy);
+
+                        if (quyHD.length > 0) {
+                            DataMauIn.congty = appContext.congty;
+                            const chinhanhPrint = await await chiNhanhService.GetDetail(
+                                quyHD[0]?.idChiNhanh ?? ''
+                            );
+                            DataMauIn.chinhanh = chinhanhPrint;
+                            DataMauIn.khachhang = {
+                                maKhachHang: quyHD[0]?.maNguoiNop,
+                                tenKhachHang: quyHD[0].tenNguoiNop,
+                                soDienThoai: quyHD[0]?.sdtNguoiNop
+                            } as KhachHangItemDto;
+                            DataMauIn.phieuthu = quyHD[0];
+                            DataMauIn.phieuthu.quyHoaDon_ChiTiet = quyCT;
+
+                            let tempMauIn = '';
+                            if (quyHD[0].idLoaiChungTu === 11) {
+                                tempMauIn = await MauInServices.GetFileMauIn('K80_PhieuThu.txt');
+                            } else {
+                                tempMauIn = await MauInServices.GetFileMauIn('K80_PhieuChi.txt');
+                            }
+                            let newHtml = DataMauIn.replaceChiNhanh(tempMauIn);
+                            newHtml = DataMauIn.replacePhieuThuChi(newHtml);
+                            if (i < rowSelectionModel.length - 1) {
+                                htmlPrint = htmlPrint.concat(
+                                    newHtml,
+                                    `<p style="page-break-before:always;"></p>`
+                                );
+                            } else {
+                                htmlPrint = htmlPrint.concat(newHtml);
+                            }
+                        }
+                    }
+                    DataMauIn.Print(htmlPrint);
+                }
+                break;
         }
-    ]);
+    };
 
     const columns: GridColDef[] = [
         {
@@ -391,7 +483,7 @@ const PageSoQuy = ({ xx }: any) => {
                 isShow={inforDelete.show}
                 title={inforDelete.title}
                 mes={inforDelete.mes}
-                onOk={deleteProduct}
+                onOk={deleteSoQuy}
                 onCancel={() => setinforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
@@ -510,10 +602,32 @@ const PageSoQuy = ({ xx }: any) => {
                         </Stack>
                     </Grid>
                 </Grid>
-                <Box marginTop={5} className="page-box-right">
+
+                {rowSelectionModel.length > 0 && (
+                    <div style={{ marginTop: '24px' }}>
+                        <ActionRowSelect
+                            lstOption={[
+                                {
+                                    id: '1',
+                                    text: 'Xóa sổ quỹ'
+                                },
+                                {
+                                    id: '2',
+                                    text: 'In sổ quỹ'
+                                }
+                            ]}
+                            countRowSelected={rowSelectionModel.length}
+                            title="sổ quỹ"
+                            choseAction={DataGrid_handleAction}
+                        />
+                    </div>
+                )}
+                <Box marginTop={rowSelectionModel.length > 0 ? 1 : 5} className="page-box-right">
                     <DataGrid
                         disableRowSelectionOnClick
-                        className="data-grid-row"
+                        className={
+                            rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
+                        }
                         rowHeight={46}
                         rows={pageDataSoQuy.items}
                         columns={columns}
@@ -539,11 +653,10 @@ const PageSoQuy = ({ xx }: any) => {
                                 });
                             }
                         }}
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                background: '#EEF0F4'
-                            }
+                        onRowSelectionModelChange={(newRowSelectionModel) => {
+                            setRowSelectionModel(newRowSelectionModel);
                         }}
+                        rowSelectionModel={rowSelectionModel}
                     />
 
                     <CustomTablePagination

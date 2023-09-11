@@ -5,9 +5,10 @@ import { PagedQuyHoaDonRequestDto } from '../services/so_quy/Dto/PagedQuyHoaDonR
 import SoQuyServices from '../services/so_quy/SoQuyServices';
 import { CreateOrEditSoQuyDto } from '../services/so_quy/Dto/CreateOrEditSoQuyDto';
 import { RequestFromToDto } from '../services/dto/ParamSearchDto';
+import QuyHoaDonDto from '../services/so_quy/QuyHoaDonDto';
 
 class SoQuyStore {
-    lstSoQuy!: PagedResultDto<GetAllQuyHoaDonItemDto>;
+    lstSoQuy!: PagedResultDto<QuyHoaDonDto>;
     createOrEditSoQuyDto: CreateOrEditSoQuyDto = {
         id: '',
         maPhieu: ''

@@ -111,7 +111,7 @@ const CreateOrEditSoQuyDialog = ({
 
     const getInforQuyHoaDon = async () => {
         if (utils.checkNull(idQuyHD)) return;
-        const data = await SoQuyServices.GetForEdit(idQuyHD ?? '');
+        const data = await SoQuyServices.GetInforQuyHoaDon_byId(idQuyHD ?? '');
         if (data !== null) {
             const quyCT = data.quyHoaDon_ChiTiet;
 

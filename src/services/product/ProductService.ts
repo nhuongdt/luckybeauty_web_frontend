@@ -43,7 +43,10 @@ class ProductService {
         return response.data.result;
     };
     async importHangHoa(input: FileUpload) {
-        const response = await http.post('api/services/app/HangHoa/ImportExcel', input);
+        const response = await http.post(
+            'api/services/app/HangHoa/ImportFile_DanhMucHangHoa',
+            input
+        );
         return response.data.result;
     }
     CreateOrEditProduct = async (input: ModelHangHoaDto) => {
@@ -62,12 +65,24 @@ class ProductService {
             });
         return xx;
     };
+    DeleteMultipleProduct = async (lstIdHangHoa: any) => {
+        const xx = await http.post(`api/services/app/HangHoa/DeleteMultipleProduct`, lstIdHangHoa);
+        return xx.data.success;
+    };
+    ChuyenNhomHang = async (lstIdHangHoa: any, idNhomHangNew: string) => {
+        const xx = await http.post(
+            `api/services/app/HangHoa/ChuyenNhomHang?idNhomHang=${idNhomHangNew}`,
+            lstIdHangHoa
+        );
+        return xx.data.success;
+    };
     RestoreProduct_byIdHangHoa = async (idHangHoa: string) => {
         const xx = await http
             .post(`api/services/app/HangHoa/RestoreProduct?idHangHoa=${idHangHoa}`)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
+
         return xx;
     };
     GetDMHangHoa_groupByNhom = async (input: any) => {

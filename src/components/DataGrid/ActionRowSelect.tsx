@@ -31,7 +31,7 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
 
     return (
         <>
-            <Stack spacing={1} direction={'row'} alignItems={'center'} marginTop={3}>
+            <Stack spacing={1} direction={'row'} alignItems={'center'}>
                 <Box sx={{ position: 'relative' }}>
                     <Button
                         variant="contained"

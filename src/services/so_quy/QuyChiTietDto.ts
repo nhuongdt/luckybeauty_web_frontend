@@ -20,6 +20,7 @@ export default class QuyChiTietDto {
     tenNganHang? = '';
     tenKhoanThuChi? = '';
     sHinhThucThanhToan? = '';
+    maHoaDonLienQuan? = '';
 
     constructor({
         id = Guid.create().toString(),

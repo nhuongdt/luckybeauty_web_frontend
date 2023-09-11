@@ -471,30 +471,39 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     customInput={TextField}
                                     onChange={(event) => editGiaBan(event)}
                                 />
-                                <TextField
-                                    style={{ display: 'none' }}
-                                    variant="outlined"
-                                    size="small"
-                                    fullWidth
-                                    label="Số phút thực hiện"
-                                    placeholder="0"
-                                    type="number"
-                                    value={product.soPhutThucHien}
-                                    onChange={(event) =>
-                                        setProduct((itemOlds) => {
-                                            return {
-                                                ...itemOlds,
-                                                soPhutThucHien: event.target.value
-                                            };
-                                        })
-                                    }
-                                />
                             </Stack>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={2} paddingTop={{ xs: 0, md: 2 }}>
+                    <Grid container>
                         <Grid item xs={0} sm={4} md={4} lg={4}></Grid>
-                        <Grid item xs={12} sm={8} md={8} lg={8} alignItems={'center'}>
+                        <Grid xs={12} sm={8} md={8} lg={8} paddingTop={2} pl={{ sm: 0, md: 0.5 }}>
+                            <TextField
+                                variant="outlined"
+                                size="small"
+                                fullWidth
+                                label="Số phút thực hiện"
+                                placeholder="0"
+                                type="number"
+                                value={product.soPhutThucHien}
+                                onChange={(event) =>
+                                    setProduct((itemOlds) => {
+                                        return {
+                                            ...itemOlds,
+                                            soPhutThucHien: event.target.value
+                                        };
+                                    })
+                                }
+                            />
+                        </Grid>
+                        <Grid item xs={0} sm={4} md={4} lg={4}></Grid>
+                        <Grid
+                            item
+                            xs={12}
+                            sm={8}
+                            md={8}
+                            lg={8}
+                            paddingTop={2}
+                            pl={{ sm: 0, md: 0.5 }}>
                             <TextField
                                 variant="outlined"
                                 fullWidth

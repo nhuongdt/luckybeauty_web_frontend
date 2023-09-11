@@ -253,7 +253,8 @@ body .font-normal {
     font-weight: 700;
 }
 
-.MuiDataGrid-columnHeadersInner {
+.MuiDataGrid-columnHeadersInner,
+.MuiTableHead-root {
     background-color: var(--color-header-table) !important
 }
 
