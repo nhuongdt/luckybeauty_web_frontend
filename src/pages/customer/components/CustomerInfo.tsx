@@ -213,18 +213,18 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             gap: '32px'
                         }
                     }}>
-                    <Tab label="Thông tin" />
+                    {/* <Tab label="Thông tin" /> */}
                     <Tab label="Cuộc hẹn" />
                     <Tab label="Mua hàng" />
                 </Tabs>
             </Box>
-            <TabPanel value={selectedTab} index={0}>
+            {/* <TabPanel value={selectedTab} index={0}>
                 <TabInfor />
-            </TabPanel>
-            <TabPanel value={selectedTab} index={1}>
+            </TabPanel> */}
+            <TabPanel value={selectedTab} index={0}>
                 <TabCuocHen />
             </TabPanel>
-            <TabPanel value={selectedTab} index={2}>
+            <TabPanel value={selectedTab} index={1}>
                 <TabMuaHang />
             </TabPanel>
             <Box

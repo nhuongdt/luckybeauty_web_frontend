@@ -41,6 +41,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../../../../stores/suggestStore';
 import { SuggestNhanSuDto } from '../../../../../../services/suggests/dto/SuggestNhanSuDto';
+import { SuggestChucVuDto } from '../../../../../../services/suggests/dto/SuggestChucVuDto';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;
@@ -80,7 +81,21 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         selectedChucVuId: '',
         listIdEmployeeSelected: [] as string[],
         listEmployee: [] as SuggestNhanSuDto[],
-        listEmployeeSelected: [] as SuggestNhanSuDto[]
+        listEmployeeSelected: [] as SuggestNhanSuDto[],
+        filteredChucVu: [] as SuggestChucVuDto[],
+        chucVuSearchValue: '',
+        nhanVienSearchValue: '',
+        nhanVienSelectedSearchValue: ''
+    };
+    handleChucVuSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ chucVuSearchValue: event.target.value });
+    };
+
+    handleNhanVienSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ nhanVienSearchValue: event.target.value });
+    };
+    handleNhanVienSelectedSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ nhanVienSelectedSearchValue: event.target.value });
     };
     handleMoveAllRight = () => {
         this.setState({
@@ -153,6 +168,29 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
     render(): ReactNode {
         const { title, onClose, onSave, visited } = this.props;
         const initValues: CreateOrEditChietKhauHoaDonDto = chietKhauHoaDonStore.createOrEditDto;
+        const filteredChucVu =
+            this.state.chucVuSearchValue === ''
+                ? suggestStore.suggestChucVu
+                : suggestStore.suggestChucVu?.filter((item) =>
+                      item.tenChucVu
+                          .toLowerCase()
+                          .includes(this.state.chucVuSearchValue.toLowerCase())
+                  );
+        const filteredNhanVien = Array.isArray(this.state.listEmployee)
+            ? this.state.listEmployee.filter((item) =>
+                  item.tenNhanVien
+                      .toLowerCase()
+                      .includes(this.state.nhanVienSearchValue.toLowerCase())
+              )
+            : [];
+        const filteredSelectedNhanVien = Array.isArray(this.state.listEmployeeSelected)
+            ? this.state.listEmployeeSelected.filter((item) =>
+                  item.tenNhanVien
+                      .toLowerCase()
+                      .includes(this.state.nhanVienSelectedSearchValue.toLowerCase())
+              )
+            : [];
+
         return (
             <Dialog open={visited} fullWidth maxWidth="md" onClose={onClose}>
                 <DialogTitle sx={{ fontSize: '24px', fontWeight: '700' }}>
@@ -339,6 +377,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     className="search-field"
                                                     variant="outlined"
                                                     placeholder="Tìm kiếm"
+                                                    value={this.state.chucVuSearchValue}
+                                                    onChange={this.handleChucVuSearchChange}
                                                     InputProps={{
                                                         startAdornment: (
                                                             <IconButton type="button">
@@ -349,19 +389,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                 <Box
                                                     maxHeight={'300px'}
                                                     overflow={'auto'}
-                                                    marginTop={2}
-                                                    sx={{
-                                                        '&::-webkit-scrollbar': {
-                                                            width: '7px'
-                                                        },
-                                                        '&::-webkit-scrollbar-thumb': {
-                                                            bgcolor: 'rgba(0,0,0,0.1)',
-                                                            borderRadius: '4px'
-                                                        },
-                                                        '&::-webkit-scrollbar-track': {
-                                                            bgcolor: 'var(--color-bg)'
-                                                        }
-                                                    }}>
+                                                    marginTop={2}>
                                                     <ListItem
                                                         sx={{
                                                             backgroundColor:
@@ -370,36 +398,33 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                     : 'transparent' // Apply background color based on selection
                                                         }}
                                                         onClick={async () => {
-                                                            this.setState({
-                                                                selectedChucVuId: ''
+                                                            await this.setState({
+                                                                selectedChucVuId: '',
+                                                                chucVuSearchValue: ''
                                                             });
                                                         }}>
                                                         <ListItemText primary={'Tất cả'} />
                                                     </ListItem>
-                                                    {suggestStore.suggestChucVu?.map(
-                                                        (item, key) => (
-                                                            <ListItem
-                                                                key={key}
-                                                                sx={{
-                                                                    backgroundColor:
-                                                                        this.state
-                                                                            .selectedChucVuId ===
-                                                                        item.idChucVu
-                                                                            ? '#E6E6E6'
-                                                                            : 'transparent' // Apply background color based on selection
-                                                                }}
-                                                                onClick={async () => {
-                                                                    this.setState({
-                                                                        selectedChucVuId:
-                                                                            item.idChucVu
-                                                                    });
-                                                                }}>
-                                                                <ListItemText
-                                                                    primary={item.tenChucVu}
-                                                                />
-                                                            </ListItem>
-                                                        )
-                                                    )}
+                                                    {filteredChucVu.map((item, key) => (
+                                                        <ListItem
+                                                            key={key}
+                                                            sx={{
+                                                                backgroundColor:
+                                                                    this.state.selectedChucVuId ===
+                                                                    item.idChucVu
+                                                                        ? '#E6E6E6'
+                                                                        : 'transparent' // Apply background color based on selection
+                                                            }}
+                                                            onClick={async () => {
+                                                                this.setState({
+                                                                    selectedChucVuId: item.idChucVu
+                                                                });
+                                                            }}>
+                                                            <ListItemText
+                                                                primary={item.tenChucVu}
+                                                            />
+                                                        </ListItem>
+                                                    ))}
                                                 </Box>
                                             </Grid>
                                             <Grid item xs={4}>
@@ -410,6 +435,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     className="search-field"
                                                     variant="outlined"
                                                     placeholder="Tìm kiếm"
+                                                    value={this.state.nhanVienSearchValue}
+                                                    onChange={this.handleNhanVienSearchChange}
                                                     InputProps={{
                                                         startAdornment: (
                                                             <IconButton type="button">
@@ -420,19 +447,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                 <Box
                                                     maxHeight={'300px'}
                                                     overflow={'auto'}
-                                                    marginTop={2}
-                                                    sx={{
-                                                        '&::-webkit-scrollbar': {
-                                                            width: '7px'
-                                                        },
-                                                        '&::-webkit-scrollbar-thumb': {
-                                                            bgcolor: 'rgba(0,0,0,0.1)',
-                                                            borderRadius: '4px'
-                                                        },
-                                                        '&::-webkit-scrollbar-track': {
-                                                            bgcolor: 'var(--color-bg)'
-                                                        }
-                                                    }}>
+                                                    marginTop={2}>
                                                     <Box display={'flex'} justifyContent={'end'}>
                                                         <Button
                                                             variant="text"
@@ -440,8 +455,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             Thêm tất cả trong trang
                                                         </Button>
                                                     </Box>
-                                                    {Array.isArray(this.state.listEmployee) ? (
-                                                        this.state.listEmployee.map((item, key) => (
+                                                    {Array.isArray(filteredNhanVien) ? (
+                                                        filteredNhanVien.map((item, key) => (
                                                             <ListItem
                                                                 key={key}
                                                                 secondaryAction={
@@ -486,6 +501,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     className="search-field"
                                                     variant="outlined"
                                                     placeholder="Tìm kiếm"
+                                                    value={this.state.nhanVienSelectedSearchValue}
+                                                    onChange={
+                                                        this.handleNhanVienSelectedSearchChange
+                                                    }
                                                     InputProps={{
                                                         startAdornment: (
                                                             <IconButton type="button">
@@ -496,19 +515,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                 <Box
                                                     maxHeight={'300px'}
                                                     overflow={'auto'}
-                                                    marginTop={2}
-                                                    sx={{
-                                                        '&::-webkit-scrollbar': {
-                                                            width: '7px'
-                                                        },
-                                                        '&::-webkit-scrollbar-thumb': {
-                                                            bgcolor: 'rgba(0,0,0,0.1)',
-                                                            borderRadius: '4px'
-                                                        },
-                                                        '&::-webkit-scrollbar-track': {
-                                                            bgcolor: 'var(--color-bg)'
-                                                        }
-                                                    }}>
+                                                    marginTop={2}>
                                                     <Box display={'flex'} justifyContent={'end'}>
                                                         <Button
                                                             variant="text"
@@ -516,10 +523,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             Xóa tất cả
                                                         </Button>
                                                     </Box>
-                                                    {Array.isArray(
-                                                        this.state.listEmployeeSelected
-                                                    ) ? (
-                                                        this.state.listEmployeeSelected.map(
+                                                    {Array.isArray(filteredSelectedNhanVien) ? (
+                                                        filteredSelectedNhanVien.map(
                                                             (item, key) => (
                                                                 <ListItem
                                                                     key={key}

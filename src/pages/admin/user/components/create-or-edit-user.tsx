@@ -133,7 +133,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                 .matches(AppConsts.emailRegex, 'Email không hợp lệ')
                 .required('Email là bắt buộc'),
             userName: Yup.string().required('Tên truy cập là bắt buộc'),
-            phoneNumber: Yup.string().matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ'),
+            phoneNumber: Yup.string()
+                .matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ')
+                .notRequired(),
             password: Yup.string().matches(
                 AppConsts.passwordRegex,
                 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
