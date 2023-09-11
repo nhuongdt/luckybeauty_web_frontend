@@ -15,6 +15,7 @@ import { SuggestNhanVienDichVuDto } from './dto/SuggestNhanVienDichVuDto';
 import Cookies from 'js-cookie';
 import { SuggestDichVuDto } from './dto/SuggestDichVuDto';
 import { SuggestNhomHangHoaDto } from './dto/SuggestNhomHangHoaDto';
+import { SuggestLoaiChungTu } from './dto/SuggestLoaiChungTu';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
@@ -152,6 +153,15 @@ class SuggestService {
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while suggesting ChucVus:', error);
+            return [];
+        }
+    }
+    public async SuggestLoaiChungTu(): Promise<SuggestLoaiChungTu[]> {
+        try {
+            const result = await http.post('api/services/app/Suggest/SuggestLoaiChungTus');
+            return result.data.result;
+        } catch (error) {
+            console.error('Error occurred while suggesting Loại Chứng Từ:', error);
             return [];
         }
     }

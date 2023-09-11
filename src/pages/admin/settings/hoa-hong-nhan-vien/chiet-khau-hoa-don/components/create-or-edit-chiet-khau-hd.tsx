@@ -49,32 +49,6 @@ interface DialogProps {
     onSave: () => void;
     formRef: CreateOrEditChietKhauHoaDonDto;
 }
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250
-        }
-    }
-};
-const loaiChungTu = [
-    'Hóa đơn bán lẻ',
-    'Gói dịch vụ',
-    'Báo giá',
-    'Phiếu nhập kho nhà cung cấp',
-    'Phiếu xuất kho',
-    'Khách trả hàng',
-    'Thẻ giá trị',
-    'Phiếu kiểm kê',
-    'Chuyển hàng',
-    'Phiếu thu',
-    'Phiếu chi',
-    'Điều chỉnh giá vốn',
-    'Nhận hàng'
-];
-
 class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
     state = {
         tabIndex: '1',
@@ -200,7 +174,12 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                             aria-label="close"
                             onClick={() => {
                                 onClose();
-                                this.setState({ tabIndex: '1' });
+                                this.setState({
+                                    tabIndex: '1',
+                                    chucVuSearchValue: '',
+                                    nhanVienSearchValue: '',
+                                    nhanVienSelectedSearchValue: ''
+                                });
                             }}
                             sx={{
                                 position: 'absolute',
@@ -224,7 +203,12 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 variant: createOrEdit.status,
                                 autoHideDuration: 3000
                             });
-                            this.setState({ tabIndex: '1' });
+                            this.setState({
+                                tabIndex: '1',
+                                chucVuSearchValue: '',
+                                nhanVienSearchValue: '',
+                                nhanVienSelectedSearchValue: ''
+                            });
                             await onSave();
                         }}>
                         {({ handleChange, errors, touched, values, setFieldValue }) => (
@@ -314,16 +298,24 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             <Grid item xs={12} sm={12} md={8}>
                                                 <FormControl fullWidth>
                                                     <Autocomplete
-                                                        options={loaiChungTu}
-                                                        getOptionLabel={(option: any) => option}
+                                                        options={suggestStore.suggestLoaiChungTu}
+                                                        getOptionLabel={(option: any) =>
+                                                            option.tenLoaiChungTu
+                                                        }
                                                         size="small"
                                                         onChange={(_, newValue) => {
                                                             setFieldValue(
                                                                 'chungTuApDung',
-                                                                newValue
+                                                                newValue?.tenLoaiChungTu
                                                             );
                                                         }}
-                                                        value={values?.chungTuApDung}
+                                                        value={
+                                                            suggestStore.suggestLoaiChungTu.filter(
+                                                                (x) =>
+                                                                    x.tenLoaiChungTu ==
+                                                                    values?.chungTuApDung
+                                                            )[0] ?? { id: 0, tenLoaiChungTu: '' }
+                                                        }
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
@@ -580,7 +572,12 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             variant="outlined"
                                             onClick={() => {
                                                 onClose();
-                                                this.setState({ tabIndex: '1' });
+                                                this.setState({
+                                                    tabIndex: '1',
+                                                    chucVuSearchValue: '',
+                                                    nhanVienSearchValue: '',
+                                                    nhanVienSelectedSearchValue: ''
+                                                });
                                             }}
                                             sx={{
                                                 fontSize: '14px',

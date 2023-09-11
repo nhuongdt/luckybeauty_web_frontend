@@ -53,6 +53,7 @@ class ChietKhauHoaDonScreen extends Component {
         await suggestStore.getSuggestChucVu();
         await suggestStore.getSuggestNhanVien();
         await chietKhauHoaDonStore.createModel();
+        await suggestStore.getSuggestLoaiChungTu();
     };
     Modal = () => {
         this.setState({ visited: !this.state.visited, idChietKhauHD: '' });
