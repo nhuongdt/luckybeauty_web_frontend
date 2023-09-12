@@ -13,7 +13,6 @@ import {
     MenuItem
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Edit from '../../employee/lich-lam-viec/editNhanVien';
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import { BookingGetAllItemDto } from '../../../services/dat-lich/dto/BookingGetAllItemDto';
@@ -89,7 +88,7 @@ const TabDay: React.FC<{ data: BookingGetAllItemDto[] }> = ({ data }) => {
 
     return (
         <Box>
-            <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} />
+            {/* <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={handleOpenEditLich} /> */}
 
             <TableContainer
                 sx={{

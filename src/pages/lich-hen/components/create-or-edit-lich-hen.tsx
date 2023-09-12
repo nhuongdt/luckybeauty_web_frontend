@@ -22,10 +22,8 @@ import { ReactComponent as AddIcon } from '../../../images/add.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { Formik, Form } from 'formik';
 import AppConsts from '../../../lib/appconst';
-import datLichService from '../../../services/dat-lich/datLichService';
 import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
-import useWindowWidth from '../../../components/StateWidth';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
 import rules from './create-or-edit-lich-hen.validate';
@@ -37,7 +35,6 @@ import bookingStore from '../../../stores/bookingStore';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
-import { values } from 'lodash';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -47,7 +44,8 @@ interface ICreateOrEditProps {
 
 class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
     state = {
-        isShowKhachHangModal: false
+        isShowKhachHangModal: false,
+        thoiGianThucHien: '0'
     };
     componentDidMount(): void {
         khachHangStore.createKhachHangDto();
@@ -88,7 +86,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
     render(): ReactNode {
         const { visible, onCancel } = this.props;
         const initialValues = bookingStore.createOrEditBookingDto;
-
         return (
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">
                 <DialogTitle sx={{ borderBottom: '1px solid #E6E1E6' }}>
@@ -274,6 +271,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 'idDonViQuiDoi',
                                                                 value ? value.id : ''
                                                             ); // Cập nhật giá trị id trong Formik
+
                                                             await suggestStore.getSuggestKyThuatVienByIdDichVu(
                                                                 value ? value.id : ''
                                                             );
@@ -395,7 +393,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     </FormGroup>
                                                 </Grid>
                                                 <Grid item md={4} sm={6} xs={12}>
-                                                    <FormGroup className="mt-2 mb-1">
+                                                    <FormGroup>
                                                         <TextField
                                                             label={
                                                                 <Typography
@@ -404,7 +402,13 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                     Thời gian làm
                                                                 </Typography>
                                                             }
-                                                            type="number"
+                                                            value={
+                                                                suggestStore.suggestDichVu.find(
+                                                                    (x) =>
+                                                                        x.id == values.idDonViQuiDoi
+                                                                )?.thoiGianThucHien ?? '0'
+                                                            }
+                                                            type="text"
                                                             size="small"></TextField>
                                                     </FormGroup>
                                                 </Grid>

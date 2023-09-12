@@ -19,9 +19,13 @@ class LichLamViecService {
         const response = await http.post('api/services/app/LichLamViec/CreateOrEdit', input);
         return response.data.success;
     }
-    public async inportLichLamViec(input: FileUpload) {
-        const result = await http.post(`api/services/app/NhanSu/Delete`);
-        return result.data.result;
+    public async delete(id: string) {
+        const response = await http.post(`api/services/app/LichLamViec/Delete?id=${id}`);
+        return response.data.result;
     }
+    // public async inportLichLamViec(input: FileUpload) {
+    //     const result = await http.post(`api/services/app/NhanSu/Delete`);
+    //     return result.data.result;
+    // }
 }
 export default new LichLamViecService();

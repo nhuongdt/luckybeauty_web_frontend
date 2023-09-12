@@ -35,6 +35,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import vi from 'date-fns/locale/vi';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
+import { NumericFormat } from 'react-number-format';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -274,11 +275,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     </Grid>
 
                                     <Grid item xs={12} md={6}>
-                                        <TextField
+                                        <NumericFormat
+                                            name="soDienThoai"
                                             size="small"
                                             type="tel"
-                                            name="soDienThoai"
-                                            value={values.soDienThoai}
                                             label={
                                                 <Typography
                                                     //color="#4C4B4C"
@@ -286,8 +286,8 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                     Số điện thoại
                                                 </Typography>
                                             }
-                                            onChange={handleChange}
-                                            placeholder="Số điện thoại"
+                                            fullWidth
+                                            value={values.soDienThoai}
                                             error={
                                                 errors.soDienThoai && touched.soDienThoai
                                                     ? true
@@ -301,8 +301,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                     </small>
                                                 )
                                             }
-                                            fullWidth
-                                            sx={{ fontSize: '16px' }}></TextField>
+                                            sx={{ fontSize: '13px' }}
+                                            onChange={handleChange}
+                                            customInput={TextField}
+                                        />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <TextField

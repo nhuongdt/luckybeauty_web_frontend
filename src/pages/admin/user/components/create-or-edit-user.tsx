@@ -33,6 +33,7 @@ import { GetRoles } from '../../../../services/user/dto/getRolesOuput';
 import TabList from '@mui/lab/TabList';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../../../lib/appconst';
+import { NumericFormat } from 'react-number-format';
 //import rules from './createOrUpdateUser.validation';
 export interface ICreateOrEditUserProps {
     visible: boolean;
@@ -299,7 +300,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         )}
                                                     />
                                                 </FormGroup>
-                                                <FormGroup>
+                                                {/* <FormGroup>
                                                     <TextField
                                                         label={
                                                             <label style={{ fontSize: '14px' }}>
@@ -331,8 +332,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                </FormGroup>
-                                                <FormGroup>
+                                                </FormGroup> */}
+                                                {/* <FormGroup>
                                                     <TextField
                                                         label={
                                                             <label style={{ fontSize: '14px' }}>
@@ -362,68 +363,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         onChange={handleChange}
                                                         size="small"
                                                     />
-                                                </FormGroup>
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                flexDirection="column"
-                                                gap="16px">
-                                                <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Email
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                        }
-                                                        error={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress && (
-                                                                <div>{errors.emailAddress}</div>
-                                                            )
-                                                        }
-                                                        type="email"
-                                                        name="emailAddress"
-                                                        value={values.emailAddress}
-                                                        onChange={handleChange}
-                                                        fullWidth
-                                                        size="small"
-                                                    />
-                                                </FormGroup>
-                                                <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Số điện thoại
-                                                            </label>
-                                                        }
-                                                        helperText={
-                                                            errors.phoneNumber && (
-                                                                <div>{errors.phoneNumber}</div>
-                                                            )
-                                                        }
-                                                        type="text"
-                                                        name="phoneNumber"
-                                                        value={values.phoneNumber}
-                                                        onChange={handleChange}
-                                                        fullWidth
-                                                        size="small"
-                                                    />
-                                                </FormGroup>
+                                                </FormGroup> */}
                                                 <FormGroup>
                                                     <TextField
                                                         label={
@@ -458,6 +398,136 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         size="small"
                                                     />
                                                 </FormGroup>
+                                                <FormGroup>
+                                                    <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Email
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress && (
+                                                                <div>{errors.emailAddress}</div>
+                                                            )
+                                                        }
+                                                        type="email"
+                                                        name="emailAddress"
+                                                        value={values.emailAddress}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        size="small"
+                                                    />
+                                                </FormGroup>
+                                            </Grid>
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                display="flex"
+                                                flexDirection="column"
+                                                gap="16px">
+                                                {/* <FormGroup>
+                                                    <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Email
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress && (
+                                                                <div>{errors.emailAddress}</div>
+                                                            )
+                                                        }
+                                                        type="email"
+                                                        name="emailAddress"
+                                                        value={values.emailAddress}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        size="small"
+                                                    />
+                                                </FormGroup> */}
+                                                {/* <FormGroup>
+                                                    <NumericFormat
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Số điện thoại
+                                                            </label>
+                                                        }
+                                                        helperText={
+                                                            errors.phoneNumber && (
+                                                                <div>{errors.phoneNumber}</div>
+                                                            )
+                                                        }
+                                                        type="text"
+                                                        name="phoneNumber"
+                                                        value={values.phoneNumber}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        size="small"
+                                                        customInput={TextField}
+                                                    />
+                                                </FormGroup> */}
+                                                {/* <FormGroup>
+                                                    <TextField
+                                                        label={
+                                                            <label style={{ fontSize: '14px' }}>
+                                                                Tên truy cập
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        error={
+                                                            touched.userName && errors.userName
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        helperText={
+                                                            touched.userName &&
+                                                            errors.userName && (
+                                                                <div>{errors.userName}</div>
+                                                            )
+                                                        }
+                                                        disabled={userId === 0 ? false : true}
+                                                        type="text"
+                                                        name="userName"
+                                                        value={values.userName}
+                                                        onChange={handleChange}
+                                                        fullWidth
+                                                        size="small"
+                                                    />
+                                                </FormGroup> */}
 
                                                 <FormGroup>
                                                     <TextField

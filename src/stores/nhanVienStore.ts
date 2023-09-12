@@ -31,7 +31,6 @@ class NhanVienStore {
     }
     async delete(id: string) {
         await NhanVienService.delete(id);
-        this.listNhanVien.items = this.listNhanVien.items.filter((x) => x.id !== id);
     }
     async search(keyWord: string, input: PagedFilterAndSortedRequest) {
         const result = await NhanVienService.search(keyWord, input);

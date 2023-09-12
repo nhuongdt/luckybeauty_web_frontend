@@ -13,6 +13,7 @@ import {
     FormControl,
     Typography
 } from '@mui/material';
+import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
@@ -36,7 +37,13 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
             tuNgay: createOrEditDto.tuNgay,
             denNgay: createOrEditDto.denNgay
         };
-
+        const rules = Yup.object().shape({
+            tenNgayLe: Yup.string().required('Tên ngày lễ không được để trống'),
+            tuNgay: Yup.date().required('Ngày bắt đầu không được để trống'),
+            denNgay: Yup.date()
+                .min(Yup.ref('tuNgay'), 'Thời gian kết thúc phải lớn hơn hoặc bằng ngày bắt đầu')
+                .required('Ngày kết thúc không được để trống')
+        });
         const handleSubmit = async (values: CreateOrEditNgayNghiLeDto) => {
             values.id = createOrEditDto.id;
             const createOrEdit = await ngayNghiLeService.createOrEdit(values);
@@ -82,8 +89,11 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                     </div>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-                        {({ values, handleChange }) => (
+                    <Formik
+                        initialValues={initialValues}
+                        validationSchema={rules}
+                        onSubmit={handleSubmit}>
+                        {({ values, handleChange, errors, touched }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -97,6 +107,19 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                 label={<Typography>Tên ngày lễ</Typography>}
                                                 sx={{ marginTop: '16px' }}
                                                 value={values.tenNgayLe}
+                                                error={
+                                                    errors.tenNgayLe && touched.tenNgayLe
+                                                        ? true
+                                                        : false
+                                                }
+                                                helperText={
+                                                    errors.tenNgayLe &&
+                                                    touched.tenNgayLe && (
+                                                        <span className="text-danger">
+                                                            {errors.tenNgayLe}
+                                                        </span>
+                                                    )
+                                                }
                                                 type="text"
                                                 name="tenNgayLe"
                                                 size="small"
@@ -113,9 +136,21 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                 type="date"
                                                 size="small"
                                                 name="tuNgay"
+                                                error={
+                                                    Boolean(errors.tuNgay) && touched.tuNgay
+                                                        ? true
+                                                        : false
+                                                }
+                                                helperText={
+                                                    Boolean(errors.tuNgay) &&
+                                                    touched?.tuNgay && (
+                                                        <span className="text-danger">
+                                                            {String(errors.tuNgay)}
+                                                        </span>
+                                                    )
+                                                }
                                                 value={values.tuNgay.toString().slice(0, 10)}
                                                 onChange={handleChange}
-                                                placeholder="Nhập từ ngày"
                                             />
                                         </FormGroup>
                                     </Grid>
@@ -127,9 +162,21 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                 className="mt-2"
                                                 size="small"
                                                 name="denNgay"
+                                                error={
+                                                    Boolean(errors.denNgay) && touched?.denNgay
+                                                        ? true
+                                                        : false
+                                                }
+                                                helperText={
+                                                    Boolean(errors.denNgay) &&
+                                                    touched?.denNgay && (
+                                                        <span className="text-danger">
+                                                            {String(errors.denNgay)}
+                                                        </span>
+                                                    )
+                                                }
                                                 value={values.denNgay.toString().slice(0, 10)}
                                                 onChange={handleChange}
-                                                placeholder="Nhập từ ngày"
                                             />
                                         </FormGroup>
                                     </Grid>

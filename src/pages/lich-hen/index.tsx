@@ -233,7 +233,6 @@ const LichHen: React.FC = () => {
                         gap: '8px'
                     }}>
                     <Button
-                        onClick={createHubConnection}
                         variant="outlined"
                         className="btn-outline-hover"
                         sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>

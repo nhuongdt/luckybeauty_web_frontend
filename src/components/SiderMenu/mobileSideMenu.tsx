@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { appRouters } from '../routers';
 import sessionStore from '../../stores/sessionStore';
-import './sider_menu.css';
 import { observer } from 'mobx-react';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -128,13 +127,14 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                             '& a': {
                                 fontSize: '14px',
                                 fontFamily: 'Roboto',
-                                color:
-                                    location.pathname === route.path ||
-                                    route.children?.some(
-                                        (dropdownItem) => location.pathname === dropdownItem.key
-                                    )
-                                        ? '#00284C'
-                                        : '#3B4758',
+                                // color:
+                                //     location.pathname === route.path ||
+                                //     route.children?.some(
+                                //         (dropdownItem) => location.pathname === dropdownItem.key
+                                //     )
+                                //         ? '#00284C'
+                                //         : '#3B4758',
+                                color: 'black',
                                 fontWeight:
                                     location.pathname === route.path ||
                                     route.children?.some(
@@ -152,13 +152,14 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                             '& span': {
                                 fontSize: '14px',
                                 fontFamily: 'Roboto !important',
-                                color:
-                                    location.pathname === route.path ||
-                                    route.children?.some(
-                                        (dropdownItem) => location.pathname === dropdownItem.path
-                                    )
-                                        ? '#3B4758'
-                                        : '#3D475C',
+                                // color:
+                                //     location.pathname === route.path ||
+                                //     route.children?.some(
+                                //         (dropdownItem) => location.pathname === dropdownItem.path
+                                //     )
+                                //         ? '#3B4758'
+                                //         : '#3D475C',
+                                color: 'black',
                                 fontWeight:
                                     location.pathname === route.path ||
                                     route.children?.some(
@@ -227,8 +228,8 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                         '& svg': {
                                             filter:
                                                 location.pathname === dropdownItem.path
-                                                    ? ' var(--color-hoverIcon)'
-                                                    : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
+                                                    ? 'var(--color-hoverIcon)'
+                                                    : 'black'
                                         },
                                         minWidth: '20px'
                                     }}>
@@ -243,9 +244,11 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                                 location.pathname === dropdownItem.path
                                                     ? '#319DFF'
                                                     : '#3D475C'
+                                            //color: 'black'
                                         },
                                         ':hover a': {
-                                            color: '#319DFF'
+                                            //color: '#319DFF'
+                                            color: 'black'
                                         }
                                     }}
                                 />

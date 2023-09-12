@@ -37,6 +37,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Close } from '@mui/icons-material';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
+import { NumericFormat } from 'react-number-format';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
@@ -248,7 +249,25 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 }}></TextField>
                                         </Grid>
                                         <Grid item xs={12} sm={6}>
-                                            <TextField
+                                            <NumericFormat
+                                                name="soDienThoai"
+                                                size="small"
+                                                type="tel"
+                                                label="Số điện thoại"
+                                                fullWidth
+                                                value={values.soDienThoai}
+                                                helperText={
+                                                    errors.soDienThoai && touched.soDienThoai ? (
+                                                        <small className="text-danger">
+                                                            Số điện thoại không hợp lệ
+                                                        </small>
+                                                    ) : null
+                                                }
+                                                sx={{ fontSize: '13px' }}
+                                                onChange={handleChange}
+                                                customInput={TextField}
+                                            />
+                                            {/* <TextField
                                                 type="tel"
                                                 size="small"
                                                 name="soDienThoai"
@@ -263,7 +282,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                         </small>
                                                     ) : null
                                                 }
-                                                sx={{ fontSize: '13px' }}></TextField>
+                                                sx={{ fontSize: '13px' }}></TextField> */}
                                         </Grid>
                                         <Grid item sm={6} xs={12}>
                                             {/* <DatePickerCustom

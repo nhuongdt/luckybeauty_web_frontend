@@ -8,6 +8,7 @@ import { enqueueSnackbar } from 'notistack';
 import utils from '../../../../utils/utils';
 import uploadFileService from '../../../../services/uploadFileService';
 import abpCustom from '../../../../components/abp-custom';
+import AppConsts from '../../../../lib/appconst';
 class StoreDetail extends Component {
     state = {
         fileSelect: {} as File,
@@ -26,7 +27,13 @@ class StoreDetail extends Component {
             twitter: '',
             website: '',
             fileLogo: ''
-        } as EditCuaHangDto
+        } as EditCuaHangDto,
+        errors: {
+            soDienThoai: '',
+            tenCongTy: '',
+            diaChi: '',
+            maSoThue: ''
+        }
     };
     async getData() {
         const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? '';
@@ -54,6 +61,10 @@ class StoreDetail extends Component {
             editCuaHang: {
                 ...this.state.editCuaHang,
                 [name]: value
+            },
+            errors: {
+                ...this.state.errors,
+                [name]: '' // Clear the error for this field
             }
         });
     };
@@ -86,7 +97,45 @@ class StoreDetail extends Component {
             };
         });
     };
+    validatePhoneNumber = (phoneNumber: string) => {
+        return AppConsts.phoneRegex.test(phoneNumber);
+    };
+    validateMaSoThue = (maSoThue: string) => {
+        return maSoThue.length === 10 || maSoThue.length === 13;
+    };
     handSubmit = async () => {
+        const { soDienThoai, tenCongTy, diaChi, maSoThue } = this.state.editCuaHang;
+        if (!soDienThoai || !tenCongTy || !diaChi || !maSoThue) {
+            this.setState({
+                errors: {
+                    soDienThoai: !soDienThoai ? 'Số điện thoại là trường bắt buộc' : '',
+                    tenCongTy: !tenCongTy ? 'Tên cửa hàng là trường bắt buộc' : '',
+                    diaChi: !diaChi ? 'Địa chỉ là trường bắt buộc' : '',
+                    maSoThue: !maSoThue ? 'Mã số thuế là trường bắt buộc' : ''
+                }
+            });
+            return;
+        }
+
+        if (!this.validatePhoneNumber(soDienThoai)) {
+            this.setState({
+                errors: {
+                    ...this.state.errors,
+                    soDienThoai: 'Số điện thoại không hợp lệ'
+                }
+            });
+            return;
+        }
+
+        if (!this.validateMaSoThue(maSoThue)) {
+            this.setState({
+                errors: {
+                    ...this.state.errors,
+                    maSoThue: 'Mã số thuế phải có độ dài 10 hoặc 13 số'
+                }
+            });
+            return;
+        }
         let fileId = this.state.googleDrive_fileId;
         const fileSelect = this.state.fileSelect;
         if (!utils.checkNull(this.state.editCuaHang.fileLogo)) {
@@ -103,7 +152,6 @@ class StoreDetail extends Component {
             }
         }
         this.setState({ isSaving: true });
-        console.log(333, this.state.isSaving);
         if (this.state.isSaving) return;
         // gán lại image theo id mới
         const dataSave = this.state.editCuaHang;
@@ -118,7 +166,15 @@ class StoreDetail extends Component {
                   variant: 'error',
                   autoHideDuration: 3000
               });
-        this.setState({ isSaving: false });
+        this.setState({
+            isSaving: false,
+            errors: {
+                soDienThoai: '',
+                tenCongTy: '',
+                diaChi: '',
+                maSoThue: ''
+            }
+        });
     };
 
     render(): ReactNode {
@@ -259,6 +315,8 @@ class StoreDetail extends Component {
                                             placeholder="Nhập tên"
                                             onChange={this.handleChange}
                                             value={editCuaHang.tenCongTy}
+                                            error={Boolean(this.state.errors.tenCongTy)}
+                                            helperText={this.state.errors.tenCongTy}
                                         />
                                     </Stack>
                                 </Grid>
@@ -271,6 +329,8 @@ class StoreDetail extends Component {
                                             name="diaChi"
                                             onChange={this.handleChange}
                                             value={editCuaHang.diaChi}
+                                            error={Boolean(this.state.errors.diaChi)}
+                                            helperText={this.state.errors.diaChi}
                                         />
                                     </Stack>
                                 </Grid>
@@ -283,6 +343,8 @@ class StoreDetail extends Component {
                                             name="soDienThoai"
                                             onChange={this.handleChange}
                                             value={editCuaHang.soDienThoai}
+                                            error={Boolean(this.state.errors.soDienThoai)}
+                                            helperText={this.state.errors.soDienThoai}
                                         />
                                     </Stack>
                                 </Grid>
@@ -295,6 +357,8 @@ class StoreDetail extends Component {
                                             name="maSoThue"
                                             onChange={this.handleChange}
                                             value={editCuaHang.maSoThue}
+                                            error={Boolean(this.state.errors.maSoThue)}
+                                            helperText={this.state.errors.maSoThue}
                                         />
                                     </Stack>
                                 </Grid>

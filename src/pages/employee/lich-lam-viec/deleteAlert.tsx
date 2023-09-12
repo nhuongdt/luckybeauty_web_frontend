@@ -15,30 +15,9 @@ import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 interface DialogComponentProps {
     open: boolean;
     onClose: () => void;
+    onDelete: () => void;
 }
-const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
-    const currentDate = new Date();
-    const startOfCurrentWeek = startOfWeek(currentDate);
-
-    const daysOfWeek = [];
-    let defaultDay = '';
-    for (let i = 0; i < 7; i++) {
-        const day = addDays(startOfCurrentWeek, i);
-        const formattedDay = format(day, 'EEEE, dd/MM/yyyy', { locale: viLocale });
-        if (formattedDay.includes('Thứ Hai')) {
-            defaultDay = formattedDay;
-        }
-        daysOfWeek.push(
-            <MenuItem key={i} value={formattedDay}>
-                {formattedDay}
-            </MenuItem>
-        );
-    }
-    daysOfWeek.push(daysOfWeek.shift());
-    const [curent, setCurent] = useState<string | typeof defaultDay>(defaultDay);
-    const handleChange = (event: SelectChangeEvent<string | typeof defaultDay>) => {
-        setCurent(event.target.value);
-    };
+const Delete: React.FC<DialogComponentProps> = ({ open, onClose, onDelete }) => {
     return (
         <Dialog open={open} onClose={onClose}>
             <Box
@@ -73,34 +52,12 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose }) => {
                         <CloseIcon />
                     </Button>
                 </Box>
-                <Typography
-                    // color="#4C4B4C"
-                    fontSize="14px"
-                    fontWeight="500"
-                    variant="body1">
-                    Từ
-                </Typography>
-                <Select
-                    fullWidth
-                    value={curent}
-                    displayEmpty
-                    onChange={handleChange}
-                    IconComponent={() => <ArrowDown />}
-                    sx={{
-                        width: '100%',
-                        '[aria-expanded="true"] ~ svg': {
-                            transform: 'rotate(180deg)'
-                        },
-                        pr: '20px',
-                        color: '#4C4B4C',
-                        height: '48px',
-                        mt: '8px'
-                    }}>
-                    {daysOfWeek}
-                </Select>
+                <Box display="flex" justifyContent="end" mt={3}>
+                    Bạn có chắc muốn xóa lịch làm việc của ca này không?
+                </Box>
                 <Box display="flex" justifyContent="end" gap="8px" mt="24px">
                     <Button
-                        onClick={onClose}
+                        onClick={onDelete}
                         variant="contained"
                         sx={{ bgcolor: 'var(--color-main)!important' }}
                         className="btn-container-hover">

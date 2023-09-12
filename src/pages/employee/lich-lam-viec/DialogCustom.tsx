@@ -6,7 +6,7 @@ interface DialogComponentProps {
     selectedRowId: any;
     anchorEl: any;
     handleOpenDelete: () => void;
-    handleOpenEdit: () => void;
+    handleOpenEditEmployee: () => void;
     handleOpenDialog: () => void;
     handleCloseDialog: () => void;
 }
@@ -16,7 +16,7 @@ const CustomEmployee: React.FC<DialogComponentProps> = ({
     handleClose,
     selectedRowId,
     anchorEl,
-    handleOpenEdit,
+    handleOpenEditEmployee,
     handleOpenDelete,
     handleOpenDialog
 }) => {
@@ -47,9 +47,8 @@ const CustomEmployee: React.FC<DialogComponentProps> = ({
                     }
                 }}>
                 <MenuItem onClick={handleOpenDialog}>Thêm ca làm việc thường xuyên</MenuItem>
-                <MenuItem onClick={undefined}>Xóa nhân viên khỏi lịch làm việc</MenuItem>
-                <MenuItem onClick={handleOpenDelete}>Xóa tất cả ca làm việc</MenuItem>
-                <MenuItem onClick={handleOpenEdit}>Chỉnh sửa nhân viên</MenuItem>
+                <MenuItem onClick={handleOpenDelete}>Xóa lịch làm việc</MenuItem>
+                {/* <MenuItem onClick={handleOpenEditEmployee}>Chỉnh sửa nhân viên</MenuItem> */}
             </Box>
         </Menu>
     );

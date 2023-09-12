@@ -1,8 +1,44 @@
 import { Box, Typography, Grid, Button } from '@mui/material';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import Calendar from './FullCalendar';
-const LichLamViec: React.FC = () => {
+import LichLamViec from './lich-lam-viec';
+import CreateOrEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
+import AppConsts from '../../../lib/appconst';
+import lichLamViecStore from '../../../stores/lichLamViecStore';
+import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
+import suggestStore from '../../../stores/suggestStore';
+import Cookies from 'js-cookie';
+const LichLamViecScreen: React.FC = () => {
+    const [openDialog, setOpenDialog] = useState(false);
+    const appContext = useContext(AppContext);
+    const chinhanhContext = appContext.chinhanhCurrent;
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+    };
+    const handleSubmit = () => {
+        handleCloseDialog();
+        getData();
+    };
+    useEffect(() => {
+        getSuggestNhanVien();
+    }, [chinhanhContext.id]);
+    const getSuggestNhanVien = async () => {
+        await suggestStore.getSuggestNhanVien();
+    };
+    const getData = async () => {
+        await lichLamViecStore.getLichLamViecNhanVienWeek({
+            dateFrom: new Date(),
+            dateTo: new Date(),
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            keyword: '',
+            skipCount: 0,
+            maxResultCount: 10,
+            idNhanVien: ''
+        });
+    };
     return (
         <Box>
             <Box sx={{ paddingTop: '16px' }}>
@@ -28,18 +64,26 @@ const LichLamViec: React.FC = () => {
                                     }}
                                 />
                             </Button>
-                            <Button variant="contained" className="btn-container-hover">
+                            <Button
+                                variant="contained"
+                                className="btn-container-hover"
+                                onClick={handleOpenDialog}>
                                 Thêm ca
                             </Button>
                         </Box>
                     </Grid>
                 </Grid>
                 <Box sx={{ borderTop: '1px solid #E6E1E6', mt: '18px', pt: '16px' }}>
-                    <Calendar />
+                    <LichLamViec />
                 </Box>
+                <CreateOrEditLichLamViecModal
+                    idNhanVien={AppConsts.guidEmpty}
+                    open={openDialog}
+                    onClose={handleSubmit}
+                />
             </Box>
         </Box>
     );
 };
 
-export default LichLamViec;
+export default LichLamViecScreen;

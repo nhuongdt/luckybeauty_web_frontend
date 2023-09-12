@@ -132,6 +132,7 @@ class EmployeeScreen extends React.Component {
                   variant: 'error',
                   autoHideDuration: 3000
               });
+        this.getListNhanVien();
         this.resetData();
     }
     Modal = () => {

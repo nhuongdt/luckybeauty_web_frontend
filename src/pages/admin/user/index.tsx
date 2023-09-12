@@ -256,8 +256,8 @@ class UserScreen extends AppComponentBase {
                             overflow: 'hidden',
                             textOverflow: 'ellipsis'
                         }}
-                        title={params.value}>
-                        {params.value}
+                        title={params.value.join(', ')}>
+                        {params.value.join(', ')}
                     </Box>
                 )
             },

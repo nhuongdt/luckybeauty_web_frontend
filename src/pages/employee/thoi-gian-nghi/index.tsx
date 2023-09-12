@@ -420,7 +420,7 @@ class EmployeeHoliday extends Component {
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
-                            hidden={!abpCustom.isGrandPermission('NhanSu_NgayNghiLe.Import')}
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_NgayNghiLe.Import')}
                             size="small"
                             onClick={this.onImportShow}
                             variant="outlined"
@@ -437,7 +437,7 @@ class EmployeeHoliday extends Component {
                             Nhập
                         </Button>
                         <Button
-                            hidden={!abpCustom.isGrandPermission('NhanSu_NgayNghiLe.Export')}
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_NgayNghiLe.Export')}
                             size="small"
                             onClick={this.exportToExcel}
                             variant="outlined"
@@ -460,7 +460,7 @@ class EmployeeHoliday extends Component {
                             onClick={() => {
                                 this.createOrUpdateModalOpen('');
                             }}
-                            hidden={!abpCustom.isGrandPermission('NhanSu_NgayNghiLe.Create')}
+                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_NgayNghiLe.Create')}
                             startIcon={<img src={AddIcon} />}
                             sx={{
                                 textTransform: 'capitalize',

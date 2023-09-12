@@ -27,7 +27,6 @@ import { ReactComponent as ListIcon } from '../../../images/list.svg';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 import CustomEmployee from './DialogCustom';
 import Delete from './deleteAlert';
-import Edit from './editNhanVien';
 import Cookies from 'js-cookie';
 import lichLamViecStore from '../../../stores/lichLamViecStore';
 import { observer } from 'mobx-react';
@@ -37,7 +36,10 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import CreateOeEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
 import AppConsts from '../../../lib/appconst';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
-const Calendar: React.FC = () => {
+import suggestStore from '../../../stores/suggestStore';
+import lichLamViecService from '../../../services/nhan-vien/lich_lam_viec/lichLamViecService';
+import { enqueueSnackbar } from 'notistack';
+const LichLamViec: React.FC = () => {
     const appContext = useContext(AppContext);
     const chinhanhContext = appContext.chinhanhCurrent;
     const [weekDates, setWeekDates] = useState<any[]>([]);
@@ -57,6 +59,7 @@ const Calendar: React.FC = () => {
     }, [chinhanhContext.id]);
     const getSuggestNhanVien = async () => {
         const result = await SuggestService.SuggestNhanSu();
+        //await suggestStore.getSuggestNhanVien();
         setSuggestNhanVien(result);
     };
     const getWeekDate = (dateCurrent: Date) => {
@@ -123,6 +126,7 @@ const Calendar: React.FC = () => {
 
     const [openDialog, setOpenDialog] = useState(false);
     const handleOpenDialog = () => {
+        setAnchorEl(null);
         setOpenDialog(true);
     };
     const handleCloseDialog = () => {
@@ -134,17 +138,30 @@ const Calendar: React.FC = () => {
     };
     const [openDelete, setOpenDelete] = useState(false);
     const handleOpenDelete = () => {
+        setAnchorEl(null);
         setOpenDelete(true);
     };
     const handleCloseDelete = () => {
         setOpenDelete(false);
+        setSelectedId('');
+    };
+    const handleDelete = async () => {
+        if (selectedId !== '') {
+            const result = await lichLamViecService.delete(selectedId);
+            enqueueSnackbar(result.message, {
+                variant: result.status,
+                autoHideDuration: 3000
+            });
+            await getData();
+        }
+        handleCloseDelete();
     };
     const [openEdit, setOpenEdit] = useState(false);
-    const handleOpenEdit = () => {
+    const handleOpenEditEmployee = () => {
         setOpenEdit(true);
-        handleCloseMenu();
+        setAnchorEl(null);
     };
-    const handleCloseEdit = () => {
+    const handleCloseEditEmployee = () => {
         setOpenEdit(false);
     };
 
@@ -206,11 +223,13 @@ const Calendar: React.FC = () => {
     };
     const handlePageChange = async (event: any, value: number) => {
         await lichLamViecStore.updatePageChange(value);
+        setSkipCount(value);
         getData();
     };
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await lichLamViecStore.updatePageChange(1);
         await lichLamViecStore.updatePerPageChange(parseInt(event.target.value.toString(), 10));
+        setMaxResultCount(parseInt(event.target.value.toString(), 10));
         getData();
     };
     return (
@@ -223,10 +242,10 @@ const Calendar: React.FC = () => {
                 handleOpenDelete={handleOpenDelete}
                 handleOpenDialog={handleOpenDialog}
                 handleCloseDialog={handleCloseDialog}
-                handleOpenEdit={handleOpenEdit}
+                handleOpenEditEmployee={handleOpenEditEmployee}
             />
-            <Edit open={openEdit} onClose={handleCloseEdit} openEditLich={() => undefined} />
-            <Delete open={openDelete} onClose={handleCloseDelete} />
+
+            <Delete open={openDelete} onDelete={handleDelete} onClose={handleCloseDelete} />
             {/* <ThemLich open={openDialog} onClose={handleCloseDialog} /> */}
             <CreateOeEditLichLamViecModal
                 idNhanVien={idNhanVien}
@@ -530,4 +549,4 @@ const Calendar: React.FC = () => {
     );
 };
 
-export default observer(Calendar);
+export default observer(LichLamViec);

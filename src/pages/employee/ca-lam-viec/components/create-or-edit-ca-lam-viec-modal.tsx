@@ -8,24 +8,18 @@ import {
     DialogContent,
     DialogTitle,
     FormGroup,
-    FormLabel,
     FormControlLabel,
     Checkbox,
     Grid,
-    Select,
-    MenuItem,
     TextField,
-    Typography,
-    FormControl,
-    InputLabel
+    Typography
 } from '@mui/material';
+import * as Yup from 'yup';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import caLamViecService from '../../../../services/nhan-vien/ca_lam_viec/caLamViecService';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../../../lib/appconst';
-import Cookies from 'js-cookie';
-import caLamViecStore from '../../../../stores/caLamViecStore';
 interface CreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -39,6 +33,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
     render(): ReactNode {
         const { visible, onCancel, title, createOrEditDto } = this.props;
         const initValues = createOrEditDto;
+        const rules = Yup.object().shape({
+            tenCa: Yup.string().required('Tên ca không dược để trống'),
+            gioVao: Yup.string().required('Giờ bắt đầu ca không được để trống'),
+            gioRa: Yup.string().required('Giờ kết thúc ca không được để trống')
+        });
         const handleSubmit = async (values: CreateOrEditCaLamViecDto) => {
             values.id = createOrEditDto.id;
             const createOrEdit = await caLamViecService.ceateOrEdit(values);
@@ -58,7 +57,6 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                   });
             onCancel();
         };
-        const date = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
         return (
             <Dialog open={visible} onClose={onCancel} maxWidth="md">
                 <DialogTitle>
@@ -84,8 +82,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                     </div>
                 </DialogTitle>
                 <DialogContent sx={{ paddingBottom: '0' }}>
-                    <Formik initialValues={initValues} onSubmit={handleSubmit}>
-                        {({ values, handleChange }) => (
+                    <Formik
+                        initialValues={initValues}
+                        validationSchema={rules}
+                        onSubmit={handleSubmit}>
+                        {({ values, handleChange, errors, touched }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -103,6 +104,15 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             <TextField
                                                 label={<Typography>Tên ca</Typography>}
                                                 value={values.tenCa}
+                                                error={errors.tenCa && touched.tenCa ? true : false}
+                                                helperText={
+                                                    errors.tenCa &&
+                                                    touched.tenCa && (
+                                                        <span className="text-danger">
+                                                            {errors.tenCa}
+                                                        </span>
+                                                    )
+                                                }
                                                 type="text"
                                                 name="tenCa"
                                                 size="small"
@@ -134,6 +144,17 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 size="small"
                                                 name="gioVao"
                                                 value={values.gioVao}
+                                                error={
+                                                    errors.gioVao && touched.gioVao ? true : false
+                                                }
+                                                helperText={
+                                                    errors.tenCa &&
+                                                    touched.tenCa && (
+                                                        <span className="text-danger">
+                                                            {errors.gioVao}
+                                                        </span>
+                                                    )
+                                                }
                                                 onChange={handleChange}
                                                 InputLabelProps={{
                                                     shrink: true
@@ -150,6 +171,15 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 size="small"
                                                 name="gioRa"
                                                 value={values.gioRa}
+                                                error={errors.gioRa && touched.gioRa ? true : false}
+                                                helperText={
+                                                    errors.gioRa &&
+                                                    touched.gioRa && (
+                                                        <span className="text-danger">
+                                                            {errors.gioRa}
+                                                        </span>
+                                                    )
+                                                }
                                                 onChange={handleChange}
                                                 InputLabelProps={{
                                                     shrink: true

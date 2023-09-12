@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
 import { appRouters } from '../routers/index';
-import './sider_menu.css';
 
 import { Link, useLocation } from 'react-router-dom';
 import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
@@ -211,14 +210,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         '& a': {
                                             fontSize: '14px',
                                             fontFamily: 'Roboto',
-                                            color:
-                                                location.pathname === itemMenu.key ||
-                                                itemMenu.children?.some(
-                                                    (dropdownItem) =>
-                                                        location.pathname === dropdownItem.key
-                                                )
-                                                    ? '#00284C'
-                                                    : '#3B4758',
+                                            // color:
+                                            //     location.pathname === itemMenu.key ||
+                                            //     itemMenu.children?.some(
+                                            //         (dropdownItem) =>
+                                            //             location.pathname === dropdownItem.key
+                                            //     )
+                                            //         ? '#00284C'
+                                            //         : '#3B4758',
+                                            color: 'black',
                                             fontWeight:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -237,14 +237,15 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         '& span': {
                                             fontSize: '14px',
                                             fontFamily: 'Roboto !important',
-                                            color:
-                                                location.pathname === itemMenu.key ||
-                                                itemMenu.children?.some(
-                                                    (dropdownItem) =>
-                                                        location.pathname === dropdownItem.key
-                                                )
-                                                    ? '#3B4758'
-                                                    : '#3D475C',
+                                            // color:
+                                            //     location.pathname === itemMenu.key ||
+                                            //     itemMenu.children?.some(
+                                            //         (dropdownItem) =>
+                                            //             location.pathname === dropdownItem.key
+                                            //     )
+                                            //         ? '#3B4758'
+                                            //         : '#3D475C',
+                                            color: 'black',
                                             fontWeight:
                                                 location.pathname === itemMenu.key ||
                                                 itemMenu.children?.some(
@@ -317,8 +318,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                             filter:
                                                                 location.pathname ===
                                                                 dropdownItem.key
-                                                                    ? ' var(--color-hoverIcon)'
-                                                                    : 'brightness(0) saturate(100%) invert(17%) sepia(8%) saturate(100%) hue-rotate(251deg) brightness(97%) contrast(90%)'
+                                                                    ? 'var(--color-hoverIcon)'
+                                                                    : 'black'
                                                         },
                                                         minWidth: '20px'
                                                     }}>
@@ -333,10 +334,12 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                                                 location.pathname ===
                                                                 dropdownItem.key
                                                                     ? '#319DFF'
-                                                                    : '#3D475C'
+                                                                    : 'black'
+                                                            //color: 'black'
                                                         },
                                                         ':hover a': {
                                                             color: '#319DFF'
+                                                            //color: 'black'
                                                         }
                                                     }}
                                                 />

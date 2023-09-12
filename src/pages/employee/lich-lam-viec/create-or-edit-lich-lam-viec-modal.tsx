@@ -15,9 +15,10 @@ import {
     DialogContent,
     DialogActions,
     FormControl,
-    InputLabel
+    InputLabel,
+    Autocomplete
 } from '@mui/material';
-
+import * as Yup from 'yup';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
 import { ReactComponent as DateIcon } from '../../../images/calendarMenu.svg';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
@@ -28,23 +29,23 @@ import { Form, Formik } from 'formik';
 import Cookies from 'js-cookie';
 import lichLamViecService from '../../../services/nhan-vien/lich_lam_viec/lichLamViecService';
 import { enqueueSnackbar } from 'notistack';
+import { observer } from 'mobx-react';
+import suggestStore from '../../../stores/suggestStore';
 
 interface DialogComponentProps {
     open: boolean;
     idNhanVien: string;
     onClose: () => void;
 }
-const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
+const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
     open,
     onClose,
     idNhanVien
 }) => {
-    const [curent, setCurent] = useState('');
+    const [curent, setCurent] = useState(1);
     const [idCaLamViec, setIdCaLamViec] = useState('');
     const [suggestCaLamViec, setSuggestCaLamViec] = useState<SuggestCaLamViecDto[]>([]);
-    const handleChange = (event: SelectChangeEvent) => {
-        setCurent(event.target.value);
-    };
+
     const caLamViecHandleChange = (event: SelectChangeEvent<any>) => {
         setIdCaLamViec(event.target.value);
     };
@@ -65,6 +66,26 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
     const [selectedDays, setSelectedDays] = useState<string[]>([]);
     const handleDayToggle = (event: React.MouseEvent<HTMLElement>, newDays: string[]) => {
         setSelectedDays(newDays);
+    };
+    const rules = Yup.object().shape({
+        idCaLamViec: Yup.string().required('Ca làm việc không được để trống'),
+        tuNgay: Yup.string().required('Ngày bắt đầu không được để trống'),
+        denNgay: Yup.string().required('Ngày kết thúc không được để trống')
+        // ngayLamViec: Yup.array()
+        //     .of(Yup.string().required('Ngày làm việc trong tuần không được để trống'))
+        //     .required('Ngày làm việc trong tuần không được để trống')
+    });
+    const initValues = {
+        id: AppConsts.guidEmpty,
+        idNhanVien: idNhanVien,
+        idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+        idCaLamViec: '',
+        tuNgay: '',
+        denNgay: '',
+        lapLai: false,
+        kieuLapLai: 0,
+        giaTriLap: 0,
+        ngayLamViec: [] as string[]
     };
     return (
         <Dialog
@@ -97,34 +118,31 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
             </DialogTitle>
             <DialogContent>
                 <Formik
-                    initialValues={{
-                        id: AppConsts.guidEmpty,
-                        idNhanVien: idNhanVien,
-                        idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-                        idCaLamViec: '',
-                        tuNgay: '',
-                        denNgay: '',
-                        lapLai: false,
-                        kieuLapLai: 0,
-                        giaTriLap: 0,
-                        ngayLamViec: [] as string[]
-                    }}
-                    onSubmit={async (values) => {
+                    validationSchema={rules}
+                    initialValues={initValues}
+                    onSubmit={async (values, helper) => {
                         values.ngayLamViec = selectedDays;
-                        //alert(JSON.stringify(values));
-                        const result = await lichLamViecService.createOrEditLichLamViec(values);
-                        result == true
-                            ? enqueueSnackbar('Thêm mới thành công', {
-                                  variant: 'success',
-                                  autoHideDuration: 3000
-                              })
-                            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
-                                  variant: 'error',
-                                  autoHideDuration: 3000
-                              });
-                        onClose();
+                        if (values.ngayLamViec.length == 0 || values.ngayLamViec == null) {
+                            helper.setFieldError(
+                                'ngayLamViec',
+                                'Ngày làm việc không được để trống'
+                            );
+                        } else {
+                            const result = await lichLamViecService.createOrEditLichLamViec(values);
+                            result == true
+                                ? enqueueSnackbar('Thêm mới thành công', {
+                                      variant: 'success',
+                                      autoHideDuration: 3000
+                                  })
+                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                                      variant: 'error',
+                                      autoHideDuration: 3000
+                                  });
+                            helper.resetForm();
+                            onClose();
+                        }
                     }}>
-                    {({ values, handleChange }) => (
+                    {({ values, handleChange, errors, touched, setFieldValue }) => (
                         <Form
                             onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                 if (event.key === 'Enter') {
@@ -151,7 +169,11 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                     <Typography fontSize="14px">Lặp lại</Typography>
                                                 }
                                                 value={curent}
-                                                onChange={handleChange}
+                                                onChange={(e) => {
+                                                    setCurent(
+                                                        Number.parseInt(e.target.value.toString())
+                                                    );
+                                                }}
                                                 sx={{
                                                     width: '100%',
                                                     '[aria-expanded="true"] ~ svg': {
@@ -164,7 +186,7 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                 }}
                                                 size="small"
                                                 IconComponent={() => <ArrowDown />}>
-                                                <MenuItem value="">Mỗi tuần</MenuItem>
+                                                <MenuItem value={2}>Mỗi tuần</MenuItem>
                                                 <MenuItem value={1}>Mỗi ngày</MenuItem>
                                                 <MenuItem value={3}>Mỗi tháng</MenuItem>
                                             </Select>
@@ -178,6 +200,17 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                 }
                                                 type="date"
                                                 value={values.tuNgay}
+                                                error={
+                                                    touched.tuNgay && errors.tuNgay ? true : false
+                                                }
+                                                helperText={
+                                                    touched.tuNgay &&
+                                                    errors.tuNgay && (
+                                                        <span className="text-danger">
+                                                            {errors.tuNgay}
+                                                        </span>
+                                                    )
+                                                }
                                                 name={'tuNgay'}
                                                 size="small"
                                                 onChange={handleChange}
@@ -224,6 +257,17 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                 type="date"
                                                 value={values.denNgay}
                                                 name={'denNgay'}
+                                                error={
+                                                    touched.denNgay && errors.denNgay ? true : false
+                                                }
+                                                helperText={
+                                                    touched.denNgay &&
+                                                    errors.denNgay && (
+                                                        <span className="text-danger">
+                                                            {errors.denNgay}
+                                                        </span>
+                                                    )
+                                                }
                                                 size="small"
                                                 onChange={handleChange}
                                                 fullWidth
@@ -269,51 +313,105 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                             padding: '24px',
                                             borderRadius: '8px'
                                         }}>
-                                        <Grid container item>
-                                            <Grid item xs={12}>
-                                                <Box sx={{ padding: '24px 0px' }}>
-                                                    <FormControl fullWidth>
-                                                        <InputLabel>
+                                        <Grid container item spacing={2}>
+                                            <Grid item xs={12} sm={6}>
+                                                <Autocomplete
+                                                    fullWidth
+                                                    onChange={(event, value) => {
+                                                        setFieldValue(
+                                                            'idNhanVien',
+                                                            value?.id ?? ''
+                                                        );
+                                                        //idNhanVien = value?.id;
+                                                    }}
+                                                    options={suggestStore.suggestNhanVien}
+                                                    value={
+                                                        suggestStore.suggestNhanVien.find(
+                                                            (x) => x.id == values.idNhanVien
+                                                        ) ?? null
+                                                    }
+                                                    disabled={
+                                                        idNhanVien !== AppConsts.guidEmpty ||
+                                                        idNhanVien === ''
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    getOptionLabel={(item) => item.tenNhanVien}
+                                                    size="small"
+                                                    sx={{
+                                                        '& .MuiAutocomplete-root': {
+                                                            backgroundColor: '#fff',
+                                                            '& .MuiSvgIcon-root': {
+                                                                position: 'relative',
+                                                                left: '-10px'
+                                                            },
+                                                            '&[aria-expanded="true"] .MuiSvgIcon-root':
+                                                                {
+                                                                    transform: 'rotate(180deg)'
+                                                                }
+                                                        }
+                                                    }}
+                                                    renderInput={(params: any) => (
+                                                        <TextField
+                                                            fullWidth
+                                                            {...params}
+                                                            label="Nhân viên"
+                                                            variant="outlined"
+                                                        />
+                                                    )}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12} sm={6}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel>
+                                                        <Typography fontSize="14px">
+                                                            Ca làm việc
+                                                        </Typography>
+                                                    </InputLabel>
+                                                    <Select
+                                                        label={
                                                             <Typography fontSize="14px">
                                                                 Ca làm việc
                                                             </Typography>
-                                                        </InputLabel>
-                                                        <Select
-                                                            label={
-                                                                <Typography fontSize="14px">
-                                                                    Ca làm việc
-                                                                </Typography>
-                                                            }
-                                                            value={values.idCaLamViec}
-                                                            onChange={handleChange}
-                                                            name="idCaLamViec"
-                                                            sx={{
-                                                                width: '100%',
-                                                                '[aria-expanded="true"] ~ svg': {
-                                                                    transform: 'rotate(180deg)'
-                                                                },
-                                                                pr: '20px',
-                                                                color: '#4C4B4C',
-
-                                                                mt: '8px'
-                                                            }}
-                                                            displayEmpty
-                                                            size="small"
-                                                            IconComponent={() => <ArrowDown />}>
-                                                            {Array.isArray(suggestCaLamViec) &&
-                                                                suggestCaLamViec.map((item) => (
-                                                                    <MenuItem
-                                                                        key={item.id}
-                                                                        value={item.id}>
-                                                                        {item.tenCa}
-                                                                    </MenuItem>
-                                                                ))}
-                                                        </Select>
-                                                    </FormControl>
-                                                </Box>
+                                                        }
+                                                        value={values.idCaLamViec}
+                                                        onChange={handleChange}
+                                                        name="idCaLamViec"
+                                                        error={
+                                                            touched.idCaLamViec &&
+                                                            errors.idCaLamViec
+                                                                ? true
+                                                                : false
+                                                        }
+                                                        sx={{
+                                                            width: '100%',
+                                                            '[aria-expanded="true"] ~ svg': {
+                                                                transform: 'rotate(180deg)'
+                                                            },
+                                                            pr: '20px',
+                                                            color: '#4C4B4C'
+                                                        }}
+                                                        displayEmpty
+                                                        size="small"
+                                                        IconComponent={() => <ArrowDown />}>
+                                                        {Array.isArray(suggestCaLamViec) &&
+                                                            suggestCaLamViec.map((item) => (
+                                                                <MenuItem
+                                                                    key={item.id}
+                                                                    value={item.id}>
+                                                                    {item.tenCa}
+                                                                </MenuItem>
+                                                            ))}
+                                                    </Select>
+                                                    {touched.idCaLamViec && errors.idCaLamViec && (
+                                                        <span className="text-danger">
+                                                            {errors.idCaLamViec}
+                                                        </span>
+                                                    )}
+                                                </FormControl>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <Box sx={{ padding: '24px 0px' }}>
+                                                <Box>
                                                     <Typography
                                                         //color="#4C4B4C"
                                                         fontSize="14px"
@@ -440,6 +538,11 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             CN
                                                         </ToggleButton>
                                                     </ToggleButtonGroup>
+                                                    {errors.ngayLamViec && (
+                                                        <span className="text-danger">
+                                                            {errors.ngayLamViec}
+                                                        </span>
+                                                    )}
                                                 </Box>
                                             </Grid>
                                         </Grid>
@@ -478,4 +581,4 @@ const CreateOeEditLichLamViecModal: React.FC<DialogComponentProps> = ({
         </Dialog>
     );
 };
-export default CreateOeEditLichLamViecModal;
+export default observer(CreateOrEditLichLamViecModal);

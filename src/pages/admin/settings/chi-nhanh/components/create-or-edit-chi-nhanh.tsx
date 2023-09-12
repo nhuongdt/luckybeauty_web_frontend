@@ -24,6 +24,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AppConsts from '../../../../../lib/appconst';
 import uploadFileService from '../../../../../services/uploadFileService';
 import utils from '../../../../../utils/utils';
+import { NumericFormat } from 'react-number-format';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;
@@ -207,7 +208,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <TextField
+                                        <NumericFormat
                                             label={
                                                 <Typography variant="subtitle2">
                                                     Số điện thoại
@@ -232,7 +233,9 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             value={values.soDienThoai}
                                             onChange={handleChange}
                                             fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}
+                                            customInput={TextField}
+                                        />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
