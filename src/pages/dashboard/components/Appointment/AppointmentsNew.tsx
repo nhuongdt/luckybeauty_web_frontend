@@ -11,9 +11,10 @@ const AppoimentsNew: React.FC = () => {
     return (
         <Box>
             {datas.length > 0 ? (
-                datas.map((data) => {
+                datas.map((data, key) => {
                     return (
                         <Box
+                            key={key}
                             display={'flex'}
                             justifyContent={'space-between'}
                             borderBottom={'1px solid #EEF0F4'}>

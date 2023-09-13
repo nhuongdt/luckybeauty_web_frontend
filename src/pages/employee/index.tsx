@@ -96,10 +96,9 @@ class EmployeeScreen extends React.Component {
     async getData() {
         const appContext = this.context as IAppContext;
         const chiNhanhContext = appContext.chinhanhCurrent as SuggestChiNhanhDto;
-        const suggestChucVus = await SuggestService.SuggestChucVu();
         await suggestStore.getSuggestChucVu();
         this.setState({
-            suggestChucVu: suggestChucVus,
+            suggestChucVu: suggestStore.suggestChucVu,
             idChiNhanh: chiNhanhContext.id
         });
         await this.getListNhanVien();

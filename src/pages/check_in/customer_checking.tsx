@@ -61,8 +61,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     }, []);
 
     const saveCheckInOK = async (dataCheckIn: any) => {
-        console.log('saveCheckInOK ', dataCheckIn);
-
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
             idKhachHang: dataCheckIn.id,
             idCheckIn: dataCheckIn.idCheckIn,
@@ -103,7 +101,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 tongTichDiem: item.tongTichDiem
             };
         });
-        console.log('item', item);
         hanleChoseCustomer(item);
 
         // add to dexie

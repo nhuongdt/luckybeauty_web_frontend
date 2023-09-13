@@ -691,7 +691,7 @@ const Header: React.FC<HeaderProps> = (
                                     </Box>
                                 </Link>
                             </MenuItem>
-                            <MenuItem
+                            {/* <MenuItem
                                 className="hover"
                                 onClick={() => {
                                     handleClose();
@@ -703,7 +703,7 @@ const Header: React.FC<HeaderProps> = (
                                         Cài đặt
                                     </Box>
                                 </Box>
-                            </MenuItem>
+                            </MenuItem> */}
 
                             <MenuItem
                                 className="hover"

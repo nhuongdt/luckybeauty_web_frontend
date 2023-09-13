@@ -8,12 +8,6 @@ import { observer } from 'mobx-react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { format as formatDate } from 'date-fns';
 const TabMuaHang: React.FC = () => {
-    const handlePageChange = async (event: any, newPage: number) => {
-        console.log(newPage);
-    };
-    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
-        console.log(event);
-    };
     const columns = [
         {
             field: 'maHoaDon',

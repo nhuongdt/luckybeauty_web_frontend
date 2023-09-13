@@ -17,7 +17,6 @@ import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 
 const isAuthenticated = (): boolean => {
     const accessToken = Cookies.get('accessToken');
-    console.log(accessToken);
     if (accessToken && !accessToken.includes('error')) {
         try {
             return true;

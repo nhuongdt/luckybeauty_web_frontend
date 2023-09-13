@@ -50,7 +50,6 @@ const GiaoDichThanhToanTest: React.FC = () => {
     const today = new Date();
     const firstLoad = useRef(true);
     const current = useContext(ChiNhanhContext);
-    console.log('current ', current);
 
     const [idHoadonChosing, setIdHoadonChosing] = useState('');
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));

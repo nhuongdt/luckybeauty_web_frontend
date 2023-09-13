@@ -56,7 +56,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
     };
     async getSuggest() {
         await suggestStore.getSuggestNguonKhach();
-        await suggestStore.getSuggestNhomKhach();
     }
     componentDidMount(): void {
         this.getSuggest();
@@ -325,9 +324,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={6}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNhomKhach.filter(
-                                                        (x) => x.id == values.idNhomKhach
-                                                    )[0] ?? { id: '', tenNhomKhach: '' }
+                                                    suggestStore.suggestNhomKhach !== undefined
+                                                        ? suggestStore.suggestNhomKhach.filter(
+                                                              (x) => x.id == values.idNhomKhach
+                                                          )[0] || { id: '', tenNhomKhach: '' }
+                                                        : { id: '', tenNhomKhach: '' }
                                                 }
                                                 options={suggestStore.suggestNhomKhach}
                                                 getOptionLabel={(option) =>
@@ -355,9 +356,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={6}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNguonKhach.filter(
-                                                        (x) => x.id == values.idNguonKhach
-                                                    )[0] ?? { id: '', tenNguonKhach: '' }
+                                                    suggestStore.suggestNguonKhach !== undefined
+                                                        ? suggestStore.suggestNguonKhach.filter(
+                                                              (x) => x.id == values.idNguonKhach
+                                                          )[0] || { id: '', tenNguonKhach: '' }
+                                                        : { id: '', tenNguonKhach: '' }
                                                 }
                                                 options={suggestStore.suggestNguonKhach}
                                                 getOptionLabel={(option) =>

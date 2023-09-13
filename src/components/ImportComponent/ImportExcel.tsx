@@ -71,7 +71,6 @@ export default function ImportExcel({
     };
     const clickImport = () => {
         if (filePath === '') {
-            console.log('setFileSelect ', fileSelect);
             setError('Vui lòng chọn file dữ liệu');
             return;
         }

@@ -35,7 +35,6 @@ class SoQuyServices {
         const result = await http.get(
             `api/services/app/QuyHoaDon/GetNhatKyThanhToan_ofHoaDon?idHoaDonLienQuan=${idHoaDonLienQuan}`
         );
-        console.log('GetNhatKyThanhToan_ofHoaDon ', result.data.result);
         return result.data.result;
     };
     HuyPhieuThuChi_ofHoaDonLienQuan = async (idHoaDonLienQuan: string) => {
@@ -175,7 +174,6 @@ class SoQuyServices {
         tongPhaiTra: number
     ) => {
         let lstQuyCT_After: QuyChiTietDto[] = [];
-        console.log('lstQuyCT_After ', lstQuyCT_After);
         let tienMat = 0,
             tienPos = 0,
             tienCK = 0;

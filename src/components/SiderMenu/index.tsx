@@ -10,6 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/material';
 import { observer } from 'mobx-react';
 import sessionStore from '../../stores/sessionStore';
+import { NavLink } from 'react-router-dom';
 
 interface Props {
     collapsed: boolean;
@@ -137,12 +138,6 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
                             key={itemMenu.key}
-                            component={Link as React.ElementType}
-                            to={
-                                itemMenu.children && itemMenu.children.length > 0
-                                    ? undefined
-                                    : itemMenu.key
-                            }
                             className={
                                 location.pathname === itemMenu.key ||
                                 itemMenu.children?.some(
@@ -299,8 +294,8 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         {itemMenu.children.map((dropdownItem) => (
                                             <ListItem
                                                 key={dropdownItem.key}
-                                                component={Link as React.ElementType}
-                                                to={dropdownItem.key}
+                                                // component={Link as React.ElementType}
+                                                // to={dropdownItem.key}
                                                 selected={
                                                     location.pathname === dropdownItem.key ||
                                                     itemMenu.children?.some(

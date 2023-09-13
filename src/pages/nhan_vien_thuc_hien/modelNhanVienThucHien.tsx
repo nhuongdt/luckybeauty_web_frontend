@@ -56,7 +56,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
         setIsShow(false);
     };
     const GetListNVThucHien_DichVu = () => {
-        console.log(33);
+        return null;
     };
 
     const GetListNhanVien = async () => {
@@ -111,7 +111,6 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
             item.id,
             triggerModal.item.idDonViQuyDoi
         );
-        console.log('hoahongDV', hoahongDV);
 
         const newNV = new NhanVienThucHienDto({
             idNhanVien: item.id,

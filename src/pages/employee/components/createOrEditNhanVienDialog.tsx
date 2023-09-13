@@ -62,7 +62,6 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     UNSAFE_componentWillReceiveProps(nextProp: any): void {
         if (nextProp.formRef !== undefined) {
             const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
-            console.log('objUpdate ', objUpdate);
             this.setState({
                 staffImage: objUpdate?.avatar ?? '',
                 googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
@@ -391,7 +390,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 value={
                                                     suggestStore.suggestChucVu.filter(
                                                         (x) => x.idChucVu == values.idChucVu
-                                                    )[0] ??
+                                                    )[0] ||
                                                     ({
                                                         idChucVu: '',
                                                         tenChucVu: ''

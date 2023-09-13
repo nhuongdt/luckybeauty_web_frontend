@@ -261,7 +261,7 @@ const LichLamViec: React.FC = () => {
                             lichLamViecStore.updateIdNhanVien(value?.id ?? AppConsts.guidEmpty);
                             getData();
                         }}
-                        value={suggestNhanVien[0]}
+                        value={suggestNhanVien[0] ?? null}
                         options={[
                             { id: '', tenNhanVien: 'Tất cả nhân viên' }, // Option for all employees
                             ...suggestNhanVien

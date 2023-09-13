@@ -156,10 +156,6 @@ class ChiNhanhScreen extends Component {
         this.InitData();
     };
 
-    handleColumnVisibilityChange = () => {
-        // console.log(this.dataGridRef.current.getVisibleColumns());
-        console.log('');
-    };
     handleCloseMenu = async () => {
         await this.setState({ anchorEl: null, idChiNhanh: '' });
     };
@@ -180,11 +176,11 @@ class ChiNhanhScreen extends Component {
                 flex: 0.8,
                 renderCell: (params: any) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Avatar
+                        {/* <Avatar
                             src={params.row.avatar}
                             alt="Avatar"
                             style={{ width: 24, height: 24, marginRight: 8 }}
-                        />
+                        /> */}
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
@@ -264,7 +260,7 @@ class ChiNhanhScreen extends Component {
                             fontFamily={'Roboto'}
                             fontWeight="400"
                             lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('vi-VN')}
+                            {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
                 ),
@@ -289,7 +285,7 @@ class ChiNhanhScreen extends Component {
                             fontFamily={'Roboto'}
                             fontWeight="400"
                             lineHeight="16px">
-                            {new Date(params.value).toLocaleDateString('vi-VN')}
+                            {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
                 ),
@@ -358,52 +354,51 @@ class ChiNhanhScreen extends Component {
                         </Box>
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
-                        <ButtonGroup
+                        <Button
+                            className="border-color btn-outline-hover"
+                            variant="outlined"
+                            startIcon={<img src={DownloadIcon} />}
+                            sx={{
+                                backgroundColor: '#fff!important',
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                height: '40px',
+                                padding: '10px 16px',
+                                borderRadius: '4px!important'
+                            }}>
+                            Nhập
+                        </Button>
+                        <Button
+                            className="border-color btn-outline-hover"
+                            variant="outlined"
+                            startIcon={<img src={UploadIcon} />}
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                height: '40px',
+                                padding: '10px 16px',
+                                borderColor: '#E6E1E6',
+                                bgcolor: '#fff!important'
+                            }}>
+                            Xuất
+                        </Button>
+                        <Button
+                            className="bg-main btn-container-hover"
+                            onClick={() => {
+                                this.createOrEditShowModal('');
+                            }}
                             variant="contained"
-                            sx={{ gap: '8px' }}
-                            className="rounded-4px resize-height">
-                            <Button
-                                className="border-color btn-outline-hover"
-                                variant="outlined"
-                                startIcon={<img src={DownloadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    bgcolor: '#fff!important'
-                                }}>
-                                Nhập
-                            </Button>
-                            <Button
-                                className="border-color btn-outline-hover"
-                                variant="outlined"
-                                startIcon={<img src={UploadIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    padding: '10px 16px',
-                                    borderColor: '#E6E1E6',
-                                    bgcolor: '#fff!important'
-                                }}>
-                                Xuất
-                            </Button>
-                            <Button
-                                className="bg-main btn-container-hover"
-                                onClick={() => {
-                                    this.createOrEditShowModal('');
-                                }}
-                                variant="contained"
-                                hidden={!abpCustom.isGrandPermission('Pages.ChiNhanh.Create')}
-                                startIcon={<img src={AddIcon} />}
-                                sx={{
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    minWidth: '173px'
-                                }}>
-                                Thêm mới
-                            </Button>
-                        </ButtonGroup>
+                            hidden={!abpCustom.isGrandPermission('Pages.ChiNhanh.Create')}
+                            startIcon={<img src={AddIcon} />}
+                            sx={{
+                                height: '40px',
+                                textTransform: 'capitalize',
+                                fontWeight: '400'
+                            }}>
+                            Thêm mới
+                        </Button>
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px">
@@ -428,7 +423,6 @@ class ChiNhanhScreen extends Component {
                                 );
                             }
                         }}
-                        onColumnVisibilityModelChange={this.handleColumnVisibilityChange}
                         columnBuffer={0}
                         hideFooter
                         ref={this.dataGridRef}

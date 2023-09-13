@@ -237,8 +237,8 @@ class ChietKhauDichVuScreen extends Component {
                             params.value === 0
                                 ? '0'
                                 : params.row.laPhanTram === true
-                                ? params.value.toString() + ' %'
-                                : params.value.toString() + ' VNĐ'
+                                ? new Intl.NumberFormat('vi-VN').format(params.value) + ' %'
+                                : new Intl.NumberFormat('vi-VN').format(params.value) + ' VNĐ'
                         }
                         sx={{
                             height: '85%',
@@ -275,8 +275,8 @@ class ChietKhauDichVuScreen extends Component {
                             params.value === 0
                                 ? '0'
                                 : params.row.laPhanTram === true
-                                ? params.value + ' %'
-                                : params.value + ' VNĐ'
+                                ? new Intl.NumberFormat('vi-VN').format(params.value) + ' %'
+                                : new Intl.NumberFormat('vi-VN').format(params.value) + ' VNĐ'
                         }
                         sx={{
                             height: '85%',
@@ -314,8 +314,8 @@ class ChietKhauDichVuScreen extends Component {
                             params.value === 0
                                 ? '0'
                                 : params.row.laPhanTram === true
-                                ? params.value + ' %'
-                                : params.value + ' VNĐ'
+                                ? new Intl.NumberFormat('vi-VN').format(params.value) + ' %'
+                                : new Intl.NumberFormat('vi-VN').format(params.value) + ' VNĐ'
                         }
                         sx={{
                             fontSize: '13px',
@@ -363,7 +363,7 @@ class ChietKhauDichVuScreen extends Component {
                             fontWeight: '400',
                             fontFamily: 'Roboto'
                         }}>
-                        {params.value}
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
             },

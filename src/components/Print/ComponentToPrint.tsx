@@ -22,7 +22,6 @@ export const ComponentToPrint = forwardRef(function ComponentToPrint({ props }: 
         html = ReplaceHoaDon(html);
         html = ReplaceHoaDonChiTiet(html);
         setContentHtml(html);
-        console.log('parserA2 ', props?.hoadonChiTiet);
     }, [props?.contentHtml]);
 
     const ReplaceHoaDon = (str: string) => {

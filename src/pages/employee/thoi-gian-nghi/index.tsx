@@ -108,9 +108,7 @@ class EmployeeHoliday extends Component {
             }
         });
     };
-    handleSearch = () => {
-        console.log('ok');
-    };
+
     Modal = () => {
         this.setState({
             modalVisible: !this.state.modalVisible,
@@ -371,14 +369,7 @@ class EmployeeHoliday extends Component {
         return (
             <Box paddingTop="16px" className="thoi-gian-nghi-page">
                 <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid
-                        item
-                        xs={12}
-                        spacing={2}
-                        md="auto"
-                        display="flex"
-                        gap="10px"
-                        alignItems="center">
+                    <Grid item xs={12} md="auto" display="flex" gap="10px" alignItems="center">
                         <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                             Quản lý thời gian nghỉ
                         </Typography>

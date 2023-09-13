@@ -44,7 +44,7 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
     }
     async getData() {
         await suggestStore.getSuggestKyThuatVien();
-        await suggestStore.getSuggestDichVu();
+        //await suggestStore.getSuggestDichVu();
     }
     handleCheckboxClick = (id: string) => {
         const { selectedIdService } = dichVuNhanVienStore;
@@ -70,7 +70,7 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
     render(): React.ReactNode {
         const { visiable, handleClose } = this.props;
         return (
-            <Dialog open={visiable} fullWidth maxWidth={'md'} onClose={handleClose}>
+            <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={handleClose}>
                 <DialogTitle>
                     <Typography fontSize="24px" fontWeight="700" mb={3}>
                         {dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien} - Dịch vụ
@@ -91,70 +91,53 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                     <TextField fullWidth size="small" placeholder="Tìm kiếm dịch vụ..." />
                 </DialogTitle>
                 <DialogContent>
-                    <Box padding={'16px'}>
-                        <Grid container spacing={1}>
-                            {/* <Grid xs={4}>
-                                <Box
-                                    display="flex"
-                                    flexDirection={'column'}
-                                    alignItems={'start'}
-                                    justifyContent={'space-between'}
-                                    padding={'0px 4px'}
-                                    sx={{
-                                        overflow: 'auto',
-                                        overflowX: 'hidden'
-                                    }}>
-                                    {suggestStore.suggestNhomHangHoa?.map((item) => (
-                                        <Box key={item.idNhomHang} display={'flex'} mb={'8px'}>
-                                            <LocalOffer
-                                                sx={{ color: 'var(--color-main)', mr: '5px' }}
-                                            />
-                                            <Typography>{item.tenNhomHang}</Typography>
-                                        </Box>
+                    <Box>
+                        <TableContainer>
+                            <Table>
+                                <TableBody>
+                                    {suggestStore.suggestDichVu?.map((item, index) => (
+                                        <TableRow
+                                            key={index}
+                                            sx={{
+                                                '& .MuiTableCell-root': {
+                                                    padding: '8px'
+                                                }
+                                            }}>
+                                            <TableCell width={'40px'}>
+                                                <Checkbox
+                                                    checked={dichVuNhanVienStore.selectedIdService.includes(
+                                                        item.id
+                                                    )}
+                                                    onClick={() => {
+                                                        this.handleCheckboxClick(item.id);
+                                                    }}
+                                                />
+                                            </TableCell>
+                                            <TableCell align="left" width={'250px'}>
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    alignItems={'center'}
+                                                    gap="8px">
+                                                    <Avatar variant="square" />{' '}
+                                                    <Typography>{item.tenDichVu}</Typography>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell align={'right'}>
+                                                <Typography>40 {' phút'}</Typography>
+                                            </TableCell>
+                                            <TableCell align={'right'}>
+                                                <Typography>
+                                                    {new Intl.NumberFormat('vi-VN').format(
+                                                        item.donGia
+                                                    )}
+                                                </Typography>
+                                            </TableCell>
+                                        </TableRow>
                                     ))}
-                                </Box>
-                            </Grid> */}
-                            <Grid xs={12}>
-                                <TableContainer>
-                                    <Table>
-                                        <TableBody>
-                                            {suggestStore.suggestDichVu?.map((item, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell>
-                                                        <Checkbox
-                                                            checked={dichVuNhanVienStore.selectedIdService.includes(
-                                                                item.id
-                                                            )}
-                                                            onClick={() => {
-                                                                this.handleCheckboxClick(item.id);
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell align="left">
-                                                        <Box
-                                                            display={'flex'}
-                                                            flexDirection={'row'}
-                                                            alignItems={'center'}
-                                                            gap="8px">
-                                                            <Avatar variant="square" />{' '}
-                                                            <Typography>
-                                                                {item.tenDichVu}
-                                                            </Typography>
-                                                        </Box>
-                                                    </TableCell>
-                                                    <TableCell align={'right'}>
-                                                        <Typography>40 {' phút'}</Typography>
-                                                    </TableCell>
-                                                    <TableCell align={'right'}>
-                                                        <Typography>{item.donGia}</Typography>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                            </Grid>
-                        </Grid>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </Box>
                 </DialogContent>
                 <DialogActions>
