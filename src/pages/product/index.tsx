@@ -57,42 +57,7 @@ import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
 import CmpIListData from '../../components/ListData/CmpIListData';
 import { IList } from '../../services/dto/IList';
 import DialogButtonClose from '../../components/Dialog/ButtonClose';
-
-export function ModalChuyenNhomHang({ isOpen, onClose, lstData, agreeNhomHang }: any) {
-    const [itemChosed, setItemChosed] = useState<IList>();
-    const choseNhom = (isEdit: boolean, item: any) => {
-        setItemChosed(item);
-    };
-    const clickAgree = () => {
-        agreeNhomHang(itemChosed);
-    };
-    return (
-        <>
-            <Dialog open={isOpen} fullWidth maxWidth="xs" onClose={onClose}>
-                <DialogTitle>
-                    Chuyển nhóm dịch vụ
-                    <DialogButtonClose onClose={onClose} />
-                </DialogTitle>
-                <DialogContent>
-                    <CmpIListData
-                        Icon={<LocalOfferOutlined />}
-                        lst={lstData}
-                        clickTreeItem={choseNhom}
-                        isShowAll={false}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="outlined" onClick={onClose}>
-                        Đóng
-                    </Button>
-                    <Button variant="contained" onClick={clickAgree}>
-                        Đồng ý
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </>
-    );
-}
+import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 
 export default function PageProduct() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
@@ -638,7 +603,9 @@ export default function PageProduct() {
                 onClose={() => setLstErrImport([])}
                 clickImport={() => console.log(lstErrImport)}
             />
-            <ModalChuyenNhomHang
+            <ModalChuyenNhom
+                title="Chuyển nhóm dịch vụ"
+                icon={<LocalOfferOutlined />}
                 isOpen={isShowModalChuyenNhom}
                 lstData={treeNhomHangHoa
                     .filter((x) => !utils.checkNull(x.id))
@@ -646,7 +613,7 @@ export default function PageProduct() {
                         return { id: item.id, text: item.tenNhomHang, color: item?.color };
                     })}
                 onClose={() => setIsShowModalChuyenNhom(false)}
-                agreeNhomHang={chuyenNhomHang}
+                agreeChuyenNhom={chuyenNhomHang}
             />
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
                 <Grid container alignItems="center" justifyContent="space-between">
@@ -807,6 +774,7 @@ export default function PageProduct() {
                                         ? 'data-grid-row-chosed'
                                         : 'data-grid-row'
                                 }
+                                autoHeight={pageDataProduct.items.length === 0}
                                 disableRowSelectionOnClick
                                 rowHeight={46}
                                 rows={pageDataProduct.items}
