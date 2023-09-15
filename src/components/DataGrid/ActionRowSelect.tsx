@@ -1,28 +1,32 @@
-import {
-    Box,
-    Typography,
-    Grid,
-    TextField,
-    IconButton,
-    Button,
-    SelectChangeEvent,
-    Stack,
-    Select,
-    MenuItem,
-    Icon
-} from '@mui/material';
+import { Box, Typography, Button, Stack } from '@mui/material';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 import { IList } from '../../services/dto/IList';
-import { useState, useRef, useEffect, ReactElement } from 'react';
+import { useState, useRef, useEffect } from 'react';
+
+// check click outside button Thaotac
+export function useComponentVisible(initialIsVisible: boolean) {
+    const [isComponentVisible, setIsComponentVisible] = useState(initialIsVisible);
+    const ref = useRef<HTMLDivElement>(null);
+
+    const handleClickOutside = (event: any) => {
+        if (ref.current && !ref.current.contains(event.target)) {
+            setIsComponentVisible(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside, true);
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, []);
+
+    return { ref, isComponentVisible, setIsComponentVisible };
+}
 
 export default function ActionRowSelect({ lstOption, countRowSelected, title, choseAction }: any) {
-    const myRef = useRef();
     const [expandAction, setExpandAction] = useState(false);
-
-    // useEffect(() => {
-    //     document.addEventListener('mousedown', handleClickOutside);
-    //     return () => document.removeEventListener('mousedown', handleClickOutside);
-    // });
+    const { ref, isComponentVisible } = useComponentVisible(true);
 
     const clickAction = (item: any) => {
         choseAction(item);
