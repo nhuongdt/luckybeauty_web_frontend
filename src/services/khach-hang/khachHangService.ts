@@ -29,6 +29,10 @@ class KhachHangService {
         const result = await http.post(`api/services/app/NhomKhach/GetForEdit?id=${id}`);
         return result.data.result;
     }
+    public async XoaNhomKhachHang(id: string) {
+        const result = await http.get(`api/services/app/NhomKhach/Delete?id=${id}`);
+        return result.data.result;
+    }
     public async createOrEdit(input: CreateOrEditKhachHangDto): Promise<KhachHangDto> {
         const result = await http.post('api/services/app/KhachHang/CreateOrEdit', input);
         return result.data.result;
@@ -52,6 +56,17 @@ class KhachHangService {
         const result = await http.post(`api/services/app/KhachHang/Delete?id=${id}`);
         return result.data.result;
     }
+    public async DeleteMultipleCustomer(lstId: any) {
+        const result = await http.post(`api/services/app/KhachHang/DeleteMultipleCustomer`, lstId);
+        return result.data.success; // true/false
+    }
+    ChuyenNhomKhachHang = async (lstIdKhachHang: any, idNhomKhachNew: string) => {
+        const xx = await http.post(
+            `api/services/app/KhachHang/ChuyenNhomKhachHang?idNhomKhach=${idNhomKhachNew}`,
+            lstIdKhachHang
+        );
+        return xx.data.success;
+    };
     public async exportDanhSach(input: PagedKhachHangResultRequestDto): Promise<IFileDto> {
         const response = await http.post(`api/services/app/KhachHang/ExportDanhSach`, input);
         return response.data.result;

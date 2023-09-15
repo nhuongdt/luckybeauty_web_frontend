@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { DataGrid, GridColDef, GridColumnVisibilityModel } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridColumnVisibilityModel,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
 import {
     Button,
@@ -19,6 +24,7 @@ import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 // import SearchIcon from '../../images/search-normal.svg';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -44,6 +50,12 @@ import AccordionNhomKhachHang from '../../components/Accordion/NhomKhachHang';
 import { SuggestNhomKhachDto } from '../../services/suggests/dto/SuggestNhomKhachDto';
 import utils from '../../utils/utils';
 import SuggestService from '../../services/suggests/SuggestService';
+import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import BangBaoLoiFileImport from '../../components/ImportComponent/BangBaoLoiFileImport';
+import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimportDto';
+import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
+import { IList } from '../../services/dto/IList';
+import { format } from 'date-fns';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -66,6 +78,9 @@ interface CustomerScreenState {
     isShowNhomKhachModal: boolean;
     listAllNhomKhach: SuggestNhomKhachDto[];
     listNhomKhachSearch: SuggestNhomKhachDto[];
+    rowSelectionModel: GridRowSelectionModel;
+    isShowModalChuyenNhom: boolean;
+    lstErrImport: BangBaoLoiFileimportDto[];
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
     constructor(props: any) {
@@ -92,7 +107,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             idNhomKhach: '',
             isShowNhomKhachModal: false,
             listAllNhomKhach: [],
-            listNhomKhachSearch: []
+            listNhomKhachSearch: [],
+            rowSelectionModel: [],
+            isShowModalChuyenNhom: false,
+            lstErrImport: []
         };
     }
     componentDidMount(): void {
@@ -154,7 +172,6 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     }
     onNhomKhachModal = async () => {
         await khachHangStore.createNewNhomKhachDto();
-
         this.setState({
             isShowNhomKhachModal: !this.state.isShowNhomKhachModal,
             listNhomKhachSearch: suggestStore.suggestNhomKhach
@@ -272,10 +289,25 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.createOrUpdateModalOpen(this.state.selectedRowId ?? '');
         this.handleCloseMenu();
     };
-    onOkDelete = () => {
-        this.delete(this.state.selectedRowId ?? '');
+    onOkDelete = async () => {
+        if (this.state.rowSelectionModel.length > 0) {
+            const ok = await khachHangService.DeleteMultipleCustomer(this.state.rowSelectionModel);
+            ok
+                ? enqueueSnackbar('Xóa khách hàng  thành công', {
+                      variant: 'success',
+                      autoHideDuration: 3000
+                  })
+                : enqueueSnackbar('Xóa khách hàng thất bại', {
+                      variant: 'error',
+                      autoHideDuration: 3000
+                  });
+            this.getData();
+        } else {
+            this.delete(this.state.selectedRowId ?? '');
+
+            this.handleCloseMenu();
+        }
         this.showConfirmDelete();
-        this.handleCloseMenu();
     };
     showConfirmDelete = () => {
         // Handle Delete action
@@ -318,6 +350,37 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 utils.strToEnglish(x.tenNhomKhach ?? '').indexOf(txtUnsign) > -1
         );
         this.setState({ listNhomKhachSearch: arr });
+    };
+    DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1: // chuyennhom
+                this.setState({
+                    isShowModalChuyenNhom: true
+                });
+                break;
+            case 2:
+                {
+                    this.setState({ isShowConfirmDelete: true });
+                }
+                break;
+        }
+    };
+    chuyenNhomKhach = async (itemChosed: IList) => {
+        const ok = await khachHangService.ChuyenNhomKhachHang(
+            this.state.rowSelectionModel,
+            itemChosed.id
+        );
+        this.setState({ isShowModalChuyenNhom: false });
+        ok
+            ? enqueueSnackbar('Chuyển nhóm khách hàng  thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Chuyển nhóm khách hàng thất bại', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
+        this.getData();
     };
     render(): React.ReactNode {
         // const apiRef = useGridApiRef();
@@ -371,6 +434,35 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
+                field: 'ngaySinh',
+                headerName: 'Ngày sinh',
+                minWidth: 112,
+                flex: 1,
+                renderHeader: (params) => (
+                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+                ),
+                renderCell: (params) => (
+                    <Box textAlign="left" width="100%" fontSize="13px">
+                        {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
+                    </Box>
+                )
+            },
+
+            // {
+            //     field: 'gioiTinh',
+            //     headerName: 'Giới tính',
+            //     minWidth: 100,
+            //     flex: 0.8,
+            //     renderHeader: (params) => (
+            //         <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
+            //     ),
+            //     renderCell: (params) => (
+            //         <Box textAlign="left" width="100%" fontSize="13px">
+            //             {params.value}
+            //         </Box>
+            //     )
+            // },
+            {
                 field: 'tenNhomKhach',
                 headerName: 'Nhóm khách',
                 minWidth: 112,
@@ -380,29 +472,15 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 )
             },
             {
-                field: 'gioiTinh',
-                headerName: 'Giới tính',
-                minWidth: 100,
-                flex: 0.8,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
-                renderCell: (params) => (
-                    <Box textAlign="left" width="100%" fontSize="13px">
-                        {params.value}
-                    </Box>
-                )
-            },
-            {
                 field: 'tongChiTieu',
-                headerName: 'Tổng chi tiêu',
+                headerName: 'Tổng mua',
                 minWidth: 113,
                 flex: 1,
                 renderHeader: (params) => (
                     <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
                 ),
                 renderCell: (params) => (
-                    <Box title={params.value} fontSize="13px" textAlign="center" width="100%">
+                    <Box title={params.value} fontSize="13px" textAlign="right" width="100%">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
@@ -470,6 +548,33 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             <>
                 {this.state.information === false ? (
                     <Grid className="customer-page" container paddingTop={2}>
+                        <BangBaoLoiFileImport
+                            isOpen={this.state.lstErrImport.length > 0}
+                            lstError={this.state.lstErrImport}
+                            onClose={() => this.setState({ lstErrImport: [] })}
+                            clickImport={() => console.log(this.state.lstErrImport)}
+                        />
+                        <ModalChuyenNhom
+                            title="Chuyển nhóm khách hàng"
+                            icon={<PersonOutlineIcon />}
+                            isOpen={this.state.isShowModalChuyenNhom}
+                            lstData={this.state.listAllNhomKhach
+                                .filter((x) => !utils.checkNull(x.id))
+                                .map((item: any, index: number) => {
+                                    return {
+                                        id: item.id,
+                                        text: item.tenNhomKhach,
+                                        color:
+                                            index % 3 == 1
+                                                ? '#5654A8'
+                                                : index % 3 == 2
+                                                ? '#d525a1'
+                                                : '#FF5677'
+                                    };
+                                })}
+                            onClose={() => this.setState({ isShowModalChuyenNhom: false })}
+                            agreeChuyenNhom={this.chuyenNhomKhach}
+                        />
                         <Grid container spacing={1} alignItems="center">
                             <Grid item xs={12} md={6} lg={6}>
                                 <Grid container alignItems="center">
@@ -639,11 +744,38 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </Box>
                             </Grid>
                             <Grid item lg={9} md={9} sm={9} xs={12}>
-                                <div className="page-box-right">
+                                {this.state.rowSelectionModel.length > 0 && (
+                                    <ActionRowSelect
+                                        lstOption={[
+                                            {
+                                                id: '1',
+                                                text: 'Chuyển nhóm'
+                                            },
+                                            {
+                                                id: '2',
+                                                text: 'Xóa khách hàng'
+                                            }
+                                        ]}
+                                        countRowSelected={this.state.rowSelectionModel.length}
+                                        title="dịch vụ"
+                                        choseAction={this.DataGrid_handleAction}
+                                    />
+                                )}
+                                <div
+                                    className="page-box-right"
+                                    style={{
+                                        marginTop:
+                                            this.state.rowSelectionModel.length > 0 ? '8px' : 0
+                                    }}>
                                     <DataGrid
                                         disableRowSelectionOnClick
                                         rowHeight={46}
-                                        className="data-grid-row"
+                                        autoHeight={this.state.totalItems === 0}
+                                        className={
+                                            this.state.rowSelectionModel.length > 0
+                                                ? 'data-grid-row-chosed'
+                                                : 'data-grid-row'
+                                        }
                                         rows={this.state.rowTable}
                                         columns={columns}
                                         onRowClick={() => this.handleOpenInfor}
@@ -668,6 +800,12 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 );
                                             }
                                         }}
+                                        onRowSelectionModelChange={(newRowSelectionModel) => {
+                                            this.setState({
+                                                rowSelectionModel: newRowSelectionModel
+                                            });
+                                        }}
+                                        rowSelectionModel={this.state.rowSelectionModel}
                                     />
                                     <ActionMenuTable
                                         selectedRowId={this.state.selectedRowId}
