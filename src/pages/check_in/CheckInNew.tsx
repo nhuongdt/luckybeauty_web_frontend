@@ -140,7 +140,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             .where('idCheckIn')
             .equals(idCheckinDelete)
             .toArray();
-        console.log('dataCheckIn_Dexie ', dataCheckIn_Dexie);
         if (dataCheckIn_Dexie.length > 0) {
             await dbDexie.khachCheckIn
                 .where('idCheckIn')
@@ -161,8 +160,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const listCusChecking = SearhCusChecking();
 
     const saveCheckInOK = async (dataCheckIn: any) => {
-        console.log('saveCheckInOK ', dataCheckIn);
-
         const cusChecking: PageKhachHangCheckInDto = new PageKhachHangCheckInDto({
             idKhachHang: dataCheckIn.idKhachHang,
             idCheckIn: dataCheckIn.idCheckIn,
@@ -192,7 +189,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     const handleClickCustomer = async (item: any) => {
-        console.log('item', item);
         hanleChoseCustomer(item);
 
         // add to dexie

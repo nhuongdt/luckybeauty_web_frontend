@@ -137,9 +137,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             totalItems: khachHangs.totalCount,
             totalPage: Math.ceil(khachHangs.totalCount / this.state.rowPerPage)
         });
-        const lstNhomKhach = await SuggestService.SuggestNhomKhach();
+
+        await suggestStore.getSuggestNhomKhach();
         this.setState((prev) => {
-            return { ...prev, listAllNhomKhach: lstNhomKhach, listNhomKhachSearch: lstNhomKhach };
+            return {
+                ...prev,
+                listAllNhomKhach: suggestStore.suggestNhomKhach,
+                listNhomKhachSearch: suggestStore.suggestNhomKhach
+            };
         });
     }
     handleChange = (event: any) => {

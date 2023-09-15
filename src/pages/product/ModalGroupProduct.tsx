@@ -173,7 +173,6 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         }
         return true;
     };
-    console.log('modelnhomhang');
 
     const saveNhomHangHoa = () => {
         setWasClickSave(true);

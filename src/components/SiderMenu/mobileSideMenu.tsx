@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { appRouters } from '../routers';
 import sessionStore from '../../stores/sessionStore';
 import { observer } from 'mobx-react';
@@ -53,6 +53,7 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
 }
 const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, key }) => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [openMenuItem, setOpenMenuItem] = useState<{ [key: number]: boolean }>({});
 
     const handleDropdown = (index: number) => {
@@ -65,14 +66,17 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
         <>
             <ListItem
                 key={key}
-                component={Link as React.ElementType}
-                to={route.children && route.children.length > 0 ? undefined : route.path}
+                component={Box as React.ElementType}
+                //to={route.children && route.children.length > 0 ? undefined : route.path}
                 className={
                     location.pathname === route.path ||
                     route.children?.some((dropdownItem) => location.pathname === dropdownItem.path)
                         ? 'nav-item active'
                         : 'nav-item'
                 }
+                onClick={() => {
+                    route.children && route.children.length > 0 ? undefined : navigate(route.path);
+                }}
                 selected={location.pathname === route.path}
                 sx={{
                     flexWrap: 'wrap',
@@ -211,8 +215,13 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                         {route.children.map((dropdownItem) => (
                             <ListItem
                                 key={dropdownItem.key}
-                                component={Link as React.ElementType}
+                                component={Box as React.ElementType}
                                 to={dropdownItem.key}
+                                onClick={() => {
+                                    dropdownItem.children && dropdownItem.children.length > 0
+                                        ? undefined
+                                        : navigate(dropdownItem.path);
+                                }}
                                 selected={
                                     location.pathname === dropdownItem.path ||
                                     route.children?.some(

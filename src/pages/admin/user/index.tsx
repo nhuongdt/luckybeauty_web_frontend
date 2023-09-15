@@ -10,7 +10,7 @@ import {
     SelectChangeEvent
 } from '@mui/material';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import userService from '../../../services/user/userService';
 
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
@@ -58,7 +58,8 @@ class UserScreen extends AppComponentBase {
         roles: [] as GetRoles[],
         suggestNhanSu: [] as SuggestNhanSuDto[],
         anchorEl: null,
-        selectedRowId: 0
+        selectedRowId: 0,
+        rowSelectedModel: [] as GridRowSelectionModel
     };
 
     async componentDidMount() {
@@ -293,9 +294,40 @@ class UserScreen extends AppComponentBase {
                 )
             },
             {
+                field: 'isActive',
+                headerName: 'Trạng thái',
+                headerAlign: 'center',
+                minWidth: 116,
+                flex: 0.8,
+                renderCell: (params) => (
+                    <Typography
+                        variant="body2"
+                        alignItems={'center'}
+                        borderRadius="12px"
+                        sx={{
+                            margin: 'auto',
+                            backgroundColor: params.row.isActive === true ? '#E8FFF3' : '#FFF8DD',
+                            color: params.row.isActive === true ? '#50CD89' : '#FF9900'
+                        }}
+                        fontSize="13px"
+                        fontWeight="400">
+                        {params.value === true ? 'Hoạt động' : 'Ngừng hoạt động'}
+                    </Typography>
+                ),
+                renderHeader: (params) => (
+                    <Box
+                        sx={{
+                            fontSize: '13px'
+                        }}>
+                        {params.colDef.headerName}
+                    </Box>
+                )
+            },
+            {
                 field: 'creationTime',
                 headerName: 'Thời gian tạo',
                 minWidth: 150,
+                headerAlign: 'center',
                 flex: 1,
                 renderHeader: (params: any) => (
                     <Box sx={{ fontWeight: '700' }} title={params.colDef.headerName}>
@@ -304,11 +336,11 @@ class UserScreen extends AppComponentBase {
                 ),
                 renderCell: (params: any) => (
                     <Box
-                        style={{
+                        sx={{
                             display: 'flex',
                             alignItems: 'center',
                             width: '100%',
-                            justifyContent: 'start'
+                            justifyContent: 'center'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
                         <Typography
@@ -345,7 +377,7 @@ class UserScreen extends AppComponentBase {
                     <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
-        ];
+        ] as GridColDef[];
 
         return (
             <Box
@@ -433,11 +465,22 @@ class UserScreen extends AppComponentBase {
                     className="page-content"
                     sx={{ paddingTop: '16px', backgroundColor: '#fff', borderRadius: '8px' }}>
                     <Box>
+                        {this.state.rowSelectedModel.length > 0 ? (
+                            <Box mb={1}>
+                                <Button variant="contained" color="secondary">
+                                    Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                                </Button>
+                            </Box>
+                        ) : null}
                         <DataGrid
-                            disableRowSelectionOnClick
                             rowHeight={46}
                             columns={columns}
                             rows={this.state.listUser}
+                            rowSelectionModel={this.state.rowSelectedModel || undefined}
+                            onRowSelectionModelChange={(row) => {
+                                this.setState({ rowSelectedModel: row });
+                            }}
+                            disableRowSelectionOnClick
                             checkboxSelection
                             sx={{
                                 '& .MuiDataGrid-columnHeader': {
@@ -481,8 +524,8 @@ class UserScreen extends AppComponentBase {
                         anchorEl={this.state.anchorEl}
                         selectedRowId={this.state.selectedRowId}
                         closeMenu={this.handleCloseMenu}
-                        handleView={this.handleView}
-                        permissionView=""
+                        handleView={this.handleEdit}
+                        permissionView="Pages.Administration.Users.Edit"
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.Administration.Users.Edit"
                         handleDelete={this.onOkDelete}

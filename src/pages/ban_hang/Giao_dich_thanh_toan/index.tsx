@@ -130,7 +130,6 @@ const GiaoDichThanhToan: React.FC = () => {
     ]);
 
     const handleKeyDownTextSearch = (event: any) => {
-        console.log(22);
         if (event.keyCode === 13) {
             hanClickIconSearch();
         }
@@ -217,7 +216,6 @@ const GiaoDichThanhToan: React.FC = () => {
         const data = await HoaDonService.ExportToExcel(paramSearch);
         fileDowloadService.downloadExportFile(data);
     };
-    console.log('apgeHoaDon');
 
     const DataGrid_handleAction = async (item: any) => {
         switch (parseInt(item.id)) {

@@ -49,7 +49,6 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
 
     const GetAllTaiKhoanNganHang = async () => {
         const data = await TaiKhoanNganHangServices.GetAllBankAccount();
-        console.log('GetAllTaiKhoanNganHang ', data);
         setBankAccount(data);
     };
 

@@ -61,7 +61,6 @@ export default function ModalAddMauIn({
     );
     // const errtenMauIn = isClickSave && utils.checkNull(tenMauIn) ? 'Vui lòng nhập tên mẫu in' : '';
     const errtenMauIn = '';
-    console.log('modelmauin');
 
     const BindDataPrint = (html: string) => {
         switch (tenLoaiChungTu) {

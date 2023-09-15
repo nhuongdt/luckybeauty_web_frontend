@@ -138,7 +138,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
         if (isFirstRender.current) {
             isFirstRender.current = false; // avoid load again
         }
-        console.log('pageload');
         PageLoad();
     }, [customerChosed]);
 
@@ -334,7 +333,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
             soLuong: 1,
             expanded: false
         });
-        console.log('newCT ', newCT);
 
         const checkCT = hoaDonChiTiet.filter((x) => x.idDonViQuyDoi === item.idDonViQuyDoi);
         if (checkCT.length === 0) {

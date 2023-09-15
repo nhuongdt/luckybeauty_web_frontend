@@ -398,9 +398,15 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     variant="outlined"
                                     size="small"
                                     fullWidth
-                                    required
                                     autoFocus
-                                    label={`Tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`}
+                                    label={
+                                        <Typography
+                                            //color="#4C4B4C"
+                                            variant="subtitle2">
+                                            Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
+                                            <span className="text-danger"> *</span>
+                                        </Typography>
+                                    }
                                     error={wasClickSave && errTenHangHoa}
                                     helperText={
                                         wasClickSave && errTenHangHoa

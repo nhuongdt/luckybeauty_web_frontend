@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { appRouters } from '../routers/index';
 
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -10,6 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/material';
 import { observer } from 'mobx-react';
 import sessionStore from '../../stores/sessionStore';
+import { NavLink } from 'react-router-dom';
 
 interface Props {
     collapsed: boolean;
@@ -56,6 +57,7 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
     return menu;
 }
 const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, CookieSidebar }) => {
+    const navigate = useNavigate();
     const mainAppRoutes = appRouters.mainRoutes[1].routes.filter(
         (item: { showInMenu: boolean }) => item.showInMenu === true
     );
@@ -123,7 +125,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                     backgroundColor: '#fff'
                 }}>
                 <List
-                    component="nav"
+                    //component="nav"
                     sx={{
                         minWidth: '218px',
                         marginTop: '80px',
@@ -136,13 +138,18 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                     }}>
                     {itemMenus.map((itemMenu, index) => (
                         <ListItem
-                            key={itemMenu.key}
-                            component={Link as React.ElementType}
-                            to={
+                            component={Box as React.ElementType}
+                            // to={
+                            //     itemMenu.children && itemMenu.children.length > 0
+                            //         ? undefined
+                            //         : itemMenu.key
+                            // }
+                            onClick={() => {
                                 itemMenu.children && itemMenu.children.length > 0
                                     ? undefined
-                                    : itemMenu.key
-                            }
+                                    : navigate(itemMenu.key.toString());
+                            }}
+                            key={index}
                             className={
                                 location.pathname === itemMenu.key ||
                                 itemMenu.children?.some(
@@ -299,8 +306,14 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                                         {itemMenu.children.map((dropdownItem) => (
                                             <ListItem
                                                 key={dropdownItem.key}
-                                                component={Link as React.ElementType}
-                                                to={dropdownItem.key}
+                                                component={Box as React.ElementType}
+                                                // to={dropdownItem.key}
+                                                onClick={() => {
+                                                    dropdownItem.children &&
+                                                    dropdownItem.children.length > 0
+                                                        ? undefined
+                                                        : navigate(dropdownItem.key.toString());
+                                                }}
                                                 selected={
                                                     location.pathname === dropdownItem.key ||
                                                     itemMenu.children?.some(

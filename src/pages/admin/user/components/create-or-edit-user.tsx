@@ -34,6 +34,8 @@ import TabList from '@mui/lab/TabList';
 import { enqueueSnackbar } from 'notistack';
 import AppConsts from '../../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
+import authenticationStore from '../../../../stores/authenticationStore';
+import Cookies from 'js-cookie';
 //import rules from './createOrUpdateUser.validation';
 export interface ICreateOrEditUserProps {
     visible: boolean;
@@ -89,6 +91,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
+                formRef.id.toString() === Cookies.get('userId')
+                    ? authenticationStore.logout()
+                    : undefined;
             }
             this.setState({ avatar: '' });
             onOk();

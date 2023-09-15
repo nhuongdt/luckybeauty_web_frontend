@@ -26,7 +26,6 @@ class ProductService {
             .then((res) => {
                 return res.data.result;
             });
-        console.log('GetDetailProduct ', data);
         return data;
     };
     Get_DMHangHoa = async (input: any) => {

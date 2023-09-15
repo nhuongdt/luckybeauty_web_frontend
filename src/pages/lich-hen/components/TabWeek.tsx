@@ -220,6 +220,7 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
 
                                                         return (
                                                             <div
+                                                                key={itemIndex}
                                                                 onClick={async () => {
                                                                     bookingStore.idBooking =
                                                                         item.id;
@@ -230,7 +231,6 @@ const TabWeek: React.FC<{ dateQuery: Date; data: BookingGetAllItemDto[] }> = ({
                                                                 }}>
                                                                 {' '}
                                                                 <Box
-                                                                    key={itemIndex}
                                                                     bgcolor={item.color + '1a'}
                                                                     title={
                                                                         'Nhân viên thực hiện: ' +

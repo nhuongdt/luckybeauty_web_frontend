@@ -290,13 +290,15 @@ class SettingDichVuNhanVien extends Component {
                                                                 </TableCell>
                                                                 <TableCell align={'right'}>
                                                                     <Typography>
-                                                                        {item.soPhutThucHien}{' '}
+                                                                        {item.soPhutThucHien}
                                                                         {' phút'}
                                                                     </Typography>
                                                                 </TableCell>
                                                                 <TableCell align={'right'}>
                                                                     <Typography>
-                                                                        {item.donGia}
+                                                                        {new Intl.NumberFormat(
+                                                                            'vi-VN'
+                                                                        ).format(item.donGia)}
                                                                     </Typography>
                                                                 </TableCell>
                                                             </TableRow>

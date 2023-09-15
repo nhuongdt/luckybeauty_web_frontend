@@ -6,7 +6,7 @@ import roleStore from './roleStore';
 import userStore from './userStore';
 export default function initializeStores() {
     return {
-        authenticationStore: new AuthenticationStore(),
+        authenticationStore: AuthenticationStore,
         roleStore: roleStore,
         tenantStore: new TenantStore(),
         userStore: userStore,

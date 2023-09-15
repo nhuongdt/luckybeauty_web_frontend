@@ -73,7 +73,6 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const GetListCustomer_wasBooking = async (paramSearch: BookingRequestDto) => {
         const data = await datLichService.GetKhachHang_Booking(paramSearch);
         setListCusBooking(data);
-        console.log('GetListCustomer_wasBooking ', data);
     };
 
     const GetAllDichVu = async () => {

@@ -161,7 +161,6 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                         enableReinitialize>
                         {(formik) => (
                             <>
-                                {console.log('formik ', formik.values)}
                                 <Form>
                                     <Grid container rowGap={1} columnSpacing={2}>
                                         <Grid item xs={12} sm={12}>

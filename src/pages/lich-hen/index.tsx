@@ -274,7 +274,7 @@ const LichHen: React.FC = () => {
                 sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
                 <Grid item xs={12} sm={3}>
                     <Autocomplete
-                        options={suggestStore.suggestKyThuatVien}
+                        options={suggestStore.suggestKyThuatVien || []}
                         getOptionLabel={(option) => `${option.tenNhanVien}`}
                         size="small"
                         sx={{ width: window.screen.width <= 650 ? '100%' : '60%' }}

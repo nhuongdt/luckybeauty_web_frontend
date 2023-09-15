@@ -16,7 +16,8 @@ import {
     DialogActions,
     FormControl,
     InputLabel,
-    Autocomplete
+    Autocomplete,
+    FormHelperText
 } from '@mui/material';
 import * as Yup from 'yup';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
@@ -67,7 +68,12 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
     const handleDayToggle = (event: React.MouseEvent<HTMLElement>, newDays: string[]) => {
         setSelectedDays(newDays);
     };
+
     const rules = Yup.object().shape({
+        idNhanVien: Yup.string()
+            .nullable()
+            .notOneOf(['00000000-0000-0000-0000-000000000000'], 'Nhân viên không được để trống')
+            .required('Nhân viên không được để trống'),
         idCaLamViec: Yup.string().required('Ca làm việc không được để trống'),
         tuNgay: Yup.string().required('Ngày bắt đầu không được để trống'),
         denNgay: Yup.string().required('Ngày kết thúc không được để trống')
@@ -194,8 +200,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         <Box>
                                             <TextField
                                                 label={
-                                                    <Typography fontSize="13px" fontWeight="500">
+                                                    <Typography variant="subtitle2">
                                                         Ngày bắt đầu
+                                                        <span className="text-danger"> *</span>
                                                     </Typography>
                                                 }
                                                 type="date"
@@ -250,8 +257,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         <Box>
                                             <TextField
                                                 label={
-                                                    <Typography fontSize="13px" fontWeight="500">
+                                                    <Typography variant="subtitle2">
                                                         Ngày kết thúc
+                                                        <span className="text-danger"> *</span>
                                                     </Typography>
                                                 }
                                                 type="date"
@@ -353,19 +361,48 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                     }}
                                                     renderInput={(params: any) => (
                                                         <TextField
+                                                            error={
+                                                                touched.idNhanVien &&
+                                                                errors.idNhanVien
+                                                                    ? true
+                                                                    : false
+                                                            }
+                                                            helperText={
+                                                                touched.idNhanVien &&
+                                                                errors.idNhanVien && (
+                                                                    <span className="text-danger">
+                                                                        {errors.idNhanVien}
+                                                                    </span>
+                                                                )
+                                                            }
                                                             fullWidth
                                                             {...params}
-                                                            label="Nhân viên"
+                                                            label={
+                                                                <Typography variant="subtitle2">
+                                                                    Nhân viên
+                                                                    <span className="text-danger">
+                                                                        {' '}
+                                                                        *
+                                                                    </span>
+                                                                </Typography>
+                                                            }
                                                             variant="outlined"
                                                         />
                                                     )}
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={6}>
-                                                <FormControl fullWidth>
+                                                <FormControl
+                                                    fullWidth
+                                                    error={
+                                                        touched.idCaLamViec && errors.idCaLamViec
+                                                            ? true
+                                                            : false
+                                                    }>
                                                     <InputLabel>
-                                                        <Typography fontSize="14px">
+                                                        <Typography variant="subtitle2">
                                                             Ca làm việc
+                                                            <span className="text-danger"> *</span>
                                                         </Typography>
                                                     </InputLabel>
                                                     <Select
@@ -377,12 +414,6 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                         value={values.idCaLamViec}
                                                         onChange={handleChange}
                                                         name="idCaLamViec"
-                                                        error={
-                                                            touched.idCaLamViec &&
-                                                            errors.idCaLamViec
-                                                                ? true
-                                                                : false
-                                                        }
                                                         sx={{
                                                             width: '100%',
                                                             '[aria-expanded="true"] ~ svg': {
@@ -403,20 +434,21 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                                 </MenuItem>
                                                             ))}
                                                     </Select>
-                                                    {touched.idCaLamViec && errors.idCaLamViec && (
-                                                        <span className="text-danger">
-                                                            {errors.idCaLamViec}
-                                                        </span>
-                                                    )}
+                                                    <FormHelperText>
+                                                        {touched.idCaLamViec &&
+                                                            errors.idCaLamViec && (
+                                                                <span className="text-danger">
+                                                                    {errors.idCaLamViec}
+                                                                </span>
+                                                            )}
+                                                    </FormHelperText>
                                                 </FormControl>
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Box>
-                                                    <Typography
-                                                        //color="#4C4B4C"
-                                                        fontSize="14px"
-                                                        fontWeight="500">
+                                                    <Typography variant="subtitle2">
                                                         Ngày làm việc
+                                                        <span className="text-danger"> *</span>
                                                     </Typography>
                                                     <ToggleButtonGroup
                                                         fullWidth

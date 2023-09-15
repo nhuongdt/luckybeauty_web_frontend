@@ -18,6 +18,7 @@ import AppConsts from '../../../lib/appconst';
 import userService from '../../../services/user/userService';
 import { enqueueSnackbar } from 'notistack';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import AuthenticationStore from '../../../stores/authenticationStore';
 class ProfileScreen extends Component {
     state = {
         showCurrentPassword: false,
@@ -280,6 +281,9 @@ class ProfileScreen extends Component {
                                             variant: createOrEdit.status,
                                             autoHideDuration: 3000
                                         });
+                                        createOrEdit.status == 'error'
+                                            ? undefined
+                                            : AuthenticationStore.logout();
                                         values.confirmPassword = '';
                                         values.currentPassword = '';
                                         values.newPassword = '';

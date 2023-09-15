@@ -77,7 +77,6 @@ const CreateOrEditSoQuyDialog = ({
         // { id: 2, text: 'Nhà cung cấp' },
         { value: 3, text: 'Nhân viên' }
     ];
-    console.log('CreateOrEditSoQuyDialog ');
 
     const formRef = useRef();
     const appContext = useContext(AppContext);
@@ -324,24 +323,22 @@ const CreateOrEditSoQuyDialog = ({
             />
             <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onClose}>
                 <DialogTitle>
-                    <div className="row">
-                        <Box className="modal-title" sx={{ float: 'left' }}>
-                            {utils.checkNull(idQuyHD) ? 'Thêm mới' : 'Cập nhật'} sổ quỹ
-                        </Box>
-                        <Box
-                            className="col-4"
-                            sx={{
-                                float: 'right',
-                                '& svg:hover': {
-                                    filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
-                                }
-                            }}>
-                            <CloseIcon
-                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
-                                onClick={onClose}
-                            />
-                        </Box>
-                    </div>
+                    <Box className="modal-title" sx={{ float: 'left' }}>
+                        {utils.checkNull(idQuyHD) ? 'Thêm mới' : 'Cập nhật'} sổ quỹ
+                    </Box>
+                    <Box
+                        className="col-4"
+                        sx={{
+                            float: 'right',
+                            '& svg:hover': {
+                                filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
+                            }
+                        }}>
+                        <CloseIcon
+                            style={{ float: 'right', height: '24px', cursor: 'pointer' }}
+                            onClick={onClose}
+                        />
+                    </Box>
                 </DialogTitle>
                 <DialogContent>
                     <Formik

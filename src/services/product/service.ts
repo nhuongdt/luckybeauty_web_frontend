@@ -7,7 +7,6 @@ export const GetDetailProduct = async (id: string) => {
         .then((res) => {
             return res.data.result;
         });
-    console.log('GetDetailProduct ', data);
     return data;
 };
 export const Get_DMHangHoa = async (input: PagedProductSearchDto) => {
@@ -16,7 +15,6 @@ export const Get_DMHangHoa = async (input: PagedProductSearchDto) => {
         .then((res: { data: { result: any } }) => {
             return res.data.result;
         });
-    console.log('GetDMHangHoa', xx);
     return xx;
 };
 export const CreateOrEditProduct = async (input: ModelHangHoaDto) => {
@@ -25,7 +23,6 @@ export const CreateOrEditProduct = async (input: ModelHangHoaDto) => {
         .then((res: { data: { result: any } }) => {
             return res.data.result;
         });
-    console.log('CreateOrEdit', xx, input);
     return xx;
 };
 
@@ -36,7 +33,6 @@ export const GetNhomHangHoa_byID = async (id: string) => {
         .then((res: { data: { result: any } }) => {
             return res.data.result;
         });
-    console.log('GetNhomHangHoa_byID ', xx);
     return xx;
 };
 
@@ -46,7 +42,6 @@ export const GetDM_NhomHangHoa = async () => {
         .then((res: { data: { result: any } }) => {
             return res.data.result;
         });
-    console.log('GetDM_NhomHangHoa ', xx);
     return xx;
 };
 

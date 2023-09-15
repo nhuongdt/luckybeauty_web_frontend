@@ -39,6 +39,7 @@ import { Close } from '@mui/icons-material';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import { NumericFormat } from 'react-number-format';
 import { format } from 'date-fns';
+import bookingStore from '../../../stores/bookingStore';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
@@ -143,7 +144,8 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     ? `https://drive.google.com/uc?export=view&id=${fileId}`
                                     : '';
                             const createOrEdit = await khachHangService.createOrEdit(values);
-
+                            bookingStore.createOrEditBookingDto.idKhachHang =
+                                createOrEdit.id.toString();
                             createOrEdit != null
                                 ? values.id === AppConsts.guidEmpty
                                     ? enqueueSnackbar('Thêm mới thành công', {
@@ -234,7 +236,14 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 autoFocus
                                                 value={values.tenKhachHang}
                                                 onChange={handleChange}
-                                                label="Tên khách hàng *"
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Tên khách hàng
+                                                        <span className="text-danger">*</span>
+                                                    </Typography>
+                                                }
                                                 helperText={
                                                     errors.tenKhachHang && touched.tenKhachHang ? (
                                                         <small className="text-danger">
@@ -253,7 +262,14 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 name="soDienThoai"
                                                 size="small"
                                                 type="tel"
-                                                label="Số điện thoại *"
+                                                label={
+                                                    <Typography
+                                                        //color="#4C4B4C"
+                                                        variant="subtitle2">
+                                                        Số điện thoại
+                                                        <span className="text-danger">*</span>
+                                                    </Typography>
+                                                }
                                                 fullWidth
                                                 value={values.soDienThoai}
                                                 helperText={
@@ -334,14 +350,15 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={12}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNhomKhach.filter(
-                                                        (x) => x.id == values.idNhomKhach
-                                                    )[0] ?? { id: '', tenNhomKhach: '' }
+                                                    suggestStore.suggestNhomKhach &&
+                                                    suggestStore.suggestNhomKhach.length > 0
+                                                        ? suggestStore.suggestNhomKhach.find(
+                                                              (x) => x.id === values.idNhomKhach
+                                                          ) || { id: '', tenNhomKhach: '' }
+                                                        : { id: '', tenNhomKhach: '' }
                                                 }
                                                 options={suggestStore.suggestNhomKhach}
-                                                getOptionLabel={(option) =>
-                                                    `${option.tenNhomKhach}`
-                                                }
+                                                getOptionLabel={(option) => option.tenNhomKhach}
                                                 size="small"
                                                 fullWidth
                                                 disablePortal
@@ -350,7 +367,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                         'idNhomKhach',
                                                         value ? value.id : undefined
                                                     );
-                                                    // Cập nhật giá trị id trong Formik
+                                                    // Update the 'idNhomKhach' value in Formik
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField
@@ -364,14 +381,15 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={6} style={{ display: 'none' }}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNguonKhach.filter(
-                                                        (x) => x.id == values.idNguonKhach
-                                                    )[0] ?? { id: '', tenNguonKhach: '' }
+                                                    suggestStore.suggestNguonKhach &&
+                                                    suggestStore.suggestNguonKhach.length > 0
+                                                        ? suggestStore.suggestNguonKhach.find(
+                                                              (x) => x.id === values.idNguonKhach
+                                                          ) || { id: '', tenNguonKhach: '' }
+                                                        : { id: '', tenNguonKhach: '' }
                                                 }
                                                 options={suggestStore.suggestNguonKhach}
-                                                getOptionLabel={(option) =>
-                                                    `${option.tenNguonKhach}`
-                                                }
+                                                getOptionLabel={(option) => option.tenNguonKhach}
                                                 size="small"
                                                 fullWidth
                                                 disablePortal
@@ -379,7 +397,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     setFieldValue(
                                                         'idNguonKhach',
                                                         value ? value.id : undefined
-                                                    ); // Cập nhật giá trị id trong Formik
+                                                    ); // Update the 'idNguonKhach' value in Formik
                                                 }}
                                                 renderInput={(params) => (
                                                     <TextField

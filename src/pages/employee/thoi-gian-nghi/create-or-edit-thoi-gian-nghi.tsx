@@ -104,7 +104,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     <Grid item xs={12}>
                                         <FormGroup>
                                             <TextField
-                                                label={<Typography>Tên ngày lễ</Typography>}
+                                                label={
+                                                    <Typography variant="subtitle2">
+                                                        Tên ngày lễ
+                                                        <span className="text-danger"> *</span>
+                                                    </Typography>
+                                                }
                                                 sx={{ marginTop: '16px' }}
                                                 value={values.tenNgayLe}
                                                 error={
@@ -131,7 +136,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
                                             <TextField
-                                                label={<Typography>Từ ngày</Typography>}
+                                                label={
+                                                    <Typography variant="subtitle2">
+                                                        Từ ngày
+                                                        <span className="text-danger"> *</span>
+                                                    </Typography>
+                                                }
                                                 className="mt-2"
                                                 type="date"
                                                 size="small"
@@ -157,7 +167,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
                                             <TextField
-                                                label={<Typography>Đến ngày</Typography>}
+                                                label={
+                                                    <Typography variant="subtitle2">
+                                                        Đến ngày
+                                                        <span className="text-danger"> *</span>
+                                                    </Typography>
+                                                }
                                                 type="date"
                                                 className="mt-2"
                                                 size="small"

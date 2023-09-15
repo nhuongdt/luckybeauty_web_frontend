@@ -179,7 +179,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         if (isFirstRender.current) {
             isFirstRender.current = false; // avoid load again
         }
-        console.log('pageload');
         PageLoad();
     }, [customerChosed]);
 

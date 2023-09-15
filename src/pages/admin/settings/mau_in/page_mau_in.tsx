@@ -269,7 +269,6 @@ export default function PageMauIn({ xx }: any) {
         }
         return sLoai;
     };
-    console.log('pagemauin');
 
     const GetContentMauInMacDinh = async (loai = 1) => {
         //Loai (1.k80,2.a4)
@@ -364,10 +363,7 @@ export default function PageMauIn({ xx }: any) {
                         <Grid item xs={12} sm={12} md={6} lg={6}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={3} md={3} lg={3}>
-                                    <Button
-                                        variant="contained"
-                                        fullWidth
-                                        onClick={showModalAddMauIn}>
+                                    <Button variant="contained" onClick={showModalAddMauIn}>
                                         Thêm mới
                                     </Button>
                                 </Grid>

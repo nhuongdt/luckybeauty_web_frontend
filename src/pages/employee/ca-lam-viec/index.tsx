@@ -10,7 +10,7 @@ import {
 import { observer } from 'mobx-react';
 import { Component, ReactNode } from 'react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import caLamViecStore from '../../../stores/caLamViecStore';
 import { TextTranslate } from '../../../components/TableLanguage';
 import AddIcon from '../../../images/add.svg';
@@ -45,6 +45,7 @@ class CaLamViecScreen extends Component {
         selectedRowId: null,
         totalCount: 0,
         isShowConfirmDelete: false,
+        rowSelectedModel: [] as GridRowSelectionModel,
         totalPage: 0
     };
     componentDidMount(): void {
@@ -467,8 +468,14 @@ class CaLamViecScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px" bgcolor="#fff">
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
-                        disableRowSelectionOnClick
                         rowHeight={46}
                         rows={
                             caLamViecStore.caLamViecs === undefined
@@ -476,6 +483,7 @@ class CaLamViecScreen extends Component {
                                 : caLamViecStore.caLamViecs.items
                         }
                         columns={columns}
+                        disableRowSelectionOnClick
                         checkboxSelection
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
@@ -491,6 +499,10 @@ class CaLamViecScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
+                        }}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

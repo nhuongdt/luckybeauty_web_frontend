@@ -107,8 +107,6 @@ export default function ModalEditChiTietGioHang({
         } else {
             setItemVisibility([true]);
         }
-
-        console.log('into _ModalEditChiTietGioHang');
     }, [isShow]);
 
     const handleChangeGiaBan = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
@@ -343,7 +341,6 @@ export default function ModalEditChiTietGioHang({
         const checkCT = lstCTHoaDon.filter(
             (x: PageHoaDonChiTietDto) => x.idDonViQuyDoi === item.idDonViQuyDoi
         );
-        console.log('checkCT ', checkCT);
         if (checkCT.length === 0) {
             // unshift
             setLstCTHoaDon([ctNew, ...lstCTHoaDon]);

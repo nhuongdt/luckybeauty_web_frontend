@@ -48,7 +48,6 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
     } as PagedKhachHangResultRequestDto);
 
     const GetKhachHang_noBooking = async (paramSearch: PagedKhachHangResultRequestDto) => {
-        console.log('param ', paramSearch);
         const data = await khachHangService.GetKhachHang_noBooking(paramSearch);
         setPageDataCustomer(data);
     };

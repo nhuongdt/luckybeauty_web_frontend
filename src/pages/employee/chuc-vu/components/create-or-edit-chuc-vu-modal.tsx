@@ -16,10 +16,12 @@ import chucVuService from '../../../../services/nhan-vien/chuc_vu/chucVuService'
 import AppConsts from '../../../../lib/appconst';
 import suggestStore from '../../../../stores/suggestStore';
 import { observer } from 'mobx-react';
+import nhanVienStore from '../../../../stores/nhanVienStore';
 
 interface ModalProps {
     visiable: boolean;
     handleClose: () => void;
+    handleSubmit: () => void;
 }
 
 class CreateOrEditChucVuModal extends Component<ModalProps> {
@@ -64,9 +66,10 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                 trangThai: 1
                             }}
                             onSubmit={async (values) => {
-                                await chucVuService.CreateOrEditChucVu(values);
+                                const result = await chucVuService.CreateOrEditChucVu(values);
                                 await suggestStore.getSuggestChucVu();
-                                this.props.handleClose();
+                                nhanVienStore.createEditNhanVien.idChucVu = result.id;
+                                this.props.handleSubmit();
                             }}>
                             {({ handleChange, values }) => (
                                 <Form>

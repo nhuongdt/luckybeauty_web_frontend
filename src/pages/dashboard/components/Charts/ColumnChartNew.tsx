@@ -12,7 +12,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             <div>
                 <p className="label">{label}</p>
                 {payload.map((entry: any, index: number) => (
-                    <div>
+                    <div key={index}>
                         <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
                             {entry.name == 'thangTruoc'
                                 ? 'Tháng trước'

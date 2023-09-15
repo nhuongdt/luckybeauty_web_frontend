@@ -51,16 +51,16 @@ class AuthenticationStore {
         localStorage.clear();
         sessionStorage.clear();
         // get an array of all cookie names
-        const cookieNames = Object.keys(Cookies.get());
-
-        // loop through each cookie name and remove the cookie
-        cookieNames.forEach((cookieName) => {
-            Cookies.remove(cookieName);
+        Object.keys(Cookies.get()).forEach((cookieName) => {
+            if (cookieName !== 'TenantName') {
+                Cookies.remove(cookieName);
+            }
         });
+        window.location.href = '/login';
     }
 
     constructor() {
         makeAutoObservable(this);
     }
 }
-export default AuthenticationStore;
+export default new AuthenticationStore();

@@ -199,7 +199,6 @@ export default function PageProduct() {
     };
 
     function saveNhomHang(objNew: ModelNhomHangHoa, isDelete = false) {
-        console.log('objNew ', objNew);
         if (isDelete) {
             setObjAlert({
                 show: true,
@@ -225,7 +224,6 @@ export default function PageProduct() {
                 });
                 setLstProductGroup(
                     lstProductGroup.map((item: ModelNhomHangHoa) => {
-                        console.log('item ', item.id, objNew.id);
                         if (item.id === objNew.id) {
                             return {
                                 ...item,
@@ -326,8 +324,6 @@ export default function PageProduct() {
             );
         }
     };
-    console.log('page');
-
     const deleteProduct = async () => {
         if (!Utils.checkNull(rowHover?.idDonViQuyDoi)) {
             await ProductService.DeleteProduct_byIDHangHoa(rowHover?.idHangHoa ?? '');
@@ -616,9 +612,9 @@ export default function PageProduct() {
                 agreeChuyenNhom={chuyenNhomHang}
             />
             <Grid container className="dich-vu-page" gap={4} paddingTop={2}>
-                <Grid container alignItems="center" justifyContent="space-between">
-                    <Grid item xs={12} md={6} lg={6} alignItems="center">
-                        <Grid container alignItems="center">
+                <Grid item container alignItems="center" justifyContent="space-between">
+                    <Grid container item xs={12} md={6} lg={6} alignItems="center">
+                        <Grid container item alignItems="center">
                             <Grid item xs={6} sm={6} lg={4} md={4}>
                                 <span className="page-title"> Danh mục dịch vụ</span>
                             </Grid>
@@ -687,7 +683,7 @@ export default function PageProduct() {
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} paddingTop={1}>
+                <Grid container item spacing={2} paddingTop={1}>
                     <Grid item lg={3} md={3} sm={4} xs={12}>
                         <Box className="page-box-left">
                             <Box
@@ -789,6 +785,7 @@ export default function PageProduct() {
                             />
 
                             <Grid
+                                item
                                 container
                                 style={{
                                     display: pageDataProduct.totalCount > 0 ? 'flex' : 'none',

@@ -10,7 +10,7 @@ import {
     InputAdornment
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DownloadIcon from '../../../../../images/download.svg';
 import UploadIcon from '../../../../../images/upload.svg';
@@ -54,7 +54,8 @@ class ChietKhauDichVuScreen extends Component {
         createOrEditDto: { laPhanTram: false } as CreateOrEditChietKhauDichVuDto,
         activeButton: '',
         focusField: '',
-        showButton: false
+        showButton: false,
+        rowSelectedModel: [] as GridRowSelectionModel
     };
     componentDidMount(): void {
         this.InitData();
@@ -237,8 +238,8 @@ class ChietKhauDichVuScreen extends Component {
                             params.value === 0
                                 ? '0'
                                 : params.row.laPhanTram === true
-                                ? params.value.toString() + ' %'
-                                : params.value.toString() + ' VNĐ'
+                                ? new Intl.NumberFormat('vi-VN').format(params.value) + ' %'
+                                : new Intl.NumberFormat('vi-VN').format(params.value) + ' VNĐ'
                         }
                         sx={{
                             height: '85%',
@@ -275,8 +276,8 @@ class ChietKhauDichVuScreen extends Component {
                             params.value === 0
                                 ? '0'
                                 : params.row.laPhanTram === true
-                                ? params.value + ' %'
-                                : params.value + ' VNĐ'
+                                ? new Intl.NumberFormat('vi-VN').format(params.value) + ' %'
+                                : new Intl.NumberFormat('vi-VN').format(params.value) + ' VNĐ'
                         }
                         sx={{
                             height: '85%',
@@ -314,8 +315,8 @@ class ChietKhauDichVuScreen extends Component {
                             params.value === 0
                                 ? '0'
                                 : params.row.laPhanTram === true
-                                ? params.value + ' %'
-                                : params.value + ' VNĐ'
+                                ? new Intl.NumberFormat('vi-VN').format(params.value) + ' %'
+                                : new Intl.NumberFormat('vi-VN').format(params.value) + ' VNĐ'
                         }
                         sx={{
                             fontSize: '13px',
@@ -363,7 +364,7 @@ class ChietKhauDichVuScreen extends Component {
                             fontWeight: '400',
                             fontFamily: 'Roboto'
                         }}>
-                        {params.value}
+                        {new Intl.NumberFormat('vi-VN').format(params.value)}
                     </Box>
                 )
             },
@@ -501,12 +502,19 @@ class ChietKhauDichVuScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box marginTop="8px">
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
-                        disableRowSelectionOnClick
                         rowHeight={46}
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
-                        checkboxSelection={false}
+                        disableRowSelectionOnClick
+                        checkboxSelection
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -521,6 +529,10 @@ class ChietKhauDichVuScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
+                        }}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

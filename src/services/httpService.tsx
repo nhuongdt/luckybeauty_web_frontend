@@ -88,26 +88,23 @@ http.interceptors.response.use(
                   //           )
                   //       }
                   //   )
-                  '';
-            // enqueueSnackbar(
-            //       <>
-            //           <div>
-            //               <div>Lỗi</div>
-            //               <span>
-            //                   {error.response.data.error.message}:
-            //                   {error.response.data.error.details}
-            //               </span>
-            //           </div>
-            //       </>,
-            //       {
-            //           variant: 'error',
-            //           anchorOrigin: {
-            //               vertical: 'top',
-            //               horizontal: 'center'
-            //           },
-            //           autoHideDuration: 3000
-            //       }
-            //   );
+
+                  enqueueSnackbar(
+                      <>
+                          <div>
+                              <div>Lỗi</div>
+                              <span>{error.response.data.error.message}</span>
+                          </div>
+                      </>,
+                      {
+                          variant: 'error',
+                          anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                          },
+                          autoHideDuration: 3000
+                      }
+                  );
         } else if (!error.response) {
             // Hiển thị thông báo lỗi sử dụng toastify
             // (

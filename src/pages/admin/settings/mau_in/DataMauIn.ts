@@ -343,6 +343,5 @@ class DataMauIn {
         // return allContent;
     };
 }
-console.log('datamauin');
 
 export default new DataMauIn();

@@ -124,7 +124,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Grid container spacing={3}>
+                                <Grid container spacing={2}>
                                     <Grid item xs={12} sm={5}>
                                         {/* <FormGroup> */}
                                         <Autocomplete
@@ -188,9 +188,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 width: '24px',
                                                                 height: '24px'
                                                             },
-                                                            minWidth: '40px',
-                                                            width: '40px',
-                                                            height: '40px',
+                                                            minWidth: '36px',
+                                                            width: '36px',
+                                                            height: '36px',
                                                             borderRadius: '8px',
                                                             border: '1px solid #319DFF'
                                                         }}
@@ -497,7 +497,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 <Button
                                                     className="btn-container-hover"
                                                     variant="contained"
-                                                    size="small"
                                                     type="submit"
                                                     sx={{
                                                         backgroundColor:
