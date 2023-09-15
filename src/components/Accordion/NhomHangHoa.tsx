@@ -56,7 +56,8 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                         }}
                         onMouseEnter={(event: any) => {
                             handleHover(event, item, index);
-                        }}>
+                        }}
+                        onClick={() => handleClickTreeItem(false, item.id)}>
                         <LocalOfferOutlined sx={{ color: item.color, width: 20, height: 20 }} />
                         <Typography
                             variant="body2"
@@ -72,13 +73,15 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                 WebkitLineClamp: 1,
                                 paddingRight: '20px'
                             }}
-                            onClick={() => handleClickTreeItem(false, item.id)}
                             title={item.tenNhomHang}>
                             {item.tenNhomHang}
                         </Typography>
                         {isHover && item.id !== '' && rowHover.id === item.id && (
                             <OpenInNew
-                                onClick={() => handleClickTreeItem(true, item.id)}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleClickTreeItem(true, item.id);
+                                }}
                                 sx={{ position: 'absolute', right: 16 }}
                             />
                         )}
@@ -102,7 +105,8 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                             }}
                             onMouseEnter={(event: any) => {
                                 handleHover(event, child, index2);
-                            }}>
+                            }}
+                            onClick={() => handleClickTreeItem(false, child.id)}>
                             <LocalOfferOutlined
                                 sx={{ color: item.color, opacity: '0', width: 20, height: 20 }}
                             />
@@ -118,13 +122,15 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                     WebkitBoxOrient: 'vertical',
                                     WebkitLineClamp: 1
                                 }}
-                                onClick={() => handleClickTreeItem(false, child.id)}
                                 title={child.tenNhomHang}>
                                 {child.tenNhomHang}
                             </Typography>
                             {isHover && rowHover.id === child.id && (
                                 <OpenInNew
-                                    onClick={() => handleClickTreeItem(true, child.id)}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleClickTreeItem(true, child.id);
+                                    }}
                                     sx={{ position: 'absolute', right: 16 }}
                                 />
                             )}
