@@ -14,7 +14,7 @@ import {
     Typography
 } from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import AddIcon from '../../../images/add.svg';
 import SearchIcon from '../../../images/search-normal.svg';
 import DownloadIcon from '../../../images/download.svg';
@@ -51,6 +51,7 @@ class EmployeeHoliday extends Component {
             tuNgay: new Date(),
             denNgay: new Date()
         } as CreateOrEditNgayNghiLeDto,
+        rowSelectedModel: [] as GridRowSelectionModel,
         totalCount: 0,
         currentPage: 1,
         totalPage: 1,
@@ -466,6 +467,13 @@ class EmployeeHoliday extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px" bgcolor="#fff">
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
                         disableRowSelectionOnClick
                         rowHeight={46}
@@ -486,6 +494,10 @@ class EmployeeHoliday extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
+                        }}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

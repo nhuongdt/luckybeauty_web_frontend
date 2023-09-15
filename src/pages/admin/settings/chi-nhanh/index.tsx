@@ -24,7 +24,7 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../../lib/appconst';
-import { DataGrid, GridApi } from '@mui/x-data-grid';
+import { DataGrid, GridApi, GridRowSelectionModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
@@ -51,7 +51,8 @@ class ChiNhanhScreen extends Component {
         totalPage: 0,
         createOrEditChiNhanhDto: {} as CreateOrEditChiNhanhDto,
         listChiNhanh: [] as ChiNhanhDto[],
-        hiddenColumns: []
+        hiddenColumns: [],
+        rowSelectedModel: [] as GridRowSelectionModel
     };
     async componentDidMount() {
         this.InitData();
@@ -402,8 +403,14 @@ class ChiNhanhScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px">
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
-                        disableRowSelectionOnClick
                         rowHeight={46}
                         columns={columns}
                         rows={this.state.listChiNhanh}
@@ -422,6 +429,11 @@ class ChiNhanhScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
+                        }}
+                        disableRowSelectionOnClick
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
                         }}
                         columnBuffer={0}
                         hideFooter

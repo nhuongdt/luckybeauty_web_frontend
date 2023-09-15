@@ -102,7 +102,12 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     <Grid item xs={12} sx={{ marginTop: '8px' }}>
                                         <FormGroup>
                                             <TextField
-                                                label={<Typography>Tên ca</Typography>}
+                                                label={
+                                                    <Typography variant="subtitle2">
+                                                        Tên ca
+                                                        <span className="text-danger"> *</span>
+                                                    </Typography>
+                                                }
                                                 value={values.tenCa}
                                                 error={errors.tenCa && touched.tenCa ? true : false}
                                                 helperText={
@@ -139,7 +144,12 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     <Grid item xs={6} sm={6}>
                                         <FormGroup>
                                             <TextField
-                                                label={<Typography>Bắt đầu ca</Typography>}
+                                                label={
+                                                    <Typography variant="subtitle2">
+                                                        Bắt đầu ca
+                                                        <span className="text-danger"> *</span>
+                                                    </Typography>
+                                                }
                                                 type="time"
                                                 size="small"
                                                 name="gioVao"
@@ -166,7 +176,12 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     <Grid item xs={6} sm={6}>
                                         <FormGroup>
                                             <TextField
-                                                label={<Typography>Kết thúc ca</Typography>}
+                                                label={
+                                                    <Typography variant="subtitle2">
+                                                        Kết thúc ca
+                                                        <span className="text-danger"> *</span>
+                                                    </Typography>
+                                                }
                                                 type="time"
                                                 size="small"
                                                 name="gioRa"

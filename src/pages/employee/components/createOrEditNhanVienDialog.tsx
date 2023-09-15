@@ -36,6 +36,9 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import vi from 'date-fns/locale/vi';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import { NumericFormat } from 'react-number-format';
+import { ThreeSixtySharp } from '@mui/icons-material';
+import nhanVienStore from '../../../stores/nhanVienStore';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -48,6 +51,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     state = {
         avatarFile: '',
         chucVuVisiable: false,
+        isShowConfirmDelete: false,
         staffImage: '',
         googleDrive_fileId: '',
         fileImage: {} as File
@@ -58,34 +62,44 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
             chucVuVisiable: !this.state.chucVuVisiable
         });
     };
-
-    UNSAFE_componentWillReceiveProps(nextProp: any): void {
-        if (nextProp.formRef !== undefined) {
-            const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
-            this.setState({
-                staffImage: objUpdate?.avatar ?? '',
-                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
-                    objUpdate?.avatar ?? ''
-                )
-            });
-        }
-    }
-
-    onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file: File = e.target.files[0];
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onload = () => {
-                this.setState((prev) => ({
-                    ...prev,
-                    staffImage: reader.result?.toString() ?? '',
-                    fileImage: file
-                }));
-            };
-        }
+    handleSubmitChucVu = async () => {
+        this.setState({
+            chucVuVisiable: !this.state.chucVuVisiable
+        });
     };
+    onModalDelete = () => {
+        this.setState({ isShowConfirmDelete: !this.state.isShowConfirmDelete });
+    };
+    handleDelete = async (id: string) => {
+        // const deleteResult = nhanVienStore.delete(id);
+        // deleteResult != null
+        //     ? enqueueSnackbar('Xóa bản ghi thành công', {
+        //           variant: 'success',
+        //           autoHideDuration: 3000
+        //       })
+        //     : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+        //           variant: 'error',
+        //           autoHideDuration: 3000
+        //       });
+        this.onModalDelete();
+        this.props.onCancel();
+    };
+
+    // onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     if (e.target.files && e.target.files[0]) {
+    //         const file: File = e.target.files[0];
+    //         const reader = new FileReader();
+    //         reader.readAsDataURL(file);
+
+    //         reader.onload = () => {
+    //             this.setState((prev) => ({
+    //                 ...prev,
+    //                 staffImage: reader.result?.toString() ?? '',
+    //                 fileImage: file
+    //             }));
+    //         };
+    //     }
+    // };
     closeImage = async () => {
         if (!utils.checkNull(this.state.googleDrive_fileId)) {
             await uploadFileService.GoogleApi_RemoveFile_byId(this.state.googleDrive_fileId);
@@ -100,7 +114,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     };
     render(): ReactNode {
         const { visible, onCancel, title, onOk, formRef } = this.props;
-        const initValues: CreateOrUpdateNhanSuDto = formRef;
+        const initValues: CreateOrUpdateNhanSuDto = nhanVienStore.createEditNhanVien;
 
         return (
             <Dialog
@@ -154,17 +168,15 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                         let fileId = this.state.googleDrive_fileId;
                         const fileSelect = this.state.fileImage;
                         if (!utils.checkNull(this.state.staffImage)) {
-                            if (this.state.staffImage !== formRef.avatar) {
-                                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
-                                    fileSelect,
-                                    'NhanVien'
-                                );
-                            }
+                            fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
+                                fileSelect,
+                                'NhanVien'
+                            );
+                            values.avatar =
+                                fileId !== ''
+                                    ? `https://drive.google.com/uc?export=view&id=${fileId}`
+                                    : '';
                         }
-                        values.avatar =
-                            fileId !== ''
-                                ? `https://drive.google.com/uc?export=view&id=${fileId}`
-                                : '';
                         const createOrEdit = await nhanVienService.createOrEdit(values);
                         createOrEdit != null
                             ? formRef.id === AppConsts.guidEmpty
@@ -180,6 +192,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                   variant: 'error',
                                   autoHideDuration: 3000
                               });
+                        this.setState({ staffImage: '' });
                         onOk();
                     }}>
                     {({ isSubmitting, handleChange, errors, values, setFieldValue, touched }) => (
@@ -204,13 +217,13 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     <Grid item xs={12}>
                                         <Box>
                                             <Stack alignItems="center" position={'relative'}>
-                                                {!utils.checkNull(this.state.staffImage) ? (
+                                                {!utils.checkNull(values.avatar) ? (
                                                     <Box
                                                         sx={{
                                                             position: 'relative'
                                                         }}>
                                                         <img
-                                                            src={this.state.staffImage}
+                                                            src={values.avatar}
                                                             className="user-image-upload"
                                                         />
                                                     </Box>
@@ -221,6 +234,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 )}
                                                 <TextField
                                                     type="file"
+                                                    name="avatar"
                                                     sx={{
                                                         position: 'absolute',
                                                         top: 0,
@@ -235,7 +249,28 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                             height: '100%'
                                                         }
                                                     }}
-                                                    onChange={this.onSelectAvatarFile}
+                                                    onChange={(
+                                                        e: React.ChangeEvent<HTMLInputElement>
+                                                    ) => {
+                                                        if (e.target.files && e.target.files[0]) {
+                                                            const file: File = e.target.files[0];
+                                                            const reader = new FileReader();
+                                                            reader.readAsDataURL(file);
+                                                            reader.onload = () => {
+                                                                this.setState((prev) => ({
+                                                                    ...prev,
+                                                                    staffImage:
+                                                                        reader.result?.toString() ??
+                                                                        '',
+                                                                    fileImage: file
+                                                                }));
+                                                                setFieldValue(
+                                                                    'avatar',
+                                                                    reader.result?.toString() ?? ''
+                                                                );
+                                                            };
+                                                        }
+                                                    }}
                                                 />
                                             </Stack>
                                         </Box>
@@ -498,6 +533,20 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     className="btn-outline-hover">
                                     Hủy
                                 </Button>
+                                {values.id === AppConsts.guidEmpty || values.id === '' ? null : (
+                                    <Button
+                                        onClick={this.onModalDelete}
+                                        variant="outlined"
+                                        color="error"
+                                        sx={{
+                                            fontSize: '14px'
+                                            //textTransform: 'unset'
+                                            //color: 'var(--color-main)'
+                                        }}>
+                                        Xóa
+                                    </Button>
+                                )}
+
                                 {!isSubmitting ? (
                                     <Button
                                         type="submit"
@@ -533,6 +582,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                 <CreateOrEditChucVuModal
                     visiable={this.state.chucVuVisiable}
                     handleClose={this.onModalChucVu}
+                    handleSubmit={this.handleSubmitChucVu}
                 />
             </Dialog>
         );

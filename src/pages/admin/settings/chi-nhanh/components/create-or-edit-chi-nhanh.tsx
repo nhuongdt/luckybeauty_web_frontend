@@ -20,11 +20,12 @@ import { ReactComponent as CloseIcon } from '../../../../../images/close-square.
 import { CreateOrEditChiNhanhDto } from '../../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import { Form, Formik } from 'formik';
 import chiNhanhService from '../../../../../services/chi_nhanh/chiNhanhService';
-import PersonIcon from '@mui/icons-material/Person';
+import AddLogoIcon from '../../../../../images/add-logo.svg';
 import AppConsts from '../../../../../lib/appconst';
 import uploadFileService from '../../../../../services/uploadFileService';
 import utils from '../../../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
+import Cookies from 'js-cookie';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;
@@ -93,6 +94,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                         validationSchema={rules}
                         onSubmit={async (values) => {
                             values.id = values.id == '' ? AppConsts.guidEmpty : values.id;
+                            values.idCongTy = Cookies.get('IdCuaHang') ?? AppConsts.guidEmpty;
                             let fileId = this.state.googleDrive_fileId;
                             const fileSelect = this.state.fileImage;
                             if (!utils.checkNull(this.state.branchLogo)) {
@@ -139,9 +141,15 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                         />
                                                     </Box>
                                                 ) : (
-                                                    <div>
-                                                        <PersonIcon className="user-icon-upload" />
-                                                    </div>
+                                                    <Box
+                                                        sx={{
+                                                            position: 'relative'
+                                                        }}>
+                                                        <img
+                                                            src={AddLogoIcon}
+                                                            className="user-image-upload"
+                                                        />
+                                                    </Box>
                                                 )}
                                                 <TextField
                                                     type="file"

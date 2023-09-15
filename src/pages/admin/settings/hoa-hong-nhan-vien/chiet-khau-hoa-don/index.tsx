@@ -7,7 +7,7 @@ import AppConsts from '../../../../../lib/appconst';
 import SearchIcon from '../../../../../images/search-normal.svg';
 import { TextTranslate } from '../../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../.././../../../images/column-sorting.svg';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
@@ -37,7 +37,8 @@ class ChietKhauHoaDonScreen extends Component {
             giaTriChietKhau: 0,
             loaiChietKhau: 0,
             idNhanViens: []
-        } as CreateOrEditChietKhauHoaDonDto
+        } as CreateOrEditChietKhauHoaDonDto,
+        rowSelectedModel: [] as GridRowSelectionModel
     };
     componentDidMount(): void {
         this.getAll();
@@ -236,13 +237,20 @@ class ChietKhauHoaDonScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop={'8px'}>
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
-                        disableRowSelectionOnClick
                         rowHeight={46}
                         columns={columns}
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
-                        checkboxSelection={false}
+                        disableRowSelectionOnClick
+                        checkboxSelection
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -257,6 +265,10 @@ class ChietKhauHoaDonScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
+                        }}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

@@ -124,7 +124,9 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                                                 </Box>
                                             </TableCell>
                                             <TableCell align={'right'}>
-                                                <Typography>40 {' phút'}</Typography>
+                                                <Typography>
+                                                    {item.thoiGianThucHien} {' phút'}
+                                                </Typography>
                                             </TableCell>
                                             <TableCell align={'right'}>
                                                 <Typography>

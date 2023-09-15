@@ -9,7 +9,13 @@ import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
 import SuggestService from '../../services/suggests/SuggestService';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridInputRowSelectionModel,
+    GridRowId,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
@@ -58,6 +64,7 @@ class EmployeeScreen extends React.Component {
         selectedRowId: null,
         suggestChucVu: [] as SuggestChucVuDto[],
         createOrEditNhanSu: {} as CreateOrUpdateNhanSuDto,
+        rowSelectedModel: [] as GridRowSelectionModel,
         currentPage: 1,
         totalPage: 1,
         totalCount: 0,
@@ -101,6 +108,7 @@ class EmployeeScreen extends React.Component {
             suggestChucVu: suggestStore.suggestChucVu,
             idChiNhanh: chiNhanhContext.id
         });
+        await NhanVienStore.createNhanVien();
         await this.getListNhanVien();
     }
     async getListNhanVien() {
@@ -214,6 +222,7 @@ class EmployeeScreen extends React.Component {
             isShowConfirmDelete: !this.state.isShowConfirmDelete,
             idNhanSu: ''
         });
+        this.getData();
     };
     exportToExcel = async () => {
         const { filter, maxResultCount, currentPage, sortBy, sortType } = this.state;
@@ -625,6 +634,19 @@ class EmployeeScreen extends React.Component {
                 </Grid>
 
                 <Box paddingTop="16px" bgcolor="#fff">
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                size="small"
+                                onClick={() => {
+                                    this.setState({ rowSelectedModel: [] });
+                                }}>
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
                         className="data-grid-row"
                         disableRowSelectionOnClick
@@ -653,6 +675,10 @@ class EmployeeScreen extends React.Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
+                        }}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
                         }}
                     />
                     <ActionMenuTable

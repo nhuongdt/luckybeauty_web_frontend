@@ -9,7 +9,7 @@ import {
     IconButton,
     SelectChangeEvent
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import AppComponentBase from '../../../components/AppComponentBase';
 import tenantService from '../../../services/tenant/tenantService';
 
@@ -30,20 +30,6 @@ import { fontWeight } from '@mui/system';
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ITenantProps {}
 
-export interface ITenantState {
-    modalVisible: boolean;
-    maxResultCount: number;
-    skipCount: number;
-    tenantId: number;
-    filter: string;
-    listTenant: GetAllTenantOutput[];
-    totalCount: number;
-    currentPage: number;
-    totalPage: number;
-    startIndex: number;
-    createOrEditTenant: CreateTenantInput;
-    isShowConfirmDelete: boolean;
-}
 class TenantScreen extends AppComponentBase<ITenantProps> {
     state = {
         modalVisible: false,
@@ -65,7 +51,8 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
         } as CreateTenantInput,
         isShowConfirmDelete: false,
         anchorEl: null,
-        selectedRowId: 0
+        selectedRowId: 0,
+        rowSelectedModel: [] as GridRowSelectionModel
     };
 
     async componentDidMount() {
@@ -356,11 +343,22 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     paddingTop="16px"
                     className="page-content "
                     sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
-                        disableRowSelectionOnClick
                         rowHeight={46}
                         columns={columns}
                         rows={this.state.listTenant}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
+                        }}
+                        disableRowSelectionOnClick
                         checkboxSelection
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

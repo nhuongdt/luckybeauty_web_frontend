@@ -8,7 +8,7 @@ import {
     IconButton,
     SelectChangeEvent
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 
 import roleService from '../../../services/role/roleService';
 import AddIcon from '../../../images/add.svg';
@@ -68,7 +68,8 @@ class RoleScreen extends React.Component<IRoleProps> {
         startIndex: 1,
         isShowConfirmDelete: false,
         selectedRowId: 0,
-        anchorEl: null
+        anchorEl: null,
+        rowSelectedModel: [] as GridRowSelectionModel
     };
 
     async componentDidMount() {
@@ -331,11 +332,22 @@ class RoleScreen extends React.Component<IRoleProps> {
                     </Grid>
                 </Box>
                 <Box paddingTop="16px" bgcolor="#fff" borderRadius="8px">
+                    {this.state.rowSelectedModel.length > 0 ? (
+                        <Box mb={1}>
+                            <Button variant="contained" color="secondary">
+                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                            </Button>
+                        </Box>
+                    ) : null}
                     <DataGrid
-                        disableRowSelectionOnClick
                         rowHeight={46}
                         columns={columns}
                         rows={this.state.listRole}
+                        rowSelectionModel={this.state.rowSelectedModel || undefined}
+                        onRowSelectionModelChange={(row) => {
+                            this.setState({ rowSelectedModel: row });
+                        }}
+                        disableRowSelectionOnClick
                         checkboxSelection
                         hideFooter
                         hideFooterPagination
@@ -345,8 +357,8 @@ class RoleScreen extends React.Component<IRoleProps> {
                         selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
-                        handleView={this.handleView}
-                        permissionView=""
+                        handleView={this.handleEdit}
+                        permissionView="Pages.Administration.Roles.Edit"
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.Administration.Roles.Edit"
                         handleDelete={this.onShowDelete}
