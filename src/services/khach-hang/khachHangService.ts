@@ -90,7 +90,10 @@ class KhachHangService {
         return result.data.result;
     }
     async importKhachHang(input: FileUpload) {
-        const response = await http.post('api/services/app/KhachHang/ImportExcel', input);
+        const response = await http.post(
+            'api/services/app/KhachHang/ImportFile_DanhMucKhachHang',
+            input
+        );
         return response.data.result;
     }
     async lichSuGiaoDich(idKhachHang: string) {

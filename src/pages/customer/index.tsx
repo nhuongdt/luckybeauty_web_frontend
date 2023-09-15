@@ -240,10 +240,22 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     };
     handleImportData = async (input: FileUpload) => {
         const result = await khachHangService.importKhachHang(input);
-        enqueueSnackbar(result.message, {
-            variant: result.status == 'success' ? 'success' : result.status,
-            autoHideDuration: 3000
-        });
+        this.setState({ lstErrImport: result });
+        if (result.length === 0) {
+            enqueueSnackbar('Import khách hàng thành công', {
+                variant: 'success',
+                autoHideDuration: 3000
+            });
+        } else {
+            const errImport = result.filter((x: BangBaoLoiFileimportDto) => x.loaiErr === 2).length;
+            if (errImport > 0) {
+                // import 1 số thành côg, 1 số thất bại
+                enqueueSnackbar(`Import thành công,  ${errImport} thất bại`, {
+                    variant: result.status == 'success' ? 'success' : result.status,
+                    autoHideDuration: 3000
+                });
+            }
+        }
         this.onImportShow();
     };
     downloadImportTemplate = async () => {
