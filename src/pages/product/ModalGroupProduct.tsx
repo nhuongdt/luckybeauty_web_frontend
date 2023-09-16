@@ -366,8 +366,9 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         Hủy
                     </Button>
                     <Button
-                        variant="contained"
-                        sx={{ bgcolor: 'red', display: isNew ? 'none' : '' }}
+                        variant="outlined"
+                        color="error"
+                        sx={{ display: isNew ? 'none' : '' }}
                         onClick={() => {
                             setInforDeleteProduct(
                                 new PropConfirmOKCancel({

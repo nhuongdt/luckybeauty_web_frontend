@@ -595,10 +595,8 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Button>
                     {!(product.trangThai === 0 || isNew) && !wasClickSave && (
                         <Button
-                            variant="contained"
-                            sx={{
-                                bgcolor: 'red'
-                            }}
+                            variant="outlined"
+                            color="error"
                             onClick={() => {
                                 setInforDeleteProduct(
                                     new PropConfirmOKCancel({

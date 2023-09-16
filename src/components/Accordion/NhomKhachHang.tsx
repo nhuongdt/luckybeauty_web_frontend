@@ -61,7 +61,8 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         '& .MuiAccordionSummary-content': {
                             alignItems: 'end'
                         }
-                    }}>
+                    }}
+                    onClick={() => handleClickTreeItem(false, '')}>
                     <PersonOutlineIcon sx={{ color: 'var(--color-main)' }} />
                     <Typography
                         variant="body2"
@@ -77,7 +78,6 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             WebkitLineClamp: 1,
                             paddingRight: '20px'
                         }}
-                        onClick={() => handleClickTreeItem(false, '')}
                         title={'Tất cả'}>
                         Tất cả
                     </Typography>
@@ -110,7 +110,8 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         }}
                         onMouseEnter={(event: any) => {
                             handleHover(event, item, index);
-                        }}>
+                        }}
+                        onClick={() => handleClickTreeItem(false, item.id)}>
                         <PersonOutlineIcon
                             sx={{
                                 color:
@@ -136,7 +137,6 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                                 WebkitLineClamp: 1,
                                 paddingRight: '20px'
                             }}
-                            onClick={() => handleClickTreeItem(false, item.id)}
                             title={item.tenNhomKhach}>
                             {item.tenNhomKhach}
                         </Typography>
@@ -145,7 +145,10 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             rowHover.id === item.id &&
                             !abpCustom.isGrandPermission('Pages.NhomKhach.Update') && (
                                 <OpenInNew
-                                    onClick={() => handleClickTreeItem(true, item.id)}
+                                    onClick={(event) => {
+                                        event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
+                                        handleClickTreeItem(true, item.id);
+                                    }}
                                     sx={{ position: 'absolute', right: 16 }}
                                 />
                             )}
