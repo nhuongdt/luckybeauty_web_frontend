@@ -348,7 +348,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                             this.setState({ rowSelectedModel: row });
                         }}
                         disableRowSelectionOnClick
-                        checkboxSelection
+                        checkboxSelection={false}
                         hideFooter
                         hideFooterPagination
                         localeText={TextTranslate}

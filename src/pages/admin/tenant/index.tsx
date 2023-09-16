@@ -359,7 +359,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             this.setState({ rowSelectedModel: row });
                         }}
                         disableRowSelectionOnClick
-                        checkboxSelection
+                        checkboxSelection={false}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {
                                 background: '#EEF0F4'

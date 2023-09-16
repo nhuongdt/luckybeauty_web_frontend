@@ -8,11 +8,13 @@ import React from 'react';
 import { SuggestChucVuDto } from '../../services/suggests/dto/SuggestChucVuDto';
 import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
 import Cookies from 'js-cookie';
-import SuggestService from '../../services/suggests/SuggestService';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import {
     DataGrid,
     GridColDef,
     GridInputRowSelectionModel,
+    GridRenderCellParams,
     GridRowId,
     GridRowSelectionModel
 } from '@mui/x-data-grid';
@@ -25,7 +27,10 @@ import {
     IconButton,
     SelectChangeEvent,
     TextField,
-    Typography
+    Checkbox,
+    Typography,
+    Stack,
+    Divider
 } from '@mui/material';
 import CreateOrEditNhanVienDialog from './components/createOrEditNhanVienDialog';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
@@ -47,6 +52,8 @@ import { AppContext, IAppContext } from '../../services/chi_nhanh/ChiNhanhContex
 import { SuggestChiNhanhDto } from '../../services/suggests/dto/SuggestChiNhanhDto';
 import suggestStore from '../../stores/suggestStore';
 import AppConsts from '../../lib/appconst';
+import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 class EmployeeScreen extends React.Component {
     static contextType = AppContext;
     state = {
@@ -62,9 +69,11 @@ class EmployeeScreen extends React.Component {
         importShow: false,
         anchorEl: null,
         selectedRowId: null,
+        checkAllRow: false,
         suggestChucVu: [] as SuggestChucVuDto[],
         createOrEditNhanSu: {} as CreateOrUpdateNhanSuDto,
-        rowSelectedModel: [] as GridRowSelectionModel,
+        listItemSelectedModel: [] as string[],
+        expendActionSelectedRow: false,
         currentPage: 1,
         totalPage: 1,
         totalCount: 0,
@@ -142,6 +151,16 @@ class EmployeeScreen extends React.Component {
         this.getListNhanVien();
         this.resetData();
     }
+    async deleteMany(ids: string[]) {
+        const deleteResult = await nhanVienService.deleteMany(ids);
+        enqueueSnackbar(deleteResult.message, {
+            variant: deleteResult.status,
+            autoHideDuration: 3000
+        });
+        this.setState({ listItemSelectedModel: [] });
+        this.getListNhanVien();
+        this.resetData();
+    }
     Modal = () => {
         this.setState({
             modalVisible: !this.state.modalVisible
@@ -170,7 +189,8 @@ class EmployeeScreen extends React.Component {
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
             currentPage: value,
-            skipCount: value
+            skipCount: value,
+            checkAllRow: false
         });
         this.getListNhanVien();
     };
@@ -178,12 +198,15 @@ class EmployeeScreen extends React.Component {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
             currentPage: 1,
-            skipCount: 1
+            skipCount: 1,
+            checkAllRow: false
         });
         this.getData();
     };
     onOkDelete = () => {
-        this.delete(this.state.selectedRowId ?? '');
+        this.state.listItemSelectedModel.length > 0
+            ? this.deleteMany(this.state.listItemSelectedModel)
+            : this.delete(this.state.selectedRowId ?? '');
         this.handleDelete;
         this.handleCloseMenu();
     };
@@ -236,6 +259,13 @@ class EmployeeScreen extends React.Component {
         });
         fileDowloadService.downloadExportFile(result);
     };
+    exportSelectedRow = async () => {
+        const result = await nhanVienService.exportDanhSachNhanVienSelected(
+            this.state.listItemSelectedModel
+        );
+        fileDowloadService.downloadExportFile(result);
+        this.setState({ listItemSelectedModel: [] });
+    };
     onImportShow = () => {
         this.setState({
             importShow: !this.state.importShow
@@ -265,7 +295,61 @@ class EmployeeScreen extends React.Component {
         });
         this.getData();
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = NhanVienStore.listNhanVien?.items.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = NhanVienStore.listNhanVien?.items.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
+
     columns: GridColDef[] = [
+        {
+            field: 'checkBox',
+            sortable: false,
+            filterable: false,
+            disableColumnMenu: true,
+            width: 65,
+            renderHeader: (params) => {
+                return (
+                    <Checkbox
+                        onClick={this.handleSelectAllGridRowClick}
+                        checked={this.state.checkAllRow}
+                    />
+                );
+            },
+            renderCell: (params) => (
+                <Checkbox
+                    onClick={() => this.handleCheckboxGridRowClick(params)}
+                    checked={this.state.listItemSelectedModel.includes(params.row.id)}
+                />
+            )
+        },
         {
             field: 'tenNhanVien',
             headerName: 'Tên nhân viên',
@@ -634,32 +718,78 @@ class EmployeeScreen extends React.Component {
                 </Grid>
 
                 <Box paddingTop="16px" bgcolor="#fff">
-                    {this.state.rowSelectedModel.length > 0 ? (
-                        <Box mb={1}>
-                            <Button
-                                variant="contained"
-                                color="secondary"
-                                size="small"
+                    {this.state.listItemSelectedModel.length > 0 ? (
+                        <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<ExpandMoreOutlined />}
+                                    onClick={() =>
+                                        this.setState({
+                                            expendActionSelectedRow:
+                                                !this.state.expendActionSelectedRow
+                                        })
+                                    }>
+                                    Thao tác
+                                </Button>
+
+                                <Box
+                                    sx={{
+                                        display: this.state.expendActionSelectedRow ? '' : 'none',
+                                        zIndex: 1,
+                                        position: 'absolute',
+                                        borderRadius: '4px',
+                                        border: '1px solid #cccc',
+                                        minWidth: 150,
+                                        backgroundColor: 'rgba(248,248,248,1)',
+                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                            backgroundColor: '#cccc'
+                                        }
+                                    }}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
+                                        <Button
+                                            startIcon={'Xóa nhân viên'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.handleDelete}></Button>
+                                        <Button
+                                            startIcon={'Xuất danh sách'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.exportSelectedRow}></Button>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                            <Divider
+                                orientation="vertical"
+                                flexItem
+                                sx={{ color: 'black' }}></Divider>
+                            <Stack direction={'row'}>
+                                <Typography variant="body2" color={'red'}>
+                                    {this.state.listItemSelectedModel.length}&nbsp;
+                                </Typography>
+                                <Typography variant="body2">bản ghi được chọn</Typography>
+                            </Stack>
+                            <ClearIcon
+                                color="error"
                                 onClick={() => {
-                                    this.setState({ rowSelectedModel: [] });
-                                }}>
-                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
-                            </Button>
-                        </Box>
+                                    this.setState({
+                                        listItemSelectedModel: [],
+                                        checkAllRow: false
+                                    });
+                                }}
+                            />
+                        </Stack>
                     ) : null}
                     <DataGrid
-                        className="data-grid-row"
                         disableRowSelectionOnClick
                         rowHeight={46}
                         rows={listNhanVien === undefined ? [] : listNhanVien.items}
                         columns={this.columns}
-                        checkboxSelection
+                        checkboxSelection={false}
                         hideFooter
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                background: '#EEF0F4'
-                            }
-                        }}
                         localeText={TextTranslate}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
@@ -676,17 +806,13 @@ class EmployeeScreen extends React.Component {
                                 );
                             }
                         }}
-                        rowSelectionModel={this.state.rowSelectedModel || undefined}
-                        onRowSelectionModelChange={(row) => {
-                            this.setState({ rowSelectedModel: row });
-                        }}
                     />
                     <ActionMenuTable
                         selectedRowId={this.state.selectedRowId}
                         anchorEl={this.state.anchorEl}
                         closeMenu={this.handleCloseMenu}
-                        handleView={this.handleView}
-                        permissionView=""
+                        handleView={this.handleEdit}
+                        permissionView="Pages.NhanSu.Edit"
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.NhanSu.Edit"
                         handleDelete={this.handleDelete}

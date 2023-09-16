@@ -1,22 +1,31 @@
 import {
     Box,
     Button,
+    Checkbox,
     Grid,
     IconButton,
     SelectChangeEvent,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
 import { observer } from 'mobx-react';
 import { Component, ReactNode } from 'react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
 import caLamViecStore from '../../../stores/caLamViecStore';
 import { TextTranslate } from '../../../components/TableLanguage';
 import AddIcon from '../../../images/add.svg';
 import SearchIcon from '../../../images/search-normal.svg';
 import DownloadIcon from '../../../images/download.svg';
 import UploadIcon from '../../../images/upload.svg';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
@@ -43,9 +52,11 @@ class CaLamViecScreen extends Component {
         importShow: false,
         anchorEl: null,
         selectedRowId: null,
+        checkAllRow: false,
+        listItemSelectedModel: [] as string[],
+        expendActionSelectedRow: false,
         totalCount: 0,
         isShowConfirmDelete: false,
-        rowSelectedModel: [] as GridRowSelectionModel,
         totalPage: 0
     };
     componentDidMount(): void {
@@ -81,13 +92,15 @@ class CaLamViecScreen extends Component {
     };
     handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
         await this.setState({
-            skipCount: value
+            skipCount: value,
+            checkAllRow: false
         });
     };
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
-            skipCount: 1
+            skipCount: 1,
+            checkAllRow: false
         });
     };
     handleOpenMenu = (event: any, rowId: any) => {
@@ -114,9 +127,21 @@ class CaLamViecScreen extends Component {
                   variant: 'error',
                   autoHideDuration: 3000
               });
+        this.getData();
     };
+    async deleteMany(ids: string[]) {
+        const deleteResult = await caLamViecService.deleteMany(ids);
+        enqueueSnackbar(deleteResult.message, {
+            variant: deleteResult.status,
+            autoHideDuration: 3000
+        });
+        this.setState({ listItemSelectedModel: [] });
+        this.getData();
+    }
     onOkDelete = async () => {
-        await this.delete(this.state.selectedRowId ?? '');
+        this.state.listItemSelectedModel.length > 0
+            ? await this.deleteMany(this.state.listItemSelectedModel)
+            : await this.delete(this.state.selectedRowId ?? '');
         this.showConfirmDelete();
         await this.handleCloseMenu();
     };
@@ -151,6 +176,12 @@ class CaLamViecScreen extends Component {
         });
         fileDowloadService.downloadExportFile(result);
     };
+    exportSelectedRow = async () => {
+        const result = await caLamViecService.exportSelectedItemToExcel(
+            this.state.listItemSelectedModel
+        );
+        fileDowloadService.downloadExportFile(result);
+    };
     onImportShow = () => {
         this.setState({
             importShow: !this.state.importShow
@@ -170,8 +201,61 @@ class CaLamViecScreen extends Component {
         );
         fileDowloadService.downloadExportFile(result);
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = caLamViecStore.caLamViecs?.items.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = caLamViecStore.caLamViecs?.items.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
     render(): ReactNode {
         const columns: GridColDef[] = [
+            {
+                field: 'checkBox',
+                sortable: false,
+                filterable: false,
+                disableColumnMenu: true,
+                width: 65,
+                renderHeader: (params) => {
+                    return (
+                        <Checkbox
+                            onClick={this.handleSelectAllGridRowClick}
+                            checked={this.state.checkAllRow}
+                        />
+                    );
+                },
+                renderCell: (params) => (
+                    <Checkbox
+                        onClick={() => this.handleCheckboxGridRowClick(params)}
+                        checked={this.state.listItemSelectedModel.includes(params.row.id)}
+                    />
+                )
+            },
             {
                 field: 'maCa',
                 headerName: 'Mã ca',
@@ -468,12 +552,66 @@ class CaLamViecScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px" bgcolor="#fff">
-                    {this.state.rowSelectedModel.length > 0 ? (
-                        <Box mb={1}>
-                            <Button variant="contained" color="secondary">
-                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
-                            </Button>
-                        </Box>
+                    {this.state.listItemSelectedModel.length > 0 ? (
+                        <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<ExpandMoreOutlined />}
+                                    onClick={() =>
+                                        this.setState({
+                                            expendActionSelectedRow:
+                                                !this.state.expendActionSelectedRow
+                                        })
+                                    }>
+                                    Thao tác
+                                </Button>
+
+                                <Box
+                                    sx={{
+                                        display: this.state.expendActionSelectedRow ? '' : 'none',
+                                        zIndex: 1,
+                                        position: 'absolute',
+                                        borderRadius: '4px',
+                                        border: '1px solid #cccc',
+                                        minWidth: 150,
+                                        backgroundColor: 'rgba(248,248,248,1)',
+                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                            backgroundColor: '#cccc'
+                                        }
+                                    }}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
+                                        <Button
+                                            startIcon={'Xóa ca làm việc'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.showConfirmDelete}></Button>
+                                        <Button
+                                            startIcon={'Xuất danh sách'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.exportSelectedRow}></Button>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                            <Stack direction={'row'}>
+                                <Typography variant="body2" color={'red'}>
+                                    {this.state.listItemSelectedModel.length}&nbsp;
+                                </Typography>
+                                <Typography variant="body2">bản ghi được chọn</Typography>
+                            </Stack>
+                            <ClearIcon
+                                color="error"
+                                onClick={() => {
+                                    this.setState({
+                                        listItemSelectedModel: [],
+                                        checkAllRow: false
+                                    });
+                                }}
+                            />
+                        </Stack>
                     ) : null}
                     <DataGrid
                         rowHeight={46}
@@ -484,7 +622,7 @@ class CaLamViecScreen extends Component {
                         }
                         columns={columns}
                         disableRowSelectionOnClick
-                        checkboxSelection
+                        checkboxSelection={false}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -499,10 +637,6 @@ class CaLamViecScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
-                        }}
-                        rowSelectionModel={this.state.rowSelectedModel || undefined}
-                        onRowSelectionModelChange={(row) => {
-                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

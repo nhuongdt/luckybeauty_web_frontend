@@ -481,7 +481,7 @@ class UserScreen extends AppComponentBase {
                                 this.setState({ rowSelectedModel: row });
                             }}
                             disableRowSelectionOnClick
-                            checkboxSelection
+                            checkboxSelection={false}
                             sx={{
                                 '& .MuiDataGrid-columnHeader': {
                                     background: '#EEF0F4'

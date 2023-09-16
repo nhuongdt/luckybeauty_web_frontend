@@ -19,12 +19,20 @@ class NgayNghiLeService {
         const result = await http.post(`api/services/app/NgayNghiLe/Delete?id=${id}`);
         return result.data.result;
     }
+    public async deleteMany(ids: string[]) {
+        const result = await http.post(`api/services/app/NgayNghiLe/DeleteMany`, ids);
+        return result.data.result;
+    }
     public async createOrEdit(input: CreateOrEditNgayNghiLeDto): Promise<NgayNghiLeDto> {
         const result = await http.post(`api/services/app/NgayNghiLe/CreateOrEdit`, input);
         return result.data.result;
     }
     async exportToExcel(input: PagedRequestDto): Promise<IFileDto> {
         const response = await http.post(`api/services/app/NgayNghiLe/ExportToExcel`, input);
+        return response.data.result;
+    }
+    async exportSelectedItemToExcel(ids: string[]): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/NgayNghiLe/ExportSelectedNghiLe`, ids);
         return response.data.result;
     }
     async importExcel(input: FileUpload) {

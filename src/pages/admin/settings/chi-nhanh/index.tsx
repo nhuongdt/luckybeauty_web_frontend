@@ -3,9 +3,11 @@ import {
     Box,
     Button,
     ButtonGroup,
+    Checkbox,
     Grid,
     IconButton,
     SelectChangeEvent,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
@@ -15,6 +17,8 @@ import UploadIcon from '../../../../images/upload.svg';
 import AddIcon from '../../../../images/add.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import { ReactComponent as IconSorting } from '../../../../images/column-sorting.svg';
 import { ReactComponent as DateIcon } from '../../../../images/calendar-5.svg';
 import { Component, ReactNode } from 'react';
@@ -24,7 +28,13 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../../lib/appconst';
-import { DataGrid, GridApi, GridRowSelectionModel } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridApi,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
@@ -52,7 +62,9 @@ class ChiNhanhScreen extends Component {
         createOrEditChiNhanhDto: {} as CreateOrEditChiNhanhDto,
         listChiNhanh: [] as ChiNhanhDto[],
         hiddenColumns: [],
-        rowSelectedModel: [] as GridRowSelectionModel
+        checkAllRow: false,
+        listItemSelectedModel: [] as string[],
+        expendActionSelectedRow: false
     };
     async componentDidMount() {
         this.InitData();
@@ -168,20 +180,68 @@ class ChiNhanhScreen extends Component {
         });
         this.InitData();
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = this.state.listChiNhanh.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = this.state.listChiNhanh.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
     render(): ReactNode {
         const columns = [
+            {
+                field: 'checkBox',
+                sortable: false,
+                filterable: false,
+                disableColumnMenu: true,
+                width: 65,
+                renderHeader: (params) => {
+                    return (
+                        <Checkbox
+                            onClick={this.handleSelectAllGridRowClick}
+                            checked={this.state.checkAllRow}
+                        />
+                    );
+                },
+                renderCell: (params) => (
+                    <Checkbox
+                        onClick={() => this.handleCheckboxGridRowClick(params)}
+                        checked={this.state.listItemSelectedModel.includes(params.row.id)}
+                    />
+                )
+            },
             {
                 field: 'tenChiNhanh',
                 headerName: 'Tên chi nhánh',
                 minWidth: 140,
                 flex: 0.8,
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {/* <Avatar
-                            src={params.row.avatar}
-                            alt="Avatar"
-                            style={{ width: 24, height: 24, marginRight: 8 }}
-                        /> */}
                         <Typography
                             fontSize="13px"
                             fontWeight="400"
@@ -192,16 +252,14 @@ class ChiNhanhScreen extends Component {
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box fontWeight="700">{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
             {
                 field: 'diaChi',
                 headerName: 'Địa chỉ',
                 minWidth: 180,
                 flex: 1.2,
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Typography
                         variant="caption"
                         fontSize="13px"
@@ -217,16 +275,14 @@ class ChiNhanhScreen extends Component {
                         {params.value}
                     </Typography>
                 ),
-                renderHeader: (params: any) => (
-                    <Box fontWeight="700">{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
             {
                 field: 'soDienThoai',
                 headerName: 'Số điện thoại',
                 minWidth: 110,
                 flex: 0.8,
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Typography
                         width="100%"
                         textAlign="left"
@@ -238,16 +294,14 @@ class ChiNhanhScreen extends Component {
                         {params.value}
                     </Typography>
                 ),
-                renderHeader: (params: any) => (
-                    <Box fontWeight="700">{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box fontWeight="700">{params.colDef.headerName}</Box>
             },
             {
                 field: 'ngayApDung',
                 headerName: 'Ngày áp dụng',
                 minWidth: 130,
                 flex: 0.8,
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Box
                         sx={{
                             display: 'flex',
@@ -265,14 +319,14 @@ class ChiNhanhScreen extends Component {
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },
             {
                 field: 'ngayHetHan',
                 headerName: 'Ngày hết hạn',
                 minWidth: 130,
                 flex: 0.8,
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <Box
                         sx={{
                             display: 'flex',
@@ -290,7 +344,7 @@ class ChiNhanhScreen extends Component {
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params: any) => <Box>{params.colDef.headerName}</Box>
+                renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
             },
             {
                 field: 'actions',
@@ -298,7 +352,7 @@ class ChiNhanhScreen extends Component {
                 minwidth: 48,
                 flex: 0.3,
                 disableColumnMenu: true,
-                renderCell: (params: any) => (
+                renderCell: (params) => (
                     <IconButton
                         aria-label="Actions"
                         aria-controls={`actions-menu-${params.row.id}`}
@@ -309,11 +363,11 @@ class ChiNhanhScreen extends Component {
                         <MoreHorizIcon />
                     </IconButton>
                 ),
-                renderHeader: (params: any) => (
+                renderHeader: (params) => (
                     <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
                 )
             }
-        ];
+        ] as GridColDef[];
 
         return (
             <Box bgcolor="#fff" paddingTop={'16px'} paddingBottom={'16px'}>
@@ -403,18 +457,72 @@ class ChiNhanhScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px">
-                    {this.state.rowSelectedModel.length > 0 ? (
-                        <Box mb={1}>
-                            <Button variant="contained" color="secondary">
-                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
-                            </Button>
-                        </Box>
+                    {this.state.listItemSelectedModel.length > 0 ? (
+                        <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<ExpandMoreOutlined />}
+                                    onClick={() =>
+                                        this.setState({
+                                            expendActionSelectedRow:
+                                                !this.state.expendActionSelectedRow
+                                        })
+                                    }>
+                                    Thao tác
+                                </Button>
+
+                                <Box
+                                    sx={{
+                                        display: this.state.expendActionSelectedRow ? '' : 'none',
+                                        zIndex: 1,
+                                        position: 'absolute',
+                                        borderRadius: '4px',
+                                        border: '1px solid #cccc',
+                                        minWidth: 150,
+                                        backgroundColor: 'rgba(248,248,248,1)',
+                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                            backgroundColor: '#cccc'
+                                        }
+                                    }}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
+                                        <Button
+                                            startIcon={'Xóa chi nhánh'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.handleDelete}></Button>
+                                        {/* <Button
+                                            startIcon={'Xuất danh sách'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.exportSelectedRow}></Button> */}
+                                    </Stack>
+                                </Box>
+                            </Box>
+                            <Stack direction={'row'}>
+                                <Typography variant="body2" color={'red'}>
+                                    {this.state.listItemSelectedModel.length}&nbsp;
+                                </Typography>
+                                <Typography variant="body2">bản ghi được chọn</Typography>
+                            </Stack>
+                            <ClearIcon
+                                color="error"
+                                onClick={() => {
+                                    this.setState({
+                                        listItemSelectedModel: [],
+                                        checkAllRow: false
+                                    });
+                                }}
+                            />
+                        </Stack>
                     ) : null}
                     <DataGrid
                         rowHeight={46}
                         columns={columns}
                         rows={this.state.listChiNhanh}
-                        checkboxSelection
+                        checkboxSelection={false}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -431,10 +539,6 @@ class ChiNhanhScreen extends Component {
                             }
                         }}
                         disableRowSelectionOnClick
-                        rowSelectionModel={this.state.rowSelectedModel || undefined}
-                        onRowSelectionModelChange={(row) => {
-                            this.setState({ rowSelectedModel: row });
-                        }}
                         columnBuffer={0}
                         hideFooter
                         ref={this.dataGridRef}

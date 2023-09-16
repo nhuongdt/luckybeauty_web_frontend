@@ -37,8 +37,16 @@ class NhanVienService {
         const result = await http.post(`api/services/app/NhanSu/Delete?id=${id}`);
         return result.data.result;
     }
+    public async deleteMany(ids: string[]) {
+        const result = await http.post(`api/services/app/NhanSu/DeleteMany`, ids);
+        return result.data.result;
+    }
     public async exportDanhSachNhanVien(input: PagedNhanSuRequestDto): Promise<IFileDto> {
         const response = await http.post(`api/services/app/NhanSu/ExportDanhSach`, input);
+        return response.data.result;
+    }
+    public async exportDanhSachNhanVienSelected(ids: string[]): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/NhanSu/ExportSelectedNhanVien`, ids);
         return response.data.result;
     }
     public async inportNhanVien(input: FileUpload) {

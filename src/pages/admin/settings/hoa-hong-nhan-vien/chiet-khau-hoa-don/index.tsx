@@ -7,8 +7,23 @@ import AppConsts from '../../../../../lib/appconst';
 import SearchIcon from '../../../../../images/search-normal.svg';
 import { TextTranslate } from '../../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../.././../../../images/column-sorting.svg';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
+import {
+    Box,
+    Button,
+    IconButton,
+    TextField,
+    Grid,
+    SelectChangeEvent,
+    Checkbox
+} from '@mui/material';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -38,7 +53,8 @@ class ChietKhauHoaDonScreen extends Component {
             loaiChietKhau: 0,
             idNhanViens: []
         } as CreateOrEditChietKhauHoaDonDto,
-        rowSelectedModel: [] as GridRowSelectionModel
+        checkAllRow: false,
+        listItemSelectedModel: [] as string[]
     };
     componentDidMount(): void {
         this.getAll();
@@ -93,7 +109,8 @@ class ChietKhauHoaDonScreen extends Component {
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
-            skipCount: value
+            skipCount: value,
+            checkAllRow: false
         });
         this.getAll();
     };
@@ -101,7 +118,8 @@ class ChietKhauHoaDonScreen extends Component {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
             currentPage: 1,
-            skipCount: 1
+            skipCount: 1,
+            checkAllRow: false
         });
         this.getAll();
     };
@@ -132,9 +150,62 @@ class ChietKhauHoaDonScreen extends Component {
             anchorEl: null
         });
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = chietKhauHoaDonStore.chietKhauHoaDons?.items.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = chietKhauHoaDonStore.chietKhauHoaDons?.items.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
     render(): ReactNode {
         const { chietKhauHoaDons } = chietKhauHoaDonStore;
         const columns: GridColDef[] = [
+            // {
+            //     field: 'checkBox',
+            //     sortable: false,
+            //     filterable: false,
+            //     disableColumnMenu: true,
+            //     width: 65,
+            //     renderHeader: (params) => {
+            //         return (
+            //             <Checkbox
+            //                 onClick={this.handleSelectAllGridRowClick}
+            //                 checked={this.state.checkAllRow}
+            //             />
+            //         );
+            //     },
+            //     renderCell: (params) => (
+            //         <Checkbox
+            //             onClick={() => this.handleCheckboxGridRowClick(params)}
+            //             checked={this.state.listItemSelectedModel.includes(params.row.id)}
+            //         />
+            //     )
+            // },
             {
                 field: 'giaTriChietKhau',
                 headerName: 'Hoa hồng',
@@ -237,10 +308,10 @@ class ChietKhauHoaDonScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop={'8px'}>
-                    {this.state.rowSelectedModel.length > 0 ? (
+                    {this.state.listItemSelectedModel.length > 0 ? (
                         <Box mb={1}>
                             <Button variant="contained" color="secondary">
-                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                                Xóa {this.state.listItemSelectedModel.length} bản ghi đã chọn
                             </Button>
                         </Box>
                     ) : null}
@@ -250,7 +321,7 @@ class ChietKhauHoaDonScreen extends Component {
                         rows={chietKhauHoaDons === undefined ? [] : chietKhauHoaDons.items}
                         localeText={TextTranslate}
                         disableRowSelectionOnClick
-                        checkboxSelection
+                        checkboxSelection={false}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -265,10 +336,6 @@ class ChietKhauHoaDonScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
-                        }}
-                        rowSelectionModel={this.state.rowSelectedModel || undefined}
-                        onRowSelectionModelChange={(row) => {
-                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

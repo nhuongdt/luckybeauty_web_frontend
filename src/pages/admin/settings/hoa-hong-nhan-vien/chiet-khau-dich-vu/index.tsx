@@ -7,13 +7,19 @@ import {
     Typography,
     SelectChangeEvent,
     Autocomplete,
-    InputAdornment
+    InputAdornment,
+    Checkbox
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import DownloadIcon from '../../../../../images/download.svg';
-import UploadIcon from '../../../../../images/upload.svg';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import AddIcon from '../../../../../images/add.svg';
 import SearchIcon from '../../../../../images/search-normal.svg';
 import { ReactComponent as SearchIconInput } from '../../../../../images/search-normal.svg';
@@ -50,12 +56,13 @@ class ChietKhauDichVuScreen extends Component {
         totalPage: 0,
         totalCount: 0,
         selectedRowId: null,
+        checkAllRow: false,
+        listItemSelectedModel: [] as string[],
         anchorEl: null,
         createOrEditDto: { laPhanTram: false } as CreateOrEditChietKhauDichVuDto,
         activeButton: '',
         focusField: '',
-        showButton: false,
-        rowSelectedModel: [] as GridRowSelectionModel
+        showButton: false
     };
     componentDidMount(): void {
         this.InitData();
@@ -81,14 +88,16 @@ class ChietKhauDichVuScreen extends Component {
     };
     handlePageChange = async (event: any, value: any) => {
         await this.setState({
-            skipCount: value
+            skipCount: value,
+            checkAllRow: false
         });
         this.InitData();
     };
     handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
-            skipCount: 1
+            skipCount: 1,
+            checkAllRow: false
         });
         this.InitData();
     };
@@ -162,10 +171,65 @@ class ChietKhauDichVuScreen extends Component {
         await this.getDataAccordingByNhanVien(this.state.idNhanVien);
         await this.onShowDeleteConfirm();
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = chietKhauDichVuStore.listChietKhauDichVu?.items.map(
+                (row) => row.id
+            );
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = chietKhauDichVuStore.listChietKhauDichVu?.items.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
     render(): ReactNode {
         const { listChietKhauDichVu } = chietKhauDichVuStore;
 
         const columns: GridColDef[] = [
+            // {
+            //     field: 'checkBox',
+            //     sortable: false,
+            //     filterable: false,
+            //     disableColumnMenu: true,
+            //     width: 65,
+            //     renderHeader: (params) => {
+            //         return (
+            //             <Checkbox
+            //                 onClick={this.handleSelectAllGridRowClick}
+            //                 checked={this.state.checkAllRow}
+            //             />
+            //         );
+            //     },
+            //     renderCell: (params) => (
+            //         <Checkbox
+            //             onClick={() => this.handleCheckboxGridRowClick(params)}
+            //             checked={this.state.listItemSelectedModel.includes(params.row.id)}
+            //         />
+            //     )
+            // },
             {
                 field: 'tenDichVu',
                 headerName: 'Tên dịch vụ ',
@@ -502,10 +566,10 @@ class ChietKhauDichVuScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box marginTop="8px">
-                    {this.state.rowSelectedModel.length > 0 ? (
+                    {this.state.listItemSelectedModel.length > 0 ? (
                         <Box mb={1}>
                             <Button variant="contained" color="secondary">
-                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
+                                Xóa {this.state.listItemSelectedModel.length} bản ghi đã chọn
                             </Button>
                         </Box>
                     ) : null}
@@ -514,7 +578,7 @@ class ChietKhauDichVuScreen extends Component {
                         columns={columns}
                         rows={listChietKhauDichVu === undefined ? [] : listChietKhauDichVu.items}
                         disableRowSelectionOnClick
-                        checkboxSelection
+                        checkboxSelection={false}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -529,10 +593,6 @@ class ChietKhauDichVuScreen extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
-                        }}
-                        rowSelectionModel={this.state.rowSelectedModel || undefined}
-                        onRowSelectionModelChange={(row) => {
-                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {

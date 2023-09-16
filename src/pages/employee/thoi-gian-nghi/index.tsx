@@ -7,18 +7,27 @@ import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/cr
 import {
     Box,
     Button,
+    Checkbox,
     Grid,
     IconButton,
     SelectChangeEvent,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowSelectionModel
+} from '@mui/x-data-grid';
 import AddIcon from '../../../images/add.svg';
 import SearchIcon from '../../../images/search-normal.svg';
 import DownloadIcon from '../../../images/download.svg';
 import UploadIcon from '../../../images/upload.svg';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
@@ -44,6 +53,7 @@ class EmployeeHoliday extends Component {
         importShow: false,
         anchorEl: null,
         selectedRowId: null,
+        checkAllRow: false,
         listHoliday: [] as NgayNghiLeDto[],
         createOrEditNgayNghiLe: {
             id: AppConsts.guidEmpty,
@@ -51,7 +61,8 @@ class EmployeeHoliday extends Component {
             tuNgay: new Date(),
             denNgay: new Date()
         } as CreateOrEditNgayNghiLeDto,
-        rowSelectedModel: [] as GridRowSelectionModel,
+        listItemSelectedModel: [] as string[],
+        expendActionSelectedRow: false,
         totalCount: 0,
         currentPage: 1,
         totalPage: 1,
@@ -88,7 +99,8 @@ class EmployeeHoliday extends Component {
     handlePageChange = async (event: React.ChangeEvent<unknown>, value: number) => {
         await this.setState({
             currentPage: value,
-            skipCount: value
+            skipCount: value,
+            checkAllRow: false
         });
         this.getListHoliday();
     };
@@ -96,7 +108,8 @@ class EmployeeHoliday extends Component {
         await this.setState({
             maxResultCount: parseInt(event.target.value.toString(), 10),
             currentPage: 1,
-            skipCount: 1
+            skipCount: 1,
+            checkAllRow: false
         });
         this.getListHoliday();
     };
@@ -170,6 +183,13 @@ class EmployeeHoliday extends Component {
                   autoHideDuration: 3000
               });
     };
+    deleteMany = async () => {
+        const result = await ngayNghiLeService.deleteMany(this.state.listItemSelectedModel);
+        enqueueSnackbar(result.message, {
+            variant: result.status,
+            autoHideDuration: 3000
+        });
+    };
     onOkDelete = async () => {
         await this.delete(this.state.selectedRowId ?? '');
         this.showConfirmDelete();
@@ -198,6 +218,12 @@ class EmployeeHoliday extends Component {
         });
         fileDowloadService.downloadExportFile(result);
     };
+    exportSelectedRow = async () => {
+        const result = await ngayNghiLeService.exportSelectedItemToExcel(
+            this.state.listItemSelectedModel
+        );
+        fileDowloadService.downloadExportFile(result);
+    };
     onImportShow = () => {
         this.setState({
             importShow: !this.state.importShow
@@ -215,8 +241,61 @@ class EmployeeHoliday extends Component {
         const result = await uploadFileService.downloadImportTemplate('NghiLe_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = this.state.listHoliday.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = this.state.listHoliday.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
     render() {
         const columns: GridColDef[] = [
+            {
+                field: 'checkBox',
+                sortable: false,
+                filterable: false,
+                disableColumnMenu: true,
+                width: 65,
+                renderHeader: (params) => {
+                    return (
+                        <Checkbox
+                            onClick={this.handleSelectAllGridRowClick}
+                            checked={this.state.checkAllRow}
+                        />
+                    );
+                },
+                renderCell: (params) => (
+                    <Checkbox
+                        onClick={() => this.handleCheckboxGridRowClick(params)}
+                        checked={this.state.listItemSelectedModel.includes(params.row.id)}
+                    />
+                )
+            },
             {
                 field: 'tenNgayLe',
                 headerName: 'Tên ngày lễ',
@@ -467,19 +546,73 @@ class EmployeeHoliday extends Component {
                     </Grid>
                 </Grid>
                 <Box paddingTop="16px" bgcolor="#fff">
-                    {this.state.rowSelectedModel.length > 0 ? (
-                        <Box mb={1}>
-                            <Button variant="contained" color="secondary">
-                                Xóa {this.state.rowSelectedModel.length} bản ghi đã chọn
-                            </Button>
-                        </Box>
+                    {this.state.listItemSelectedModel.length > 0 ? (
+                        <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button
+                                    variant="contained"
+                                    endIcon={<ExpandMoreOutlined />}
+                                    onClick={() =>
+                                        this.setState({
+                                            expendActionSelectedRow:
+                                                !this.state.expendActionSelectedRow
+                                        })
+                                    }>
+                                    Thao tác
+                                </Button>
+
+                                <Box
+                                    sx={{
+                                        display: this.state.expendActionSelectedRow ? '' : 'none',
+                                        zIndex: 1,
+                                        position: 'absolute',
+                                        borderRadius: '4px',
+                                        border: '1px solid #cccc',
+                                        minWidth: 150,
+                                        backgroundColor: 'rgba(248,248,248,1)',
+                                        '& .MuiStack-root .MuiStack-root:hover': {
+                                            backgroundColor: '#cccc'
+                                        }
+                                    }}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
+                                        <Button
+                                            startIcon={'Xóa ngày nghỉ lễ'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.showConfirmDelete}></Button>
+                                        <Button
+                                            startIcon={'Xuất danh sách'}
+                                            sx={{ color: 'black' }}
+                                            onClick={this.exportSelectedRow}></Button>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                            <Stack direction={'row'}>
+                                <Typography variant="body2" color={'red'}>
+                                    {this.state.listItemSelectedModel.length}&nbsp;
+                                </Typography>
+                                <Typography variant="body2">bản ghi được chọn</Typography>
+                            </Stack>
+                            <ClearIcon
+                                color="error"
+                                onClick={() => {
+                                    this.setState({
+                                        listItemSelectedModel: [],
+                                        checkAllRow: false
+                                    });
+                                }}
+                            />
+                        </Stack>
                     ) : null}
                     <DataGrid
                         disableRowSelectionOnClick
                         rowHeight={46}
                         rows={this.state.listHoliday}
                         columns={columns}
-                        checkboxSelection
+                        checkboxSelection={false}
                         sortingOrder={['desc', 'asc']}
                         sortModel={[
                             {
@@ -494,10 +627,6 @@ class EmployeeHoliday extends Component {
                                     newSortModel[0].field ?? 'desc'
                                 );
                             }
-                        }}
-                        rowSelectionModel={this.state.rowSelectedModel || undefined}
-                        onRowSelectionModelChange={(row) => {
-                            this.setState({ rowSelectedModel: row });
                         }}
                         sx={{
                             '& .MuiDataGrid-columnHeader': {
