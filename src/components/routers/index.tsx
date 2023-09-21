@@ -181,7 +181,7 @@ export const appRouters: AppRouteProps = {
                     iconActive: <LichActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(() => import('../../pages/lich-hen'))
+                    component: LoadableComponent(() => import('../../pages/appoinments'))
                 },
                 {
                     path: '/ban-hangs',
@@ -525,6 +525,20 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     component: LoadableComponent(
                         () => import('../../pages/admin/settings/mau_in/page_mau_in')
+                    )
+                },
+                {
+                    path: '/settings/voucher',
+                    permission: 'Pages.CongTy',
+                    title: 'Hoa hồng',
+                    name: 'caidat',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(
+                        () => import('../../pages/admin/settings/khuyen_mai')
                     )
                 },
 

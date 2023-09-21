@@ -1,5 +1,7 @@
 import utils from '../../utils/utils';
 import { ExecuteResultDto } from '../dto/ExecuteResultDto';
+import { IFileDto } from '../dto/FileDto';
+import { FileUpload } from '../dto/FileUpload';
 import { PagedRequestDto } from '../dto/pagedRequestDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
@@ -33,6 +35,18 @@ class ChiNhanhService {
     public async GetChiNhanhByUser(): Promise<SuggestChiNhanhDto[]> {
         const response = await http.get('api/services/app/ChiNhanh/GetChiNhanhByUser');
         return response.data.result;
+    }
+    public async exportDanhSach(input: PagedRequestDto): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/ChiNhanh/ExportDanhSach`, input);
+        return response.data.result;
+    }
+    public async exportDanhSachSelected(ids: string[]): Promise<IFileDto> {
+        const response = await http.post(`api/services/app/ChiNhanh/ExportSelectedDanhSach`, ids);
+        return response.data.result;
+    }
+    public async importChiNhanh(input: FileUpload) {
+        const result = await http.post(`api/services/app/ChiNhanh/ImportExcel`, input);
+        return result.data.result;
     }
 }
 export default new ChiNhanhService();

@@ -273,7 +273,7 @@ class EmployeeScreen extends React.Component {
         this.getData();
     };
     handleImportData = async (input: FileUpload) => {
-        const result = await nhanVienService.inportNhanVien(input);
+        const result = await nhanVienService.importNhanVien(input);
         enqueueSnackbar(result.message, {
             variant: result.status == 'success' ? 'success' : result.status,
             autoHideDuration: 3000

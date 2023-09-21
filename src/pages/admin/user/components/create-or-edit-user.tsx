@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Yup from 'yup';
-import { Formik, Form } from 'formik';
+import { Formik, Form, FormikHelpers } from 'formik';
 import {
     Dialog,
     DialogTitle,
@@ -64,7 +64,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
         this.setState({ tabIndex: newValue });
     };
 
-    handleSubmit = async (values: CreateOrUpdateUserInput) => {
+    handleSubmit = async (values: CreateOrUpdateUserInput, helper: FormikHelpers<any>) => {
         try {
             const { formRef, onOk } = this.props;
             if (formRef.id === 0) {
@@ -96,6 +96,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     : undefined;
             }
             this.setState({ avatar: '' });
+            helper.resetForm();
             onOk();
         } catch (error) {
             enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {

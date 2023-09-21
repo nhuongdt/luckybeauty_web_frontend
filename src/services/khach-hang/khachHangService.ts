@@ -71,6 +71,13 @@ class KhachHangService {
         const response = await http.post(`api/services/app/KhachHang/ExportDanhSach`, input);
         return response.data.result;
     }
+    public async exportSelectedDanhSach(input: Guid[]): Promise<IFileDto> {
+        const response = await http.post(
+            `api/services/app/KhachHang/ExporSelectedtDanhSach`,
+            input
+        );
+        return response.data.result;
+    }
     jqAutoCustomer = async (input: PagedKhachHangResultRequestDto) => {
         const result = await http.post(`api/services/app/KhachHang/JqAutoCustomer`, input);
         return result.data.result;

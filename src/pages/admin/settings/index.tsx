@@ -198,6 +198,8 @@ class SettingPages extends Component {
                                     </ListItem>
                                     <Divider />
                                     <ListItem
+                                        component={Link as React.ElementType}
+                                        to={'/settings/voucher'}
                                         secondaryAction={
                                             <IconButton>
                                                 <ArrowRightIcon />

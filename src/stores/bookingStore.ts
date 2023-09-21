@@ -5,10 +5,12 @@ import Cookies from 'js-cookie';
 import { BookingInfoDto } from '../services/dat-lich/dto/BookingInfoDto';
 import AppConsts from '../lib/appconst';
 import { CreateBookingDto } from '../services/dat-lich/dto/CreateBookingDto';
-
+import { FullCalendarEvent } from '../services/dat-lich/dto/FullCalendarEvent';
+import { format as formatDate, parse } from 'date-fns';
 class BookingStore {
-    selectedDate: Date = new Date();
+    selectedDate: string = new Date().toString();
     listBooking!: BookingGetAllItemDto[];
+    fullCalendarEvents!: FullCalendarEvent[];
     typeView!: string;
     idNhanVien!: string;
     idService!: string;
@@ -20,7 +22,7 @@ class BookingStore {
     isShowConfirmDelete!: boolean;
     constructor() {
         makeAutoObservable(this);
-        this.selectedDate = new Date();
+        this.selectedDate = new Date().toString();
         this.isShowBookingInfo = false;
         this.isShowConfirmDelete = false;
         this.isShowCreateOrEdit = false;
@@ -76,6 +78,28 @@ class BookingStore {
             idDichVu: this.idService
         });
         this.listBooking = result;
+        this.fullCalendarEvents = result.map((item) => {
+            const [hoursStart, minutesStart] = item.startTime.split(':').map(Number);
+            const [hoursEnd, minutesEnd] = item.endTime.split(':').map(Number);
+            const bookingDateTime = new Date(item.bookingDate);
+            const startTime = bookingDateTime.setHours(hoursStart, minutesStart);
+            const endTime = bookingDateTime.setHours(hoursEnd, minutesEnd);
+            const event: FullCalendarEvent = {
+                id: item.id,
+                title: item.services,
+                start: new Date(startTime),
+                end: new Date(endTime),
+                backgroundColor: item.color + '1a',
+                textColor: item.color,
+                borderColor: item.color + '1a',
+                display: item.customer,
+                resourceId: item.sourceId,
+                startStr: new Date(startTime).toISOString(),
+                endStr: new Date(endTime).toISOString()
+            };
+
+            return event;
+        });
     }
     async getBookingInfo(id: string) {
         const result = await datLichService.GetInforBooking(id);
@@ -85,7 +109,7 @@ class BookingStore {
         this.typeView = type;
         await this.getData();
     }
-    async onChangeDate(date: Date) {
+    async onChangeDate(date: string) {
         this.selectedDate = date;
         await this.getData();
     }

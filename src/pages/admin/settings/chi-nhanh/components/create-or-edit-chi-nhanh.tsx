@@ -25,7 +25,9 @@ import AppConsts from '../../../../../lib/appconst';
 import uploadFileService from '../../../../../services/uploadFileService';
 import utils from '../../../../../utils/utils';
 import { NumericFormat } from 'react-number-format';
+import { format as formatDate } from 'date-fns';
 import Cookies from 'js-cookie';
+import DatePickerRequiredCustom from '../../../../../components/DatetimePicker/DatePickerRequiredCustom';
 interface ChiNhanhProps {
     isShow: boolean;
     onSave: () => void;
@@ -259,52 +261,64 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            label={
-                                                <Typography variant="subtitle2">
-                                                    Ngày áp dụng
-                                                </Typography>
+                                        <DatePickerRequiredCustom
+                                            props={{
+                                                width: '100%',
+                                                size: 'small',
+                                                label: (
+                                                    <Typography variant="subtitle2">
+                                                        Ngày áp dụng
+                                                    </Typography>
+                                                ),
+                                                error:
+                                                    touched.ngayApDung &&
+                                                    Boolean(errors.ngayApDung),
+                                                helperText: touched.ngayApDung &&
+                                                    Boolean(errors.ngayApDung) && (
+                                                        <span className="text-danger">
+                                                            {String(errors.ngayApDung)}
+                                                        </span>
+                                                    )
+                                            }}
+                                            defaultVal={
+                                                values.ngayApDung
+                                                    ? formatDate(values.ngayApDung, 'yyyy-MM-dd')
+                                                    : ''
                                             }
-                                            error={touched.ngayApDung && Boolean(errors.ngayApDung)}
-                                            helperText={
-                                                touched.ngayApDung &&
-                                                Boolean(errors.ngayApDung) && (
-                                                    <span className="text-danger">
-                                                        {String(errors.ngayApDung)}
-                                                    </span>
-                                                )
-                                            }
-                                            size="small"
-                                            type="date"
-                                            name="ngayApDung"
-                                            value={values.ngayApDung.toString().substring(0, 10)}
-                                            onChange={handleChange}
-                                            fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                                            handleChangeDate={(value: string) => {
+                                                values.ngayApDung = new Date(value);
+                                            }}
+                                        />
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            label={
-                                                <Typography variant="subtitle2">
-                                                    Ngày hết hạn
-                                                </Typography>
+                                        <DatePickerRequiredCustom
+                                            props={{
+                                                width: '100%',
+                                                size: 'small',
+                                                label: (
+                                                    <Typography variant="subtitle2">
+                                                        Ngày hết hạn
+                                                    </Typography>
+                                                ),
+                                                error:
+                                                    touched.ngayHetHan &&
+                                                    Boolean(errors.ngayHetHan),
+                                                helperText: touched.ngayHetHan &&
+                                                    Boolean(errors.ngayHetHan) && (
+                                                        <span className="text-danger">
+                                                            {String(errors.ngayHetHan)}
+                                                        </span>
+                                                    )
+                                            }}
+                                            defaultVal={
+                                                values.ngayHetHan
+                                                    ? formatDate(values.ngayHetHan, 'yyyy-MM-dd')
+                                                    : ''
                                             }
-                                            error={touched.ngayHetHan && Boolean(errors.ngayHetHan)}
-                                            helperText={
-                                                touched.ngayHetHan &&
-                                                Boolean(errors.ngayHetHan) && (
-                                                    <span className="text-danger">
-                                                        {String(errors.ngayHetHan)}
-                                                    </span>
-                                                )
-                                            }
-                                            size="small"
-                                            type="date"
-                                            name="ngayHetHan"
-                                            value={values.ngayHetHan.toString().substring(0, 10)}
-                                            onChange={handleChange}
-                                            fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                                            handleChangeDate={(value: string) => {
+                                                values.ngayHetHan = new Date(value);
+                                            }}
+                                        />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormControl fullWidth>

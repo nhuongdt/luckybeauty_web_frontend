@@ -20,6 +20,9 @@ import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService'
 import AppConsts from '../../../lib/appconst';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import { enqueueSnackbar } from 'notistack';
+import { format as formatDate } from 'date-fns';
+import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
+import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 interface CreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -135,63 +138,69 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <TextField
-                                                label={
-                                                    <Typography variant="subtitle2">
-                                                        Từ ngày
-                                                        <span className="text-danger"> *</span>
-                                                    </Typography>
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    size: 'small',
+                                                    label: (
+                                                        <Typography variant="subtitle2">
+                                                            Từ ngày
+                                                            <span className="text-danger"> *</span>
+                                                        </Typography>
+                                                    ),
+                                                    error:
+                                                        Boolean(errors.tuNgay) && touched.tuNgay
+                                                            ? true
+                                                            : false,
+                                                    helperText: Boolean(errors.tuNgay) &&
+                                                        touched?.tuNgay && (
+                                                            <span className="text-danger">
+                                                                {String(errors.tuNgay)}
+                                                            </span>
+                                                        )
+                                                }}
+                                                defaultVal={
+                                                    values.tuNgay
+                                                        ? formatDate(values.tuNgay, 'yyyy-MM-dd')
+                                                        : ''
                                                 }
-                                                className="mt-2"
-                                                type="date"
-                                                size="small"
-                                                name="tuNgay"
-                                                error={
-                                                    Boolean(errors.tuNgay) && touched.tuNgay
-                                                        ? true
-                                                        : false
-                                                }
-                                                helperText={
-                                                    Boolean(errors.tuNgay) &&
-                                                    touched?.tuNgay && (
-                                                        <span className="text-danger">
-                                                            {String(errors.tuNgay)}
-                                                        </span>
-                                                    )
-                                                }
-                                                value={values.tuNgay.toString().slice(0, 10)}
-                                                onChange={handleChange}
+                                                handleChangeDate={(dt: string) => {
+                                                    values.tuNgay = new Date(dt);
+                                                }}
                                             />
                                         </FormGroup>
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <FormGroup>
-                                            <TextField
-                                                label={
-                                                    <Typography variant="subtitle2">
-                                                        Đến ngày
-                                                        <span className="text-danger"> *</span>
-                                                    </Typography>
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    size: 'small',
+                                                    label: (
+                                                        <Typography variant="subtitle2">
+                                                            Đến ngày
+                                                            <span className="text-danger"> *</span>
+                                                        </Typography>
+                                                    ),
+                                                    error:
+                                                        Boolean(errors.denNgay) && touched.denNgay
+                                                            ? true
+                                                            : false,
+                                                    helperText: Boolean(errors.denNgay) &&
+                                                        touched?.denNgay && (
+                                                            <span className="text-danger">
+                                                                {String(errors.denNgay)}
+                                                            </span>
+                                                        )
+                                                }}
+                                                defaultVal={
+                                                    values.denNgay
+                                                        ? formatDate(values.denNgay, 'yyyy-MM-dd')
+                                                        : ''
                                                 }
-                                                type="date"
-                                                className="mt-2"
-                                                size="small"
-                                                name="denNgay"
-                                                error={
-                                                    Boolean(errors.denNgay) && touched?.denNgay
-                                                        ? true
-                                                        : false
-                                                }
-                                                helperText={
-                                                    Boolean(errors.denNgay) &&
-                                                    touched?.denNgay && (
-                                                        <span className="text-danger">
-                                                            {String(errors.denNgay)}
-                                                        </span>
-                                                    )
-                                                }
-                                                value={values.denNgay.toString().slice(0, 10)}
-                                                onChange={handleChange}
+                                                handleChangeDate={(value: string) => {
+                                                    values.denNgay = new Date(value);
+                                                }}
                                             />
                                         </FormGroup>
                                     </Grid>

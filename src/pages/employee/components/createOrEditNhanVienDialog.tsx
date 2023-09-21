@@ -28,11 +28,9 @@ import { observer } from 'mobx-react';
 import abpCustom from '../../../components/abp-custom';
 import utils from '../../../utils/utils';
 import uploadFileService from '../../../services/uploadFileService';
-import { Guid } from 'guid-typescript';
 import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDto';
 import PersonIcon from '@mui/icons-material/Person';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { format as formatDate } from 'date-fns';
 import vi from 'date-fns/locale/vi';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import { NumericFormat } from 'react-number-format';
@@ -359,27 +357,20 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <TextField
-                                            size="small"
-                                            type="date"
-                                            fullWidth
-                                            name="ngaySinh"
-                                            label={
-                                                <Typography
-                                                    //color="#4C4B4C"
-                                                    variant="subtitle2">
-                                                    Ngày sinh
-                                                </Typography>
+                                        <DatePickerCustom
+                                            props={{ width: '100%', label: 'Ngày sinh' }}
+                                            defaultVal={
+                                                values.ngaySinh
+                                                    ? formatDate(
+                                                          new Date(values.ngaySinh),
+                                                          'yyyy-MM-dd'
+                                                      )
+                                                    : ''
                                             }
-                                            InputLabelProps={{
-                                                shrink: true
+                                            handleChangeDate={(dt: string) => {
+                                                values.ngaySinh = dt;
                                             }}
-                                            value={values.ngaySinh?.substring(0, 10)}
-                                            onChange={handleChange}
-                                            placeholder="21/04/2004"
-                                            sx={{
-                                                fontSize: '16px'
-                                            }}></TextField>
+                                        />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <Stack spacing={1} direction={'row'}>

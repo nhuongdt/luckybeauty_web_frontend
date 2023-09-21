@@ -2,7 +2,7 @@ import { ParamSearchDto } from '../../dto/ParamSearchDto';
 
 export interface PagedBookingResultRequestDto {
     idChiNhanh: string;
-    dateSelected: Date;
+    dateSelected: string;
     typeView: string;
     idNhanVien?: string;
     idDichVu?: string;

@@ -3,6 +3,7 @@ import {
     DataGrid,
     GridColDef,
     GridColumnVisibilityModel,
+    GridRenderCellParams,
     GridRowSelectionModel
 } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
@@ -16,7 +17,8 @@ import {
     TextField,
     IconButton,
     Avatar,
-    SelectChangeEvent
+    SelectChangeEvent,
+    Checkbox
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import './customerPage.css';
@@ -24,6 +26,8 @@ import DownloadIcon from '../../images/download.svg';
 import UploadIcon from '../../images/upload.svg';
 import AddIcon from '../../images/add.svg';
 // import SearchIcon from '../../images/search-normal.svg';
+import ClearIcon from '@mui/icons-material/Clear';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
@@ -56,6 +60,7 @@ import { BangBaoLoiFileimportDto } from '../../services/dto/BangBaoLoiFileimport
 import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 import { IList } from '../../services/dto/IList';
 import { format } from 'date-fns';
+import { Guid } from 'guid-typescript';
 interface CustomerScreenState {
     rowTable: KhachHangItemDto[];
     toggle: boolean;
@@ -80,6 +85,9 @@ interface CustomerScreenState {
     listNhomKhachSearch: SuggestNhomKhachDto[];
     rowSelectionModel: GridRowSelectionModel;
     isShowModalChuyenNhom: boolean;
+    expendActionSelectedRow: boolean;
+    listItemSelectedModel: Guid[];
+    checkAllRow: boolean;
     lstErrImport: BangBaoLoiFileimportDto[];
 }
 class CustomerScreen extends React.Component<any, CustomerScreenState> {
@@ -110,6 +118,9 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             listNhomKhachSearch: [],
             rowSelectionModel: [],
             isShowModalChuyenNhom: false,
+            checkAllRow: false,
+            expendActionSelectedRow: false,
+            listItemSelectedModel: [],
             lstErrImport: []
         };
     }
@@ -302,8 +313,10 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.handleCloseMenu();
     };
     onOkDelete = async () => {
-        if (this.state.rowSelectionModel.length > 0) {
-            const ok = await khachHangService.DeleteMultipleCustomer(this.state.rowSelectionModel);
+        if (this.state.listItemSelectedModel.length > 0) {
+            const ok = await khachHangService.DeleteMultipleCustomer(
+                this.state.listItemSelectedModel
+            );
             ok
                 ? enqueueSnackbar('Xóa khách hàng  thành công', {
                       variant: 'success',
@@ -363,19 +376,17 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         );
         this.setState({ listNhomKhachSearch: arr });
     };
-    DataGrid_handleAction = async (item: any) => {
-        switch (parseInt(item.id)) {
-            case 1: // chuyennhom
-                this.setState({
-                    isShowModalChuyenNhom: true
-                });
-                break;
-            case 2:
-                {
-                    this.setState({ isShowConfirmDelete: true });
-                }
-                break;
-        }
+    onShowChuyenNhomKhach = () => {
+        this.setState({
+            isShowModalChuyenNhom: true
+        });
+    };
+    exportSelectedRow = async () => {
+        const result = await khachHangService.exportSelectedDanhSach(
+            this.state.listItemSelectedModel
+        );
+        fileDowloadService.downloadExportFile(result);
+        this.setState({ listItemSelectedModel: [] });
     };
     chuyenNhomKhach = async (itemChosed: IList) => {
         const ok = await khachHangService.ChuyenNhomKhachHang(
@@ -394,9 +405,62 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
               });
         this.getData();
     };
+    handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
+        const { id } = params.row;
+        const selectedIndex = this.state.listItemSelectedModel.indexOf(id);
+        let newSelectedRows = [];
+
+        if (selectedIndex === -1) {
+            newSelectedRows = [...this.state.listItemSelectedModel, id];
+        } else {
+            newSelectedRows = [
+                ...this.state.listItemSelectedModel.slice(0, selectedIndex),
+                ...this.state.listItemSelectedModel.slice(selectedIndex + 1)
+            ];
+        }
+
+        this.setState({ listItemSelectedModel: newSelectedRows });
+    };
+    handleSelectAllGridRowClick = () => {
+        if (this.state.checkAllRow) {
+            const allRowRemove = this.state.rowTable.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter(
+                (item) => !allRowRemove.includes(item)
+            );
+            this.setState({ listItemSelectedModel: newRows });
+        } else {
+            const allRowIds = this.state.rowTable.map((row) => row.id);
+            const mergeRowId = new Set([...this.state.listItemSelectedModel, ...allRowIds]);
+            this.setState({
+                listItemSelectedModel: Array.from(mergeRowId)
+            });
+        }
+        this.setState({ checkAllRow: !this.state.checkAllRow });
+    };
     render(): React.ReactNode {
         // const apiRef = useGridApiRef();
         const columns: GridColDef[] = [
+            {
+                field: 'checkBox',
+                sortable: false,
+                filterable: false,
+                disableColumnMenu: true,
+                width: 65,
+                renderHeader: (params) => {
+                    return (
+                        <Checkbox
+                            onClick={this.handleSelectAllGridRowClick}
+                            checked={this.state.checkAllRow}
+                        />
+                    );
+                },
+                renderCell: (params) => (
+                    <Checkbox
+                        onClick={() => this.handleCheckboxGridRowClick(params)}
+                        checked={this.state.listItemSelectedModel.includes(params.row.id)}
+                    />
+                )
+            },
             {
                 field: 'tenKhachHang',
                 headerName: 'Tên khách hàng',
@@ -756,23 +820,81 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </Box>
                             </Grid>
                             <Grid item lg={9} md={9} sm={9} xs={12}>
-                                {this.state.rowSelectionModel.length > 0 && (
-                                    <ActionRowSelect
-                                        lstOption={[
-                                            {
-                                                id: '1',
-                                                text: 'Chuyển nhóm'
-                                            },
-                                            {
-                                                id: '2',
-                                                text: 'Xóa khách hàng'
-                                            }
-                                        ]}
-                                        countRowSelected={this.state.rowSelectionModel.length}
-                                        title="dịch vụ"
-                                        choseAction={this.DataGrid_handleAction}
-                                    />
-                                )}
+                                {this.state.listItemSelectedModel.length > 0 ? (
+                                    <Stack
+                                        spacing={1}
+                                        marginBottom={2}
+                                        direction={'row'}
+                                        alignItems={'center'}>
+                                        <Box sx={{ position: 'relative' }}>
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<ExpandMoreOutlined />}
+                                                onClick={() =>
+                                                    this.setState({
+                                                        expendActionSelectedRow:
+                                                            !this.state.expendActionSelectedRow
+                                                    })
+                                                }>
+                                                Thao tác
+                                            </Button>
+
+                                            <Box
+                                                sx={{
+                                                    display: this.state.expendActionSelectedRow
+                                                        ? ''
+                                                        : 'none',
+                                                    zIndex: 1,
+                                                    position: 'absolute',
+                                                    borderRadius: '4px',
+                                                    border: '1px solid #cccc',
+                                                    minWidth: 150,
+                                                    backgroundColor: 'rgba(248,248,248,1)',
+                                                    '& .MuiStack-root .MuiStack-root:hover': {
+                                                        backgroundColor: '#cccc'
+                                                    }
+                                                }}>
+                                                <Stack
+                                                    alignContent={'center'}
+                                                    justifyContent={'start'}
+                                                    textAlign={'left'}
+                                                    spacing={0.5}>
+                                                    <Button
+                                                        startIcon={'Chuyển nhóm khách'}
+                                                        sx={{ color: 'black' }}
+                                                        onClick={
+                                                            this.onShowChuyenNhomKhach
+                                                        }></Button>
+                                                    <Button
+                                                        startIcon={'Xóa khách hàng'}
+                                                        sx={{ color: 'black' }}
+                                                        onClick={this.showConfirmDelete}></Button>
+                                                    <Button
+                                                        startIcon={'Xuất danh sách'}
+                                                        sx={{ color: 'black' }}
+                                                        onClick={this.exportSelectedRow}></Button>
+                                                </Stack>
+                                            </Box>
+                                        </Box>
+                                        <Stack direction={'row'}>
+                                            <Typography variant="body2" color={'red'}>
+                                                {this.state.listItemSelectedModel.length}&nbsp;
+                                            </Typography>
+                                            <Typography variant="body2">
+                                                bản ghi được chọn
+                                            </Typography>
+                                        </Stack>
+                                        <ClearIcon
+                                            color="error"
+                                            onClick={() => {
+                                                this.setState({
+                                                    listItemSelectedModel: [],
+                                                    checkAllRow: false
+                                                });
+                                            }}
+                                        />
+                                    </Stack>
+                                ) : null}
                                 <div
                                     className="page-box-right"
                                     style={{
@@ -794,7 +916,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         hideFooter
                                         onColumnVisibilityModelChange={this.toggleColumnVisibility}
                                         columnVisibilityModel={this.state.visibilityColumn}
-                                        checkboxSelection
+                                        checkboxSelection={false}
                                         localeText={TextTranslate}
                                         sortingOrder={['desc', 'asc']}
                                         sortModel={[

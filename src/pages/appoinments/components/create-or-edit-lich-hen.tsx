@@ -35,6 +35,8 @@ import bookingStore from '../../../stores/bookingStore';
 import { SuggestKhachHangDto } from '../../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDichVuDto } from '../../../services/suggests/dto/SuggestDichVuDto';
 import { SuggestNhanVienDichVuDto } from '../../../services/suggests/dto/SuggestNhanVienDichVuDto';
+import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
+import { format as formatDate } from 'date-fns';
 interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
@@ -69,9 +71,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
         const saveOK = createResult != null;
         saveOK
             ? enqueueSnackbar(
-                  values.id !== AppConsts.guidEmpty || values.id !== ''
-                      ? 'Cập nhật thành công'
-                      : 'Thêm mới thành công',
+                  values.id === AppConsts.guidEmpty || values.id === ''
+                      ? 'Thêm mới thành công'
+                      : 'Cập nhật thành công',
                   {
                       variant: 'success',
                       autoHideDuration: 3000
@@ -94,9 +96,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                         fontSize="24px"
                         //color="rgb(51, 50, 51)"
                         fontWeight="700">
-                        {initialValues.id !== '' || initialValues.id !== AppConsts.guidEmpty
-                            ? 'Cập nhật lịch hẹn'
-                            : 'Thêm cuộc hẹn'}
+                        {initialValues.id === '' || initialValues.id === AppConsts.guidEmpty
+                            ? 'Thêm cuộc hẹn'
+                            : 'Cập hật lịch hẹn'}
                     </Typography>
                     <IconButton
                         aria-label="close"
@@ -212,38 +214,40 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                         sm={7}
                                         sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
                                         <FormGroup className="mt-4 mb-1">
-                                            <TextField
-                                                label={
-                                                    <Typography variant="body1" fontSize="14px">
-                                                        Ngày <span className="text-danger">*</span>
-                                                    </Typography>
-                                                }
-                                                sx={{
-                                                    '& .MuiInputBase-root': {
-                                                        bgcolor: '#fff'
-                                                    }
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    size: 'small',
+                                                    label: (
+                                                        <Typography variant="subtitle2">
+                                                            Ngày
+                                                            <span className="text-danger"> *</span>
+                                                        </Typography>
+                                                    ),
+                                                    error:
+                                                        Boolean(errors.startTime) &&
+                                                        touched.startTime
+                                                            ? true
+                                                            : false,
+                                                    helperText: Boolean(errors.startTime) &&
+                                                        touched?.startTime && (
+                                                            <span className="text-danger">
+                                                                {String(errors.startTime)}
+                                                            </span>
+                                                        )
                                                 }}
-                                                error={
-                                                    errors.startTime && touched.startTime
-                                                        ? true
-                                                        : false
+                                                defaultVal={
+                                                    values.startTime
+                                                        ? formatDate(
+                                                              new Date(values.startTime),
+                                                              'yyyy-MM-dd'
+                                                          )
+                                                        : formatDate(new Date(), 'yyyy-MM-dd')
                                                 }
-                                                InputLabelProps={{
-                                                    shrink: true
+                                                handleChangeDate={(value: string) => {
+                                                    values.startTime = value;
                                                 }}
-                                                helperText={
-                                                    errors.startTime &&
-                                                    touched.startTime && (
-                                                        <span className="text-danger">
-                                                            {errors.startTime}
-                                                        </span>
-                                                    )
-                                                }
-                                                type="date"
-                                                size="small"
-                                                name="startTime"
-                                                value={values.startTime}
-                                                onChange={handleChange}></TextField>
+                                            />
                                         </FormGroup>
                                         <Grid container spacing={2} sx={{ marginTop: '4px' }}>
                                             <Grid item md={8} sm={6} xs={12}>

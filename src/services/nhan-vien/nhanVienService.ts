@@ -49,7 +49,7 @@ class NhanVienService {
         const response = await http.post(`api/services/app/NhanSu/ExportSelectedNhanVien`, ids);
         return response.data.result;
     }
-    public async inportNhanVien(input: FileUpload) {
+    public async importNhanVien(input: FileUpload) {
         const result = await http.post(`api/services/app/NhanSu/ImportExcel`, input);
         return result.data.result;
     }

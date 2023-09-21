@@ -20,6 +20,7 @@ import {
     BookingDetailDto,
     BookingDetail_ofCustomerDto
 } from '../../services/dat-lich/dto/BookingGetAllItemDto';
+import CreateOrEditLichHenModal from '../appoinments/components/create-or-edit-lich-hen';
 import datLichService from '../../services/dat-lich/datLichService';
 import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
 import { format } from 'date-fns';
@@ -28,7 +29,6 @@ import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
 import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
-import CreateOrEditLichHenModal from '../lich-hen/components/create-or-edit-lich-hen';
 import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';

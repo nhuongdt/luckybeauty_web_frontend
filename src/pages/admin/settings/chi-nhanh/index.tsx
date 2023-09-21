@@ -43,6 +43,11 @@ import cuaHangService from '../../../../services/cua_hang/cuaHangService';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import ViewChiNhanhModal from './components/view-chi-nhanh-modal';
 import abpCustom from '../../../../components/abp-custom';
+import fileDowloadService from '../../../../services/file-dowload.service';
+import { enqueueSnackbar } from 'notistack';
+import { FileUpload } from '../../../../services/dto/FileUpload';
+import uploadFileService from '../../../../services/uploadFileService';
+import ImportExcel from '../../../../components/ImportComponent/ImportExcel';
 
 class ChiNhanhScreen extends Component {
     dataGridRef: RefObject<any> = React.createRef<GridApi>();
@@ -52,6 +57,7 @@ class ChiNhanhScreen extends Component {
         isShowModal: false,
         isShowView: false,
         isShowConfirmDelete: false,
+        importShow: false,
         currentPage: 1,
         rowPerPage: 10,
         filter: '',
@@ -137,6 +143,43 @@ class ChiNhanhScreen extends Component {
             });
         }
         this.Modal();
+    };
+    exportToExcel = async () => {
+        const { filter, rowPerPage, currentPage, sortBy, sortType } = this.state;
+        const result = await chiNhanhService.exportDanhSach({
+            maxResultCount: rowPerPage,
+            skipCount: currentPage,
+            keyword: filter,
+            sortBy: sortBy,
+            sortType: sortType
+        });
+        fileDowloadService.downloadExportFile(result);
+    };
+    exportSelectedRow = async () => {
+        const result = await chiNhanhService.exportDanhSachSelected(
+            this.state.listItemSelectedModel
+        );
+        fileDowloadService.downloadExportFile(result);
+        this.setState({ listItemSelectedModel: [] });
+    };
+    onImportShow = () => {
+        this.setState({
+            importShow: !this.state.importShow
+        });
+        this.InitData();
+    };
+    handleImportData = async (input: FileUpload) => {
+        const result = await chiNhanhService.importChiNhanh(input);
+        enqueueSnackbar(result.message, {
+            variant: result.status == 'success' ? 'success' : result.status,
+            autoHideDuration: 3000
+        });
+    };
+    downloadImportTemplate = async () => {
+        const result = await uploadFileService.downloadImportTemplate(
+            'ChiNhanh_ImportTemplate.xlsx'
+        );
+        fileDowloadService.downloadExportFile(result);
     };
     handleEdit = () => {
         // Handle Edit action
@@ -413,6 +456,7 @@ class ChiNhanhScreen extends Component {
                             className="border-color btn-outline-hover"
                             variant="outlined"
                             startIcon={<img src={DownloadIcon} />}
+                            onClick={this.onImportShow}
                             sx={{
                                 backgroundColor: '#fff!important',
                                 textTransform: 'capitalize',
@@ -428,6 +472,7 @@ class ChiNhanhScreen extends Component {
                             className="border-color btn-outline-hover"
                             variant="outlined"
                             startIcon={<img src={UploadIcon} />}
+                            onClick={this.exportToExcel}
                             sx={{
                                 textTransform: 'capitalize',
                                 fontWeight: '400',
@@ -494,10 +539,10 @@ class ChiNhanhScreen extends Component {
                                             startIcon={'Xóa chi nhánh'}
                                             sx={{ color: 'black' }}
                                             onClick={this.handleDelete}></Button>
-                                        {/* <Button
+                                        <Button
                                             startIcon={'Xuất danh sách'}
                                             sx={{ color: 'black' }}
-                                            onClick={this.exportSelectedRow}></Button> */}
+                                            onClick={this.exportSelectedRow}></Button>
                                     </Stack>
                                 </Box>
                             </Box>
@@ -582,6 +627,13 @@ class ChiNhanhScreen extends Component {
                         isShow={this.state.isShowModal}
                         onCLose={this.onCloseModal}
                         onSave={this.handleSubmit}
+                    />
+                    <ImportExcel
+                        tieude={'Nhập file chi nhánh'}
+                        isOpen={this.state.importShow}
+                        onClose={this.onImportShow}
+                        downloadImportTemplate={this.downloadImportTemplate}
+                        importFile={this.handleImportData}
                     />
                 </Box>
             </Box>

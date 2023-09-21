@@ -31,7 +31,9 @@ import Cookies from 'js-cookie';
 import lichLamViecService from '../../../services/nhan-vien/lich_lam_viec/lichLamViecService';
 import { enqueueSnackbar } from 'notistack';
 import { observer } from 'mobx-react';
+import { format as formatDate } from 'date-fns';
 import suggestStore from '../../../stores/suggestStore';
+import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 
 interface DialogComponentProps {
     open: boolean;
@@ -145,6 +147,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                       autoHideDuration: 3000
                                   });
                             helper.resetForm();
+                            setSelectedDays([]);
                             onClose();
                         }
                     }}>
@@ -198,116 +201,72 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                             </Select>
                                         </FormControl>
                                         <Box>
-                                            <TextField
-                                                label={
-                                                    <Typography variant="subtitle2">
-                                                        Ngày bắt đầu
-                                                        <span className="text-danger"> *</span>
-                                                    </Typography>
-                                                }
-                                                type="date"
-                                                value={values.tuNgay}
-                                                error={
-                                                    touched.tuNgay && errors.tuNgay ? true : false
-                                                }
-                                                helperText={
-                                                    touched.tuNgay &&
-                                                    errors.tuNgay && (
-                                                        <span className="text-danger">
-                                                            {errors.tuNgay}
-                                                        </span>
-                                                    )
-                                                }
-                                                name={'tuNgay'}
-                                                size="small"
-                                                onChange={handleChange}
-                                                fullWidth
-                                                sx={{
-                                                    mt: '8px',
-                                                    cursor: 'pointer',
-                                                    position: 'relative',
-
-                                                    '& input': {
-                                                        flexDirection: 'row-reverse',
-                                                        gap: '10px'
-                                                    },
-                                                    '& svg': {
-                                                        position: 'absolute',
-                                                        zIndex: '2',
-                                                        pointerEvents: 'none'
-                                                    },
-                                                    '& input[type="date"]::-webkit-calendar-picker-indicator':
-                                                        {
-                                                            opacity: '0'
-                                                        },
-                                                    '& input[type="date"]::-moz-calendar-picker-indicator':
-                                                        {
-                                                            opacity: '0'
-                                                        }
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    size: 'small',
+                                                    label: (
+                                                        <Typography variant="subtitle2">
+                                                            Ngày bắt đầu
+                                                            <span className="text-danger"> *</span>
+                                                        </Typography>
+                                                    ),
+                                                    error:
+                                                        Boolean(errors.tuNgay) && touched.tuNgay
+                                                            ? true
+                                                            : false,
+                                                    helperText: Boolean(errors.tuNgay) &&
+                                                        touched?.tuNgay && (
+                                                            <span className="text-danger">
+                                                                {String(errors.tuNgay)}
+                                                            </span>
+                                                        )
                                                 }}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <React.Fragment>
-                                                            <DateIcon />
-                                                        </React.Fragment>
-                                                    )
+                                                defaultVal={
+                                                    values.tuNgay
+                                                        ? formatDate(
+                                                              new Date(values.tuNgay),
+                                                              'yyyy-MM-dd'
+                                                          )
+                                                        : ''
+                                                }
+                                                handleChangeDate={(value: string) => {
+                                                    values.tuNgay = value;
                                                 }}
                                             />
                                         </Box>
                                         <Box>
-                                            <TextField
-                                                label={
-                                                    <Typography variant="subtitle2">
-                                                        Ngày kết thúc
-                                                        <span className="text-danger"> *</span>
-                                                    </Typography>
-                                                }
-                                                type="date"
-                                                value={values.denNgay}
-                                                name={'denNgay'}
-                                                error={
-                                                    touched.denNgay && errors.denNgay ? true : false
-                                                }
-                                                helperText={
-                                                    touched.denNgay &&
-                                                    errors.denNgay && (
-                                                        <span className="text-danger">
-                                                            {errors.denNgay}
-                                                        </span>
-                                                    )
-                                                }
-                                                size="small"
-                                                onChange={handleChange}
-                                                fullWidth
-                                                sx={{
-                                                    mt: '8px',
-                                                    cursor: 'pointer',
-                                                    position: 'relative',
-
-                                                    '& input': {
-                                                        flexDirection: 'row-reverse',
-                                                        gap: '10px'
-                                                    },
-                                                    '& svg': {
-                                                        position: 'absolute',
-                                                        zIndex: '2',
-                                                        pointerEvents: 'none'
-                                                    },
-                                                    '& input[type="date"]::-webkit-calendar-picker-indicator':
-                                                        {
-                                                            opacity: '0'
-                                                        },
-                                                    '& input[type="date"]::-moz-calendar-picker-indicator':
-                                                        {
-                                                            opacity: '0'
-                                                        }
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    size: 'small',
+                                                    label: (
+                                                        <Typography variant="subtitle2">
+                                                            Ngày kết thuc
+                                                            <span className="text-danger"> *</span>
+                                                        </Typography>
+                                                    ),
+                                                    error:
+                                                        Boolean(errors.denNgay) && touched.denNgay
+                                                            ? true
+                                                            : false,
+                                                    helperText: Boolean(errors.denNgay) &&
+                                                        touched?.denNgay && (
+                                                            <span className="text-danger">
+                                                                {String(errors.denNgay)}
+                                                            </span>
+                                                        )
                                                 }}
-                                                InputProps={{
-                                                    startAdornment: (
-                                                        <React.Fragment>
-                                                            <DateIcon />
-                                                        </React.Fragment>
-                                                    )
+                                                defaultVal={
+                                                    values.denNgay
+                                                        ? formatDate(
+                                                              new Date(values.denNgay),
+                                                              'yyyy-MM-dd'
+                                                          )
+                                                        : ''
+                                                }
+                                                handleChangeDate={(value: string) => {
+                                                    values.denNgay = value;
                                                 }}
                                             />
                                         </Box>
