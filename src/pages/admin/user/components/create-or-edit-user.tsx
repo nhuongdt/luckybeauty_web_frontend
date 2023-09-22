@@ -244,7 +244,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 tenNhanVien: ''
                                                             }
                                                         }
-                                                        options={suggestNhanSu}
+                                                        options={suggestNhanSu ?? []}
                                                         getOptionLabel={(option) =>
                                                             option.tenNhanVien
                                                         }
@@ -692,7 +692,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             variant="outlined"
                                             size="small"
                                             sx={{
-                                                color: 'var(--color-main)'
+                                                color: 'var(--color-main)',
+                                                fontSize: '14px'
                                             }}
                                             onClick={() => {
                                                 onCancel();
@@ -703,6 +704,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                         </Button>
                                         <Button
                                             variant="contained"
+                                            sx={{ fontSize: '14px' }}
                                             size="small"
                                             type="submit"
                                             // onClick={() => {

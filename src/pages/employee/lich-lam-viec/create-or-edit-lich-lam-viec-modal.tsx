@@ -242,7 +242,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                     size: 'small',
                                                     label: (
                                                         <Typography variant="subtitle2">
-                                                            Ngày kết thuc
+                                                            Ngày kết thúc
                                                             <span className="text-danger"> *</span>
                                                         </Typography>
                                                     ),
@@ -291,9 +291,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                         );
                                                         //idNhanVien = value?.id;
                                                     }}
-                                                    options={suggestStore.suggestNhanVien}
+                                                    options={suggestStore?.suggestNhanVien ?? []}
                                                     value={
-                                                        suggestStore.suggestNhanVien.find(
+                                                        suggestStore.suggestNhanVien?.find(
                                                             (x) => x.id == values.idNhanVien
                                                         ) ?? null
                                                     }
@@ -384,8 +384,8 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                         displayEmpty
                                                         size="small"
                                                         IconComponent={() => <ArrowDown />}>
-                                                        {Array.isArray(suggestCaLamViec) &&
-                                                            suggestCaLamViec.map((item) => (
+                                                        {Array.isArray(suggestCaLamViec ?? []) &&
+                                                            suggestCaLamViec?.map((item) => (
                                                                 <MenuItem
                                                                     key={item.id}
                                                                     value={item.id}>

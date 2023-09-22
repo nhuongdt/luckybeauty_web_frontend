@@ -253,7 +253,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             <Grid item md={8} sm={6} xs={12}>
                                                 <FormGroup>
                                                     <Autocomplete
-                                                        options={suggestStore.suggestDichVu}
+                                                        options={suggestStore?.suggestDichVu ?? []}
                                                         getOptionLabel={(option) =>
                                                             `${option.tenDichVu}`
                                                         }
@@ -354,7 +354,8 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     <FormGroup>
                                                         <Autocomplete
                                                             options={
-                                                                suggestStore.suggestKyThuatVien
+                                                                suggestStore?.suggestKyThuatVien ??
+                                                                []
                                                             }
                                                             getOptionLabel={(option) =>
                                                                 `${option.tenNhanVien}`

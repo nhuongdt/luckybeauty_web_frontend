@@ -32,11 +32,10 @@ import { SuggestChucVuDto } from '../../../services/suggests/dto/SuggestChucVuDt
 import PersonIcon from '@mui/icons-material/Person';
 import { format as formatDate } from 'date-fns';
 import vi from 'date-fns/locale/vi';
-import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import { NumericFormat } from 'react-number-format';
-import { ThreeSixtySharp } from '@mui/icons-material';
 import nhanVienStore from '../../../stores/nhanVienStore';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
+import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 export interface ICreateOrEditUserProps {
     visible: boolean;
     onCancel: () => void;
@@ -357,8 +356,12 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             sx={{ fontSize: '16px' }}></TextField>
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <DatePickerCustom
-                                            props={{ width: '100%', label: 'Ngày sinh' }}
+                                        <DatePickerRequiredCustom
+                                            props={{
+                                                width: '100%',
+                                                label: 'Ngày sinh',
+                                                size: 'small'
+                                            }}
                                             defaultVal={
                                                 values.ngaySinh
                                                     ? formatDate(

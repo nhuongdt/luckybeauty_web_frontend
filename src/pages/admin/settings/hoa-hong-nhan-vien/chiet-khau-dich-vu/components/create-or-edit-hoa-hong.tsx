@@ -101,7 +101,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <Grid item xs={12} sm={6} marginTop={2}>
                                         <Autocomplete
-                                            options={suggestStore?.suggestNhanVien}
+                                            options={suggestStore?.suggestNhanVien ?? []}
                                             getOptionLabel={(item) => item.tenNhanVien}
                                             value={
                                                 suggestStore.suggestNhanVien?.find(
@@ -146,7 +146,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6} marginTop={2}>
                                         <Autocomplete
-                                            options={suggestStore?.suggestDichVu}
+                                            options={suggestStore?.suggestDichVu ?? []}
                                             getOptionLabel={(item) => item.tenDichVu}
                                             value={
                                                 suggestStore.suggestDichVu?.find(

@@ -49,8 +49,23 @@ const LichHen: React.FC = () => {
     const [notificationConnectionHub, setNotificationConnectionHub] =
         useState<signalR.HubConnection>();
     const getData = async () => {
+        let calendarView = 'week';
+        const lichHenView = Cookies.get('lich-hen-view') ?? 'timeGridWeek';
+        setInitialView(lichHenView);
+        const calendarComponent = calendarRef.current;
+        if (calendarComponent && calendarComponent.getApi) {
+            // Change the view to the new initialView
+            calendarComponent.getApi().changeView(lichHenView);
+        }
+        if (lichHenView == 'dayGridMonth') {
+            calendarView = 'month';
+        } else if (lichHenView == 'timeGridWeek') {
+            calendarView = 'week';
+        } else {
+            calendarView = 'day';
+        }
         bookingStore.selectedDate = formatDateFns(new Date(), 'yyyy-MM-dd');
-        bookingStore.typeView = Cookies.get('Tab-lich-hen') ?? 'week';
+        bookingStore.typeView = calendarView;
         await bookingStore.getData();
     };
     const suggestData = async () => {
@@ -88,12 +103,16 @@ const LichHen: React.FC = () => {
         }
     };
     const sendNotification = async () => {
-        if (notificationConnectionHub) {
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl(process.env.REACT_APP_REMOTE_SERVICE_BASE_URL + 'notifications') // Điều chỉnh URL hub tại đây
+            .build();
+        setNotificationConnectionHub(newConnection);
+        if (newConnection) {
             // Khởi động kết nối nếu chưa kết nối hoặc đang trong trạng thái khác "Connected"
-            if (notificationConnectionHub.state !== 'Connected') {
-                await notificationConnectionHub.start();
+            if (newConnection.state !== 'Connected') {
+                await newConnection.start();
             }
-            notificationConnectionHub
+            newConnection
                 .invoke('SendNotification')
                 .then(() => {
                     console.log('Bắt đầu gửi thông báo');
@@ -127,6 +146,7 @@ const LichHen: React.FC = () => {
         } else {
             newValue = 'day';
         }
+        Cookies.set('lich-hen-view', event.target.value);
         await bookingStore.onChangeTypeView(newValue);
     };
     const toDayClick = async () => {
@@ -187,6 +207,10 @@ const LichHen: React.FC = () => {
             clickInfo.event.id != '' ||
             clickInfo.event.id !== undefined
         ) {
+            const modal = document.getElementsByClassName('fc-popover')[0] as HTMLElement | null;
+            if (modal) {
+                modal.style.display = 'none';
+            }
             await bookingStore.getBookingInfo(clickInfo.event.id);
             await bookingStore.onShowBookingInfo();
         }

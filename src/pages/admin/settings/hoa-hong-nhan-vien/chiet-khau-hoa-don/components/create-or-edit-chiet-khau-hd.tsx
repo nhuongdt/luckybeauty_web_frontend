@@ -298,7 +298,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             <Grid item xs={12} sm={12} md={8}>
                                                 <FormControl fullWidth>
                                                     <Autocomplete
-                                                        options={suggestStore.suggestLoaiChungTu}
+                                                        options={
+                                                            suggestStore.suggestLoaiChungTu ?? []
+                                                        }
                                                         getOptionLabel={(option: any) =>
                                                             option.tenLoaiChungTu
                                                         }
@@ -310,7 +312,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             );
                                                         }}
                                                         value={
-                                                            suggestStore.suggestLoaiChungTu.filter(
+                                                            suggestStore.suggestLoaiChungTu?.filter(
                                                                 (x) =>
                                                                     x.tenLoaiChungTu ==
                                                                     values?.chungTuApDung

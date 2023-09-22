@@ -1,4 +1,4 @@
-import { Component, ReactNode, useEffect } from 'react';
+import { Component, ReactNode } from 'react';
 import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/CreateOrEditKhachHangDto';
 import {
     Autocomplete,
@@ -6,7 +6,6 @@ import {
     Button,
     Grid,
     TextField,
-    TextareaAutosize,
     Typography,
     Dialog,
     RadioGroup,
@@ -14,13 +13,9 @@ import {
     Radio,
     Stack,
     DialogTitle,
-    DialogContent,
-    InputAdornment
+    DialogContent
 } from '@mui/material';
-import useWindowWidth from '../../../components/StateWidth';
-import fileIcon from '../../../images/file.svg';
 import closeIcon from '../../../images/close-square.svg';
-import fileSmallIcon from '../../../images/fi_upload-cloud.svg';
 import React from 'react';
 import { Form, Formik } from 'formik';
 import khachHangService from '../../../services/khach-hang/khachHangService';
@@ -30,16 +25,13 @@ import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
 import '../customerPage.css';
 import rules from './create-or-edit-customer.validate';
-import { fontSize, width } from '@mui/system';
 import utils from '../../../utils/utils';
 import uploadFileService from '../../../services/uploadFileService';
 import PersonIcon from '@mui/icons-material/Person';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import { Close } from '@mui/icons-material';
-import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import { NumericFormat } from 'react-number-format';
-import { format } from 'date-fns';
+import { format as formatDate } from 'date-fns';
 import bookingStore from '../../../stores/bookingStore';
+import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
 
 export interface ICreateOrEditCustomerProps {
     visible: boolean;
@@ -283,29 +275,17 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 onChange={handleChange}
                                                 customInput={TextField}
                                             />
-                                            {/* <TextField
-                                                type="tel"
-                                                size="small"
-                                                name="soDienThoai"
-                                                label=" Số điện thoại *"
-                                                value={values.soDienThoai}
-                                                onChange={handleChange}
-                                                fullWidth
-                                                helperText={
-                                                    errors.soDienThoai && touched.soDienThoai ? (
-                                                        <small className="text-danger">
-                                                            Số điện thoại không hợp lệ
-                                                        </small>
-                                                    ) : null
-                                                }
-                                                sx={{ fontSize: '13px' }}></TextField> */}
                                         </Grid>
                                         <Grid item sm={6} xs={12}>
-                                            <DatePickerCustom
-                                                props={{ width: '100%', label: 'Ngày sinh' }}
+                                            <DatePickerRequiredCustom
+                                                props={{
+                                                    width: '100%',
+                                                    label: 'Ngày sinh',
+                                                    size: 'small'
+                                                }}
                                                 defaultVal={
                                                     values.ngaySinh
-                                                        ? format(
+                                                        ? formatDate(
                                                               new Date(values.ngaySinh),
                                                               'yyyy-MM-dd'
                                                           )
@@ -315,26 +295,6 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     values.ngaySinh = new Date(dt);
                                                 }}
                                             />
-                                            {/* <TextField
-                                                size="small"
-                                                type="date"
-                                                fullWidth
-                                                name="ngaySinh"
-                                                label={
-                                                    <Typography
-                                                        //color="#4C4B4C"
-                                                        variant="subtitle2">
-                                                        Ngày sinh
-                                                    </Typography>
-                                                }
-                                                InputLabelProps={{
-                                                    shrink: true
-                                                }}
-                                                value={values.ngaySinh?.toString().substring(0, 10)}
-                                                onChange={handleChange}
-                                                sx={{
-                                                    fontSize: '16px'
-                                                }}></TextField> */}
                                         </Grid>
                                         <Grid item xs={12}>
                                             <TextField
@@ -357,7 +317,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                           ) || { id: '', tenNhomKhach: '' }
                                                         : { id: '', tenNhomKhach: '' }
                                                 }
-                                                options={suggestStore.suggestNhomKhach}
+                                                options={suggestStore?.suggestNhomKhach ?? []}
                                                 getOptionLabel={(option) => option.tenNhomKhach}
                                                 size="small"
                                                 fullWidth
@@ -388,7 +348,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                           ) || { id: '', tenNguonKhach: '' }
                                                         : { id: '', tenNguonKhach: '' }
                                                 }
-                                                options={suggestStore.suggestNguonKhach}
+                                                options={suggestStore?.suggestNguonKhach ?? []}
                                                 getOptionLabel={(option) => option.tenNguonKhach}
                                                 size="small"
                                                 fullWidth

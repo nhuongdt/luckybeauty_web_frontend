@@ -315,7 +315,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
-                                                    color: 'var(--color-main)'
+                                                    color: 'var(--color-main)',
+                                                    fontSize: '14px'
                                                 }}
                                                 onClick={onCancel}
                                                 className="btn-outline-hover">
@@ -324,6 +325,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                             {!isSubmitting ? (
                                                 <Button
                                                     variant="contained"
+                                                    sx={{ fontSize: '14px' }}
                                                     size="small"
                                                     onClick={() => {
                                                         this.handleSubmit(values);

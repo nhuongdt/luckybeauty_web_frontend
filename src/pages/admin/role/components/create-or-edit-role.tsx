@@ -475,7 +475,9 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 variant="outlined"
                                                 size="small"
                                                 sx={{
-                                                    color: 'var(--color-main)'
+                                                    color: 'var(--color-main)',
+                                                    fontSize: '14px',
+                                                    textTransform: 'unset'
                                                 }}
                                                 onClick={() => {
                                                     this.setState({
@@ -490,6 +492,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             <Button
                                                 variant="contained"
                                                 type="submit"
+                                                sx={{ fontSize: '14px', textTransform: 'unset' }}
                                                 size="small"
                                                 className="btn-container-hover">
                                                 Lưu
