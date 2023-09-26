@@ -218,7 +218,7 @@ const LichHen: React.FC = () => {
     return (
         <Box
             sx={{
-                padding: '16px',
+                padding: '16px 8px',
                 height: '100%'
             }}>
             <Box
@@ -270,8 +270,8 @@ const LichHen: React.FC = () => {
                         startIcon={<AddIcon />}
                         variant="contained"
                         onClick={async () => {
+                            bookingStore.createNewBookingDto();
                             handleCreateUpdateShow('');
-                            await bookingStore.createNewBookingDto();
                         }}
                         className="btn-container-hover"
                         sx={{ bgcolor: 'var(--color-main)', fontSize: '14px', fontWeight: '400' }}>

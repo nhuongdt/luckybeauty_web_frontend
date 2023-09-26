@@ -93,8 +93,8 @@ class SettingDichVuNhanVien extends Component {
                         Cài đặt dịch vụ nhân viên
                     </Typography>
                 </Box>
-                <Box padding={'16px 16px'}>
-                    <Grid container spacing={2} padding={'0px 8px'}>
+                <Box padding={'16px 0px'}>
+                    <Grid container spacing={2}>
                         {window.screen.width <= 650 ? (
                             <Grid item xs={12}>
                                 <Autocomplete
@@ -112,8 +112,12 @@ class SettingDichVuNhanVien extends Component {
                                                 display={'flex'}
                                                 flexDirection={'column'}
                                                 ml={'5px'}>
-                                                <Typography>{option?.tenNhanVien}</Typography>
-                                                <Typography>{option?.chucVu}</Typography>
+                                                <Typography fontSize={'13px'}>
+                                                    {option?.tenNhanVien}
+                                                </Typography>
+                                                <Typography fontSize={'13px'}>
+                                                    {option?.chucVu}
+                                                </Typography>
                                             </Box>
                                         </Box>
                                     )}
@@ -161,6 +165,7 @@ class SettingDichVuNhanVien extends Component {
                                     <Box
                                         className="page-box-left"
                                         sx={{
+                                            padding: '8px',
                                             width: '100%',
                                             // minHeight: '550px',
                                             // maxHeight: '550px',
@@ -191,13 +196,19 @@ class SettingDichVuNhanVien extends Component {
                                                     backgroundColor:
                                                         this.state.selectedItemId === item.id
                                                             ? '#E6E6E6'
-                                                            : 'transparent' // Apply background color based on selection
+                                                            : 'transparent', // Apply background color based on selection
+                                                    padding: '0px 8px',
+                                                    fontSize: '13px !important'
                                                 }}>
                                                 <ListItemAvatar>
                                                     <Avatar src={item.avatar} />
                                                 </ListItemAvatar>
                                                 <ListItemText
-                                                    primary={item.tenNhanVien}
+                                                    primary={
+                                                        <Typography fontSize={'14px'}>
+                                                            {item.tenNhanVien}
+                                                        </Typography>
+                                                    }
                                                     secondary={item.chucVu}
                                                 />
                                             </ListItem>
@@ -226,27 +237,41 @@ class SettingDichVuNhanVien extends Component {
                                         sx={{ width: '64px', height: '64px' }}
                                         src={dichVuNhanVienStore.dichVuNhanVienDetail?.avatar}
                                     />
-                                    <Typography>
+                                    <Typography fontSize={'14px'}>
                                         {dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien}
                                     </Typography>
                                     <Box
                                         display={'flex'}
                                         flexDirection={'row'}
                                         alignItems={'center'}
+                                        textAlign={'center'}
                                         gap={2}>
-                                        <Box>
-                                            {dichVuNhanVienStore.dichVuNhanVienDetail?.rate}
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            alignItems={'center'}
+                                            textAlign={'center'}>
+                                            <Typography fontSize={'14px'}>
+                                                {dichVuNhanVienStore.dichVuNhanVienDetail?.rate ===
+                                                0
+                                                    ? 5
+                                                    : dichVuNhanVienStore.dichVuNhanVienDetail
+                                                          ?.rate}
+                                            </Typography>
                                             <StarIcon
-                                                style={{ opacity: 0.55 }}
+                                                style={{
+                                                    opacity: 0.55,
+                                                    marginLeft: '5px',
+                                                    marginRight: '5px'
+                                                }}
                                                 sx={{ color: '#EE8935' }}
-                                                fontSize="inherit"
-                                            />{' '}
-                                            -{' '}
+                                            />
+                                            -
                                         </Box>
                                         <Chip
                                             label={dichVuNhanVienStore.dichVuNhanVienDetail?.chucVu}
                                         />
-                                        <Typography>
+                                        <Typography fontSize={'14px'}>
                                             {dichVuNhanVienStore.dichVuNhanVienDetail?.soDienThoai}
                                         </Typography>
                                     </Box>
@@ -283,19 +308,20 @@ class SettingDichVuNhanVien extends Component {
                                                                             src={item.avatar}
                                                                             variant="square"
                                                                         />{' '}
-                                                                        <Typography>
+                                                                        <Typography
+                                                                            fontSize={'13px'}>
                                                                             {item.tenDichVu}
                                                                         </Typography>
                                                                     </Box>
                                                                 </TableCell>
                                                                 <TableCell align={'right'}>
-                                                                    <Typography>
+                                                                    <Typography fontSize={'13px'}>
                                                                         {item.soPhutThucHien}
                                                                         {' phút'}
                                                                     </Typography>
                                                                 </TableCell>
                                                                 <TableCell align={'right'}>
-                                                                    <Typography>
+                                                                    <Typography fontSize={'13px'}>
                                                                         {new Intl.NumberFormat(
                                                                             'vi-VN'
                                                                         ).format(item.donGia)}

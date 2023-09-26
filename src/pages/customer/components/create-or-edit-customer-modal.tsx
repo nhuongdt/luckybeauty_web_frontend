@@ -229,9 +229,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 value={values.tenKhachHang}
                                                 onChange={handleChange}
                                                 label={
-                                                    <Typography
-                                                        //color="#4C4B4C"
-                                                        variant="subtitle2">
+                                                    <Typography fontSize={'13px'}>
                                                         Tên khách hàng
                                                         <span className="text-danger">*</span>
                                                     </Typography>

@@ -210,7 +210,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             />
                                         </TabList>
                                     </Box>
-                                    <TabPanel value="1" sx={{ padding: '16px' }}>
+                                    <TabPanel value="1" sx={{ padding: '16px 0px 0px 0px' }}>
                                         <Grid
                                             container
                                             sx={{ '& label': { marginBottom: '4px' } }}
@@ -602,7 +602,14 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         size="small"
                                                     />
                                                 </FormGroup>
-                                                <Grid item xs={12}>
+                                                <Grid
+                                                    item
+                                                    xs={12}
+                                                    sx={{
+                                                        '.MuiGrid-item': {
+                                                            paddingTop: '0px !important'
+                                                        }
+                                                    }}>
                                                     <FormGroup>
                                                         <FormControlLabel
                                                             name="isAdmin"
@@ -622,20 +629,14 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         />
                                                     </FormGroup>
                                                 </Grid>
-                                                <Grid xs={12} item>
+                                                <Grid xs={12} item padding={'0px !important'}>
                                                     <FormGroup>
                                                         <FormControlLabel
                                                             name="isActive"
                                                             value={values.isActive}
                                                             onChange={handleChange}
                                                             checked={values.isActive}
-                                                            control={
-                                                                <Checkbox
-                                                                // sx={{
-                                                                //     color: 'var(--color-main)!important'
-                                                                // }}
-                                                                />
-                                                            }
+                                                            control={<Checkbox />}
                                                             label="Kích hoạt"
                                                         />
                                                     </FormGroup>
@@ -672,7 +673,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                 </TabContext>
                                 <DialogActions
                                     sx={{
-                                        paddingRight: '0!important',
+                                        padding: '0px 0px 16px 0px !important',
                                         position: 'sticky',
                                         bottom: '0',
                                         left: '0',

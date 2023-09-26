@@ -68,7 +68,7 @@ const LichLamViecScreen: React.FC = () => {
                                 variant="contained"
                                 className="btn-container-hover"
                                 onClick={handleOpenDialog}>
-                                Thêm ca
+                                Thêm lịch làm việc
                             </Button>
                         </Box>
                     </Grid>

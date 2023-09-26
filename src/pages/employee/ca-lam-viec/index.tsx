@@ -551,7 +551,7 @@ class CaLamViecScreen extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box paddingTop="16px" bgcolor="#fff">
+                <Box paddingTop="16px">
                     {this.state.listItemSelectedModel.length > 0 ? (
                         <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
                             <Box sx={{ position: 'relative' }}>

@@ -339,10 +339,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         </Grid>
                     </Grid>
                 </div>
-                <Box
-                    paddingTop="16px"
-                    className="page-content "
-                    sx={{ backgroundColor: '#fff', borderRadius: '8px' }}>
+                <Box paddingTop="16px" className="page-content " sx={{ borderRadius: '8px' }}>
                     {this.state.rowSelectedModel.length > 0 ? (
                         <Box mb={1}>
                             <Button variant="contained" color="secondary">

@@ -17,7 +17,9 @@ import {
     FormControl,
     InputLabel,
     Autocomplete,
-    FormHelperText
+    FormHelperText,
+    FormLabel,
+    AutocompleteRenderInputParams
 } from '@mui/material';
 import * as Yup from 'yup';
 import { ReactComponent as ArrowDown } from '../../../images/arow-down.svg';
@@ -171,11 +173,11 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                         }}>
                                         <FormControl fullWidth>
                                             <InputLabel>
-                                                <Typography fontSize="14px">Lặp lại</Typography>
+                                                <Typography fontSize="13px">Lặp lại</Typography>
                                             </InputLabel>
                                             <Select
                                                 label={
-                                                    <Typography fontSize="14px">Lặp lại</Typography>
+                                                    <Typography fontSize="13px">Lặp lại</Typography>
                                                 }
                                                 value={curent}
                                                 onChange={(e) => {
@@ -188,10 +190,10 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                     '[aria-expanded="true"] ~ svg': {
                                                         transform: 'rotate(180deg)'
                                                     },
-                                                    pr: '20px',
+                                                    pr: '20px'
                                                     //color: '#4C4B4C',
 
-                                                    mt: '8px'
+                                                    //mt: '8px'
                                                 }}
                                                 size="small"
                                                 IconComponent={() => <ArrowDown />}>
@@ -351,61 +353,52 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                 />
                                             </Grid>
                                             <Grid item xs={12} sm={6}>
-                                                <FormControl
-                                                    fullWidth
-                                                    error={
-                                                        touched.idCaLamViec && errors.idCaLamViec
-                                                            ? true
-                                                            : false
-                                                    }>
-                                                    <InputLabel>
-                                                        <Typography variant="subtitle2">
-                                                            Ca làm việc
-                                                            <span className="text-danger"> *</span>
-                                                        </Typography>
-                                                    </InputLabel>
-                                                    <Select
-                                                        label={
-                                                            <Typography fontSize="14px">
-                                                                Ca làm việc
-                                                            </Typography>
-                                                        }
-                                                        value={values.idCaLamViec}
-                                                        onChange={handleChange}
-                                                        name="idCaLamViec"
-                                                        sx={{
-                                                            width: '100%',
-                                                            '[aria-expanded="true"] ~ svg': {
-                                                                transform: 'rotate(180deg)'
-                                                            },
-                                                            pr: '20px',
-                                                            color: '#4C4B4C'
-                                                        }}
-                                                        displayEmpty
-                                                        size="small"
-                                                        IconComponent={() => <ArrowDown />}>
-                                                        {Array.isArray(suggestCaLamViec ?? []) &&
-                                                            suggestCaLamViec?.map((item) => (
-                                                                <MenuItem
-                                                                    key={item.id}
-                                                                    value={item.id}>
-                                                                    {item.tenCa}
-                                                                </MenuItem>
-                                                            ))}
-                                                    </Select>
-                                                    <FormHelperText>
-                                                        {touched.idCaLamViec &&
-                                                            errors.idCaLamViec && (
-                                                                <span className="text-danger">
-                                                                    {errors.idCaLamViec}
-                                                                </span>
-                                                            )}
-                                                    </FormHelperText>
-                                                </FormControl>
+                                                <Autocomplete
+                                                    size="small"
+                                                    options={suggestCaLamViec ?? []}
+                                                    getOptionLabel={(option) => option.tenCa}
+                                                    value={
+                                                        suggestCaLamViec.find(
+                                                            (x) => x.id == values.idCaLamViec
+                                                        ) ?? null
+                                                    }
+                                                    onChange={(e, v) => {
+                                                        setFieldValue('idCaLamViec', v?.id);
+                                                    }}
+                                                    renderInput={(
+                                                        param: AutocompleteRenderInputParams
+                                                    ) => (
+                                                        <TextField
+                                                            {...param}
+                                                            label={
+                                                                <Typography fontSize={'13px'}>
+                                                                    Ca làm việc
+                                                                    <span className="text-danger">
+                                                                        *
+                                                                    </span>
+                                                                </Typography>
+                                                            }
+                                                            error={
+                                                                touched.idCaLamViec &&
+                                                                errors.idCaLamViec
+                                                                    ? true
+                                                                    : false
+                                                            }
+                                                            helperText={
+                                                                touched.idCaLamViec &&
+                                                                errors.idCaLamViec && (
+                                                                    <span className="text-danger">
+                                                                        {errors.idCaLamViec}
+                                                                    </span>
+                                                                )
+                                                            }
+                                                        />
+                                                    )}
+                                                />
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <Box>
-                                                    <Typography variant="subtitle2">
+                                                    <Typography fontSize={'13px'}>
                                                         Ngày làm việc
                                                         <span className="text-danger"> *</span>
                                                     </Typography>
@@ -540,7 +533,10 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                     </Box>
                                 </Grid>
                             </Grid>
-                            <DialogActions>
+                            <DialogActions
+                                sx={{
+                                    paddingRight: '0px !important'
+                                }}>
                                 <Box
                                     display="flex"
                                     marginLeft="auto"

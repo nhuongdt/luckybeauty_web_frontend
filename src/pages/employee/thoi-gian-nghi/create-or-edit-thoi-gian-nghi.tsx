@@ -205,7 +205,10 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         </FormGroup>
                                     </Grid>
                                 </Grid>
-                                <DialogActions sx={{ paddingRight: '0!important' }}>
+                                <DialogActions
+                                    sx={{
+                                        padding: '16px 0px 0px 0px !important'
+                                    }}>
                                     <Button
                                         sx={{
                                             color: 'var(--color-main)!important',

@@ -81,7 +81,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                         </Box>
                     </div>
                 </DialogTitle>
-                <DialogContent sx={{ paddingBottom: '0' }}>
+                <DialogContent>
                     <Formik
                         initialValues={initValues}
                         validationSchema={rules}
@@ -93,17 +93,12 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         event.preventDefault(); // Prevent form submission
                                     }
                                 }}>
-                                <Grid
-                                    container
-                                    direction="row"
-                                    spacing={2}
-                                    alignItems="center"
-                                    maxWidth={'100%'}>
+                                <Grid container direction="row" spacing={2} alignItems="center">
                                     <Grid item xs={12} sx={{ marginTop: '8px' }}>
                                         <FormGroup>
                                             <TextField
                                                 label={
-                                                    <Typography variant="subtitle2">
+                                                    <Typography>
                                                         Tên ca
                                                         <span className="text-danger"> *</span>
                                                     </Typography>
@@ -131,13 +126,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                     fontSize: '13px!important'
                                                 }
                                             }}
-                                            control={
-                                                <Checkbox
-                                                    sx={{
-                                                        color: 'var(--color-main)!important'
-                                                    }}
-                                                />
-                                            }
+                                            control={<Checkbox />}
                                             label="Không cố định thời gian"
                                         />
                                     </Grid>
@@ -145,7 +134,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         <FormGroup>
                                             <TextField
                                                 label={
-                                                    <Typography variant="subtitle2">
+                                                    <Typography>
                                                         Bắt đầu ca
                                                         <span className="text-danger"> *</span>
                                                     </Typography>
@@ -177,7 +166,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         <FormGroup>
                                             <TextField
                                                 label={
-                                                    <Typography variant="subtitle2">
+                                                    <Typography>
                                                         Kết thúc ca
                                                         <span className="text-danger"> *</span>
                                                     </Typography>
@@ -214,52 +203,46 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                             value={values?.laNghiGiuaCa}
                                             checked={values?.laNghiGiuaCa}
                                             onChange={handleChange}
-                                            control={
-                                                <Checkbox
-                                                    sx={{
-                                                        color: 'var(--color-main)!important'
-                                                    }}
-                                                />
-                                            }
+                                            control={<Checkbox />}
                                             label="Nghỉ giữa ca"
                                         />
                                     </Grid>
-                                    {values.laNghiGiuaCa == true ? (
-                                        <>
-                                            <Grid item xs={6} sm={6}>
-                                                <FormGroup>
-                                                    <TextField
-                                                        label={<Typography>Giờ nghỉ từ</Typography>}
-                                                        type="time"
-                                                        size="small"
-                                                        name="gioNghiTu"
-                                                        value={values.gioNghiTu}
-                                                        onChange={handleChange}
-                                                        InputLabelProps={{
-                                                            shrink: true
-                                                        }}
-                                                    />
-                                                </FormGroup>
-                                            </Grid>
-                                            <Grid item xs={6} sm={6}>
-                                                <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <Typography>Giờ nghỉ đến</Typography>
-                                                        }
-                                                        type="time"
-                                                        size="small"
-                                                        name="gioNghiDen"
-                                                        value={values.gioNghiDen}
-                                                        onChange={handleChange}
-                                                        InputLabelProps={{
-                                                            shrink: true
-                                                        }}
-                                                    />
-                                                </FormGroup>
-                                            </Grid>
-                                        </>
-                                    ) : null}
+                                    <Grid
+                                        item
+                                        xs={6}
+                                        sm={6}
+                                        hidden={values.laNghiGiuaCa == true ? false : true}>
+                                        <TextField
+                                            fullWidth
+                                            label={<Typography>Giờ nghỉ từ</Typography>}
+                                            type="time"
+                                            size="small"
+                                            name="gioNghiTu"
+                                            value={values.gioNghiTu}
+                                            onChange={handleChange}
+                                            InputLabelProps={{
+                                                shrink: true
+                                            }}
+                                        />
+                                    </Grid>
+                                    <Grid
+                                        item
+                                        xs={6}
+                                        sm={6}
+                                        hidden={values.laNghiGiuaCa == true ? false : true}>
+                                        <TextField
+                                            fullWidth
+                                            label={<Typography>Giờ nghỉ đến</Typography>}
+                                            type="time"
+                                            size="small"
+                                            name="gioNghiDen"
+                                            value={values.gioNghiDen}
+                                            onChange={handleChange}
+                                            InputLabelProps={{
+                                                shrink: true
+                                            }}
+                                        />
+                                    </Grid>
                                     <Grid item xs={12}>
                                         <FormGroup
                                             sx={{
@@ -279,12 +262,10 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                 </Grid>
                                 <DialogActions
                                     sx={{
-                                        paddingRight: '0',
                                         position: 'sticky',
-                                        bottom: '0',
-                                        left: '0',
                                         bgcolor: '#fff',
-                                        zIndex: '5'
+                                        zIndex: '5',
+                                        padding: '16px 0px 0px 0px !important'
                                     }}>
                                     <Button
                                         sx={{

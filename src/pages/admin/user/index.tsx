@@ -304,6 +304,7 @@ class UserScreen extends AppComponentBase {
                         variant="body2"
                         alignItems={'center'}
                         borderRadius="12px"
+                        padding={'4px 8px'}
                         sx={{
                             margin: 'auto',
                             backgroundColor: params.row.isActive === true ? '#E8FFF3' : '#FFF8DD',
@@ -461,9 +462,7 @@ class UserScreen extends AppComponentBase {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box
-                    className="page-content"
-                    sx={{ paddingTop: '16px', backgroundColor: '#fff', borderRadius: '8px' }}>
+                <Box className="page-content" sx={{ paddingTop: '16px', borderRadius: '8px' }}>
                     <Box>
                         {this.state.rowSelectedModel.length > 0 ? (
                             <Box mb={1}>

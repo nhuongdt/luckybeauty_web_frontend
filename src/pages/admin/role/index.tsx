@@ -331,7 +331,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box paddingTop="16px" bgcolor="#fff" borderRadius="8px">
+                <Box paddingTop="16px" borderRadius="8px">
                     {this.state.rowSelectedModel.length > 0 ? (
                         <Box mb={1}>
                             <Button variant="contained" color="secondary">

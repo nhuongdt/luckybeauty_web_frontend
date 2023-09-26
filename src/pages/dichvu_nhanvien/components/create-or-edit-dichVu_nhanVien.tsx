@@ -33,7 +33,8 @@ interface ModalProps {
 class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
     state = {
         settingValue: 'Service',
-        selectedIdService: [] as string[]
+        selectedIdService: [] as string[],
+        searchQuery: ''
     };
     componentDidMount(): void {
         this.getData();
@@ -67,16 +68,33 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
             settingValue: value
         });
     };
+    handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ searchQuery: event.target.value });
+    };
     render(): React.ReactNode {
         const { visiable, handleClose } = this.props;
+        const { searchQuery } = this.state;
+        const filteredSuggestDichVu = suggestStore.suggestDichVu?.filter((item) =>
+            item.tenDichVu.toLowerCase().includes(searchQuery.toLowerCase())
+        );
         return (
-            <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={handleClose}>
+            <Dialog
+                open={visiable}
+                fullWidth
+                maxWidth={'sm'}
+                onClose={() => {
+                    handleClose();
+                    this.setState({ searchQuery: '' });
+                }}>
                 <DialogTitle>
                     <Typography fontSize="24px" fontWeight="700" mb={3}>
                         {dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien} - Dịch vụ
                     </Typography>
                     <Button
-                        onClick={this.props.handleClose}
+                        onClick={() => {
+                            handleClose();
+                            this.setState({ searchQuery: '' });
+                        }}
                         sx={{
                             position: 'absolute',
                             right: '16px',
@@ -88,14 +106,20 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                         }}>
                         <CloseIcon />
                     </Button>
-                    <TextField fullWidth size="small" placeholder="Tìm kiếm dịch vụ..." />
+                    <TextField
+                        fullWidth
+                        size="small"
+                        value={searchQuery}
+                        onChange={this.handleSearchChange}
+                        placeholder="Tìm kiếm dịch vụ..."
+                    />
                 </DialogTitle>
                 <DialogContent>
                     <Box>
                         <TableContainer>
                             <Table>
                                 <TableBody>
-                                    {suggestStore.suggestDichVu?.map((item, index) => (
+                                    {filteredSuggestDichVu?.map((item, index) => (
                                         <TableRow
                                             key={index}
                                             sx={{
@@ -120,14 +144,18 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                                                     alignItems={'center'}
                                                     gap="8px">
                                                     <Avatar variant="square" />{' '}
-                                                    <Typography>{item.tenDichVu}</Typography>
+                                                    <Typography fontSize={'13px'}>
+                                                        {item.tenDichVu}
+                                                    </Typography>
                                                 </Box>
                                             </TableCell>
                                             <TableCell align={'right'}>
-                                                <Typography>{item.thoiGianThucHien}</Typography>
+                                                <Typography fontSize={'13px'}>
+                                                    {item.thoiGianThucHien}
+                                                </Typography>
                                             </TableCell>
                                             <TableCell align={'right'}>
-                                                <Typography>
+                                                <Typography fontSize={'13px'}>
                                                     {new Intl.NumberFormat('vi-VN').format(
                                                         item.donGia
                                                     )}
@@ -140,7 +168,21 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                         </TableContainer>
                     </Box>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions sx={{ paddingBottom: '16px !important' }}>
+                    <Button
+                        onClick={() => {
+                            this.props.handleClose();
+                            this.setState({ searchQuery: '' });
+                        }}
+                        variant="outlined"
+                        sx={{
+                            fontSize: '14px',
+                            textTransform: 'unset',
+                            color: 'var(--color-main)'
+                        }}
+                        className="btn-outline-hover">
+                        Hủy
+                    </Button>
                     <Button
                         type="button"
                         onClick={async () => {
@@ -149,7 +191,8 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                                 variant: result.status,
                                 autoHideDuration: 3000
                             });
-                            this.props.handleClose();
+                            this.setState({ searchQuery: '' });
+                            handleClose();
                         }}
                         variant="contained"
                         sx={{
@@ -161,17 +204,6 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                         }}
                         className="btn-container-hover">
                         Lưu
-                    </Button>
-                    <Button
-                        onClick={this.props.handleClose}
-                        variant="outlined"
-                        sx={{
-                            fontSize: '14px',
-                            textTransform: 'unset',
-                            color: 'var(--color-main)'
-                        }}
-                        className="btn-outline-hover">
-                        Hủy
                     </Button>
                 </DialogActions>
             </Dialog>

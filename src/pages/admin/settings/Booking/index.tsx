@@ -239,24 +239,12 @@ const Booking: React.FC = () => {
                         }}>
                         <FormControlLabel
                             sx={{ width: '100%' }}
-                            control={
-                                <Checkbox
-                                    sx={{
-                                        color: 'var(--color-main)!important'
-                                    }}
-                                />
-                            }
+                            control={<Checkbox />}
                             label="Gửi thông báo đến nhân viên khách hàng đặt lịch"
                         />
                         <FormControlLabel
                             sx={{ width: '100%' }}
-                            control={
-                                <Checkbox
-                                // sx={{
-                                //     color: 'var(--color-main)!important'
-                                // }}
-                                />
-                            }
+                            control={<Checkbox />}
                             label="Gửi thông báo đến địa chỉ email"
                         />
                         <TextField
@@ -267,13 +255,7 @@ const Booking: React.FC = () => {
                         />
                         <FormControlLabel
                             sx={{ width: '100%' }}
-                            control={
-                                <Checkbox
-                                // sx={{
-                                //     color: 'var(--color-main)!important'
-                                // }}
-                                />
-                            }
+                            control={<Checkbox />}
                             label="Các cuộc hẹn sẽ được tự động xác nhận"
                         />
                     </Box>
