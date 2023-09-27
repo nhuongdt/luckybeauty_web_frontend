@@ -94,8 +94,7 @@ export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, 
                     sx={{
                         width: props?.width,
                         '& .MuiSvgIcon-root': {
-                            width: 14,
-                            height: 14
+                            display: 'none'
                         }
                     }}
                     value={value}
