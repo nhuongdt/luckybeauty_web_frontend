@@ -4,10 +4,15 @@ import { Autocomplete, Grid, TextField, Typography } from '@mui/material';
 import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
 import { ChiNhanhDto } from '../../services/chi_nhanh/Dto/chiNhanhDto';
 
-export default function AutocompleteChiNhanh({ handleChoseItem, idChosed, dataChiNhanh }: any) {
+export default function AutocompleteChiNhanh({
+    handleChoseItem,
+    idChosed,
+    dataChiNhanh,
+    label
+}: any) {
     const [itemChosed, setItemChosed] = useState<ChiNhanhDto | null>(null);
     React.useEffect(() => {
-        const item = dataChiNhanh.filter((x: ChiNhanhDto) => x.id == idChosed);
+        const item = dataChiNhanh?.filter((x: ChiNhanhDto) => x.id == idChosed);
         if (item.length > 0) {
             setItemChosed(item[0]);
         } else {
@@ -33,7 +38,7 @@ export default function AutocompleteChiNhanh({ handleChoseItem, idChosed, dataCh
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={dataChiNhanh}
                 getOptionLabel={(option: any) => (option.tenChiNhanh ? option.tenChiNhanh : '')}
-                renderInput={(params) => <TextField {...params} label="Tìm kiếm" />}
+                renderInput={(params) => <TextField {...params} label={label ?? 'Tìm kiếm'} />}
                 renderOption={(props, option) => {
                     return (
                         <li {...props}>
