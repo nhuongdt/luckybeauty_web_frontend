@@ -321,3 +321,6 @@
 ::-webkit-scrollbar-track {
     background-color: var(--color-bg);
 }
+/* .MuiInputLabel-root{
+    transform-origin: top center !important
+} */

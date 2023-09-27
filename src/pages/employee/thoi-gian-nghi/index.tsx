@@ -491,7 +491,8 @@ class EmployeeHoliday extends Component {
                     </Grid>
                     <Grid xs={12} md="auto" item display="flex" gap="8px" justifyContent="end">
                         <Button
-                            hidden={!abpCustom.isGrandPermission('Pages.NhanSu_NgayNghiLe.Import')}
+                            //hidden={!abpCustom.isGrandPermission('Pages.NhanSu_NgayNghiLe.Import')}
+                            hidden
                             size="small"
                             onClick={this.onImportShow}
                             variant="outlined"
@@ -545,7 +546,7 @@ class EmployeeHoliday extends Component {
                         </Button>
                     </Grid>
                 </Grid>
-                <Box paddingTop="16px" bgcolor="#fff">
+                <Box paddingTop="16px">
                     {this.state.listItemSelectedModel.length > 0 ? (
                         <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
                             <Box sx={{ position: 'relative' }}>

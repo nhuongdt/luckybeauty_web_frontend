@@ -106,7 +106,6 @@ const ToolbarHeader: React.FC<{
                             bgcolor: 'transparent!important',
                             fontWeight: '400',
                             paddingX: '0',
-                            pb: '10px',
                             mr: '20px'
                         }}
                         onClick={toDayClick}>

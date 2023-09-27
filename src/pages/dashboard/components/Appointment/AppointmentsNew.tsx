@@ -18,7 +18,11 @@ const AppoimentsNew: React.FC = () => {
                             display={'flex'}
                             justifyContent={'space-between'}
                             borderBottom={'1px solid #EEF0F4'}>
-                            <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
+                            <Box
+                                display={'flex'}
+                                justifyContent={'start'}
+                                alignItems={'center'}
+                                padding={'6px 4px'}>
                                 <Avatar src={data.avatar} />
                                 <Box
                                     sx={{ marginLeft: '24px' }}

@@ -26,8 +26,10 @@ const KhuyenMaiPage: React.FC = () => {
         getAll();
     }, []);
     const getAll = async () => {
-        await suggestStore.getSuggestKyThuatVien();
+        await suggestStore.getSuggestNhanVien();
         await suggestStore.getSuggestDichVu();
+        await suggestStore.getSuggestNhomKhach();
+        await suggestStore.getSuggestChiNhanh();
     };
     const handlePageChange = async (event: any, value: number) => {
         setCurrentPage(value);

@@ -204,13 +204,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                 flexDirection={useWindowWidth() < 600 ? 'column' : 'row'}
                                 justifyContent="space-between"
                                 padding="0px 24px 0px 24px">
-                                <Grid
-                                    container
-                                    className="form-container"
-                                    spacing={2}
-                                    rowSpacing={2}
-                                    marginTop="0"
-                                    marginLeft="0">
+                                <Grid container className="form-container" spacing={2}>
                                     <Grid item xs={12}>
                                         <Box>
                                             <Stack alignItems="center" position={'relative'}>
@@ -511,7 +505,7 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     bottom: '0',
                                     display: 'flex',
                                     gap: '8px',
-                                    padding: '8px 24px 8px 8px',
+                                    padding: '16px 24px 16px 16px',
 
                                     right: '50px',
                                     justifyContent: 'end'

@@ -413,7 +413,7 @@ class ChiNhanhScreen extends Component {
         ] as GridColDef[];
 
         return (
-            <Box bgcolor="#fff" paddingTop={'16px'} paddingBottom={'16px'}>
+            <Box paddingTop={'16px'} paddingBottom={'16px'}>
                 <Grid container alignItems="center" justifyContent="space-between">
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="12px">
                         <Typography variant="h1" fontSize="16px" fontWeight="700">

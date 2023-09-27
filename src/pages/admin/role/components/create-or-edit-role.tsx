@@ -460,7 +460,12 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                             </FormGroup>
                                         </TabPanel>
                                     </TabContext>
-                                    <DialogActions sx={{ paddingRight: '0!important' }}>
+                                    <DialogActions
+                                        sx={{
+                                            paddingRight: '0!important',
+                                            paddingTop: '16px !important',
+                                            paddingBottom: '0px !important'
+                                        }}>
                                         <Box
                                             display="flex"
                                             width="fit-content"

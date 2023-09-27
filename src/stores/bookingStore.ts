@@ -51,7 +51,7 @@ class BookingStore {
             idKhachHang: '',
             idNhanVien: '',
             startHours: '',
-            startTime: '',
+            startTime: formatDate(new Date(), 'yyyy-MM-dd'),
             ghiChu: '',
             trangThai: 1
         };

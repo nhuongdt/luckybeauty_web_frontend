@@ -9,7 +9,7 @@ import { SuggestNguonKhachDto } from '../services/suggests/dto/SuggestNguonKhach
 import { SuggestKhachHangDto } from '../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestNhomHangHoaDto } from '../services/suggests/dto/SuggestNhomHangHoaDto';
 import { SuggestLoaiChungTu } from '../services/suggests/dto/SuggestLoaiChungTu';
-import { da } from 'date-fns/locale';
+import { SuggestChiNhanhDto } from '../services/suggests/dto/SuggestChiNhanhDto';
 
 class SuggestStore {
     suggestKyThuatVien!: SuggestNhanVienDichVuDto[];
@@ -21,6 +21,7 @@ class SuggestStore {
     suggestNhanVien!: SuggestNhanSuDto[];
     suggestKhachHang!: SuggestKhachHangDto[];
     suggestLoaiChungTu!: SuggestLoaiChungTu[];
+    suggestChiNhanh!: SuggestChiNhanhDto[];
     constructor() {
         makeAutoObservable(this);
     }
@@ -63,6 +64,10 @@ class SuggestStore {
     async getSuggestLoaiChungTu() {
         const data = await SuggestService.SuggestLoaiChungTu();
         this.suggestLoaiChungTu = data;
+    }
+    async getSuggestChiNhanh() {
+        const data = await SuggestService.SuggestChiNhanh();
+        this.suggestChiNhanh = data;
     }
 }
 export default new SuggestStore();

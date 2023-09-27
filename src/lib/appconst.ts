@@ -37,10 +37,50 @@ const AppConsts = {
         { value: 2, text: 'Chuyển khoản' },
         { value: 3, text: 'Quẹt thẻ' }
     ] as ISelect[],
+    hinhThucKhuyenMaiHoaDon: [
+        {
+            value: 11,
+            name: 'Hóa đơn - Giảm giá hóa đơn'
+        },
+        {
+            value: 12,
+            name: 'Hóa đơn - Tặng hàng'
+        },
+        {
+            value: 13,
+            name: 'Hóa đơn - Giảm giá hàng'
+        },
+        {
+            value: 14,
+            name: 'Hóa đơn - Tặng Điểm'
+        }
+    ],
+    hinhThucKhuyenMaiHangHoa: [
+        {
+            value: 21,
+            name: 'Hàng hóa - Mua hàng giảm giá hàng'
+        },
+        {
+            value: 22,
+            name: 'Hàng hóa - Mua hàng tặng hàng'
+        },
+        {
+            value: 23,
+            name: 'Hàng hóa - Mua hàng giảm giá theo số lượng mua'
+        },
+        {
+            value: 24,
+            name: 'Hàng hóa - Mua hàng tặng điểm'
+        }
+    ],
     loaiBooking: {
         online: 0,
         offline: 1,
         cuaHangBook: 2
+    },
+    loaiKhuyenMai: {
+        hangHoa: 2,
+        hoaDon: 1
     },
     listColumnCustomer: {
         actions: true,

@@ -224,26 +224,14 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             <span className="text-danger"> *</span>
                                                         </Typography>
                                                     ),
-                                                    error:
-                                                        Boolean(errors.startTime) &&
-                                                        touched.startTime
-                                                            ? true
-                                                            : false,
-                                                    helperText: Boolean(errors.startTime) &&
-                                                        touched?.startTime && (
-                                                            <span className="text-danger">
-                                                                {String(errors.startTime)}
-                                                            </span>
-                                                        )
+                                                    error: Boolean(errors.startTime),
+                                                    helperText: Boolean(errors.startTime) && (
+                                                        <span className="text-danger">
+                                                            {String(errors.startTime)}
+                                                        </span>
+                                                    )
                                                 }}
-                                                defaultVal={
-                                                    values.startTime
-                                                        ? formatDate(
-                                                              new Date(values.startTime),
-                                                              'yyyy-MM-dd'
-                                                          )
-                                                        : formatDate(new Date(), 'yyyy-MM-dd')
-                                                }
+                                                defaultVal={values.startTime}
                                                 handleChangeDate={(value: string) => {
                                                     values.startTime = value;
                                                 }}
