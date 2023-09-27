@@ -116,7 +116,7 @@ class DataMauIn {
     };
     replacePhieuThuChi = (shtml: string) => {
         let data = shtml;
-        console.log('replacePhieuThuChi ');
+
         data = data.replaceAll('{MaPhieuThuChi}', this.phieuthu?.maHoaDon ?? '');
         data = data.replaceAll(
             '{NgayLapPhieu}',
@@ -176,7 +176,6 @@ class DataMauIn {
 
     replaceHoaDon = (shtml: string) => {
         let data = shtml;
-        console.log('replaceHoaDon ');
         data = data.replaceAll('{TenKhachHang}', this.khachhang.tenKhachHang);
         data = data.replaceAll('{DiaChiKhachHang}', this.khachhang.diaChi ?? '');
         data = data.replaceAll('{DienThoaiKhachHang}', this.khachhang.soDienThoai ?? '');
@@ -233,6 +232,7 @@ class DataMauIn {
             '{NoHoaDon}',
             new Intl.NumberFormat('vi-VN').format(this.hoadon.conNo ?? 0)
         );
+        data = data.replaceAll('{NoHoaDon_BangChu}', utils.DocSo(this.hoadon.conNo));
         data = data.replaceAll('{TienBangChu}', utils.DocSo(this.hoadon.daThanhToan));
         return data;
     };
