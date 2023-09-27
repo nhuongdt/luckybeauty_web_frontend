@@ -2,6 +2,7 @@ import { Box, Typography, Button, Stack } from '@mui/material';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 import { IList } from '../../services/dto/IList';
 import { useState, useRef, useEffect } from 'react';
+import ClearIcon from '@mui/icons-material/Clear';
 
 // check click outside button Thaotac
 export function useComponentVisible(initialIsVisible: boolean) {
@@ -24,7 +25,13 @@ export function useComponentVisible(initialIsVisible: boolean) {
     return { ref, isComponentVisible, setIsComponentVisible };
 }
 
-export default function ActionRowSelect({ lstOption, countRowSelected, title, choseAction }: any) {
+export default function ActionRowSelect({
+    lstOption,
+    countRowSelected,
+    title,
+    choseAction,
+    removeItemChosed
+}: any) {
     const [expandAction, setExpandAction] = useState(false);
     const { ref, isComponentVisible } = useComponentVisible(true);
 
@@ -51,7 +58,7 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
                             position: 'absolute',
                             borderRadius: '4px',
                             border: '1px solid #cccc',
-                            minWidth: 150,
+                            minWidth: 160,
                             backgroundColor: 'rgba(248,248,248,1)',
                             '& .MuiStack-root .MuiStack-root:hover': {
                                 backgroundColor: '#cccc'
@@ -81,6 +88,7 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
                     </Typography>
                     <Typography variant="body2">{title ?? 'bản ghi'} được chọn</Typography>
                 </Stack>
+                <ClearIcon color="error" onClick={removeItemChosed} />
             </Stack>
         </>
     );
