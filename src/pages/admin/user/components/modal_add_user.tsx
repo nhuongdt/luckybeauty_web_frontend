@@ -16,7 +16,7 @@ import {
     IconButton
 } from '@mui/material';
 import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import TabPanel from '@mui/lab/TabPanel';
 import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 import AutocompleteChiNhanh from '../../../../components/Autocomplete/ChiNhanh';
@@ -32,6 +32,7 @@ import * as Yup from 'yup';
 import AppConsts from '../../../../lib/appconst';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 
 export default function ModalAddUser({
     isShowModal,
@@ -40,13 +41,20 @@ export default function ModalAddUser({
     dataChiNhanh,
     onCancel
 }: any) {
+    const appContext = useContext(AppContext);
+    const chinhanhCurrent = appContext.chinhanhCurrent;
+    const idChiNhanh = chinhanhCurrent?.id;
     const [tabIndex, setTabIndex] = useState('1');
     const [avatar, setAvatar] = useState('');
     const [googleDrive_fileId, setGoogleDrive_fileId] = useState('');
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
-    const [showPassword, setShowPassword] = useState<File>({} as File); // file image
+    const [showPassword, setShowPassword] = useState<boolean>(false); // file image
+    const [changePassword, setChangePassword] = useState<boolean>(false); // file image
 
-    const [user, setUser] = useState<CreateOrUpdateUserInput | null>();
+    const [user, setUser] = useState<CreateOrUpdateUserInput>({
+        userName: '',
+        password: ''
+    } as CreateOrUpdateUserInput);
     const [roles, setRoles] = useState<CreateOrUpdateUserInput | null>();
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue.toString());
@@ -64,18 +72,32 @@ export default function ModalAddUser({
 
     useEffect(() => {
         if (isShowModal) {
+            console.log('user ', user);
             if (userId === 0) {
-                const idChiNhanh = dataChiNhanh?.length === 1 ? dataChiNhanh[0].id : '';
                 setUser({ idChiNhanhMacDinh: idChiNhanh } as CreateOrUpdateUserInput);
             } else {
                 GetInforUser();
                 GetAllRole_ofUser();
             }
+            setChangePassword(false);
         }
     }, [isShowModal]);
 
+    const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
+
     const changeNhanVien = async (item: any) => {
-        setUser({ ...user, nhanSuId: item?.id } as CreateOrUpdateUserInput);
+        const arrTenNV = item?.tenNhanVien.split(' ');
+        let surName = ''; // họ
+        if (arrTenNV.length > 0) {
+            surName = arrTenNV[0];
+        }
+        setUser({
+            ...user,
+            nhanSuId: item?.id,
+            phoneNumber: item?.soDienThoai,
+            name: item?.tenNhanVien,
+            surname: surName
+        } as CreateOrUpdateUserInput);
         setAvatar(item?.avatar);
         initialValues.nhanSuId = item?.id;
     };
@@ -94,8 +116,13 @@ export default function ModalAddUser({
         setGoogleDrive_fileId('');
     };
     const saveUser = async () => {
-        const obj = { ...user };
-        // obj.av
+        if (userId == 0) {
+            const data = await userService.CreateUser(user);
+            console.log('CreateUser ', data, user);
+        } else {
+            await userService.UpdateUser(user);
+        }
+        // todo userRole: list [userId, roleId, idChiNhanh]
     };
 
     const initialValues = {
@@ -107,8 +134,21 @@ export default function ModalAddUser({
         confirmPassword: user?.password
     };
 
+    const confirmPasswordValidation = (userId: number, password: string, passwordNew: string) => {
+        if (userId === 0 || !password) {
+            console.log('inbto ', password);
+            return Yup.string()
+                .required('Vui lòng xác nhận mật khẩu')
+                .oneOf([password], 'Mật khẩu xác nhận phải trùng khớp');
+        } else {
+            return Yup.string()
+                .required('Vui lòng xác nhận mật khẩu')
+                .oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
+        }
+    };
+
     const rules = Yup.object().shape({
-        nhanSuId: Yup.string().required('Vui lòng chọn nhân viên'),
+        // nhanSuId: Yup.string().required('Vui lòng chọn nhân viên'),
         emailAddress: Yup.string()
             .matches(AppConsts.emailRegex, 'Email không hợp lệ')
             .required('Vui lòng nhập email'),
@@ -117,11 +157,61 @@ export default function ModalAddUser({
             AppConsts.passwordRegex,
             'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
         ),
+
+        passwordNew: Yup.string().when(['changePassword'], {
+            is: (changePassword: boolean) => {
+                return changePassword;
+            },
+            then: (schema: any) => {
+                return schema.matches(
+                    AppConsts.passwordRegex,
+                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                );
+            }
+        }),
+        // .when('userId', {
+        //     is: (userId: number) => userId !== 0,
+        //     then: Yup.string().test(
+        //         'password-match',
+        //         'Mật khẩu không khớp với mật khẩu trong cơ sở dữ liệu',
+        //         async (params: type) => {
+        //             const passwordMathesDB = true; // todo
+        //             return passwordMathesDB;
+        //         }
+        //     )
+        // }),
         confirmPassword: Yup.string().oneOf(
             [Yup.ref('password'), ''],
             'Mật khẩu xác nhận phải trùng khớp'
         )
+        // confirmPassword: Yup.lazy((value, schema) => {
+        //     console.log('schema ', schema);
+        //     return confirmPasswordValidation(
+        //         schema.parent.userId,
+        //         schema.parent.password,
+        //         schema.parent.passwordNew
+        //     );
+        // })
     });
+
+    const iconPassword =
+        userId === 0
+            ? {
+                  endAdornment: (
+                      <InputAdornment position="end">
+                          <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              // onMouseDown={
+                              //     handleMouseDownPassword
+                              // }
+                              edge="end">
+                              {showPassword ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                      </InputAdornment>
+                  )
+              }
+            : {};
     return (
         <>
             <Dialog open={isShowModal} maxWidth={'sm'} fullWidth onClose={onCancel}>
@@ -130,7 +220,7 @@ export default function ModalAddUser({
                         {userId === 0 ? 'Thêm mới' : 'Cập nhật'} người dùng
                     </Box>
 
-                    <DialogButtonClose />
+                    <DialogButtonClose onClose={onCancel} />
                 </DialogTitle>
                 <DialogContent sx={{ '& .MuiTabPanel-root': { padding: 0 } }}>
                     <Formik
@@ -186,7 +276,17 @@ export default function ModalAddUser({
                                                                 </span>
                                                             </label>
                                                         }
-                                                        onChange={handleChange}
+                                                        value={user?.userName || ''}
+                                                        onChange={(e) => {
+                                                            setFieldValue(
+                                                                'userName',
+                                                                e.target.value
+                                                            );
+                                                            setUser({
+                                                                ...user,
+                                                                userName: e.target.value
+                                                            });
+                                                        }}
                                                         helperText={
                                                             touched.userName &&
                                                             errors.userName && (
@@ -210,7 +310,18 @@ export default function ModalAddUser({
                                                                 </span>
                                                             </label>
                                                         }
-                                                        onChange={handleChange}
+                                                        value={user?.emailAddress || ''}
+                                                        // onChange={handleChange}
+                                                        onChange={(e) => {
+                                                            setFieldValue(
+                                                                'emailAddress',
+                                                                e.target.value
+                                                            );
+                                                            setUser({
+                                                                ...user,
+                                                                emailAddress: e.target.value
+                                                            });
+                                                        }}
                                                         helperText={
                                                             touched.emailAddress &&
                                                             errors.emailAddress && (
@@ -223,119 +334,190 @@ export default function ModalAddUser({
                                         </Grid>
                                         <Grid container spacing={2} paddingTop={2}>
                                             <Grid item xs={12}>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    type="password"
-                                                    onChange={handleChange}
-                                                    label={
-                                                        <label style={{ fontSize: '13px' }}>
-                                                            Mật khẩu {userId === 0 ? '' : 'cũ'}
-                                                            <span
-                                                                style={{
-                                                                    color: 'red',
-                                                                    marginLeft: '2px'
-                                                                }}>
-                                                                *
-                                                            </span>
-                                                        </label>
-                                                    }
-                                                    helperText={
-                                                        touched.password &&
-                                                        errors.password && (
-                                                            <span>{errors.password}</span>
-                                                        )
-                                                    }
-                                                    InputProps={{
-                                                        endAdornment: (
-                                                            <InputAdornment position="end">
-                                                                <IconButton
-                                                                    aria-label="toggle password visibility"
-                                                                    //   onClick={handleClickShowPassword}
-                                                                    //   onMouseDown={handleMouseDownPassword}
-                                                                    edge="end">
-                                                                    {showPassword ? (
-                                                                        <VisibilityOff />
-                                                                    ) : (
-                                                                        <Visibility />
-                                                                    )}
-                                                                </IconButton>
-                                                            </InputAdornment>
-                                                        )
-                                                    }}
-                                                />
-                                            </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                sx={{ display: userId !== 0 ? '' : 'none' }}>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    name="password"
-                                                    type="password"
-                                                    label={
-                                                        <label style={{ fontSize: '13px' }}>
-                                                            Mật khẩu mới
-                                                            <span
-                                                                style={{
-                                                                    color: 'red',
-                                                                    marginLeft: '2px'
-                                                                }}>
-                                                                *
-                                                            </span>
-                                                        </label>
-                                                    }
-                                                    onChange={handleChange}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <TextField
-                                                    size="small"
-                                                    fullWidth
-                                                    type="password"
-                                                    name="confirmPassword"
-                                                    onChange={handleChange}
-                                                    label={
-                                                        <label style={{ fontSize: '13px' }}>
-                                                            Nhập lại mật khẩu
-                                                            <span
-                                                                style={{
-                                                                    color: 'red',
-                                                                    marginLeft: '2px'
-                                                                }}>
-                                                                *
-                                                            </span>
-                                                        </label>
-                                                    }
-                                                    helperText={
-                                                        touched.confirmPassword &&
-                                                        errors.confirmPassword && (
-                                                            <span>{errors.confirmPassword}</span>
-                                                        )
-                                                    }
-                                                />
-                                            </Grid>
-                                            <Grid item xs={12}>
                                                 <AutocompleteChiNhanh
                                                     label="Chi nhánh mặc định"
                                                     dataChiNhanh={dataChiNhanh}
-                                                    idChosed={user?.idChiNhanhMacDinh}
+                                                    idChosed={user?.idChiNhanhMacDinh || ''}
                                                     handleChoseItem={changeChiNhanh}
                                                 />
                                             </Grid>
-                                            <Grid item xs={12} paddingTop={0}>
+                                            {userId !== 0 && (
+                                                <Grid item xs={12}>
+                                                    <FormControlLabel
+                                                        control={
+                                                            <Checkbox
+                                                                size="small"
+                                                                checked={changePassword}
+                                                                onChange={() =>
+                                                                    setChangePassword(
+                                                                        () => !changePassword
+                                                                    )
+                                                                }
+                                                            />
+                                                        }
+                                                        label="Đổi mật khẩu"
+                                                    />
+                                                </Grid>
+                                            )}
+
+                                            {(changePassword || userId === 0) && (
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        size="small"
+                                                        fullWidth
+                                                        name="password"
+                                                        type={showPassword ? 'text' : 'password'}
+                                                        // onChange={handleChange}
+                                                        onChange={(e) => {
+                                                            setFieldValue(
+                                                                'password',
+                                                                e.target.value
+                                                            );
+                                                            setUser({
+                                                                ...user,
+                                                                password: e.target.value
+                                                            });
+                                                        }}
+                                                        value={user?.password || ''}
+                                                        label={
+                                                            <label style={{ fontSize: '13px' }}>
+                                                                Mật khẩu{' '}
+                                                                {userId === 0 ? '' : 'hiện tại'}
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        helperText={
+                                                            touched.password &&
+                                                            errors.password && (
+                                                                <span>{errors.password}</span>
+                                                            )
+                                                        }
+                                                        InputProps={iconPassword}
+                                                    />
+                                                </Grid>
+                                            )}
+
+                                            {changePassword && (
+                                                <>
+                                                    <Grid
+                                                        item
+                                                        xs={12}
+                                                        sx={{
+                                                            display: userId !== 0 ? '' : 'none'
+                                                        }}>
+                                                        <TextField
+                                                            size="small"
+                                                            fullWidth
+                                                            name="passwordNew"
+                                                            type="password"
+                                                            value={values?.passwordNew || ''}
+                                                            label={
+                                                                <label style={{ fontSize: '13px' }}>
+                                                                    Mật khẩu mới
+                                                                    <span
+                                                                        style={{
+                                                                            color: 'red',
+                                                                            marginLeft: '2px'
+                                                                        }}>
+                                                                        *
+                                                                    </span>
+                                                                </label>
+                                                            }
+                                                            onChange={handleChange}
+                                                            helperText={
+                                                                touched.passwordNew &&
+                                                                errors.passwordNew && (
+                                                                    <span>
+                                                                        {errors.passwordNew}
+                                                                    </span>
+                                                                )
+                                                            }
+                                                        />
+                                                    </Grid>
+                                                </>
+                                            )}
+                                            {(changePassword || userId === 0) && (
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        size="small"
+                                                        fullWidth
+                                                        type="password"
+                                                        name="confirmPassword"
+                                                        onChange={handleChange}
+                                                        // onChange={(e) => {
+                                                        //     handleChange;
+                                                        //     setUser({
+                                                        //         ...user,
+                                                        //         confirmPassword: e.target.value
+                                                        //     });
+                                                        // }}
+                                                        value={values?.confirmPassword || ''}
+                                                        label={
+                                                            <label style={{ fontSize: '13px' }}>
+                                                                Nhập lại mật khẩu
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        marginLeft: '2px'
+                                                                    }}>
+                                                                    *
+                                                                </span>
+                                                            </label>
+                                                        }
+                                                        helperText={
+                                                            touched.confirmPassword &&
+                                                            errors.confirmPassword && (
+                                                                <span>
+                                                                    {errors.confirmPassword}
+                                                                </span>
+                                                            )
+                                                        }
+                                                    />
+                                                </Grid>
+                                            )}
+
+                                            <Grid
+                                                item
+                                                xs={12}
+                                                sx={{
+                                                    paddingTop:
+                                                        userId !== 0 && !changePassword
+                                                            ? '0px!important'
+                                                            : '8px!important'
+                                                }}>
                                                 <FormGroup>
                                                     <FormControlLabel
                                                         control={<Checkbox size="small" />}
                                                         label="Là quản trị viên"
-                                                    />
-                                                    <FormControlLabel
-                                                        control={
-                                                            <Checkbox defaultChecked size="small" />
+                                                        name="isAdmin"
+                                                        value={
+                                                            user?.isAdmin === true ? true : false
                                                         }
-                                                        label="Kích hoạt"
+                                                        onChange={handleChange}
+                                                        checked={
+                                                            user?.isAdmin === true ? true : false
+                                                        }
                                                     />
+                                                    {userId !== 0 && !user?.isActive && (
+                                                        <FormControlLabel
+                                                            control={
+                                                                <Checkbox
+                                                                    name="isActive"
+                                                                    value={user?.isActive}
+                                                                    onChange={handleChange}
+                                                                    checked={user?.isActive}
+                                                                    size="small"
+                                                                />
+                                                            }
+                                                            label="Kích hoạt"
+                                                        />
+                                                    )}
                                                 </FormGroup>
                                             </Grid>
                                         </Grid>
@@ -347,13 +529,14 @@ export default function ModalAddUser({
                                         spacing={1}
                                         justifyContent={'flex-end'}
                                         direction={'row'}>
-                                        <Button variant="outlined">Hủy</Button>
+                                        <Button variant="outlined" onClick={onCancel}>
+                                            Hủy
+                                        </Button>
                                         <Button variant="contained" type="submit">
                                             Lưu
                                         </Button>
                                     </Stack>
                                 </Grid>
-                                <DialogActions></DialogActions>
                             </Form>
                         )}
                     </Formik>
