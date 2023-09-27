@@ -215,20 +215,24 @@ const PageSoQuy = ({ xx }: any) => {
         setisShowModal(false);
         switch (type) {
             case 1: // insert
-                setPageDataSoQuy({
-                    ...pageDataSoQuy,
-                    items: [dataSave, ...pageDataSoQuy.items],
-                    totalCount: pageDataSoQuy.totalCount + 1,
-                    totalPage: utils.getTotalPage(
-                        pageDataSoQuy.totalCount + 1,
-                        paramSearch.pageSize
-                    )
-                });
-                setObjAlert({
-                    show: true,
-                    type: 1,
-                    mes: 'Thêm ' + dataSave.loaiPhieu + ' thành công'
-                });
+                {
+                    // phải gán lại ngày lập: để chèn dc dòng mới thêm lên trên cùng
+                    dataSave.ngayLapHoaDon = new Date(dataSave.ngayLapHoaDon);
+                    setPageDataSoQuy({
+                        ...pageDataSoQuy,
+                        items: [dataSave, ...pageDataSoQuy.items],
+                        totalCount: pageDataSoQuy.totalCount + 1,
+                        totalPage: utils.getTotalPage(
+                            pageDataSoQuy.totalCount + 1,
+                            paramSearch.pageSize
+                        )
+                    });
+                    setObjAlert({
+                        show: true,
+                        type: 1,
+                        mes: 'Thêm ' + dataSave.loaiPhieu + ' thành công'
+                    });
+                }
                 break;
             case 2:
                 setPageDataSoQuy({
@@ -287,6 +291,7 @@ const PageSoQuy = ({ xx }: any) => {
                         const quyCT = await SoQuyServices.GetQuyChiTiet_byIQuyHoaDon(idSoquy);
 
                         if (quyHD.length > 0) {
+                            console.log('quyHD ', quyHD);
                             DataMauIn.congty = appContext.congty;
                             const chinhanhPrint = await await chiNhanhService.GetDetail(
                                 quyHD[0]?.idChiNhanh ?? ''
