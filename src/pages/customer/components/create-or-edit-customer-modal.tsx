@@ -231,7 +231,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 label={
                                                     <Typography
                                                         //color="#4C4B4C"
-                                                        variant="subtitle2">
+                                                        variant="body2">
                                                         Tên khách hàng
                                                         <span className="text-danger">*</span>
                                                     </Typography>
@@ -257,7 +257,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 label={
                                                     <Typography
                                                         //color="#4C4B4C"
-                                                        variant="subtitle2">
+                                                        variant="body2">
                                                         Số điện thoại
                                                         <span className="text-danger">*</span>
                                                     </Typography>
