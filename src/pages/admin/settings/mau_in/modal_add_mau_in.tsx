@@ -274,8 +274,8 @@ export default function ModalAddMauIn({
                                             {!utils.checkNull(idUpdate) && (
                                                 <Stack spacing={1} direction={'row'}>
                                                     <Button
-                                                        variant="contained"
-                                                        sx={{ bgcolor: '#854545' }}
+                                                        variant="outlined"
+                                                        color="error"
                                                         onClick={() => {
                                                             setInforObjDelete(
                                                                 new PropConfirmOKCancel({
