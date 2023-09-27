@@ -112,6 +112,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                     <DataGrid
                         disableRowSelectionOnClick
                         autoHeight
+                        rowHeight={46}
                         columns={columns}
                         rows={chitietHoaDon}
                         localeText={TextTranslate}
