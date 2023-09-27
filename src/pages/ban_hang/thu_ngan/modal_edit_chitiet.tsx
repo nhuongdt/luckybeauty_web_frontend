@@ -433,13 +433,13 @@ export default function ModalEditChiTietGioHang({
                     }}>
                     <CloseIcon />
                 </IconButton>
-                <DialogContent>
+                <DialogContent sx={{ paddingTop: 0 }}>
                     {/* 1 row */}
                     {lstCTHoaDon.map((ct: any, index: number) => (
                         <Grid
                             container
                             key={index}
-                            padding={2}
+                            padding="16px 0px"
                             borderBottom={formType === 1 ? '' : '1px dashed green'}
                             borderRadius={1}
                             marginBottom={formType === 1 ? 0 : '10px'}>
@@ -863,7 +863,7 @@ export default function ModalEditChiTietGioHang({
                                     sx={{
                                         fontSize: '14px',
                                         display: 'flex',
-                                        alignContent: 'center'
+                                        alignItems: 'center'
                                     }}
                                     onClick={() => setShowModalSeachProduct(true)}>
                                     <Add />
@@ -875,19 +875,19 @@ export default function ModalEditChiTietGioHang({
 
                     {/* end 1 row */}
 
-                    <Grid item xs={12} md={12} paddingRight={2}>
+                    <Grid item xs={12} md={12}>
                         <Stack spacing={1} direction={'row'} justifyContent={'flex-end'}>
-                            <Button
-                                variant="contained"
-                                className="button-container"
-                                onClick={agrreGioHang}>
-                                Lưu
-                            </Button>
                             <Button
                                 variant="outlined"
                                 className="button-outline"
                                 onClick={closeModal}>
                                 Hủy
+                            </Button>
+                            <Button
+                                variant="contained"
+                                className="button-container"
+                                onClick={agrreGioHang}>
+                                Lưu
                             </Button>
                         </Stack>
                     </Grid>
