@@ -192,6 +192,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
         setTypeAction(1);
         setHoaDonChosed({
             ...hoadonChosed,
+            daThanhToan: (hoadonChosed?.daThanhToan ?? 0) + tongThunew,
             conNo: (hoadonChosed?.conNo ?? 0) - tongThunew
         });
     };
