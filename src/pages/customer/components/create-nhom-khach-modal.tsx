@@ -130,6 +130,15 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                                     spacing={1}
                                                     direction={'row'}
                                                     justifyContent={'flex-end'}>
+                                                    <Button
+                                                        onClick={this.props.handleClose}
+                                                        variant="outlined"
+                                                        sx={{
+                                                            color: 'var(--color-main)!important'
+                                                        }}
+                                                        className="btn-outline-hover">
+                                                        Hủy
+                                                    </Button>
                                                     {khachHangStore.createOrEditNhomKhachDto?.id !=
                                                         AppConsts.guidEmpty && (
                                                         <Button
@@ -150,15 +159,6 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                                         variant="contained"
                                                         className="btn-container-hover">
                                                         Lưu
-                                                    </Button>
-                                                    <Button
-                                                        onClick={this.props.handleClose}
-                                                        variant="outlined"
-                                                        sx={{
-                                                            color: 'var(--color-main)!important'
-                                                        }}
-                                                        className="btn-outline-hover">
-                                                        Hủy
                                                     </Button>
                                                 </Stack>
                                             </Grid>
