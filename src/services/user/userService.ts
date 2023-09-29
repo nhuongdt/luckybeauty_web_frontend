@@ -12,6 +12,7 @@ import { ChangePasswordDto } from './dto/ChangePasswordDto';
 class UserService {
     public async create(createUserInput: CreateOrUpdateUserInput) {
         try {
+            // insert user + userRole
             const result = await http.post('api/services/app/User/Create', createUserInput);
             return result.data.result;
         } catch (error) {
@@ -21,7 +22,19 @@ class UserService {
         }
     }
 
+    CreateUser = async (param: CreateOrUpdateUserInput) => {
+        //  used to insert user (not role)
+        const result = await http.post('api/services/app/User/CreateUser', param);
+        return result.data.result;
+    };
+    UpdateUser = async (param: CreateOrUpdateUserInput) => {
+        // update user (not role)
+        const result = await http.post('api/services/app/User/UpdateUser_notRole', param);
+        return result.data.result;
+    };
+
     public async update(updateUserInput: UpdateUserInput) {
+        // update user + userRole
         try {
             const result = await http.post('api/services/app/User/UpdateUser', updateUserInput);
             return result.data.result;
