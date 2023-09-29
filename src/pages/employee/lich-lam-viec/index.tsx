@@ -23,10 +23,21 @@ const LichLamViecScreen: React.FC = () => {
         getData();
     };
     useEffect(() => {
+        lichLamViecStore.createModel();
+    }, []);
+    useEffect(() => {
         getSuggestNhanVien();
     }, [chinhanhContext.id]);
     const getSuggestNhanVien = async () => {
         await suggestStore.getSuggestNhanVien();
+    };
+    const onShowModal = async (id: string) => {
+        if (id === '') {
+            await lichLamViecStore.createModel();
+        } else {
+            await lichLamViecStore.getForEdit(id);
+        }
+        handleOpenDialog();
     };
     const getData = async () => {
         await lichLamViecStore.getLichLamViecNhanVienWeek({
@@ -67,7 +78,9 @@ const LichLamViecScreen: React.FC = () => {
                             <Button
                                 variant="contained"
                                 className="btn-container-hover"
-                                onClick={handleOpenDialog}>
+                                onClick={() => {
+                                    onShowModal('');
+                                }}>
                                 Thêm lịch làm việc
                             </Button>
                         </Box>

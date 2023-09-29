@@ -22,7 +22,9 @@ import {
     TextField,
     Grid,
     SelectChangeEvent,
-    Checkbox
+    Checkbox,
+    Typography,
+    ButtonGroup
 } from '@mui/material';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
@@ -32,6 +34,7 @@ import suggestStore from '../../../../../stores/suggestStore';
 import ActionMenuTable from '../../../../../components/Menu/ActionMenuTable';
 import ConfirmDelete from '../../../../../components/AlertDialog/ConfirmDelete';
 import abpCustom from '../../../../../components/abp-custom';
+import chietKhauDichVuStore from '../../../../../stores/chietKhauDichVuStore';
 class ChietKhauHoaDonScreen extends Component {
     state = {
         idChietKhauHD: AppConsts.guidEmpty,
@@ -259,52 +262,76 @@ class ChietKhauHoaDonScreen extends Component {
         ];
         return (
             <Box>
-                <Grid
-                    container
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{ background: '#EEF0F4', padding: '8px' }}>
+                <Box
+                    display={'flex'}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    paddingBottom={'16px'}>
+                    <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px">
+                        Hoa hồng theo hóa đơn
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            this.createOrEditShowModal('');
+                        }}
+                        sx={{ height: 40, color: '#FFFAFF' }}
+                        startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
+                        hidden={!abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create')}
+                        className="btn-container-hover">
+                        Thêm mới
+                    </Button>
+                </Box>
+                <Grid container justifyContent="space-between" alignItems="center">
                     <Grid item>
-                        <Box className="form-search">
-                            <TextField
+                        <ButtonGroup
+                            sx={{
+                                height: '40px',
+                                bottom: '24px',
+                                right: '50px',
+                                float: 'right',
+                                gap: '8px',
+                                '& button': {
+                                    padding: '8px 10px!important',
+                                    lineHeight: '24px'
+                                }
+                            }}>
+                            <Button
+                                variant={'outlined'}
                                 sx={{
-                                    backgroundColor: '#FFFAFF',
-                                    borderColor: '#CDC9CD',
-                                    '& .MuiInputBase-root': {
-                                        height: '32px',
-                                        fontSize: '14px'
+                                    fontSize: '16px',
+                                    textTransform: 'unset',
+                                    color: '#8492AE',
+                                    backgroundColor: '#FFF',
+                                    borderColor: 'transparent!important',
+                                    boxShadow: 'none!important',
+                                    '&:hover': {
+                                        color: '#319DFF',
+                                        backgroundColor: '#FFF',
+                                        border: 'none !important',
+                                        borderBottom: '2px outset #319DFF !important',
+                                        boxShadow: 'none!important'
                                     }
                                 }}
-                                onChange={(e) => {
-                                    this.setState({ keyword: e.target.value });
-                                }}
-                                size="small"
-                                className="search-field"
-                                variant="outlined"
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button" onClick={this.getAll}>
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
-                    </Grid>
-
-                    <Grid item>
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                                this.createOrEditShowModal('');
-                            }}
-                            sx={{ height: 32, color: '#FFFAFF' }}
-                            startIcon={<AddOutlinedIcon sx={{ color: '#FFFAFF' }} />}
-                            hidden={!abpCustom.isGrandPermission('Pages.ChietKhauHoaDon.Create')}
-                            className="btn-container-hover">
-                            Thêm mới
-                        </Button>
+                                onClick={async () => {
+                                    await chietKhauDichVuStore.changeViewHoaHong(true);
+                                }}>
+                                Theo dịch vụ
+                            </Button>
+                            <Button
+                                variant={'outlined'}
+                                sx={{
+                                    fontSize: '16px',
+                                    textTransform: 'unset',
+                                    color: '#319DFF',
+                                    backgroundColor: '#FFF',
+                                    border: 'none !important',
+                                    borderBottom: '2px outset #319DFF !important',
+                                    boxShadow: 'none!important'
+                                }}>
+                                Theo hóa đơn
+                            </Button>
+                        </ButtonGroup>
                     </Grid>
                 </Grid>
                 <Box paddingTop={'8px'}>
@@ -335,11 +362,6 @@ class ChietKhauHoaDonScreen extends Component {
                                     newSortModel[0].sort?.toString() ?? 'creationTime',
                                     newSortModel[0].field ?? 'desc'
                                 );
-                            }
-                        }}
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                background: '#FFF'
                             }
                         }}
                         hideFooter

@@ -40,37 +40,37 @@ const AppConsts = {
     hinhThucKhuyenMaiHoaDon: [
         {
             value: 11,
-            name: 'Hóa đơn - Giảm giá hóa đơn'
+            name: 'Giảm giá hóa đơn'
         },
         {
             value: 12,
-            name: 'Hóa đơn - Tặng hàng'
+            name: 'Tặng hàng'
         },
         {
             value: 13,
-            name: 'Hóa đơn - Giảm giá hàng'
+            name: 'Giảm giá hàng'
         },
         {
             value: 14,
-            name: 'Hóa đơn - Tặng Điểm'
+            name: 'Tặng Điểm'
         }
     ],
     hinhThucKhuyenMaiHangHoa: [
         {
             value: 21,
-            name: 'Hàng hóa - Mua hàng giảm giá hàng'
+            name: 'Mua hàng giảm giá hàng'
         },
         {
             value: 22,
-            name: 'Hàng hóa - Mua hàng tặng hàng'
+            name: 'Mua hàng tặng hàng'
         },
         {
             value: 23,
-            name: 'Hàng hóa - Mua hàng giảm giá theo số lượng mua'
+            name: 'Mua hàng giảm giá theo số lượng mua'
         },
         {
             value: 24,
-            name: 'Hàng hóa - Mua hàng tặng điểm'
+            name: 'Mua hàng tặng điểm'
         }
     ],
     loaiBooking: {

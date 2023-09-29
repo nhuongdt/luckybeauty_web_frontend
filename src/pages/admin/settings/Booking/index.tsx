@@ -83,7 +83,7 @@ const Booking: React.FC = () => {
                             <HelpIcon />
                         </Box>
                     </Box>
-                    <Typography variant="body1" fontSize="14px" fontWeight="500" marginTop="16px">
+                    <Typography variant="body1" fontSize="13px" fontWeight="500" marginTop="16px">
                         Địa chỉ trang web khách hàng booking
                     </Typography>
                     <TextField
@@ -137,7 +137,7 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                fontSize="14px"
+                                fontSize="13px"
                                 fontWeight="500"
                                 marginTop="16px">
                                 Khách hàng có thể dặt lịch hẹn trước tối thiếu
@@ -156,7 +156,7 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                fontSize="14px"
+                                fontSize="13px"
                                 fontWeight="500"
                                 marginTop="16px">
                                 Khách hàng có thể dặt lịch hẹn trước tối đa
@@ -175,7 +175,7 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                fontSize="14px"
+                                fontSize="13px"
                                 fontWeight="500"
                                 marginTop="16px">
                                 Khách hàng có thể hủy hoặc lên lịch lại
@@ -194,7 +194,7 @@ const Booking: React.FC = () => {
                         <Grid item md={6} xs={12}>
                             <Typography
                                 variant="body1"
-                                fontSize="14px"
+                                fontSize="13px"
                                 fontWeight="500"
                                 marginTop="16px">
                                 Khoảng thời gian đặt lịch
@@ -234,7 +234,7 @@ const Booking: React.FC = () => {
                         sx={{
                             '& .MuiTypography-root': {
                                 color: '#4C4B4C',
-                                fontSize: '14px'
+                                fontSize: '13px'
                             }
                         }}>
                         <FormControlLabel
@@ -248,7 +248,6 @@ const Booking: React.FC = () => {
                             label="Gửi thông báo đến địa chỉ email"
                         />
                         <TextField
-                            defaultValue="dinhtuantaiok@gmail.com"
                             fullWidth
                             size="small"
                             sx={{ '& input': { height: '31px' }, marginY: '8px' }}

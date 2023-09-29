@@ -872,14 +872,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         marginBottom={2}
                                         direction={'row'}
                                         alignItems={'center'}>
-                                        <Box sx={{ position: 'relative' }}>
+                                        <Box
+                                            sx={{ position: 'relative' }}
+                                            onMouseLeave={() => {
+                                                this.setState({
+                                                    expendActionSelectedRow: false
+                                                });
+                                            }}>
                                             <Button
                                                 variant="contained"
                                                 endIcon={<ExpandMoreOutlined />}
                                                 onClick={() =>
                                                     this.setState({
-                                                        expendActionSelectedRow:
-                                                            !this.state.expendActionSelectedRow
+                                                        expendActionSelectedRow: false
                                                     })
                                                 }>
                                                 Thao tác
@@ -909,11 +914,23 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                         }></Button>
                                                     <Button
                                                         startIcon={'Xóa khách hàng'}
-                                                        sx={{ color: 'black' }}
+                                                        sx={{
+                                                            color: 'black',
+                                                            '&:hover': {
+                                                                backgroundColor: '#E6E6E6',
+                                                                boxShadow: 'none'
+                                                            }
+                                                        }}
                                                         onClick={this.showConfirmDelete}></Button>
                                                     <Button
                                                         startIcon={'Xuất danh sách'}
-                                                        sx={{ color: 'black' }}
+                                                        sx={{
+                                                            color: 'black',
+                                                            '&:hover': {
+                                                                backgroundColor: '#E6E6E6',
+                                                                boxShadow: 'none'
+                                                            }
+                                                        }}
                                                         onClick={this.exportSelectedRow}></Button>
                                                 </Stack>
                                             </Box>

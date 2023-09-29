@@ -21,20 +21,23 @@ import {
     RadioGroup,
     Tabs,
     Tab,
-    Box
+    Box,
+    MenuItem,
+    Select,
+    InputLabel
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../../../images/close-square.svg';
-import { Form, Formik, FormikHelpers, FormikValues } from 'formik';
+import { FieldArray, Form, Formik } from 'formik';
 import { format as formatDate } from 'date-fns';
 import DatePickerRequiredCustom from '../../../../../components/DatetimePicker/DatePickerRequiredCustom';
 import suggestStore from '../../../../../stores/suggestStore';
-import { SuggestDichVuDto } from '../../../../../services/suggests/dto/SuggestDichVuDto';
 import { observer } from 'mobx-react';
 import AppConsts from '../../../../../lib/appconst';
 import { useState } from 'react';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import ThoiGianConst from '../../../../../lib/thoiGianConst';
+import khuyenMaiStore from '../../../../../stores/khuyenMaiStore';
 function a11yProps(index: number) {
     return {
         id: `vertical-tab-${index}`,
@@ -45,15 +48,11 @@ const CreateOrEditVoucher: React.FC<{
     visiable: boolean;
     handleClose: () => void;
 }> = ({ visiable, handleClose }: any) => {
-    const [tatCaChiNhanh, setTatCaChiNhanh] = useState(true);
-    const [tatCaNhanVien, setTatCaNhanVien] = useState(true);
-    const [tatCaNhomKhach, setTatCaNhomKhach] = useState(true);
-    const [loaiKhuyenMai, setLoaiKhuyenMai] = useState(AppConsts.loaiKhuyenMai.hoaDon);
     const [tabIndex, setTabIndex] = useState(0);
     const handleTabChange = (event: any, value: number) => {
         setTabIndex(value);
     };
-
+    const initValues = khuyenMaiStore.createOrEditKhuyenMaiDto;
     return (
         <Dialog open={visiable} maxWidth="md" fullWidth onClose={handleClose}>
             <DialogTitle>
@@ -76,31 +75,41 @@ const CreateOrEditVoucher: React.FC<{
             </DialogTitle>
             <DialogContent>
                 <Formik
-                    initialValues={{
-                        id: '',
-                        maKhuyenMai: '',
-                        tenKhuyenMai: '',
-                        trangThai: 1,
-                        hinhThucKM: 11,
-                        loaiKhuyenMai: 1,
-                        thoiGianApDung: '',
-                        thoiGianKetThuc: '',
-                        ngayApDung: [],
-                        thangApDung: [],
-                        thuApDung: [],
-                        gioApDung: [],
-                        ghiChu: '',
-                        idNhanViens: [] as string[],
-                        idChiNhanhs: [],
-                        idNhomKhachs: [],
-                        tongTienHang: 0
-                    }}
-                    onSubmit={function (
-                        values: FormikValues,
-                        formikHelpers: FormikHelpers<FormikValues>
-                    ): void | Promise<any> {
-                        alert(JSON.stringify(values));
-                        handleClose();
+                    initialValues={initValues}
+                    onSubmit={async (values, formikHelpers) => {
+                        if (
+                            values.thoiGianApDung === '' ||
+                            values.thoiGianApDung == null ||
+                            values.thoiGianApDung == undefined
+                        ) {
+                            setTabIndex(1);
+                            formikHelpers.setFieldError(
+                                'thoiGianApDung',
+                                'Thời gian áp dụng không được để trống'
+                            );
+                        } else if (
+                            values.thoiGianKetThuc === '' ||
+                            values.thoiGianKetThuc == null ||
+                            values.thoiGianKetThuc == undefined
+                        ) {
+                            setTabIndex(1);
+                            formikHelpers.setFieldError(
+                                'thoiGianKetThuc',
+                                'Thời gian kết thúc không được để trống'
+                            );
+                        }
+                        if (values.tenKhuyenMai == '') {
+                            formikHelpers.setFieldError(
+                                'tenKhuyenMai',
+                                'Tên chương trình khuyễn mãi không được để trống'
+                            );
+                        }
+
+                        if (formikHelpers) {
+                            await khuyenMaiStore.CreateOrEditKhuyenMai(values);
+                            formikHelpers.resetForm();
+                            handleClose();
+                        }
                     }}>
                     {({ values, errors, touched, handleChange, setFieldValue, isSubmitting }) => (
                         <Form>
@@ -110,7 +119,7 @@ const CreateOrEditVoucher: React.FC<{
                                         value="start"
                                         control={
                                             <Switch
-                                                checked={values.trangThai === 1 ? true : false}
+                                                checked={values?.trangThai === 1 ? true : false}
                                                 color="primary"
                                             />
                                         }
@@ -131,7 +140,7 @@ const CreateOrEditVoucher: React.FC<{
                                                 Mã chương trình
                                             </Typography>
                                         }
-                                        value={values.maKhuyenMai}
+                                        value={values?.maKhuyenMai}
                                         onChange={handleChange}
                                         fullWidth
                                         sx={{ fontSize: '16px' }}></TextField>
@@ -146,12 +155,12 @@ const CreateOrEditVoucher: React.FC<{
                                                 Tên chương trình
                                             </Typography>
                                         }
-                                        value={values.tenKhuyenMai}
+                                        value={values?.tenKhuyenMai}
                                         onChange={handleChange}
                                         fullWidth
                                         sx={{ fontSize: '16px' }}></TextField>
                                 </Grid>
-                                <Grid item xs={4}>
+                                <Grid item xs={3}>
                                     <Tabs
                                         orientation="vertical"
                                         variant="scrollable"
@@ -163,70 +172,63 @@ const CreateOrEditVoucher: React.FC<{
                                             marginTop: '8px'
                                         }}>
                                         <Tab
-                                            sx={{ alignItems: 'start' }}
+                                            sx={{ alignItems: 'start', fontSize: '13px' }}
                                             label="Hình thức khuyến mại"
                                             {...a11yProps(0)}
                                         />
                                         <Tab
-                                            sx={{ alignItems: 'start' }}
+                                            sx={{ alignItems: 'start', fontSize: '13px' }}
                                             label="Thời gian áp dụng"
                                             {...a11yProps(1)}
                                         />
                                         <Tab
-                                            sx={{ alignItems: 'start' }}
+                                            sx={{ alignItems: 'start', fontSize: '13px' }}
                                             label="Phạm vi áp dụng"
                                             {...a11yProps(2)}
                                         />
                                     </Tabs>
                                 </Grid>
 
-                                <Grid item xs={8}>
+                                <Grid item xs={9}>
                                     <TabPanel value={tabIndex} index={0}>
                                         <Grid container spacing={2}>
-                                            <Grid item xs={12}>
-                                                <Stack direction={'row'} spacing={3}>
-                                                    <Typography
-                                                        component="div"
-                                                        display={'flex'}
-                                                        alignItems={'center'}>
-                                                        Khuyến mại theo
-                                                    </Typography>
-                                                    <FormControl>
-                                                        <RadioGroup
-                                                            row
-                                                            value={values.loaiKhuyenMai}
-                                                            onChange={(e, v) => {
-                                                                setLoaiKhuyenMai(
-                                                                    Number.parseInt(v)
-                                                                );
-                                                                setFieldValue(
-                                                                    'loaiKhuyenMai',
-                                                                    Number.parseInt(v)
-                                                                );
-                                                            }}>
-                                                            <FormControlLabel
-                                                                value={
-                                                                    AppConsts.loaiKhuyenMai.hangHoa
-                                                                }
-                                                                control={<Radio />}
-                                                                label="Hàng hóa"
-                                                            />
-                                                            <FormControlLabel
-                                                                value={
-                                                                    AppConsts.loaiKhuyenMai.hoaDon
-                                                                }
-                                                                control={<Radio />}
-                                                                label="Hóa đơn"
-                                                            />
-                                                        </RadioGroup>
-                                                    </FormControl>
-                                                </Stack>
+                                            <Grid item xs={12} md={6}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel
+                                                        sx={{ fontSize: '13px' }}
+                                                        id="demo-simple-select-label">
+                                                        Loại khuyến mãi
+                                                    </InputLabel>
+                                                    <Select
+                                                        size="small"
+                                                        label="Loại khuyến mại"
+                                                        onChange={(event) => {
+                                                            setFieldValue(
+                                                                'loaiKhuyenMai',
+                                                                event.target.value
+                                                            );
+                                                            setFieldValue(
+                                                                'hinhThucKM',
+                                                                event.target.value == 1 ? 11 : 21
+                                                            );
+                                                        }}
+                                                        value={values?.loaiKhuyenMai}>
+                                                        <MenuItem
+                                                            value={AppConsts.loaiKhuyenMai.hangHoa}>
+                                                            Hàng hóa
+                                                        </MenuItem>
+                                                        <MenuItem
+                                                            value={AppConsts.loaiKhuyenMai.hoaDon}>
+                                                            Hóa đơn
+                                                        </MenuItem>
+                                                    </Select>
+                                                </FormControl>
                                             </Grid>
                                             <Grid item xs={12} md={6}>
                                                 <FormGroup>
                                                     <Autocomplete
                                                         options={
-                                                            loaiKhuyenMai ===
+                                                            values.loaiKhuyenMai ===
                                                             AppConsts.loaiKhuyenMai.hoaDon
                                                                 ? AppConsts.hinhThucKhuyenMaiHoaDon
                                                                 : AppConsts.hinhThucKhuyenMaiHangHoa
@@ -235,18 +237,18 @@ const CreateOrEditVoucher: React.FC<{
                                                             `${option.name}`
                                                         }
                                                         value={
-                                                            loaiKhuyenMai ===
+                                                            values.loaiKhuyenMai ===
                                                             AppConsts.loaiKhuyenMai.hoaDon
-                                                                ? AppConsts.hinhThucKhuyenMaiHoaDon.filter(
+                                                                ? AppConsts.hinhThucKhuyenMaiHoaDon.find(
                                                                       (x) =>
                                                                           x.value ==
-                                                                          values.hinhThucKM
-                                                                  )?.[0]
-                                                                : AppConsts.hinhThucKhuyenMaiHangHoa.filter(
+                                                                          values?.hinhThucKM
+                                                                  )
+                                                                : AppConsts.hinhThucKhuyenMaiHangHoa.find(
                                                                       (x) =>
                                                                           x.value ==
-                                                                          values.hinhThucKM
-                                                                  )?.[0]
+                                                                          values?.hinhThucKM
+                                                                  )
                                                         }
                                                         size="small"
                                                         fullWidth
@@ -273,34 +275,336 @@ const CreateOrEditVoucher: React.FC<{
                                                     />
                                                 </FormGroup>
                                             </Grid>
-                                            <Grid item xs={12} md={6}>
-                                                <Stack spacing={1} direction={'row'}>
-                                                    <TextField
-                                                        size="small"
-                                                        type="text"
-                                                        name="tongTienHang"
-                                                        label={
-                                                            <Typography variant="subtitle2">
-                                                                Giảm giá
-                                                            </Typography>
-                                                        }
-                                                        value={values.tongTienHang}
-                                                        onChange={handleChange}
-                                                        fullWidth
-                                                        sx={{ fontSize: '16px' }}></TextField>
-                                                    <ToggleButtonGroup value={true} size="small">
-                                                        <ToggleButton
-                                                            value={true}
-                                                            sx={{ padding: '5px', width: '30px' }}>
-                                                            %
-                                                        </ToggleButton>
-                                                        <ToggleButton
-                                                            value={false}
-                                                            sx={{ padding: '5px', width: '30px' }}>
-                                                            đ
-                                                        </ToggleButton>
-                                                    </ToggleButtonGroup>
-                                                </Stack>
+                                            <Grid item xs={12}>
+                                                <FieldArray
+                                                    name="khuyenMaiChiTiets"
+                                                    render={(arrayHelpers) => {
+                                                        return (
+                                                            <Box>
+                                                                {values?.khuyenMaiChiTiets &&
+                                                                values?.khuyenMaiChiTiets.length >
+                                                                    0 ? (
+                                                                    <Box>
+                                                                        {values?.khuyenMaiChiTiets.map(
+                                                                            (item, index) => (
+                                                                                <Box
+                                                                                    key={index}
+                                                                                    display="flex"
+                                                                                    gap="8px"
+                                                                                    justifyContent="space-between">
+                                                                                    {values.loaiKhuyenMai ===
+                                                                                    1 ? (
+                                                                                        <TextField
+                                                                                            size="small"
+                                                                                            label="Tổng tiền hàng từ"
+                                                                                            fullWidth
+                                                                                            onChange={
+                                                                                                handleChange
+                                                                                            }
+                                                                                            value={
+                                                                                                item.tongTienHang
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.tongTienHang`}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.loaiKhuyenMai ===
+                                                                                    2 ? (
+                                                                                        <TextField
+                                                                                            size="small"
+                                                                                            label=""
+                                                                                            sx={{
+                                                                                                width: '20%'
+                                                                                            }}
+                                                                                            onChange={
+                                                                                                handleChange
+                                                                                            }
+                                                                                            value={
+                                                                                                item.soLuongMua
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongMua`}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.loaiKhuyenMai ===
+                                                                                    2 ? (
+                                                                                        <Autocomplete
+                                                                                            options={
+                                                                                                suggestStore?.suggestDonViQuiDoi ??
+                                                                                                []
+                                                                                            }
+                                                                                            getOptionLabel={(
+                                                                                                option
+                                                                                            ) =>
+                                                                                                `${option.tenDonVi}`
+                                                                                            }
+                                                                                            value={
+                                                                                                suggestStore.suggestDonViQuiDoi?.find(
+                                                                                                    (
+                                                                                                        x
+                                                                                                    ) =>
+                                                                                                        x.id ==
+                                                                                                        item.idDonViQuiDoiMua
+                                                                                                ) ??
+                                                                                                null
+                                                                                            }
+                                                                                            size="small"
+                                                                                            fullWidth
+                                                                                            disablePortal
+                                                                                            onChange={async (
+                                                                                                event,
+                                                                                                value
+                                                                                            ) => {
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.idDonViQuiDoiMua`,
+                                                                                                    value?.id
+                                                                                                );
+                                                                                            }}
+                                                                                            renderInput={(
+                                                                                                params
+                                                                                            ) => (
+                                                                                                <TextField
+                                                                                                    {...params}
+                                                                                                    label={
+                                                                                                        <Typography fontSize="13px">
+                                                                                                            Mặt
+                                                                                                            hàng
+                                                                                                        </Typography>
+                                                                                                    }
+                                                                                                />
+                                                                                            )}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM ===
+                                                                                        11 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        13 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        21 ? (
+                                                                                        <TextField
+                                                                                            size="small"
+                                                                                            label="Giảm giá"
+                                                                                            sx={{
+                                                                                                width: '50%'
+                                                                                            }}
+                                                                                            onChange={
+                                                                                                handleChange
+                                                                                            }
+                                                                                            value={
+                                                                                                item.giamGia
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.giamGia`}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM ===
+                                                                                        12 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        22 ? (
+                                                                                        <TextField
+                                                                                            size="small"
+                                                                                            label={
+                                                                                                values.hinhThucKM ===
+                                                                                                12
+                                                                                                    ? 'Số lượng tặng'
+                                                                                                    : ''
+                                                                                            }
+                                                                                            sx={{
+                                                                                                width:
+                                                                                                    values.hinhThucKM ===
+                                                                                                    12
+                                                                                                        ? '50%'
+                                                                                                        : '20%'
+                                                                                            }}
+                                                                                            onChange={
+                                                                                                handleChange
+                                                                                            }
+                                                                                            value={
+                                                                                                item.soLuongTang
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongTang`}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM ===
+                                                                                        11 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        13 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        21 ? (
+                                                                                        <ToggleButtonGroup
+                                                                                            value={
+                                                                                                item.giamGiaTheoPhanTram ??
+                                                                                                true
+                                                                                            }
+                                                                                            size="small">
+                                                                                            <ToggleButton
+                                                                                                onClick={() => {
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.giamGiaTheoPhanTram`,
+                                                                                                        true
+                                                                                                    );
+                                                                                                }}
+                                                                                                value={
+                                                                                                    true
+                                                                                                }
+                                                                                                sx={{
+                                                                                                    width: '32px',
+                                                                                                    height: '36px'
+                                                                                                }}>
+                                                                                                %
+                                                                                            </ToggleButton>
+                                                                                            <ToggleButton
+                                                                                                value={
+                                                                                                    false
+                                                                                                }
+                                                                                                onClick={() => {
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.giamGiaTheoPhanTram`,
+                                                                                                        false
+                                                                                                    );
+                                                                                                }}
+                                                                                                sx={{
+                                                                                                    padding:
+                                                                                                        '5px',
+                                                                                                    width: '32px',
+                                                                                                    height: '36px'
+                                                                                                }}>
+                                                                                                đ
+                                                                                            </ToggleButton>
+                                                                                        </ToggleButtonGroup>
+                                                                                    ) : null}
+
+                                                                                    {values.hinhThucKM ===
+                                                                                        12 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        13 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        22 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        21 ? (
+                                                                                        <Autocomplete
+                                                                                            options={
+                                                                                                suggestStore?.suggestDonViQuiDoi ??
+                                                                                                []
+                                                                                            }
+                                                                                            getOptionLabel={(
+                                                                                                option
+                                                                                            ) =>
+                                                                                                `${option.tenDonVi}`
+                                                                                            }
+                                                                                            value={
+                                                                                                suggestStore.suggestDonViQuiDoi?.find(
+                                                                                                    (
+                                                                                                        x
+                                                                                                    ) =>
+                                                                                                        x.id ==
+                                                                                                        item.idDonViQuiDoiTang
+                                                                                                ) ??
+                                                                                                null
+                                                                                            }
+                                                                                            size="small"
+                                                                                            fullWidth
+                                                                                            disablePortal
+                                                                                            onChange={async (
+                                                                                                event,
+                                                                                                value
+                                                                                            ) => {
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.idDonViQuiDoiTang`,
+                                                                                                    value?.id
+                                                                                                );
+                                                                                            }}
+                                                                                            renderInput={(
+                                                                                                params
+                                                                                            ) => (
+                                                                                                <TextField
+                                                                                                    {...params}
+                                                                                                    label={
+                                                                                                        <Typography fontSize="13px">
+                                                                                                            Mặt
+                                                                                                            hàng
+                                                                                                        </Typography>
+                                                                                                    }
+                                                                                                />
+                                                                                            )}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM ===
+                                                                                        14 ||
+                                                                                    values.hinhThucKM ===
+                                                                                        24 ? (
+                                                                                        <TextField
+                                                                                            size="small"
+                                                                                            label={
+                                                                                                'Số điểm tặng'
+                                                                                            }
+                                                                                            fullWidth
+                                                                                            onChange={
+                                                                                                handleChange
+                                                                                            }
+                                                                                            value={
+                                                                                                item.giamGia
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.soDiemTang`}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM ===
+                                                                                    23 ? (
+                                                                                        <TextField
+                                                                                            size="small"
+                                                                                            label={
+                                                                                                'Giá khuyến mại'
+                                                                                            }
+                                                                                            fullWidth
+                                                                                            onChange={
+                                                                                                handleChange
+                                                                                            }
+                                                                                            value={
+                                                                                                item.giaKhuyenMai
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
+                                                                                        />
+                                                                                    ) : null}
+                                                                                    <IconButton
+                                                                                        onClick={() => {
+                                                                                            arrayHelpers.remove(
+                                                                                                index
+                                                                                            );
+                                                                                        }}
+                                                                                        sx={{
+                                                                                            marginLeft:
+                                                                                                '5px'
+                                                                                        }}>
+                                                                                        <CloseIcon color="red" />
+                                                                                    </IconButton>
+                                                                                </Box>
+                                                                            )
+                                                                        )}
+                                                                        <Button
+                                                                            onClick={() =>
+                                                                                arrayHelpers.insert(
+                                                                                    values
+                                                                                        .khuyenMaiChiTiets
+                                                                                        .length + 1,
+                                                                                    {
+                                                                                        id: AppConsts.guidEmpty
+                                                                                    }
+                                                                                )
+                                                                            }>
+                                                                            Thêm điều kiện
+                                                                        </Button>
+                                                                    </Box>
+                                                                ) : (
+                                                                    <Button
+                                                                        onClick={() =>
+                                                                            arrayHelpers.push({
+                                                                                id: AppConsts.guidEmpty
+                                                                            })
+                                                                        }>
+                                                                        Thêm điều kiện
+                                                                    </Button>
+                                                                )}
+                                                            </Box>
+                                                        );
+                                                    }}
+                                                />
                                             </Grid>
                                         </Grid>
                                     </TabPanel>
@@ -335,9 +639,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             )
                                                     }}
                                                     defaultVal={
-                                                        values.thoiGianApDung
+                                                        values?.thoiGianApDung
                                                             ? formatDate(
-                                                                  new Date(values.thoiGianApDung),
+                                                                  new Date(values?.thoiGianApDung),
                                                                   'yyyy-MM-dd'
                                                               )
                                                             : ''
@@ -353,7 +657,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         width: '100%',
                                                         size: 'small',
                                                         label: (
-                                                            <Typography variant="subtitle2">
+                                                            <Typography>
                                                                 Ngày kêt thúc
                                                                 <span className="text-danger">
                                                                     {' '}
@@ -362,23 +666,25 @@ const CreateOrEditVoucher: React.FC<{
                                                             </Typography>
                                                         ),
                                                         error:
-                                                            Boolean(errors.thoiGianKetThuc) &&
-                                                            touched.thoiGianKetThuc
+                                                            Boolean(errors?.thoiGianKetThuc) &&
+                                                            touched?.thoiGianKetThuc
                                                                 ? true
                                                                 : false,
                                                         helperText: Boolean(
-                                                            errors.thoiGianKetThuc
+                                                            errors?.thoiGianKetThuc
                                                         ) &&
-                                                            touched?.thoiGianKetThuc && (
+                                                            touched.thoiGianKetThuc && (
                                                                 <span className="text-danger">
-                                                                    {String(errors.thoiGianKetThuc)}
+                                                                    {String(
+                                                                        errors?.thoiGianKetThuc
+                                                                    )}
                                                                 </span>
                                                             )
                                                     }}
                                                     defaultVal={
-                                                        values.thoiGianKetThuc
+                                                        values?.thoiGianKetThuc
                                                             ? formatDate(
-                                                                  new Date(values.thoiGianKetThuc),
+                                                                  new Date(values?.thoiGianKetThuc),
                                                                   'yyyy-MM-dd'
                                                               )
                                                             : ''
@@ -411,7 +717,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={ThoiGianConst.thang.filter((x) =>
-                                                        values.thangApDung.includes(x.value)
+                                                        values?.thangApDungs?.includes(x.value)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -450,7 +756,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={ThoiGianConst.ngay.filter((x) =>
-                                                        values.ngayApDung.includes(x.value)
+                                                        values?.ngayApDungs?.includes(x.value)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -490,7 +796,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={ThoiGianConst.thu.filter((x) =>
-                                                        values.thuApDung.includes(x.value)
+                                                        values?.thuApDungs?.includes(x.value)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -527,7 +833,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={ThoiGianConst.gio.filter((x) =>
-                                                        values.gioApDung.includes(x)
+                                                        values?.gioApDungs?.includes(x)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -550,12 +856,13 @@ const CreateOrEditVoucher: React.FC<{
                                                 fullWidth>
                                                 <RadioGroup
                                                     row
-                                                    value={tatCaChiNhanh}
+                                                    value={values?.tatCaChiNhanh}
                                                     onChange={(e, v) => {
-                                                        setTatCaChiNhanh(
+                                                        setFieldValue('idChiNhanhs', []);
+                                                        setFieldValue(
+                                                            'tatCaChiNhanh',
                                                             v === 'true' ? true : false
                                                         );
-                                                        setFieldValue('idChiNhanhs', []);
                                                     }}>
                                                     <FormControlLabel
                                                         control={<Radio value="true" />}
@@ -568,7 +875,7 @@ const CreateOrEditVoucher: React.FC<{
                                                 </RadioGroup>
                                                 <Autocomplete
                                                     multiple
-                                                    disabled={tatCaChiNhanh}
+                                                    disabled={values?.tatCaChiNhanh}
                                                     options={suggestStore?.suggestChiNhanh ?? []}
                                                     getOptionLabel={(option) =>
                                                         `${option.tenChiNhanh}`
@@ -589,7 +896,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={suggestStore.suggestChiNhanh.filter(
-                                                        (x) => values.idChiNhanhs.includes(x.id)
+                                                        (x) => values?.idChiNhanhs?.includes(x.id)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -615,12 +922,13 @@ const CreateOrEditVoucher: React.FC<{
                                                 fullWidth>
                                                 <RadioGroup
                                                     row
-                                                    value={tatCaNhanVien}
-                                                    onChange={(v, e) => {
-                                                        setTatCaNhanVien(
-                                                            e === 'true' ? true : false
-                                                        );
+                                                    value={values?.tatCaNhanVien}
+                                                    onChange={(e, v) => {
                                                         setFieldValue('idNhanViens', []);
+                                                        setFieldValue(
+                                                            'tatCaNhanVien',
+                                                            v === 'true' ? true : false
+                                                        );
                                                     }}>
                                                     <FormControlLabel
                                                         control={<Radio value="true" />}
@@ -633,7 +941,7 @@ const CreateOrEditVoucher: React.FC<{
                                                 </RadioGroup>
                                                 <Autocomplete
                                                     multiple
-                                                    disabled={tatCaNhanVien}
+                                                    disabled={values?.tatCaNhanVien}
                                                     options={suggestStore?.suggestNhanVien ?? []}
                                                     getOptionLabel={(option) =>
                                                         `${option.tenNhanVien}`
@@ -654,7 +962,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={suggestStore.suggestNhanVien.filter(
-                                                        (x) => values.idNhanViens.includes(x.id)
+                                                        (x) => values?.idNhanViens?.includes(x.id)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -680,12 +988,13 @@ const CreateOrEditVoucher: React.FC<{
                                                 fullWidth>
                                                 <RadioGroup
                                                     row
-                                                    value={tatCaNhomKhach}
+                                                    value={values?.tatCaKhachHang}
                                                     onChange={(e, value) => {
-                                                        setTatCaNhomKhach(
+                                                        setFieldValue('idNhomKhachs', []);
+                                                        setFieldValue(
+                                                            'tatCaNhomKhach',
                                                             value === 'true' ? true : false
                                                         );
-                                                        setFieldValue('idNhomKhachs', []);
                                                     }}>
                                                     <FormControlLabel
                                                         control={<Radio value={'true'} />}
@@ -698,7 +1007,7 @@ const CreateOrEditVoucher: React.FC<{
                                                 </RadioGroup>
                                                 <Autocomplete
                                                     multiple
-                                                    disabled={tatCaNhomKhach}
+                                                    disabled={values?.tatCaKhachHang}
                                                     options={suggestStore?.suggestNhomKhach ?? []}
                                                     getOptionLabel={(option) =>
                                                         `${option.tenNhomKhach}`
@@ -719,7 +1028,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         </li>
                                                     )}
                                                     value={suggestStore.suggestNhomKhach.filter(
-                                                        (x) => values.idNhomKhachs.includes(x.id)
+                                                        (x) => values?.idNhomKhachs?.includes(x.id)
                                                     )}
                                                     size="small"
                                                     fullWidth
@@ -755,7 +1064,7 @@ const CreateOrEditVoucher: React.FC<{
                                         rows={4}
                                         size="small"
                                         name="ghiChu"
-                                        //value={values.ghiChu}
+                                        value={values?.ghiChu}
                                         onChange={handleChange}></TextField>
                                 </Grid>
                             </Grid>

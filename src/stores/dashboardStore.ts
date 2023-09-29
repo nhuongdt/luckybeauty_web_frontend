@@ -27,6 +27,7 @@ class DashboardStore {
         };
     }
     async getData(input: DashboardFilter) {
+        input.idChiNhanh = Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty;
         this.getThongKeSoLuong(input);
         this.getDanhSachLichHen(input);
         this.getThongKeDoanhThu(input);

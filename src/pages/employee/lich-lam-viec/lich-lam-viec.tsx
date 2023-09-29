@@ -33,12 +33,13 @@ import { observer } from 'mobx-react';
 import { SuggestNhanSuDto } from '../../../services/suggests/dto/SuggestNhanSuDto';
 import SuggestService from '../../../services/suggests/SuggestService';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import CreateOeEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
+import CreateOrEditLichLamViecModal from './create-or-edit-lich-lam-viec-modal';
 import AppConsts from '../../../lib/appconst';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import suggestStore from '../../../stores/suggestStore';
 import lichLamViecService from '../../../services/nhan-vien/lich_lam_viec/lichLamViecService';
 import { enqueueSnackbar } from 'notistack';
+import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 const LichLamViec: React.FC = () => {
     const appContext = useContext(AppContext);
     const chinhanhContext = appContext.chinhanhCurrent;
@@ -94,8 +95,8 @@ const LichLamViec: React.FC = () => {
         const dayOfMonth = date.getDate();
         return (
             <>
-                <Box sx={{ fontWeight: '400', fontSize: '12px' }}>{day}</Box>
-                <div>
+                <Box sx={{ fontWeight: '400', fontSize: '16px', textAlign: 'center' }}>{day}</Box>
+                <div style={{ textAlign: 'center', fontSize: '13px' }}>
                     {dayOfMonth} {month}
                 </div>
             </>
@@ -157,8 +158,13 @@ const LichLamViec: React.FC = () => {
         handleCloseDelete();
     };
     const [openEdit, setOpenEdit] = useState(false);
-    const handleOpenEditEmployee = () => {
-        setOpenEdit(true);
+    const handleOpenEdit = async () => {
+        if (selectedId !== '' || selectedId !== AppConsts.guidEmpty) {
+            await lichLamViecStore.getForEdit(selectedId);
+        } else {
+            await lichLamViecStore.createModel();
+        }
+        setOpenDialog(true);
         setAnchorEl(null);
     };
     const handleCloseEditEmployee = () => {
@@ -242,12 +248,16 @@ const LichLamViec: React.FC = () => {
                 handleOpenDelete={handleOpenDelete}
                 handleOpenDialog={handleOpenDialog}
                 handleCloseDialog={handleCloseDialog}
-                handleOpenEditEmployee={handleOpenEditEmployee}
+                handleOpenEdit={handleOpenEdit}
             />
 
-            <Delete open={openDelete} onDelete={handleDelete} onClose={handleCloseDelete} />
+            {/* <Delete open={openDelete} onDelete={handleDelete} onClose={handleCloseDelete} /> */}
+            <ConfirmDelete
+                isShow={openDelete}
+                onOk={handleDelete}
+                onCancel={handleCloseDelete}></ConfirmDelete>
             {/* <ThemLich open={openDialog} onClose={handleCloseDialog} /> */}
-            <CreateOeEditLichLamViecModal
+            <CreateOrEditLichLamViecModal
                 idNhanVien={idNhanVien}
                 open={openDialog}
                 onClose={handleSubmit}
@@ -413,7 +423,14 @@ const LichLamViec: React.FC = () => {
                             }}>
                             <TableCell sx={{ border: 'none' }}>Nhân viên</TableCell>
                             {weekDates.map((date, index) => (
-                                <TableCell key={index}>{date}</TableCell>
+                                <TableCell key={index}>
+                                    <Box
+                                        display={'flex'}
+                                        justifyContent={'center'}
+                                        alignItems={'center'}>
+                                        <Typography fontSize={'13px'}>{date}</Typography>
+                                    </Box>
+                                </TableCell>
                             ))}
                         </TableRow>
                     </TableHead>

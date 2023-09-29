@@ -554,7 +554,13 @@ class CaLamViecScreen extends Component {
                 <Box paddingTop="16px">
                     {this.state.listItemSelectedModel.length > 0 ? (
                         <Stack spacing={1} marginBottom={2} direction={'row'} alignItems={'center'}>
-                            <Box sx={{ position: 'relative' }}>
+                            <Box
+                                sx={{ position: 'relative' }}
+                                onMouseLeave={() => {
+                                    this.setState({
+                                        expendActionSelectedRow: false
+                                    });
+                                }}>
                                 <Button
                                     variant="contained"
                                     endIcon={<ExpandMoreOutlined />}
@@ -587,11 +593,23 @@ class CaLamViecScreen extends Component {
                                         spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa ca làm việc'}
-                                            sx={{ color: 'black' }}
+                                            sx={{
+                                                color: 'black',
+                                                '&:hover': {
+                                                    backgroundColor: '#E6E6E6',
+                                                    boxShadow: 'none'
+                                                }
+                                            }}
                                             onClick={this.showConfirmDelete}></Button>
                                         <Button
                                             startIcon={'Xuất danh sách'}
-                                            sx={{ color: 'black' }}
+                                            sx={{
+                                                color: 'black',
+                                                '&:hover': {
+                                                    backgroundColor: '#E6E6E6',
+                                                    boxShadow: 'none'
+                                                }
+                                            }}
                                             onClick={this.exportSelectedRow}></Button>
                                     </Stack>
                                 </Box>
