@@ -33,13 +33,24 @@ import AppConsts from '../../../../lib/appconst';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
+import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
+import RoleModel from '../../../../models/Roles/roleModel';
+import { DataGrid, GridColDef, GridRowSelectionModel, useGridApiRef } from '@mui/x-data-grid';
+import { RoleDto } from '../../../../services/role/dto/roleDto';
+import { TextTranslate } from '../../../../components/TableLanguage';
+import { IChiNhanhRoles, IUserRoleDto } from '../../../../models/Roles/userRoleDto';
+import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
+import TableRoleChiNhanh from '../../../../components/Table/RoleChiNhanh';
+import roleService from '../../../../services/role/roleService';
 
 export default function ModalAddUser({
     isShowModal,
     dataNhanVien,
     userId,
     dataChiNhanh,
-    onCancel
+    allRoles,
+    onCancel,
+    onOk
 }: any) {
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
@@ -50,80 +61,14 @@ export default function ModalAddUser({
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
     const [showPassword, setShowPassword] = useState<boolean>(false); // file image
     const [changePassword, setChangePassword] = useState<boolean>(false); // file image
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [chiNhanhRoles, setChiNhanhRoles] = useState<IChiNhanhRoles[]>([]);
+    const [lstChosed, setLstChosed] = useState<IUserRoleDto[]>([]);
 
     const [user, setUser] = useState<CreateOrUpdateUserInput>({
         userName: '',
         password: ''
     } as CreateOrUpdateUserInput);
-    const [roles, setRoles] = useState<CreateOrUpdateUserInput | null>();
-    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
-        setTabIndex(newValue.toString());
-    };
-
-    const GetInforUser = async () => {
-        const userEdit = await userService.get(userId);
-        setUser(userEdit);
-    };
-
-    const GetAllRole_ofUser = async () => {
-        const roles = await userService.getRoles();
-        setRoles(roles);
-    };
-
-    useEffect(() => {
-        if (isShowModal) {
-            console.log('user ', user);
-            if (userId === 0) {
-                setUser({ idChiNhanhMacDinh: idChiNhanh } as CreateOrUpdateUserInput);
-            } else {
-                GetInforUser();
-                GetAllRole_ofUser();
-            }
-            setChangePassword(false);
-        }
-    }, [isShowModal]);
-
-    const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
-
-    const changeNhanVien = async (item: any) => {
-        const arrTenNV = item?.tenNhanVien.split(' ');
-        let surName = ''; // họ
-        if (arrTenNV.length > 0) {
-            surName = arrTenNV[0];
-        }
-        setUser({
-            ...user,
-            nhanSuId: item?.id,
-            phoneNumber: item?.soDienThoai,
-            name: item?.tenNhanVien,
-            surname: surName
-        } as CreateOrUpdateUserInput);
-        setAvatar(item?.avatar);
-        initialValues.nhanSuId = item?.id;
-    };
-    const changeChiNhanh = async (item: any) => {
-        setUser({ ...user, idChiNhanhMacDinh: item?.id } as CreateOrUpdateUserInput);
-    };
-    const choseImage = async (pathFile: string, file: File) => {
-        if (!utils.checkNull(googleDrive_fileId)) {
-            await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
-        }
-        setAvatar(pathFile);
-        setFileImage(file);
-    };
-    const closeImage = () => {
-        setAvatar('');
-        setGoogleDrive_fileId('');
-    };
-    const saveUser = async () => {
-        if (userId == 0) {
-            const data = await userService.CreateUser(user);
-            console.log('CreateUser ', data, user);
-        } else {
-            await userService.UpdateUser(user);
-        }
-        // todo userRole: list [userId, roleId, idChiNhanh]
-    };
 
     const initialValues = {
         nhanSuId: user?.nhanSuId,
@@ -193,6 +138,109 @@ export default function ModalAddUser({
         //     );
         // })
     });
+
+    const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
+        setTabIndex(newValue.toString());
+    };
+
+    const GetInforUser = async () => {
+        const userEdit = await userService.get(userId);
+        setUser(userEdit);
+        console.log('user ', userEdit);
+
+        initialValues.nhanSuId = userEdit?.nhanSuId;
+        initialValues.emailAddress = userEdit?.emailAddress;
+        initialValues.userName = userEdit?.userName;
+    };
+
+    useEffect(() => {
+        if (isShowModal) {
+            if (userId === 0) {
+                setUser({
+                    idChiNhanhMacDinh: idChiNhanh,
+                    isActive: true
+                } as CreateOrUpdateUserInput);
+            } else {
+                GetInforUser();
+            }
+            setChangePassword(false);
+            setChiNhanhRoles(
+                dataChiNhanh.map((item: ChiNhanhDto) => {
+                    return {
+                        idChiNhanh: item.id,
+                        tenChiNhanh: item.tenChiNhanh,
+                        roles: allRoles
+                    } as unknown as IChiNhanhRoles;
+                })
+            );
+        }
+    }, [isShowModal]);
+
+    const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
+
+    const changeNhanVien = async (item: any) => {
+        const arrTenNV = item?.tenNhanVien.split(' ');
+        let surName = ''; // họ
+        if (arrTenNV.length > 0) {
+            surName = arrTenNV[0];
+        }
+        setUser({
+            ...user,
+            nhanSuId: item?.id,
+            phoneNumber: item?.soDienThoai,
+            name: item?.tenNhanVien,
+            surname: surName
+        } as CreateOrUpdateUserInput);
+        setAvatar(item?.avatar);
+        initialValues.nhanSuId = item?.id;
+    };
+    const changeChiNhanh = async (item: any) => {
+        setUser({ ...user, idChiNhanhMacDinh: item?.id } as CreateOrUpdateUserInput);
+    };
+    const choseImage = async (pathFile: string, file: File) => {
+        if (!utils.checkNull(googleDrive_fileId)) {
+            await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
+        }
+        setAvatar(pathFile);
+        setFileImage(file);
+    };
+    const closeImage = () => {
+        setAvatar('');
+        setGoogleDrive_fileId('');
+    };
+    const getRoleChiNhanh_fromChild = (lst: IUserRoleDto[]) => {
+        setLstChosed(lst);
+        console.log('getRoleChiNhanh_fromChild ', lst);
+    };
+    const saveUser = async () => {
+        let userIdNew = 0;
+        if (userId == 0) {
+            const data = await userService.CreateUser(user);
+            if (data !== null) {
+                userIdNew = data.id;
+
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Thêm mới người dùng thành công'
+                });
+            }
+            console.log('CreateUser ', data, user);
+        } else {
+            const data = await userService.UpdateUser(user);
+            if (data !== null) {
+                userIdNew = userId;
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: 'Cập nhật người dùng thành công'
+                });
+            }
+        }
+        // todo userRole: list [userId, roleId, idChiNhanh]
+        await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
+        onOk();
+    };
 
     const iconPassword =
         userId === 0
@@ -499,7 +547,12 @@ export default function ModalAddUser({
                                                         value={
                                                             user?.isAdmin === true ? true : false
                                                         }
-                                                        onChange={handleChange}
+                                                        onChange={() =>
+                                                            setUser({
+                                                                ...user,
+                                                                isAdmin: !user?.isAdmin
+                                                            })
+                                                        }
                                                         checked={
                                                             user?.isAdmin === true ? true : false
                                                         }
@@ -522,7 +575,14 @@ export default function ModalAddUser({
                                             </Grid>
                                         </Grid>
                                     </TabPanel>
-                                    <TabPanel value="2">Item Three</TabPanel>
+                                    <TabPanel value="2">
+                                        <TableRoleChiNhanh
+                                            userId={userId}
+                                            allRoles={allRoles}
+                                            chiNhanhRoles={chiNhanhRoles}
+                                            passDataToParent={getRoleChiNhanh_fromChild}
+                                        />
+                                    </TabPanel>
                                 </TabContext>
                                 <Grid container justifyContent={'end'}>
                                     <Stack
