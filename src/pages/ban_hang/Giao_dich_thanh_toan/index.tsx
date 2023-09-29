@@ -654,6 +654,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
                         }
                         rowHeight={46}
+                        autoHeight={pageDataHoaDon.items.length === 0}
                         columns={columns}
                         rows={pageDataHoaDon.items}
                         hideFooter
