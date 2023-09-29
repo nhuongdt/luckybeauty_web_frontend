@@ -8,6 +8,7 @@ import { UpdateUserInput } from './dto/updateUserInput';
 import http from '../httpService';
 import { ProfileDto } from './dto/ProfileDto';
 import { ChangePasswordDto } from './dto/ChangePasswordDto';
+import utils from '../../utils/utils';
 
 class UserService {
     public async create(createUserInput: CreateOrUpdateUserInput) {
@@ -22,6 +23,33 @@ class UserService {
         }
     }
 
+    CheckExistUser = async (userId: number, userName: string) => {
+        if (!utils.checkNull(userName)) {
+            const result = await http.get(
+                `api/services/app/User/CheckExistUser?userId=${userId}&userName=${userName}`
+            );
+            return result.data.result;
+        }
+        return false;
+    };
+    CheckExistEmail = async (userId: number, email: string) => {
+        if (!utils.checkNull(email)) {
+            const result = await http.get(
+                `api/services/app/User/CheckExistEmail?userId=${userId}&email=${email}`
+            );
+            return result.data.result;
+        }
+        return false;
+    };
+    CheckMatchesPassword = async (userId: number, password: string) => {
+        if (userId !== 0 && !utils.checkNull(password)) {
+            const result = await http.get(
+                `api/services/app/User/CheckMatchesPassword?userId=${userId}&plainPassword=${password}`
+            );
+            return result.data.result;
+        }
+        return true;
+    };
     CreateUser = async (param: CreateOrUpdateUserInput) => {
         //  used to insert user (not role)
         const result = await http.post('api/services/app/User/CreateUser', param);
