@@ -20,7 +20,6 @@ import { useContext, useEffect, useState } from 'react';
 import TabPanel from '@mui/lab/TabPanel';
 import AutocompleteNhanVien from '../../../../components/Autocomplete/NhanVien';
 import AutocompleteChiNhanh from '../../../../components/Autocomplete/ChiNhanh';
-import { CreateOrUpdateUserInput } from '../../../../services/user/dto/createOrUpdateUserInput';
 import userService from '../../../../services/user/userService';
 import TabList from '@mui/lab/TabList';
 import TabContext from '@mui/lab/TabContext';
@@ -30,19 +29,14 @@ import utils from '../../../../utils/utils';
 import uploadFileService from '../../../../services/uploadFileService';
 import * as Yup from 'yup';
 import AppConsts from '../../../../lib/appconst';
-import { Formik, Form, FormikHelpers } from 'formik';
+import { Formik, Form } from 'formik';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
-import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
-import RoleModel from '../../../../models/Roles/roleModel';
-import { DataGrid, GridColDef, GridRowSelectionModel, useGridApiRef } from '@mui/x-data-grid';
-import { RoleDto } from '../../../../services/role/dto/roleDto';
-import { TextTranslate } from '../../../../components/TableLanguage';
+import { enqueueSnackbar } from 'notistack';
 import { IChiNhanhRoles, IUserRoleDto } from '../../../../models/Roles/userRoleDto';
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import TableRoleChiNhanh from '../../../../components/Table/RoleChiNhanh';
 import roleService from '../../../../services/role/roleService';
-import { StringArraySupportOption } from 'prettier';
 
 export default function ModalAddUser({
     isShowModal,
@@ -61,25 +55,27 @@ export default function ModalAddUser({
     const [googleDrive_fileId, setGoogleDrive_fileId] = useState('');
     const [fileImage, setFileImage] = useState<File>({} as File); // file image
     const [showPassword, setShowPassword] = useState<boolean>(false); // file image
+    const [showPasswordNew, setShowPasswordNew] = useState<boolean>(false); // file image
     const [changePassword, setChangePassword] = useState<boolean>(false); // file image
-    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [isActive, setIsActive] = useState<boolean>(true); // file image
     const [chiNhanhRoles, setChiNhanhRoles] = useState<IChiNhanhRoles[]>([]);
     const [lstChosed, setLstChosed] = useState<IUserRoleDto[]>([]);
 
-    const [user, setUser] = useState<CreateOrUpdateUserInput>({
-        userName: '',
-        password: ''
-    } as CreateOrUpdateUserInput);
-
     const initialValues = {
-        userId: 0,
-        nhanSuId: user?.nhanSuId,
-        emailAddress: user?.emailAddress,
-        userName: user?.userName,
-        password: user?.password,
-        passwordNew: user?.password,
-        confirmPassword: user?.password,
-        changePassword: false
+        id: 0,
+        nhanSuId: '',
+        emailAddress: '',
+        userName: '',
+        password: '',
+        passwordNew: '',
+        confirmPassword: '',
+        changePassword: false,
+        isActive: false,
+        isAdmin: false,
+        idChiNhanhMacDinh: '',
+        phoneNumber: '',
+        name: '',
+        surname: ''
     };
 
     const confirmPasswordValidation = (
@@ -102,37 +98,48 @@ export default function ModalAddUser({
         }
     };
 
+    const passwordValidation = (userId: number, changePassword: boolean) => {
+        if (userId === 0) {
+            return Yup.string()
+                .required('Vui lòng nhập mật khẩu')
+                .matches(
+                    AppConsts.passwordRegex,
+                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                );
+        } else {
+            if (changePassword) {
+                return Yup.string().required('Vui lòng nhập khẩu hiện tại');
+            }
+            return Yup.string();
+        }
+    };
+
     const rules = Yup.object().shape({
         // nhanSuId: Yup.string().required('Vui lòng chọn nhân viên'),
         emailAddress: Yup.string()
             .matches(AppConsts.emailRegex, 'Email không hợp lệ')
             .required('Vui lòng nhập email'),
         userName: Yup.string().required('Vui lòng nhập tên truy cập'),
-        password: Yup.string()
-            .required('Vui lòng nhập mật khẩu')
-            .matches(
-                AppConsts.passwordRegex,
-                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-            ),
+        password: Yup.lazy((value: any, schema: any) => {
+            return passwordValidation(schema.parent.userId, schema.parent.changePassword);
+        }),
         passwordNew: Yup.string().when(['changePassword'], {
             is: (changePassword: boolean) => {
                 return changePassword;
             },
             then: (schema: any) => {
-                return schema.matches(
-                    AppConsts.passwordRegex,
-                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-                );
+                return schema
+                    .required('Vui lòng nhập khẩu hiện mới')
+                    .matches(
+                        AppConsts.passwordRegex,
+                        'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                    );
             }
         }),
 
-        // confirmPassword: Yup.string().oneOf(
-        //     [Yup.ref('password'), ''],
-        //     'Mật khẩu xác nhận phải trùng khớp'
-        // )
         confirmPassword: Yup.lazy((value: any, schema: any) => {
             return confirmPasswordValidation(
-                schema.parent.userId,
+                schema.parent.id,
                 schema.parent.changePassword,
                 schema.parent.password,
                 schema.parent.passwordNew
@@ -146,39 +153,32 @@ export default function ModalAddUser({
 
     const GetInforUser = async () => {
         const userEdit = await userService.get(userId);
-        setUser(userEdit);
-
-        initialValues.userId = userEdit?.id;
-        initialValues.nhanSuId = userEdit?.nhanSuId;
+        initialValues.id = userEdit?.id;
+        initialValues.nhanSuId = userEdit?.nhanSuId as string;
         initialValues.emailAddress = userEdit?.emailAddress;
         initialValues.userName = userEdit?.userName;
+        initialValues.name = userEdit?.name;
+        initialValues.surname = userEdit?.surname;
+        initialValues.phoneNumber = userEdit?.phoneNumber;
         initialValues.password = '';
         initialValues.passwordNew = '';
         initialValues.confirmPassword = '';
         initialValues.changePassword = false;
+        initialValues.isActive = userEdit.isActive;
+        initialValues.idChiNhanhMacDinh = userEdit?.idChiNhanhMacDinh as string;
+        setIsActive(userEdit?.isActive ?? false);
     };
 
     useEffect(() => {
         if (isShowModal) {
             if (userId === 0) {
-                setUser({
-                    nhanSuId: '',
-                    userName: '',
-                    password: '',
-                    name: '',
-                    surname: '',
-                    emailAddress: '',
-                    phoneNumber: '',
-                    idChiNhanhMacDinh: idChiNhanh,
-                    isActive: true
-                } as CreateOrUpdateUserInput);
-
-                initialValues.userId = 0;
+                initialValues.id = 0;
                 initialValues.emailAddress = '';
                 initialValues.userName = '';
                 initialValues.passwordNew = '';
                 initialValues.confirmPassword = '';
                 initialValues.changePassword = false;
+                initialValues.isActive = true;
             } else {
                 GetInforUser();
             }
@@ -196,26 +196,8 @@ export default function ModalAddUser({
     }, [isShowModal]);
 
     const handleClickShowPassword = () => setShowPassword((show: boolean) => !show);
+    const handleClickShowPasswordNew = () => setShowPasswordNew((show: boolean) => !show);
 
-    const changeNhanVien = async (item: any) => {
-        const arrTenNV = item?.tenNhanVien.split(' ');
-        let surName = ''; // họ
-        if (arrTenNV.length > 0) {
-            surName = arrTenNV[0];
-        }
-        setUser({
-            ...user,
-            nhanSuId: item?.id,
-            phoneNumber: item?.soDienThoai,
-            name: item?.tenNhanVien,
-            surname: surName
-        } as CreateOrUpdateUserInput);
-        setAvatar(item?.avatar);
-        initialValues.nhanSuId = item?.id;
-    };
-    const changeChiNhanh = async (item: any) => {
-        setUser({ ...user, idChiNhanhMacDinh: item?.id } as CreateOrUpdateUserInput);
-    };
     const choseImage = async (pathFile: string, file: File) => {
         if (!utils.checkNull(googleDrive_fileId)) {
             await uploadFileService.GoogleApi_RemoveFile_byId(googleDrive_fileId);
@@ -231,39 +213,63 @@ export default function ModalAddUser({
         setLstChosed(lst);
     };
 
-    const checkSaveDB = async () => {
+    const checkSaveDB = async (user: any) => {
+        const existUser = await userService.CheckExistUser(userId, user?.userName);
+        if (existUser) {
+            enqueueSnackbar('Người dùng đã tồn tại', {
+                variant: 'error',
+                autoHideDuration: 3000
+            });
+            return false;
+        }
+        const existEmail = await userService.CheckExistEmail(userId, user?.emailAddress);
+        if (existEmail) {
+            enqueueSnackbar('Email đã tồn tại', {
+                variant: 'error',
+                autoHideDuration: 3000
+            });
+            return false;
+        }
+        const response = await userService.CheckMatchesPassword(userId, user?.password);
+        if (!response) {
+            enqueueSnackbar('Mật khẩu hiện tại không đúng', {
+                variant: 'error',
+                autoHideDuration: 3000
+            });
+            return false;
+        }
         return true;
     };
-    const saveUser = async () => {
-        const userIdNew = 0;
-        console.log('init ', initialValues);
-        const check = await checkSaveDB();
-        // if (userId == 0) {
-        //     const data = await userService.CreateUser(user);
-        //     if (data !== null) {
-        //         userIdNew = data.id;
-
-        //         setObjAlert({
-        //             show: true,
-        //             type: 1,
-        //             mes: 'Thêm mới người dùng thành công'
-        //         });
-        //     }
-        //     console.log('CreateUser ', data, user);
-        // } else {
-        //     const data = await userService.UpdateUser(user);
-        //     if (data !== null) {
-        //         userIdNew = userId;
-        //         setObjAlert({
-        //             show: true,
-        //             type: 1,
-        //             mes: 'Cập nhật người dùng thành công'
-        //         });
-        //     }
-        // }
-        // // todo userRole: list [userId, roleId, idChiNhanh]
-        // await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
-        // onOk();
+    const saveUser = async (values: any) => {
+        let userIdNew = 0;
+        const checkDB = await checkSaveDB(values);
+        if (!checkDB) {
+            return;
+        }
+        values.nhanSuId = values?.nhanSuId == '' ? null : values.nhanSuId;
+        values.idChiNhanhMacDinh =
+            values?.idChiNhanhMacDinh == '' ? null : values.idChiNhanhMacDinh;
+        if (userId == 0) {
+            const data = await userService.CreateUser(values);
+            if (data !== null) {
+                userIdNew = data.id;
+                enqueueSnackbar('Thêm mới người dùng thành công', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
+            }
+        } else {
+            const data = await userService.UpdateUser(values);
+            if (data !== null) {
+                userIdNew = userId;
+                enqueueSnackbar('Cập nhật người dùng thành công', {
+                    variant: 'success',
+                    autoHideDuration: 3000
+                });
+            }
+        }
+        await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
+        onOk();
     };
 
     const iconPassword =
@@ -284,6 +290,24 @@ export default function ModalAddUser({
                   )
               }
             : {};
+    const iconPasswordNew = (passNew: string) =>
+        userId !== 0 && !utils.checkNull(passNew)
+            ? {
+                  endAdornment: (
+                      <InputAdornment position="end">
+                          <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPasswordNew}
+                              // onMouseDown={
+                              //     handleMouseDownPassword
+                              // }
+                              edge="end">
+                              {showPasswordNew ? <Visibility /> : <VisibilityOff />}
+                          </IconButton>
+                      </InputAdornment>
+                  )
+              }
+            : {};
     return (
         <>
             <Dialog open={isShowModal} maxWidth={'sm'} fullWidth onClose={onCancel}>
@@ -298,7 +322,7 @@ export default function ModalAddUser({
                     <Formik
                         initialValues={initialValues}
                         validationSchema={rules}
-                        onSubmit={saveUser}>
+                        onSubmit={(values) => saveUser(values)}>
                         {({
                             isSubmitting,
                             handleChange,
@@ -333,10 +357,24 @@ export default function ModalAddUser({
                                                             )
                                                         }
                                                         dataNhanVien={dataNhanVien}
-                                                        idChosed={user?.nhanSuId}
+                                                        idChosed={values?.nhanSuId}
                                                         handleChoseItem={(item: any) => {
-                                                            changeNhanVien(item);
+                                                            const arrTenNV =
+                                                                item?.tenNhanVien.split(' ');
+                                                            let surName = ''; // họ
+                                                            if (arrTenNV.length > 0) {
+                                                                surName = arrTenNV[0];
+                                                            }
                                                             setFieldValue('nhanSuId', item?.id);
+                                                            setFieldValue(
+                                                                'name',
+                                                                item?.tenNhanVien
+                                                            );
+                                                            setFieldValue('surname', surName);
+                                                            setFieldValue(
+                                                                'phoneNumber',
+                                                                item?.soDienThoai
+                                                            );
                                                         }}
                                                     />
                                                     <TextField
@@ -361,10 +399,6 @@ export default function ModalAddUser({
                                                                 'userName',
                                                                 e.target.value
                                                             );
-                                                            setUser({
-                                                                ...user,
-                                                                userName: e.target.value
-                                                            });
                                                         }}
                                                         helperText={
                                                             touched.userName &&
@@ -395,10 +429,6 @@ export default function ModalAddUser({
                                                                 'emailAddress',
                                                                 e.target.value
                                                             );
-                                                            setUser({
-                                                                ...user,
-                                                                emailAddress: e.target.value
-                                                            });
                                                         }}
                                                         helperText={
                                                             touched.emailAddress &&
@@ -415,11 +445,16 @@ export default function ModalAddUser({
                                                 <AutocompleteChiNhanh
                                                     label="Chi nhánh mặc định"
                                                     dataChiNhanh={dataChiNhanh}
-                                                    idChosed={user?.idChiNhanhMacDinh || ''}
-                                                    handleChoseItem={changeChiNhanh}
+                                                    idChosed={values?.idChiNhanhMacDinh || ''}
+                                                    handleChoseItem={(item: any) => {
+                                                        setFieldValue(
+                                                            'idChiNhanhMacDinh',
+                                                            item?.id
+                                                        );
+                                                    }}
                                                 />
                                             </Grid>
-                                            {userId !== 0 && (
+                                            {userId !== 0 && isActive && (
                                                 <Grid item xs={12}>
                                                     <FormControlLabel
                                                         control={
@@ -455,10 +490,6 @@ export default function ModalAddUser({
                                                                 'password',
                                                                 e.target.value
                                                             );
-                                                            setUser({
-                                                                ...user,
-                                                                password: e.target.value
-                                                            });
                                                         }}
                                                         label={
                                                             <label style={{ fontSize: '13px' }}>
@@ -496,7 +527,11 @@ export default function ModalAddUser({
                                                             size="small"
                                                             fullWidth
                                                             name="passwordNew"
-                                                            type="password"
+                                                            type={
+                                                                showPasswordNew
+                                                                    ? 'text'
+                                                                    : 'password'
+                                                            }
                                                             value={values?.passwordNew || ''}
                                                             label={
                                                                 <label style={{ fontSize: '13px' }}>
@@ -519,6 +554,9 @@ export default function ModalAddUser({
                                                                     </span>
                                                                 )
                                                             }
+                                                            InputProps={iconPasswordNew(
+                                                                values.passwordNew
+                                                            )}
                                                         />
                                                     </Grid>
                                                 </>
@@ -531,13 +569,6 @@ export default function ModalAddUser({
                                                         type="password"
                                                         name="confirmPassword"
                                                         onChange={handleChange}
-                                                        // onChange={(e) => {
-                                                        //     handleChange;
-                                                        //     setUser({
-                                                        //         ...user,
-                                                        //         confirmPassword: e.target.value
-                                                        //     });
-                                                        // }}
                                                         value={values?.confirmPassword || ''}
                                                         label={
                                                             <label style={{ fontSize: '13px' }}>
@@ -573,31 +604,25 @@ export default function ModalAddUser({
                                                             : '8px!important'
                                                 }}>
                                                 <FormGroup>
-                                                    <FormControlLabel
-                                                        control={<Checkbox size="small" />}
-                                                        label="Là quản trị viên"
-                                                        name="isAdmin"
-                                                        value={
-                                                            user?.isAdmin === true ? true : false
-                                                        }
-                                                        onChange={() =>
-                                                            setUser({
-                                                                ...user,
-                                                                isAdmin: !user?.isAdmin
-                                                            })
-                                                        }
-                                                        checked={
-                                                            user?.isAdmin === true ? true : false
-                                                        }
-                                                    />
-                                                    {userId !== 0 && !user?.isActive && (
+                                                    {isActive && (
+                                                        <FormControlLabel
+                                                            control={<Checkbox size="small" />}
+                                                            label="Là quản trị viên"
+                                                            name="isAdmin"
+                                                            value={values?.isAdmin}
+                                                            onChange={handleChange}
+                                                            checked={values?.isAdmin ?? false}
+                                                        />
+                                                    )}
+
+                                                    {userId !== 0 && !isActive && (
                                                         <FormControlLabel
                                                             control={
                                                                 <Checkbox
                                                                     name="isActive"
-                                                                    value={user?.isActive}
+                                                                    value={values?.isActive}
                                                                     onChange={handleChange}
-                                                                    checked={user?.isActive}
+                                                                    checked={values?.isActive}
                                                                     size="small"
                                                                 />
                                                             }
