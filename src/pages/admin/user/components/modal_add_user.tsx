@@ -42,6 +42,7 @@ import { IChiNhanhRoles, IUserRoleDto } from '../../../../models/Roles/userRoleD
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import TableRoleChiNhanh from '../../../../components/Table/RoleChiNhanh';
 import roleService from '../../../../services/role/roleService';
+import { StringArraySupportOption } from 'prettier';
 
 export default function ModalAddUser({
     isShowModal,
@@ -71,24 +72,33 @@ export default function ModalAddUser({
     } as CreateOrUpdateUserInput);
 
     const initialValues = {
+        userId: 0,
         nhanSuId: user?.nhanSuId,
         emailAddress: user?.emailAddress,
         userName: user?.userName,
         password: user?.password,
         passwordNew: user?.password,
-        confirmPassword: user?.password
+        confirmPassword: user?.password,
+        changePassword: false
     };
 
-    const confirmPasswordValidation = (userId: number, password: string, passwordNew: string) => {
-        if (userId === 0 || !password) {
-            console.log('inbto ', password);
+    const confirmPasswordValidation = (
+        userId: number,
+        changePassword: boolean,
+        password: string,
+        passwordNew: string
+    ) => {
+        if (userId === 0) {
             return Yup.string()
                 .required('Vui lòng xác nhận mật khẩu')
                 .oneOf([password], 'Mật khẩu xác nhận phải trùng khớp');
         } else {
-            return Yup.string()
-                .required('Vui lòng xác nhận mật khẩu')
-                .oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
+            if (changePassword) {
+                return Yup.string()
+                    .required('Vui lòng xác nhận mật khẩu')
+                    .oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
+            }
+            return Yup.string();
         }
     };
 
@@ -98,11 +108,12 @@ export default function ModalAddUser({
             .matches(AppConsts.emailRegex, 'Email không hợp lệ')
             .required('Vui lòng nhập email'),
         userName: Yup.string().required('Vui lòng nhập tên truy cập'),
-        password: Yup.string().matches(
-            AppConsts.passwordRegex,
-            'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-        ),
-
+        password: Yup.string()
+            .required('Vui lòng nhập mật khẩu')
+            .matches(
+                AppConsts.passwordRegex,
+                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+            ),
         passwordNew: Yup.string().when(['changePassword'], {
             is: (changePassword: boolean) => {
                 return changePassword;
@@ -114,29 +125,19 @@ export default function ModalAddUser({
                 );
             }
         }),
-        // .when('userId', {
-        //     is: (userId: number) => userId !== 0,
-        //     then: Yup.string().test(
-        //         'password-match',
-        //         'Mật khẩu không khớp với mật khẩu trong cơ sở dữ liệu',
-        //         async (params: type) => {
-        //             const passwordMathesDB = true; // todo
-        //             return passwordMathesDB;
-        //         }
-        //     )
-        // }),
-        confirmPassword: Yup.string().oneOf(
-            [Yup.ref('password'), ''],
-            'Mật khẩu xác nhận phải trùng khớp'
-        )
-        // confirmPassword: Yup.lazy((value, schema) => {
-        //     console.log('schema ', schema);
-        //     return confirmPasswordValidation(
-        //         schema.parent.userId,
-        //         schema.parent.password,
-        //         schema.parent.passwordNew
-        //     );
-        // })
+
+        // confirmPassword: Yup.string().oneOf(
+        //     [Yup.ref('password'), ''],
+        //     'Mật khẩu xác nhận phải trùng khớp'
+        // )
+        confirmPassword: Yup.lazy((value: any, schema: any) => {
+            return confirmPasswordValidation(
+                schema.parent.userId,
+                schema.parent.changePassword,
+                schema.parent.password,
+                schema.parent.passwordNew
+            );
+        })
     });
 
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
@@ -146,20 +147,38 @@ export default function ModalAddUser({
     const GetInforUser = async () => {
         const userEdit = await userService.get(userId);
         setUser(userEdit);
-        console.log('user ', userEdit);
 
+        initialValues.userId = userEdit?.id;
         initialValues.nhanSuId = userEdit?.nhanSuId;
         initialValues.emailAddress = userEdit?.emailAddress;
         initialValues.userName = userEdit?.userName;
+        initialValues.password = '';
+        initialValues.passwordNew = '';
+        initialValues.confirmPassword = '';
+        initialValues.changePassword = false;
     };
 
     useEffect(() => {
         if (isShowModal) {
             if (userId === 0) {
                 setUser({
+                    nhanSuId: '',
+                    userName: '',
+                    password: '',
+                    name: '',
+                    surname: '',
+                    emailAddress: '',
+                    phoneNumber: '',
                     idChiNhanhMacDinh: idChiNhanh,
                     isActive: true
                 } as CreateOrUpdateUserInput);
+
+                initialValues.userId = 0;
+                initialValues.emailAddress = '';
+                initialValues.userName = '';
+                initialValues.passwordNew = '';
+                initialValues.confirmPassword = '';
+                initialValues.changePassword = false;
             } else {
                 GetInforUser();
             }
@@ -210,36 +229,41 @@ export default function ModalAddUser({
     };
     const getRoleChiNhanh_fromChild = (lst: IUserRoleDto[]) => {
         setLstChosed(lst);
-        console.log('getRoleChiNhanh_fromChild ', lst);
+    };
+
+    const checkSaveDB = async () => {
+        return true;
     };
     const saveUser = async () => {
-        let userIdNew = 0;
-        if (userId == 0) {
-            const data = await userService.CreateUser(user);
-            if (data !== null) {
-                userIdNew = data.id;
+        const userIdNew = 0;
+        console.log('init ', initialValues);
+        const check = await checkSaveDB();
+        // if (userId == 0) {
+        //     const data = await userService.CreateUser(user);
+        //     if (data !== null) {
+        //         userIdNew = data.id;
 
-                setObjAlert({
-                    show: true,
-                    type: 1,
-                    mes: 'Thêm mới người dùng thành công'
-                });
-            }
-            console.log('CreateUser ', data, user);
-        } else {
-            const data = await userService.UpdateUser(user);
-            if (data !== null) {
-                userIdNew = userId;
-                setObjAlert({
-                    show: true,
-                    type: 1,
-                    mes: 'Cập nhật người dùng thành công'
-                });
-            }
-        }
-        // todo userRole: list [userId, roleId, idChiNhanh]
-        await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
-        onOk();
+        //         setObjAlert({
+        //             show: true,
+        //             type: 1,
+        //             mes: 'Thêm mới người dùng thành công'
+        //         });
+        //     }
+        //     console.log('CreateUser ', data, user);
+        // } else {
+        //     const data = await userService.UpdateUser(user);
+        //     if (data !== null) {
+        //         userIdNew = userId;
+        //         setObjAlert({
+        //             show: true,
+        //             type: 1,
+        //             mes: 'Cập nhật người dùng thành công'
+        //         });
+        //     }
+        // }
+        // // todo userRole: list [userId, roleId, idChiNhanh]
+        // await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
+        // onOk();
     };
 
     const iconPassword =
@@ -275,7 +299,14 @@ export default function ModalAddUser({
                         initialValues={initialValues}
                         validationSchema={rules}
                         onSubmit={saveUser}>
-                        {({ handleChange, values, errors, touched, setFieldValue }) => (
+                        {({
+                            isSubmitting,
+                            handleChange,
+                            values,
+                            errors,
+                            touched,
+                            setFieldValue
+                        }) => (
                             <Form>
                                 <TabContext value={tabIndex}>
                                     <TabList onChange={handleChangeTab}>
@@ -324,7 +355,7 @@ export default function ModalAddUser({
                                                                 </span>
                                                             </label>
                                                         }
-                                                        value={user?.userName || ''}
+                                                        value={values?.userName || ''}
                                                         onChange={(e) => {
                                                             setFieldValue(
                                                                 'userName',
@@ -358,8 +389,7 @@ export default function ModalAddUser({
                                                                 </span>
                                                             </label>
                                                         }
-                                                        value={user?.emailAddress || ''}
-                                                        // onChange={handleChange}
+                                                        value={values?.emailAddress || ''}
                                                         onChange={(e) => {
                                                             setFieldValue(
                                                                 'emailAddress',
@@ -395,12 +425,16 @@ export default function ModalAddUser({
                                                         control={
                                                             <Checkbox
                                                                 size="small"
-                                                                checked={changePassword}
-                                                                onChange={() =>
+                                                                checked={values?.changePassword}
+                                                                onChange={() => {
                                                                     setChangePassword(
                                                                         () => !changePassword
-                                                                    )
-                                                                }
+                                                                    );
+                                                                    setFieldValue(
+                                                                        'changePassword',
+                                                                        !changePassword
+                                                                    );
+                                                                }}
                                                             />
                                                         }
                                                         label="Đổi mật khẩu"
@@ -415,7 +449,7 @@ export default function ModalAddUser({
                                                         fullWidth
                                                         name="password"
                                                         type={showPassword ? 'text' : 'password'}
-                                                        // onChange={handleChange}
+                                                        value={values?.password || ''}
                                                         onChange={(e) => {
                                                             setFieldValue(
                                                                 'password',
@@ -426,7 +460,6 @@ export default function ModalAddUser({
                                                                 password: e.target.value
                                                             });
                                                         }}
-                                                        value={user?.password || ''}
                                                         label={
                                                             <label style={{ fontSize: '13px' }}>
                                                                 Mật khẩu{' '}
