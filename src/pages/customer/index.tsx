@@ -388,6 +388,25 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         fileDowloadService.downloadExportFile(result);
         this.setState({ listItemSelectedModel: [] });
     };
+    DataGrid_handleAction = async (item: any) => {
+        switch (parseInt(item.id)) {
+            case 1: // chuyennhom
+                this.setState({
+                    isShowModalChuyenNhom: true
+                });
+                break;
+            case 2:
+                {
+                    this.setState({ isShowConfirmDelete: true });
+                }
+                break;
+            case 3:
+                {
+                    await this.exportSelectedRow();
+                }
+                break;
+        }
+    };
     chuyenNhomKhach = async (itemChosed: IList) => {
         const ok = await khachHangService.ChuyenNhomKhachHang(
             this.state.rowSelectionModel,
@@ -820,7 +839,34 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </Box>
                             </Grid>
                             <Grid item lg={9} md={9} sm={9} xs={12}>
-                                {this.state.listItemSelectedModel.length > 0 ? (
+                                {this.state.listItemSelectedModel.length > 0 && (
+                                    <ActionRowSelect
+                                        lstOption={[
+                                            {
+                                                id: '1',
+                                                text: 'Chuyển nhóm khách'
+                                            },
+                                            {
+                                                id: '2',
+                                                text: 'Xóa khách hàng'
+                                            },
+                                            {
+                                                id: '3',
+                                                text: 'Xuất danh sách'
+                                            }
+                                        ]}
+                                        countRowSelected={this.state.listItemSelectedModel.length}
+                                        title="khách hàng"
+                                        choseAction={this.DataGrid_handleAction}
+                                        removeItemChosed={() => {
+                                            this.setState({
+                                                listItemSelectedModel: [],
+                                                checkAllRow: false
+                                            });
+                                        }}
+                                    />
+                                )}
+                                {/* {this.state.listItemSelectedModel.length > 0 ? (
                                     <Stack
                                         spacing={1}
                                         marginBottom={2}
@@ -859,11 +905,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                         backgroundColor: '#cccc'
                                                     }
                                                 }}>
-                                                <Stack
-                                                    alignContent={'center'}
-                                                    justifyContent={'start'}
-                                                    textAlign={'left'}
-                                                    spacing={0.5}>
+                                                <Stack textAlign={'left'} spacing={0.5}>
                                                     <Button
                                                         startIcon={'Chuyển nhóm khách'}
                                                         sx={{ color: 'black' }}
@@ -911,19 +953,19 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                             }}
                                         />
                                     </Stack>
-                                ) : null}
+                                ) : null} */}
                                 <div
                                     className="page-box-right"
                                     style={{
                                         marginTop:
-                                            this.state.rowSelectionModel.length > 0 ? '8px' : 0
+                                            this.state.listItemSelectedModel.length > 0 ? '8px' : 0
                                     }}>
                                     <DataGrid
                                         disableRowSelectionOnClick
                                         rowHeight={46}
                                         autoHeight={this.state.totalItems === 0}
                                         className={
-                                            this.state.rowSelectionModel.length > 0
+                                            this.state.listItemSelectedModel.length > 0
                                                 ? 'data-grid-row-chosed'
                                                 : 'data-grid-row'
                                         }

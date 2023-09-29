@@ -93,9 +93,10 @@ body .font-normal {
     padding-bottom: 5px;
 }
 
-.MuiAutocomplete-root .MuiOutlinedInput-root {
+
+/* .MuiAutocomplete-root .MuiOutlinedInput-root {
     padding: 3px;
-}
+} */
 
 .table-head tr th {
     padding: 3px 5px;
@@ -275,9 +276,9 @@ body .font-normal {
 }
 
 .autocomplete-option {
-    border-bottom: 1px dashed var(--border-color);
+    /* border-bottom: 1px dashed var(--border-color); */
     font-size: var(--font-size-main);
-    padding: 10px
+    padding: 10px!important
 }
 
 

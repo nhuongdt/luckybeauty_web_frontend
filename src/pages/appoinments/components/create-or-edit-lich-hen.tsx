@@ -41,7 +41,7 @@ interface ICreateOrEditProps {
     visible: boolean;
     onCancel: () => void;
     idLichHen: string;
-    onOk: () => void;
+    onOk: (idBooking: string) => void;
 }
 
 class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
@@ -83,7 +83,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                   variant: 'error',
                   autoHideDuration: 3000
               });
-        this.props.onOk();
+        this.props.onOk(createResult.id);
     };
     render(): ReactNode {
         const { visible, onCancel } = this.props;

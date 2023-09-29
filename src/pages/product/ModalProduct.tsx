@@ -400,9 +400,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     fullWidth
                                     autoFocus
                                     label={
-                                        <Typography
-                                            //color="#4C4B4C"
-                                            variant="subtitle2">
+                                        <Typography variant="body2">
                                             Tên {product.tenLoaiHangHoa?.toLocaleLowerCase()}
                                             <span className="text-danger"> *</span>
                                         </Typography>
@@ -564,7 +562,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions style={{ paddingBottom: '20px' }}>
                     <Button
                         variant="outlined"
                         sx={{ color: 'var(--color-main)' }}

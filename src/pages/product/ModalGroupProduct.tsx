@@ -355,7 +355,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                         </Grid>
                     </Grid>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions style={{ paddingBottom: '20px' }}>
                     <Button
                         variant="outlined"
                         sx={{

@@ -66,7 +66,7 @@
         max-height: calc(70vh - 32px)!important;
     }
     .page-box-left {
-        min-height: calc(75vh - 44px)!important;
-        max-height: calc(75vh - 44px)!important;
+        min-height: calc(80vh - 32px)!important;
+        max-height: calc(80vh - 32px)!important;
     }
 }

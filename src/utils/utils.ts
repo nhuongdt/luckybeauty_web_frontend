@@ -6,7 +6,6 @@
 // import { L } from '../lib/abpUtility'
 import { concat } from 'lodash';
 import { flatRoutes } from '../components/routers/index';
-import dayjs from 'dayjs';
 
 declare let abp: any;
 
@@ -323,26 +322,6 @@ class Utils {
             chuoi.trim().substr(0, 1).toUpperCase() + chuoi.substr(2) + ' đồng'
         ); /*; chuoi + ' đồng';*/
     }
-
-    getMonth = (month = dayjs().month()) => {
-        const year = dayjs().year();
-        const firstDayOfMonth = dayjs(new Date(year, month, -1)).day();
-        let currentMonthCount = 0 - firstDayOfMonth;
-        const daysMatrix = new Array(5).fill([]).map(() => {
-            return new Array(7).fill(null).map(() => {
-                currentMonthCount++;
-                return dayjs(new Date(year, month, currentMonthCount));
-            });
-        });
-        return daysMatrix;
-    };
-    getWeek = (inputDate = dayjs().date()) => {
-        const date = dayjs(inputDate);
-        // Tìm ngày đầu của tuần (thứ 2)
-        const startOfWeek = date.startOf('week').add(1, 'day');
-        // Tìm ngày cuối của tuần (chủ nhật)
-        const endOfWeek = date.endOf('week').add(1, 'day');
-    };
 }
 
 export default new Utils();

@@ -108,6 +108,7 @@ export default function TabDiary({ idHoaDon }: any) {
                 disableRowSelectionOnClick
                 autoHeight
                 hideFooter
+                rowHeight={46}
                 columns={columns}
                 rows={phieuThuChi}
                 localeText={TextTranslate}

@@ -403,10 +403,10 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}>
                                             {' '}
-                                            &#123;TienKhachThieu&#125;{' '}
+                                            &#123;NoHoaDon&#125;{' '}
                                         </label>
                                         <Typography variant="subtitle2">
-                                            Giá trị tiền khách thiếu
+                                            Tiền khách nợ của hóa đơn hiện tại
                                         </Typography>
                                     </Stack>
                                 </Stack>
@@ -414,10 +414,10 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}>
                                             {' '}
-                                            &#123;TienKhachThieu_BangChu&#125;{' '}
+                                            &#123;NoHoaDon_BangChu&#125;{' '}
                                         </label>
                                         <Typography variant="subtitle2">
-                                            Tiền khách thiếu (bằng chữ)
+                                            Tiền khách nợ của hóa đơn hiện tại (bằng chữ)
                                         </Typography>
                                     </Stack>
                                 </Stack>

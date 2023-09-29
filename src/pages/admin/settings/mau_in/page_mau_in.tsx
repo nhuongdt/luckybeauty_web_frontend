@@ -392,15 +392,12 @@ export default function PageMauIn({ xx }: any) {
                         {idMauInChosed.length === 36 && (
                             <Grid item xs={12} sm={12} md={6} lg={6}>
                                 <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
-                                    <Button
-                                        variant="contained"
-                                        color="secondary"
-                                        onClick={UpdateMauIn}>
+                                    <Button variant="contained" onClick={UpdateMauIn}>
                                         Lưu mẫu in
                                     </Button>
                                     <Button
-                                        variant="contained"
-                                        sx={{ bgcolor: '#854545' }}
+                                        variant="outlined"
+                                        color="error"
                                         onClick={() => {
                                             setInforObjDelete(
                                                 new PropConfirmOKCancel({
