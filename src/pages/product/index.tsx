@@ -758,6 +758,9 @@ export default function PageProduct() {
                                 countRowSelected={rowSelectionModel.length}
                                 title="dịch vụ"
                                 choseAction={DataGrid_handleAction}
+                                removeItemChosed={() => {
+                                    setRowSelectionModel([]);
+                                }}
                             />
                         )}
 
