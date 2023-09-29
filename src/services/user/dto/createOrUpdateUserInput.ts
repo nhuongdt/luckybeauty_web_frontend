@@ -8,7 +8,7 @@ export interface CreateOrUpdateUserInput {
     roleNames: string[];
     password: string;
     id: number;
-    nhanSuId: string;
+    nhanSuId: string | null;
     isAdmin?: boolean;
     idChiNhanhMacDinh?: string | null;
 }

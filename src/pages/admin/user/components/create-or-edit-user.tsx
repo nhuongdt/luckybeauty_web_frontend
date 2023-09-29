@@ -36,6 +36,7 @@ import AppConsts from '../../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
 import authenticationStore from '../../../../stores/authenticationStore';
 import Cookies from 'js-cookie';
+import { Tracing } from 'trace_events';
 //import rules from './createOrUpdateUser.validation';
 export interface ICreateOrEditUserProps {
     visible: boolean;
@@ -76,7 +77,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
             } else {
                 await userService.update({
                     id: formRef.id,
-                    nhanSuId: values.nhanSuId,
+                    nhanSuId: values.nhanSuId as string,
                     emailAddress: values.emailAddress,
                     phoneNumber: values.phoneNumber,
                     isActive: values.isActive,
