@@ -20,8 +20,8 @@ import { Link } from 'react-router-dom';
 class SettingPages extends Component {
     render(): ReactNode {
         return (
-            <Box>
-                <Box padding={'16px 32px'}>
+            <Box padding={'16px'}>
+                <Box>
                     <Typography
                         fontWeight="700"
                         fontFamily={'Roboto'}
@@ -30,13 +30,14 @@ class SettingPages extends Component {
                         Cài đặt
                     </Typography>
                 </Box>
-                <Box padding={'16px 32px'}>
-                    <Grid container spacing={1}>
+                <Box marginTop={'16px'}>
+                    <Grid container spacing={2}>
                         <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
+                                bgcolor={'#FFF'}
                                 padding={'16px 32px'}
                                 borderRadius={4}
-                                border={'1px solid #E0E4EB'}
+                                //border={'1px solid #E0E4EB'}
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
@@ -115,9 +116,10 @@ class SettingPages extends Component {
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
+                                bgcolor={'#FFF'}
                                 padding={'16px 32px'}
                                 borderRadius={4}
-                                border={'1px solid #E0E4EB'}
+                                //border={'1px solid #E0E4EB'}
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
@@ -158,9 +160,10 @@ class SettingPages extends Component {
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
+                                bgcolor={'#FFF'}
                                 padding={'16px 32px'}
                                 borderRadius={4}
-                                border={'1px solid #E0E4EB'}
+                                //border={'1px solid #E0E4EB'}
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
@@ -220,9 +223,10 @@ class SettingPages extends Component {
                         </Grid>
                         <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                             <Box
+                                bgcolor={'#FFF'}
                                 padding={'16px 32px'}
                                 borderRadius={4}
-                                border={'1px solid #E0E4EB'}
+                                //border={'1px solid #E0E4EB'}
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>

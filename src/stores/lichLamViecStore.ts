@@ -6,6 +6,7 @@ import lichLamViecService from '../services/nhan-vien/lich_lam_viec/lichLamViecS
 import Cookies from 'js-cookie';
 import { CreateOrEditLichLamViecDto } from '../services/nhan-vien/lich_lam_viec/dto/CreateOrEditLichLamViecDto';
 import AppConsts from '../lib/appconst';
+import { format as formatDate } from 'date-fns';
 
 class LichLamViecStore {
     listLichLamViec: PagedResultDto<LichLamViecNhanVienDto> = {
@@ -15,15 +16,15 @@ class LichLamViecStore {
     };
     createLichLamViecDto: CreateOrEditLichLamViecDto = {
         id: AppConsts.guidEmpty,
-        giaTriLap: 0,
-        idCaLamViec: '',
+        idNhanVien: AppConsts.guidEmpty,
         idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-        idNhanVien: '',
-        kieuLapLai: 0,
+        idCaLamViec: '',
+        tuNgay: formatDate(new Date(), 'yyyy-MM-dd'),
+        denNgay: '',
         lapLai: false,
-        ngayLamViec: [],
-        tuNgay: '',
-        denNgay: ''
+        kieuLapLai: 0,
+        giaTriLap: 0,
+        ngayLamViec: [] as string[]
     };
     dateFrom: Date = new Date();
     idNhanVien!: string;
@@ -37,6 +38,20 @@ class LichLamViecStore {
         this.totalPage = 0;
         this.skipCount = 1;
         this.maxResultCount = 10;
+    }
+    async createModel() {
+        this.createLichLamViecDto = {
+            id: AppConsts.guidEmpty,
+            idNhanVien: AppConsts.guidEmpty,
+            idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
+            idCaLamViec: '',
+            tuNgay: formatDate(new Date(), 'yyyy-MM-dd'),
+            denNgay: '',
+            lapLai: false,
+            kieuLapLai: 0,
+            giaTriLap: 0,
+            ngayLamViec: [] as string[]
+        };
     }
     async getLichLamViecNhanVienWeek(input: PagedRequestLichLamViecDto) {
         this.listLichLamViec.items = [];
@@ -63,6 +78,10 @@ class LichLamViecStore {
     }
     async updatePerPageChange(page: number) {
         this.maxResultCount = page;
+    }
+    async getForEdit(id: string) {
+        const data = await lichLamViecService.getForEdit(id);
+        this.createLichLamViecDto = data;
     }
 }
 export default new LichLamViecStore();

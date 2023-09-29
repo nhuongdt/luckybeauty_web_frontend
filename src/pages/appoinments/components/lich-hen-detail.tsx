@@ -43,9 +43,10 @@ const LichHenDetail: FC = () => {
                     justifyContent={'space-between'}
                     padding={'16px 24px'}
                     borderBottom="1px solid #C2C9D6">
-                    <Typography alignItems={'center'}>Chi tiết cuộc hẹn</Typography>
+                    <Typography fontSize="24px" fontWeight={700}>
+                        Chi tiết cuộc hẹn
+                    </Typography>
                     <IconButton
-                        size="small"
                         onClick={async () => {
                             await bookingStore.onShowBookingInfo();
                             bookingStore.idBooking = AppConsts.guidEmpty;

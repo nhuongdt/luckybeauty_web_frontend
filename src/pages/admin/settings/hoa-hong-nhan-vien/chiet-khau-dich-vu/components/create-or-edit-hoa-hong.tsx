@@ -61,6 +61,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                         fontSize: '24px',
                         fontWeight: '700'
                     }}>
+                    {title}
                     {onClose ? (
                         <IconButton
                             aria-label="close"

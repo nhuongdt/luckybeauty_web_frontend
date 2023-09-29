@@ -36,6 +36,7 @@ import { observer } from 'mobx-react';
 import { format as formatDate } from 'date-fns';
 import suggestStore from '../../../stores/suggestStore';
 import DatePickerRequiredCustom from '../../../components/DatetimePicker/DatePickerRequiredCustom';
+import lichLamViecStore from '../../../stores/lichLamViecStore';
 
 interface DialogComponentProps {
     open: boolean;
@@ -68,7 +69,10 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDate(event.target.value);
     };
-    const [selectedDays, setSelectedDays] = useState<string[]>([]);
+    const initValues = { ...lichLamViecStore.createLichLamViecDto, idNhanVien: idNhanVien };
+    const [selectedDays, setSelectedDays] = useState<string[]>(
+        lichLamViecStore.createLichLamViecDto?.ngayLamViec
+    );
     const handleDayToggle = (event: React.MouseEvent<HTMLElement>, newDays: string[]) => {
         setSelectedDays(newDays);
     };
@@ -85,18 +89,6 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
         //     .of(Yup.string().required('Ngày làm việc trong tuần không được để trống'))
         //     .required('Ngày làm việc trong tuần không được để trống')
     });
-    const initValues = {
-        id: AppConsts.guidEmpty,
-        idNhanVien: idNhanVien,
-        idChiNhanh: Cookies.get('IdChiNhanh') ?? '',
-        idCaLamViec: '',
-        tuNgay: '',
-        denNgay: '',
-        lapLai: false,
-        kieuLapLai: 0,
-        giaTriLap: 0,
-        ngayLamViec: [] as string[]
-    };
     return (
         <Dialog
             open={open}
@@ -131,7 +123,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                     validationSchema={rules}
                     initialValues={initValues}
                     onSubmit={async (values, helper) => {
-                        values.ngayLamViec = selectedDays;
+                        //values.ngayLamViec = selectedDays;
                         if (values.ngayLamViec.length == 0 || values.ngayLamViec == null) {
                             helper.setFieldError(
                                 'ngayLamViec',
@@ -224,14 +216,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             </span>
                                                         )
                                                 }}
-                                                defaultVal={
-                                                    values.tuNgay
-                                                        ? formatDate(
-                                                              new Date(values.tuNgay),
-                                                              'yyyy-MM-dd'
-                                                          )
-                                                        : ''
-                                                }
+                                                defaultVal={values?.tuNgay}
                                                 handleChangeDate={(value: string) => {
                                                     values.tuNgay = value;
                                                 }}
@@ -406,14 +391,17 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                         fullWidth
                                                         size="small"
                                                         orientation="horizontal"
-                                                        value={selectedDays}
+                                                        value={values.ngayLamViec}
                                                         sx={{ mt: '8px', padding: '2px' }}
-                                                        onChange={handleDayToggle}>
+                                                        onChange={(event, days) => {
+                                                            handleDayToggle(event, days);
+                                                            setFieldValue('ngayLamViec', days);
+                                                        }}>
                                                         <ToggleButton
                                                             value={AppConsts.dayOfWeek.monday}
                                                             aria-label="Monday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.monday
                                                                 )
                                                                     ? {
@@ -429,7 +417,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             value={AppConsts.dayOfWeek.tuesday}
                                                             aria-label="Tuesday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.tuesday
                                                                 )
                                                                     ? {
@@ -445,7 +433,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             value={AppConsts.dayOfWeek.wednesday}
                                                             aria-label="Wednesday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.wednesday
                                                                 )
                                                                     ? {
@@ -461,7 +449,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             value={AppConsts.dayOfWeek.thursday}
                                                             aria-label="Thursday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.thursday
                                                                 )
                                                                     ? {
@@ -477,7 +465,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             value={AppConsts.dayOfWeek.friday}
                                                             aria-label="Friday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.friday
                                                                 )
                                                                     ? {
@@ -493,7 +481,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             value={AppConsts.dayOfWeek.saturday}
                                                             aria-label="Saturday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.saturday
                                                                 )
                                                                     ? {
@@ -509,7 +497,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({
                                                             value={AppConsts.dayOfWeek.sunday}
                                                             aria-label="Sunday"
                                                             style={
-                                                                selectedDays.includes(
+                                                                values.ngayLamViec?.includes(
                                                                     AppConsts.dayOfWeek.sunday
                                                                 )
                                                                     ? {

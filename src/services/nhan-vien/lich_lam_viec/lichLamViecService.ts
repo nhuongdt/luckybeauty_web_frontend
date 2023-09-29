@@ -23,6 +23,10 @@ class LichLamViecService {
         const response = await http.post(`api/services/app/LichLamViec/Delete?id=${id}`);
         return response.data.result;
     }
+    public async getForEdit(id: string) {
+        const response = await http.get(`api/services/app/LichLamViec/GetForEdit?id=${id}`);
+        return response.data.result;
+    }
     // public async inportLichLamViec(input: FileUpload) {
     //     const result = await http.post(`api/services/app/NhanSu/Delete`);
     //     return result.data.result;

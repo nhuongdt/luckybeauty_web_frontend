@@ -10,11 +10,13 @@ import { CreateOrEditChietKhauDichVuDto } from '../services/hoa_hong/chiet_khau_
 class ChietKhauDichVuStore {
     listChietKhauDichVu!: PagedResultDto<ChietKhauDichVuItemDto>;
     createOrEditDto!: CreateOrEditChietKhauDichVuDto;
+    isChietKhauDichVu!: boolean;
     id!: string;
     constructor() {
         makeObservable(this, {
             listChietKhauDichVu: observable,
             createOrEditDto: observable,
+            isChietKhauDichVu: observable,
             id: observable,
             createModel: action,
             createOrEdit: action,
@@ -23,6 +25,9 @@ class ChietKhauDichVuStore {
             getAccordingByNhanVien: action,
             getAll: action
         });
+    }
+    async changeViewHoaHong(trangThai: boolean) {
+        this.isChietKhauDichVu = trangThai;
     }
     async createModel() {
         const idChiNhanh = Cookies.get('IdChiNhanh')?.toString() ?? AppConsts.guidEmpty;

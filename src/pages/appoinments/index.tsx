@@ -387,6 +387,8 @@ const LichHen: React.FC = () => {
     );
 };
 export default observer(LichHen);
+
+//lable header theo ngày của từng nhân viên
 function renderResourceLabelContent(args: any) {
     const lable = JSON.parse(args.resource.title);
     return (
@@ -422,15 +424,20 @@ function renderResourceLabelContent(args: any) {
         </Box>
     );
 }
+
+// render header của lịch theo tuần
 function renderDayHeaderContent(args: DayHeaderContentArg) {
     const initialView = args.view.type;
     return (
         <Box
             display={'flex'}
             padding={'6px 4px'}
-            justifyContent={initialView === 'timeGridWeek' ? 'start' : 'center'}
+            // justifyContent={initialView === 'timeGridWeek' ? 'start' : 'center'}
+            // flexDirection={initialView === 'timeGridWeek' ? 'column' : 'row'}
+            // alignItems={initialView === 'timeGridWeek' ? 'start' : 'center'}
+            justifyContent={'center'}
             flexDirection={initialView === 'timeGridWeek' ? 'column' : 'row'}
-            alignItems={initialView === 'timeGridWeek' ? 'start' : 'center'}
+            alignItems={'center'}
             minHeight={'65px'}>
             <Box fontSize={initialView === 'timeGridWeek' ? '12px' : '14px'}>
                 {formatDateFns(args.date, 'EEEE', { locale: vi })}

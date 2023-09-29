@@ -8,7 +8,8 @@ import {
     SelectChangeEvent,
     Autocomplete,
     InputAdornment,
-    Checkbox
+    Checkbox,
+    ButtonGroup
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
 import {
@@ -20,6 +21,8 @@ import {
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
+import DownloadIcon from '../../../../../images/download.svg';
+import UploadIcon from '../../../../../images/upload.svg';
 import AddIcon from '../../../../../images/add.svg';
 import SearchIcon from '../../../../../images/search-normal.svg';
 import { ReactComponent as SearchIconInput } from '../../../../../images/search-normal.svg';
@@ -459,113 +462,143 @@ class ChietKhauDichVuScreen extends Component {
         ];
         return (
             <div>
-                <Grid
-                    container
-                    sx={{
-                        height: '48px',
-                        background: '#EEF0F4',
-                        alignItems: 'center',
-                        paddingX: '8px'
-                    }}>
-                    <Grid item xs={3}>
-                        <Autocomplete
-                            options={suggestStore.suggestNhanVien}
-                            getOptionLabel={(option) => `${option.tenNhanVien}`}
-                            value={
-                                suggestStore.suggestNhanVien?.find(
-                                    (x) => x.id === this.state.idNhanVien
-                                ) ||
-                                (suggestStore.suggestNhanVien?.length > 0
-                                    ? suggestStore.suggestNhanVien[0]
-                                    : null)
-                            }
+                <Box display={'flex'} justifyContent={'space-between'} marginBottom={'16px'}>
+                    <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
+                        <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px">
+                            Hoa hồng theo dịch vụ
+                        </Typography>
+                        <TextField
+                            type="text"
                             size="small"
-                            sx={{ width: '75%' }}
-                            fullWidth
-                            disablePortal
-                            onChange={async (event, value) => {
-                                await this.setState({ idNhanVien: value?.id });
-                                await this.getDataAccordingByNhanVien(value?.id);
-                            }}
-                            renderInput={(params) => (
-                                <TextField
-                                    sx={{ bgcolor: '#fff' }}
-                                    {...params}
-                                    placeholder="Tìm tên"
-                                    InputProps={{
-                                        ...params.InputProps,
-                                        startAdornment: (
-                                            <>
-                                                {params.InputProps.startAdornment}
-                                                <InputAdornment position="start">
-                                                    <SearchIconInput />
-                                                </InputAdornment>
-                                            </>
-                                        )
-                                    }}
-                                />
-                            )}
-                        />
-                    </Grid>
-
-                    <Grid
-                        item
-                        xs={9}
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            justifyContent: 'end'
-                        }}>
-                        <Box>
-                            <TextField
-                                type="text"
-                                size="small"
-                                sx={{
-                                    '& input': { bgcolor: '#fff' },
-                                    '& .MuiInputBase-root': { pl: '0', bgcolor: '#fff' }
-                                }}
-                                placeholder="Tìm kiếm"
-                                InputProps={{
-                                    startAdornment: (
-                                        <IconButton type="button" sx={{ bgcolor: '#fff' }}>
-                                            <img src={SearchIcon} />
-                                        </IconButton>
-                                    )
-                                }}
-                            />
-                        </Box>
-                        <Box
-                            display="flex"
-                            gap="8px"
-                            justifyContent="end"
                             sx={{
-                                '& button:not(.btn-container-hover)': {
-                                    color: '#666466!important',
-                                    bgcolor: '#fff!important',
-                                    boxShadow: 'none!important',
-                                    borderColor: '#ede4ea',
-                                    textTransform: 'unset!important',
-                                    fontWeight: '400'
-                                }
+                                '& input': { bgcolor: '#fff' },
+                                '& .MuiInputBase-root': { pl: '0', bgcolor: '#fff' },
+                                marginLeft: '10px'
+                            }}
+                            placeholder="Tìm kiếm"
+                            InputProps={{
+                                startAdornment: (
+                                    <IconButton type="button" sx={{ bgcolor: '#fff' }}>
+                                        <img src={SearchIcon} />
+                                    </IconButton>
+                                )
+                            }}
+                        />
+                    </Box>
+                    <ButtonGroup
+                        variant="contained"
+                        sx={{
+                            boxShadow: 'none',
+                            gap: '8px'
+                        }}
+                        className="rounded-4px resize-height">
+                        <Button
+                            className="border-color btn-outline-hover"
+                            //hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Import')}
+                            variant="outlined"
+                            startIcon={<img src={DownloadIcon} />}
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                bgcolor: '#fff!important',
+                                height: 40
                             }}>
-                            <Button
-                                startIcon={<img src={AddIcon} />}
-                                variant="contained"
-                                sx={{ bgcolor: '#7C3367' }}
-                                onClick={() => {
-                                    this.createOrUpdateModalOpen('');
-                                }}
-                                hidden={
-                                    !abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Create')
+                            Nhập
+                        </Button>
+                        <Button
+                            className="border-color btn-outline-hover"
+                            variant="outlined"
+                            //hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Export')}
+                            startIcon={<img src={UploadIcon} />}
+                            sx={{
+                                textTransform: 'capitalize',
+                                fontWeight: '400',
+                                color: '#666466',
+                                padding: '10px 16px',
+                                borderColor: '#E6E1E6',
+                                bgcolor: '#fff!important',
+                                height: 40
+                            }}>
+                            Xuất
+                        </Button>
+                        <Button
+                            startIcon={<img src={AddIcon} />}
+                            variant="contained"
+                            sx={{ bgcolor: '#7C3367', height: 40 }}
+                            onClick={() => {
+                                this.createOrUpdateModalOpen('');
+                            }}
+                            hidden={!abpCustom.isGrandPermission('Pages.ChietKhauDichVu.Create')}
+                            className="btn-container-hover">
+                            Thêm mới
+                        </Button>
+                    </ButtonGroup>
+                </Box>
+                <Box display={'flex'} justifyContent={'space-between'} marginBottom={'8px'}>
+                    <ButtonGroup
+                        variant="contained"
+                        sx={{ gap: '8px', boxShadow: 'none', '. button': { height: '40px' } }}>
+                        <Button
+                            variant={'outlined'}
+                            sx={{
+                                fontSize: '16px',
+                                textTransform: 'unset',
+                                color: '#319DFF',
+                                backgroundColor: '#FFF',
+                                border: 'none !important',
+                                borderBottom: '2px outset #319DFF !important'
+                            }}>
+                            Theo dịch vụ
+                        </Button>
+                        <Button
+                            variant={'outlined'}
+                            sx={{
+                                fontSize: '16px',
+                                textTransform: 'unset',
+                                color: '#8492AE',
+                                backgroundColor: '#FFF',
+                                borderColor: 'transparent!important',
+                                boxShadow: 'none!important',
+                                '&:hover': {
+                                    color: '#319DFF',
+                                    backgroundColor: '#FFF',
+                                    border: 'none !important',
+                                    borderBottom: '2px outset #319DFF !important',
+                                    boxShadow: 'none!important'
                                 }
-                                className="btn-container-hover">
-                                Thêm mới
-                            </Button>
-                        </Box>
-                    </Grid>
-                </Grid>
-                <Box marginTop="8px">
+                            }}
+                            onClick={async () => {
+                                await chietKhauDichVuStore.changeViewHoaHong(false);
+                            }}>
+                            Theo hóa đơn
+                        </Button>
+                    </ButtonGroup>
+                    <Autocomplete
+                        options={suggestStore.suggestNhanVien}
+                        getOptionLabel={(option) => `${option.tenNhanVien}`}
+                        value={
+                            suggestStore.suggestNhanVien?.find(
+                                (x) => x.id === this.state.idNhanVien
+                            ) ||
+                            (suggestStore.suggestNhanVien?.length > 0
+                                ? suggestStore.suggestNhanVien[0]
+                                : null)
+                        }
+                        size="small"
+                        sx={{ width: '15%', border: '1px soid #319DFF' }}
+                        fullWidth
+                        disablePortal
+                        onChange={async (event, value) => {
+                            await this.setState({ idNhanVien: value?.id });
+                            await this.getDataAccordingByNhanVien(value?.id);
+                        }}
+                        renderInput={(params) => (
+                            <TextField sx={{ bgcolor: '#fff' }} {...params} placeholder="Tìm tên" />
+                        )}
+                    />
+                </Box>
+                <Box marginBottom="8px">
                     {this.state.listItemSelectedModel.length > 0 ? (
                         <Box mb={1}>
                             <Button variant="contained" color="secondary">
@@ -592,11 +625,6 @@ class ChietKhauDichVuScreen extends Component {
                                     newSortModel[0].sort?.toString() ?? 'creationTime',
                                     newSortModel[0].field ?? 'desc'
                                 );
-                            }
-                        }}
-                        sx={{
-                            '& .MuiDataGrid-columnHeader': {
-                                background: '#FFF'
                             }
                         }}
                         localeText={TextTranslate}
