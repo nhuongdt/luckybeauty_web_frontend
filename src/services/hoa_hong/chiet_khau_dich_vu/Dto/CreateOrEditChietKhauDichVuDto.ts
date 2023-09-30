@@ -1,7 +1,7 @@
 export interface CreateOrEditChietKhauDichVuDto {
     id: string;
     idChiNhanh: string;
-    idNhanVien: string;
+    idNhanViens: string[];
     idDonViQuiDoi: string;
     loaiChietKhau: number;
     giaTri: number;

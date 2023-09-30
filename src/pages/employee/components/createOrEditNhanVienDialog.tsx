@@ -67,21 +67,24 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
     onModalDelete = () => {
         this.setState({ isShowConfirmDelete: !this.state.isShowConfirmDelete });
     };
-    handleDelete = async (id: string) => {
-        // const deleteResult = nhanVienStore.delete(id);
-        // deleteResult != null
-        //     ? enqueueSnackbar('Xóa bản ghi thành công', {
-        //           variant: 'success',
-        //           autoHideDuration: 3000
-        //       })
-        //     : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
-        //           variant: 'error',
-        //           autoHideDuration: 3000
-        //       });
+    handleDelete = async () => {
         this.onModalDelete();
         this.props.onCancel();
     };
-
+    onOkDelete = async () => {
+        const deleteResult = nhanVienStore.delete(nhanVienStore.createEditNhanVien.id);
+        deleteResult != null
+            ? enqueueSnackbar('Xóa bản ghi thành công', {
+                  variant: 'success',
+                  autoHideDuration: 3000
+              })
+            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
+                  variant: 'error',
+                  autoHideDuration: 3000
+              });
+        this.onModalDelete();
+        this.props.onCancel();
+    };
     // onSelectAvatarFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     if (e.target.files && e.target.files[0]) {
     //         const file: File = e.target.files[0];
@@ -572,6 +575,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     handleClose={this.onModalChucVu}
                     handleSubmit={this.handleSubmitChucVu}
                 />
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.handleDelete}></ConfirmDelete>
             </Dialog>
         );
     }

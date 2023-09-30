@@ -98,7 +98,7 @@ const LichHenDetail: FC = () => {
                         <Grid
                             item
                             xs={12}
-                            padding={'8px 24px 8px 0px'}
+                            padding={'8px'}
                             display={'flex'}
                             justifyContent={'center'}
                             alignItems={'center'}>

@@ -36,7 +36,7 @@ class ChietKhauDichVuStore {
             idChiNhanh: idChiNhanh,
             giaTri: 0,
             idDonViQuiDoi: '',
-            idNhanVien: '',
+            idNhanViens: [],
             laPhanTram: false,
             loaiChietKhau: 1
         };

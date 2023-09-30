@@ -859,8 +859,9 @@ class EmployeeScreen extends React.Component {
                 />
                 <CreateOrEditNhanVienDialog
                     visible={this.state.modalVisible}
-                    onCancel={() => {
+                    onCancel={async () => {
                         this.setState({ modalVisible: false });
+                        await this.getListNhanVien();
                     }}
                     onOk={this.handleSubmit}
                     title={

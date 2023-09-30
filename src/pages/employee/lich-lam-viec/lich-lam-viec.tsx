@@ -404,8 +404,8 @@ const LichLamViec: React.FC = () => {
                                 }
                             }}>
                             <MenuItem value="">Tuần</MenuItem>
-                            <MenuItem value="Tháng">Tháng</MenuItem>
-                            <MenuItem value="Năm">Năm</MenuItem>
+                            {/* <MenuItem value="Tháng">Tháng</MenuItem>
+                            <MenuItem value="Năm">Năm</MenuItem> */}
                         </Select>
                     </Box>
                 </Grid>

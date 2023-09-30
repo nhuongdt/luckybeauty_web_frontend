@@ -46,7 +46,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
         const initialValues: CreateOrEditChietKhauDichVuDto = chietKhauDichVuStore.createOrEditDto;
         const rules = Yup.object().shape({
             idDonViQuiDoi: Yup.string().required('Dịch vụ là bắt buộc'),
-            idNhanVien: Yup.string().required('Vui lòng chọn nhân viên'),
+            idNhanViens: Yup.array().min(1, 'Vui lòng chọn ít nhất 1 nhân viên'),
             loaiChietKhau: Yup.number().required('Vui lòng chọn loại chiết khấu'),
             giaTri: Yup.number()
                 .required('Vui lòng nhập giá trị chiết khấu')
@@ -102,12 +102,13 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                 <Grid container spacing={4} rowSpacing={2}>
                                     <Grid item xs={12} sm={6} marginTop={2}>
                                         <Autocomplete
+                                            multiple
                                             options={suggestStore?.suggestNhanVien ?? []}
                                             getOptionLabel={(item) => item.tenNhanVien}
                                             value={
-                                                suggestStore.suggestNhanVien?.find(
-                                                    (item) => item.id === values?.idNhanVien
-                                                ) || null
+                                                suggestStore?.suggestNhanVien?.filter((item) =>
+                                                    values?.idNhanViens.includes(item.id)
+                                                ) || []
                                             }
                                             disabled={
                                                 values.id === AppConsts.guidEmpty ? false : true
@@ -115,8 +116,10 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             onChange={(event, newValue) => {
                                                 handleChange({
                                                     target: {
-                                                        name: 'idNhanVien',
-                                                        value: newValue ? newValue.id : '' // Set the value to the selected item's id or an empty string if nothing is selected
+                                                        name: 'idNhanViens',
+                                                        value: newValue
+                                                            ? newValue.map((item) => item.id)
+                                                            : [] // Set the value to the selected item's id or an empty string if nothing is selected
                                                     }
                                                 });
                                             }}
@@ -130,7 +133,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                         </Typography>
                                                     }
                                                     error={
-                                                        errors.idNhanVien && touched.idNhanVien
+                                                        errors.idNhanViens && touched.idNhanViens
                                                             ? true
                                                             : false
                                                     }
@@ -139,9 +142,9 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                 />
                                             )}
                                         />
-                                        {errors.idNhanVien && touched.idNhanVien && (
+                                        {errors.idNhanViens && touched.idNhanViens && (
                                             <small className="text-danger">
-                                                {errors.idNhanVien}
+                                                {errors.idNhanViens}
                                             </small>
                                         )}
                                     </Grid>
@@ -237,6 +240,12 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                     </small>
                                                 )
                                             }
+                                            InputProps={{
+                                                inputProps: {
+                                                    max: values.laPhanTram == true ? 100 : Infinity,
+                                                    min: 1
+                                                }
+                                            }}
                                             onChange={handleChange}
                                             fullWidth
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
@@ -245,6 +254,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         <FormControlLabel
                                             label={'Là phần trăm'}
                                             value={values?.laPhanTram == true ? true : false}
+                                            checked={values?.laPhanTram == true ? true : false}
                                             onChange={(e, checked) => {
                                                 setFieldValue('laPhanTram', checked);
                                             }}
