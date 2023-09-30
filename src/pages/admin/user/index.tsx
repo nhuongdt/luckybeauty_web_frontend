@@ -30,6 +30,10 @@ import ActionMenuTable from '../../../components/Menu/ActionMenuTable';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { enqueueSnackbar } from 'notistack';
 import abpCustom from '../../../components/abp-custom';
+import ModalAddUser from './components/modal_add_user';
+import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
+import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
+import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 class UserScreen extends AppComponentBase {
     state = {
         modalVisible: false,
@@ -59,11 +63,28 @@ class UserScreen extends AppComponentBase {
         suggestNhanSu: [] as SuggestNhanSuDto[],
         anchorEl: null,
         selectedRowId: 0,
-        rowSelectedModel: [] as GridRowSelectionModel
+        rowSelectedModel: [] as GridRowSelectionModel,
+        allChiNhanh: [] as ChiNhanhDto[]
     };
 
     async componentDidMount() {
         await this.getAll();
+        await this.getAllChiNhanh();
+        await this.getAllRole();
+    }
+
+    async getAllChiNhanh() {
+        const data = await chiNhanhService.GetAll({
+            keyword: '',
+            maxResultCount: 100,
+            skipCount: 0
+        } as PagedRequestDto);
+        this.setState({ allChiNhanh: data.items });
+    }
+
+    async getAllRole() {
+        const allRole = await userService.getRoles();
+        this.setState({ roles: allRole });
     }
 
     async getAll() {
@@ -150,32 +171,28 @@ class UserScreen extends AppComponentBase {
         this.handleCloseMenu();
     };
     async createOrUpdateModalOpen(entityDto: number) {
-        if (entityDto === 0) {
-            const roles = await userService.getRoles();
-            await this.setState({
-                roles: roles,
-                userEdit: {
-                    userName: '',
-                    name: '',
-                    surname: '',
-                    emailAddress: '',
-                    phoneNumber: '',
-                    isActive: false,
-                    roleNames: [],
-                    password: '',
-                    id: 0,
-                    nhanSuId: '',
-                    isAdmin: false
-                }
-            });
-        } else {
-            const user = await userService.get(entityDto);
-            const roles = await userService.getRoles();
-            await this.setState({
-                userEdit: user,
-                roles: roles
-            });
-        }
+        // if (entityDto === 0) {
+        //     this.setState({
+        //         userEdit: {
+        //             userName: '',
+        //             name: '',
+        //             surname: '',
+        //             emailAddress: '',
+        //             phoneNumber: '',
+        //             isActive: false,
+        //             roleNames: [],
+        //             password: '',
+        //             id: 0,
+        //             nhanSuId: '',
+        //             isAdmin: false
+        //         }
+        //     });
+        // } else {
+        //     const user = await userService.get(entityDto);
+        //     this.setState({
+        //         userEdit: user
+        //     });
+        // }
 
         this.setState({ userId: entityDto });
         this.Modal();
@@ -499,7 +516,7 @@ class UserScreen extends AppComponentBase {
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
-                    <CreateOrEditUser
+                    {/* <CreateOrEditUser
                         visible={this.state.modalVisible}
                         modalType={
                             this.state.userId === 0 ? 'Thêm mới tài khoản' : 'Cập nhật tài khoản'
@@ -513,6 +530,19 @@ class UserScreen extends AppComponentBase {
                         roles={this.state.roles}
                         suggestNhanSu={this.state.suggestNhanSu}
                         userId={this.state.userId}
+                        onOk={this.handleCreate}
+                    /> */}
+                    <ModalAddUser
+                        isShowModal={this.state.modalVisible}
+                        onCancel={() => {
+                            this.setState({
+                                modalVisible: false
+                            });
+                        }}
+                        dataNhanVien={this.state.suggestNhanSu}
+                        dataChiNhanh={this.state.allChiNhanh}
+                        userId={this.state.userId}
+                        allRoles={this.state.roles}
                         onOk={this.handleCreate}
                     />
                     <ConfirmDelete

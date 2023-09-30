@@ -10,8 +10,27 @@ import { CreateOrEditRoleDto } from './dto/createOrEditRoleDto';
 import { RoleDto } from './dto/roleDto';
 import { permissionCheckboxTree } from './dto/permissionCheckboxTree';
 import { enqueueSnackbar } from 'notistack';
+import { IUserRoleDto } from '../../models/Roles/userRoleDto';
+import utils from '../../utils/utils';
 
 class RoleService {
+    CreateRole_byChiNhanhOfUser = async (userId: number, params: IUserRoleDto[]) => {
+        if (!utils.checkNull(userId?.toString())) {
+            const result = await http.post(
+                `api/services/app/UserRole/CreateRole_byChiNhanhOfUser?userId=${userId}`,
+                params
+            );
+            return result.data.result;
+        }
+    };
+    GetRolebyChiNhanh_ofUser = async (userId: number) => {
+        if (!utils.checkNull(userId?.toString())) {
+            const result = await http.get(
+                `api/services/app/UserRole/GetRolebyChiNhanh_ofUser?userId=${userId}`
+            );
+            return result.data.result;
+        }
+    };
     public async createOrEdit(input: CreateOrEditRoleDto): Promise<RoleDto> {
         const result = await http.post('api/services/app/Role/CreateOrUpdateRole', input);
         return result.data.result;
