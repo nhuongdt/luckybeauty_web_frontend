@@ -557,7 +557,7 @@ class UserScreen extends AppComponentBase {
                         permissionView="Pages.Administration.Users.Edit"
                         handleEdit={this.handleEdit}
                         permissionEdit="Pages.Administration.Users.Edit"
-                        handleDelete={this.onOkDelete}
+                        handleDelete={this.onShowDelete}
                         permissionDelete="Pages.Administration.Users.Delete"
                     />
                 </Box>
