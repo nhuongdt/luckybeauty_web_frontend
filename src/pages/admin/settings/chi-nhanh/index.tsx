@@ -103,7 +103,11 @@ class ChiNhanhScreen extends Component {
         });
     };
     onOkDelete = async () => {
-        await chiNhanhService.Delete(this.state.idChiNhanh);
+        if (this.state.listItemSelectedModel.length > 0) {
+            await chiNhanhService.DeleteMany(this.state.listItemSelectedModel);
+        } else {
+            await chiNhanhService.Delete(this.state.idChiNhanh);
+        }
         await this.setState({ idChiNhanh: '' });
         this.handleDelete();
         this.handleCloseMenu();
@@ -174,6 +178,7 @@ class ChiNhanhScreen extends Component {
             variant: result.status == 'success' ? 'success' : result.status,
             autoHideDuration: 3000
         });
+        this.onImportShow();
     };
     downloadImportTemplate = async () => {
         const result = await uploadFileService.downloadImportTemplate(

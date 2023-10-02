@@ -282,7 +282,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             }}
                                             defaultVal={
                                                 values.ngayApDung
-                                                    ? formatDate(values.ngayApDung, 'yyyy-MM-dd')
+                                                    ? formatDate(
+                                                          new Date(values.ngayApDung),
+                                                          'yyyy/MM/dd'
+                                                      )
                                                     : ''
                                             }
                                             handleChangeDate={(value: string) => {
@@ -312,7 +315,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             }}
                                             defaultVal={
                                                 values.ngayHetHan
-                                                    ? formatDate(values.ngayHetHan, 'yyyy-MM-dd')
+                                                    ? formatDate(
+                                                          new Date(values.ngayHetHan),
+                                                          'yyyy/MM/dd'
+                                                      )
                                                     : ''
                                             }
                                             handleChangeDate={(value: string) => {

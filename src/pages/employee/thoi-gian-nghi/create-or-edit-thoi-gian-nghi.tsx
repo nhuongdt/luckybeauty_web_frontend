@@ -161,7 +161,10 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                 }}
                                                 defaultVal={
                                                     values.tuNgay
-                                                        ? formatDate(values.tuNgay, 'yyyy-MM-dd')
+                                                        ? formatDate(
+                                                              new Date(values.tuNgay),
+                                                              'yyyy/MM/dd'
+                                                          )
                                                         : ''
                                                 }
                                                 handleChangeDate={(dt: string) => {
@@ -195,7 +198,10 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                 }}
                                                 defaultVal={
                                                     values.denNgay
-                                                        ? formatDate(values.denNgay, 'yyyy-MM-dd')
+                                                        ? formatDate(
+                                                              new Date(values.denNgay),
+                                                              'yyyy/MM/dd'
+                                                          )
                                                         : ''
                                                 }
                                                 handleChangeDate={(value: string) => {

@@ -38,6 +38,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import ThoiGianConst from '../../../../../lib/thoiGianConst';
 import khuyenMaiStore from '../../../../../stores/khuyenMaiStore';
+import { NumericFormat } from 'react-number-format';
 function a11yProps(index: number) {
     return {
         id: `vertical-tab-${index}`,
@@ -388,9 +389,25 @@ const CreateOrEditVoucher: React.FC<{
                                                                                             onChange={
                                                                                                 handleChange
                                                                                             }
-                                                                                            value={
-                                                                                                item.giamGia
-                                                                                            }
+                                                                                            type="number"
+                                                                                            InputProps={{
+                                                                                                inputProps:
+                                                                                                    {
+                                                                                                        max:
+                                                                                                            item.giamGiaTheoPhanTram ??
+                                                                                                            true ==
+                                                                                                                true
+                                                                                                                ? 100
+                                                                                                                : undefined,
+                                                                                                        min: 1
+                                                                                                    }
+                                                                                            }}
+                                                                                            value={new Intl.NumberFormat(
+                                                                                                'en-GB'
+                                                                                            ).format(
+                                                                                                item.giamGia ??
+                                                                                                    0
+                                                                                            )}
                                                                                             name={`khuyenMaiChiTiets.${index}.giamGia`}
                                                                                         />
                                                                                     ) : null}
@@ -430,8 +447,7 @@ const CreateOrEditVoucher: React.FC<{
                                                                                         21 ? (
                                                                                         <ToggleButtonGroup
                                                                                             value={
-                                                                                                item.giamGiaTheoPhanTram ??
-                                                                                                true
+                                                                                                item.giamGiaTheoPhanTram
                                                                                             }
                                                                                             size="small">
                                                                                             <ToggleButton

@@ -19,8 +19,13 @@ class ChiNhanhService {
         const result = await http.post('api/services/app/ChiNhanh/CreateOrEditChiNhanh', input);
         return result.data.result;
     }
+
     public async Delete(id: string): Promise<ExecuteResultDto> {
         const result = await http.post(`api/services/app/ChiNhanh/DeleteChiNhanh?Id=${id}`);
+        return result.data.result;
+    }
+    public async DeleteMany(ids: string[]): Promise<ExecuteResultDto> {
+        const result = await http.post(`api/services/app/ChiNhanh/DeleteMany`, ids);
         return result.data.result;
     }
     public async GetForEdit(id: string) {
