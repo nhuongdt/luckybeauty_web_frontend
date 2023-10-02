@@ -48,11 +48,7 @@ export default function TableRoleChiNhanh({
         );
         if (itemEx.length > 0) {
             if (!checked) {
-                setLstChosed(
-                    lstChosed.filter(
-                        (x: IUserRoleDto) => x.idChiNhanh !== idChiNhanh && x.roleId !== roleId
-                    )
-                );
+                setLstChosed(lstChosed.filter((x: IUserRoleDto) => x.idChiNhanh !== idChiNhanh));
             }
         } else {
             if (checked) {
@@ -78,9 +74,20 @@ export default function TableRoleChiNhanh({
         }
     };
 
-    const CacuklatorCheckAll = () => {
-        //
+    const filterSameRole = (lstChosed: IUserRoleDto[]) => {
+        for (let i = 0; i < allRoles.length; i++) {
+            const itFor = allRoles[i];
+            if (
+                lstChosed.filter((x: IUserRoleDto) => x.roleId === itFor.id).length ===
+                chiNhanhRoles.length
+            ) {
+                return { checkAll: true, roleId: itFor.id };
+            }
+        }
+        return { checkAll: false, roleId: 0 };
     };
+
+    const objCheckAll = useMemo(() => filterSameRole(lstChosed), [lstChosed]);
 
     useEffect(() => {
         passDataToParent(lstChosed);
@@ -118,6 +125,11 @@ export default function TableRoleChiNhanh({
                                             {item.displayName}
                                         </Stack>
                                         <Checkbox
+                                            checked={
+                                                objCheckAll?.checkAll &&
+                                                objCheckAll?.roleId === item.id
+                                            }
+                                            value={objCheckAll?.checkAll}
                                             onChange={(e) => checkAll(e.target.checked, item.id)}
                                         />
                                     </Stack>
