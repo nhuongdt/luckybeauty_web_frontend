@@ -98,22 +98,24 @@ const CreateOrEditVoucher: React.FC<{
                                 'thoiGianKetThuc',
                                 'Thời gian kết thúc không được để trống'
                             );
-                        }
-                        if (values.tenKhuyenMai == '') {
+                        } else if (values.tenKhuyenMai == '') {
                             formikHelpers.setFieldError(
                                 'tenKhuyenMai',
                                 'Tên chương trình khuyễn mãi không được để trống'
                             );
-                        }
-
-                        if (formikHelpers) {
+                        } else {
                             await khuyenMaiStore.CreateOrEditKhuyenMai(values);
                             formikHelpers.resetForm();
                             handleClose();
                         }
                     }}>
                     {({ values, errors, touched, handleChange, setFieldValue, isSubmitting }) => (
-                        <Form>
+                        <Form
+                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault(); // Prevent unwanted form submission
+                                }
+                            }}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <FormControlLabel
@@ -295,12 +297,41 @@ const CreateOrEditVoucher: React.FC<{
                                                                                     justifyContent="space-between">
                                                                                     {values.loaiKhuyenMai ===
                                                                                     1 ? (
-                                                                                        <TextField
+                                                                                        <NumericFormat
+                                                                                            thousandSeparator={
+                                                                                                '.'
+                                                                                            }
+                                                                                            decimalSeparator={
+                                                                                                ','
+                                                                                            }
                                                                                             size="small"
                                                                                             label="Tổng tiền hàng từ"
+                                                                                            sx={{
+                                                                                                marginTop:
+                                                                                                    '6px'
+                                                                                            }}
+                                                                                            type="text"
                                                                                             fullWidth
-                                                                                            onChange={
-                                                                                                handleChange
+                                                                                            onChange={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                const valueChange =
+                                                                                                    e.target.value.replaceAll(
+                                                                                                        '.',
+                                                                                                        ''
+                                                                                                    );
+                                                                                                alert(
+                                                                                                    valueChange
+                                                                                                );
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.tongTienHang`,
+                                                                                                    Number.parseInt(
+                                                                                                        valueChange
+                                                                                                    )
+                                                                                                );
+                                                                                            }}
+                                                                                            customInput={
+                                                                                                TextField
                                                                                             }
                                                                                             value={
                                                                                                 item.tongTienHang
@@ -310,14 +341,37 @@ const CreateOrEditVoucher: React.FC<{
                                                                                     ) : null}
                                                                                     {values.loaiKhuyenMai ===
                                                                                     2 ? (
-                                                                                        <TextField
+                                                                                        <NumericFormat
+                                                                                            thousandSeparator={
+                                                                                                '.'
+                                                                                            }
+                                                                                            decimalSeparator={
+                                                                                                ','
+                                                                                            }
                                                                                             size="small"
                                                                                             label=""
                                                                                             sx={{
-                                                                                                width: '20%'
+                                                                                                width: '20%',
+                                                                                                marginTop:
+                                                                                                    '6px'
                                                                                             }}
-                                                                                            onChange={
-                                                                                                handleChange
+                                                                                            onChange={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                const valueChange =
+                                                                                                    e.target.value.replaceAll(
+                                                                                                        '.',
+                                                                                                        ''
+                                                                                                    );
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.soLuongMua`,
+                                                                                                    Number.parseInt(
+                                                                                                        valueChange
+                                                                                                    )
+                                                                                                );
+                                                                                            }}
+                                                                                            customInput={
+                                                                                                TextField
                                                                                             }
                                                                                             value={
                                                                                                 item.soLuongMua
@@ -364,6 +418,10 @@ const CreateOrEditVoucher: React.FC<{
                                                                                             ) => (
                                                                                                 <TextField
                                                                                                     {...params}
+                                                                                                    sx={{
+                                                                                                        marginTop:
+                                                                                                            '6px'
+                                                                                                    }}
                                                                                                     label={
                                                                                                         <Typography fontSize="13px">
                                                                                                             Mặt
@@ -380,34 +438,41 @@ const CreateOrEditVoucher: React.FC<{
                                                                                         13 ||
                                                                                     values.hinhThucKM ===
                                                                                         21 ? (
-                                                                                        <TextField
+                                                                                        <NumericFormat
+                                                                                            thousandSeparator={
+                                                                                                '.'
+                                                                                            }
+                                                                                            decimalSeparator={
+                                                                                                ','
+                                                                                            }
                                                                                             size="small"
                                                                                             label="Giảm giá"
                                                                                             sx={{
-                                                                                                width: '50%'
+                                                                                                width: '50%',
+                                                                                                marginTop:
+                                                                                                    '6px'
                                                                                             }}
-                                                                                            onChange={
-                                                                                                handleChange
+                                                                                            value={
+                                                                                                item.giamGia
                                                                                             }
-                                                                                            type="number"
-                                                                                            InputProps={{
-                                                                                                inputProps:
-                                                                                                    {
-                                                                                                        max:
-                                                                                                            item.giamGiaTheoPhanTram ??
-                                                                                                            true ==
-                                                                                                                true
-                                                                                                                ? 100
-                                                                                                                : undefined,
-                                                                                                        min: 1
-                                                                                                    }
+                                                                                            onChange={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                const valueChange =
+                                                                                                    e.target.value.replaceAll(
+                                                                                                        '.',
+                                                                                                        ''
+                                                                                                    );
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.giamGia`,
+                                                                                                    Number.parseInt(
+                                                                                                        valueChange
+                                                                                                    )
+                                                                                                );
                                                                                             }}
-                                                                                            value={new Intl.NumberFormat(
-                                                                                                'en-GB'
-                                                                                            ).format(
-                                                                                                item.giamGia ??
-                                                                                                    0
-                                                                                            )}
+                                                                                            customInput={
+                                                                                                TextField
+                                                                                            }
                                                                                             name={`khuyenMaiChiTiets.${index}.giamGia`}
                                                                                         />
                                                                                     ) : null}
@@ -415,7 +480,17 @@ const CreateOrEditVoucher: React.FC<{
                                                                                         12 ||
                                                                                     values.hinhThucKM ===
                                                                                         22 ? (
-                                                                                        <TextField
+                                                                                        <NumericFormat
+                                                                                            thousandSeparator={
+                                                                                                '.'
+                                                                                            }
+                                                                                            decimalSeparator={
+                                                                                                ','
+                                                                                            }
+                                                                                            value={
+                                                                                                item.soLuongTang
+                                                                                            }
+                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongTang`}
                                                                                             size="small"
                                                                                             label={
                                                                                                 values.hinhThucKM ===
@@ -428,15 +503,28 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                     values.hinhThucKM ===
                                                                                                     12
                                                                                                         ? '50%'
-                                                                                                        : '20%'
+                                                                                                        : '20%',
+                                                                                                marginTop:
+                                                                                                    '6px'
                                                                                             }}
-                                                                                            onChange={
-                                                                                                handleChange
+                                                                                            onChange={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                const valueChange =
+                                                                                                    e.target.value.replaceAll(
+                                                                                                        '.',
+                                                                                                        ''
+                                                                                                    );
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.soLuongTang`,
+                                                                                                    Number.parseInt(
+                                                                                                        valueChange
+                                                                                                    )
+                                                                                                );
+                                                                                            }}
+                                                                                            customInput={
+                                                                                                TextField
                                                                                             }
-                                                                                            value={
-                                                                                                item.soLuongTang
-                                                                                            }
-                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongTang`}
                                                                                         />
                                                                                     ) : null}
                                                                                     {values.hinhThucKM ===
@@ -449,6 +537,10 @@ const CreateOrEditVoucher: React.FC<{
                                                                                             value={
                                                                                                 item.giamGiaTheoPhanTram
                                                                                             }
+                                                                                            sx={{
+                                                                                                marginTop:
+                                                                                                    '6px'
+                                                                                            }}
                                                                                             size="small">
                                                                                             <ToggleButton
                                                                                                 onClick={() => {
@@ -515,6 +607,10 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                 ) ??
                                                                                                 null
                                                                                             }
+                                                                                            sx={{
+                                                                                                marginTop:
+                                                                                                    '6px'
+                                                                                            }}
                                                                                             size="small"
                                                                                             fullWidth
                                                                                             disablePortal
@@ -546,31 +642,81 @@ const CreateOrEditVoucher: React.FC<{
                                                                                         14 ||
                                                                                     values.hinhThucKM ===
                                                                                         24 ? (
-                                                                                        <TextField
+                                                                                        <NumericFormat
+                                                                                            thousandSeparator={
+                                                                                                '.'
+                                                                                            }
+                                                                                            decimalSeparator={
+                                                                                                ','
+                                                                                            }
+                                                                                            sx={{
+                                                                                                marginTop:
+                                                                                                    '6px'
+                                                                                            }}
                                                                                             size="small"
                                                                                             label={
                                                                                                 'Số điểm tặng'
                                                                                             }
                                                                                             fullWidth
-                                                                                            onChange={
-                                                                                                handleChange
+                                                                                            onChange={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                const valueChange =
+                                                                                                    e.target.value.replaceAll(
+                                                                                                        '.',
+                                                                                                        ''
+                                                                                                    );
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.soDiemTang`,
+                                                                                                    Number.parseInt(
+                                                                                                        valueChange
+                                                                                                    )
+                                                                                                );
+                                                                                            }}
+                                                                                            customInput={
+                                                                                                TextField
                                                                                             }
                                                                                             value={
-                                                                                                item.giamGia
+                                                                                                item.soDiemTang
                                                                                             }
                                                                                             name={`khuyenMaiChiTiets.${index}.soDiemTang`}
                                                                                         />
                                                                                     ) : null}
                                                                                     {values.hinhThucKM ===
                                                                                     23 ? (
-                                                                                        <TextField
+                                                                                        <NumericFormat
+                                                                                            thousandSeparator={
+                                                                                                '.'
+                                                                                            }
+                                                                                            decimalSeparator={
+                                                                                                ','
+                                                                                            }
+                                                                                            sx={{
+                                                                                                marginTop:
+                                                                                                    '6px'
+                                                                                            }}
                                                                                             size="small"
                                                                                             label={
                                                                                                 'Giá khuyến mại'
                                                                                             }
                                                                                             fullWidth
-                                                                                            onChange={
-                                                                                                handleChange
+                                                                                            onChange={(
+                                                                                                e
+                                                                                            ) => {
+                                                                                                const valueChange =
+                                                                                                    e.target.value.replaceAll(
+                                                                                                        '.',
+                                                                                                        ''
+                                                                                                    );
+                                                                                                setFieldValue(
+                                                                                                    `khuyenMaiChiTiets.${index}.giaKhuyenMai`,
+                                                                                                    Number.parseInt(
+                                                                                                        valueChange
+                                                                                                    )
+                                                                                                );
+                                                                                            }}
+                                                                                            customInput={
+                                                                                                TextField
                                                                                             }
                                                                                             value={
                                                                                                 item.giaKhuyenMai
@@ -586,7 +732,9 @@ const CreateOrEditVoucher: React.FC<{
                                                                                         }}
                                                                                         sx={{
                                                                                             marginLeft:
-                                                                                                '5px'
+                                                                                                '5px',
+                                                                                            marginTop:
+                                                                                                '6px'
                                                                                         }}>
                                                                                         <CloseIcon color="red" />
                                                                                     </IconButton>

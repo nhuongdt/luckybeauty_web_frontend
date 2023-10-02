@@ -73,14 +73,14 @@ class ChietKhauDichVuScreen extends Component {
     async InitData() {
         await suggestStore.getSuggestNhanVien();
         await suggestStore.getSuggestDichVu();
-        suggestStore.suggestNhanVien?.length > 0
+        suggestStore.suggestNhanVien?.length > 0 && this.state.idNhanVien === AppConsts.guidEmpty
             ? await this.getDataAccordingByNhanVien(suggestStore.suggestNhanVien[0].id)
             : await this.getDataAccordingByNhanVien(this.state.idNhanVien);
     }
     getDataAccordingByNhanVien = async (idNhanVien: any) => {
         await chietKhauDichVuStore.getAccordingByNhanVien(
             {
-                keyword: this.state.keyword,
+                keyword: this.state.keyword ?? '',
                 maxResultCount: this.state.maxResultCount,
                 skipCount: this.state.skipCount,
                 sortBy: this.state.sortBy,
@@ -475,10 +475,23 @@ class ChietKhauDichVuScreen extends Component {
                                 '& .MuiInputBase-root': { pl: '0', bgcolor: '#fff' },
                                 marginLeft: '10px'
                             }}
+                            onChange={(e) => {
+                                this.setState({ keyword: e.target.value });
+                            }}
+                            onKeyDown={(e) => {
+                                if (e.key == 'Enter') {
+                                    this.getDataAccordingByNhanVien(this.state.idNhanVien);
+                                }
+                            }}
                             placeholder="Tìm kiếm"
                             InputProps={{
                                 startAdornment: (
-                                    <IconButton type="button" sx={{ bgcolor: '#fff' }}>
+                                    <IconButton
+                                        type="button"
+                                        sx={{ bgcolor: '#fff' }}
+                                        onClick={() => {
+                                            this.getDataAccordingByNhanVien(this.state.idNhanVien);
+                                        }}>
                                         <img src={SearchIcon} />
                                     </IconButton>
                                 )

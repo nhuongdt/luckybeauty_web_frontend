@@ -54,7 +54,8 @@ class ChietKhauHoaDonScreen extends Component {
             chungTuApDung: '',
             giaTriChietKhau: 0,
             loaiChietKhau: 0,
-            idNhanViens: []
+            idNhanViens: [],
+            ghiChu: ''
         } as CreateOrEditChietKhauHoaDonDto,
         checkAllRow: false,
         listItemSelectedModel: [] as string[]

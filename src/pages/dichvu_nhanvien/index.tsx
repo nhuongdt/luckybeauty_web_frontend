@@ -205,7 +205,7 @@ class SettingDichVuNhanVien extends Component {
                                                 </ListItemAvatar>
                                                 <ListItemText
                                                     primary={
-                                                        <Typography fontSize={'14px'}>
+                                                        <Typography fontSize={'13px'}>
                                                             {item.tenNhanVien}
                                                         </Typography>
                                                     }

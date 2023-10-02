@@ -31,7 +31,7 @@ import { enqueueSnackbar } from 'notistack';
 import chietKhauDichVuStore from '../../../../../../stores/chietKhauDichVuStore';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../../../../stores/suggestStore';
-import { values } from 'lodash';
+import { NumericFormat } from 'react-number-format';
 interface DialogProps {
     visited: boolean;
     title?: React.ReactNode;
@@ -41,6 +41,15 @@ interface DialogProps {
     formRef: CreateOrEditChietKhauDichVuDto;
 }
 class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
+    formatNumber = (value: number) => {
+        // Your logic for formatting the number as ###,###.##
+        // This is just a basic example; you might want to use a library like numeral.js for more complex formatting.
+        const formattedNumber = Number(value).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        return formattedNumber;
+    };
     render(): ReactNode {
         const { title, onClose, onSave, visited } = this.props;
         const initialValues: CreateOrEditChietKhauDichVuDto = chietKhauDichVuStore.createOrEditDto;
@@ -223,14 +232,12 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                         )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
-                                        <TextField
-                                            label={
-                                                <Typography variant="subtitle2">Giá trị</Typography>
-                                            }
-                                            type="number"
-                                            size="small"
-                                            name="giaTri"
-                                            value={values?.giaTri}
+                                        <NumericFormat
+                                            label={<Typography>Giá trị</Typography>}
+                                            value={values.giaTri}
+                                            thousandSeparator={'.'}
+                                            decimalSeparator={','}
+                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}
                                             error={errors.giaTri && touched.giaTri ? true : false}
                                             helperText={
                                                 errors.giaTri &&
@@ -240,15 +247,21 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                     </small>
                                                 )
                                             }
-                                            InputProps={{
-                                                inputProps: {
-                                                    max: values.laPhanTram == true ? 100 : Infinity,
-                                                    min: 1
-                                                }
-                                            }}
-                                            onChange={handleChange}
                                             fullWidth
-                                            sx={{ fontSize: '16px', color: '#4c4b4c' }}></TextField>
+                                            name="giaTri"
+                                            onChange={(e) => {
+                                                const valueChange = e.target.value.replaceAll(
+                                                    '.',
+                                                    ''
+                                                );
+                                                setFieldValue(
+                                                    'giaTri',
+                                                    Number.parseInt(valueChange)
+                                                );
+                                            }}
+                                            customInput={TextField}
+                                            size={'small'}
+                                        />
                                     </Grid>
                                     <Grid item xs={12}>
                                         <FormControlLabel
