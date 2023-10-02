@@ -43,9 +43,9 @@ export default function AutocompleteChiNhanh({
                     return (
                         <li {...props}>
                             <Grid container alignItems="center">
-                                <Grid item sx={{ display: 'flex', width: 44 }}>
+                                {/* <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
-                                </Grid>
+                                </Grid> */}
                                 <Grid
                                     item
                                     sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
