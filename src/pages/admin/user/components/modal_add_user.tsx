@@ -37,6 +37,7 @@ import { IChiNhanhRoles, IUserRoleDto } from '../../../../models/Roles/userRoleD
 import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import TableRoleChiNhanh from '../../../../components/Table/RoleChiNhanh';
 import roleService from '../../../../services/role/roleService';
+import { Guid } from 'guid-typescript';
 
 export default function ModalAddUser({
     isShowModal,
@@ -165,6 +166,7 @@ export default function ModalAddUser({
         initialValues.confirmPassword = '';
         initialValues.changePassword = false;
         initialValues.isActive = userEdit.isActive;
+        initialValues.isAdmin = userEdit.isAdmin as boolean;
         initialValues.idChiNhanhMacDinh = userEdit?.idChiNhanhMacDinh as string;
         setIsActive(userEdit?.isActive ?? false);
     };
@@ -173,12 +175,14 @@ export default function ModalAddUser({
         if (isShowModal) {
             if (userId === 0) {
                 initialValues.id = 0;
+                initialValues.idChiNhanhMacDinh = idChiNhanh;
                 initialValues.emailAddress = '';
                 initialValues.userName = '';
                 initialValues.passwordNew = '';
                 initialValues.confirmPassword = '';
                 initialValues.changePassword = false;
                 initialValues.isActive = true;
+                initialValues.isAdmin = false;
             } else {
                 GetInforUser();
             }
@@ -246,7 +250,10 @@ export default function ModalAddUser({
         if (!checkDB) {
             return;
         }
+        // user có thể không phải là nhân viên --> setdefault (name, surname ='' --> avoid error null in DB)
         values.nhanSuId = values?.nhanSuId == '' ? null : values.nhanSuId;
+        values.name = utils.checkNull(values?.name) ? '' : values.name;
+        values.surname = utils.checkNull(values?.surname) ? '' : values.surname;
         values.idChiNhanhMacDinh =
             values?.idChiNhanhMacDinh == '' ? null : values.idChiNhanhMacDinh;
         if (userId == 0) {
@@ -362,7 +369,7 @@ export default function ModalAddUser({
                                                             const arrTenNV =
                                                                 item?.tenNhanVien.split(' ');
                                                             let surName = ''; // họ
-                                                            if (arrTenNV.length > 0) {
+                                                            if (arrTenNV?.length > 0) {
                                                                 surName = arrTenNV[0];
                                                             }
                                                             setFieldValue('nhanSuId', item?.id);
@@ -604,18 +611,18 @@ export default function ModalAddUser({
                                                             : '8px!important'
                                                 }}>
                                                 <FormGroup>
-                                                    {isActive && (
+                                                    {/* {isActive && (
                                                         <FormControlLabel
                                                             control={<Checkbox size="small" />}
                                                             label="Là quản trị viên"
                                                             name="isAdmin"
                                                             value={values?.isAdmin}
                                                             onChange={handleChange}
-                                                            checked={values?.isAdmin ?? false}
+                                                            checked={values?.isAdmin}
                                                         />
-                                                    )}
+                                                    )} */}
 
-                                                    {userId !== 0 && !isActive && (
+                                                    {userId !== 0 && (
                                                         <FormControlLabel
                                                             control={
                                                                 <Checkbox
