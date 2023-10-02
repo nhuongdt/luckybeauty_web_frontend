@@ -183,6 +183,7 @@ export default function ModalAddUser({
                 initialValues.changePassword = false;
                 initialValues.isActive = true;
                 initialValues.isAdmin = false;
+                setAvatar('');
             } else {
                 GetInforUser();
             }
@@ -351,6 +352,7 @@ export default function ModalAddUser({
                                                     pathImg={avatar}
                                                     handeChoseImage={choseImage}
                                                     handleCloseImage={closeImage}
+                                                    roleChangeImg={false} // form này không cho phép thay đổi ảnh (chỉ hiển thị theo ảnh nhân viên)
                                                 />
                                             </Grid>
                                             <Grid item xs={8}>
@@ -382,6 +384,7 @@ export default function ModalAddUser({
                                                                 'phoneNumber',
                                                                 item?.soDienThoai
                                                             );
+                                                            setAvatar(item?.avatar);
                                                         }}
                                                     />
                                                     <TextField
