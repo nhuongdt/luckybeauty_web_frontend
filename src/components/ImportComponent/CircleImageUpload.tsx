@@ -2,8 +2,14 @@ import { Box, Stack, TextField } from '@mui/material';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import utils from '../../utils/utils';
 
-export default function CircleImageUpload({ pathImg, handeChoseImage, handleCloseImage }: any) {
+export default function CircleImageUpload({
+    pathImg,
+    handeChoseImage,
+    handleCloseImage,
+    roleChangeImg = true
+}: any) {
     const choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!roleChangeImg) return;
         await closeImage();
         if (e.target.files && e.target.files[0]) {
             const file: File = e.target.files[0];
@@ -33,7 +39,7 @@ export default function CircleImageUpload({ pathImg, handeChoseImage, handleClos
                     </div>
                 )}
                 <TextField
-                    type="file"
+                    type={roleChangeImg ? 'file' : 'text'}
                     sx={{
                         position: 'absolute',
                         top: 0,
