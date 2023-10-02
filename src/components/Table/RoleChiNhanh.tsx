@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { RoleDto } from '../../services/role/dto/roleDto';
 import { IChiNhanhRoles, IUserRoleDto, RoleDtoCheck } from '../../models/Roles/userRoleDto';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import roleService from '../../services/role/roleService';
 export default function TableRoleChiNhanh({
     allRoles,
@@ -31,15 +31,6 @@ export default function TableRoleChiNhanh({
 
     const GetRolebyChiNhanh_ofUser = async () => {
         const data = await roleService.GetRolebyChiNhanh_ofUser(userId);
-        console.log(
-            'GetRolebyChiNhanh_ofUser ',
-            data.map((item: any) => {
-                return {
-                    idChiNhanh: item.idChiNhanh,
-                    roleId: item.roleId
-                } as IUserRoleDto;
-            })
-        );
 
         setLstChosed(
             data.map((item: any) => {
@@ -65,7 +56,10 @@ export default function TableRoleChiNhanh({
             }
         } else {
             if (checked) {
-                setLstChosed([{ idChiNhanh: idChiNhanh, roleId: roleId }, ...lstChosed]);
+                setLstChosed([
+                    { idChiNhanh: idChiNhanh, roleId: roleId },
+                    ...lstChosed.filter((x: IUserRoleDto) => x.idChiNhanh !== idChiNhanh) // 1 chi nhánh chỉ chọn 1 role
+                ]);
             }
         }
     };
@@ -82,6 +76,10 @@ export default function TableRoleChiNhanh({
             // remove role by idChiNhanh
             setLstChosed([]);
         }
+    };
+
+    const CacuklatorCheckAll = () => {
+        //
     };
 
     useEffect(() => {
