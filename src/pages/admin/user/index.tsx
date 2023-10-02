@@ -539,7 +539,16 @@ class UserScreen extends AppComponentBase {
                                 modalVisible: false
                             });
                         }}
-                        dataNhanVien={this.state.suggestNhanSu}
+                        // chỉ lấy nhân viên chưa có tk đăng nhập
+                        dataNhanVien={this.state.suggestNhanSu.filter(
+                            (xOut: SuggestNhanSuDto) =>
+                                !this.state.listUser
+                                    ?.map((x: GetAllUserOutput) => {
+                                        // get list nhansuId from listUser
+                                        return x.nhanSuId;
+                                    })
+                                    .includes(xOut.id)
+                        )}
                         dataChiNhanh={this.state.allChiNhanh}
                         userId={this.state.userId}
                         allRoles={this.state.roles}
