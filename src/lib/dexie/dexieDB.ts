@@ -13,6 +13,9 @@ export class SubClassDexie extends Dexie {
             hoaDon: '&id, idKhachHang',
             khachCheckIn: '&idCheckIn, idKhachHang'
         });
+        this.version(2).stores({
+            hoaDon: '&id, idKhachHang, idChiNhanh'
+        });
     }
 }
 export const dbDexie = new SubClassDexie();

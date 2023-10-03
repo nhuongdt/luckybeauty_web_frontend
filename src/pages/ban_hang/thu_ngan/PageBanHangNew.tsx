@@ -238,7 +238,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const FirstLoad_getSetDataFromCache = async () => {
         const idCus = customerChosed.idKhachHang;
         if (!utils.checkNull(idCus)) {
-            const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
+            const data = await dbDexie.hoaDon
+                .where('idKhachHang')
+                .equals(idCus)
+                .and((x) => x.idChiNhanh == idChiNhanh)
+                .toArray();
+            // todo check tontai khachhang, nhung # chi nhanh (xyar ra khi mở nhiều tenant cùng lúc)
 
             if (data.length === 0) {
                 const dataHD: PageHoaDonDto = {
