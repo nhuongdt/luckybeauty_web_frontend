@@ -14,7 +14,9 @@ import {
     MenuItem,
     FormControl,
     Avatar,
-    Dialog
+    Dialog,
+    DialogTitle,
+    DialogContent
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Search } from '@mui/icons-material';
@@ -33,6 +35,7 @@ import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
 import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuRequestDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
+import DialogButtonClose from '../../components/Dialog/ButtonClose';
 const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     const [isShow, setIsShow] = useState(false);
     const [txtSearch, setTxtSearch] = useState('');
@@ -165,23 +168,17 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
 
     return (
         <>
-            {/* <div
-                onClick={() => setIsShow(false)}
-                className={isShow ? 'show overlay' : 'overlay'}></div> */}
-
-            <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="xl">
-                <Box padding="24px">
-                    <Typography variant="h5" color="333233" fontWeight="700" marginBottom="28px">
-                        Chọn kỹ thuật viên
-                    </Typography>
+            <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="md">
+                <DialogTitle>
+                    <Typography className="modal-title">Chọn kỹ thuật viên</Typography>
+                    <DialogButtonClose onClose={() => setIsShow(false)} />
+                </DialogTitle>
+                <DialogContent>
                     <TextField
                         size="small"
                         sx={{
-                            borderColor: '#CDC9CD',
                             width: '375px'
                         }}
-                        className="search-field"
-                        variant="outlined"
                         type="search"
                         placeholder="Tìm kiếm"
                         value={txtSearch}
@@ -189,28 +186,25 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                             setTxtSearch(event.target.value);
                         }}
                         InputProps={{
-                            startAdornment: (
-                                <IconButton type="submit">
-                                    <SearchIcon />
-                                </IconButton>
-                            )
+                            startAdornment: <Search />
                         }}
                     />
                     <Typography
                         variant="subtitle1"
                         fontWeight="700"
                         color="#999699"
-                        marginTop="28px">
+                        marginTop="20px"
+                        marginBottom={'8px'}>
                         Danh sách kỹ thuật viên
                     </Typography>
-                    <Grid container className="list-persons" spacing={2} marginTop="8px">
+                    <Grid container className="list-persons" spacing={2}>
                         {lstNhanVien?.map((person: any, index: any) => (
                             <Grid
                                 className="person-item"
                                 item
                                 xs={12}
-                                md={3}
-                                lg={3}
+                                md={4}
+                                lg={4}
                                 key={index}
                                 onClick={() => ChoseNhanVien(person)}>
                                 <Box
@@ -219,7 +213,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                         alignItems: 'center',
                                         gap: '8px',
                                         position: 'relative',
-                                        padding: ' 24px 24px 20px 24px',
+                                        padding: '20px 12px',
                                         borderRadius: '8px',
                                         transition: '.4s',
                                         cursor: 'pointer',
@@ -234,7 +228,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                             right: '-10px',
                                             height: '20px',
                                             borderRadius: '50%',
-                                            top: '5px',
+                                            top: '-5px',
                                             zIndex: '2',
                                             transition: '.4s',
                                             opacity: person.isChosed ? '1' : '0'
@@ -251,11 +245,6 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                         <CheckCircleIcon sx={{ color: 'var(--color-main)' }} />
                                     </Box>
                                     <div className="person-avatar">
-                                        {/* <Avatar
-                                            src={person.avatar}
-                                            alt={person.name}
-                                            sx={{ width: '44px', height: '44px' }}
-                                        /> */}
                                         {utils.checkNull(person?.avatar) ? (
                                             <BadgeFistCharOfName
                                                 firstChar={utils.getFirstLetter(
@@ -269,15 +258,14 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                             />
                                         )}
                                     </div>
-                                    <Stack maxWidth="calc(100% - 100px)">
+                                    <Stack maxWidth="calc(100% - 50px)">
                                         <Typography
                                             title={person.tenNhanVien}
-                                            variant="subtitle1"
+                                            variant="subtitle2"
                                             className="lableOverflow">
                                             {person.tenNhanVien}
                                         </Typography>
                                         <Typography
-                                            sx={{ fontStyle: 'italic' }}
                                             variant="caption"
                                             className="person-position"
                                             color={'#333233'}>
@@ -293,14 +281,23 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                         direction="row"
                         spacing={1}
                         sx={{
-                            marginTop: '30px',
                             background: '#fff',
                             justifyContent: 'center',
                             position: 'sticky',
                             bottom: '0',
                             left: '0',
-                            padding: '24px'
+                            paddingTop: '30px'
                         }}>
+                        <Button
+                            variant="outlined"
+                            sx={{
+                                borderColor: '#e6e1e6',
+                                textTransform: 'capitalize'
+                            }}
+                            className=" btn-outline-hover"
+                            onClick={() => setIsShow(false)}>
+                            Hủy
+                        </Button>
                         <Button
                             variant="contained"
                             className="btn-container-hover"
@@ -312,33 +309,8 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                             onClick={onSave}>
                             Lưu
                         </Button>
-                        <Button
-                            variant="outlined"
-                            sx={{
-                                borderColor: '#e6e1e6',
-                                textTransform: 'capitalize'
-                            }}
-                            className=" btn-outline-hover"
-                            onClick={() => setIsShow(false)}>
-                            Hủy
-                        </Button>
                     </Stack>
-                    <IconButton
-                        sx={{
-                            position: 'absolute',
-                            top: '35px',
-                            right: '31px',
-
-                            fontSize: '30px',
-                            cursor: 'pointer',
-                            '&:hover svg': {
-                                filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
-                            }
-                        }}
-                        onClick={() => setIsShow(false)}>
-                        <Close />
-                    </IconButton>
-                </Box>
+                </DialogContent>
             </Dialog>
         </>
     );
