@@ -91,15 +91,21 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                     <Formik
                         initialValues={initialValues}
                         validationSchema={rules}
-                        onSubmit={async (values) => {
+                        onSubmit={async (values, helpers) => {
                             values.id = values.id ?? AppConsts.guidEmpty;
                             values.idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
-                            const createOrEdit = await chietKhauDichVuService.CreateOrEdit(values);
-                            enqueueSnackbar(createOrEdit.message, {
-                                variant: createOrEdit.status,
-                                autoHideDuration: 3000
-                            });
-                            await onSave();
+                            if (values.laPhanTram == true && values.giaTri > 100) {
+                                helpers.setFieldError('giaTri', 'Giá trị không được quá 100 %');
+                            } else {
+                                const createOrEdit = await chietKhauDichVuService.CreateOrEdit(
+                                    values
+                                );
+                                enqueueSnackbar(createOrEdit.message, {
+                                    variant: createOrEdit.status,
+                                    autoHideDuration: 3000
+                                });
+                                await onSave();
+                            }
                         }}>
                         {({ values, handleChange, errors, touched, setFieldValue }) => (
                             <Form
@@ -247,16 +253,17 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                     </small>
                                                 )
                                             }
+                                            InputProps={{ inputMode: 'numeric' }}
                                             fullWidth
                                             name="giaTri"
-                                            onChange={(e) => {
+                                            onChange={async (e) => {
                                                 const valueChange = e.target.value.replaceAll(
                                                     '.',
                                                     ''
                                                 );
                                                 setFieldValue(
                                                     'giaTri',
-                                                    Number.parseInt(valueChange)
+                                                    Number.parseInt(valueChange, 10)
                                                 );
                                             }}
                                             customInput={TextField}

@@ -114,26 +114,29 @@ class StoreDetail extends Component {
                     maSoThue: !maSoThue ? 'Mã số thuế là trường bắt buộc' : ''
                 }
             });
+            this.setState({ isSaving: false });
             return;
         }
 
-        if (!this.validatePhoneNumber(soDienThoai)) {
+        if (this.validatePhoneNumber(soDienThoai) == false) {
             this.setState({
                 errors: {
                     ...this.state.errors,
                     soDienThoai: 'Số điện thoại không hợp lệ'
                 }
             });
+            this.setState({ isSaving: false });
             return;
         }
 
-        if (!this.validateMaSoThue(maSoThue)) {
+        if (this.validateMaSoThue(maSoThue) == false) {
             this.setState({
                 errors: {
                     ...this.state.errors,
                     maSoThue: 'Mã số thuế phải có độ dài 10 hoặc 13 số'
                 }
             });
+            this.setState({ isSaving: false });
             return;
         }
         let fileId = this.state.googleDrive_fileId;
@@ -152,7 +155,7 @@ class StoreDetail extends Component {
             }
         }
         this.setState({ isSaving: true });
-        if (this.state.isSaving) return;
+        //if (this.state.isSaving === false) return;
         // gán lại image theo id mới
         const dataSave = this.state.editCuaHang;
         dataSave.logo = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';

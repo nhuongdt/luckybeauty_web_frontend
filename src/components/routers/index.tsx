@@ -84,6 +84,18 @@ export const userRouter: RouteProps[] = [
         showInMenu: false
     },
     {
+        path: '/account/changepassword',
+        permission: '',
+        title: 'Đổi mật khẩu',
+        name: 'khachhang',
+        icon: <ClientIcon width="20px" />,
+        iconActive: <ClientActive width="20px" />,
+        showInMenu: false,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../pages/account/Change_Password'))
+    },
+    {
         path: 'exception401',
         permission: '',
         title: 'exception',
