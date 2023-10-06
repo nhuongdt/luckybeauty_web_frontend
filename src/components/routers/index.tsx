@@ -566,7 +566,7 @@ export const appRouters: AppRouteProps = {
                     children: [
                         {
                             path: '/account/profile',
-                            permission: 'Pages',
+                            permission: '',
                             title: 'Profile',
                             name: 'profile',
                             icon: null,
