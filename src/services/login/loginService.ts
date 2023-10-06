@@ -5,6 +5,7 @@ import LoginModel from '../../models/Login/loginModel';
 import qs from 'qs';
 import { RolePermission } from './dto/RolePermission';
 import http from '../httpService';
+import { waitForDebugger } from 'inspector';
 class LoginService {
     public async CheckTenant(tenantName: string, isRemember?: boolean) {
         const tenancy = tenantName || 'default';
@@ -75,6 +76,13 @@ class LoginService {
                         Cookies.set('avatar', apiResult.data.result['avatar'], {
                             expires: tokenExpireDate
                         });
+                        Cookies.set(
+                            'idChiNhanhMacDinh',
+                            apiResult.data.result['idChiNhanhMacDinh'],
+                            {
+                                expires: tokenExpireDate
+                            }
+                        );
                         loginModel.rememberMe
                             ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
                             : Cookies.set('isRememberMe', 'false');

@@ -59,6 +59,7 @@ import NhanVienService from '../../../services/nhan-vien/nhanVienService';
 import Cookies from 'js-cookie';
 import logo from '../../../images/Lucky_beauty.jpg';
 import { ReactComponent as IconDv } from '../../../images/icon-DV.svg';
+
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { ReactComponent as DeleteIcon } from '../../../images/trash.svg';
 import { ReactComponent as UserIcon } from '../../../images/user.svg';
@@ -237,7 +238,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     const FirstLoad_getSetDataFromCache = async () => {
         const idCus = customerChosed.idKhachHang;
         if (!utils.checkNull(idCus)) {
-            const data = await dbDexie.hoaDon.where('idKhachHang').equals(idCus).toArray();
+            const data = await dbDexie.hoaDon
+                .where('idKhachHang')
+                .equals(idCus)
+                .and((x) => x.idChiNhanh == idChiNhanh)
+                .toArray();
+            // todo check tontai khachhang, nhung # chi nhanh (xyar ra khi mở nhiều tenant cùng lúc)
 
             if (data.length === 0) {
                 const dataHD: PageHoaDonDto = {
@@ -1116,7 +1122,6 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     boxShadow: CoditionLayout
                                         ? 'unset'
                                         : ' 0px 20px 100px 0px #0000000D',
-                                    // padding: '16px 0px 16px 16px',
                                     padding: '16px',
                                     height: CoditionLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
@@ -1140,13 +1145,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         alignItems="center">
                                         <Typography
                                             variant="h3"
-                                            fontSize="18px"
+                                            fontSize="16px"
                                             color="#4C4B4C"
                                             fontWeight="700"
                                             onClick={() => choseLoaiHang(2)}>
                                             Nhóm dịch vụ
                                         </Typography>
-                                        {isScrollable && (
+                                        {/* {isScrollable && (
                                             <Box
                                                 sx={{
                                                     '& button': {
@@ -1183,17 +1188,18 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     />
                                                 </Button>
                                             </Box>
-                                        )}
+                                        )} */}
                                     </Box>
                                     <List
                                         onScroll={handleScroll}
                                         ref={containerRef}
                                         onWheel={handleWheel}
                                         sx={{
+                                            height: 66,
                                             display: CoditionLayout ? 'flex' : 'block',
                                             columnGap: '12px',
                                             flexWrap: CoditionLayout ? 'nowrap' : 'wrap',
-                                            overflowX: 'auto',
+                                            overflowX: CoditionLayout ? 'auto' : 'none',
                                             scrollBehavior: 'smooth',
                                             '&::-webkit-scrollbar': {
                                                 width: '7px',
@@ -1204,19 +1210,67 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 borderRadius: '8px'
                                             }
                                         }}>
+                                        <ListItem
+                                            component="a"
+                                            onClick={() => choseLoaiHang(2)}
+                                            sx={{
+                                                gap: '6px',
+                                                padding: '4px 8px ',
+                                                overflow: 'hidden',
+                                                bgcolor: 'var( --color-main)',
+                                                borderRadius: '8px',
+                                                marginTop: '8px',
+                                                cursor: 'pointer',
+                                                transition: '.4s',
+                                                minWidth: CoditionLayout ? '100px' : 'unset',
+                                                maxWidth: CoditionLayout ? '100px' : 'unset',
+                                                position: 'relative',
+                                                '&::after': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    left: '0',
+                                                    bottom: '0',
+                                                    backgroundColor: 'rgba(0,0,0,0.3)',
+                                                    zIndex: '0',
+                                                    opacity: '0',
+                                                    transition: '.4s'
+                                                },
+                                                '&:hover::after': {
+                                                    opacity: '1'
+                                                }
+                                            }}>
+                                            <ListItemText
+                                                sx={{
+                                                    textAlign: 'center',
+                                                    '& .MuiTypography-root': {
+                                                        color: 'white',
+                                                        whiteSpace: 'nowrap',
+                                                        width: '100%',
+                                                        fontSize: 'var(--font-size-main)',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        fontWeight: '600',
+                                                        position: 'relative',
+                                                        zIndex: '2'
+                                                    }
+                                                }}>
+                                                Tất cả
+                                            </ListItemText>
+                                        </ListItem>
                                         {nhomDichVu.map((nhomDV, index) => (
                                             <ListItem
                                                 component="a"
-                                                href={'#' + nhomDV.id}
                                                 key={index}
-                                                // onClick={() => choseNhomDichVu(nhomDV)}
+                                                onClick={() => choseNhomDichVu(nhomDV)}
                                                 sx={{
                                                     gap: '6px',
-                                                    padding: '8px 10px ',
+                                                    padding: '4px 8px ',
                                                     overflow: 'hidden',
-                                                    backgroundColor: nhomDV.color,
+                                                    bgcolor: '#EEF0F4',
                                                     borderRadius: '8px',
-                                                    marginTop: '12px',
+                                                    marginTop: '8px',
                                                     cursor: 'pointer',
                                                     transition: '.4s',
                                                     minWidth: CoditionLayout ? '200px' : 'unset',
@@ -1242,17 +1296,20 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     sx={{
                                                         minWidth: '0',
                                                         position: 'relative',
-                                                        zIndex: '2'
+                                                        zIndex: '2',
+                                                        '& path': {
+                                                            fill: nhomDV.color ?? '#c2c9d6'
+                                                        }
                                                     }}>
-                                                    <IconDv style={{ color: '#F1FAFF' }} />
+                                                    <IconDv />
                                                 </ListItemIcon>
                                                 <ListItemText
                                                     sx={{
                                                         '& .MuiTypography-root': {
-                                                            color: '#F1FAFF',
+                                                            color: 'black',
                                                             whiteSpace: 'nowrap',
                                                             width: '100%',
-                                                            fontSize: '14px',
+                                                            fontSize: 'var(--font-size-main)',
                                                             overflow: 'hidden',
                                                             textOverflow: 'ellipsis',
                                                             fontWeight: '600',
@@ -1272,7 +1329,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 key={index}
                                                 sx={{
                                                     gap: '6px',
-                                                    padding: '8px 10px',
+                                                    padding: '4px 8px',
                                                     overflow: 'hidden',
                                                     bgcolor: nhomHH.color,
                                                     borderRadius: '8px',
@@ -1299,20 +1356,22 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         opacity: '1'
                                                     }
                                                 }}
-                                                // onClick={() => choseNhomDichVu(nhomHH)}
-                                            >
+                                                onClick={() => choseNhomDichVu(nhomHH)}>
                                                 <ListItemIcon
                                                     sx={{
                                                         minWidth: '0',
                                                         position: 'relative',
-                                                        zIndex: '2'
+                                                        zIndex: '2',
+                                                        '& path': {
+                                                            fill: nhomHH.color ?? '#c2c9d6'
+                                                        }
                                                     }}>
-                                                    <IconDv style={{ color: '#F1FAFF' }} />
+                                                    <IconDv />
                                                 </ListItemIcon>
                                                 <ListItemText
                                                     sx={{
                                                         '& .MuiTypography-root': {
-                                                            color: '#F1FAFF',
+                                                            color: 'black',
                                                             whiteSpace: 'nowrap',
                                                             width: '100%',
                                                             fontWeight: '600',
@@ -1372,7 +1431,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     flexDirection="column"
                                     gap="24px"
                                     padding={2}
-                                    marginTop="16px"
+                                    marginTop="22px"
                                     sx={{
                                         width: '100%',
                                         backgroundColor: CoditionLayout ? 'transparent' : '#fff',
@@ -1414,15 +1473,15 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     <Grid
                                                         item
                                                         xs={6}
-                                                        sm={4}
-                                                        md={4}
-                                                        lg={3}
+                                                        sm={6}
+                                                        md={CoditionLayout ? 4 : 6}
+                                                        lg={CoditionLayout ? 3 : 4}
                                                         key={item.id}>
                                                         <Stack
                                                             spacing={2}
                                                             height={'100%'}
                                                             padding="8px 12px"
-                                                            display="flex"
+                                                            // display="flex"
                                                             flexDirection="column"
                                                             justifyContent="space-between"
                                                             gap="8px"
@@ -1445,9 +1504,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                     fontSize: '12px',
                                                                     fontWeight: '700',
                                                                     color: '#333233',
-                                                                    display: '-webkit-box',
-                                                                    WebkitBoxOrient: 'vertical',
-                                                                    WebkitLineClamp: 2,
+                                                                    // display: '-webkit-box',
+                                                                    // WebkitBoxOrient: 'vertical',
+                                                                    // WebkitLineClamp: 2,
                                                                     maxHeight: '32px',
                                                                     overflow: 'hidden',
                                                                     textOverflow: 'ellipsis'
@@ -1505,9 +1564,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             width: 'calc(100% + 16px)',
                             mt: showDetail ? '-21px' : '-79px',
                             backgroundColor: '#fff',
-                            // borderRadius: '8px',
                             height: 'calc(100vh - 16px)',
                             padding: '16px',
+                            paddingBottom: 0,
                             display: 'flex',
                             flexDirection: 'column',
                             justifyContent: 'space-between',
@@ -1523,11 +1582,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             }
                         }}>
                         <Box
-                            // padding={'0px 0px 16px 0px'}
-                            // paddingBottom={'16px'}
                             sx={{
                                 backgroundColor: '#fff',
-                                // radius: '8px',
                                 borderBottom: '1px solid #F2F2F2',
                                 paddingBottom: '16px'
                             }}>

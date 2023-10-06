@@ -683,8 +683,8 @@ export default function PageProduct() {
                         </Button>
                     </Grid>
                 </Grid>
-                <Grid container item spacing={2} paddingTop={1}>
-                    <Grid item lg={3} md={3} sm={4} xs={12}>
+                <Grid container item spacing={2} paddingTop={1} columns={13}>
+                    <Grid item lg={3} md={3} sm={4} xs={13}>
                         <Box className="page-box-left">
                             <Box
                                 display="flex"
@@ -742,7 +742,7 @@ export default function PageProduct() {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item lg={9} md={9} sm={8} xs={12}>
+                    <Grid item lg={10} md={10} sm={9} xs={13}>
                         {rowSelectionModel.length > 0 && (
                             <ActionRowSelect
                                 lstOption={[

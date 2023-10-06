@@ -44,6 +44,7 @@ import { observer } from 'mobx-react';
 import NotificationSeverity from '../../enum/NotificationSeverity';
 import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
+import utils from '../../utils/utils';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -102,24 +103,27 @@ const Header: React.FC<HeaderProps> = (
                 if (listChiNhanh != null && listChiNhanh.length > 0) {
                     setListChiNhanh(listChiNhanh);
 
-                    if (
-                        Cookies.get('IdChiNhanh') === undefined ||
-                        Cookies.get('IdChiNhanh') === ''
-                    ) {
+                    const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');
+                    const remember = Cookies.get('isRememberMe');
+                    if (utils.checkNull(idChiNhanhMacDinh)) {
                         const idChiNhanh = listChiNhanh[0].id;
                         const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
 
                         setCurrentChiNhanh(idChiNhanh);
-                        const remember = Cookies.get('isRememberMe');
+
                         Cookies.set('IdChiNhanh', idChiNhanh, {
                             expires: remember === 'true' ? 1 : undefined
                         });
                         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
                     } else {
-                        const idChiNhanh = Cookies.get('IdChiNhanh') ?? '';
+                        const idChiNhanh = idChiNhanhMacDinh ?? '';
                         setCurrentChiNhanh(idChiNhanh);
                         // todo tenChiNhanh
                         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: '' });
+
+                        Cookies.set('IdChiNhanh', idChiNhanh, {
+                            expires: remember === 'true' ? 1 : undefined
+                        });
                     }
                 }
             }

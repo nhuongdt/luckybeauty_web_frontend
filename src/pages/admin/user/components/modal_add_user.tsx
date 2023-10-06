@@ -38,6 +38,8 @@ import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import TableRoleChiNhanh from '../../../../components/Table/RoleChiNhanh';
 import roleService from '../../../../services/role/roleService';
 import { Guid } from 'guid-typescript';
+import authenticationStore from '../../../../stores/authenticationStore';
+import Cookies from 'js-cookie';
 
 export default function ModalAddUser({
     isShowModal,
@@ -171,6 +173,19 @@ export default function ModalAddUser({
         setIsActive(userEdit?.isActive ?? false);
     };
 
+    const GetRolebyChiNhanh_ofUser = async () => {
+        const data = await roleService.GetRolebyChiNhanh_ofUser(userId);
+
+        setLstChosed(
+            data.map((item: any) => {
+                return {
+                    idChiNhanh: item.idChiNhanh,
+                    roleId: item.roleId
+                } as IUserRoleDto;
+            })
+        );
+    };
+
     useEffect(() => {
         if (isShowModal) {
             if (userId === 0) {
@@ -186,6 +201,7 @@ export default function ModalAddUser({
                 setAvatar('');
             } else {
                 GetInforUser();
+                GetRolebyChiNhanh_ofUser();
             }
             setChangePassword(false);
             setChiNhanhRoles(
@@ -251,6 +267,15 @@ export default function ModalAddUser({
         if (!checkDB) {
             return;
         }
+        let passNew_samePassOld = false;
+        if (values.changePassword) {
+            // check math passOld & passsNew
+            passNew_samePassOld = await userService.CheckMatchesPassword(
+                userId,
+                values?.passwordNew
+            );
+            values.password = values.passwordNew;
+        }
         // user có thể không phải là nhân viên --> setdefault (name, surname ='' --> avoid error null in DB)
         values.nhanSuId = values?.nhanSuId == '' ? null : values.nhanSuId;
         values.name = utils.checkNull(values?.name) ? '' : values.name;
@@ -277,6 +302,10 @@ export default function ModalAddUser({
             }
         }
         await roleService.CreateRole_byChiNhanhOfUser(userIdNew, lstChosed);
+        const userLogin = Cookies.get('userId');
+        if (userLogin === userId.toString()) {
+            if (!passNew_samePassOld) return authenticationStore.logout(); // logout if change pass
+        }
         onOk();
     };
 

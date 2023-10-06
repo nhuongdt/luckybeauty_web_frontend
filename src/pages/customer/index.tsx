@@ -777,8 +777,8 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </ButtonGroup>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={2} marginTop={3}>
-                            <Grid item lg={3} md={3} sm={3} xs={12}>
+                        <Grid container spacing={2} marginTop={3} columns={13}>
+                            <Grid item lg={3} md={3} sm={3} xs={13}>
                                 <Box className="page-box-left">
                                     <Box
                                         display="flex"
@@ -838,7 +838,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Box>
                                 </Box>
                             </Grid>
-                            <Grid item lg={9} md={9} sm={9} xs={12}>
+                            <Grid item lg={10} md={10} sm={10} xs={13}>
                                 {this.state.listItemSelectedModel.length > 0 && (
                                     <ActionRowSelect
                                         lstOption={[
