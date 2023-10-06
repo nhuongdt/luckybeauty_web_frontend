@@ -443,6 +443,21 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(
                                 () => import('../../pages/admin/tenant/index')
                             )
+                        },
+                        {
+                            path: '/Brandname',
+                            permission: 'Pages.Tenants',
+                            title: 'Brandname',
+                            name: 'Brandname',
+                            iconActive: null,
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            showInMenu: true,
+                            children: [],
+
+                            isLayout: false,
+                            component: LoadableComponent(
+                                () => import('../../pages/sms/brandname/index')
+                            )
                         }
                     ],
                     component: null
