@@ -21,6 +21,7 @@ import * as yup from 'yup';
 import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import { IOSSwitch } from '../../../components/Switch/IOSSwitch';
 import { Guid } from 'guid-typescript';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 
 export default function ModalCreateOrEditBrandname({
     isShow,
@@ -36,6 +37,7 @@ export default function ModalCreateOrEditBrandname({
         ngayKichHoat: new Date(),
         trangThai: 1
     } as BrandnameDto);
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     useEffect(() => {
         if (isShow) {
@@ -50,38 +52,58 @@ export default function ModalCreateOrEditBrandname({
                 } as BrandnameDto);
             } else {
                 // get data from db
-                setObjBrandname({
-                    ...objBrandname,
-                    id: objUpdate.id,
-                    brandname: objUpdate.brandname,
-                    sdtCuaHang: objUpdate.sdtCuaHang,
-                    ngayKichHoat: objUpdate.ngayKichHoat,
-                    trangThai: objUpdate.trangThai
-                } as BrandnameDto);
+                setObjBrandname(() => {
+                    return {
+                        id: objUpdate.id,
+                        brandname: objUpdate.brandname,
+                        sdtCuaHang: objUpdate.sdtCuaHang,
+                        ngayKichHoat: objUpdate.ngayKichHoat,
+                        trangThai: objUpdate.trangThai,
+                        tongTienNap: objUpdate.tongTienNap,
+                        daSuDung: objUpdate.daSuDung,
+                        conLai: objUpdate.conLai
+                    } as BrandnameDto;
+                });
             }
         }
     }, [isShow]);
 
-    const checkSaveDB = async () => {
+    const checkSaveDB = async (values: any) => {
         // brandname exist
+        const sdtExists = await BrandnameService.Brandname_CheckExistSDT(
+            values.sdtCuaHang,
+            idBrandname
+        );
+        if (sdtExists) {
+            setObjAlert({ ...objAlert, show: true, mes: 'Số điện thoại đã tồn tại', type: 2 });
+            return false;
+        }
         return true;
     };
     const saveBrandname = async (values: BrandnameDto) => {
-        const check = await checkSaveDB();
+        const check = await checkSaveDB(values);
         if (!check) return;
 
-        console.log('save_values ', values);
         if (utils.checkNull(idBrandname)) {
             values.id = Guid.EMPTY;
         }
-        const data = await BrandnameService.CreateBrandname(values);
+
+        const data = values as BrandnameDto;
         if (utils.checkNull(idBrandname)) {
+            const data = await BrandnameService.CreateBrandname(values);
             data.txtTrangThai = values.trangThai === 1 ? 'Kích hoạt' : 'Chưa kích hoạt';
             data.tongTienNap = 0;
             data.daSuDung = 0;
             data.conLai = 0;
+            onSave(data);
+        } else {
+            await BrandnameService.UpdateBrandname(values);
+            data.txtTrangThai = values.trangThai === 1 ? 'Kích hoạt' : 'Chưa kích hoạt';
+            data.tongTienNap = objUpdate.tongTienNap;
+            data.daSuDung = objUpdate.daSuDung;
+            data.conLai = objUpdate.conLai;
+            onSave(data);
         }
-        onSave(data);
     };
 
     const rules = yup.object().shape({
@@ -91,6 +113,11 @@ export default function ModalCreateOrEditBrandname({
 
     return (
         <>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Dialog
                 open={isShow}
                 onClose={onClose}
@@ -103,7 +130,8 @@ export default function ModalCreateOrEditBrandname({
                 <Formik
                     initialValues={objBrandname}
                     validationSchema={rules}
-                    onSubmit={saveBrandname}>
+                    onSubmit={saveBrandname}
+                    enableReinitialize>
                     {({
                         isSubmitting,
                         handleChange,
@@ -120,8 +148,14 @@ export default function ModalCreateOrEditBrandname({
                                             <Typography variant="body2">Kích hoạt</Typography>
                                             <IOSSwitch
                                                 sx={{ m: 1 }}
-                                                value={values.trangThai == 1 ? true : false}
-                                                checked={values.trangThai == 1 ? true : false}
+                                                value={values.trangThai}
+                                                checked={
+                                                    parseInt(values.trangThai) == 1 ? true : false
+                                                }
+                                                onChange={() => {
+                                                    const newVal = values.trangThai == 1 ? 0 : 1;
+                                                    setFieldValue('trangThai', newVal);
+                                                }}
                                             />
                                         </Stack>
                                     </Grid>
@@ -134,10 +168,10 @@ export default function ModalCreateOrEditBrandname({
                                             autoFocus
                                             label={`Tên brandname *`}
                                             onChange={handleChange}
-                                            value={values.brandName}
+                                            value={values.brandname}
                                             helperText={
-                                                touched.brandName &&
-                                                errors.brandName && <span>{errors.brandName}</span>
+                                                touched.brandname &&
+                                                errors.brandname && <span>{errors.brandname}</span>
                                             }
                                         />
                                     </Grid>

@@ -1,8 +1,27 @@
+import utils from '../../../utils/utils';
 import { PagedRequestDto } from '../../dto/pagedRequestDto';
 import http from '../../httpService';
 import { BrandnameDto } from './BrandnameDto';
 
 class BrandnameService {
+    Brandname_CheckExistSDT = async (phoneNumber: string, id: string) => {
+        if (!utils.checkNull(phoneNumber)) {
+            const data = await http
+                .get(
+                    `api/services/app/Brandname/Brandname_CheckExistSDT?phoneNumber=${phoneNumber}&id=${id}`
+                )
+                .then((res) => {
+                    return res.data.result;
+                });
+            return data;
+        } else {
+            return false;
+        }
+    };
+    GetInforBrandnamebyID = async (id: string) => {
+        const result = await http.get(`api/services/app/Brandname/GetInforBrandnamebyID?id=${id}`);
+        return result.data.result;
+    };
     GetListBandname = async (params: PagedRequestDto) => {
         const result = await http.post(`api/services/app/Brandname/GetListBandname`, params);
         return result.data.result;
@@ -18,6 +37,27 @@ class BrandnameService {
     XoaBrandname = async (id: string) => {
         const result = await http.get('api/services/app/Brandname/XoaBrandname?id=' + id);
         return result.data.result;
+    };
+    DeleteMultiple_Brandname = async (lstId: any) => {
+        const result = await http.post(
+            'api/services/app/Brandname/DeleteMultiple_Brandname',
+            lstId
+        );
+        return result.data.success;
+    };
+    ActiveMultiple_Brandname = async (lstId: any) => {
+        const result = await http.post(
+            'api/services/app/Brandname/ActiveMultiple_Brandname',
+            lstId
+        );
+        return result.data.success;
+    };
+    ExportToExcel_ListBrandname = async (param: PagedRequestDto) => {
+        const result = await http.post(
+            'api/services/app/Brandname/ExportToExcel_ListBrandname',
+            param
+        );
+        return result.data.success;
     };
 }
 

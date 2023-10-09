@@ -13,6 +13,8 @@ import {
     SelectChangeEvent
 } from '@mui/material';
 import { DeleteSweepOutlined, PrintOutlined, Search } from '@mui/icons-material';
+import { Info, Edit, DeleteForever, MoreHoriz } from '@mui/icons-material';
+
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { format, lastDayOfMonth } from 'date-fns';
@@ -27,12 +29,16 @@ import {
 } from '../../../services/sms/brandname/BrandnameDto';
 import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import ModalCreateOrEditBrandname from './modal_create_or_edit_brandname';
+import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
+import utils from '../../../utils/utils';
+import fileDowloadService from '../../../services/file-dowload.service';
 
 export default function PageBrandname() {
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
     const [brandChosed, setBrandChosed] = useState<BrandnameDto>({ id: '' } as BrandnameDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+    const [dataGrid_typeAction, setDataGrid_typeAction] = useState(0);
     const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(
         new PropConfirmOKCancel({ show: false })
     );
@@ -71,7 +77,6 @@ export default function PageBrandname() {
 
     const GetListBrandname = async () => {
         const data = await BrandnameService.GetListBandname(paramSearch);
-        console.log('GetListBrandname ', data);
 
         if (data !== null) {
             setPageDataBrandname({
@@ -82,13 +87,16 @@ export default function PageBrandname() {
         }
     };
 
-    const exportToExcel = () => {
-        //
+    const exportToExcel = async () => {
+        const param = { ...paramSearch };
+        param.maxResultCount = pageDataBrandname.totalCount;
+        param.skipCount = 1;
+        const data = await BrandnameService.ExportToExcel_ListBrandname(param);
+        fileDowloadService.downloadExportFile(data);
     };
 
     const choseRow = (item: any) => {
-        console.log('into');
-        setBrandChosed(item);
+        setBrandChosed(item?.row);
     };
 
     const handleChangePage = (event: any, value: number) => {
@@ -110,24 +118,142 @@ export default function PageBrandname() {
                 setInforDelete({
                     ...inforDelete,
                     show: true,
-                    mes: 'Bạn có chắc chắn muốn xóa những brandname này không?'
+                    title: 'Thông báo xóa',
+                    mes: `Bạn có chắc chắn muốn xóa ${rowSelectionModel.length} brandname này không?`
                 });
                 break;
             case 2:
                 {
-                    //
+                    setInforDelete({
+                        ...inforDelete,
+                        show: true,
+                        title: 'Kích hoạt',
+                        mes: `Bạn có chắc chắn muốn kích hoạt ${rowSelectionModel.length} brandname này không?`
+                    });
                 }
+                break;
+        }
+        setDataGrid_typeAction(parseInt(item.id));
+    };
+
+    const doActionRow = (action: number, item: any) => {
+        switch (action) {
+            case 1:
+                {
+                    setIsShowModalAdd(true);
+                    setBrandChosed(item);
+                }
+                break;
+            case 2:
+                setInforDelete({
+                    ...inforDelete,
+                    show: true,
+                    mes: `Bạn có chắc chắn muốn xóa brandname ${item.brandname} này không?`
+                });
                 break;
         }
     };
 
+    const Delete_MultipleBrandname = async () => {
+        if (rowSelectionModel.length > 0) {
+            switch (dataGrid_typeAction) {
+                case 1:
+                    {
+                        const data = await BrandnameService.DeleteMultiple_Brandname(
+                            rowSelectionModel
+                        );
+                        if (data) {
+                            setObjAlert({
+                                show: true,
+                                type: 1,
+                                mes: `Xóa ${rowSelectionModel.length} brandname thành công`
+                            });
+                        } else {
+                            setObjAlert({
+                                show: true,
+                                type: 2,
+                                mes: `Xóa ${rowSelectionModel.length} brandname thất bại`
+                            });
+                        }
+                    }
+                    break;
+                case 2:
+                    {
+                        const data = await BrandnameService.ActiveMultiple_Brandname(
+                            rowSelectionModel
+                        );
+                        if (data) {
+                            setObjAlert({
+                                show: true,
+                                type: 1,
+                                mes: `Kích hoạt ${rowSelectionModel.length} brandname thành công`
+                            });
+                        } else {
+                            setObjAlert({
+                                show: true,
+                                type: 2,
+                                mes: `Kích hoạt ${rowSelectionModel.length} brandname thất bại`
+                            });
+                        }
+                    }
+                    break;
+            }
+            await GetListBrandname();
+        } else {
+            // only
+            const data = await BrandnameService.XoaBrandname(brandChosed.id);
+            if (utils.checkNull(data)) {
+                setObjAlert({
+                    show: true,
+                    type: 1,
+                    mes: `Xóa ${brandChosed.brandname} brandname thành công`
+                });
+                setPageDataBrandname({
+                    ...pageDataBrandname,
+                    items: pageDataBrandname.items.filter(
+                        (x: BrandnameDto) => x.id !== brandChosed.id
+                    ),
+                    totalCount: pageDataBrandname.totalCount - 1
+                });
+            } else {
+                setObjAlert({
+                    show: true,
+                    type: 2,
+                    mes: `Xóa ${brandChosed.brandname} brandname thất bại`
+                });
+            }
+        }
+        setInforDelete({ ...inforDelete, show: false });
+    };
+
     const onSaveBrandname = (dataSave: BrandnameDto) => {
         setIsShowModalAdd(false);
-        setPageDataBrandname({
-            ...pageDataBrandname,
-            items: [dataSave, ...pageDataBrandname.items],
-            totalCount: pageDataBrandname.totalCount + 1
-        });
+        if (utils.checkNull(brandChosed.id)) {
+            setPageDataBrandname({
+                ...pageDataBrandname,
+                items: [dataSave, ...pageDataBrandname.items],
+                totalCount: pageDataBrandname.totalCount + 1
+            });
+        } else {
+            // update
+            setPageDataBrandname({
+                ...pageDataBrandname,
+                items: pageDataBrandname.items.map((x: BrandnameDto) => {
+                    if (x.id === dataSave.id) {
+                        return {
+                            ...x,
+                            brandname: dataSave.brandname,
+                            sdtCuaHang: dataSave.sdtCuaHang,
+                            ngayKichHoat: dataSave.ngayKichHoat,
+                            trangThai: dataSave.trangThai,
+                            txtTrangThai: dataSave.txtTrangThai
+                        };
+                    } else {
+                        return x;
+                    }
+                })
+            });
+        }
     };
 
     const columns: GridColDef[] = [
@@ -150,18 +276,20 @@ export default function PageBrandname() {
         {
             field: 'ngayKichHoat',
             headerName: 'Ngày kích hoạt',
-            flex: 1,
+            headerAlign: 'center',
+            align: 'center',
+            flex: 0.8,
             renderHeader: (params: any) => (
                 <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
+                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy')}</Box>
             )
         },
         {
             field: 'tongTienNap',
             headerName: 'Tổng tiền nạp',
-            headerAlign: 'center',
+            headerAlign: 'right',
             align: 'right',
             flex: 1,
             renderHeader: (params: any) => (
@@ -176,7 +304,7 @@ export default function PageBrandname() {
         {
             field: 'daSuDung',
             headerName: 'Đã sử dụng',
-            headerAlign: 'center',
+            headerAlign: 'right',
             align: 'right',
             flex: 1,
             renderHeader: (params: any) => (
@@ -191,14 +319,14 @@ export default function PageBrandname() {
         {
             field: 'conLai',
             headerName: 'Còn lại',
-            headerAlign: 'center',
+            headerAlign: 'right',
             align: 'right',
             flex: 1,
             renderHeader: (params: any) => (
                 <Box title={params.value}>{params.colDef.headerName}</Box>
             ),
             renderCell: (params: any) => (
-                <Box title={params.value} textAlign="center" width="100%">
+                <Box title={params.value}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             )
@@ -235,6 +363,33 @@ export default function PageBrandname() {
                     {params.value}
                 </Box>
             )
+        },
+        {
+            field: '#',
+            headerAlign: 'center',
+            width: 48,
+            flex: 0.4,
+            disableColumnMenu: true,
+            renderCell: (params) => (
+                <ActionViewEditDelete
+                    lstOption={[
+                        {
+                            id: '1',
+                            text: 'Sửa',
+                            color: '#009EF7',
+                            icon: <Edit sx={{ color: '#009EF7' }} />
+                        },
+                        {
+                            id: '2',
+                            text: 'Xóa',
+                            color: '#F1416C',
+                            icon: <DeleteForever sx={{ color: '#F1416C' }} />
+                        }
+                    ]}
+                    handleAction={(action: any) => doActionRow(action, params.row)}
+                />
+            ),
+            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
 
@@ -250,12 +405,12 @@ export default function PageBrandname() {
                 isShow={inforDelete.show}
                 title={inforDelete.title}
                 mes={inforDelete.mes}
-                // onOk={Delete_MultipleHoaDon}
+                onOk={Delete_MultipleBrandname}
                 onCancel={() => setInforDelete({ ...inforDelete, show: false })}></ConfirmDelete>
             <ModalCreateOrEditBrandname
                 isShow={isShowModalAdd}
                 onClose={() => setIsShowModalAdd(false)}
-                idBrandname=""
+                idBrandname={brandChosed.id}
                 objUpdate={brandChosed}
                 onSave={onSaveBrandname}
             />
@@ -338,7 +493,7 @@ export default function PageBrandname() {
                                     },
                                     {
                                         id: '2',
-                                        text: 'In brandname',
+                                        text: 'Kích hoạt',
                                         icon: (
                                             <PrintOutlined sx={{ width: '1rem', height: '1rem' }} />
                                         )
@@ -347,6 +502,9 @@ export default function PageBrandname() {
                                 countRowSelected={rowSelectionModel.length}
                                 title="brandname"
                                 choseAction={DataGrid_handleAction}
+                                removeItemChosed={() => {
+                                    setRowSelectionModel([]);
+                                }}
                             />
                         </div>
                     )}
