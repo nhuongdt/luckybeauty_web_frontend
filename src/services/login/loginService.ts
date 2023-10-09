@@ -20,7 +20,7 @@ class LoginService {
                 expires: 365
             });
             Cookies.set('Abp.TenantId', tenantName ? tenantId : 'null', {
-                expires: isRemember === true ? 1 : undefined
+                expires: 365
             });
         }
 
@@ -47,20 +47,15 @@ class LoginService {
                 if (apiResult.status === 200) {
                     if (apiResult.data.success === true) {
                         const tokenExpireDate = loginModel.rememberMe
-                            ? new Date(
-                                  new Date().getTime() +
-                                      1000 * apiResult.data.result.expireInSeconds
-                              )
+                            ? new Date(new Date().getTime() + 1000 * apiResult.data.result.expireInSeconds)
                             : undefined;
                         result = apiResult.data.success;
                         Cookies.set('accessToken', apiResult.data.result['accessToken'], {
                             expires: tokenExpireDate
                         });
-                        Cookies.set(
-                            'encryptedAccessToken',
-                            apiResult.data.result['encryptedAccessToken'],
-                            { expires: tokenExpireDate }
-                        );
+                        Cookies.set('encryptedAccessToken', apiResult.data.result['encryptedAccessToken'], {
+                            expires: tokenExpireDate
+                        });
                         Cookies.set('userId', apiResult.data.result['userId'], {
                             expires: tokenExpireDate
                         });
@@ -76,13 +71,9 @@ class LoginService {
                         Cookies.set('avatar', apiResult.data.result['avatar'], {
                             expires: tokenExpireDate
                         });
-                        Cookies.set(
-                            'idChiNhanhMacDinh',
-                            apiResult.data.result['idChiNhanhMacDinh'],
-                            {
-                                expires: tokenExpireDate
-                            }
-                        );
+                        Cookies.set('idChiNhanhMacDinh', apiResult.data.result['idChiNhanhMacDinh'], {
+                            expires: tokenExpireDate
+                        });
                         loginModel.rememberMe
                             ? Cookies.set('isRememberMe', 'true', { expires: tokenExpireDate })
                             : Cookies.set('isRememberMe', 'false');
@@ -97,12 +88,9 @@ class LoginService {
         }
     }
     async GetPermissionByUserId(userId: number, isRemember: boolean) {
-        const response = await http.post(
-            `api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`
-        );
+        const response = await http.post(`api/services/app/Permission/GetAllPermissionByRole?UserId=${userId}`);
         const tokenExpireDate =
-            Cookies.get('isRememberMe') !== undefined &&
-            Cookies.get('isRememberMe')?.toString() == 'true'
+            Cookies.get('isRememberMe') !== undefined && Cookies.get('isRememberMe')?.toString() == 'true'
                 ? new Date(new Date().getTime() + 1000 * 86400)
                 : undefined;
         // Cookies.set('permissions', response.data.result['permissions'], {

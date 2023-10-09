@@ -149,9 +149,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     showInMenu: true,
                     isLayout: false,
-                    component: LoadableComponent(
-                        () => import('../../pages/ban_hang/thu_ngan/main_page_ban_hang')
-                    )
+                    component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/main_page_ban_hang'))
                 }
             ]
         },
@@ -214,9 +212,7 @@ export const appRouters: AppRouteProps = {
 
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(
-                                () => import('../../pages/ban_hang/thu_ngan/index')
-                            )
+                            component: LoadableComponent(() => import('../../pages/ban_hang/thu_ngan/index'))
                         },
                         {
                             path: '/giao-dich-thanh-toan',
@@ -259,9 +255,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(
-                        () => import('../../pages/customer/components/CustomerInfo')
-                    )
+                    component: LoadableComponent(() => import('../../pages/customer/components/CustomerInfo'))
                 },
                 {
                     path: '/dich-vus',
@@ -295,9 +289,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/dichvu_nhanvien')
-                            )
+                            component: LoadableComponent(() => import('../../pages/dichvu_nhanvien'))
                         }
                     ],
                     component: null
@@ -360,9 +352,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/employee/thoi-gian-nghi')
-                            )
+                            component: LoadableComponent(() => import('../../pages/employee/thoi-gian-nghi'))
                         },
                         {
                             path: '/lich-lam-viec',
@@ -374,9 +364,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/employee/lich-lam-viec')
-                            )
+                            component: LoadableComponent(() => import('../../pages/employee/lich-lam-viec'))
                         },
                         {
                             path: '/ca-lam-viec',
@@ -388,9 +376,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: true,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/employee/ca-lam-viec')
-                            )
+                            component: LoadableComponent(() => import('../../pages/employee/ca-lam-viec'))
                         }
                     ],
                     component: null
@@ -452,9 +438,7 @@ export const appRouters: AppRouteProps = {
                             children: [],
 
                             isLayout: false,
-                            component: LoadableComponent(
-                                () => import('../../pages/admin/tenant/index')
-                            )
+                            component: LoadableComponent(() => import('../../pages/admin/tenant/index'))
                         }
                     ],
                     component: null
@@ -481,9 +465,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(
-                        () => import('../../pages/admin/settings/cua-hang/index')
-                    )
+                    component: LoadableComponent(() => import('../../pages/admin/settings/cua-hang/index'))
                 },
                 {
                     path: '/settings/chi-nhanhs',
@@ -495,9 +477,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(
-                        () => import('../../pages/admin/settings/chi-nhanh')
-                    )
+                    component: LoadableComponent(() => import('../../pages/admin/settings/chi-nhanh'))
                 },
                 {
                     path: '/settings/dat-lich',
@@ -521,9 +501,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(
-                        () => import('../../pages/admin/settings/hoa-hong-nhan-vien')
-                    )
+                    component: LoadableComponent(() => import('../../pages/admin/settings/hoa-hong-nhan-vien'))
                 },
                 {
                     path: '/settings/mau-in',
@@ -535,9 +513,7 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(
-                        () => import('../../pages/admin/settings/mau_in/page_mau_in')
-                    )
+                    component: LoadableComponent(() => import('../../pages/admin/settings/mau_in/page_mau_in'))
                 },
                 {
                     path: '/settings/voucher',
@@ -549,9 +525,19 @@ export const appRouters: AppRouteProps = {
                     showInMenu: false,
                     isLayout: false,
                     children: [],
-                    component: LoadableComponent(
-                        () => import('../../pages/admin/settings/khuyen_mai')
-                    )
+                    component: LoadableComponent(() => import('../../pages/admin/settings/khuyen_mai'))
+                },
+                {
+                    path: '/settings/email',
+                    permission: 'Pages.CongTy',
+                    title: 'Email',
+                    name: 'email',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/admin/settings/Email'))
                 },
 
                 {
@@ -574,9 +560,7 @@ export const appRouters: AppRouteProps = {
                             showInMenu: false,
                             isLayout: false,
                             children: [],
-                            component: LoadableComponent(
-                                () => import('../../pages/account/profile')
-                            )
+                            component: LoadableComponent(() => import('../../pages/account/profile'))
                         }
                     ],
                     component: null

@@ -41,7 +41,7 @@ const LichHenDetail: FC = () => {
                 <Box
                     display={'flex'}
                     justifyContent={'space-between'}
-                    padding={'16px 24px'}
+                    padding={'16px'}
                     borderBottom="1px solid #C2C9D6">
                     <Typography fontSize="24px" fontWeight={700}>
                         Chi tiết cuộc hẹn
@@ -65,12 +65,8 @@ const LichHenDetail: FC = () => {
                                         flexDirection={'column'}
                                         justifyContent={'space-between'}
                                         marginLeft={'5px'}>
-                                        <Typography>
-                                            {bookingStore.bookingInfoDto?.tenKhachHang}
-                                        </Typography>
-                                        <Typography>
-                                            {bookingStore.bookingInfoDto?.soDienThoai}
-                                        </Typography>
+                                        <Typography>{bookingStore.bookingInfoDto?.tenKhachHang}</Typography>
+                                        <Typography>{bookingStore.bookingInfoDto?.soDienThoai}</Typography>
                                     </Box>
                                 </Box>
                                 <Box>
@@ -78,9 +74,7 @@ const LichHenDetail: FC = () => {
                                         <Button
                                             onClick={async () => {
                                                 await bookingStore.onShowBookingInfo();
-                                                await bookingStore.getForEditBooking(
-                                                    bookingStore.bookingInfoDto?.id
-                                                );
+                                                await bookingStore.getForEditBooking(bookingStore.bookingInfoDto?.id);
                                                 bookingStore.isShowCreateOrEdit = true;
                                             }}>
                                             Chỉnh sửa
@@ -105,11 +99,11 @@ const LichHenDetail: FC = () => {
                             <Table>
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell>Ngày</TableCell>
-                                        <TableCell>Dịch vụ</TableCell>
-                                        <TableCell>Giá</TableCell>
-                                        <TableCell>Nhân viên</TableCell>
-                                        <TableCell>Ghi chú</TableCell>
+                                        <TableCell sx={{ fontSize: '13px' }}>Ngày</TableCell>
+                                        <TableCell sx={{ fontSize: '13px' }}>Dịch vụ</TableCell>
+                                        <TableCell sx={{ fontSize: '13px' }}>Giá</TableCell>
+                                        <TableCell sx={{ fontSize: '13px' }}>Nhân viên</TableCell>
+                                        <TableCell sx={{ fontSize: '13px' }}>Ghi chú</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -119,14 +113,12 @@ const LichHenDetail: FC = () => {
                                                 sx={{
                                                     color: 'black',
                                                     fontFamily: 'Roboto',
-                                                    fontSize: '14px',
+                                                    fontSize: '13px',
                                                     fontWeight: '500',
                                                     marginLeft: '8px'
                                                 }}>
                                                 {formatDate(
-                                                    new Date(
-                                                        bookingStore.bookingInfoDto.bookingDate
-                                                    ),
+                                                    new Date(bookingStore.bookingInfoDto.bookingDate),
                                                     'iii, dd/MM/yyyy',
                                                     { locale: vi }
                                                 )}{' '}
@@ -139,7 +131,7 @@ const LichHenDetail: FC = () => {
                                                 sx={{
                                                     color: 'black',
                                                     fontFamily: 'Roboto',
-                                                    fontSize: '14px',
+                                                    fontSize: '13px',
                                                     fontWeight: '500',
                                                     marginLeft: '8px'
                                                 }}>
@@ -147,16 +139,14 @@ const LichHenDetail: FC = () => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            {new Intl.NumberFormat('vi-VN').format(
-                                                bookingStore.bookingInfoDto.donGia
-                                            )}
+                                            {new Intl.NumberFormat('vi-VN').format(bookingStore.bookingInfoDto.donGia)}
                                         </TableCell>
                                         <TableCell>
                                             <Typography
                                                 sx={{
                                                     color: 'black',
                                                     fontFamily: 'Roboto',
-                                                    fontSize: '14px',
+                                                    fontSize: '13px',
                                                     fontWeight: '500',
                                                     marginLeft: '8px'
                                                 }}>
@@ -168,7 +158,7 @@ const LichHenDetail: FC = () => {
                                                 sx={{
                                                     color: 'black',
                                                     fontFamily: 'Roboto',
-                                                    fontSize: '14px',
+                                                    fontSize: '13px',
                                                     fontWeight: '500',
                                                     marginLeft: '8px'
                                                 }}>
@@ -185,27 +175,25 @@ const LichHenDetail: FC = () => {
                                 display={'flex'}
                                 alignItems={'center'}
                                 justifyContent={'space-between'}>
-                                <Typography>Trạng thái:</Typography>
+                                <Typography fontSize={'13px'}>Trạng thái:</Typography>
                                 <Stack direction="row">
                                     <Button
                                         variant="text"
                                         onClick={() => {
-                                            bookingStore.bookingInfoDto.trangThai =
-                                                TrangThaiBooking.Wait;
+                                            bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Wait;
                                         }}
                                         sx={{
                                             '&:hover': {
                                                 background: '#FF9900',
                                                 color: '#FFF'
                                             },
+                                            fontSize: '13px',
                                             background:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Wait
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait
                                                     ? '#FF9900'
                                                     : '#FF99001a',
                                             color:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Wait
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait
                                                     ? '#FFF'
                                                     : '#FF9900'
                                         }}>
@@ -213,22 +201,20 @@ const LichHenDetail: FC = () => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            bookingStore.bookingInfoDto.trangThai =
-                                                TrangThaiBooking.Confirm;
+                                            bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Confirm;
                                         }}
                                         sx={{
                                             '&:hover': {
                                                 background: '#7DC1FF',
                                                 color: '#FFF'
                                             },
+                                            fontSize: '13px',
                                             background:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Confirm
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm
                                                     ? '#7DC1FF'
                                                     : '#7DC1FF1a',
                                             color:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Confirm
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm
                                                     ? '#FFF'
                                                     : '#7DC1FF'
                                         }}>
@@ -236,22 +222,20 @@ const LichHenDetail: FC = () => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            bookingStore.bookingInfoDto.trangThai =
-                                                TrangThaiBooking.CheckIn;
+                                            bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.CheckIn;
                                         }}
                                         sx={{
                                             '&:hover': {
                                                 background: '#009EF7',
                                                 color: '#FFF'
                                             },
+                                            fontSize: '13px',
                                             background:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.CheckIn
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn
                                                     ? '#009EF7'
                                                     : '#009EF71a',
                                             color:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.CheckIn
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn
                                                     ? '#FFF'
                                                     : '#009EF7'
                                         }}>
@@ -259,22 +243,20 @@ const LichHenDetail: FC = () => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            bookingStore.bookingInfoDto.trangThai =
-                                                TrangThaiBooking.Success;
+                                            bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Success;
                                         }}
                                         sx={{
                                             '&:hover': {
                                                 background: '#50CD89',
                                                 color: '#FFF'
                                             },
+                                            fontSize: '13px',
                                             background:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Success
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success
                                                     ? '#50CD89'
                                                     : '#50CD891a',
                                             color:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Success
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success
                                                     ? '#FFF'
                                                     : '#50CD89'
                                         }}>
@@ -282,22 +264,20 @@ const LichHenDetail: FC = () => {
                                     </Button>
                                     <Button
                                         onClick={() => {
-                                            bookingStore.bookingInfoDto.trangThai =
-                                                TrangThaiBooking.Cancel;
+                                            bookingStore.bookingInfoDto.trangThai = TrangThaiBooking.Cancel;
                                         }}
                                         sx={{
                                             '&:hover': {
                                                 background: '#F1416C',
                                                 color: '#FFF'
                                             },
+                                            fontSize: '13px',
                                             background:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Cancel
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel
                                                     ? '#F1416C'
                                                     : '#F1416C1a',
                                             color:
-                                                bookingStore.bookingInfoDto?.trangThai ==
-                                                TrangThaiBooking.Cancel
+                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel
                                                     ? '#FFF'
                                                     : '#F1416C'
                                         }}>

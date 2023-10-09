@@ -105,7 +105,7 @@ const Header: React.FC<HeaderProps> = (
 
                     const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');
                     const remember = Cookies.get('isRememberMe');
-                    if (utils.checkNull(idChiNhanhMacDinh)) {
+                    if (utils.checkNull(idChiNhanhMacDinh) || idChiNhanhMacDinh == 'null' || idChiNhanhMacDinh == '') {
                         const idChiNhanh = listChiNhanh[0].id;
                         const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
 
@@ -190,10 +190,7 @@ const Header: React.FC<HeaderProps> = (
     };
 
     return (
-        <Box
-            display="flex"
-            className="header"
-            sx={{ position: 'fixed', right: '0', top: '0', zIndex: 20 }}>
+        <Box display="flex" className="header" sx={{ position: 'fixed', right: '0', top: '0', zIndex: 20 }}>
             {' '}
             <Grid container className={'header-container'} justifyContent="space-between">
                 <Grid item xs={6} sx={{ textAlign: 'left', display: 'flex', alignItems: 'center' }}>
@@ -212,10 +209,7 @@ const Header: React.FC<HeaderProps> = (
                                 fontSize="18px"
                                 sx={{
                                     opacity: collapsed && !isChildHovered ? '0' : '1',
-                                    transform:
-                                        collapsed && !isChildHovered
-                                            ? 'translateX(-40px)'
-                                            : 'translateX(0)',
+                                    transform: collapsed && !isChildHovered ? 'translateX(-40px)' : 'translateX(0)',
                                     transition: '.4s'
                                 }}>
                                 Lucky Beauty
@@ -240,8 +234,7 @@ const Header: React.FC<HeaderProps> = (
                             '& .MuiTouchRipple-root': {
                                 display: 'none'
                             },
-                            transform:
-                                collapsed && !isChildHovered ? 'rotate(-180deg)' : 'rotate(0deg)'
+                            transform: collapsed && !isChildHovered ? 'rotate(-180deg)' : 'rotate(0deg)'
                         }}
                         onClick={toggle}>
                         <ArrowBackIosIcon
@@ -259,9 +252,7 @@ const Header: React.FC<HeaderProps> = (
                     </Button>
                 </Grid>
                 <Grid item xs={6} sx={{ textAlign: 'right', float: 'right' }}>
-                    <Box
-                        display="flex"
-                        sx={{ marginRight: '30px', alignItems: 'center', justifyContent: 'end' }}>
+                    <Box display="flex" sx={{ marginRight: '30px', alignItems: 'center', justifyContent: 'end' }}>
                         <Box display="flex">
                             <LocationIcon />
                             <Select
@@ -365,10 +356,7 @@ const Header: React.FC<HeaderProps> = (
                                                     gap: '3px',
                                                     aignItems: 'center'
                                                 }}>
-                                                <Typography
-                                                    variant="body1"
-                                                    color="#4C4B4C"
-                                                    fontWeight="700">
+                                                <Typography variant="body1" color="#4C4B4C" fontWeight="700">
                                                     Thông báo
                                                 </Typography>
                                                 <Box
@@ -383,8 +371,7 @@ const Header: React.FC<HeaderProps> = (
                                                         lineHeight: '16px',
                                                         margin: 'auto'
                                                     }}>
-                                                    {notificationStore.notifications?.unreadCount ??
-                                                        0}
+                                                    {notificationStore.notifications?.unreadCount ?? 0}
                                                 </Box>
                                             </Box>
                                             <IconButton
@@ -410,24 +397,19 @@ const Header: React.FC<HeaderProps> = (
                                                 justifyContent: 'space-between'
                                             }}>
                                             <Box marginRight={'10px'}>
-                                                {item.notification.severity ===
-                                                NotificationSeverity.Info ? (
+                                                {item.notification.severity === NotificationSeverity.Info ? (
                                                     <InfoOutlinedIcon color="info" />
                                                 ) : null}
-                                                {item.notification.severity ===
-                                                NotificationSeverity.Error ? (
+                                                {item.notification.severity === NotificationSeverity.Error ? (
                                                     <ErrorOutlineOutlinedIcon color="error" />
                                                 ) : null}
-                                                {item.notification.severity ===
-                                                NotificationSeverity.Fatal
+                                                {item.notification.severity === NotificationSeverity.Fatal
                                                     ? null
                                                     : null}
-                                                {item.notification.severity ===
-                                                NotificationSeverity.Success ? (
+                                                {item.notification.severity === NotificationSeverity.Success ? (
                                                     <CheckCircleOutlineOutlinedIcon color="success" />
                                                 ) : null}
-                                                {item.notification.severity ===
-                                                NotificationSeverity.Warn ? (
+                                                {item.notification.severity === NotificationSeverity.Warn ? (
                                                     <WarningAmberOutlinedIcon color="warning" />
                                                 ) : null}
                                             </Box>
@@ -443,9 +425,7 @@ const Header: React.FC<HeaderProps> = (
                                                 <Typography fontSize="16px" fontWeight="500">
                                                     {item.notification.notificationName}
                                                 </Typography>
-                                                <Typography fontSize="13px">
-                                                    {item.notification.content}
-                                                </Typography>
+                                                <Typography fontSize="13px">{item.notification.content}</Typography>
                                                 <Box
                                                     sx={{
                                                         display: 'flex',
@@ -459,14 +439,9 @@ const Header: React.FC<HeaderProps> = (
                                                             fontWeight: '300',
                                                             float: 'left'
                                                         }}>
-                                                        {formatDistanceToNow(
-                                                            new Date(
-                                                                item.notification.creationTime
-                                                            ),
-                                                            {
-                                                                addSuffix: true
-                                                            }
-                                                        )}
+                                                        {formatDistanceToNow(new Date(item.notification.creationTime), {
+                                                            addSuffix: true
+                                                        })}
                                                     </Typography>
                                                     {item.state === UserNotificationState.Unread ? (
                                                         <Button
@@ -492,9 +467,7 @@ const Header: React.FC<HeaderProps> = (
                                             display: 'none'
                                         }
                                     }}>
-                                    <Button
-                                        variant="text"
-                                        sx={{ color: '#319DFF', margin: 'auto' }}>
+                                    <Button variant="text" sx={{ color: '#319DFF', margin: 'auto' }}>
                                         Xem tất cả
                                     </Button>
                                 </MenuItem>
@@ -528,11 +501,7 @@ const Header: React.FC<HeaderProps> = (
                                             filter: 'var(--color-hoverIcon)'
                                         }
                                     }}>
-                                    <Typography
-                                        color="#4C4B4C"
-                                        variant="body1"
-                                        fontSize="16px"
-                                        fontWeight="700">
+                                    <Typography color="#4C4B4C" variant="body1" fontSize="16px" fontWeight="700">
                                         Thiết lập thông báo
                                     </Typography>
                                     <Box>
@@ -555,11 +524,7 @@ const Header: React.FC<HeaderProps> = (
                             {dataSettingThongBao.map((item, index) => (
                                 <MenuItem key={index}>
                                     <Box>
-                                        <Typography
-                                            variant="body1"
-                                            fontSize="12px"
-                                            fontWeight="500"
-                                            color="#4C4B4C">
+                                        <Typography variant="body1" fontSize="12px" fontWeight="500" color="#4C4B4C">
                                             {item.title}
                                         </Typography>
                                         <FormGroup>
@@ -620,11 +585,7 @@ const Header: React.FC<HeaderProps> = (
                             aria-expanded={open ? 'true' : undefined}
                             onClick={handleClick}
                             sx={{ pr: '25px', mr: '-20px' }}>
-                            <Avatar
-                                src={Cookies.get('avatar') ?? ''}
-                                sx={{ height: 36, width: 36 }}
-                                alt={'profile'}
-                            />
+                            <Avatar src={Cookies.get('avatar') ?? ''} sx={{ height: 36, width: 36 }} alt={'profile'} />
                         </Button>
 
                         <Menu
@@ -685,9 +646,7 @@ const Header: React.FC<HeaderProps> = (
                                     navigate('/account/profile');
                                 }}
                                 className="hover">
-                                <Link
-                                    to="/account/profile"
-                                    style={{ textDecoration: 'none', listStyle: 'none' }}>
+                                <Link to="/account/profile" style={{ textDecoration: 'none', listStyle: 'none' }}>
                                     <ProfileIcon />
                                     <Box component="button" className="typo">
                                         {' '}
@@ -713,7 +672,7 @@ const Header: React.FC<HeaderProps> = (
                                 className="hover"
                                 onClick={() => {
                                     Object.keys(Cookies.get()).forEach((cookieName) => {
-                                        if (cookieName !== 'TenantName') {
+                                        if (cookieName !== 'TenantName' && cookieName !== 'Abp.TenantId') {
                                             Cookies.remove(cookieName);
                                         }
                                     });
@@ -726,7 +685,7 @@ const Header: React.FC<HeaderProps> = (
                                     style={{ textDecoration: 'none', listStyle: 'none' }}
                                     onClick={() => {
                                         Object.keys(Cookies.get()).forEach((cookieName) => {
-                                            if (cookieName !== 'TenantName') {
+                                            if (cookieName !== 'TenantName' && cookieName !== 'Abp.TenantId') {
                                                 Cookies.remove(cookieName);
                                             }
                                         });

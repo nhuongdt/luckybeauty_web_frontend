@@ -7,13 +7,8 @@ import { resetPasswordInput } from './dto/resetPasswordInput';
 import { ResetPasswordOutput } from './dto/resetPasswordOutput';
 
 class AccountService {
-    public async isTenantAvailable(
-        isTenantAvaibleInput: IsTenantAvaibleInput
-    ): Promise<IsTenantAvaibleOutput> {
-        const result = await http.post(
-            'api/services/app/Account/IsTenantAvailable',
-            isTenantAvaibleInput
-        );
+    public async isTenantAvailable(isTenantAvaibleInput: IsTenantAvaibleInput): Promise<IsTenantAvaibleOutput> {
+        const result = await http.post('api/services/app/Account/IsTenantAvailable', isTenantAvaibleInput);
         return result.data.result;
     }
 
@@ -22,13 +17,8 @@ class AccountService {
         return result.data.result;
     }
 
-    public async ResetPassword(
-        resetPasswordInput: resetPasswordInput
-    ): Promise<ResetPasswordOutput> {
-        const result = await http.post(
-            'api/services/app/Account/ResetPassword',
-            resetPasswordInput
-        );
+    public async ResetPassword(resetPasswordInput: resetPasswordInput): Promise<ResetPasswordOutput> {
+        const result = await http.post('api/services/app/Account/ResetPassword', resetPasswordInput);
         return result.data.result;
     }
     public async SendPasswordResetCode(emailAddress: string, tenantId?: number) {

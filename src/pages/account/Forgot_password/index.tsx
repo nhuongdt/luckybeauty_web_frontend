@@ -41,13 +41,10 @@ function ForgotPasswordPage() {
                 }
             );
         } else {
-            enqueueSnackbar(
-                'Địa chỉ email không tồn tại tong Tenant hiện tại, Vui lòng kiểm tra lại',
-                {
-                    variant: 'error',
-                    autoHideDuration: 5000
-                }
-            );
+            enqueueSnackbar('Địa chỉ email không tồn tại tong Tenant hiện tại, Vui lòng kiểm tra lại', {
+                variant: 'error',
+                autoHideDuration: 5000
+            });
         }
     };
     useEffect(() => {
@@ -100,8 +97,8 @@ function ForgotPasswordPage() {
 
                 <Typography variant="h1">Quên mật khẩu</Typography>
                 <Typography>
-                    Nhập địa chỉ email bạn đã sử dụng khi tạo tài khoản và chúng tôi sẽ gửi cho bạn
-                    mã để đặt lại mật khẩu
+                    Nhập địa chỉ email bạn đã sử dụng khi tạo tài khoản và chúng tôi sẽ gửi cho bạn mã để đặt lại mật
+                    khẩu
                 </Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
