@@ -41,8 +41,9 @@ class ChietKhauHoaDonStore {
             idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty,
             chungTuApDung: '',
             giaTriChietKhau: 0,
-            loaiChietKhau: 0,
-            idNhanViens: []
+            loaiChietKhau: 1,
+            idNhanViens: [],
+            ghiChu: ''
         };
     }
 }

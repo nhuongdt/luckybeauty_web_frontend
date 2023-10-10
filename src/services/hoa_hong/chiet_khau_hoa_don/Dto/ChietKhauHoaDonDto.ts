@@ -4,4 +4,5 @@ export interface ChietKhauHoaDonDto {
     loaiChietKhau: number;
     giaTriCHietKhau: number;
     chungTuApDung: string[];
+    ghiChu: string;
 }

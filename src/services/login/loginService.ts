@@ -17,7 +17,7 @@ class LoginService {
         const tenantId = result.data.result['tenantId'] || 0;
         if (result.data.result['state'] === 1) {
             Cookies.set('TenantName', tenantName, {
-                expires: new Date().getTime() + 1000 * 86400
+                expires: 365
             });
             Cookies.set('Abp.TenantId', tenantName ? tenantId : 'null', {
                 expires: isRemember === true ? 1 : undefined

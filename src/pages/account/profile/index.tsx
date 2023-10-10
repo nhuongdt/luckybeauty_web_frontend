@@ -277,7 +277,7 @@ class ProfileScreen extends Component {
                                             currentPassword: values.currentPassword,
                                             newPassword: values.newPassword
                                         });
-                                        enqueueSnackbar(createOrEdit.message, {
+                                        await enqueueSnackbar(createOrEdit.message, {
                                             variant: createOrEdit.status,
                                             autoHideDuration: 3000
                                         });

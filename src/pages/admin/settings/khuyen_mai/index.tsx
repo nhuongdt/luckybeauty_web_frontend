@@ -29,21 +29,28 @@ const KhuyenMaiPage: React.FC = () => {
     const [filter, setFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [maxResultCount, setMaxResultCount] = useState(10);
+    const [sortBy, setSortBy] = useState('desc');
+    const [sortType, setSortType] = useState('createionTime');
     const [isShowCreate, setIsShowCreate] = useState(false);
     const [selectedRowId, setSelectedRowId] = useState('');
     const [anchorEl, setAnchorEl] = useState<any>(null);
     const [isShowConfirmDelete, setIsShowConfirmDelete] = useState(false);
     useEffect(() => {
         initSuggest();
-        getAll();
+        //getAll();
     }, []);
     const getAll = async () => {
         await khuyenMaiStore.getAll({
             keyword: filter,
             maxResultCount: maxResultCount,
-            skipCount: currentPage
+            skipCount: currentPage,
+            sortBy: sortBy,
+            sortType: sortType
         });
     };
+    useEffect(() => {
+        getAll();
+    }, [currentPage, maxResultCount, sortBy, sortType]);
     const initSuggest = async () => {
         await suggestStore.getSuggestNhanVien();
         await suggestStore.getSuggestDichVu();
@@ -52,12 +59,11 @@ const KhuyenMaiPage: React.FC = () => {
         await suggestStore.getSuggestDonViQuiDoi();
     };
     const handlePageChange = async (event: any, value: number) => {
-        setCurrentPage(value);
-        getAll();
+        await setCurrentPage(value);
     };
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
-        setMaxResultCount(parseInt(event.target.value.toString(), 10));
-        getAll();
+        await setMaxResultCount(parseInt(event.target.value.toString(), 10));
+        setCurrentPage(1);
     };
     const Modal = () => {
         setIsShowCreate(!isShowCreate);
@@ -100,6 +106,10 @@ const KhuyenMaiPage: React.FC = () => {
         handleCloseMenu();
         showConfirmDelete();
         await getAll();
+    };
+    const onSort = async (sortType: string, sortBy: string) => {
+        setSortBy(sortBy);
+        setSortType(sortType);
     };
     const columns = [
         {
@@ -405,6 +415,21 @@ const KhuyenMaiPage: React.FC = () => {
                     hideFooterPagination
                     hideFooter
                     localeText={TextTranslate}
+                    sortingOrder={['desc', 'asc']}
+                    sortModel={[
+                        {
+                            field: sortBy,
+                            sort: sortType == 'desc' ? 'desc' : 'asc'
+                        }
+                    ]}
+                    onSortModelChange={(newSortModel) => {
+                        if (newSortModel.length > 0) {
+                            onSort(
+                                newSortModel[0].sort?.toString() ?? 'creationTime',
+                                newSortModel[0].field ?? 'desc'
+                            );
+                        }
+                    }}
                 />
             </Box>
             <ActionMenuTable

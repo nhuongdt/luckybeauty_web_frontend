@@ -14,7 +14,8 @@ import {
     Avatar,
     Button,
     DialogActions,
-    Checkbox
+    Checkbox,
+    FormControlLabel
 } from '@mui/material';
 import React, { Component } from 'react';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
@@ -116,6 +117,19 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                 </DialogTitle>
                 <DialogContent>
                     <Box>
+                        <FormControlLabel
+                            sx={{ paddingLeft: '18px' }}
+                            label={'Chọn tất cả'}
+                            onChange={(event, checked) => {
+                                checked == true
+                                    ? (dichVuNhanVienStore.selectedIdService =
+                                          filteredSuggestDichVu.map((item) => {
+                                              return item.id;
+                                          }))
+                                    : (dichVuNhanVienStore.selectedIdService = []);
+                            }}
+                            control={<Checkbox />}
+                        />
                         <TableContainer>
                             <Table>
                                 <TableBody>

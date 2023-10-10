@@ -5,4 +5,5 @@ export interface CreateOrEditChietKhauHoaDonDto {
     giaTriChietKhau: number;
     chungTuApDung: string;
     idNhanViens: string[];
+    ghiChu: string;
 }
