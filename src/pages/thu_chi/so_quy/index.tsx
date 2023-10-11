@@ -32,6 +32,7 @@ import MauInServices from '../../../services/mau_in/MauInServices';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
+import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -39,6 +40,7 @@ const PageSoQuy = ({ xx }: any) => {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const [isShowModal, setisShowModal] = useState(false);
+    const [isShowModalNapTienBrannName, setIsShowModalNapTienBrannName] = useState(false);
     const [selectedRowId, setSelectedRowId] = useState('');
     const [inforDelete, setinforDelete] = useState<PropConfirmOKCancel>({
         show: false,
@@ -144,17 +146,20 @@ const PageSoQuy = ({ xx }: any) => {
     const doActionRow = (action: number, itemSQ: GetAllQuyHoaDonItemDto) => {
         setSelectedRowId(itemSQ?.id);
         if (action < 2) {
-            if (utils.checkNull(itemSQ?.idHoaDonLienQuan)) {
-                setisShowModal(true);
+            console.log('itemSQ ', itemSQ);
+            if (!utils.checkNull(itemSQ?.idBrandname)) {
+                setIsShowModalNapTienBrannName(true);
+            } else {
+                if (utils.checkNull(itemSQ?.idHoaDonLienQuan)) {
+                    setisShowModal(true);
+                }
             }
         } else {
             setinforDelete(
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa ${itemSQ?.loaiPhieu ?? ' '}  ${
-                        itemSQ?.maHoaDon ?? ' '
-                    } không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${itemSQ?.loaiPhieu ?? ' '}  ${itemSQ?.maHoaDon ?? ' '} không?`
                 })
             );
         }
@@ -171,14 +176,9 @@ const PageSoQuy = ({ xx }: any) => {
                 });
                 setPageDataSoQuy({
                     ...pageDataSoQuy,
-                    items: pageDataSoQuy.items.filter(
-                        (x: any) => !rowSelectionModel.toString().includes(x.id)
-                    ),
+                    items: pageDataSoQuy.items.filter((x: any) => !rowSelectionModel.toString().includes(x.id)),
                     totalCount: pageDataSoQuy.totalCount - rowSelectionModel.length,
-                    totalPage: utils.getTotalPage(
-                        pageDataSoQuy.totalCount - rowSelectionModel.length,
-                        paramSearch.pageSize
-                    )
+                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - rowSelectionModel.length, paramSearch.pageSize)
                 });
                 setRowSelectionModel([]);
             } else {
@@ -222,10 +222,7 @@ const PageSoQuy = ({ xx }: any) => {
                         ...pageDataSoQuy,
                         items: [dataSave, ...pageDataSoQuy.items],
                         totalCount: pageDataSoQuy.totalCount + 1,
-                        totalPage: utils.getTotalPage(
-                            pageDataSoQuy.totalCount + 1,
-                            paramSearch.pageSize
-                        )
+                        totalPage: utils.getTotalPage(pageDataSoQuy.totalCount + 1, paramSearch.pageSize)
                     });
                     setObjAlert({
                         show: true,
@@ -272,6 +269,10 @@ const PageSoQuy = ({ xx }: any) => {
         }
     };
 
+    const saveNapTienBrandname = async () => {
+        setIsShowModalNapTienBrannName(false);
+    };
+
     const DataGrid_handleAction = async (item: any) => {
         switch (parseInt(item.id)) {
             case 1:
@@ -293,9 +294,7 @@ const PageSoQuy = ({ xx }: any) => {
                         if (quyHD.length > 0) {
                             console.log('quyHD ', quyHD);
                             DataMauIn.congty = appContext.congty;
-                            const chinhanhPrint = await await chiNhanhService.GetDetail(
-                                quyHD[0]?.idChiNhanh ?? ''
-                            );
+                            const chinhanhPrint = await await chiNhanhService.GetDetail(quyHD[0]?.idChiNhanh ?? '');
                             DataMauIn.chinhanh = chinhanhPrint;
                             DataMauIn.khachhang = {
                                 maKhachHang: quyHD[0]?.maNguoiNop,
@@ -314,10 +313,7 @@ const PageSoQuy = ({ xx }: any) => {
                             let newHtml = DataMauIn.replaceChiNhanh(tempMauIn);
                             newHtml = DataMauIn.replacePhieuThuChi(newHtml);
                             if (i < rowSelectionModel.length - 1) {
-                                htmlPrint = htmlPrint.concat(
-                                    newHtml,
-                                    `<p style="page-break-before:always;"></p>`
-                                );
+                                htmlPrint = htmlPrint.concat(newHtml, `<p style="page-break-before:always;"></p>`);
                             } else {
                                 htmlPrint = htmlPrint.concat(newHtml);
                             }
@@ -334,9 +330,7 @@ const PageSoQuy = ({ xx }: any) => {
             field: 'loaiPhieu',
             headerName: 'Loại phiếu',
             flex: 0.8,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={params.value} width="100%">
                     {params.value}
@@ -347,10 +341,8 @@ const PageSoQuy = ({ xx }: any) => {
             field: 'maHoaDon',
             headerName: 'Mã phiếu',
             minWidth: 118,
-            flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            flex: 0.8,
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -359,40 +351,19 @@ const PageSoQuy = ({ xx }: any) => {
             headerAlign: 'center',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} width="100%" textAlign="center">
                     {format(new Date(params.value), 'dd/MM/yyyy HH:mm')}
                 </Box>
             )
         },
-        // {
-        //     field: 'tenKhoanThuChi',
-        //     headerName: 'Loại thu chi',
-        //     minWidth: 118,
-        //     flex: 1,
-        //     renderHeader: (params: any) => (
-        //         <Box title={params.value}>
-        //             {params.colDef.headerName}
-        //             <IconSorting
-        //                 onClick={() => {
-        //                     setParamSearch({ ...paramSearch, columnSort: 'tenKhoanThuChi' });
-        //                 }}
-        //             />
-        //         </Box>
-        //     ),
-        //     renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
-        // },
         {
             field: 'tenNguoiNop',
             headerName: 'Người nộp',
             // minWidth: 118,
             flex: 1.5,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => <Box title={params.value}>{params.value}</Box>
         },
         {
@@ -401,9 +372,7 @@ const PageSoQuy = ({ xx }: any) => {
             headerAlign: 'right',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} width="100%" textAlign="end">
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -413,11 +382,9 @@ const PageSoQuy = ({ xx }: any) => {
         {
             field: 'sHinhThucThanhToan',
             headerName: 'Hình thức',
-            minWidth: 118,
-            flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            minWidth: 150,
+            flex: 1.2,
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} width="100%">
                     {params.value}
@@ -430,27 +397,15 @@ const PageSoQuy = ({ xx }: any) => {
             headerAlign: 'center',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
                     sx={{
                         padding: '4px 8px',
                         borderRadius: '100px',
-                        backgroundColor:
-                            params.value === 'Đã thanh toán'
-                                ? '#E8FFF3'
-                                : params.value === 'Chưa thanh toán'
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.value === 'Đã thanh toán'
-                                ? '#50CD89'
-                                : params.value === 'Chưa thanh toán'
-                                ? '#FF9900'
-                                : '#F1416C',
+                        backgroundColor: params.value === 'Đã thanh toán' ? '#E8FFF3' : params.value === 'Chưa thanh toán' ? '#FFF8DD' : '#FFF5F8',
+                        color: params.value === 'Đã thanh toán' ? '#50CD89' : params.value === 'Chưa thanh toán' ? '#FF9900' : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -465,11 +420,7 @@ const PageSoQuy = ({ xx }: any) => {
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
-            renderCell: (params) => (
-                <ActionViewEditDelete
-                    handleAction={(action: any) => doActionRow(action, params.row)}
-                />
-            ),
+            renderCell: (params) => <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
@@ -483,6 +434,12 @@ const PageSoQuy = ({ xx }: any) => {
                 onOk={saveSoQuy}
                 visiable={isShowModal}
                 idQuyHD={selectedRowId}
+            />
+            <NapTienBrandname
+                visiable={isShowModalNapTienBrannName}
+                idQuyHD={selectedRowId}
+                onClose={() => setIsShowModalNapTienBrannName(false)}
+                onOk={saveNapTienBrandname}
             />
             <ConfirmDelete
                 isShow={inforDelete.show}
@@ -563,16 +520,12 @@ const PageSoQuy = ({ xx }: any) => {
                                 }}>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.fromDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, fromDate: newVal })
-                                    }
+                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, fromDate: newVal })}
                                 />
                                 <Box>-</Box>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.toDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, toDate: newVal })
-                                    }
+                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, toDate: newVal })}
                                 />
                             </Box>
                             <Button
@@ -630,9 +583,7 @@ const PageSoQuy = ({ xx }: any) => {
                 <Box marginTop={rowSelectionModel.length > 0 ? 1 : 5} className="page-box-right">
                     <DataGrid
                         disableRowSelectionOnClick
-                        className={
-                            rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
-                        }
+                        className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                         rowHeight={46}
                         rows={pageDataSoQuy.items}
                         columns={columns}

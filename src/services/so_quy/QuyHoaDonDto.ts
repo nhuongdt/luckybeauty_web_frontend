@@ -5,6 +5,7 @@ import { format, add, addDays } from 'date-fns';
 export default class QuyHoaDonDto {
     id = Guid.create().toString();
     idChiNhanh?: string;
+    idBrandname?: string;
     idNhanVien?: string | null = null;
     idLoaiChungTu = 11;
     maHoaDon? = '';
@@ -41,6 +42,7 @@ export default class QuyHoaDonDto {
         id = Guid.create().toString(),
         idLoaiChungTu = 11,
         idChiNhanh = '',
+        idBrandname = '',
         maHoaDon = '',
         idNhanVien = null,
         idDoiTuongNopTien = null,
@@ -56,6 +58,7 @@ export default class QuyHoaDonDto {
         this.id = id;
         this.idLoaiChungTu = idLoaiChungTu;
         this.idChiNhanh = idChiNhanh;
+        this.idBrandname = idBrandname;
         this.maHoaDon = maHoaDon;
         this.idNhanVien = idNhanVien;
         this.idDoiTuongNopTien = idDoiTuongNopTien;
