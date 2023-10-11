@@ -39,9 +39,7 @@ export default function BangBaoLoiFileImport({ isOpen, lstError, onClose, clickI
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell style={{ width: '20%' }}>
-                                        Tên trường dữ liệu
-                                    </TableCell>
+                                    <TableCell style={{ width: '20%' }}>Tên trường dữ liệu</TableCell>
                                     <TableCell align="center" style={{ width: '15%' }}>
                                         Vị trí
                                     </TableCell>
@@ -61,9 +59,7 @@ export default function BangBaoLoiFileImport({ isOpen, lstError, onClose, clickI
                                                 }
                                             }}>
                                             <TableCell>{item.tenTruongDuLieu}</TableCell>
-                                            <TableCell align="center">
-                                                Dòng số {item.rowNumber}
-                                            </TableCell>
+                                            <TableCell align="center">Dòng số {item.rowNumber}</TableCell>
                                             <TableCell>{item.giaTriDuLieu}</TableCell>
                                             <TableCell>{item.dienGiai}</TableCell>
                                         </TableRow>

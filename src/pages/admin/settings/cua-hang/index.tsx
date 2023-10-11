@@ -188,10 +188,7 @@ class StoreDetail extends Component {
                 <Box className="page-full">
                     <Grid container>
                         <Grid item xs={12} md={12} sm={12}>
-                            <Stack
-                                marginBottom={'16px'}
-                                direction={'row'}
-                                justifyContent={'space-between'}>
+                            <Stack marginBottom={'16px'} direction={'row'} justifyContent={'space-between'}>
                                 <Typography variant="h2" fontSize="24px" fontWeight="700" mb="32px">
                                     Chi tiết cửa hàng
                                 </Typography>
@@ -381,25 +378,13 @@ class StoreDetail extends Component {
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Website</Typography>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            name="website"
-                                            onChange={this.handleChange}
-                                            value={editCuaHang.website}
-                                        />
+                                        <TextField size="small" fullWidth name="website" onChange={this.handleChange} value={editCuaHang.website} />
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Facebook</Typography>
-                                        <TextField
-                                            size="small"
-                                            fullWidth
-                                            name="facebook"
-                                            onChange={this.handleChange}
-                                            value={editCuaHang.facebook}
-                                        />
+                                        <TextField size="small" fullWidth name="facebook" onChange={this.handleChange} value={editCuaHang.facebook} />
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12} md={6}>

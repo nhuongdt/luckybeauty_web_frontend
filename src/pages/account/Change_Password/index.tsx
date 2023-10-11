@@ -1,12 +1,4 @@
-import {
-    Button,
-    FormGroup,
-    Grid,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Button, FormGroup, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Formik, Form } from 'formik';
 import { useEffect, useState } from 'react';
@@ -34,10 +26,7 @@ const ResetPassword = () => {
     }, []);
     const rules = Yup.object().shape({
         password: Yup.string()
-            .matches(
-                AppConsts.passwordRegex,
-                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-            )
+            .matches(AppConsts.passwordRegex, 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt')
             .required('Mật khẩu không được để trống'),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')
@@ -49,11 +38,7 @@ const ResetPassword = () => {
                 <Grid item xs={12}>
                     <Box className={'change-password-page-inner'}>
                         <Box textAlign={'center'}>
-                            <Box
-                                display={'flex'}
-                                justifyContent={'center'}
-                                alignItems={'center'}
-                                padding={'12px 0px'}>
+                            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={'12px 0px'}>
                                 <img src={logo} alt="Lucky Beauty" />
                                 <Typography
                                     marginLeft={'5px'}
@@ -145,16 +130,10 @@ const ResetPassword = () => {
                                                 name="password"
                                                 value={values.password}
                                                 onChange={handleChange}
-                                                error={
-                                                    errors.password && touched.password
-                                                        ? true
-                                                        : false
-                                                }
+                                                error={errors.password && touched.password ? true : false}
                                                 helperText={
                                                     errors.password && touched.password ? (
-                                                        <span className="text-danger">
-                                                            {String(errors.password)}
-                                                        </span>
+                                                        <span className="text-danger">{String(errors.password)}</span>
                                                     ) : (
                                                         ''
                                                     )
@@ -184,11 +163,7 @@ const ResetPassword = () => {
                                                                 onClick={() => {
                                                                     setShowPassword(!showPassword);
                                                                 }}>
-                                                                {showPassword ? (
-                                                                    <VisibilityOff />
-                                                                ) : (
-                                                                    <Visibility />
-                                                                )}
+                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                     )
@@ -209,18 +184,10 @@ const ResetPassword = () => {
                                                 name="confirmPassword"
                                                 value={values.confirmPassword}
                                                 onChange={handleChange}
-                                                error={
-                                                    errors.confirmPassword &&
-                                                    touched.confirmPassword
-                                                        ? true
-                                                        : false
-                                                }
+                                                error={errors.confirmPassword && touched.confirmPassword ? true : false}
                                                 helperText={
-                                                    errors.confirmPassword &&
-                                                    touched.confirmPassword ? (
-                                                        <span className="text-danger">
-                                                            {String(errors.confirmPassword)}
-                                                        </span>
+                                                    errors.confirmPassword && touched.confirmPassword ? (
+                                                        <span className="text-danger">{String(errors.confirmPassword)}</span>
                                                     ) : (
                                                         ''
                                                     )
@@ -248,15 +215,9 @@ const ResetPassword = () => {
                                                         <InputAdornment position="end">
                                                             <IconButton
                                                                 onClick={() => {
-                                                                    setShowConfirmPassword(
-                                                                        !showConfirmPassword
-                                                                    );
+                                                                    setShowConfirmPassword(!showConfirmPassword);
                                                                 }}>
-                                                                {showConfirmPassword ? (
-                                                                    <VisibilityOff />
-                                                                ) : (
-                                                                    <Visibility />
-                                                                )}
+                                                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                     )
@@ -264,12 +225,7 @@ const ResetPassword = () => {
                                                 placeholder="Nhập xác nhận mật khẩu"></TextField>
                                         </FormGroup>
                                         <FormGroup sx={{ padding: '8px' }}>
-                                            <Button
-                                                sx={{ height: '48px' }}
-                                                variant="contained"
-                                                type="submit"
-                                                color="primary"
-                                                fullWidth>
+                                            <Button sx={{ height: '48px' }} variant="contained" type="submit" color="primary" fullWidth>
                                                 Đổi mật khẩu
                                             </Button>
                                         </FormGroup>

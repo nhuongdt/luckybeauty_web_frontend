@@ -60,8 +60,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         const defaultExpand = this.getDefaultExpandPermission(this.props.permissionTree);
         const permissions =
             this.state.selectedPermissions.length === 0 ||
-            (this.state.selectedPermissions.length === 1 &&
-                this.state.selectedPermissions[0] == 'Pages')
+            (this.state.selectedPermissions.length === 1 && this.state.selectedPermissions[0] == 'Pages')
                 ? this.props.formRef.grantedPermissions ?? ['Pages']
                 : this.state.selectedPermissions;
         this.setState({
@@ -71,23 +70,16 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             filteredPermissions: this.props.permissionTree
         });
     };
-    filterPermissions = (
-        permissions: PermissionTree[],
-        searchKeyword: string
-    ): PermissionTree[] => {
+    filterPermissions = (permissions: PermissionTree[], searchKeyword: string): PermissionTree[] => {
         return permissions.filter((permission) => {
             const matchesKeyword = permission.displayName.toLowerCase().includes(searchKeyword);
-            const hasMatchingChildren =
-                this.filterPermissions(permission.children, searchKeyword).length > 0;
+            const hasMatchingChildren = this.filterPermissions(permission.children, searchKeyword).length > 0;
             return matchesKeyword || hasMatchingChildren;
         });
     };
     handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const searchKeyword = event.target.value.toLowerCase().toString();
-        const filteredPermissions = this.filterPermissions(
-            this.props.permissionTree,
-            searchKeyword
-        );
+        const filteredPermissions = this.filterPermissions(this.props.permissionTree, searchKeyword);
         this.setState({
             searchKeyWord: searchKeyword,
             filteredPermissions: filteredPermissions
@@ -181,15 +173,13 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
     renderTree = (nodes: PermissionTree[], isCollapsed = false) => {
         const { searchKeyWord } = this.state;
         return nodes.map((node) => {
-            const hasMatchingChildren =
-                this.filterPermissions(node.children, searchKeyWord).length > 0;
+            const hasMatchingChildren = this.filterPermissions(node.children, searchKeyWord).length > 0;
 
             if (!hasMatchingChildren && !node.displayName.toLowerCase().includes(searchKeyWord)) {
                 return null; // Skip rendering if no match found
             }
             const hasChildren = node.children && node.children.length > 0;
-            const isItemCollapsed =
-                isCollapsed || !this.state.expandedPermissions?.includes(node.name);
+            const isItemCollapsed = isCollapsed || !this.state.expandedPermissions?.includes(node.name);
 
             return (
                 <ListItem key={node.name} disablePadding>
@@ -197,13 +187,9 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         {hasChildren && (
                             <>
                                 {isItemCollapsed ? (
-                                    <ExpandMoreIcon
-                                        onClick={() => this.toggleCollapse(node.name)}
-                                    />
+                                    <ExpandMoreIcon onClick={() => this.toggleCollapse(node.name)} />
                                 ) : (
-                                    <ChevronRightIcon
-                                        onClick={() => this.toggleCollapse(node.name)}
-                                    />
+                                    <ChevronRightIcon onClick={() => this.toggleCollapse(node.name)} />
                                 )}
                             </>
                         )}
@@ -290,10 +276,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={initialValues}
-                        onSubmit={this.handleSubmit}
-                        validationSchema={rules}>
+                    <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
                         {({ values, handleChange, errors, touched }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <Box>
@@ -342,9 +325,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 <TextField
                                                     className="mt-2"
                                                     label={
-                                                        <label
-                                                            htmlFor="name"
-                                                            className="modal-lable">
+                                                        <label htmlFor="name" className="modal-lable">
                                                             Tên vai trò
                                                             <span
                                                                 style={{
@@ -359,16 +340,8 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     size="small"
                                                     id="name"
                                                     type="text"
-                                                    error={
-                                                        errors.name && touched.name ? true : false
-                                                    }
-                                                    helperText={
-                                                        errors.name && (
-                                                            <small className="text-danger">
-                                                                {errors.name}
-                                                            </small>
-                                                        )
-                                                    }
+                                                    error={errors.name && touched.name ? true : false}
+                                                    helperText={errors.name && <small className="text-danger">{errors.name}</small>}
                                                     name="name"
                                                     value={values.name}
                                                     onChange={handleChange}
@@ -379,9 +352,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     className="mt-2"
                                                     fullWidth
                                                     label={
-                                                        <label
-                                                            htmlFor="displayName"
-                                                            className="modal-lable">
+                                                        <label htmlFor="displayName" className="modal-lable">
                                                             Tên hiển thị
                                                             <span
                                                                 style={{
@@ -392,18 +363,8 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                             </span>
                                                         </label>
                                                     }
-                                                    error={
-                                                        errors.displayName && touched.displayName
-                                                            ? true
-                                                            : false
-                                                    }
-                                                    helperText={
-                                                        errors.displayName && (
-                                                            <small className="text-danger">
-                                                                {errors.displayName}
-                                                            </small>
-                                                        )
-                                                    }
+                                                    error={errors.displayName && touched.displayName ? true : false}
+                                                    helperText={errors.displayName && <small className="text-danger">{errors.displayName}</small>}
                                                     size="small"
                                                     id="displayName"
                                                     type="text"
@@ -417,9 +378,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     className="mt-2"
                                                     fullWidth
                                                     label={
-                                                        <label
-                                                            htmlFor="description"
-                                                            className="modal-lable">
+                                                        <label htmlFor="description" className="modal-lable">
                                                             Mô tả
                                                         </label>
                                                     }
@@ -453,9 +412,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     maxHeight: '450px'
                                                 }}>
                                                 <List component="nav" disablePadding>
-                                                    {this.renderTree(
-                                                        this.state.filteredPermissions
-                                                    )}
+                                                    {this.renderTree(this.state.filteredPermissions)}
                                                 </List>
                                             </FormGroup>
                                         </TabPanel>

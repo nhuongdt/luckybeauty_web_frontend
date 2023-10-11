@@ -1,13 +1,4 @@
-import {
-    Box,
-    Grid,
-    MenuItem,
-    Pagination,
-    Select,
-    SelectChangeEvent,
-    Typography,
-    FormControl
-} from '@mui/material';
+import { Box, Grid, MenuItem, Pagination, Select, SelectChangeEvent, Typography, FormControl } from '@mui/material';
 import { Component, ReactNode } from 'react';
 
 interface TablePaginationProps {
@@ -21,19 +12,9 @@ interface TablePaginationProps {
 
 class CustomTablePagination extends Component<TablePaginationProps> {
     render(): ReactNode {
-        const {
-            totalPage,
-            totalRecord,
-            currentPage,
-            rowPerPage,
-            handlePageChange,
-            handlePerPageChange
-        } = this.props;
+        const { totalPage, totalRecord, currentPage, rowPerPage, handlePageChange, handlePerPageChange } = this.props;
         return (
-            <Grid
-                container
-                sx={{ display: totalRecord > 0 ? '' : 'none', backgroundColor: '#fff' }}
-                padding="0px 16px">
+            <Grid container sx={{ display: totalRecord > 0 ? '' : 'none', backgroundColor: '#fff' }} padding="0px 16px">
                 <Grid item xs={6} md={3}>
                     <Box
                         sx={{
@@ -43,10 +24,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                             height: 48
                         }}>
                         <FormControl variant="standard">
-                            <Select
-                                sx={{ height: '32px' }}
-                                onChange={handlePerPageChange}
-                                defaultValue={rowPerPage}>
+                            <Select sx={{ height: '32px' }} onChange={handlePerPageChange} defaultValue={rowPerPage}>
                                 <MenuItem value={5}>
                                     <Typography variant="body2">5/ Trang</Typography>
                                 </MenuItem>
@@ -76,10 +54,7 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                         }}>
                         <Typography variant="body2">
                             Hiển thị {(currentPage - 1) * rowPerPage + 1} -{' '}
-                            {rowPerPage * currentPage > totalRecord
-                                ? totalRecord
-                                : rowPerPage * currentPage}{' '}
-                            của {totalRecord} mục
+                            {rowPerPage * currentPage > totalRecord ? totalRecord : rowPerPage * currentPage} của {totalRecord} mục
                         </Typography>
                         <Pagination
                             count={totalPage}

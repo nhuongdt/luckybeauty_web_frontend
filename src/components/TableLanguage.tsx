@@ -29,13 +29,9 @@ export const TextTranslate = {
     footerTotalVisibleRows: (visibleCount: number, totalCount: number) =>
         `${visibleCount.toLocaleString()} / ${totalCount.toLocaleString()}does nothing`,
     MuiTablePagination: {
-        labelDisplayedRows: ({ from, to, count }: { from: number; to: number; count: number }) =>
-            `hiển thị ${from} - ${to} của ${count} mục`,
+        labelDisplayedRows: ({ from, to, count }: { from: number; to: number; count: number }) => `hiển thị ${from} - ${to} của ${count} mục`,
         labelRowsPerPage: 'Số hàng tối đa trên mỗi trang '
     },
     labelRowsPerPage: 'Số hàng tối đa trên mỗi trang ',
-    footerRowSelected: (count: number) =>
-        count !== 1
-            ? `${count.toLocaleString()} Hàng được chọn`
-            : `${count.toLocaleString()} Hàng được chọn `
+    footerRowSelected: (count: number) => (count !== 1 ? `${count.toLocaleString()} Hàng được chọn` : `${count.toLocaleString()} Hàng được chọn `)
 };

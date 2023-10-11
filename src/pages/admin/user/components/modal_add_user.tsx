@@ -41,15 +41,7 @@ import { Guid } from 'guid-typescript';
 import authenticationStore from '../../../../stores/authenticationStore';
 import Cookies from 'js-cookie';
 
-export default function ModalAddUser({
-    isShowModal,
-    dataNhanVien,
-    userId,
-    dataChiNhanh,
-    allRoles,
-    onCancel,
-    onOk
-}: any) {
+export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataChiNhanh, allRoles, onCancel, onOk }: any) {
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanhCurrent?.id;
@@ -81,21 +73,12 @@ export default function ModalAddUser({
         surname: ''
     };
 
-    const confirmPasswordValidation = (
-        userId: number,
-        changePassword: boolean,
-        password: string,
-        passwordNew: string
-    ) => {
+    const confirmPasswordValidation = (userId: number, changePassword: boolean, password: string, passwordNew: string) => {
         if (userId === 0) {
-            return Yup.string()
-                .required('Vui lòng xác nhận mật khẩu')
-                .oneOf([password], 'Mật khẩu xác nhận phải trùng khớp');
+            return Yup.string().required('Vui lòng xác nhận mật khẩu').oneOf([password], 'Mật khẩu xác nhận phải trùng khớp');
         } else {
             if (changePassword) {
-                return Yup.string()
-                    .required('Vui lòng xác nhận mật khẩu')
-                    .oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
+                return Yup.string().required('Vui lòng xác nhận mật khẩu').oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
             }
             return Yup.string();
         }
@@ -105,10 +88,7 @@ export default function ModalAddUser({
         if (userId === 0) {
             return Yup.string()
                 .required('Vui lòng nhập mật khẩu')
-                .matches(
-                    AppConsts.passwordRegex,
-                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-                );
+                .matches(AppConsts.passwordRegex, 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt');
         } else {
             if (changePassword) {
                 return Yup.string().required('Vui lòng nhập khẩu hiện tại');
@@ -119,9 +99,7 @@ export default function ModalAddUser({
 
     const rules = Yup.object().shape({
         // nhanSuId: Yup.string().required('Vui lòng chọn nhân viên'),
-        emailAddress: Yup.string()
-            .matches(AppConsts.emailRegex, 'Email không hợp lệ')
-            .required('Vui lòng nhập email'),
+        emailAddress: Yup.string().matches(AppConsts.emailRegex, 'Email không hợp lệ').required('Vui lòng nhập email'),
         userName: Yup.string().required('Vui lòng nhập tên truy cập'),
         password: Yup.lazy((value: any, schema: any) => {
             return passwordValidation(schema.parent.userId, schema.parent.changePassword);
@@ -141,12 +119,7 @@ export default function ModalAddUser({
         }),
 
         confirmPassword: Yup.lazy((value: any, schema: any) => {
-            return confirmPasswordValidation(
-                schema.parent.id,
-                schema.parent.changePassword,
-                schema.parent.password,
-                schema.parent.passwordNew
-            );
+            return confirmPasswordValidation(schema.parent.id, schema.parent.changePassword, schema.parent.password, schema.parent.passwordNew);
         })
     });
 
@@ -270,18 +243,14 @@ export default function ModalAddUser({
         let passNew_samePassOld = false;
         if (values.changePassword) {
             // check math passOld & passsNew
-            passNew_samePassOld = await userService.CheckMatchesPassword(
-                userId,
-                values?.passwordNew
-            );
+            passNew_samePassOld = await userService.CheckMatchesPassword(userId, values?.passwordNew);
             values.password = values.passwordNew;
         }
         // user có thể không phải là nhân viên --> setdefault (name, surname ='' --> avoid error null in DB)
         values.nhanSuId = values?.nhanSuId == '' ? null : values.nhanSuId;
         values.name = utils.checkNull(values?.name) ? '' : values.name;
         values.surname = utils.checkNull(values?.surname) ? '' : values.surname;
-        values.idChiNhanhMacDinh =
-            values?.idChiNhanhMacDinh == '' ? null : values.idChiNhanhMacDinh;
+        values.idChiNhanhMacDinh = values?.idChiNhanhMacDinh == '' ? null : values.idChiNhanhMacDinh;
         if (userId == 0) {
             const data = await userService.CreateUser(values);
             if (data !== null) {
@@ -349,25 +318,13 @@ export default function ModalAddUser({
         <>
             <Dialog open={isShowModal} maxWidth={'sm'} fullWidth onClose={onCancel}>
                 <DialogTitle>
-                    <Box className="modal-title">
-                        {userId === 0 ? 'Thêm mới' : 'Cập nhật'} người dùng
-                    </Box>
+                    <Box className="modal-title">{userId === 0 ? 'Thêm mới' : 'Cập nhật'} người dùng</Box>
 
                     <DialogButtonClose onClose={onCancel} />
                 </DialogTitle>
                 <DialogContent sx={{ '& .MuiTabPanel-root': { padding: 0 } }}>
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={rules}
-                        onSubmit={(values) => saveUser(values)}>
-                        {({
-                            isSubmitting,
-                            handleChange,
-                            values,
-                            errors,
-                            touched,
-                            setFieldValue
-                        }) => (
+                    <Formik initialValues={initialValues} validationSchema={rules} onSubmit={(values) => saveUser(values)}>
+                        {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }) => (
                             <Form>
                                 <TabContext value={tabIndex}>
                                     <TabList onChange={handleChangeTab}>
@@ -388,31 +345,19 @@ export default function ModalAddUser({
                                                 <Stack spacing={2}>
                                                     <AutocompleteNhanVien
                                                         label="Chọn nhân sự đã có"
-                                                        helperText={
-                                                            touched.nhanSuId &&
-                                                            errors.nhanSuId && (
-                                                                <span>{errors.nhanSuId}</span>
-                                                            )
-                                                        }
+                                                        helperText={touched.nhanSuId && errors.nhanSuId && <span>{errors.nhanSuId}</span>}
                                                         dataNhanVien={dataNhanVien}
                                                         idChosed={values?.nhanSuId}
                                                         handleChoseItem={(item: any) => {
-                                                            const arrTenNV =
-                                                                item?.tenNhanVien.split(' ');
+                                                            const arrTenNV = item?.tenNhanVien.split(' ');
                                                             let surName = ''; // họ
                                                             if (arrTenNV?.length > 0) {
                                                                 surName = arrTenNV[0];
                                                             }
                                                             setFieldValue('nhanSuId', item?.id);
-                                                            setFieldValue(
-                                                                'name',
-                                                                item?.tenNhanVien
-                                                            );
+                                                            setFieldValue('name', item?.tenNhanVien);
                                                             setFieldValue('surname', surName);
-                                                            setFieldValue(
-                                                                'phoneNumber',
-                                                                item?.soDienThoai
-                                                            );
+                                                            setFieldValue('phoneNumber', item?.soDienThoai);
                                                             setAvatar(item?.avatar);
                                                         }}
                                                     />
@@ -434,17 +379,9 @@ export default function ModalAddUser({
                                                         }
                                                         value={values?.userName || ''}
                                                         onChange={(e) => {
-                                                            setFieldValue(
-                                                                'userName',
-                                                                e.target.value
-                                                            );
+                                                            setFieldValue('userName', e.target.value);
                                                         }}
-                                                        helperText={
-                                                            touched.userName &&
-                                                            errors.userName && (
-                                                                <span>{errors.userName}</span>
-                                                            )
-                                                        }
+                                                        helperText={touched.userName && errors.userName && <span>{errors.userName}</span>}
                                                     />
                                                     <TextField
                                                         size="small"
@@ -464,17 +401,9 @@ export default function ModalAddUser({
                                                         }
                                                         value={values?.emailAddress || ''}
                                                         onChange={(e) => {
-                                                            setFieldValue(
-                                                                'emailAddress',
-                                                                e.target.value
-                                                            );
+                                                            setFieldValue('emailAddress', e.target.value);
                                                         }}
-                                                        helperText={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress && (
-                                                                <span>{errors.emailAddress}</span>
-                                                            )
-                                                        }
+                                                        helperText={touched.emailAddress && errors.emailAddress && <span>{errors.emailAddress}</span>}
                                                     />
                                                 </Stack>
                                             </Grid>
@@ -486,10 +415,7 @@ export default function ModalAddUser({
                                                     dataChiNhanh={dataChiNhanh}
                                                     idChosed={values?.idChiNhanhMacDinh || ''}
                                                     handleChoseItem={(item: any) => {
-                                                        setFieldValue(
-                                                            'idChiNhanhMacDinh',
-                                                            item?.id
-                                                        );
+                                                        setFieldValue('idChiNhanhMacDinh', item?.id);
                                                     }}
                                                 />
                                             </Grid>
@@ -501,13 +427,8 @@ export default function ModalAddUser({
                                                                 size="small"
                                                                 checked={values?.changePassword}
                                                                 onChange={() => {
-                                                                    setChangePassword(
-                                                                        () => !changePassword
-                                                                    );
-                                                                    setFieldValue(
-                                                                        'changePassword',
-                                                                        !changePassword
-                                                                    );
+                                                                    setChangePassword(() => !changePassword);
+                                                                    setFieldValue('changePassword', !changePassword);
                                                                 }}
                                                             />
                                                         }
@@ -525,15 +446,11 @@ export default function ModalAddUser({
                                                         type={showPassword ? 'text' : 'password'}
                                                         value={values?.password || ''}
                                                         onChange={(e) => {
-                                                            setFieldValue(
-                                                                'password',
-                                                                e.target.value
-                                                            );
+                                                            setFieldValue('password', e.target.value);
                                                         }}
                                                         label={
                                                             <label style={{ fontSize: '13px' }}>
-                                                                Mật khẩu{' '}
-                                                                {userId === 0 ? '' : 'hiện tại'}
+                                                                Mật khẩu {userId === 0 ? '' : 'hiện tại'}
                                                                 <span
                                                                     style={{
                                                                         color: 'red',
@@ -543,12 +460,7 @@ export default function ModalAddUser({
                                                                 </span>
                                                             </label>
                                                         }
-                                                        helperText={
-                                                            touched.password &&
-                                                            errors.password && (
-                                                                <span>{errors.password}</span>
-                                                            )
-                                                        }
+                                                        helperText={touched.password && errors.password && <span>{errors.password}</span>}
                                                         InputProps={iconPassword}
                                                     />
                                                 </Grid>
@@ -566,11 +478,7 @@ export default function ModalAddUser({
                                                             size="small"
                                                             fullWidth
                                                             name="passwordNew"
-                                                            type={
-                                                                showPasswordNew
-                                                                    ? 'text'
-                                                                    : 'password'
-                                                            }
+                                                            type={showPasswordNew ? 'text' : 'password'}
                                                             value={values?.passwordNew || ''}
                                                             label={
                                                                 <label style={{ fontSize: '13px' }}>
@@ -586,16 +494,9 @@ export default function ModalAddUser({
                                                             }
                                                             onChange={handleChange}
                                                             helperText={
-                                                                touched.passwordNew &&
-                                                                errors.passwordNew && (
-                                                                    <span>
-                                                                        {errors.passwordNew}
-                                                                    </span>
-                                                                )
+                                                                touched.passwordNew && errors.passwordNew && <span>{errors.passwordNew}</span>
                                                             }
-                                                            InputProps={iconPasswordNew(
-                                                                values.passwordNew
-                                                            )}
+                                                            InputProps={iconPasswordNew(values.passwordNew)}
                                                         />
                                                     </Grid>
                                                 </>
@@ -622,12 +523,7 @@ export default function ModalAddUser({
                                                             </label>
                                                         }
                                                         helperText={
-                                                            touched.confirmPassword &&
-                                                            errors.confirmPassword && (
-                                                                <span>
-                                                                    {errors.confirmPassword}
-                                                                </span>
-                                                            )
+                                                            touched.confirmPassword && errors.confirmPassword && <span>{errors.confirmPassword}</span>
                                                         }
                                                     />
                                                 </Grid>
@@ -637,10 +533,7 @@ export default function ModalAddUser({
                                                 item
                                                 xs={12}
                                                 sx={{
-                                                    paddingTop:
-                                                        userId !== 0 && !changePassword
-                                                            ? '0px!important'
-                                                            : '8px!important'
+                                                    paddingTop: userId !== 0 && !changePassword ? '0px!important' : '8px!important'
                                                 }}>
                                                 <FormGroup>
                                                     {/* {isActive && (
@@ -682,10 +575,7 @@ export default function ModalAddUser({
                                     </TabPanel>
                                 </TabContext>
                                 <Grid container justifyContent={'end'}>
-                                    <Stack
-                                        spacing={1}
-                                        justifyContent={'flex-end'}
-                                        direction={'row'}>
+                                    <Stack spacing={1} justifyContent={'flex-end'} direction={'row'}>
                                         <Button variant="outlined" onClick={onCancel}>
                                             Hủy
                                         </Button>

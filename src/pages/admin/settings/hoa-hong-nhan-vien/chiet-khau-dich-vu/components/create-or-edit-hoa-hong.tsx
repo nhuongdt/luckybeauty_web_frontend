@@ -97,9 +97,7 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                             if (values.laPhanTram == true && values.giaTri > 100) {
                                 helpers.setFieldError('giaTri', 'Giá trị không được quá 100 %');
                             } else {
-                                const createOrEdit = await chietKhauDichVuService.CreateOrEdit(
-                                    values
-                                );
+                                const createOrEdit = await chietKhauDichVuService.CreateOrEdit(values);
                                 enqueueSnackbar(createOrEdit.message, {
                                     variant: createOrEdit.status,
                                     autoHideDuration: 3000
@@ -120,21 +118,13 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             multiple
                                             options={suggestStore?.suggestNhanVien ?? []}
                                             getOptionLabel={(item) => item.tenNhanVien}
-                                            value={
-                                                suggestStore?.suggestNhanVien?.filter((item) =>
-                                                    values?.idNhanViens.includes(item.id)
-                                                ) || []
-                                            }
-                                            disabled={
-                                                values.id === AppConsts.guidEmpty ? false : true
-                                            }
+                                            value={suggestStore?.suggestNhanVien?.filter((item) => values?.idNhanViens.includes(item.id)) || []}
+                                            disabled={values.id === AppConsts.guidEmpty ? false : true}
                                             onChange={(event, newValue) => {
                                                 handleChange({
                                                     target: {
                                                         name: 'idNhanViens',
-                                                        value: newValue
-                                                            ? newValue.map((item) => item.id)
-                                                            : [] // Set the value to the selected item's id or an empty string if nothing is selected
+                                                        value: newValue ? newValue.map((item) => item.id) : [] // Set the value to the selected item's id or an empty string if nothing is selected
                                                     }
                                                 });
                                             }}
@@ -142,36 +132,20 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
-                                                    label={
-                                                        <Typography variant="subtitle2">
-                                                            Nhân viên
-                                                        </Typography>
-                                                    }
-                                                    error={
-                                                        errors.idNhanViens && touched.idNhanViens
-                                                            ? true
-                                                            : false
-                                                    }
+                                                    label={<Typography variant="subtitle2">Nhân viên</Typography>}
+                                                    error={errors.idNhanViens && touched.idNhanViens ? true : false}
                                                     size="small"
                                                     sx={{ fontSize: '16px', color: '#4c4b4c' }}
                                                 />
                                             )}
                                         />
-                                        {errors.idNhanViens && touched.idNhanViens && (
-                                            <small className="text-danger">
-                                                {errors.idNhanViens}
-                                            </small>
-                                        )}
+                                        {errors.idNhanViens && touched.idNhanViens && <small className="text-danger">{errors.idNhanViens}</small>}
                                     </Grid>
                                     <Grid item xs={12} sm={6} marginTop={2}>
                                         <Autocomplete
                                             options={suggestStore?.suggestDichVu ?? []}
                                             getOptionLabel={(item) => item.tenDichVu}
-                                            value={
-                                                suggestStore.suggestDichVu?.find(
-                                                    (item) => item.id === values?.idDonViQuiDoi
-                                                ) || null
-                                            }
+                                            value={suggestStore.suggestDichVu?.find((item) => item.id === values?.idDonViQuiDoi) || null}
                                             onChange={(event, newValue) => {
                                                 handleChange({
                                                     target: {
@@ -184,26 +158,15 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
-                                                    label={
-                                                        <Typography variant="subtitle2">
-                                                            Dịch vụ
-                                                        </Typography>
-                                                    }
-                                                    error={
-                                                        errors.idDonViQuiDoi &&
-                                                        touched.idDonViQuiDoi
-                                                            ? true
-                                                            : false
-                                                    }
+                                                    label={<Typography variant="subtitle2">Dịch vụ</Typography>}
+                                                    error={errors.idDonViQuiDoi && touched.idDonViQuiDoi ? true : false}
                                                     size="small"
                                                     sx={{ fontSize: '16px', color: '#4c4b4c' }}
                                                 />
                                             )}
                                         />
                                         {errors.idDonViQuiDoi && touched.idDonViQuiDoi && (
-                                            <small className="text-danger">
-                                                {errors.idDonViQuiDoi}
-                                            </small>
+                                            <small className="text-danger">{errors.idDonViQuiDoi}</small>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -215,26 +178,12 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             name="loaiChietKhau"
                                             onChange={handleChange}
                                             sx={{ display: 'flex', flexDirection: 'row' }}>
-                                            <FormControlLabel
-                                                value={1}
-                                                control={<Radio />}
-                                                label="Thực hiện"
-                                            />
-                                            <FormControlLabel
-                                                value={2}
-                                                control={<Radio />}
-                                                label="Yêu cầu"
-                                            />
-                                            <FormControlLabel
-                                                value={3}
-                                                control={<Radio />}
-                                                label="Tư vấn"
-                                            />
+                                            <FormControlLabel value={1} control={<Radio />} label="Thực hiện" />
+                                            <FormControlLabel value={2} control={<Radio />} label="Yêu cầu" />
+                                            <FormControlLabel value={3} control={<Radio />} label="Tư vấn" />
                                         </RadioGroup>
                                         {errors.loaiChietKhau && touched.loaiChietKhau && (
-                                            <small className="text-danger">
-                                                {errors.loaiChietKhau}
-                                            </small>
+                                            <small className="text-danger">{errors.loaiChietKhau}</small>
                                         )}
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
@@ -245,26 +194,13 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             decimalSeparator={','}
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}
                                             error={errors.giaTri && touched.giaTri ? true : false}
-                                            helperText={
-                                                errors.giaTri &&
-                                                touched.giaTri && (
-                                                    <small className="text-danger">
-                                                        {errors.giaTri}
-                                                    </small>
-                                                )
-                                            }
+                                            helperText={errors.giaTri && touched.giaTri && <small className="text-danger">{errors.giaTri}</small>}
                                             InputProps={{ inputMode: 'numeric' }}
                                             fullWidth
                                             name="giaTri"
                                             onChange={async (e) => {
-                                                const valueChange = e.target.value.replaceAll(
-                                                    '.',
-                                                    ''
-                                                );
-                                                setFieldValue(
-                                                    'giaTri',
-                                                    Number.parseInt(valueChange, 10)
-                                                );
+                                                const valueChange = e.target.value.replaceAll('.', '');
+                                                setFieldValue('giaTri', Number.parseInt(valueChange, 10));
                                             }}
                                             customInput={TextField}
                                             size={'small'}

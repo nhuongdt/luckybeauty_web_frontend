@@ -53,10 +53,7 @@ const TabInfor: React.FC = () => {
         <Box mt="24px">
             <Grid container spacing={3}>
                 <Grid item xs={3}>
-                    <Box
-                        bgcolor="#fff"
-                        padding="24px"
-                        sx={{ boxShadow: '0px 4px 20px 0px #AAA9B81A', borderRadius: '12px' }}>
+                    <Box bgcolor="#fff" padding="24px" sx={{ boxShadow: '0px 4px 20px 0px #AAA9B81A', borderRadius: '12px' }}>
                         <Typography variant="h3" fontWeight="700" color="#3B4758" fontSize="16px">
                             Cài đặt
                         </Typography>
@@ -79,11 +76,7 @@ const TabInfor: React.FC = () => {
                                         variant="body1"
                                         fontSize="14px"
                                         color="#4C4B4C"
-                                        maxWidth={
-                                            index === 1 && useWindowWidth() < 1700
-                                                ? '200px'
-                                                : 'unset'
-                                        }>
+                                        maxWidth={index === 1 && useWindowWidth() < 1700 ? '200px' : 'unset'}>
                                         {item.text}
                                     </Typography>
                                     <Button
@@ -147,11 +140,7 @@ const TabInfor: React.FC = () => {
                                             gap: '12px',
                                             alignItems: 'center'
                                         }}>
-                                        <Typography
-                                            color="#333233"
-                                            variant="body1"
-                                            fontSize="24px"
-                                            fontWeight="700">
+                                        <Typography color="#333233" variant="body1" fontSize="24px" fontWeight="700">
                                             {item.value}
                                         </Typography>
                                         <Typography color="#666466" fontSize="14px" variant="body1">

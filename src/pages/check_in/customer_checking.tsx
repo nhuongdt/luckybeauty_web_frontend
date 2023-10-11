@@ -37,14 +37,10 @@ const shortNameCus = createTheme({
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const history = useNavigate();
 
-    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(
-        new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
-    );
+    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY }));
     const [listCusChecking, setListCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
 
-    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
 
     const GetListCustomerChecking = async () => {
         const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
@@ -75,10 +71,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         dbDexie.khachCheckIn.add(cusChecking);
 
         // check exist dexie
-        const cus = await dbDexie.khachCheckIn
-            .where('idKhachHang')
-            .equals(dataCheckIn.idKhachHang)
-            .toArray();
+        const cus = await dbDexie.khachCheckIn.where('idKhachHang').equals(dataCheckIn.idKhachHang).toArray();
         if (cus.length === 0) {
             // remove & add again
             await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
@@ -104,10 +97,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         hanleChoseCustomer(item);
 
         // add to dexie
-        const cus = await dbDexie.khachCheckIn
-            .where('idKhachHang')
-            .equals(item.idKhachHang)
-            .toArray();
+        const cus = await dbDexie.khachCheckIn.where('idKhachHang').equals(item.idKhachHang).toArray();
         if (cus.length === 0) {
             await dbDexie.khachCheckIn.add(item);
         }
@@ -139,12 +129,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                         }}>
                         Thêm khách
                     </Button> */}
-                    <Button
-                        variant="contained"
-                        className="btnIconText"
-                        startIcon={<Add />}
-                        sx={{ bgcolor: '#7c3367' }}
-                        onClick={handleToggle}>
+                    <Button variant="contained" className="btnIconText" startIcon={<Add />} sx={{ bgcolor: '#7c3367' }} onClick={handleToggle}>
                         Thêm khách
                     </Button>
                 </Stack>
@@ -169,9 +154,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                         <Button variant="outlined">TM</Button>
                                     </ThemeProvider>
                                     <Stack>
-                                        <Typography className="cusname">
-                                            {item.tenKhachHang}
-                                        </Typography>
+                                        <Typography className="cusname">{item.tenKhachHang}</Typography>
                                         <Typography className="cusphone" sx={{ color: '#acaca5' }}>
                                             {item.soDienThoai}
                                         </Typography>
@@ -195,9 +178,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 <Stack direction="row" spacing={1} paddingTop={1}>
                                     <Typography className="cuspoint">{item.dateCheckIn}</Typography>
                                     <Box>
-                                        <QueryBuilder
-                                            style={{ fontSize: '14px', marginTop: '-5px' }}
-                                        />
+                                        <QueryBuilder style={{ fontSize: '14px', marginTop: '-5px' }} />
                                     </Box>
                                     <Typography className="cusname">{item.timeCheckIn}</Typography>
                                 </Stack>

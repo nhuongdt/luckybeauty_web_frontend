@@ -2,15 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
 
-import {
-    Input,
-    Checkbox,
-    Grid,
-    TextField,
-    IconButton,
-    InputAdornment,
-    FormControlLabel
-} from '@mui/material';
+import { Input, Checkbox, Grid, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
@@ -129,11 +121,7 @@ const RegisterScreen: React.FC = () => {
                                             }
                                         }}
                                         type="email">
-                                        <Input
-                                            type="email"
-                                            placeholder="Nhập địa chỉ email"
-                                            required
-                                        />
+                                        <Input type="email" placeholder="Nhập địa chỉ email" required />
                                         <Input />
                                     </TextField>
                                 </Grid>
@@ -166,8 +154,7 @@ const RegisterScreen: React.FC = () => {
                                         className="w-100"
                                         label={
                                             <span className="login-label">
-                                                Số điện thoại{' '}
-                                                <span style={{ color: 'red' }}>*</span>
+                                                Số điện thoại <span style={{ color: 'red' }}>*</span>
                                             </span>
                                         }
                                         type="tel"
@@ -213,11 +200,7 @@ const RegisterScreen: React.FC = () => {
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <IconButton onClick={handleShowPassword}>
-                                                        {showPassword ? (
-                                                            <VisibilityOff />
-                                                        ) : (
-                                                            <Visibility />
-                                                        )}
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>
                                                 </InputAdornment>
                                             )
@@ -234,18 +217,11 @@ const RegisterScreen: React.FC = () => {
                                         }}
                                         value={confirmPassword}
                                         error={!passwordMatch}
-                                        helperText={
-                                            !passwordMatch && (
-                                                <p className="error-password">
-                                                    Mật khẩu không khớp
-                                                </p>
-                                            )
-                                        }
+                                        helperText={!passwordMatch && <p className="error-password">Mật khẩu không khớp</p>}
                                         name="confirmPassword"
                                         label={
                                             <span className="login-label">
-                                                Xác nhận lại mật khẩu{' '}
-                                                <span style={{ color: 'red' }}>*</span>
+                                                Xác nhận lại mật khẩu <span style={{ color: 'red' }}>*</span>
                                             </span>
                                         }
                                         fullWidth
@@ -261,11 +237,7 @@ const RegisterScreen: React.FC = () => {
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <IconButton onClick={handleShowPassword2}>
-                                                        {showPassword2 ? (
-                                                            <VisibilityOff />
-                                                        ) : (
-                                                            <Visibility />
-                                                        )}
+                                                        {showPassword2 ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>
                                                 </InputAdornment>
                                             )
@@ -282,17 +254,13 @@ const RegisterScreen: React.FC = () => {
                                     control={<Checkbox defaultChecked />}
                                     label={
                                         <p className="dieu-khoan">
-                                            Tôi đồng ý với <Link to="#">Điều khoản</Link> và{' '}
-                                            <Link to="#">Bảo mật</Link>
+                                            Tôi đồng ý với <Link to="#">Điều khoản</Link> và <Link to="#">Bảo mật</Link>
                                         </p>
                                     }
                                     sx={{ marginTop: '36px' }}
                                 />
                             </div>
-                            <button
-                                type="submit"
-                                className="btn btn-primary btn-register"
-                                onClick={handleSubmit}>
+                            <button type="submit" className="btn btn-primary btn-register" onClick={handleSubmit}>
                                 <span className="text-login">Tạo tài khoản</span>
                             </button>
                         </form>

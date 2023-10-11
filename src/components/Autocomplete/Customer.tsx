@@ -10,12 +10,7 @@ import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { DataArray } from '@mui/icons-material';
 
-export default function AutocompleteCustomer({
-    idChosed,
-    handleChoseItem,
-    helperText = '',
-    err = false
-}: any) {
+export default function AutocompleteCustomer({ idChosed, handleChoseItem, helperText = '', err = false }: any) {
     const [listCustomer, setListCustomer] = useState([]);
     const [cusChosed, setCusChosed] = useState<CreateOrEditKhachHangDto | null>(null);
     const [paramSearch, setParamSearch] = useState<PagedKhachHangResultRequestDto>({
@@ -67,9 +62,7 @@ export default function AutocompleteCustomer({
                 autoComplete
                 multiple={false}
                 value={cusChosed}
-                onChange={(event: any, newValue: CreateOrEditKhachHangDto | null) =>
-                    choseItem(newValue)
-                }
+                onChange={(event: any, newValue: CreateOrEditKhachHangDto | null) => choseItem(newValue)}
                 onInputChange={(event, newInputValue) => {
                     handleInputChange(newInputValue);
                 }}
@@ -77,9 +70,7 @@ export default function AutocompleteCustomer({
                 //isOptionEqualToValue={(option, value) => option.id === value.id}// bi douple 2 dong neu them dong nay
                 options={listCustomer}
                 getOptionLabel={(option: any) => (option.tenKhachHang ? option.tenKhachHang : '')}
-                renderInput={(params) => (
-                    <TextField {...params} label="Tìm kiếm" helperText={helperText} error={err} />
-                )}
+                renderInput={(params) => <TextField {...params} label="Tìm kiếm" helperText={helperText} error={err} />}
                 renderOption={(props, option) => {
                     return (
                         <li
@@ -92,12 +83,8 @@ export default function AutocompleteCustomer({
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
                                 </Grid>
-                                <Grid
-                                    item
-                                    sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                    <Typography style={{ fontSize: '13px' }}>
-                                        {option.tenKhachHang}
-                                    </Typography>
+                                <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Typography style={{ fontSize: '13px' }}>{option.tenKhachHang}</Typography>
                                     <Box
                                         component="span"
                                         style={{

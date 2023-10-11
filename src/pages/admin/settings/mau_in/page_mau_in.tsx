@@ -44,9 +44,7 @@ export default function PageMauIn({ xx }: any) {
     const [newMauIn, setNewMauIn] = useState<MauInDto>({} as MauInDto);
     const [idMauInUpdate, setIdMauInUpdate] = useState('');
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
-    const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(
-        new PropConfirmOKCancel({ show: false })
-    );
+    const [inforObjDelete, setInforObjDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [isShowToken, setIsShowToken] = useState(false);
 
     useEffect(() => {
@@ -92,9 +90,7 @@ export default function PageMauIn({ xx }: any) {
             case 11:
             case 12:
                 {
-                    const mauInByLoaiChungTu = allMauIn.filter(
-                        (x: MauInDto) => x.loaiChungTu === newValue
-                    );
+                    const mauInByLoaiChungTu = allMauIn.filter((x: MauInDto) => x.loaiChungTu === newValue);
                     const mauMacDinh = mauInByLoaiChungTu.filter((x: MauInDto) => x.laMacDinh);
                     const tempK80: MauInDto = {
                         id: '1',
@@ -326,9 +322,7 @@ export default function PageMauIn({ xx }: any) {
                 title={inforObjDelete.title}
                 mes={inforObjDelete.mes}
                 onOk={deleteMauIn}
-                onCancel={() =>
-                    setInforObjDelete({ ...inforObjDelete, show: false })
-                }></ConfirmDelete>
+                onCancel={() => setInforObjDelete({ ...inforObjDelete, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -346,11 +340,7 @@ export default function PageMauIn({ xx }: any) {
                                 }
                             }}
                             aria-label="basic tabs example">
-                            <InfoOutlinedIcon
-                                titleAccess="Danh sách token mẫu in"
-                                sx={{ color: 'chocolate' }}
-                                onClick={() => setIsShowToken(true)}
-                            />
+                            <InfoOutlinedIcon titleAccess="Danh sách token mẫu in" sx={{ color: 'chocolate' }} onClick={() => setIsShowToken(true)} />
 
                             <Tab label="Hóa đơn" value={1} />
                             <Tab label="Phiếu thu" value={11} />
@@ -368,11 +358,7 @@ export default function PageMauIn({ xx }: any) {
                                     </Button>
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={6} lg={6}>
-                                    <SelectMauIn
-                                        data={lstMauIn}
-                                        idChosed={idMauInChosed}
-                                        handleChange={changeMauIn}
-                                    />
+                                    <SelectMauIn data={lstMauIn} idChosed={idMauInChosed} handleChange={changeMauIn} />
                                 </Grid>
                                 <Grid item xs={12} sm={3} md={3} lg={3}>
                                     {idMauInChosed.length === 36 && (
@@ -422,9 +408,7 @@ export default function PageMauIn({ xx }: any) {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={6} lg={6}>
-                    <div
-                        className="ck-content"
-                        dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
+                    <div className="ck-content" dangerouslySetInnerHTML={{ __html: dataPrint }}></div>
                 </Grid>
             </Grid>
         </>

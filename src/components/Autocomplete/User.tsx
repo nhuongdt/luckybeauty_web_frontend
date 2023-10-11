@@ -44,12 +44,8 @@ export default function AutocompleteUser({ handleChoseItem, idChosed, dataUser }
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
                                 </Grid>
-                                <Grid
-                                    item
-                                    sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                    <Typography style={{ fontSize: '14px' }}>
-                                        {option.userName}
-                                    </Typography>
+                                <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Typography style={{ fontSize: '14px' }}>{option.userName}</Typography>
                                 </Grid>
                             </Grid>
                         </li>

@@ -26,12 +26,7 @@ const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) =>
                     <Typography variant="subtitle1" component="h2">
                         {mes != '' ? mes : 'Bạn có chắc chắn muốn xóa bản ghi này không?'}
                     </Typography>
-                    <Stack
-                        mt={3}
-                        direction="row"
-                        justifyContent="flex-end"
-                        alignItems="center"
-                        spacing={2}>
+                    <Stack mt={3} direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
                         <Button variant="contained" color="error" onClick={onCancel}>
                             Bỏ qua
                         </Button>

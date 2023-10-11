@@ -1,16 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import {
-    Box,
-    TextField,
-    Button,
-    Typography,
-    Grid,
-    InputAdornment,
-    Avatar,
-    IconButton,
-    debounce,
-    Stack
-} from '@mui/material';
+import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, IconButton, debounce, Stack } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -122,9 +111,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                         sx={{ maxWidth: '375px' }}
                         placeholder="Tìm kiếm"
                         value={paramSearch.keyword}
-                        onChange={(e) =>
-                            setParamSearch({ ...paramSearch, keyword: e.target.value })
-                        }
+                        onChange={(e) => setParamSearch({ ...paramSearch, keyword: e.target.value })}
                         InputProps={{
                             startAdornment: (
                                 <>
@@ -174,19 +161,12 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                             {/* <Box sx={{ justifyContent: 'space-between' }}> */}
                             <Stack spacing={2} direction={'row'}>
                                 {utils.checkNull(item.avatar) ? (
-                                    <BadgeFistCharOfName
-                                        firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
-                                    />
+                                    <BadgeFistCharOfName firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')} />
                                 ) : (
                                     <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
                                 )}
-                                <Stack
-                                    justifyContent={'space-evenly'}
-                                    maxWidth={'calc(100% - 44px)'}>
-                                    <Typography
-                                        variant="subtitle2"
-                                        className="lableOverflow"
-                                        title={item.tenKhachHang}>
+                                <Stack justifyContent={'space-evenly'} maxWidth={'calc(100% - 44px)'}>
+                                    <Typography variant="subtitle2" className="lableOverflow" title={item.tenKhachHang}>
                                         {item.tenKhachHang}
                                     </Typography>
                                     <Typography variant="caption" color="#999699">

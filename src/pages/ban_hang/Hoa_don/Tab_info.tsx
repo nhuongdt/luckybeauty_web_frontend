@@ -36,9 +36,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
         {
@@ -50,10 +48,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-                    {' '}
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}> {new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
         {
@@ -65,9 +60,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         },
         // {
@@ -98,9 +91,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
             )
         }
     ];
@@ -126,12 +117,7 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                             boxShadow: '0px 4px 20px 0px #AAA9B81A',
                             borderRadius: '12px'
                         }}>
-                        <Typography
-                            variant="h2"
-                            fontSize="16px"
-                            fontWeight="700"
-                            color="#3B4758"
-                            mb="36px">
+                        <Typography variant="h2" fontSize="16px" fontWeight="700" color="#3B4758" mb="36px">
                             Chi tiết thanh toán
                         </Typography>
                         <Grid
@@ -144,92 +130,52 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
                                 }
                             }}>
                             <Grid item xs={6}>
-                                <Typography
-                                    color="#3B4758"
-                                    variant="h3"
-                                    fontSize="14px"
-                                    fontWeight="400">
+                                <Typography color="#3B4758" variant="h3" fontSize="14px" fontWeight="400">
                                     Tổng tiền hàng{' '}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    fontWeight="700"
-                                    color="#3B4758">
+                                <Typography variant="body1" fontSize="14px" fontWeight="700" color="#3B4758">
                                     {new Intl.NumberFormat('vi-VN').format(hoadon?.tongTienHang)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    color="#3B4758"
-                                    variant="h3"
-                                    fontSize="14px"
-                                    fontWeight="400">
+                                <Typography color="#3B4758" variant="h3" fontSize="14px" fontWeight="400">
                                     Giảm hóa đơn{' '}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    fontWeight="700"
-                                    color="#3B4758">
+                                <Typography variant="body1" fontSize="14px" fontWeight="700" color="#3B4758">
                                     {new Intl.NumberFormat('vi-VN').format(hoadon?.tongGiamGiaHD)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    color="#3B4758"
-                                    variant="h3"
-                                    fontSize="14px"
-                                    fontWeight="400">
+                                <Typography color="#3B4758" variant="h3" fontSize="14px" fontWeight="400">
                                     Tổng thanh toán{' '}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    fontWeight="700"
-                                    color="#3B4758">
+                                <Typography variant="body1" fontSize="14px" fontWeight="700" color="#3B4758">
                                     {new Intl.NumberFormat('vi-VN').format(hoadon?.tongThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    color="#3B4758"
-                                    variant="h3"
-                                    fontSize="14px"
-                                    fontWeight="400">
+                                <Typography color="#3B4758" variant="h3" fontSize="14px" fontWeight="400">
                                     Khách đã trả{' '}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography
-                                    variant="body1"
-                                    fontSize="14px"
-                                    fontWeight="700"
-                                    color="#3B4758">
+                                <Typography variant="body1" fontSize="14px" fontWeight="700" color="#3B4758">
                                     {new Intl.NumberFormat('vi-VN').format(hoadon?.daThanhToan)}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} marginTop="28px">
-                                <Typography
-                                    color="#3B4758"
-                                    variant="h3"
-                                    fontSize="18px"
-                                    fontWeight="700">
+                                <Typography color="#3B4758" variant="h3" fontSize="18px" fontWeight="700">
                                     Còn nợ
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} marginTop="28px">
-                                <Typography
-                                    variant="body1"
-                                    fontSize="18px"
-                                    fontWeight="700"
-                                    color="#3B4758">
+                                <Typography variant="body1" fontSize="18px" fontWeight="700" color="#3B4758">
                                     {new Intl.NumberFormat('vi-VN').format(hoadon?.conNo)}
                                 </Typography>
                             </Grid>

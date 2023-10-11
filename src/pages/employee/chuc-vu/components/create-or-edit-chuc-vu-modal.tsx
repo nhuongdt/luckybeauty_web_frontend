@@ -1,14 +1,4 @@
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { Form, Formik } from 'formik';
@@ -27,11 +17,7 @@ interface ModalProps {
 class CreateOrEditChucVuModal extends Component<ModalProps> {
     render(): ReactNode {
         return (
-            <Dialog
-                fullWidth
-                maxWidth="sm"
-                open={this.props.visiable}
-                onClose={this.props.handleClose}>
+            <Dialog fullWidth maxWidth="sm" open={this.props.visiable} onClose={this.props.handleClose}>
                 <Box>
                     <DialogTitle>
                         <Typography
@@ -81,11 +67,7 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                                 fontWeight="500">
                                                 Tên chức vụ
                                             </Typography>
-                                            <TextField
-                                                fullWidth
-                                                size="small"
-                                                name="tenChucVu"
-                                                onChange={handleChange}></TextField>
+                                            <TextField fullWidth size="small" name="tenChucVu" onChange={handleChange}></TextField>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Typography
@@ -94,11 +76,7 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                                 fontWeight="500">
                                                 Mô tả
                                             </Typography>
-                                            <TextField
-                                                fullWidth
-                                                size="small"
-                                                name="moTa"
-                                                onChange={handleChange}></TextField>
+                                            <TextField fullWidth size="small" name="moTa" onChange={handleChange}></TextField>
                                         </Grid>
                                     </Grid>
                                     <DialogActions>
@@ -118,10 +96,7 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                                 className="btn-outline-hover">
                                                 Hủy
                                             </Button>
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                                className="btn-container-hover">
+                                            <Button type="submit" variant="contained" className="btn-container-hover">
                                                 Lưu
                                             </Button>
                                         </Box>

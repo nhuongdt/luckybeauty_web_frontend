@@ -1,13 +1,5 @@
 import React, { ChangeEventHandler } from 'react';
-import {
-    Button,
-    Box,
-    Typography,
-    Grid,
-    TextField,
-    IconButton,
-    SelectChangeEvent
-} from '@mui/material';
+import { Button, Box, Typography, Grid, TextField, IconButton, SelectChangeEvent } from '@mui/material';
 import { DATA_GRID_PROPS_DEFAULT_VALUES, DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 
 import roleService from '../../../services/role/roleService';
@@ -202,12 +194,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                     </Box>
                 ),
                 renderCell: (params: any) => (
-                    <Box
-                        width="100%"
-                        textAlign="left"
-                        fontSize="13px"
-                        fontWeight={400}
-                        fontFamily={'Roboto'}>
+                    <Box width="100%" textAlign="left" fontSize="13px" fontWeight={400} fontFamily={'Roboto'}>
                         {params.value}
                     </Box>
                 )
@@ -218,9 +205,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box
-                        sx={{ fontWeight: '700', textAlign: 'left' }}
-                        title={params.colDef.headerName}>
+                    <Box sx={{ fontWeight: '700', textAlign: 'left' }} title={params.colDef.headerName}>
                         {params.colDef.headerName}
                     </Box>
                 ),
@@ -257,9 +242,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                         </IconButton>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
         return (
@@ -269,11 +252,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                         <Grid item>
                             <div>
                                 <Box display="flex" alignItems="center" gap="10px">
-                                    <Typography
-                                        variant="h1"
-                                        fontSize="16px"
-                                        color="#333233"
-                                        fontWeight="700">
+                                    <Typography variant="h1" fontSize="16px" color="#333233" fontWeight="700">
                                         Danh sách vai trò
                                     </Typography>
                                     <Box>
@@ -305,11 +284,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                                 <Box>
                                     <Box display="flex" alignItems="center" gap="8px">
                                         <Button
-                                            hidden={
-                                                !abpCustom.isGrandPermission(
-                                                    'Pages.Administration.Roles.Create'
-                                                )
-                                            }
+                                            hidden={!abpCustom.isGrandPermission('Pages.Administration.Roles.Create')}
                                             variant="contained"
                                             startIcon={<img src={AddIcon} />}
                                             size="small"
@@ -386,10 +361,7 @@ class RoleScreen extends React.Component<IRoleProps> {
                     permissionTree={this.state.permissionTree}
                     formRef={roleStore.createOrEditRoleDto}
                 />
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.onShowDelete}></ConfirmDelete>
+                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDelete}></ConfirmDelete>
             </Box>
         );
     }

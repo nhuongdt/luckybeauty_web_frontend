@@ -1,23 +1,9 @@
-import {
-    Table,
-    TableContainer,
-    TableCell,
-    TableHead,
-    TableRow,
-    TableBody,
-    Stack,
-    Checkbox
-} from '@mui/material';
+import { Table, TableContainer, TableCell, TableHead, TableRow, TableBody, Stack, Checkbox } from '@mui/material';
 import { RoleDto } from '../../services/role/dto/roleDto';
 import { IChiNhanhRoles, IUserRoleDto, RoleDtoCheck } from '../../models/Roles/userRoleDto';
 import { useEffect, useState, useMemo } from 'react';
 import roleService from '../../services/role/roleService';
-export default function TableRoleChiNhanh({
-    allRoles,
-    chiNhanhRoles,
-    userId,
-    passDataToParent
-}: any) {
+export default function TableRoleChiNhanh({ allRoles, chiNhanhRoles, userId, passDataToParent }: any) {
     const [lstChosed, setLstChosed] = useState<IUserRoleDto[]>([]);
     useEffect(() => {
         if (userId === 0) {
@@ -43,9 +29,7 @@ export default function TableRoleChiNhanh({
     };
 
     const changeCheckOne = (checked: boolean, idChiNhanh: string, roleId: number) => {
-        const itemEx = lstChosed.filter(
-            (x: IUserRoleDto) => x.idChiNhanh === idChiNhanh && x.roleId === roleId
-        );
+        const itemEx = lstChosed.filter((x: IUserRoleDto) => x.idChiNhanh === idChiNhanh && x.roleId === roleId);
         if (itemEx.length > 0) {
             if (!checked) {
                 setLstChosed(lstChosed.filter((x: IUserRoleDto) => x.idChiNhanh !== idChiNhanh));
@@ -77,10 +61,7 @@ export default function TableRoleChiNhanh({
     const filterSameRole = (lstChosed: IUserRoleDto[]) => {
         for (let i = 0; i < allRoles.length; i++) {
             const itFor = allRoles[i];
-            if (
-                lstChosed.filter((x: IUserRoleDto) => x.roleId === itFor.id).length ===
-                chiNhanhRoles.length
-            ) {
+            if (lstChosed.filter((x: IUserRoleDto) => x.roleId === itFor.id).length === chiNhanhRoles.length) {
                 return { checkAll: true, roleId: itFor.id };
             }
         }
@@ -119,16 +100,12 @@ export default function TableRoleChiNhanh({
                                         <Stack
                                             sx={{
                                                 fontWeight: 500,
-                                                fontFamily:
-                                                    '"Roboto","Helvetica","Arial",sans-serif'
+                                                fontFamily: '"Roboto","Helvetica","Arial",sans-serif'
                                             }}>
                                             {item.displayName}
                                         </Stack>
                                         <Checkbox
-                                            checked={
-                                                objCheckAll?.checkAll &&
-                                                objCheckAll?.roleId === item.id
-                                            }
+                                            checked={objCheckAll?.checkAll && objCheckAll?.roleId === item.id}
                                             value={objCheckAll?.checkAll}
                                             onChange={(e) => checkAll(e.target.checked, item.id)}
                                         />
@@ -152,18 +129,8 @@ export default function TableRoleChiNhanh({
                                 {row.roles?.map((itemRole: RoleDtoCheck) => (
                                     <TableCell align="center" key={itemRole.id}>
                                         <Checkbox
-                                            checked={lstChosed.some(
-                                                (x: IUserRoleDto) =>
-                                                    x.idChiNhanh === row.idChiNhanh &&
-                                                    x.roleId === itemRole.id
-                                            )}
-                                            onChange={(e) =>
-                                                changeCheckOne(
-                                                    e.target.checked,
-                                                    row.idChiNhanh,
-                                                    itemRole.id
-                                                )
-                                            }
+                                            checked={lstChosed.some((x: IUserRoleDto) => x.idChiNhanh === row.idChiNhanh && x.roleId === itemRole.id)}
+                                            onChange={(e) => changeCheckOne(e.target.checked, row.idChiNhanh, itemRole.id)}
                                         />
                                     </TableCell>
                                 ))}

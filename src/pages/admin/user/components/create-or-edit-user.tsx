@@ -92,9 +92,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
-                formRef.id.toString() === Cookies.get('userId')
-                    ? authenticationStore.logout()
-                    : undefined;
+                formRef.id.toString() === Cookies.get('userId') ? authenticationStore.logout() : undefined;
             }
             this.setState({ avatar: '' });
             helper.resetForm();
@@ -137,21 +135,14 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
         const rules = Yup.object().shape({
             surname: Yup.string().required('Tên là bắt buộc'),
             name: Yup.string().required('Họ là bắt buộc'),
-            emailAddress: Yup.string()
-                .matches(AppConsts.emailRegex, 'Email không hợp lệ')
-                .required('Email là bắt buộc'),
+            emailAddress: Yup.string().matches(AppConsts.emailRegex, 'Email không hợp lệ').required('Email là bắt buộc'),
             userName: Yup.string().required('Tên truy cập là bắt buộc'),
-            phoneNumber: Yup.string()
-                .matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ')
-                .notRequired(),
+            phoneNumber: Yup.string().matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ').notRequired(),
             password: Yup.string().matches(
                 AppConsts.passwordRegex,
                 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
             ),
-            confirmPassword: Yup.string().oneOf(
-                [Yup.ref('password'), ''],
-                'Mật khẩu xác nhận phải trùng khớp'
-            )
+            confirmPassword: Yup.string().oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')
         });
         return (
             <Dialog
@@ -188,56 +179,28 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent sx={{ paddingBottom: '0' }}>
-                    <Formik
-                        initialValues={initialValues}
-                        onSubmit={this.handleSubmit}
-                        validationSchema={rules}>
+                    <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
                         {({ handleChange, values, errors, touched, setFieldValue }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <TabContext value={this.state.tabIndex}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                        <TabList
-                                            onChange={this.handleTabChange}
-                                            aria-label="lab API tabs example">
-                                            <Tab
-                                                label="Người dùng"
-                                                value="1"
-                                                sx={{ textTransform: 'unset!important' }}
-                                            />
-                                            <Tab
-                                                label="Vai trò"
-                                                value="2"
-                                                sx={{ textTransform: 'unset!important' }}
-                                            />
+                                        <TabList onChange={this.handleTabChange} aria-label="lab API tabs example">
+                                            <Tab label="Người dùng" value="1" sx={{ textTransform: 'unset!important' }} />
+                                            <Tab label="Vai trò" value="2" sx={{ textTransform: 'unset!important' }} />
                                         </TabList>
                                     </Box>
                                     <TabPanel value="1" sx={{ padding: '16px 0px 0px 0px' }}>
-                                        <Grid
-                                            container
-                                            sx={{ '& label': { marginBottom: '4px' } }}
-                                            spacing={2}>
+                                        <Grid container sx={{ '& label': { marginBottom: '4px' } }} spacing={2}>
                                             <Grid item sm={4} xs={12}>
                                                 <Box textAlign={'center'}>
-                                                    <img
-                                                        src={this.state.avatar}
-                                                        width={150}
-                                                        height={150}
-                                                    />
+                                                    <img src={this.state.avatar} width={150} height={150} />
                                                 </Box>
                                             </Grid>
-                                            <Grid
-                                                item
-                                                sm={8}
-                                                xs={12}
-                                                display="flex"
-                                                flexDirection="column"
-                                                gap="16px">
+                                            <Grid item sm={8} xs={12} display="flex" flexDirection="column" gap="16px">
                                                 <FormGroup>
                                                     <Autocomplete
                                                         value={
-                                                            suggestNhanSu.find(
-                                                                (x) => x.id === values.nhanSuId
-                                                            ) || {
+                                                            suggestNhanSu.find((x) => x.id === values.nhanSuId) || {
                                                                 id: '',
                                                                 avatar: '',
                                                                 chucVu: '',
@@ -246,47 +209,28 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             }
                                                         }
                                                         options={suggestNhanSu ?? []}
-                                                        getOptionLabel={(option) =>
-                                                            option.tenNhanVien
-                                                        }
+                                                        getOptionLabel={(option) => option.tenNhanVien}
                                                         size="small"
                                                         fullWidth
                                                         disablePortal
                                                         onChange={(event, value) => {
-                                                            setFieldValue(
-                                                                'nhanSuId',
-                                                                value ? value.id : undefined
-                                                            );
+                                                            setFieldValue('nhanSuId', value ? value.id : undefined);
                                                             this.setState({
                                                                 avatar: value?.avatar
                                                             });
-                                                            const nhanVien = suggestNhanSu.find(
-                                                                (x) => x.id === value?.id
-                                                            ) || {
+                                                            const nhanVien = suggestNhanSu.find((x) => x.id === value?.id) || {
                                                                 avatar: '',
                                                                 chucVu: '',
                                                                 id: '',
                                                                 soDienThoai: '',
                                                                 tenNhanVien: ''
                                                             };
-                                                            setFieldValue(
-                                                                'phoneNumber',
-                                                                nhanVien.soDienThoai || ''
-                                                            );
+                                                            setFieldValue('phoneNumber', nhanVien.soDienThoai || '');
 
-                                                            const names = nhanVien.tenNhanVien
-                                                                .split(' ')
-                                                                .filter(Boolean);
+                                                            const names = nhanVien.tenNhanVien.split(' ').filter(Boolean);
                                                             if (names.length > 0) {
-                                                                setFieldValue(
-                                                                    'name',
-                                                                    names[names.length - 1]
-                                                                );
-                                                                setFieldValue(
-                                                                    'surname',
-                                                                    names.slice(0, -1).join(' ') ||
-                                                                        names[names.length - 1]
-                                                                );
+                                                                setFieldValue('name', names[names.length - 1]);
+                                                                setFieldValue('surname', names.slice(0, -1).join(' ') || names[names.length - 1]);
                                                             } else {
                                                                 setFieldValue('name', '');
                                                                 setFieldValue('surname', '');
@@ -296,9 +240,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             <TextField
                                                                 {...params}
                                                                 label={
-                                                                    <Typography
-                                                                        variant="body1"
-                                                                        fontSize="14px">
+                                                                    <Typography variant="body1" fontSize="14px">
                                                                         Chọn nhân sự đã có
                                                                     </Typography>
                                                                 }
@@ -385,17 +327,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span>
                                                             </label>
                                                         }
-                                                        error={
-                                                            touched.userName && errors.userName
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.userName &&
-                                                            errors.userName && (
-                                                                <div>{errors.userName}</div>
-                                                            )
-                                                        }
+                                                        error={touched.userName && errors.userName ? true : false}
+                                                        helperText={touched.userName && errors.userName && <div>{errors.userName}</div>}
                                                         disabled={userId === 0 ? false : true}
                                                         type="text"
                                                         name="userName"
@@ -419,18 +352,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span>
                                                             </label>
                                                         }
-                                                        error={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress && (
-                                                                <div>{errors.emailAddress}</div>
-                                                            )
-                                                        }
+                                                        error={touched.emailAddress && errors.emailAddress ? true : false}
+                                                        helperText={touched.emailAddress && errors.emailAddress && <div>{errors.emailAddress}</div>}
                                                         type="email"
                                                         name="emailAddress"
                                                         value={values.emailAddress}
@@ -440,12 +363,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     />
                                                 </FormGroup>
                                             </Grid>
-                                            <Grid
-                                                item
-                                                xs={12}
-                                                display="flex"
-                                                flexDirection="column"
-                                                gap="16px">
+                                            <Grid item xs={12} display="flex" flexDirection="column" gap="16px">
                                                 {/* <FormGroup>
                                                     <TextField
                                                         label={
@@ -546,17 +464,8 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span> */}
                                                             </label>
                                                         }
-                                                        error={
-                                                            touched.password && errors.password
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.password &&
-                                                            errors.password && (
-                                                                <span>{errors.password}</span>
-                                                            )
-                                                        }
+                                                        error={touched.password && errors.password ? true : false}
+                                                        helperText={touched.password && errors.password && <span>{errors.password}</span>}
                                                         type="password"
                                                         name="password"
                                                         value={values.password}
@@ -578,19 +487,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span> */}
                                                             </label>
                                                         }
-                                                        error={
-                                                            touched.confirmPassword &&
-                                                            errors.confirmPassword
-                                                                ? true
-                                                                : false
-                                                        }
+                                                        error={touched.confirmPassword && errors.confirmPassword ? true : false}
                                                         helperText={
-                                                            touched.confirmPassword &&
-                                                            errors.confirmPassword && (
-                                                                <span>
-                                                                    {errors.confirmPassword}
-                                                                </span>
-                                                            )
+                                                            touched.confirmPassword && errors.confirmPassword && <span>{errors.confirmPassword}</span>
                                                         }
                                                         type="password"
                                                         fullWidth
@@ -614,17 +513,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                     <FormGroup>
                                                         <FormControlLabel
                                                             name="isAdmin"
-                                                            value={
-                                                                values.isAdmin === true
-                                                                    ? true
-                                                                    : false
-                                                            }
+                                                            value={values.isAdmin === true ? true : false}
                                                             onChange={handleChange}
-                                                            checked={
-                                                                values.isAdmin === true
-                                                                    ? true
-                                                                    : false
-                                                            }
+                                                            checked={values.isAdmin === true ? true : false}
                                                             control={<Checkbox />}
                                                             label="Là quản trị viên"
                                                         />
@@ -654,9 +545,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         value={option.value}
                                                         control={
                                                             <Checkbox
-                                                                checked={values.roleNames.includes(
-                                                                    option.value
-                                                                )}
+                                                                checked={values.roleNames.includes(option.value)}
                                                                 onChange={handleChange}
                                                                 name="roleNames"
                                                                 value={option.value}

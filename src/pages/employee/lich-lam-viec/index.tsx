@@ -89,11 +89,7 @@ const LichLamViecScreen: React.FC = () => {
                 <Box sx={{ borderTop: '1px solid #E6E1E6', mt: '18px', pt: '16px' }}>
                     <LichLamViec />
                 </Box>
-                <CreateOrEditLichLamViecModal
-                    idNhanVien={AppConsts.guidEmpty}
-                    open={openDialog}
-                    onClose={handleSubmit}
-                />
+                <CreateOrEditLichLamViecModal idNhanVien={AppConsts.guidEmpty} open={openDialog} onClose={handleSubmit} />
             </Box>
         </Box>
     );

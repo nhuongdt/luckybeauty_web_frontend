@@ -1,14 +1,4 @@
-import {
-    Box,
-    Button,
-    ButtonGroup,
-    Checkbox,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, ButtonGroup, Checkbox, Grid, IconButton, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '../../../../images/add.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
@@ -139,10 +129,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 90,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -166,10 +153,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -193,10 +177,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -220,10 +201,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -247,10 +225,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -276,10 +251,7 @@ const KhuyenMaiPage: React.FC = () => {
             flex: 1,
             headerAlign: 'center',
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -291,18 +263,8 @@ const KhuyenMaiPage: React.FC = () => {
                     padding={'4px 8px'}
                     sx={{
                         margin: 'auto',
-                        backgroundColor:
-                            params.row.trangThai === 1
-                                ? '#E8FFF3'
-                                : params.row.trangThai === 0
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 1
-                                ? '#50CD89'
-                                : params.row.trangThai === 0
-                                ? '#FF9900'
-                                : '#F1416C'
+                        backgroundColor: params.row.trangThai === 1 ? '#E8FFF3' : params.row.trangThai === 0 ? '#FFF8DD' : '#FFF5F8',
+                        color: params.row.trangThai === 1 ? '#50CD89' : params.row.trangThai === 0 ? '#FF9900' : '#F1416C'
                     }}
                     fontSize="13px"
                     fontWeight="400"
@@ -380,9 +342,7 @@ const KhuyenMaiPage: React.FC = () => {
                 </Grid>
 
                 <Grid item xs={12} md="auto" display="flex" gap="8px" justifyContent="end">
-                    <ButtonGroup
-                        variant="contained"
-                        sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
+                    <ButtonGroup variant="contained" sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
                         <Button
                             size="small"
                             hidden={!abpCustom.isGrandPermission('Pages.KhuyenMai.Create')}
@@ -424,10 +384,7 @@ const KhuyenMaiPage: React.FC = () => {
                     ]}
                     onSortModelChange={(newSortModel) => {
                         if (newSortModel.length > 0) {
-                            onSort(
-                                newSortModel[0].sort?.toString() ?? 'creationTime',
-                                newSortModel[0].field ?? 'desc'
-                            );
+                            onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                         }
                     }}
                 />
@@ -443,10 +400,7 @@ const KhuyenMaiPage: React.FC = () => {
                 handleDelete={handleDelete}
                 permissionDelete="Pages.KhuyenMai.Delete"
             />
-            <ConfirmDelete
-                isShow={isShowConfirmDelete}
-                onOk={onOkDelete}
-                onCancel={showConfirmDelete}></ConfirmDelete>
+            <ConfirmDelete isShow={isShowConfirmDelete} onOk={onOkDelete} onCancel={showConfirmDelete}></ConfirmDelete>
             <CustomTablePagination
                 currentPage={currentPage}
                 rowPerPage={maxResultCount}

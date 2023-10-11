@@ -18,13 +18,7 @@ import AppConsts from '../../lib/appconst';
 import * as signalR from '@microsoft/signalr';
 import notificationStore from '../../stores/notificationStore';
 import ToolbarHeader from './components/Toolbarheader';
-import {
-    CustomContentGenerator,
-    DateSelectArg,
-    DayHeaderContentArg,
-    EventClickArg,
-    EventContentArg
-} from '@fullcalendar/core';
+import { CustomContentGenerator, DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -46,8 +40,7 @@ const LichHen: React.FC = () => {
     const calendarRef = useRef<FullCalendar>(null);
     const [idBooking, setIdBooking] = useState<string>('');
     const [connection, setConnection] = useState<signalR.HubConnection>();
-    const [notificationConnectionHub, setNotificationConnectionHub] =
-        useState<signalR.HubConnection>();
+    const [notificationConnectionHub, setNotificationConnectionHub] = useState<signalR.HubConnection>();
     const getData = async () => {
         let calendarView = 'week';
         const lichHenView = Cookies.get('lich-hen-view') ?? 'timeGridWeek';
@@ -195,18 +188,13 @@ const LichHen: React.FC = () => {
         bookingStore.createNewBookingDto();
         bookingStore.createOrEditBookingDto.startHours = startHours;
         bookingStore.createOrEditBookingDto.startTime = startTime;
-        bookingStore.createOrEditBookingDto.idNhanVien =
-            selectInfo.resource?.id ?? AppConsts.guidEmpty;
+        bookingStore.createOrEditBookingDto.idNhanVien = selectInfo.resource?.id ?? AppConsts.guidEmpty;
         bookingStore.isShowCreateOrEdit = true;
     };
 
     const handleEventClick = async (clickInfo: EventClickArg) => {
         bookingStore.idBooking = clickInfo.event.id;
-        if (
-            clickInfo.event.id != null ||
-            clickInfo.event.id != '' ||
-            clickInfo.event.id !== undefined
-        ) {
+        if (clickInfo.event.id != null || clickInfo.event.id != '' || clickInfo.event.id !== undefined) {
             const modal = document.getElementsByClassName('fc-popover')[0] as HTMLElement | null;
             if (modal) {
                 modal.style.display = 'none';
@@ -244,10 +232,7 @@ const LichHen: React.FC = () => {
                         display: 'flex',
                         gap: '8px'
                     }}>
-                    <Button
-                        variant="outlined"
-                        className="btn-outline-hover"
-                        sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>
+                    <Button variant="outlined" className="btn-outline-hover" sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>
                         <SettingIcon />
                     </Button>
                     <Button
@@ -290,14 +275,7 @@ const LichHen: React.FC = () => {
                 />
                 <FullCalendar
                     ref={calendarRef}
-                    plugins={[
-                        dayGridPlugin,
-                        timeGridPlugin,
-                        interactionPlugin,
-                        listPlugin,
-                        resourceTimelinePlugin,
-                        resourceTimeGridPlugin
-                    ]}
+                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, resourceTimelinePlugin, resourceTimeGridPlugin]}
                     schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
                     resources={
                         bookingStore.idNhanVien !== undefined && bookingStore.idNhanVien !== ''
@@ -341,11 +319,7 @@ const LichHen: React.FC = () => {
                         minute: '2-digit',
                         omitZeroMinute: false // Set this to true if you want to omit ":00" for minutes
                     }}
-                    events={
-                        bookingStore.fullCalendarEvents !== undefined
-                            ? bookingStore.fullCalendarEvents
-                            : []
-                    }
+                    events={bookingStore.fullCalendarEvents !== undefined ? bookingStore.fullCalendarEvents : []}
                     weekends={true}
                     select={handleDateSelect}
                     eventContent={renderEventContent} // custom render function
@@ -405,12 +379,7 @@ function renderResourceLabelContent(args: any) {
                     <Avatar src={lable.avatar} alt={lable.tenNhanVien} />
                 </Box>
             </Box>
-            <Box
-                marginLeft={'5px'}
-                display={'flex'}
-                flexDirection={'column'}
-                justifyContent={'space-between'}
-                alignItems={'start'}>
+            <Box marginLeft={'5px'} display={'flex'} flexDirection={'column'} justifyContent={'space-between'} alignItems={'start'}>
                 <Typography
                     fontSize="12px"
                     fontWeight="700"
@@ -439,9 +408,7 @@ function renderDayHeaderContent(args: DayHeaderContentArg) {
             flexDirection={initialView === 'timeGridWeek' ? 'column' : 'row'}
             alignItems={'center'}
             minHeight={'65px'}>
-            <Box fontSize={initialView === 'timeGridWeek' ? '12px' : '14px'}>
-                {formatDateFns(args.date, 'EEEE', { locale: vi })}
-            </Box>
+            <Box fontSize={initialView === 'timeGridWeek' ? '12px' : '14px'}>{formatDateFns(args.date, 'EEEE', { locale: vi })}</Box>
             {initialView === 'timeGridWeek' ? (
                 <Box fontSize={'18px'} mt={1}>
                     {formatDateFns(args.date, 'd', { locale: vi })}
@@ -464,21 +431,12 @@ function renderEventContent(eventContent: EventContentArg) {
                 overflow: 'hidden'
             }}>
             {eventContent.view.type === 'dayGridMonth' ? (
-                <Typography
-                    variant="body1"
-                    fontSize="12px"
-                    whiteSpace="nowrap"
-                    width={'100%'}
-                    color={eventContent.event.textColor}>
+                <Typography variant="body1" fontSize="12px" whiteSpace="nowrap" width={'100%'} color={eventContent.event.textColor}>
                     {formattedStartTime} {eventContent.event.title + ':'}
                     {eventContent.event.display}
                 </Typography>
             ) : (
-                <Typography
-                    variant="body1"
-                    fontSize="12px"
-                    whiteSpace="normal"
-                    color={eventContent.event.textColor}>
+                <Typography variant="body1" fontSize="12px" whiteSpace="normal" color={eventContent.event.textColor}>
                     <Box display={'flex'} alignItems={'center'} sx={{ overflow: 'hidden' }}>
                         {formattedStartTime} - {formattedEndTime}{' '}
                         <QueryBuilder

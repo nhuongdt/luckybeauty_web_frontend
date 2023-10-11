@@ -1,11 +1,4 @@
-import {
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    Box,
-    Typography,
-    Button
-} from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button } from '@mui/material';
 import { useState } from 'react';
 import { OpenInNew, LocalOfferOutlined } from '@mui/icons-material';
 import { ModelNhomHangHoa } from '../../services/product/dto';
@@ -107,9 +100,7 @@ export default function AccordionNhomHangHoa({ dataNhomHang, clickTreeItem }: an
                                 handleHover(event, child, index2);
                             }}
                             onClick={() => handleClickTreeItem(false, child.id)}>
-                            <LocalOfferOutlined
-                                sx={{ color: item.color, opacity: '0', width: 20, height: 20 }}
-                            />
+                            <LocalOfferOutlined sx={{ color: item.color, opacity: '0', width: 20, height: 20 }} />
                             <Typography
                                 variant="body2"
                                 textTransform="capitalize"

@@ -25,15 +25,7 @@ import {
     IconButton,
     ButtonGroup
 } from '@mui/material';
-import {
-    Percent,
-    Add,
-    Remove,
-    MoreHoriz,
-    ExpandMore,
-    ExpandLess,
-    Close
-} from '@mui/icons-material';
+import { Percent, Add, Remove, MoreHoriz, ExpandMore, ExpandLess, Close } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import PageHoaDonChiTietDto from '../../../services/ban_hang/PageHoaDonChiTietDto';
 import Utils from '../../../utils/utils'; // func common
@@ -338,9 +330,7 @@ export default function ModalEditChiTietGioHang({
             idNhomHangHoa: item.idNhomHangHoa,
             giaBan: item.giaBan
         });
-        const checkCT = lstCTHoaDon.filter(
-            (x: PageHoaDonChiTietDto) => x.idDonViQuyDoi === item.idDonViQuyDoi
-        );
+        const checkCT = lstCTHoaDon.filter((x: PageHoaDonChiTietDto) => x.idDonViQuyDoi === item.idDonViQuyDoi);
         if (checkCT.length === 0) {
             // unshift
             setLstCTHoaDon([ctNew, ...lstCTHoaDon]);
@@ -418,9 +408,7 @@ export default function ModalEditChiTietGioHang({
                 handleChoseProduct={addNewChiTiet}
             />
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ color: '#29303D', fontWeight: '700', fontSize: '24px' }}>
-                    Chỉnh sửa giỏ hàng
-                </DialogTitle>
+                <DialogTitle sx={{ color: '#29303D', fontWeight: '700', fontSize: '24px' }}>Chỉnh sửa giỏ hàng</DialogTitle>
                 <IconButton
                     onClick={closeModal}
                     sx={{
@@ -506,44 +494,29 @@ export default function ModalEditChiTietGioHang({
                                         sm={formType === 1 ? 3 : 1}
                                         md={formType === 1 ? 3 : 2}
                                         lg={formType === 1 ? 3 : 2}>
-                                        <Stack
-                                            direction="row"
-                                            spacing={1}
-                                            justifyContent="end"
-                                            height="100%"
-                                            alignItems="center">
+                                        <Stack direction="row" spacing={1} justifyContent="end" height="100%" alignItems="center">
                                             <Typography
                                                 sx={{
                                                     fontWeight: 500,
                                                     textAlign: 'right',
                                                     color: 'var(--color-main)'
                                                 }}>
-                                                {new Intl.NumberFormat('vi-VN').format(
-                                                    ct?.thanhTienSauVAT
-                                                )}
+                                                {new Intl.NumberFormat('vi-VN').format(ct?.thanhTienSauVAT)}
                                             </Typography>
                                         </Stack>
                                     </Grid>
                                     {/* // man hinh thu ngan: khong hien icon toogle  */}
                                     {formType !== 1 && (
                                         <Grid item xs={2} sm={1} md={1} lg={1}>
-                                            <Box
-                                                onClick={() => toggleVisibility(index)}
-                                                sx={{ cursor: 'pointer' }}>
+                                            <Box onClick={() => toggleVisibility(index)} sx={{ cursor: 'pointer' }}>
                                                 <ExpandMore
                                                     sx={{
-                                                        display:
-                                                            formType !== 1 && !itemVisibility[index]
-                                                                ? ''
-                                                                : 'none'
+                                                        display: formType !== 1 && !itemVisibility[index] ? '' : 'none'
                                                     }}
                                                 />
                                                 <ExpandLess
                                                     sx={{
-                                                        display:
-                                                            formType !== 1 && itemVisibility[index]
-                                                                ? ''
-                                                                : 'none'
+                                                        display: formType !== 1 && itemVisibility[index] ? '' : 'none'
                                                     }}
                                                 />
                                             </Box>
@@ -561,9 +534,7 @@ export default function ModalEditChiTietGioHang({
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) =>
-                                                    handleChangeGiaBan(event, ct.id)
-                                                }
+                                                onChange={(event: any) => handleChangeGiaBan(event, ct.id)}
                                             />
                                         </Stack>
                                     </Grid>
@@ -580,25 +551,14 @@ export default function ModalEditChiTietGioHang({
                                                 variant="body2">
                                                 Số lượng
                                             </Typography>
-                                            <Stack
-                                                direction="row"
-                                                spacing={1}
-                                                sx={{ '& .btnIcon': { cursor: 'pointer' } }}>
-                                                <Remove
-                                                    className="btnIcon"
-                                                    onClick={() => giamSoLuong(ct.id)}
-                                                />
+                                            <Stack direction="row" spacing={1} sx={{ '& .btnIcon': { cursor: 'pointer' } }}>
+                                                <Remove className="btnIcon" onClick={() => giamSoLuong(ct.id)} />
                                                 <TextField
                                                     size="small"
                                                     fullWidth
                                                     value={ct.soLuong}
-                                                    onChange={(event: any) =>
-                                                        handleChangeSoLuong(event, ct.id)
-                                                    }></TextField>
-                                                <Add
-                                                    className="btnIcon"
-                                                    onClick={() => tangSoLuong(ct.id)}
-                                                />
+                                                    onChange={(event: any) => handleChangeSoLuong(event, ct.id)}></TextField>
+                                                <Add className="btnIcon" onClick={() => tangSoLuong(ct.id)} />
                                             </Stack>
                                         </Stack>
                                     </Grid>
@@ -614,9 +574,7 @@ export default function ModalEditChiTietGioHang({
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
-                                                    <Typography variant="body2">
-                                                        Giảm giá
-                                                    </Typography>
+                                                    <Typography variant="body2">Giảm giá</Typography>
                                                     <span
                                                         style={{
                                                             fontSize: '10px',
@@ -625,10 +583,7 @@ export default function ModalEditChiTietGioHang({
                                                             color: 'red',
                                                             display: 'none'
                                                         }}>
-                                                        -
-                                                        {new Intl.NumberFormat('vi-VN').format(
-                                                            ct?.tienChietKhau
-                                                        )}
+                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
                                                     </span>
                                                 </Stack>
                                                 <Stack
@@ -641,27 +596,18 @@ export default function ModalEditChiTietGioHang({
                                                         color: 'red',
                                                         display: ct?.tienChietKhau > 0 ? '' : 'none'
                                                     }}>
-                                                    -
-                                                    {new Intl.NumberFormat('vi-VN').format(
-                                                        ct?.tienChietKhau
-                                                    )}
+                                                    -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
                                                 </Stack>
                                             </Stack>
 
                                             <NumericFormat
                                                 size="small"
                                                 fullWidth
-                                                value={
-                                                    ct.ptChietKhau > 0
-                                                        ? ct.ptChietKhau
-                                                        : ct.tienChietKhau
-                                                }
+                                                value={ct.ptChietKhau > 0 ? ct.ptChietKhau : ct.tienChietKhau}
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) =>
-                                                    changeGtriChietKhau(event.target.value, ct.id)
-                                                }
+                                                onChange={(event: any) => changeGtriChietKhau(event.target.value, ct.id)}
                                             />
                                         </Stack>
                                     </Grid>
@@ -686,12 +632,8 @@ export default function ModalEditChiTietGioHang({
                                             fullWidth>
                                             <Button
                                                 sx={{
-                                                    bgcolor: ct.laPTChietKhau
-                                                        ? 'var(--color-main)'
-                                                        : '',
-                                                    color: ct.laPTChietKhau
-                                                        ? 'white'
-                                                        : 'var(--color-main)',
+                                                    bgcolor: ct.laPTChietKhau ? 'var(--color-main)' : '',
+                                                    color: ct.laPTChietKhau ? 'white' : 'var(--color-main)',
                                                     '&:hover ': {
                                                         bgcolor: 'var(--color-main)',
                                                         color: 'white'
@@ -702,12 +644,8 @@ export default function ModalEditChiTietGioHang({
                                             </Button>
                                             <Button
                                                 sx={{
-                                                    bgcolor: !ct.laPTChietKhau
-                                                        ? ' var(--color-main)'
-                                                        : '',
-                                                    color: !ct.laPTChietKhau
-                                                        ? 'white'
-                                                        : 'var(--color-main)',
+                                                    bgcolor: !ct.laPTChietKhau ? ' var(--color-main)' : '',
+                                                    color: !ct.laPTChietKhau ? 'white' : 'var(--color-main)',
                                                     '&:hover ': {
                                                         bgcolor: 'var(--color-main)',
                                                         color: 'white'
@@ -720,33 +658,21 @@ export default function ModalEditChiTietGioHang({
                                     </Grid>
                                     {formType === 1 && ct.laPTChietKhau && (
                                         <Grid item xs={12} md={12}>
-                                            <Stack
-                                                spacing={1}
-                                                direction={'row'}
-                                                flexWrap="wrap"
-                                                useFlexGap>
+                                            <Stack spacing={1} direction={'row'} flexWrap="wrap" useFlexGap>
                                                 {chietKhau.map((item, index) => (
                                                     <Button
                                                         key={index}
-                                                        onClick={() =>
-                                                            onClickPtramChietKhau(item, ct.id)
-                                                        }
+                                                        onClick={() => onClickPtramChietKhau(item, ct.id)}
                                                         sx={{
                                                             minWidth: 'unset',
                                                             flexGrow: '1',
                                                             fontSize: '12px',
-                                                            color:
-                                                                ct.ptChietKhau === item
-                                                                    ? 'white'
-                                                                    : 'var(--color-main)',
+                                                            color: ct.ptChietKhau === item ? 'white' : 'var(--color-main)',
                                                             paddingY: '8px ',
                                                             textAlign: 'center',
                                                             border: '1px solid var(--color-main)',
                                                             borderRadius: '4px',
-                                                            bgcolor:
-                                                                ct.ptChietKhau === item
-                                                                    ? 'var(--color-main)'
-                                                                    : '',
+                                                            bgcolor: ct.ptChietKhau === item ? 'var(--color-main)' : '',
                                                             '&:hover ': {
                                                                 bgcolor: 'var(--color-main)',
                                                                 color: 'white'
@@ -758,19 +684,11 @@ export default function ModalEditChiTietGioHang({
                                             </Stack>
                                         </Grid>
                                     )}
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{ display: 'none' }}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} style={{ display: 'none' }}>
                                         <Stack direction="column" spacing={1}>
                                             <Stack direction="row" justifyContent="space-between">
                                                 <Stack direction="row" spacing={1}>
-                                                    <Typography variant="body2">
-                                                        Chiết khấu
-                                                    </Typography>
+                                                    <Typography variant="body2">Chiết khấu</Typography>
                                                     <span
                                                         style={{
                                                             fontSize: '10px',
@@ -779,10 +697,7 @@ export default function ModalEditChiTietGioHang({
                                                             color: 'red',
                                                             display: 'none'
                                                         }}>
-                                                        -{' '}
-                                                        {new Intl.NumberFormat('vi-VN').format(
-                                                            ct?.tienChietKhau
-                                                        )}
+                                                        - {new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
                                                     </span>
                                                 </Stack>
                                                 <Stack
@@ -795,52 +710,31 @@ export default function ModalEditChiTietGioHang({
                                                         color: 'red',
                                                         display: ct?.tienChietKhau > 0 ? '' : 'none'
                                                     }}>
-                                                    <span>
-                                                        -
-                                                        {new Intl.NumberFormat('vi-VN').format(
-                                                            ct?.tienChietKhau
-                                                        )}
-                                                    </span>
+                                                    <span>-{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}</span>
                                                 </Stack>
                                             </Stack>
 
                                             <NumericFormat
                                                 size="small"
                                                 fullWidth
-                                                value={
-                                                    ct.ptChietKhau > 0
-                                                        ? ct.ptChietKhau
-                                                        : ct.tienChietKhau
-                                                }
+                                                value={ct.ptChietKhau > 0 ? ct.ptChietKhau : ct.tienChietKhau}
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) =>
-                                                    changeGtriChietKhau(event.target.value, ct.id)
-                                                }
+                                                onChange={(event: any) => changeGtriChietKhau(event.target.value, ct.id)}
                                             />
                                         </Stack>
                                     </Grid>
-                                    <Grid
-                                        item
-                                        xs={12}
-                                        sm={12}
-                                        md={12}
-                                        lg={12}
-                                        style={{ display: 'none' }}>
+                                    <Grid item xs={12} sm={12} md={12} lg={12} style={{ display: 'none' }}>
                                         <FormControlLabel
                                             value="true"
-                                            control={
-                                                <Radio size="small" checked={ct.laPTChietKhau} />
-                                            }
+                                            control={<Radio size="small" checked={ct.laPTChietKhau} />}
                                             label="%"
                                             onChange={() => changeLoaiChietKhau(true, ct.id)}
                                         />
                                         <FormControlLabel
                                             value="false"
-                                            control={
-                                                <Radio size="small" checked={!ct.laPTChietKhau} />
-                                            }
+                                            control={<Radio size="small" checked={!ct.laPTChietKhau} />}
                                             label="đ"
                                             onChange={() => changeLoaiChietKhau(false, ct.id)}
                                         />
@@ -877,16 +771,10 @@ export default function ModalEditChiTietGioHang({
 
                     <Grid item xs={12} md={12}>
                         <Stack spacing={1} direction={'row'} justifyContent={'flex-end'}>
-                            <Button
-                                variant="outlined"
-                                className="button-outline"
-                                onClick={closeModal}>
+                            <Button variant="outlined" className="button-outline" onClick={closeModal}>
                                 Hủy
                             </Button>
-                            <Button
-                                variant="contained"
-                                className="button-container"
-                                onClick={agrreGioHang}>
+                            <Button variant="contained" className="button-container" onClick={agrreGioHang}>
                                 Lưu
                             </Button>
                         </Stack>

@@ -49,9 +49,7 @@ export default function AutocompleteBank({ handleChoseItem, idChosed, listOption
                                                 width: 'calc(100% - 44px)',
                                                 wordWrap: 'break-word'
                                             }}>
-                                            <Typography style={{ fontSize: '14px' }}>
-                                                {option.tenNganHang}
-                                            </Typography>
+                                            <Typography style={{ fontSize: '14px' }}>{option.tenNganHang}</Typography>
                                         </Grid>
                                     </Grid>
                                 )}

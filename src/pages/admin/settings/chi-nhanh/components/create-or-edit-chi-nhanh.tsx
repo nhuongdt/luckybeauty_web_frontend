@@ -46,9 +46,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
             const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
             this.setState({
                 branchLogo: objUpdate?.logo ?? '',
-                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
-                    objUpdate?.logo ?? ''
-                )
+                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(objUpdate?.logo ?? '')
             });
         }
     }
@@ -101,27 +99,14 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                             const fileSelect = this.state.fileImage;
                             if (!utils.checkNull(this.state.branchLogo)) {
                                 if (this.state.branchLogo !== formRef.logo) {
-                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
-                                        fileSelect,
-                                        'ChiNhanh'
-                                    );
+                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileSelect, 'ChiNhanh');
                                 }
                             }
-                            values.logo =
-                                fileId !== ''
-                                    ? `https://drive.google.com/uc?export=view&id=${fileId}`
-                                    : '';
+                            values.logo = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
                             await chiNhanhService.CreateOrEdit(values);
                             onSave();
                         }}>
-                        {({
-                            handleChange,
-                            values,
-                            errors,
-                            touched,
-                            setFieldValue,
-                            isSubmitting
-                        }) => (
+                        {({ handleChange, values, errors, touched, setFieldValue, isSubmitting }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -137,20 +122,14 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                         sx={{
                                                             position: 'relative'
                                                         }}>
-                                                        <img
-                                                            src={this.state.branchLogo}
-                                                            className="user-image-upload"
-                                                        />
+                                                        <img src={this.state.branchLogo} className="user-image-upload" />
                                                     </Box>
                                                 ) : (
                                                     <Box
                                                         sx={{
                                                             position: 'relative'
                                                         }}>
-                                                        <img
-                                                            src={AddLogoIcon}
-                                                            className="user-image-upload"
-                                                        />
+                                                        <img src={AddLogoIcon} className="user-image-upload" />
                                                     </Box>
                                                 )}
                                                 <TextField
@@ -176,11 +155,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
-                                            label={
-                                                <Typography variant="subtitle2">
-                                                    Mã chi nhánh
-                                                </Typography>
-                                            }
+                                            label={<Typography variant="subtitle2">Mã chi nhánh</Typography>}
                                             size="small"
                                             name="maChiNhanh"
                                             placeholder="Nhập mã chi nhánh"
@@ -191,23 +166,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
-                                            label={
-                                                <Typography variant="subtitle2">
-                                                    Tên chi nhánh
-                                                </Typography>
-                                            }
-                                            error={
-                                                errors.tenChiNhanh && touched.tenChiNhanh
-                                                    ? true
-                                                    : false
-                                            }
+                                            label={<Typography variant="subtitle2">Tên chi nhánh</Typography>}
+                                            error={errors.tenChiNhanh && touched.tenChiNhanh ? true : false}
                                             helperText={
-                                                errors.tenChiNhanh &&
-                                                touched.tenChiNhanh && (
-                                                    <span className="text-danger">
-                                                        {errors.tenChiNhanh}
-                                                    </span>
-                                                )
+                                                errors.tenChiNhanh && touched.tenChiNhanh && <span className="text-danger">{errors.tenChiNhanh}</span>
                                             }
                                             size="small"
                                             placeholder="Nhập tên chi nhánh"
@@ -219,23 +181,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <NumericFormat
-                                            label={
-                                                <Typography variant="subtitle2">
-                                                    Số điện thoại
-                                                </Typography>
-                                            }
-                                            error={
-                                                errors.soDienThoai && touched.soDienThoai
-                                                    ? true
-                                                    : false
-                                            }
+                                            label={<Typography variant="subtitle2">Số điện thoại</Typography>}
+                                            error={errors.soDienThoai && touched.soDienThoai ? true : false}
                                             helperText={
-                                                errors.soDienThoai &&
-                                                touched.soDienThoai && (
-                                                    <span className="text-danger">
-                                                        {errors.soDienThoai}
-                                                    </span>
-                                                )
+                                                errors.soDienThoai && touched.soDienThoai && <span className="text-danger">{errors.soDienThoai}</span>
                                             }
                                             size="small"
                                             name="soDienThoai"
@@ -249,9 +198,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                     </Grid>
                                     <Grid item xs={12} sm={6}>
                                         <TextField
-                                            label={
-                                                <Typography variant="subtitle2">Địa chỉ</Typography>
-                                            }
+                                            label={<Typography variant="subtitle2">Địa chỉ</Typography>}
                                             size="small"
                                             placeholder="Nhập địa chỉ"
                                             name="diaChi"
@@ -265,29 +212,13 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             props={{
                                                 width: '100%',
                                                 size: 'small',
-                                                label: (
-                                                    <Typography variant="subtitle2">
-                                                        Ngày áp dụng
-                                                    </Typography>
-                                                ),
-                                                error:
-                                                    touched.ngayApDung &&
-                                                    Boolean(errors.ngayApDung),
-                                                helperText: touched.ngayApDung &&
-                                                    Boolean(errors.ngayApDung) && (
-                                                        <span className="text-danger">
-                                                            {String(errors.ngayApDung)}
-                                                        </span>
-                                                    )
+                                                label: <Typography variant="subtitle2">Ngày áp dụng</Typography>,
+                                                error: touched.ngayApDung && Boolean(errors.ngayApDung),
+                                                helperText: touched.ngayApDung && Boolean(errors.ngayApDung) && (
+                                                    <span className="text-danger">{String(errors.ngayApDung)}</span>
+                                                )
                                             }}
-                                            defaultVal={
-                                                values.ngayApDung
-                                                    ? formatDate(
-                                                          new Date(values.ngayApDung),
-                                                          'yyyy/MM/dd'
-                                                      )
-                                                    : ''
-                                            }
+                                            defaultVal={values.ngayApDung ? formatDate(new Date(values.ngayApDung), 'yyyy/MM/dd') : ''}
                                             handleChangeDate={(value: string) => {
                                                 values.ngayApDung = new Date(value);
                                             }}
@@ -298,29 +229,13 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             props={{
                                                 width: '100%',
                                                 size: 'small',
-                                                label: (
-                                                    <Typography variant="subtitle2">
-                                                        Ngày hết hạn
-                                                    </Typography>
-                                                ),
-                                                error:
-                                                    touched.ngayHetHan &&
-                                                    Boolean(errors.ngayHetHan),
-                                                helperText: touched.ngayHetHan &&
-                                                    Boolean(errors.ngayHetHan) && (
-                                                        <span className="text-danger">
-                                                            {String(errors.ngayHetHan)}
-                                                        </span>
-                                                    )
+                                                label: <Typography variant="subtitle2">Ngày hết hạn</Typography>,
+                                                error: touched.ngayHetHan && Boolean(errors.ngayHetHan),
+                                                helperText: touched.ngayHetHan && Boolean(errors.ngayHetHan) && (
+                                                    <span className="text-danger">{String(errors.ngayHetHan)}</span>
+                                                )
                                             }}
-                                            defaultVal={
-                                                values.ngayHetHan
-                                                    ? formatDate(
-                                                          new Date(values.ngayHetHan),
-                                                          'yyyy/MM/dd'
-                                                      )
-                                                    : ''
-                                            }
+                                            defaultVal={values.ngayHetHan ? formatDate(new Date(values.ngayHetHan), 'yyyy/MM/dd') : ''}
                                             handleChangeDate={(value: string) => {
                                                 values.ngayHetHan = new Date(value);
                                             }}
@@ -341,9 +256,7 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <TextField
-                                            label={
-                                                <Typography variant="subtitle2">Ghi chú</Typography>
-                                            }
+                                            label={<Typography variant="subtitle2">Ghi chú</Typography>}
                                             size="small"
                                             rows={4}
                                             multiline

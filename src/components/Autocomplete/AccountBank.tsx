@@ -4,12 +4,7 @@ import { Autocomplete, Button, Grid, TextField, Typography, Box } from '@mui/mat
 import AddIcon from '@mui/icons-material/Add';
 import { TaiKhoanNganHangDto } from '../../services/so_quy/Dto/TaiKhoanNganHangDto';
 
-export default function AutocompleteAccountBank({
-    handleChoseItem,
-    idChosed,
-    listOption,
-    handleClickBtnAdd
-}: any) {
+export default function AutocompleteAccountBank({ handleChoseItem, idChosed, listOption, handleClickBtnAdd }: any) {
     const [itemChosed, setItemChosed] = useState<TaiKhoanNganHangDto | null>(null);
     React.useEffect(() => {
         const item = listOption.filter((x: TaiKhoanNganHangDto) => x.id == idChosed);
@@ -59,14 +54,9 @@ export default function AutocompleteAccountBank({
                                     </Button>
                                 )}
                                 {option.id != '' && (
-                                    <Grid
-                                        item
-                                        key={option.id}
-                                        sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Grid item key={option.id} sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
                                         <Typography style={{ fontSize: '14px' }}>
-                                            {option.tenChuThe
-                                                .toString()
-                                                .concat(` ${option.soTaiKhoan}`)}
+                                            {option.tenChuThe.toString().concat(` ${option.soTaiKhoan}`)}
                                         </Typography>
                                         <Box
                                             component="span"
@@ -75,9 +65,7 @@ export default function AutocompleteAccountBank({
                                                 color: '#acaca5',
                                                 fontSize: '12px'
                                             }}>
-                                            {option.tenNganHang
-                                                .toString()
-                                                .concat(` ${option.maNganHang}`)}
+                                            {option.tenNganHang.toString().concat(` ${option.maNganHang}`)}
                                         </Box>
                                     </Grid>
                                 )}

@@ -4,24 +4,9 @@ import React from 'react';
 import { NgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/NgayNghiLeDto';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
-import {
-    Box,
-    Button,
-    Checkbox,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, Checkbox, Grid, IconButton, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import AddIcon from '../../../images/add.svg';
 import SearchIcon from '../../../images/search-normal.svg';
 import DownloadIcon from '../../../images/download.svg';
@@ -219,9 +204,7 @@ class EmployeeHoliday extends Component {
         fileDowloadService.downloadExportFile(result);
     };
     exportSelectedRow = async () => {
-        const result = await ngayNghiLeService.exportSelectedItemToExcel(
-            this.state.listItemSelectedModel
-        );
+        const result = await ngayNghiLeService.exportSelectedItemToExcel(this.state.listItemSelectedModel);
         fileDowloadService.downloadExportFile(result);
     };
     onImportShow = () => {
@@ -260,9 +243,7 @@ class EmployeeHoliday extends Component {
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
             const allRowRemove = this.state.listHoliday.map((row) => row.id);
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = this.state.listHoliday.map((row) => row.id);
@@ -282,12 +263,7 @@ class EmployeeHoliday extends Component {
                 disableColumnMenu: true,
                 width: 65,
                 renderHeader: (params) => {
-                    return (
-                        <Checkbox
-                            onClick={this.handleSelectAllGridRowClick}
-                            checked={this.state.checkAllRow}
-                        />
-                    );
+                    return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
                 renderCell: (params) => (
                     <Checkbox
@@ -300,9 +276,7 @@ class EmployeeHoliday extends Component {
                 field: 'tenNgayLe',
                 headerName: 'Tên ngày lễ',
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
                     <Box
                         sx={{
@@ -333,12 +307,7 @@ class EmployeeHoliday extends Component {
                             justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            fontFamily={'Roboto'}
-                            color="#3D475C"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -370,12 +339,7 @@ class EmployeeHoliday extends Component {
                             justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            fontFamily={'Roboto'}
-                            color="#3D475C"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -403,12 +367,7 @@ class EmployeeHoliday extends Component {
                             width: '100%',
                             textAlign: 'left'
                         }}>
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            fontFamily={'Roboto'}
-                            color="#3D475C"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
                             {params.value} ngày
                         </Typography>
                     </Box>
@@ -441,9 +400,7 @@ class EmployeeHoliday extends Component {
                         <MoreHorizIcon />
                     </IconButton>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
         return (
@@ -561,8 +518,7 @@ class EmployeeHoliday extends Component {
                                     endIcon={<ExpandMoreOutlined />}
                                     onClick={() =>
                                         this.setState({
-                                            expendActionSelectedRow:
-                                                !this.state.expendActionSelectedRow
+                                            expendActionSelectedRow: !this.state.expendActionSelectedRow
                                         })
                                     }>
                                     Thao tác
@@ -581,11 +537,7 @@ class EmployeeHoliday extends Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
+                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa ngày nghỉ lễ'}
                                             sx={{
@@ -641,10 +593,7 @@ class EmployeeHoliday extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                         sx={{
@@ -675,10 +624,7 @@ class EmployeeHoliday extends Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.showConfirmDelete}></ConfirmDelete>
+                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditThoiGianNghi
                     visible={this.state.modalVisible}
                     title={this.state.IdHoliday == '' ? 'Thêm mới ngày lễ' : 'Cập nhật này lễ'}

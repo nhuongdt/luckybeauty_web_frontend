@@ -4,12 +4,7 @@ import { Autocomplete, Grid, TextField, Typography } from '@mui/material';
 import CenterFocusWeakIcon from '@mui/icons-material/CenterFocusWeak';
 import { ChiNhanhDto } from '../../services/chi_nhanh/Dto/chiNhanhDto';
 
-export default function AutocompleteChiNhanh({
-    handleChoseItem,
-    idChosed,
-    dataChiNhanh,
-    label
-}: any) {
+export default function AutocompleteChiNhanh({ handleChoseItem, idChosed, dataChiNhanh, label }: any) {
     const [itemChosed, setItemChosed] = useState<ChiNhanhDto | null>(null);
     React.useEffect(() => {
         const item = dataChiNhanh?.filter((x: ChiNhanhDto) => x.id == idChosed);
@@ -46,12 +41,8 @@ export default function AutocompleteChiNhanh({
                                 {/* <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
                                 </Grid> */}
-                                <Grid
-                                    item
-                                    sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                    <Typography style={{ fontSize: '14px' }}>
-                                        {option.tenChiNhanh}
-                                    </Typography>
+                                <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Typography style={{ fontSize: '14px' }}>{option.tenChiNhanh}</Typography>
                                 </Grid>
                             </Grid>
                         </li>

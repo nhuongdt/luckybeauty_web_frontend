@@ -2,6 +2,7 @@ import { PagedResultDto } from '../../dto/pagedResultDto';
 
 export class BrandnameDto {
     id = '';
+    tenantId = '';
     brandname = '';
     sdtCuaHang = '';
     ngayKichHoat = new Date();

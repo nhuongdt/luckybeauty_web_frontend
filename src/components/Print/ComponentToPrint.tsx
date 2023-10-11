@@ -1,12 +1,6 @@
 import React from 'react';
 import { useState, forwardRef, useEffect } from 'react';
-import parse, {
-    domToReact,
-    attributesToProps,
-    htmlToDOM,
-    HTMLReactParserOptions,
-    Element
-} from 'html-react-parser';
+import parse, { domToReact, attributesToProps, htmlToDOM, HTMLReactParserOptions, Element } from 'html-react-parser';
 import { CommentSharp } from '@mui/icons-material';
 
 export const ComponentToPrint = forwardRef(function ComponentToPrint({ props }: any, ref: any) {

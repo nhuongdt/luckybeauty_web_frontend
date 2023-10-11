@@ -35,9 +35,7 @@ const TabCuocHen: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box
-                    title={params.value}
-                    sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                <Box title={params.value} sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
                     {params.value}
                 </Box>
             )
@@ -121,11 +119,7 @@ const TabCuocHen: React.FC = () => {
                     //hideFooter
                     autoHeight
                     columns={columns}
-                    rows={
-                        khachHangStore.lichSuDatLich === undefined
-                            ? []
-                            : khachHangStore.lichSuDatLich.items
-                    }
+                    rows={khachHangStore.lichSuDatLich === undefined ? [] : khachHangStore.lichSuDatLich.items}
                     getRowId={(row) => row.bookingDate}
                     initialState={{
                         pagination: {

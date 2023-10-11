@@ -5,17 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
-import {
-    Grid,
-    Box,
-    Autocomplete,
-    InputAdornment,
-    TextField,
-    Typography,
-    Checkbox,
-    FormGroup,
-    Stack
-} from '@mui/material';
+import { Grid, Box, Autocomplete, InputAdornment, TextField, Typography, Checkbox, FormGroup, Stack } from '@mui/material';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
@@ -67,13 +57,7 @@ export const GridColor = ({ handleChoseColor }: any) => {
                 sx={{ ml: 0, p: 1.5, border: '1px solid grey' }}>
                 <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 6, sm: 6, md: 6 }}>
                     {arrColor.map((item, index) => (
-                        <Grid
-                            key={index}
-                            item
-                            xs={1}
-                            sm={1}
-                            md={1}
-                            onClick={() => choseColor(item)}>
+                        <Grid key={index} item xs={1} sm={1} md={1} onClick={() => choseColor(item)}>
                             <Box className="grid-color" sx={{ bgcolor: item }}></Box>
                         </Grid>
                     ))}
@@ -101,9 +85,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     );
     const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa | null>(null);
 
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
-        new PropConfirmOKCancel({ show: false })
-    );
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
 
     const showModal = async (id: string) => {
         if (id) {
@@ -132,9 +114,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         if (item == null) {
             setNhomGoc(null);
         } else {
-            setNhomGoc(
-                new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang })
-            );
+            setNhomGoc(new ModelNhomHangHoa({ id: item?.id ?? null, tenNhomHang: item?.tenNhomHang }));
         }
         setGroupProduct((old: any) => {
             return { ...old, idParent: item?.id ?? null };
@@ -206,14 +186,8 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 title={inforDeleteProduct.title}
                 mes={inforDeleteProduct.mes}
                 onOk={xoaNhomHang}
-                onCancel={() =>
-                    setInforDeleteProduct({ ...inforDeleteProduct, show: false })
-                }></ConfirmDelete>
-            <Dialog
-                open={isShow}
-                onClose={() => setIsShow(false)}
-                aria-labelledby="draggable-dialog-title"
-                maxWidth="xs">
+                onCancel={() => setInforDeleteProduct({ ...inforDeleteProduct, show: false })}></ConfirmDelete>
+            <Dialog open={isShow} onClose={() => setIsShow(false)} aria-labelledby="draggable-dialog-title" maxWidth="xs">
                 <DialogTitle className="modal-title" id="draggable-dialog-title">
                     {isNew ? 'Thêm' : 'Cập nhật'} {groupProduct.sLoaiNhomHang}
                 </DialogTitle>
@@ -278,9 +252,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 label={`Tên ${groupProduct.sLoaiNhomHang}`}
                                 value={groupProduct.tenNhomHang}
                                 error={errTenNhom && wasClickSave}
-                                helperText={
-                                    errTenNhom && wasClickSave ? 'Tên nhóm không được để trống' : ''
-                                }
+                                helperText={errTenNhom && wasClickSave ? 'Tên nhóm không được để trống' : ''}
                                 onChange={(event) => {
                                     setGroupProduct((olds: any) => {
                                         return { ...olds, tenNhomHang: event.target.value };
@@ -301,17 +273,10 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     handleChangeNhomGoc(newValue);
                                 }}
                                 options={dataNhomHangFilter}
-                                getOptionLabel={(option: any) =>
-                                    option.tenNhomHang ? option.tenNhomHang : ''
-                                }
-                                renderInput={(params) => (
-                                    <TextField {...params} label="Chọn nhóm" />
-                                )}
+                                getOptionLabel={(option: any) => (option.tenNhomHang ? option.tenNhomHang : '')}
+                                renderInput={(params) => <TextField {...params} label="Chọn nhóm" />}
                                 renderOption={(props, item) => (
-                                    <Box
-                                        component={'li'}
-                                        {...props}
-                                        className="autocomplete-option">
+                                    <Box component={'li'} {...props} className="autocomplete-option">
                                         {item.tenNhomHang}
                                     </Box>
                                 )}
@@ -327,9 +292,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="start">
-                                                <Box
-                                                    className="grid-color"
-                                                    sx={{ bgcolor: groupProduct.color }}></Box>
+                                                <Box className="grid-color" sx={{ bgcolor: groupProduct.color }}></Box>
                                             </InputAdornment>
                                         )
                                     }}
@@ -374,9 +337,7 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 new PropConfirmOKCancel({
                                     show: true,
                                     title: 'Xác nhận xóa',
-                                    mes: `Bạn có chắc chắn muốn xóa ${
-                                        groupProduct.sLoaiNhomHang
-                                    }  ${groupProduct?.tenNhomHang ?? ' '} không?`
+                                    mes: `Bạn có chắc chắn muốn xóa ${groupProduct.sLoaiNhomHang}  ${groupProduct?.tenNhomHang ?? ' '} không?`
                                 })
                             );
                         }}>

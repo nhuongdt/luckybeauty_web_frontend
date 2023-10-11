@@ -1,15 +1,4 @@
-import {
-    Box,
-    Button,
-    Grid,
-    Stack,
-    InputAdornment,
-    TextField,
-    Typography,
-    IconButton,
-    ButtonGroup,
-    Avatar
-} from '@mui/material';
+import { Box, Button, Grid, Stack, InputAdornment, TextField, Typography, IconButton, ButtonGroup, Avatar } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, useEffect } from 'react';
@@ -70,9 +59,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
         mes: ''
     });
 
-    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
@@ -104,18 +91,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             const txtUnsign = utils.strToEnglish(txt);
             const data = allCusChecking.filter(
                 (x) =>
-                    (x.maKhachHang !== null &&
-                        x.maKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.tenKhachHang !== null &&
-                        x.tenKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.soDienThoai !== null &&
-                        x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.maKhachHang !== null &&
-                        utils.strToEnglish(x.maKhachHang).indexOf(txtUnsign) > -1) ||
-                    (x.tenKhachHang !== null &&
-                        utils.strToEnglish(x.tenKhachHang).indexOf(txtUnsign) > -1) ||
-                    (x.soDienThoai !== null &&
-                        utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
+                    (x.maKhachHang !== null && x.maKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenKhachHang !== null && x.tenKhachHang.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.soDienThoai !== null && x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.maKhachHang !== null && utils.strToEnglish(x.maKhachHang).indexOf(txtUnsign) > -1) ||
+                    (x.tenKhachHang !== null && utils.strToEnglish(x.tenKhachHang).indexOf(txtUnsign) > -1) ||
+                    (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
             );
             return data;
         } else {
@@ -124,9 +105,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     };
 
     const deleteCusChecking = async () => {
-        setAllCusChecking(
-            allCusChecking.filter((x: PageKhachHangCheckInDto) => x.idCheckIn !== idCheckinDelete)
-        );
+        setAllCusChecking(allCusChecking.filter((x: PageKhachHangCheckInDto) => x.idCheckIn !== idCheckinDelete));
         await CheckinService.UpdateTrangThaiCheckin(idCheckinDelete, 0);
         setinforDelete(
             new PropConfirmOKCancel({
@@ -136,18 +115,13 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             })
         );
 
-        const dataCheckIn_Dexie = await dbDexie.khachCheckIn
-            .where('idCheckIn')
-            .equals(idCheckinDelete)
-            .toArray();
+        const dataCheckIn_Dexie = await dbDexie.khachCheckIn.where('idCheckIn').equals(idCheckinDelete).toArray();
         if (dataCheckIn_Dexie.length > 0) {
             await dbDexie.khachCheckIn
                 .where('idCheckIn')
                 .equals(idCheckinDelete)
                 .delete()
-                .then((deleteCount: any) =>
-                    console.log('idcheckindelete ', idCheckinDelete, 'deletecount', deleteCount)
-                );
+                .then((deleteCount: any) => console.log('idcheckindelete ', idCheckinDelete, 'deletecount', deleteCount));
 
             await dbDexie.hoaDon
                 .where('idKhachHang')
@@ -173,10 +147,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
         // check exist dexie
         if (dataCheckIn.idKhachHang !== Guid.EMPTY) {
-            const cus = await dbDexie.khachCheckIn
-                .where('idCheckIn')
-                .equals(dataCheckIn.idCheckIn)
-                .toArray();
+            const cus = await dbDexie.khachCheckIn.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
             if (cus.length > 0) {
                 // remove & add again
                 await dbDexie.khachCheckIn.delete(dataCheckIn.idCheckIn);
@@ -292,14 +263,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
 
             <Grid container paddingLeft={2} paddingTop={2} columnSpacing={2} rowSpacing={2}>
                 {listCusChecking.map((item: any, index: any) => (
-                    <Grid
-                        item
-                        xs={12}
-                        sm={4}
-                        md={4}
-                        lg={3}
-                        key={index}
-                        sx={{ position: 'relative' }}>
+                    <Grid item xs={12} sm={4} md={4} lg={3} key={index} sx={{ position: 'relative' }}>
                         <Button
                             sx={{
                                 position: 'absolute',
@@ -343,15 +307,10 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                             }}>
                             <Stack direction={'row'} spacing={2}>
                                 {utils.checkNull(item?.avatar) ? (
-                                    <BadgeFistCharOfName
-                                        firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
-                                    />
+                                    <BadgeFistCharOfName firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')} />
                                 ) : (
                                     // <Avatar src={item.avatar} />
-                                    <img
-                                        src={item.avatar}
-                                        style={{ width: 40, height: 40, borderRadius: '100%' }}
-                                    />
+                                    <img src={item.avatar} style={{ width: 40, height: 40, borderRadius: '100%' }} />
                                 )}
 
                                 <div>
@@ -375,13 +334,8 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                                 <Grid container>
                                     <Grid item xs={7} sm={7} md={7}>
                                         <Stack spacing={1} direction={'row'} color={'#3D475C'}>
-                                            <Typography variant="body2">
-                                                {item.dateCheckIn}
-                                            </Typography>
-                                            <Typography
-                                                display="flex"
-                                                alignItems="center"
-                                                variant="body2">
+                                            <Typography variant="body2">{item.dateCheckIn}</Typography>
+                                            <Typography display="flex" alignItems="center" variant="body2">
                                                 <QueryBuilder
                                                     style={{
                                                         fontSize: '12px',

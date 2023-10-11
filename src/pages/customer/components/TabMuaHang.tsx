@@ -14,13 +14,9 @@ const TabMuaHang: React.FC = () => {
             headerName: 'Mã hóa đơn',
             minWidth: 70,
             flex: 1.2,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
-                <Box
-                    title={params.value}
-                    sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                <Box title={params.value} sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                     {params.value}
                 </Box>
             )
@@ -29,9 +25,7 @@ const TabMuaHang: React.FC = () => {
             field: 'ngayLapHoaDon',
             headerName: 'Ngày bán',
             flex: 1.2,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box sx={{ width: '100%' }} title={params.value}>
                     {formatDate(new Date(params.value), 'dd/MM/yyyy')}
@@ -42,9 +36,7 @@ const TabMuaHang: React.FC = () => {
             field: 'tongTienHang',
             headerName: 'Tổng tiền hàng',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box sx={{ width: '100%' }} title={params.value}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -55,9 +47,7 @@ const TabMuaHang: React.FC = () => {
             field: 'tongGiamGia',
             headerName: 'Tổng giảm giá',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} sx={{ width: '100%' }}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -73,11 +63,7 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'khachDaTra',
@@ -88,11 +74,7 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'conNo',
@@ -103,11 +85,7 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'trangThai',
@@ -122,18 +100,8 @@ const TabMuaHang: React.FC = () => {
                 <Box
                     title={params.value}
                     sx={{
-                        color:
-                            params.value == 'Hoàn thành'
-                                ? '#50CD89'
-                                : params.value == 'Hủy'
-                                ? '#F1416C'
-                                : '#FF9900',
-                        backgroundColor:
-                            params.value == 'Hoàn thành'
-                                ? '#E8FFF3'
-                                : params.value == 'Hủy'
-                                ? '#FFF5F8'
-                                : '#FFF8DD'
+                        color: params.value == 'Hoàn thành' ? '#50CD89' : params.value == 'Hủy' ? '#F1416C' : '#FF9900',
+                        backgroundColor: params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
                     }}>
                     {params.value}
                 </Box>
@@ -149,11 +117,7 @@ const TabMuaHang: React.FC = () => {
                     //hideFooter
                     autoHeight
                     columns={columns}
-                    rows={
-                        khachHangStore.lichSuGiaoDich === undefined
-                            ? []
-                            : khachHangStore.lichSuGiaoDich.items
-                    }
+                    rows={khachHangStore.lichSuGiaoDich === undefined ? [] : khachHangStore.lichSuGiaoDich.items}
                     getRowId={(row) => row.maHoaDon}
                     initialState={{
                         pagination: {
@@ -187,21 +151,18 @@ const TabMuaHang: React.FC = () => {
                         '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
                             fill: '#7C3367'
                         },
-                        '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)':
-                            {
-                                fill: '#000'
-                            },
-                        '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)':
-                            {
-                                fill: '#000'
-                            },
+                        '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)': {
+                            fill: '#000'
+                        },
+                        '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)': {
+                            fill: '#000'
+                        },
                         '& .Mui-checked, &.MuiCheckbox-indeterminate': {
                             color: '#7C3367!important'
                         },
-                        '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within':
-                            {
-                                outline: 'none'
-                            }
+                        '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
+                            outline: 'none'
+                        }
                     }}
                 />
                 {/* <CustomTablePagination

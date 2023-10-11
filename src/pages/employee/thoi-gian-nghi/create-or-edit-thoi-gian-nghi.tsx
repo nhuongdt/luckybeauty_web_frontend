@@ -71,9 +71,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
             <Dialog open={visible} onClose={onCancel} maxWidth="sm" fullWidth>
                 <DialogTitle>
                     <div className="row">
-                        <Box
-                            className="col-8"
-                            sx={{ float: 'left', fontSize: '24px', fontWeight: '700' }}>
+                        <Box className="col-8" sx={{ float: 'left', fontSize: '24px', fontWeight: '700' }}>
                             {title}
                         </Box>
                         <Box
@@ -84,18 +82,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                     filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
                                 }
                             }}>
-                            <CloseIcon
-                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
-                                onClick={onCancel}
-                            />
+                            <CloseIcon style={{ float: 'right', height: '24px', cursor: 'pointer' }} onClick={onCancel} />
                         </Box>
                     </div>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={initialValues}
-                        validationSchema={rules}
-                        onSubmit={handleSubmit}>
+                    <Formik initialValues={initialValues} validationSchema={rules} onSubmit={handleSubmit}>
                         {({ values, handleChange, errors, touched }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
@@ -115,18 +107,9 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                 }
                                                 sx={{ marginTop: '16px' }}
                                                 value={values.tenNgayLe}
-                                                error={
-                                                    errors.tenNgayLe && touched.tenNgayLe
-                                                        ? true
-                                                        : false
-                                                }
+                                                error={errors.tenNgayLe && touched.tenNgayLe ? true : false}
                                                 helperText={
-                                                    errors.tenNgayLe &&
-                                                    touched.tenNgayLe && (
-                                                        <span className="text-danger">
-                                                            {errors.tenNgayLe}
-                                                        </span>
-                                                    )
+                                                    errors.tenNgayLe && touched.tenNgayLe && <span className="text-danger">{errors.tenNgayLe}</span>
                                                 }
                                                 type="text"
                                                 name="tenNgayLe"
@@ -148,25 +131,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                             <span className="text-danger"> *</span>
                                                         </Typography>
                                                     ),
-                                                    error:
-                                                        Boolean(errors.tuNgay) && touched.tuNgay
-                                                            ? true
-                                                            : false,
-                                                    helperText: Boolean(errors.tuNgay) &&
-                                                        touched?.tuNgay && (
-                                                            <span className="text-danger">
-                                                                {String(errors.tuNgay)}
-                                                            </span>
-                                                        )
+                                                    error: Boolean(errors.tuNgay) && touched.tuNgay ? true : false,
+                                                    helperText: Boolean(errors.tuNgay) && touched?.tuNgay && (
+                                                        <span className="text-danger">{String(errors.tuNgay)}</span>
+                                                    )
                                                 }}
-                                                defaultVal={
-                                                    values.tuNgay
-                                                        ? formatDate(
-                                                              new Date(values.tuNgay),
-                                                              'yyyy/MM/dd'
-                                                          )
-                                                        : ''
-                                                }
+                                                defaultVal={values.tuNgay ? formatDate(new Date(values.tuNgay), 'yyyy/MM/dd') : ''}
                                                 handleChangeDate={(dt: string) => {
                                                     values.tuNgay = new Date(dt);
                                                 }}
@@ -185,25 +155,12 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                                             <span className="text-danger"> *</span>
                                                         </Typography>
                                                     ),
-                                                    error:
-                                                        Boolean(errors.denNgay) && touched.denNgay
-                                                            ? true
-                                                            : false,
-                                                    helperText: Boolean(errors.denNgay) &&
-                                                        touched?.denNgay && (
-                                                            <span className="text-danger">
-                                                                {String(errors.denNgay)}
-                                                            </span>
-                                                        )
+                                                    error: Boolean(errors.denNgay) && touched.denNgay ? true : false,
+                                                    helperText: Boolean(errors.denNgay) && touched?.denNgay && (
+                                                        <span className="text-danger">{String(errors.denNgay)}</span>
+                                                    )
                                                 }}
-                                                defaultVal={
-                                                    values.denNgay
-                                                        ? formatDate(
-                                                              new Date(values.denNgay),
-                                                              'yyyy/MM/dd'
-                                                          )
-                                                        : ''
-                                                }
+                                                defaultVal={values.denNgay ? formatDate(new Date(values.denNgay), 'yyyy/MM/dd') : ''}
                                                 handleChangeDate={(value: string) => {
                                                     values.denNgay = new Date(value);
                                                 }}
@@ -226,10 +183,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         className="btn-outline-hover">
                                         Hủy
                                     </Button>
-                                    <Button
-                                        variant="contained"
-                                        type="submit"
-                                        className="btn-container-hover">
+                                    <Button variant="contained" type="submit" className="btn-container-hover">
                                         Lưu
                                     </Button>
                                 </DialogActions>

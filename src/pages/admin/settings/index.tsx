@@ -1,15 +1,4 @@
-import {
-    Box,
-    Divider,
-    Grid,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-    Typography
-} from '@mui/material';
+import { Box, Divider, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as StoreIcon } from '../../../images/icons/setting_page/shop_active_blue.svg';
 import { ReactComponent as PeopleIcon } from '../../../images/icons/setting_page/people_active_blue.svg';
@@ -22,11 +11,7 @@ class SettingPages extends Component {
         return (
             <Box padding={'16px'}>
                 <Box>
-                    <Typography
-                        fontWeight="700"
-                        fontFamily={'Roboto'}
-                        fontSize="18px"
-                        sx={{ color: 'black' }}>
+                    <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px" sx={{ color: 'black' }}>
                         Cài đặt
                     </Typography>
                 </Box>
@@ -41,16 +26,9 @@ class SettingPages extends Component {
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
-                                <Box
-                                    display={'flex'}
-                                    justifyContent={'start'}
-                                    alignItems={'center'}>
+                                <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                     <StoreIcon />
-                                    <Typography
-                                        marginLeft={'8px'}
-                                        fontSize={18}
-                                        fontWeight={700}
-                                        fontFamily={'Roboto'}>
+                                    <Typography marginLeft={'8px'} fontSize={18} fontWeight={700} fontFamily={'Roboto'}>
                                         Cài đặt cửa hàng
                                     </Typography>
                                 </Box>
@@ -123,16 +101,9 @@ class SettingPages extends Component {
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
-                                <Box
-                                    display={'flex'}
-                                    justifyContent={'start'}
-                                    alignItems={'center'}>
+                                <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                     <PeopleIcon />
-                                    <Typography
-                                        marginLeft={'8px'}
-                                        fontSize={18}
-                                        fontWeight={700}
-                                        fontFamily={'Roboto'}>
+                                    <Typography marginLeft={'8px'} fontSize={18} fontWeight={700} fontFamily={'Roboto'}>
                                         Cài đặt nhân viên
                                     </Typography>
                                 </Box>
@@ -167,16 +138,9 @@ class SettingPages extends Component {
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
-                                <Box
-                                    display={'flex'}
-                                    justifyContent={'start'}
-                                    alignItems={'center'}>
+                                <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                     <CartIcon />
-                                    <Typography
-                                        marginLeft={'8px'}
-                                        fontSize={18}
-                                        fontWeight={700}
-                                        fontFamily={'Roboto'}>
+                                    <Typography marginLeft={'8px'} fontSize={18} fontWeight={700} fontFamily={'Roboto'}>
                                         Bán hàng
                                     </Typography>
                                 </Box>
@@ -230,16 +194,9 @@ class SettingPages extends Component {
                                 display={'flex'}
                                 justifyContent={'space-between'}
                                 flexDirection={'column'}>
-                                <Box
-                                    display={'flex'}
-                                    justifyContent={'start'}
-                                    alignItems={'center'}>
+                                <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                     <UserIcon />
-                                    <Typography
-                                        marginLeft={'8px'}
-                                        fontSize={18}
-                                        fontWeight={700}
-                                        fontFamily={'Roboto'}>
+                                    <Typography marginLeft={'8px'} fontSize={18} fontWeight={700} fontFamily={'Roboto'}>
                                         Cài đặt khách hàng
                                     </Typography>
                                 </Box>

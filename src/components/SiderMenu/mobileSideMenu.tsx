@@ -41,10 +41,7 @@ function convertMenuItemsToMenu(menuItems: any[], listPermission: string[]): Men
                 icon: item.icon,
                 iconActive: item.iconActive,
                 type: item.isLayout ? 'group' : undefined,
-                children:
-                    item.children.length > 0
-                        ? convertMenuItemsToMenu(item.children, listPermission)
-                        : undefined
+                children: item.children.length > 0 ? convertMenuItemsToMenu(item.children, listPermission) : undefined
             };
             menu.push(menuItem);
         }
@@ -69,8 +66,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                 component={Box as React.ElementType}
                 //to={route.children && route.children.length > 0 ? undefined : route.path}
                 className={
-                    location.pathname === route.path ||
-                    route.children?.some((dropdownItem) => location.pathname === dropdownItem.path)
+                    location.pathname === route.path || route.children?.some((dropdownItem) => location.pathname === dropdownItem.path)
                         ? 'nav-item active'
                         : 'nav-item'
                 }
@@ -93,10 +89,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                         transition: '.4s',
                         alignItems: 'center',
                         backgroundColor:
-                            location.pathname === route.path ||
-                            route.children?.some(
-                                (dropdownItem) => location.pathname === dropdownItem.path
-                            )
+                            location.pathname === route.path || route.children?.some((dropdownItem) => location.pathname === dropdownItem.path)
                                 ? 'var(--color-bg)!important'
                                 : 'transparent',
                         borderRadius: '8px',
@@ -110,17 +103,11 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                             minWidth: '40px',
                             transition: '.4s',
                             filter:
-                                location.pathname === route.path ||
-                                route.children?.some(
-                                    (dropdownItem) => location.pathname === dropdownItem.key
-                                )
+                                location.pathname === route.path || route.children?.some((dropdownItem) => location.pathname === dropdownItem.key)
                                     ? 'brightness(0) saturate(100%) invert(17%) sepia(0%) saturate(399%) hue-rotate(341deg) brightness(95%) contrast(87%)'
                                     : 'unset'
                         }}>
-                        {location.pathname === route.path ||
-                        route.children?.some(
-                            (dropdownItem) => location.pathname === dropdownItem.key
-                        )
+                        {location.pathname === route.path || route.children?.some((dropdownItem) => location.pathname === dropdownItem.key)
                             ? route.iconActive
                             : route.icon}
                     </ListItemIcon>
@@ -140,10 +127,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                 //         : '#3B4758',
                                 color: 'black',
                                 fontWeight:
-                                    location.pathname === route.path ||
-                                    route.children?.some(
-                                        (dropdownItem) => location.pathname === dropdownItem.key
-                                    )
+                                    location.pathname === route.path || route.children?.some((dropdownItem) => location.pathname === dropdownItem.key)
                                         ? '500'
                                         : '400'
                             },
@@ -166,9 +150,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                 color: 'black',
                                 fontWeight:
                                     location.pathname === route.path ||
-                                    route.children?.some(
-                                        (dropdownItem) => location.pathname === dropdownItem.path
-                                    )
+                                    route.children?.some((dropdownItem) => location.pathname === dropdownItem.path)
                                         ? '500'
                                         : '400'
                             }
@@ -206,9 +188,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                         width: '100%',
                         position: 'relative',
                         pl: '26px',
-                        transition: openMenuItem[key]
-                            ? 'max-height 2.5s, left .4s,min-height .4s'
-                            : ' max-height 1s,left .4s,min-height .4s',
+                        transition: openMenuItem[key] ? 'max-height 2.5s, left .4s,min-height .4s' : ' max-height 1s,left .4s,min-height .4s',
                         maxHeight: openMenuItem[key] == true ? '400px' : '0px'
                     }}>
                     <List component="div" disablePadding>
@@ -218,15 +198,11 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                 component={Box as React.ElementType}
                                 to={dropdownItem.key}
                                 onClick={() => {
-                                    dropdownItem.children && dropdownItem.children.length > 0
-                                        ? undefined
-                                        : navigate(dropdownItem.path);
+                                    dropdownItem.children && dropdownItem.children.length > 0 ? undefined : navigate(dropdownItem.path);
                                 }}
                                 selected={
                                     location.pathname === dropdownItem.path ||
-                                    route.children?.some(
-                                        (dropdownItem) => location.pathname === dropdownItem.path
-                                    )
+                                    route.children?.some((dropdownItem) => location.pathname === dropdownItem.path)
                                 }
                                 sx={{
                                     backgroundColor: 'transparent!important',
@@ -235,10 +211,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                 <ListItemIcon
                                     sx={{
                                         '& svg': {
-                                            filter:
-                                                location.pathname === dropdownItem.path
-                                                    ? 'var(--color-hoverIcon)'
-                                                    : 'black'
+                                            filter: location.pathname === dropdownItem.path ? 'var(--color-hoverIcon)' : 'black'
                                         },
                                         minWidth: '20px'
                                     }}>
@@ -249,10 +222,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
                                     sx={{
                                         '& a': {
                                             fontSize: '14px',
-                                            color:
-                                                location.pathname === dropdownItem.path
-                                                    ? '#319DFF'
-                                                    : '#3D475C'
+                                            color: location.pathname === dropdownItem.path ? '#319DFF' : '#3D475C'
                                             //color: 'black'
                                         },
                                         ':hover a': {
@@ -270,9 +240,7 @@ const RecursiveMenuItem: React.FC<{ route: MenuItem; key: number }> = ({ route, 
     );
 };
 const ResponsiveDrawer: React.FC<Props> = ({ isOpen, onOpen }) => {
-    const mainAppRoutes = appRouters.mainRoutes[1].routes.filter(
-        (item: { showInMenu: boolean }) => item.showInMenu === true
-    );
+    const mainAppRoutes = appRouters.mainRoutes[1].routes.filter((item: { showInMenu: boolean }) => item.showInMenu === true);
     const itemMenus = convertMenuItemsToMenu(mainAppRoutes, sessionStore.listPermisson);
     return (
         <Drawer

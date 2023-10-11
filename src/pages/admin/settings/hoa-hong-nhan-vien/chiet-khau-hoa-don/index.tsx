@@ -9,23 +9,8 @@ import { TextTranslate } from '../../../../../components/TableLanguage';
 import { ReactComponent as IconSorting } from '../.././../../../images/column-sorting.svg';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
-import {
-    Box,
-    Button,
-    IconButton,
-    TextField,
-    Grid,
-    SelectChangeEvent,
-    Checkbox,
-    Typography,
-    ButtonGroup
-} from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
+import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent, Checkbox, Typography, ButtonGroup } from '@mui/material';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -173,9 +158,7 @@ class ChietKhauHoaDonScreen extends Component {
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
             const allRowRemove = chietKhauHoaDonStore.chietKhauHoaDons?.items.map((row) => row.id);
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = chietKhauHoaDonStore.chietKhauHoaDons?.items.map((row) => row.id);
@@ -215,27 +198,21 @@ class ChietKhauHoaDonScreen extends Component {
                 headerName: 'Hoa hồng',
                 minWidth: 112,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'chungTuApDung',
                 headerName: 'Chứng từ áp dụng',
                 minWidth: 120,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'ghiChu',
                 headerName: 'Ghi chú',
                 minWidth: 150,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'actions',
@@ -256,18 +233,12 @@ class ChietKhauHoaDonScreen extends Component {
                         </IconButton>
                     </Box>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
         return (
             <Box>
-                <Box
-                    display={'flex'}
-                    justifyContent={'space-between'}
-                    alignItems={'center'}
-                    paddingBottom={'16px'}>
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} paddingBottom={'16px'}>
                     <Typography fontWeight="700" fontFamily={'Roboto'} fontSize="18px">
                         Hoa hồng theo hóa đơn
                     </Typography>
@@ -359,10 +330,7 @@ class ChietKhauHoaDonScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                         hideFooter
@@ -378,21 +346,12 @@ class ChietKhauHoaDonScreen extends Component {
                         handleDelete={this.handleDelete}
                         permissionDelete="Pages.ChietKhauHoaDon.Delete"
                     />
-                    <ConfirmDelete
-                        isShow={this.state.isShowConfirmDelete}
-                        onOk={this.onOkDelete}
-                        onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
+                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
                     <CustomTablePagination
                         currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
-                        totalRecord={
-                            chietKhauHoaDons === undefined ? 0 : chietKhauHoaDons.totalCount
-                        }
-                        totalPage={
-                            chietKhauHoaDons === undefined
-                                ? 0
-                                : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)
-                        }
+                        totalRecord={chietKhauHoaDons === undefined ? 0 : chietKhauHoaDons.totalCount}
+                        totalPage={chietKhauHoaDons === undefined ? 0 : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)}
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
@@ -402,8 +361,7 @@ class ChietKhauHoaDonScreen extends Component {
                         onSave={this.handleCreate}
                         visited={this.state.visited}
                         title={
-                            this.state.idChietKhauHD === '' ||
-                            this.state.idChietKhauHD === AppConsts.guidEmpty
+                            this.state.idChietKhauHD === '' || this.state.idChietKhauHD === AppConsts.guidEmpty
                                 ? 'Thêm mới hoa hồng theo hóa đơn'
                                 : 'Cập nhật hoa hồng theo hóa đơn'
                         }

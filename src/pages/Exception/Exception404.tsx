@@ -11,11 +11,7 @@ class Exception404 extends React.Component<any, any> {
         return (
             <Grid container style={{ marginTop: 150 }}>
                 <Grid item xs={6} sm={6} md={6} lg={4} xl={4}>
-                    <Avatar
-                        variant="square"
-                        sx={{ width: '100%', height: '100%' }}
-                        src={error404}
-                    />
+                    <Avatar variant="square" sx={{ width: '100%', height: '100%' }} src={error404} />
                 </Grid>
                 <Grid item xs={6} sm={6} md={6} lg={4} xl={4} style={{ marginTop: 75 }}>
                     <Grid item>
@@ -26,8 +22,7 @@ class Exception404 extends React.Component<any, any> {
                     </Grid>
                     <Grid item>
                         <h5 className={'errorDescription'}>
-                            Trang bạn muốn truy cập có thể đã bị xóa, đổi tên hoặc địa chỉ của trang
-                            không đúng. Xin vui lòng thử lại.
+                            Trang bạn muốn truy cập có thể đã bị xóa, đổi tên hoặc địa chỉ của trang không đúng. Xin vui lòng thử lại.
                         </h5>
                     </Grid>
                     <Grid item textAlign={'center'}>

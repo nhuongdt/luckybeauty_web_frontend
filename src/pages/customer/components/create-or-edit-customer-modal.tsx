@@ -60,9 +60,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
             const objUpdate = JSON.parse(JSON.stringify(nextProp.formRef));
             this.setState({
                 cusImage: objUpdate?.avatar ?? '',
-                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(
-                    objUpdate?.avatar ?? ''
-                )
+                googleDrive_fileId: uploadFileService.GoogleApi_GetFileIdfromLink(objUpdate?.avatar ?? '')
             });
         }
     }
@@ -124,20 +122,13 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     utils.checkNull(formRef.avatar)
                                 ) {
                                     // awlay insert: because image was delete before save
-                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
-                                        fileSelect,
-                                        'KhachHang'
-                                    );
+                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileSelect, 'KhachHang');
                                 }
                             }
                             // gán lại image theo id mới
-                            values.avatar =
-                                fileId !== ''
-                                    ? `https://drive.google.com/uc?export=view&id=${fileId}`
-                                    : '';
+                            values.avatar = fileId !== '' ? `https://drive.google.com/uc?export=view&id=${fileId}` : '';
                             const createOrEdit = await khachHangService.createOrEdit(values);
-                            bookingStore.createOrEditBookingDto.idKhachHang =
-                                createOrEdit.id.toString();
+                            bookingStore.createOrEditBookingDto.idKhachHang = createOrEdit.id.toString();
                             createOrEdit != null
                                 ? values.id === AppConsts.guidEmpty
                                     ? enqueueSnackbar('Thêm mới thành công', {
@@ -155,14 +146,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                             this.setState({ errorPhoneNumber: false, errorTenKhach: false });
                             onOk(createOrEdit);
                         }}>
-                        {({
-                            isSubmitting,
-                            setFieldValue,
-                            values,
-                            handleChange,
-                            errors,
-                            touched
-                        }) => (
+                        {({ isSubmitting, setFieldValue, values, handleChange, errors, touched }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -180,18 +164,13 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             <Grid container justifyContent="flex-start">
                                                 <Grid item xs={5}></Grid>
                                                 <Grid item xs={2}>
-                                                    <Stack
-                                                        alignItems="center"
-                                                        position={'relative'}>
+                                                    <Stack alignItems="center" position={'relative'}>
                                                         {!utils.checkNull(this.state.cusImage) ? (
                                                             <Box
                                                                 sx={{
                                                                     position: 'relative'
                                                                 }}>
-                                                                <img
-                                                                    src={this.state.cusImage}
-                                                                    className="user-image-upload"
-                                                                />
+                                                                <img src={this.state.cusImage} className="user-image-upload" />
                                                             </Box>
                                                         ) : (
                                                             <div>
@@ -238,9 +217,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 }
                                                 helperText={
                                                     errors.tenKhachHang && touched.tenKhachHang ? (
-                                                        <small className="text-danger">
-                                                            Tên khách hàng không được để trống
-                                                        </small>
+                                                        <small className="text-danger">Tên khách hàng không được để trống</small>
                                                     ) : null
                                                 }
                                                 fullWidth
@@ -266,9 +243,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 value={values.soDienThoai}
                                                 helperText={
                                                     errors.soDienThoai && touched.soDienThoai ? (
-                                                        <small className="text-danger">
-                                                            Số điện thoại không hợp lệ
-                                                        </small>
+                                                        <small className="text-danger">Số điện thoại không hợp lệ</small>
                                                     ) : null
                                                 }
                                                 sx={{ fontSize: '13px' }}
@@ -283,14 +258,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     label: 'Ngày sinh',
                                                     size: 'small'
                                                 }}
-                                                defaultVal={
-                                                    values.ngaySinh
-                                                        ? formatDate(
-                                                              new Date(values.ngaySinh),
-                                                              'yyyy-MM-dd'
-                                                          )
-                                                        : ''
-                                                }
+                                                defaultVal={values.ngaySinh ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd') : ''}
                                                 handleChangeDate={(dt: string) => {
                                                     values.ngaySinh = new Date(dt);
                                                 }}
@@ -310,11 +278,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={12}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNhomKhach &&
-                                                    suggestStore.suggestNhomKhach.length > 0
-                                                        ? suggestStore.suggestNhomKhach.find(
-                                                              (x) => x.id === values.idNhomKhach
-                                                          ) || { id: '', tenNhomKhach: '' }
+                                                    suggestStore.suggestNhomKhach && suggestStore.suggestNhomKhach.length > 0
+                                                        ? suggestStore.suggestNhomKhach.find((x) => x.id === values.idNhomKhach) || {
+                                                              id: '',
+                                                              tenNhomKhach: ''
+                                                          }
                                                         : { id: '', tenNhomKhach: '' }
                                                 }
                                                 options={suggestStore?.suggestNhomKhach ?? []}
@@ -323,10 +291,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 fullWidth
                                                 disablePortal
                                                 onChange={(event, value) => {
-                                                    setFieldValue(
-                                                        'idNhomKhach',
-                                                        value ? value.id : undefined
-                                                    );
+                                                    setFieldValue('idNhomKhach', value ? value.id : undefined);
                                                     // Update the 'idNhomKhach' value in Formik
                                                 }}
                                                 renderInput={(params) => (
@@ -341,11 +306,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={6} style={{ display: 'none' }}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNguonKhach &&
-                                                    suggestStore.suggestNguonKhach.length > 0
-                                                        ? suggestStore.suggestNguonKhach.find(
-                                                              (x) => x.id === values.idNguonKhach
-                                                          ) || { id: '', tenNguonKhach: '' }
+                                                    suggestStore.suggestNguonKhach && suggestStore.suggestNguonKhach.length > 0
+                                                        ? suggestStore.suggestNguonKhach.find((x) => x.id === values.idNguonKhach) || {
+                                                              id: '',
+                                                              tenNguonKhach: ''
+                                                          }
                                                         : { id: '', tenNguonKhach: '' }
                                                 }
                                                 options={suggestStore?.suggestNguonKhach ?? []}
@@ -354,27 +319,15 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 fullWidth
                                                 disablePortal
                                                 onChange={(event, value) => {
-                                                    setFieldValue(
-                                                        'idNguonKhach',
-                                                        value ? value.id : undefined
-                                                    ); // Update the 'idNguonKhach' value in Formik
+                                                    setFieldValue('idNguonKhach', value ? value.id : undefined); // Update the 'idNguonKhach' value in Formik
                                                 }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        label="Nguồn khách"
-                                                        placeholder="Chọn nguồn khách"
-                                                    />
-                                                )}
+                                                renderInput={(params) => <TextField {...params} label="Nguồn khách" placeholder="Chọn nguồn khách" />}
                                             />
                                         </Grid>
 
                                         <Grid item xs={12} sm={12}>
                                             <Stack spacing={2} direction={'row'}>
-                                                <Stack
-                                                    className="modal-lable "
-                                                    justifyContent={'center'}
-                                                    alignItems={'center'}>
+                                                <Stack className="modal-lable " justifyContent={'center'} alignItems={'center'}>
                                                     Giới tính
                                                 </Stack>
                                                 <RadioGroup
@@ -384,21 +337,9 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     value={values.gioiTinh}
                                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                                     name="gioiTinh">
-                                                    <FormControlLabel
-                                                        value="true"
-                                                        control={<Radio />}
-                                                        label="Nam"
-                                                    />
-                                                    <FormControlLabel
-                                                        value="false"
-                                                        control={<Radio />}
-                                                        label="Nữ"
-                                                    />
-                                                    <FormControlLabel
-                                                        value=""
-                                                        control={<Radio />}
-                                                        label="Khác"
-                                                    />
+                                                    <FormControlLabel value="true" control={<Radio />} label="Nam" />
+                                                    <FormControlLabel value="false" control={<Radio />} label="Nữ" />
+                                                    <FormControlLabel value="" control={<Radio />} label="Khác" />
                                                 </RadioGroup>
                                             </Stack>
                                         </Grid>
@@ -414,10 +355,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Stack
-                                                spacing={1}
-                                                direction={'row'}
-                                                justifyContent={'flex-end'}>
+                                            <Stack spacing={1} direction={'row'} justifyContent={'flex-end'}>
                                                 <Button
                                                     variant="outlined"
                                                     onClick={onCancel}

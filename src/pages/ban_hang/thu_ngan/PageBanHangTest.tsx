@@ -90,17 +90,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
     const [hoaDonChiTiet, setHoaDonChiTiet] = useState<PageHoaDonChiTietDto[]>([]);
 
     // used to check update infor cthd
-    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
-        new PageHoaDonChiTietDto({ id: '', expanded: false })
-    );
+    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(new PageHoaDonChiTietDto({ id: '', expanded: false }));
 
-    const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
-        new PropToChildMauIn({ contentHtml: '' })
-    );
+    const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(new PropToChildMauIn({ contentHtml: '' }));
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
-    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [isShowEditGioHang, setIsShowEditGioHang] = useState(false);
@@ -394,14 +388,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                 if (x.id === cthdDoing.id) {
                     return {
                         ...x,
-                        tienChietKhau:
-                            (x.ptChietKhau ?? 0) > 0
-                                ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100
-                                : x.tienChietKhau,
-                        tienThue:
-                            (x.ptThue ?? 0) > 0
-                                ? ((x.donGiaSauCK ?? 0) * (x.ptThue ?? 0)) / 100
-                                : x.tienThue
+                        tienChietKhau: (x.ptChietKhau ?? 0) > 0 ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100 : x.tienChietKhau,
+                        tienThue: (x.ptThue ?? 0) > 0 ? ((x.donGiaSauCK ?? 0) * (x.ptThue ?? 0)) / 100 : x.tienThue
                     };
                 } else {
                     return x;
@@ -433,9 +421,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                 if (x.id === cthd.id) {
                     return {
                         ...x,
-                        nhanVienThucHien: x.nhanVienThucHien?.filter(
-                            (nvth) => nvth.idNhanVien !== nv.idNhanVien
-                        )
+                        nhanVienThucHien: x.nhanVienThucHien?.filter((nvth) => nvth.idNhanVien !== nv.idNhanVien)
                     };
                 } else {
                     return x;
@@ -495,21 +481,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
             .where('id')
             .equals(hoadon.id)
             .delete()
-            .then((deleteCount: any) =>
-                console.log('idhoadondelete ', hoadon.id, 'deletecount', deleteCount)
-            );
+            .then((deleteCount: any) => console.log('idhoadondelete ', hoadon.id, 'deletecount', deleteCount));
         await dbDexie.khachCheckIn
             .where('idCheckIn')
             .equals(customerChosed.idCheckIn)
             .delete()
-            .then((deleteCount: any) =>
-                console.log(
-                    'idcheckindelete ',
-                    customerChosed.idCheckIn,
-                    'deletecount',
-                    deleteCount
-                )
-            );
+            .then((deleteCount: any) => console.log('idcheckindelete ', customerChosed.idCheckIn, 'deletecount', deleteCount));
     };
 
     const handlePrint = useReactToPrint({
@@ -744,12 +721,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
             }}>
             <Box>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Typography
-                        variant="h3"
-                        fontSize="18px"
-                        color="#4C4B4C"
-                        fontWeight="700"
-                        onClick={() => choseLoaiHang(2)}>
+                    <Typography variant="h3" fontSize="18px" color="#4C4B4C" fontWeight="700" onClick={() => choseLoaiHang(2)}>
                         Nhóm dịch vụ
                     </Typography>
                     {isScrollable && (
@@ -877,12 +849,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                         justifyContent: 'space-between',
                         alignItems: 'center'
                     }}>
-                    <Typography
-                        variant="h3"
-                        fontSize="18px"
-                        color="#4C4B4C"
-                        fontWeight="700"
-                        onClick={() => choseLoaiHang(1)}>
+                    <Typography variant="h3" fontSize="18px" color="#4C4B4C" fontWeight="700" onClick={() => choseLoaiHang(1)}>
                         Sản phẩm
                     </Typography>
                     {isScrollable2 && (
@@ -1055,12 +1022,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                         sx={{
                             backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                             borderRadius: '8px',
-                            maxHeight:
-                                CoditionLayout && innerHeight > 600
-                                    ? '56vh'
-                                    : CoditionLayout && innerHeight < 605
-                                    ? '32vh'
-                                    : '88.5vh',
+                            maxHeight: CoditionLayout && innerHeight > 600 ? '56vh' : CoditionLayout && innerHeight < 605 ? '32vh' : '88.5vh',
                             overflowX: 'hidden',
                             overflowY: 'auto',
                             '&::-webkit-scrollbar': {
@@ -1076,12 +1038,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                         }}>
                         {listProduct.map((nhom: any, index: any) => (
                             <Box key={index}>
-                                <Typography
-                                    variant="h4"
-                                    fontSize="16px"
-                                    color="#000"
-                                    fontWeight="700"
-                                    marginBottom="16px">
+                                <Typography variant="h4" fontSize="16px" color="#000" fontWeight="700" marginBottom="16px">
                                     {nhom.tenNhomHang}
                                 </Typography>
 
@@ -1124,10 +1081,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                                     }}>
                                                     {item.tenHangHoa}
                                                 </Typography>
-                                                <Typography
-                                                    variant="body1"
-                                                    fontSize="14px"
-                                                    color="#333233">
+                                                <Typography variant="body1" fontSize="14px" color="#333233">
                                                     {utils.formatNumber(item.giaBan)}
                                                 </Typography>
                                             </Box>
@@ -1197,16 +1151,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                             }
                         }}>
                         {hoaDonChiTiet?.map((ct: any, index) => (
-                            <Box
-                                padding="12px"
-                                borderRadius="8px"
-                                border="1px solid #F2F2F2"
-                                marginTop="16px"
-                                key={index}>
-                                <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center">
+                            <Box padding="12px" borderRadius="8px" border="1px solid #F2F2F2" marginTop="16px" key={index}>
+                                <Box display="flex" justifyContent="space-between" alignItems="center">
                                     <Box width="100%">
                                         <Typography
                                             variant="body1"
@@ -1286,17 +1232,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                 {/* nhan vien thuc hien */}
 
                                 {ct.nhanVienThucHien.length > 0 && (
-                                    <Box
-                                        display="flex"
-                                        alignItems="center"
-                                        flexWrap="wrap"
-                                        gap="8px"
-                                        mt="8px">
-                                        <Typography
-                                            variant="body2"
-                                            fontSize="12px"
-                                            color="#666466"
-                                            lineHeight="16px">
+                                    <Box display="flex" alignItems="center" flexWrap="wrap" gap="8px" mt="8px">
+                                        <Typography variant="body2" fontSize="12px" color="#666466" lineHeight="16px">
                                             Nhân viên :
                                         </Typography>
                                         {ct.nhanVienThucHien.map((nv: any, index3: any) => (
@@ -1315,15 +1252,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                                     '& .remove-NV:hover img': {
                                                         filter: 'brightness(0) saturate(100%) invert(21%) sepia(100%) saturate(3282%) hue-rotate(337deg) brightness(85%) contrast(105%)'
                                                     },
-                                                    flexGrow:
-                                                        ct.nhanVienThucHien.length % 2 === 0
-                                                            ? '1'
-                                                            : 'unset',
+                                                    flexGrow: ct.nhanVienThucHien.length % 2 === 0 ? '1' : 'unset',
 
-                                                    width:
-                                                        ct.nhanVienThucHien.length % 2 === 0
-                                                            ? 'calc(50% - 69px)'
-                                                            : 'auto'
+                                                    width: ct.nhanVienThucHien.length % 2 === 0 ? 'calc(50% - 69px)' : 'auto'
                                                 }}
                                                 key={index3}>
                                                 <Box
@@ -1336,10 +1267,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                                     title={nv.tenNhanVien}>
                                                     {nv.tenNhanVien}
                                                 </Box>
-                                                <span
-                                                    className="remove-NV"
-                                                    style={{ cursor: 'pointer' }}
-                                                    onClick={() => RemoveNVThucHien(ct, nv)}>
+                                                <span className="remove-NV" style={{ cursor: 'pointer' }} onClick={() => RemoveNVThucHien(ct, nv)}>
                                                     <img src={closeIcon} alt="close" />
                                                 </span>
                                             </Typography>
@@ -1351,12 +1279,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                     </Box>
                     <Box marginTop="auto">
                         <Box pt="8px">
-                            <Typography
-                                variant="h3"
-                                color="#333233"
-                                fontSize="14px"
-                                fontWeight="500"
-                                mb="8px">
+                            <Typography variant="h3" color="#333233" fontSize="14px" fontWeight="500" mb="8px">
                                 Mã giảm giá
                             </Typography>
                             <TextField
@@ -1415,11 +1338,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                         {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
                                     </Typography>
                                 </Box>
-                                <Box
-                                    display="none"
-                                    justifyContent="space-between"
-                                    borderBottom="1px solid #CBADC2"
-                                    pb="8px">
+                                <Box display="none" justifyContent="space-between" borderBottom="1px solid #CBADC2" pb="8px">
                                     <Typography variant="h6" fontSize="14px" color="#3B4758">
                                         Tổng giảm giá
                                     </Typography>
@@ -1427,23 +1346,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                         {Utils.formatNumber(hoadon.tongChietKhauHangHoa)}
                                     </Typography>
                                 </Box>
-                                <Box
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    mt="8px">
-                                    <Typography
-                                        variant="h5"
-                                        fontWeight="700"
-                                        fontSize="18px"
-                                        color="#3B4758">
+                                <Box display="flex" justifyContent="space-between" alignItems="center" mt="8px">
+                                    <Typography variant="h5" fontWeight="700" fontSize="18px" color="#3B4758">
                                         Tổng thanh toán
                                     </Typography>
-                                    <Typography
-                                        variant="body1"
-                                        fontWeight="700"
-                                        fontSize="16px"
-                                        color="#3B4758">
+                                    <Typography variant="body1" fontWeight="700" fontSize="16px" color="#3B4758">
                                         {Utils.formatNumber(hoadon.tongThanhToan)}
                                     </Typography>
                                 </Box>
@@ -1510,9 +1417,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                 sx={{
                                     backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                     borderRadius: '8px',
-                                    boxShadow: CoditionLayout
-                                        ? 'unset'
-                                        : ' 0px 20px 100px 0px #0000000D',
+                                    boxShadow: CoditionLayout ? 'unset' : ' 0px 20px 100px 0px #0000000D',
                                     padding: '16px 24px',
                                     height: CoditionLayout ? 'unset' : '100vh',
                                     overflowX: 'hidden',
@@ -1530,16 +1435,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                     }
                                 }}>
                                 <Box>
-                                    <Box
-                                        display="flex"
-                                        justifyContent="space-between"
-                                        alignItems="center">
-                                        <Typography
-                                            variant="h3"
-                                            fontSize="18px"
-                                            color="#4C4B4C"
-                                            fontWeight="700"
-                                            onClick={() => choseLoaiHang(2)}>
+                                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                                        <Typography variant="h3" fontSize="18px" color="#4C4B4C" fontWeight="700" onClick={() => choseLoaiHang(2)}>
                                             Nhóm dịch vụ
                                         </Typography>
                                         {isScrollable && (
@@ -1667,12 +1564,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                             justifyContent: 'space-between',
                                             alignItems: 'center'
                                         }}>
-                                        <Typography
-                                            variant="h3"
-                                            fontSize="18px"
-                                            color="#4C4B4C"
-                                            fontWeight="700"
-                                            onClick={() => choseLoaiHang(1)}>
+                                        <Typography variant="h3" fontSize="18px" color="#4C4B4C" fontWeight="700" onClick={() => choseLoaiHang(1)}>
                                             Sản phẩm
                                         </Typography>
                                         {isScrollable2 && (
@@ -1807,11 +1699,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                         backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                         borderRadius: '8px',
                                         maxHeight:
-                                            CoditionLayout && innerHeight > 600
-                                                ? '56vh'
-                                                : CoditionLayout && innerHeight < 605
-                                                ? '32vh'
-                                                : '88.5vh',
+                                            CoditionLayout && innerHeight > 600 ? '56vh' : CoditionLayout && innerHeight < 605 ? '32vh' : '88.5vh',
                                         overflowX: 'hidden',
                                         overflowY: 'auto',
                                         '&::-webkit-scrollbar': {
@@ -1827,21 +1715,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                     }}>
                                     {listProduct.map((nhom: any, index: any) => (
                                         <Box key={index}>
-                                            <Typography
-                                                variant="h4"
-                                                fontSize="16px"
-                                                color="#000"
-                                                fontWeight="700"
-                                                marginBottom="16px">
+                                            <Typography variant="h4" fontSize="16px" color="#000" fontWeight="700" marginBottom="16px">
                                                 {nhom.tenNhomHang}
                                             </Typography>
 
                                             <Grid container spacing={1.5}>
                                                 {nhom.hangHoas.map((item: any, index2: any) => (
-                                                    <Grid
-                                                        item
-                                                        xs={CoditionLayout ? 2.4 : 4}
-                                                        key={item.id}>
+                                                    <Grid item xs={CoditionLayout ? 2.4 : 4} key={item.id}>
                                                         <Box
                                                             minHeight="104px"
                                                             padding="8px 12px 9px 12px"
@@ -1878,10 +1758,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
                                                                 }}>
                                                                 {item.tenHangHoa}
                                                             </Typography>
-                                                            <Typography
-                                                                variant="body1"
-                                                                fontSize="14px"
-                                                                color="#333233">
+                                                            <Typography variant="body1" fontSize="14px" color="#333233">
                                                                 {utils.formatNumber(item.giaBan)}
                                                             </Typography>
                                                         </Box>

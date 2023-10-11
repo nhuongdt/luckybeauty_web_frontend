@@ -1,16 +1,4 @@
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    Grid,
-    DialogActions,
-    TextField,
-    Button,
-    Stack,
-    Typography,
-    Checkbox,
-    Radio
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, TextField, Button, Stack, Typography, Checkbox, Radio } from '@mui/material';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import utils from '../../../utils/utils';
 import { useEffect, useState } from 'react';
@@ -22,16 +10,12 @@ import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import { IOSSwitch } from '../../../components/Switch/IOSSwitch';
 import { Guid } from 'guid-typescript';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import AutocompleteFromDB from '../../../components/Autocomplete/AutocompleteFromDB';
 
-export default function ModalCreateOrEditBrandname({
-    isShow,
-    idBrandname,
-    onClose,
-    objUpdate,
-    onSave
-}: any) {
+export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClose, objUpdate, onSave }: any) {
     const [objBrandname, setObjBrandname] = useState<BrandnameDto>({
         id: '',
+        tenantId: '',
         brandname: '',
         sdtCuaHang: '',
         ngayKichHoat: new Date(),
@@ -45,6 +29,7 @@ export default function ModalCreateOrEditBrandname({
                 setObjBrandname({
                     ...objBrandname,
                     id: '',
+                    tenantId: '',
                     brandname: '',
                     sdtCuaHang: '',
                     ngayKichHoat: new Date(),
@@ -55,6 +40,7 @@ export default function ModalCreateOrEditBrandname({
                 setObjBrandname(() => {
                     return {
                         id: objUpdate.id,
+                        tenantId: objUpdate.tenantId,
                         brandname: objUpdate.brandname,
                         sdtCuaHang: objUpdate.sdtCuaHang,
                         ngayKichHoat: objUpdate.ngayKichHoat,
@@ -70,10 +56,7 @@ export default function ModalCreateOrEditBrandname({
 
     const checkSaveDB = async (values: any) => {
         // brandname exist
-        const sdtExists = await BrandnameService.Brandname_CheckExistSDT(
-            values.sdtCuaHang,
-            idBrandname
-        );
+        const sdtExists = await BrandnameService.Brandname_CheckExistSDT(values.sdtCuaHang, idBrandname);
         if (sdtExists) {
             setObjAlert({ ...objAlert, show: true, mes: 'Số điện thoại đã tồn tại', type: 2 });
             return false;
@@ -107,6 +90,7 @@ export default function ModalCreateOrEditBrandname({
     };
 
     const rules = yup.object().shape({
+        tenantId: yup.string().required('Vui lòng chọn tenantname'),
         brandname: yup.string().required('Vui lòng nhập tên brandname'),
         sdtCuaHang: yup.string().required('Vui lòng nhập số điện thoại gửi tin')
     });
@@ -118,28 +102,13 @@ export default function ModalCreateOrEditBrandname({
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Dialog
-                open={isShow}
-                onClose={onClose}
-                aria-labelledby="draggable-dialog-title"
-                maxWidth="xs">
+            <Dialog open={isShow} onClose={onClose} aria-labelledby="draggable-dialog-title" maxWidth="xs">
                 <DialogTitle className="modal-title" id="draggable-dialog-title">
                     {utils.checkNull(idBrandname) ? 'Thêm' : 'Cập nhật'} brandname
                 </DialogTitle>
                 <DialogButtonClose onClose={onClose} />
-                <Formik
-                    initialValues={objBrandname}
-                    validationSchema={rules}
-                    onSubmit={saveBrandname}
-                    enableReinitialize>
-                    {({
-                        isSubmitting,
-                        handleChange,
-                        values,
-                        errors,
-                        touched,
-                        setFieldValue
-                    }: any) => (
+                <Formik initialValues={objBrandname} validationSchema={rules} onSubmit={saveBrandname} enableReinitialize>
+                    {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }: any) => (
                         <Form>
                             <DialogContent sx={{ overflow: 'unset' }}>
                                 <Grid container spacing={2}>
@@ -149,15 +118,25 @@ export default function ModalCreateOrEditBrandname({
                                             <IOSSwitch
                                                 sx={{ m: 1 }}
                                                 value={values.trangThai}
-                                                checked={
-                                                    parseInt(values.trangThai) == 1 ? true : false
-                                                }
+                                                checked={parseInt(values.trangThai) == 1 ? true : false}
                                                 onChange={() => {
                                                     const newVal = values.trangThai == 1 ? 0 : 1;
                                                     setFieldValue('trangThai', newVal);
                                                 }}
                                             />
                                         </Stack>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <AutocompleteFromDB
+                                            type="tenant"
+                                            label="Chọn tenant"
+                                            idChosed={values.tenantId}
+                                            handleChoseItem={(item: any) => {
+                                                setFieldValue('tenantId', item.id);
+                                            }}
+                                            helperText={touched.tenantId && errors.tenantId}
+                                            err={errors.tenantId}
+                                        />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
                                         <TextField
@@ -169,10 +148,7 @@ export default function ModalCreateOrEditBrandname({
                                             label={`Tên brandname *`}
                                             onChange={handleChange}
                                             value={values.brandname}
-                                            helperText={
-                                                touched.brandname &&
-                                                errors.brandname && <span>{errors.brandname}</span>
-                                            }
+                                            helperText={touched.brandname && errors.brandname && <span>{errors.brandname}</span>}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -184,12 +160,7 @@ export default function ModalCreateOrEditBrandname({
                                             label={`Số điện thoại`}
                                             onChange={handleChange}
                                             value={values.sdtCuaHang}
-                                            helperText={
-                                                touched.sdtCuaHang &&
-                                                errors.sdtCuaHang && (
-                                                    <span>{errors.sdtCuaHang}</span>
-                                                )
-                                            }
+                                            helperText={touched.sdtCuaHang && errors.sdtCuaHang && <span>{errors.sdtCuaHang}</span>}
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -197,9 +168,7 @@ export default function ModalCreateOrEditBrandname({
                                             label="Ngày kích hoạt"
                                             props={{ width: '100%', label: 'Ngày kích hoạt' }}
                                             defaultVal={values.ngayKichHoat}
-                                            handleChangeDate={(newVal: string) =>
-                                                setFieldValue('ngayKichHoat', newVal)
-                                            }
+                                            handleChangeDate={(newVal: string) => setFieldValue('ngayKichHoat', newVal)}
                                         />
                                     </Grid>
                                 </Grid>

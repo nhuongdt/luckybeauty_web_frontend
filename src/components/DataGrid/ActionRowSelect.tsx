@@ -25,13 +25,7 @@ export function useComponentVisible(initialIsVisible: boolean) {
     return { ref, isComponentVisible, setIsComponentVisible };
 }
 
-export default function ActionRowSelect({
-    lstOption,
-    countRowSelected,
-    title,
-    choseAction,
-    removeItemChosed
-}: any) {
+export default function ActionRowSelect({ lstOption, countRowSelected, title, choseAction, removeItemChosed }: any) {
     const [expandAction, setExpandAction] = useState(false);
     const { ref, isComponentVisible } = useComponentVisible(true);
 
@@ -44,10 +38,7 @@ export default function ActionRowSelect({
         <>
             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                 <Box sx={{ position: 'relative' }}>
-                    <Button
-                        variant="contained"
-                        endIcon={<ExpandMoreOutlined />}
-                        onClick={() => setExpandAction(!expandAction)}>
+                    <Button variant="contained" endIcon={<ExpandMoreOutlined />} onClick={() => setExpandAction(!expandAction)}>
                         Thao tác
                     </Button>
 
@@ -66,12 +57,7 @@ export default function ActionRowSelect({
                         }}>
                         <Stack alignContent={'center'}>
                             {lstOption?.map((item: IList, index: number) => (
-                                <Stack
-                                    direction={'row'}
-                                    key={index}
-                                    spacing={1}
-                                    padding={'6px'}
-                                    onClick={() => clickAction(item)}>
+                                <Stack direction={'row'} key={index} spacing={1} padding={'6px'} onClick={() => clickAction(item)}>
                                     {/* {item.icon} */}
                                     <Typography variant="subtitle2" marginLeft={1}>
                                         {item.text}

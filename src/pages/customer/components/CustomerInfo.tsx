@@ -71,24 +71,13 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                         display: 'flex',
                         gap: '8px'
                     }}>
-                    <Button
-                        variant="outlined"
-                        sx={{ color: '#666466' }}
-                        className="btn-outline-hover"
-                        startIcon={<PrintIcon />}>
+                    <Button variant="outlined" sx={{ color: '#666466' }} className="btn-outline-hover" startIcon={<PrintIcon />}>
                         In
                     </Button>
-                    <Button
-                        className="btn-outline-hover"
-                        startIcon={<ExportIcon />}
-                        variant="outlined"
-                        sx={{ color: '#666466' }}>
+                    <Button className="btn-outline-hover" startIcon={<ExportIcon />} variant="outlined" sx={{ color: '#666466' }}>
                         Xuất
                     </Button>
-                    <Button
-                        className="btn-container-hover"
-                        variant="contained"
-                        sx={{ bgcolor: '#7C3367' }}>
+                    <Button className="btn-container-hover" variant="contained" sx={{ bgcolor: '#7C3367' }}>
                         Sao chép
                     </Button>
                 </Box>
@@ -127,20 +116,13 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                     padding: '4px'
                                 }
                             }}>
-                            <Typography
-                                variant="h3"
-                                color="#3B4758"
-                                fontWeight="700"
-                                fontSize="24px"
-                                mr="12px">
+                            <Typography variant="h3" color="#3B4758" fontWeight="700" fontSize="24px" mr="12px">
                                 {khachHangStore.khachHangDetail.tenKhachHang}
                             </Typography>
                             <IconButton>
                                 <EditIcon
                                     onClick={async () => {
-                                        await khachHangStore.getForEdit(
-                                            khachHangStore.khachHangDetail.id
-                                        );
+                                        await khachHangStore.getForEdit(khachHangStore.khachHangDetail.id);
                                         setIsShowEditKhachHang(true);
                                     }}
                                 />
@@ -177,15 +159,11 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             </Box>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography variant="body1">Số điện thoại : </Typography>
-                                <Typography variant="body1">
-                                    {khachHangStore.khachHangDetail.soDienThoai}
-                                </Typography>
+                                <Typography variant="body1">{khachHangStore.khachHangDetail.soDienThoai}</Typography>
                             </Box>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography variant="body1">Địa chỉ : </Typography>
-                                <Typography variant="body1">
-                                    {khachHangStore.khachHangDetail.diaChi}
-                                </Typography>
+                                <Typography variant="body1">{khachHangStore.khachHangDetail.diaChi}</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -262,9 +240,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
             <ConfirmDelete
                 isShow={isShowDeleteKhachHang}
                 onOk={async () => {
-                    const deleteReult = await khachHangService.delete(
-                        khachHangStore.khachHangDetail.id
-                    );
+                    const deleteReult = await khachHangService.delete(khachHangStore.khachHangDetail.id);
                     deleteReult != null
                         ? enqueueSnackbar('Xóa bản ghi thành công', {
                               variant: 'success',

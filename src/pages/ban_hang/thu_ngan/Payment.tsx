@@ -72,9 +72,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
     };
 
     const removeHinhThucThanhToan = (id: number) => {
-        setHinhthucThanhToanChosed(() =>
-            hinhthucThanhToanChosed.filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== id)
-        );
+        setHinhthucThanhToanChosed(() => hinhthucThanhToanChosed.filter((x: QuyChiTietDto) => x.hinhThucThanhToan !== id));
     };
 
     const indexChosed = hinhthucThanhToanChosed.map((item: QuyChiTietDto) => {
@@ -93,12 +91,9 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
         );
     };
 
-    const sumTienKhachTra = hinhthucThanhToanChosed.reduce(
-        (currentValue: number, item: QuyChiTietDto) => {
-            return item.tienThu + currentValue;
-        },
-        0
-    );
+    const sumTienKhachTra = hinhthucThanhToanChosed.reduce((currentValue: number, item: QuyChiTietDto) => {
+        return item.tienThu + currentValue;
+    }, 0);
 
     const tienThuaTraKhach = sumTienKhachTra - tongPhaiTra;
 
@@ -205,12 +200,8 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
             tienCK = 0;
         let idTaiKhoanPos = null,
             idTaiKhoanCK = null;
-        const itemPos = hinhthucThanhToanChosed.filter(
-            (x: QuyChiTietDto) => x.hinhThucThanhToan === 2
-        );
-        const itemCK = hinhthucThanhToanChosed.filter(
-            (x: QuyChiTietDto) => x.hinhThucThanhToan === 3
-        );
+        const itemPos = hinhthucThanhToanChosed.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+        const itemCK = hinhthucThanhToanChosed.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
         if (itemPos.length > 0) {
             idTaiKhoanPos = itemPos[0].idTaiKhoanNganHang;
         }
@@ -334,11 +325,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                         borderColor: '#7C3367'
                                     }
                                 }}>
-                                <Typography
-                                    fontSize="16px"
-                                    variant="h3"
-                                    fontWeight="400"
-                                    color="#333233">
+                                <Typography fontSize="16px" variant="h3" fontWeight="400" color="#333233">
                                     {item}
                                 </Typography>
                             </Box>
@@ -361,12 +348,8 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                     borderRadius="8px"
                                     sx={{
                                         position: 'relative',
-                                        bgcolor: indexChosed.includes(item.id)
-                                            ? ' #F2EBF0'
-                                            : '#fff',
-                                        borderColor: indexChosed.includes(item.id)
-                                            ? '#7C3367'
-                                            : '#CDC9CD',
+                                        bgcolor: indexChosed.includes(item.id) ? ' #F2EBF0' : '#fff',
+                                        borderColor: indexChosed.includes(item.id) ? '#7C3367' : '#CDC9CD',
                                         cursor: 'pointer',
                                         transition: '.4s',
                                         '& svg': {
@@ -378,12 +361,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                         }
                                     }}>
                                     <item.icon />
-                                    <Typography
-                                        mt="8px"
-                                        fontSize="14px"
-                                        variant="h3"
-                                        fontWeight="400"
-                                        color="#333233">
+                                    <Typography mt="8px" fontSize="14px" variant="h3" fontWeight="400" color="#333233">
                                         {item?.text}
                                     </Typography>
                                     <Box
@@ -410,9 +388,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                         ))}
                     </Grid>
                     {hinhthucThanhToanChosed
-                        .sort((a: QuyChiTietDto, b: QuyChiTietDto) =>
-                            a.hinhThucThanhToan > b.hinhThucThanhToan ? 1 : -1
-                        )
+                        .sort((a: QuyChiTietDto, b: QuyChiTietDto) => (a.hinhThucThanhToan > b.hinhThucThanhToan ? 1 : -1))
                         .map((item: QuyChiTietDto) => (
                             <Box mt="24px" key={item.hinhThucThanhToan}>
                                 <Box
@@ -434,40 +410,24 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                                 height: '16px'
                                             }
                                         }}
-                                        onClick={() =>
-                                            removeHinhThucThanhToan(item.hinhThucThanhToan)
-                                        }>
+                                        onClick={() => removeHinhThucThanhToan(item.hinhThucThanhToan)}>
                                         <CloseIcon />
                                     </IconButton>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                         {item.hinhThucThanhToan === 1 && <IconTitleTienmat />}
                                         {item.hinhThucThanhToan === 2 && <IconNganhang />}
                                         {item.hinhThucThanhToan === 3 && <IconNganhang />}
-                                        <Typography
-                                            variant="h3"
-                                            color="#000"
-                                            fontSize="14px"
-                                            fontWeight="700">
-                                            {hinhThucThanhToan.filter(
-                                                (x: any) => x.id === item.hinhThucThanhToan
-                                            ).length > 0
-                                                ? hinhThucThanhToan.filter(
-                                                      (x: any) => x.id === item.hinhThucThanhToan
-                                                  )[0].text
+                                        <Typography variant="h3" color="#000" fontSize="14px" fontWeight="700">
+                                            {hinhThucThanhToan.filter((x: any) => x.id === item.hinhThucThanhToan).length > 0
+                                                ? hinhThucThanhToan.filter((x: any) => x.id === item.hinhThucThanhToan)[0].text
                                                 : ''}
                                         </Typography>
                                     </Box>
                                     {item.hinhThucThanhToan !== 1 && (
-                                        <Box
-                                            sx={{ display: 'flex', gap: '20px', marginTop: '8px' }}>
+                                        <Box sx={{ display: 'flex', gap: '20px', marginTop: '8px' }}>
                                             {bankAccount.map((itemCard, index) => (
                                                 <Box
-                                                    onClick={() =>
-                                                        handleSelectedCard(
-                                                            itemCard,
-                                                            item.hinhThucThanhToan
-                                                        )
-                                                    }
+                                                    onClick={() => handleSelectedCard(itemCard, item.hinhThucThanhToan)}
                                                     key={index}
                                                     sx={{
                                                         display: 'flex',
@@ -481,12 +441,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                                     <Box
                                                         sx={{
                                                             padding: '10px',
-                                                            border: `1px solid ${
-                                                                item.idTaiKhoanNganHang ===
-                                                                itemCard.id
-                                                                    ? '#7C3367'
-                                                                    : '#CDC9CD'
-                                                            }`,
+                                                            border: `1px solid ${item.idTaiKhoanNganHang === itemCard.id ? '#7C3367' : '#CDC9CD'}`,
                                                             transition: '.3s',
                                                             cursor: 'pointer',
                                                             borderRadius: '8px',
@@ -519,12 +474,7 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                     )}
 
                                     <Box mt="12px" sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <Typography
-                                            variant="body1"
-                                            fontSize="14px"
-                                            fontWeight="400"
-                                            color="#666466"
-                                            minWidth="105px">
+                                        <Typography variant="body1" fontSize="14px" fontWeight="400" color="#666466" minWidth="105px">
                                             Tiền khách trả
                                         </Typography>
                                         <NumericFormat
@@ -538,20 +488,16 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                                     textAlign: 'right',
                                                     fontWeight: 600
                                                 },
-                                                '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button':
-                                                    {
-                                                        appearance: 'none'
-                                                    }
+                                                '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button': {
+                                                    appearance: 'none'
+                                                }
                                             }}
                                             thousandSeparator={'.'}
                                             decimalSeparator={','}
                                             value={item?.tienThu}
                                             customInput={TextField}
                                             onChange={(e) => {
-                                                changeTienKhachTra(
-                                                    e.target.value,
-                                                    item.hinhThucThanhToan
-                                                );
+                                                changeTienKhachTra(e.target.value, item.hinhThucThanhToan);
                                             }}
                                         />
                                     </Box>
@@ -567,19 +513,11 @@ const Payments: React.FC<ChildComponent> = ({ handleClickPrev, tongPhaiTra = 0, 
                                     alignItems: 'center',
                                     padding: 2
                                 }}>
-                                <Typography
-                                    variant="body1"
-                                    sx={{ fontSize: '14px', color: '#4C4B4C', marginTop: '8px' }}>
-                                    {tienThuaTraKhach > 0
-                                        ? 'Tiền thừa trả khách'
-                                        : 'Tiền khách thiếu'}
+                                <Typography variant="body1" sx={{ fontSize: '14px', color: '#4C4B4C', marginTop: '8px' }}>
+                                    {tienThuaTraKhach > 0 ? 'Tiền thừa trả khách' : 'Tiền khách thiếu'}
                                 </Typography>
-                                <Typography
-                                    variant="body1"
-                                    sx={{ fontSize: '14px', color: '#333233', fontWeight: '700' }}>
-                                    {new Intl.NumberFormat('vi-VN').format(
-                                        Math.abs(tienThuaTraKhach)
-                                    )}
+                                <Typography variant="body1" sx={{ fontSize: '14px', color: '#333233', fontWeight: '700' }}>
+                                    {new Intl.NumberFormat('vi-VN').format(Math.abs(tienThuaTraKhach))}
                                 </Typography>
                             </Box>
                         </>

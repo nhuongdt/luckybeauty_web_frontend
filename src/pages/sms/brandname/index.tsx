@@ -2,18 +2,9 @@ import { useEffect, useState } from 'react';
 import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
-import {
-    Button,
-    Grid,
-    IconButton,
-    Stack,
-    TextField,
-    Typography,
-    Box,
-    SelectChangeEvent
-} from '@mui/material';
-import { DeleteSweepOutlined, PrintOutlined, Search } from '@mui/icons-material';
-import { Info, Edit, DeleteForever, MoreHoriz } from '@mui/icons-material';
+import { Button, Grid, IconButton, Stack, TextField, Typography, Box, SelectChangeEvent } from '@mui/material';
+import { Add, DeleteSweepOutlined, PrintOutlined, Search } from '@mui/icons-material';
+import { FileUploadOutlined, Edit, DeleteForever, PaidOutlined } from '@mui/icons-material';
 
 import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
@@ -23,25 +14,22 @@ import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 import ActionRowSelect from '../../../components/DataGrid/ActionRowSelect';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { TextTranslate } from '../../../components/TableLanguage';
-import {
-    BrandnameDto,
-    PagedResultBrandnameDto
-} from '../../../services/sms/brandname/BrandnameDto';
+import { BrandnameDto, PagedResultBrandnameDto } from '../../../services/sms/brandname/BrandnameDto';
 import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import ModalCreateOrEditBrandname from './modal_create_or_edit_brandname';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
 import utils from '../../../utils/utils';
 import fileDowloadService from '../../../services/file-dowload.service';
+import NapTienBrandname from './nap_tien_brandname';
 
 export default function PageBrandname() {
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
+    const [isShowModalNapTien, setIsShowModalNapTien] = useState(false);
     const [brandChosed, setBrandChosed] = useState<BrandnameDto>({ id: '' } as BrandnameDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [dataGrid_typeAction, setDataGrid_typeAction] = useState(0);
-    const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(
-        new PropConfirmOKCancel({ show: false })
-    );
+    const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [paramSearch, setParamSearch] = useState<PagedRequestDto>({
         keyword: '',
         skipCount: 1,
@@ -159,9 +147,7 @@ export default function PageBrandname() {
             switch (dataGrid_typeAction) {
                 case 1:
                     {
-                        const data = await BrandnameService.DeleteMultiple_Brandname(
-                            rowSelectionModel
-                        );
+                        const data = await BrandnameService.DeleteMultiple_Brandname(rowSelectionModel);
                         if (data) {
                             setObjAlert({
                                 show: true,
@@ -179,9 +165,7 @@ export default function PageBrandname() {
                     break;
                 case 2:
                     {
-                        const data = await BrandnameService.ActiveMultiple_Brandname(
-                            rowSelectionModel
-                        );
+                        const data = await BrandnameService.ActiveMultiple_Brandname(rowSelectionModel);
                         if (data) {
                             setObjAlert({
                                 show: true,
@@ -210,9 +194,7 @@ export default function PageBrandname() {
                 });
                 setPageDataBrandname({
                     ...pageDataBrandname,
-                    items: pageDataBrandname.items.filter(
-                        (x: BrandnameDto) => x.id !== brandChosed.id
-                    ),
+                    items: pageDataBrandname.items.filter((x: BrandnameDto) => x.id !== brandChosed.id),
                     totalCount: pageDataBrandname.totalCount - 1
                 });
             } else {
@@ -242,6 +224,7 @@ export default function PageBrandname() {
                     if (x.id === dataSave.id) {
                         return {
                             ...x,
+                            tenantId: dataSave.tenantId,
                             brandname: dataSave.brandname,
                             sdtCuaHang: dataSave.sdtCuaHang,
                             ngayKichHoat: dataSave.ngayKichHoat,
@@ -256,22 +239,40 @@ export default function PageBrandname() {
         }
     };
 
+    const saveNapTienBrandname = async (dataSave: any) => {
+        setIsShowModalNapTien(false);
+        console.log('saveNapTienBrandname ', dataSave);
+        const tongThu = utils.formatNumberToFloat(dataSave.tongTienThu);
+        // update
+        setPageDataBrandname({
+            ...pageDataBrandname,
+            items: pageDataBrandname.items.map((x: BrandnameDto) => {
+                if (x.id === dataSave.idBrandname) {
+                    return {
+                        ...x,
+                        tenantId: dataSave.tenantId,
+                        tongTienNap: x.tongTienNap + tongThu,
+                        conLai: x.conLai + tongThu
+                    };
+                } else {
+                    return x;
+                }
+            })
+        });
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'brandname',
             headerName: 'Tên brandname',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
         },
         {
             field: 'sdtCuaHang',
             headerName: 'SDT cửa hàng',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
         },
         {
             field: 'ngayKichHoat',
@@ -279,12 +280,8 @@ export default function PageBrandname() {
             headerAlign: 'center',
             align: 'center',
             flex: 0.8,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy')}</Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy')}</Box>
         },
         {
             field: 'tongTienNap',
@@ -292,14 +289,8 @@ export default function PageBrandname() {
             headerAlign: 'right',
             align: 'right',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'daSuDung',
@@ -307,14 +298,8 @@ export default function PageBrandname() {
             headerAlign: 'right',
             align: 'right',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'conLai',
@@ -322,41 +307,23 @@ export default function PageBrandname() {
             headerAlign: 'right',
             align: 'right',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'txtTrangThai',
             headerAlign: 'center',
             headerName: 'Trạng thái',
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
                     sx={{
                         padding: '4px 8px',
                         borderRadius: '100px',
-                        backgroundColor:
-                            params.row.trangThai === 3
-                                ? '#E8FFF3'
-                                : params.row.trangThai === 1
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 3
-                                ? '#50CD89'
-                                : params.row.trangThai === 1
-                                ? '#FF9900'
-                                : '#F1416C',
+                        backgroundColor: params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                        color: params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -414,6 +381,7 @@ export default function PageBrandname() {
                 objUpdate={brandChosed}
                 onSave={onSaveBrandname}
             />
+            <NapTienBrandname visiable={isShowModalNapTien} idQuyHD={''} onClose={() => setIsShowModalNapTien(false)} onOk={saveNapTienBrandname} />
 
             <Grid container paddingTop={2}>
                 <Grid item xs={6}>
@@ -461,7 +429,7 @@ export default function PageBrandname() {
                             size="small"
                             onClick={exportToExcel}
                             variant="outlined"
-                            startIcon={<FileDownloadOutlinedIcon />}
+                            startIcon={<FileUploadOutlined />}
                             className="btnNhapXuat btn-outline-hover"
                             sx={{ bgcolor: '#fff!important', color: '#666466' }}>
                             Xuất
@@ -471,10 +439,18 @@ export default function PageBrandname() {
                             onClick={() => {
                                 setIsShowModalAdd(true);
                                 setBrandChosed({ id: '' } as BrandnameDto);
-                            }}>
+                            }}
+                            startIcon={<Add />}>
                             Thêm mới
                         </Button>
-                        <Button variant="contained">Nạp tiền</Button>
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                setIsShowModalNapTien(true);
+                            }}
+                            startIcon={<PaidOutlined />}>
+                            Nạp tiền
+                        </Button>
                     </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -485,18 +461,12 @@ export default function PageBrandname() {
                                     {
                                         id: '1',
                                         text: 'Xóa brandname',
-                                        icon: (
-                                            <DeleteSweepOutlined
-                                                sx={{ width: '1rem', height: '1rem' }}
-                                            />
-                                        )
+                                        icon: <DeleteSweepOutlined sx={{ width: '1rem', height: '1rem' }} />
                                     },
                                     {
                                         id: '2',
                                         text: 'Kích hoạt',
-                                        icon: (
-                                            <PrintOutlined sx={{ width: '1rem', height: '1rem' }} />
-                                        )
+                                        icon: <PrintOutlined sx={{ width: '1rem', height: '1rem' }} />
                                     }
                                 ]}
                                 countRowSelected={rowSelectionModel.length}
@@ -509,17 +479,10 @@ export default function PageBrandname() {
                         </div>
                     )}
 
-                    <Stack
-                        marginTop={rowSelectionModel.length > 0 ? 1 : 5}
-                        className="page-box-right"
-                        spacing={1}>
+                    <Stack marginTop={rowSelectionModel.length > 0 ? 1 : 5} className="page-box-right" spacing={1}>
                         <DataGrid
                             disableRowSelectionOnClick
-                            className={
-                                rowSelectionModel.length > 0
-                                    ? 'data-grid-row-chosed'
-                                    : 'data-grid-row'
-                            }
+                            className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                             rowHeight={46}
                             autoHeight={pageDataBrandname.items.length === 0}
                             columns={columns}

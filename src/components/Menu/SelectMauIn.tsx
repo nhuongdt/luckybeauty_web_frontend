@@ -8,11 +8,7 @@ export default function SelectMauIn({ idChosed, data, handleChange }: any) {
     return (
         <>
             <FormControl fullWidth size="small">
-                <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    value={idChosed}
-                    label="Age">
+                <Select labelId="demo-simple-select-label" id="demo-simple-select" value={idChosed} label="Age">
                     {data.map((item: MauInDto, index: number) => (
                         <MenuItem key={index} value={item.id} onClick={() => changeItem(item)}>
                             {item.tenMauIn}

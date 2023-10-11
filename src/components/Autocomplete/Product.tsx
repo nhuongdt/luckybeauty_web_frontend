@@ -60,12 +60,8 @@ export default function AutocompleteProduct({ handleChoseItem, productChosed }: 
                                 <Grid item sx={{ display: 'flex', width: 44 }}>
                                     <CenterFocusWeakIcon sx={{ color: 'text.secondary' }} />
                                 </Grid>
-                                <Grid
-                                    item
-                                    sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                    <Typography style={{ fontSize: '14px' }}>
-                                        {option.tenHangHoa}
-                                    </Typography>
+                                <Grid item sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Typography style={{ fontSize: '14px' }}>{option.tenHangHoa}</Typography>
                                     <Stack
                                         direction="row"
                                         spacing={1}
@@ -76,9 +72,7 @@ export default function AutocompleteProduct({ handleChoseItem, productChosed }: 
                                         }}>
                                         <span>{option.maHangHoa}</span>
                                         <span></span>
-                                        <span>
-                                            {new Intl.NumberFormat('vi-VN').format(option.giaBan)}
-                                        </span>
+                                        <span>{new Intl.NumberFormat('vi-VN').format(option.giaBan)}</span>
                                     </Stack>
                                 </Grid>
                             </Grid>

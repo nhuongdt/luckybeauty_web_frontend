@@ -10,14 +10,7 @@ import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUp
 import Cookies from 'js-cookie';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
-import {
-    DataGrid,
-    GridColDef,
-    GridInputRowSelectionModel,
-    GridRenderCellParams,
-    GridRowId,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridInputRowSelectionModel, GridRenderCellParams, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
@@ -204,9 +197,7 @@ class EmployeeScreen extends React.Component {
         this.getData();
     };
     onOkDelete = () => {
-        this.state.listItemSelectedModel.length > 0
-            ? this.deleteMany(this.state.listItemSelectedModel)
-            : this.delete(this.state.selectedRowId ?? '');
+        this.state.listItemSelectedModel.length > 0 ? this.deleteMany(this.state.listItemSelectedModel) : this.delete(this.state.selectedRowId ?? '');
         this.handleDelete;
         this.handleCloseMenu();
     };
@@ -260,9 +251,7 @@ class EmployeeScreen extends React.Component {
         fileDowloadService.downloadExportFile(result);
     };
     exportSelectedRow = async () => {
-        const result = await nhanVienService.exportDanhSachNhanVienSelected(
-            this.state.listItemSelectedModel
-        );
+        const result = await nhanVienService.exportDanhSachNhanVienSelected(this.state.listItemSelectedModel);
         fileDowloadService.downloadExportFile(result);
         this.setState({ listItemSelectedModel: [] });
     };
@@ -280,9 +269,7 @@ class EmployeeScreen extends React.Component {
         });
     };
     downloadImportTemplate = async () => {
-        const result = await uploadFileService.downloadImportTemplate(
-            'NhanVien_ImportTemplate.xlsx'
-        );
+        const result = await uploadFileService.downloadImportTemplate('NhanVien_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
     onSort = async (sortType: string, sortBy: string) => {
@@ -314,9 +301,7 @@ class EmployeeScreen extends React.Component {
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
             const allRowRemove = NhanVienStore.listNhanVien?.items.map((row) => row.id);
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = NhanVienStore.listNhanVien?.items.map((row) => row.id);
@@ -336,12 +321,7 @@ class EmployeeScreen extends React.Component {
             disableColumnMenu: true,
             width: 65,
             renderHeader: (params) => {
-                return (
-                    <Checkbox
-                        onClick={this.handleSelectAllGridRowClick}
-                        checked={this.state.checkAllRow}
-                    />
-                );
+                return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
             },
             renderCell: (params) => (
                 <Checkbox
@@ -357,11 +337,7 @@ class EmployeeScreen extends React.Component {
             flex: 1.5,
             renderCell: (params) => (
                 <Box style={{ display: 'flex', alignItems: 'center' }} width="100%">
-                    <Avatar
-                        src={params.row.avatar}
-                        alt="Avatar"
-                        style={{ width: 24, height: 24, marginRight: 8 }}
-                    />
+                    <Avatar src={params.row.avatar} alt="Avatar" style={{ width: 24, height: 24, marginRight: 8 }} />
                     <Typography
                         variant="body2"
                         title={params.value}
@@ -371,18 +347,14 @@ class EmployeeScreen extends React.Component {
                     </Typography>
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            )
+            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
         {
             field: 'soDienThoai',
             headerName: 'Số điện thoại',
             minWidth: 120,
             flex: 0.8,
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
 
             renderCell: (params) => (
                 <Box width="100%" textAlign="left" fontSize="13px">
@@ -520,12 +492,7 @@ class EmployeeScreen extends React.Component {
                         width: '100%'
                     }}>
                     <DateIcon style={{ marginRight: 4 }} />
-                    <Typography
-                        fontSize="13px"
-                        fontWeight="400"
-                        fontFamily={'Roboto'}
-                        color="#3D475C"
-                        lineHeight="16px">
+                    <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Typography>
                 </Box>
@@ -557,17 +524,8 @@ class EmployeeScreen extends React.Component {
                     sx={{
                         margin: 'auto',
                         backgroundColor:
-                            params.row.trangThai === 'Hoạt động'
-                                ? '#E8FFF3'
-                                : params.row.trangThai === 'Ngừng hoạt động'
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 'Hoạt động'
-                                ? '#50CD89'
-                                : params.row.trangThai === 'Ngừng hoạt động'
-                                ? '#FF9900'
-                                : '#F1416C'
+                            params.row.trangThai === 'Hoạt động' ? '#E8FFF3' : params.row.trangThai === 'Ngừng hoạt động' ? '#FFF8DD' : '#FFF5F8',
+                        color: params.row.trangThai === 'Hoạt động' ? '#50CD89' : params.row.trangThai === 'Ngừng hoạt động' ? '#FF9900' : '#F1416C'
                     }}
                     fontSize="13px"
                     fontWeight="400"
@@ -599,9 +557,7 @@ class EmployeeScreen extends React.Component {
                     aria-controls={`actions-menu-${params.row.id}`}
                     aria-haspopup="true"
                     onClick={(event: any) => {
-                        params.row.trangThai == 'Hoạt động'
-                            ? this.handleOpenMenu(event, params.row.id)
-                            : null;
+                        params.row.trangThai == 'Hoạt động' ? this.handleOpenMenu(event, params.row.id) : null;
                     }}>
                     <MoreHorizIcon />
                 </IconButton>
@@ -692,9 +648,7 @@ class EmployeeScreen extends React.Component {
                             className="btn-outline-hover">
                             Xuất
                         </Button>
-                        <ButtonGroup
-                            variant="contained"
-                            sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
+                        <ButtonGroup variant="contained" sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
                             <Button
                                 size="small"
                                 hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Create')}
@@ -733,8 +687,7 @@ class EmployeeScreen extends React.Component {
                                     endIcon={<ExpandMoreOutlined />}
                                     onClick={() =>
                                         this.setState({
-                                            expendActionSelectedRow:
-                                                !this.state.expendActionSelectedRow
+                                            expendActionSelectedRow: !this.state.expendActionSelectedRow
                                         })
                                     }>
                                     Thao tác
@@ -753,11 +706,7 @@ class EmployeeScreen extends React.Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
+                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa nhân viên'}
                                             sx={{
@@ -781,10 +730,7 @@ class EmployeeScreen extends React.Component {
                                     </Stack>
                                 </Box>
                             </Box>
-                            <Divider
-                                orientation="vertical"
-                                flexItem
-                                sx={{ color: 'black' }}></Divider>
+                            <Divider orientation="vertical" flexItem sx={{ color: 'black' }}></Divider>
                             <Stack direction={'row'}>
                                 <Typography variant="body2" color={'red'}>
                                     {this.state.listItemSelectedModel.length}&nbsp;
@@ -819,10 +765,7 @@ class EmployeeScreen extends React.Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                     />
@@ -846,10 +789,7 @@ class EmployeeScreen extends React.Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.handleDelete}></ConfirmDelete>
+                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.handleDelete}></ConfirmDelete>
                 <ImportExcel
                     tieude={'Nhập file nhân viên'}
                     isOpen={this.state.importShow}
@@ -865,9 +805,7 @@ class EmployeeScreen extends React.Component {
                     }}
                     onOk={this.handleSubmit}
                     title={
-                        this.state.idNhanSu === '' ||
-                        this.state.idNhanSu == undefined ||
-                        this.state.idNhanSu === AppConsts.guidEmpty
+                        this.state.idNhanSu === '' || this.state.idNhanSu == undefined || this.state.idNhanSu === AppConsts.guidEmpty
                             ? 'Thêm mới nhân viên'
                             : 'Cập nhật thông tin nhân viên'
                     }

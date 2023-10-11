@@ -2,12 +2,7 @@ import { Box, Stack, TextField } from '@mui/material';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import utils from '../../utils/utils';
 
-export default function CircleImageUpload({
-    pathImg,
-    handeChoseImage,
-    handleCloseImage,
-    roleChangeImg = true
-}: any) {
+export default function CircleImageUpload({ pathImg, handeChoseImage, handleCloseImage, roleChangeImg = true }: any) {
     const choseImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!roleChangeImg) return;
         await closeImage();

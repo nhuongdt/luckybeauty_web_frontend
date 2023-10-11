@@ -20,12 +20,7 @@ export function ModalChuyenNhom({ title, icon, isOpen, onClose, lstData, agreeCh
                     <DialogButtonClose onClose={onClose} />
                 </DialogTitle>
                 <DialogContent>
-                    <CmpIListData
-                        Icon={icon}
-                        lst={lstData}
-                        clickTreeItem={choseNhom}
-                        isShowAll={false}
-                    />
+                    <CmpIListData Icon={icon} lst={lstData} clickTreeItem={choseNhom} isShowAll={false} />
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" onClick={onClose}>
