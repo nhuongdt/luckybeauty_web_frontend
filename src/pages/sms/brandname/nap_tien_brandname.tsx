@@ -229,7 +229,9 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
     useEffect(() => {
         setQuyHoaDon({
             ...quyHoaDon,
-            sHinhThucThanhToan: AppConsts.hinhThucThanhToan.filter((x: ISelect) => x.value === quyHoaDon.hinhThucThanhToan)[0]?.text
+            sHinhThucThanhToan: AppConsts.hinhThucThanhToan.filter(
+                (x: ISelect) => x.value === quyHoaDon.hinhThucThanhToan
+            )[0]?.text
         });
     }, [quyHoaDon.hinhThucThanhToan]);
 
@@ -266,7 +268,11 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                     <DialogButtonClose onClose={onClose} />
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={quyHoaDon} validationSchema={validate} onSubmit={saveSoQuy} enableReinitialize>
+                    <Formik
+                        initialValues={quyHoaDon}
+                        validationSchema={validate}
+                        onSubmit={saveSoQuy}
+                        enableReinitialize>
                         {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }: any) => (
                             <Form>
                                 <Grid container spacing={2} marginTop={0.5}>
@@ -311,7 +317,9 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                                             label="Hình thức"
                                             data={AppConsts.hinhThucThanhToan}
                                             idChosed={quyHoaDon?.hinhThucThanhToan}
-                                            handleChange={(item: ISelect) => setFieldValue('hinhThucThanhToan', item.value)}
+                                            handleChange={(item: ISelect) =>
+                                                setFieldValue('hinhThucThanhToan', item.value)
+                                            }
                                         />
                                     </Grid>
                                     {/* <Grid item xs={12} sm={6}>
@@ -409,7 +417,11 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                                                 Hủy
                                             </Button>
                                             {!isSubmitting ? (
-                                                <Button variant="contained" sx={{ bgcolor: '#7C3367' }} className="btn-container-hover" type="submit">
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{ bgcolor: '#7C3367' }}
+                                                    className="btn-container-hover"
+                                                    type="submit">
                                                     Lưu
                                                 </Button>
                                             ) : (
@@ -435,9 +447,9 @@ const NapTienBrandname = ({ visiable = false, idQuyHD = null, onClose, onOk }: a
                                                                 new PropConfirmOKCancel({
                                                                     show: true,
                                                                     title: 'Xác nhận xóa',
-                                                                    mes: `Bạn có chắc chắn muốn xóa ${quyHoaDon?.loaiPhieu ?? ' '}  ${
-                                                                        quyHoaDon?.maHoaDon ?? ' '
-                                                                    } không?`
+                                                                    mes: `Bạn có chắc chắn muốn xóa ${
+                                                                        quyHoaDon?.loaiPhieu ?? ' '
+                                                                    }  ${quyHoaDon?.maHoaDon ?? ' '} không?`
                                                                 })
                                                             );
                                                         }}>

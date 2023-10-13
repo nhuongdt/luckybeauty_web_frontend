@@ -33,7 +33,8 @@ const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose, onOK }) =
                     Hủy hóa đơn ?
                 </Typography>
                 <Typography variant="body1" fontSize="14px" color="#666466" marginY="24px">
-                    Bạn có chắc chắn hủy hóa đơn này không? Sau khi Hủy, thông tin hóa đơn của bạn sẽ bị xóa vĩnh viễn. Bạn không thể khôi phục lại .
+                    Bạn có chắc chắn hủy hóa đơn này không? Sau khi Hủy, thông tin hóa đơn của bạn sẽ bị xóa vĩnh viễn.
+                    Bạn không thể khôi phục lại .
                 </Typography>
                 <Box
                     sx={{
@@ -52,7 +53,8 @@ const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose, onOK }) =
                             Cuộc hẹn sẽ bị hủy
                         </Typography>
                         <Typography variant="body1" fontSize="16px" color="#D0915C" mt="8px">
-                            Trong trường hợp có hẹn, cuộc hẹn sẽ bị đánh dấu là <span style={{ color: '#F1416C' }}>Hủy</span>
+                            Trong trường hợp có hẹn, cuộc hẹn sẽ bị đánh dấu là{' '}
+                            <span style={{ color: '#F1416C' }}>Hủy</span>
                         </Typography>
                     </Box>
                 </Box>
@@ -74,8 +76,8 @@ const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose, onOK }) =
                             Hoàn tác các dữ liệu liên quan
                         </Typography>
                         <Typography variant="body1" fontSize="16px" color="#D0915C" mt="8px">
-                            Tất cả dịch vụ, gói, sản phẩm, thẻ quà tặng, tư cách thành viên, hàng tồn kho sẽ được cập nhật lại và tất cả các giao dịch
-                            sẽ bị hoàn tác.
+                            Tất cả dịch vụ, gói, sản phẩm, thẻ quà tặng, tư cách thành viên, hàng tồn kho sẽ được cập
+                            nhật lại và tất cả các giao dịch sẽ bị hoàn tác.
                         </Typography>
                     </Box>
                 </Box>

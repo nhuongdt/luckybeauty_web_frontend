@@ -93,7 +93,10 @@ export default function ImportExcel({ tieude, listOption, isOpen, onClose, downl
                         style={{
                             display: listOption != null && listOption.length > 0 ? '' : 'none'
                         }}>
-                        <RadioGroup aria-labelledby="demo-radio-buttons-group-label" defaultValue="female" name="radio-buttons-group">
+                        <RadioGroup
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            defaultValue="female"
+                            name="radio-buttons-group">
                             {listOption?.map((item: any, index: number) => (
                                 <FormControlLabel key={index} control={<Radio />} label={item.text} />
                             ))}
@@ -101,9 +104,16 @@ export default function ImportExcel({ tieude, listOption, isOpen, onClose, downl
                     </Stack>
                     <Stack spacing={2}>
                         <Stack fontStyle={'italic'} spacing={1} alignItems={'flex-start'}>
-                            <Typography variant="body2">Tải về file mẫu (.xlsx) hoặc nhập file dữ liệu sẵn có</Typography>
-                            <Typography variant="body2">Hệ thống chỉ cho phép nhập tối đa 10000 dòng mỗi lần từ file</Typography>
-                            <Button variant="outlined" startIcon={<VerticalAlignBottomOutlinedIcon />} onClick={downloadImportTemplate}>
+                            <Typography variant="body2">
+                                Tải về file mẫu (.xlsx) hoặc nhập file dữ liệu sẵn có
+                            </Typography>
+                            <Typography variant="body2">
+                                Hệ thống chỉ cho phép nhập tối đa 10000 dòng mỗi lần từ file
+                            </Typography>
+                            <Button
+                                variant="outlined"
+                                startIcon={<VerticalAlignBottomOutlinedIcon />}
+                                onClick={downloadImportTemplate}>
                                 Tải xuống
                             </Button>
                         </Stack>
@@ -131,7 +141,10 @@ export default function ImportExcel({ tieude, listOption, isOpen, onClose, downl
                                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                                         type={'file'}
                                                         onChange={handleFileSelect}></input>
-                                                    <Button variant="outlined" onClick={chooseFile} startIcon={<FileUploadOutlinedIcon />}>
+                                                    <Button
+                                                        variant="outlined"
+                                                        onClick={chooseFile}
+                                                        startIcon={<FileUploadOutlinedIcon />}>
                                                         Chọn file
                                                     </Button>
                                                 </Stack>

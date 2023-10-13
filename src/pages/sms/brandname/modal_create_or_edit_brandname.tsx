@@ -1,4 +1,16 @@
-import { Dialog, DialogTitle, DialogContent, Grid, DialogActions, TextField, Button, Stack, Typography, Checkbox, Radio } from '@mui/material';
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    Grid,
+    DialogActions,
+    TextField,
+    Button,
+    Stack,
+    Typography,
+    Checkbox,
+    Radio
+} from '@mui/material';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import utils from '../../../utils/utils';
 import { useEffect, useState } from 'react';
@@ -107,7 +119,11 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                     {utils.checkNull(idBrandname) ? 'Thêm' : 'Cập nhật'} brandname
                 </DialogTitle>
                 <DialogButtonClose onClose={onClose} />
-                <Formik initialValues={objBrandname} validationSchema={rules} onSubmit={saveBrandname} enableReinitialize>
+                <Formik
+                    initialValues={objBrandname}
+                    validationSchema={rules}
+                    onSubmit={saveBrandname}
+                    enableReinitialize>
                     {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }: any) => (
                         <Form>
                             <DialogContent sx={{ overflow: 'unset' }}>
@@ -148,7 +164,9 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                                             label={`Tên brandname *`}
                                             onChange={handleChange}
                                             value={values.brandname}
-                                            helperText={touched.brandname && errors.brandname && <span>{errors.brandname}</span>}
+                                            helperText={
+                                                touched.brandname && errors.brandname && <span>{errors.brandname}</span>
+                                            }
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -160,7 +178,10 @@ export default function ModalCreateOrEditBrandname({ isShow, idBrandname, onClos
                                             label={`Số điện thoại`}
                                             onChange={handleChange}
                                             value={values.sdtCuaHang}
-                                            helperText={touched.sdtCuaHang && errors.sdtCuaHang && <span>{errors.sdtCuaHang}</span>}
+                                            helperText={
+                                                touched.sdtCuaHang &&
+                                                errors.sdtCuaHang && <span>{errors.sdtCuaHang}</span>
+                                            }
                                         />
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>

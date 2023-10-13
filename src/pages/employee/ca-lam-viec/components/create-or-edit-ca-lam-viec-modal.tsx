@@ -72,7 +72,10 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                     filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
                                 }
                             }}>
-                            <CloseIcon style={{ float: 'right', height: '24px', cursor: 'pointer' }} onClick={onCancel} />
+                            <CloseIcon
+                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
+                                onClick={onCancel}
+                            />
                         </Box>
                     </div>
                 </DialogTitle>
@@ -97,7 +100,10 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 }
                                                 value={values.tenCa}
                                                 error={errors.tenCa && touched.tenCa ? true : false}
-                                                helperText={errors.tenCa && touched.tenCa && <span className="text-danger">{errors.tenCa}</span>}
+                                                helperText={
+                                                    errors.tenCa &&
+                                                    touched.tenCa && <span className="text-danger">{errors.tenCa}</span>
+                                                }
                                                 type="text"
                                                 name="tenCa"
                                                 size="small"
@@ -129,7 +135,12 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 name="gioVao"
                                                 value={values.gioVao}
                                                 error={errors.gioVao && touched.gioVao ? true : false}
-                                                helperText={errors.tenCa && touched.tenCa && <span className="text-danger">{errors.gioVao}</span>}
+                                                helperText={
+                                                    errors.tenCa &&
+                                                    touched.tenCa && (
+                                                        <span className="text-danger">{errors.gioVao}</span>
+                                                    )
+                                                }
                                                 onChange={handleChange}
                                                 InputLabelProps={{
                                                     shrink: true
@@ -152,7 +163,10 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                 name="gioRa"
                                                 value={values.gioRa}
                                                 error={errors.gioRa && touched.gioRa ? true : false}
-                                                helperText={errors.gioRa && touched.gioRa && <span className="text-danger">{errors.gioRa}</span>}
+                                                helperText={
+                                                    errors.gioRa &&
+                                                    touched.gioRa && <span className="text-danger">{errors.gioRa}</span>
+                                                }
                                                 onChange={handleChange}
                                                 InputLabelProps={{
                                                     shrink: true
@@ -213,7 +227,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                                     borderRadius: '8px'
                                                 }
                                             }}>
-                                            <TextField label={<Typography>Mô tả</Typography>} multiline maxRows={3} minRows={2}></TextField>
+                                            <TextField
+                                                label={<Typography>Mô tả</Typography>}
+                                                multiline
+                                                maxRows={3}
+                                                minRows={2}></TextField>
                                         </FormGroup>
                                     </Grid>
                                 </Grid>
@@ -236,7 +254,11 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         className="btn-cancel-dialog btn-outline-hover">
                                         Hủy
                                     </Button>
-                                    <Button sx={{ height: '40px' }} variant="contained" type="submit" className="btn-container-hover">
+                                    <Button
+                                        sx={{ height: '40px' }}
+                                        variant="contained"
+                                        type="submit"
+                                        className="btn-container-hover">
                                         Lưu
                                     </Button>
                                 </DialogActions>

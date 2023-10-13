@@ -24,7 +24,11 @@ const Booking: React.FC = () => {
     };
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }} paddingTop={'16px'}>
-            <Box sx={{ display: 'flex', flexDirection: 'row' }} paddingRight={'16px'} justifyContent={'space-between'} alignItems={'center'}>
+            <Box
+                sx={{ display: 'flex', flexDirection: 'row' }}
+                paddingRight={'16px'}
+                justifyContent={'space-between'}
+                alignItems={'center'}>
                 <Typography variant="h4" fontSize="18px" fontWeight="700">
                     Cài đặt booking
                 </Typography>
@@ -76,7 +80,9 @@ const Booking: React.FC = () => {
                         fullWidth
                         size="small"
                         defaultValue={`http://192.168.1.63:5100/booking/${
-                            Cookies.get('TenantName') == null || Cookies.get('TenantName') == undefined ? 'default' : Cookies.get('TenantName')
+                            Cookies.get('TenantName') == null || Cookies.get('TenantName') == undefined
+                                ? 'default'
+                                : Cookies.get('TenantName')
                         }`}
                         sx={{
                             '& input': { height: '31px' },
@@ -204,10 +210,22 @@ const Booking: React.FC = () => {
                                 fontSize: '13px'
                             }
                         }}>
-                        <FormControlLabel sx={{ width: '100%' }} control={<Checkbox />} label="Gửi thông báo đến nhân viên khách hàng đặt lịch" />
-                        <FormControlLabel sx={{ width: '100%' }} control={<Checkbox />} label="Gửi thông báo đến địa chỉ email" />
+                        <FormControlLabel
+                            sx={{ width: '100%' }}
+                            control={<Checkbox />}
+                            label="Gửi thông báo đến nhân viên khách hàng đặt lịch"
+                        />
+                        <FormControlLabel
+                            sx={{ width: '100%' }}
+                            control={<Checkbox />}
+                            label="Gửi thông báo đến địa chỉ email"
+                        />
                         <TextField fullWidth size="small" sx={{ '& input': { height: '31px' }, marginY: '8px' }} />
-                        <FormControlLabel sx={{ width: '100%' }} control={<Checkbox />} label="Các cuộc hẹn sẽ được tự động xác nhận" />
+                        <FormControlLabel
+                            sx={{ width: '100%' }}
+                            control={<Checkbox />}
+                            label="Các cuộc hẹn sẽ được tự động xác nhận"
+                        />
                     </Box>
                 </Box>
             </Box>

@@ -142,12 +142,19 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                     filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
                                 }
                             }}>
-                            <CloseIcon style={{ float: 'right', height: '24px', cursor: 'pointer' }} onClick={onClose} />
+                            <CloseIcon
+                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
+                                onClick={onClose}
+                            />
                         </Box>
                     </div>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={taiKhoanNganHang} validationSchema={validate} onSubmit={saveAccountBank} enableReinitialize>
+                    <Formik
+                        initialValues={taiKhoanNganHang}
+                        validationSchema={validate}
+                        onSubmit={saveAccountBank}
+                        enableReinitialize>
                         {(formik) => (
                             <>
                                 <Form>
@@ -245,7 +252,11 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                         </Grid>
                                     </Grid>
                                     <DialogActions>
-                                        <Button variant="contained" className="btn-container-hover" type="submit" disabled={formik.isSubmitting}>
+                                        <Button
+                                            variant="contained"
+                                            className="btn-container-hover"
+                                            type="submit"
+                                            disabled={formik.isSubmitting}>
                                             Lưu
                                         </Button>
 

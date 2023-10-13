@@ -408,7 +408,9 @@ export default function ModalEditChiTietGioHang({
                 handleChoseProduct={addNewChiTiet}
             />
             <Dialog open={isShow} onClose={handleClose} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ color: '#29303D', fontWeight: '700', fontSize: '24px' }}>Chỉnh sửa giỏ hàng</DialogTitle>
+                <DialogTitle sx={{ color: '#29303D', fontWeight: '700', fontSize: '24px' }}>
+                    Chỉnh sửa giỏ hàng
+                </DialogTitle>
                 <IconButton
                     onClick={closeModal}
                     sx={{
@@ -494,7 +496,12 @@ export default function ModalEditChiTietGioHang({
                                         sm={formType === 1 ? 3 : 1}
                                         md={formType === 1 ? 3 : 2}
                                         lg={formType === 1 ? 3 : 2}>
-                                        <Stack direction="row" spacing={1} justifyContent="end" height="100%" alignItems="center">
+                                        <Stack
+                                            direction="row"
+                                            spacing={1}
+                                            justifyContent="end"
+                                            height="100%"
+                                            alignItems="center">
                                             <Typography
                                                 sx={{
                                                     fontWeight: 500,
@@ -551,13 +558,18 @@ export default function ModalEditChiTietGioHang({
                                                 variant="body2">
                                                 Số lượng
                                             </Typography>
-                                            <Stack direction="row" spacing={1} sx={{ '& .btnIcon': { cursor: 'pointer' } }}>
+                                            <Stack
+                                                direction="row"
+                                                spacing={1}
+                                                sx={{ '& .btnIcon': { cursor: 'pointer' } }}>
                                                 <Remove className="btnIcon" onClick={() => giamSoLuong(ct.id)} />
                                                 <TextField
                                                     size="small"
                                                     fullWidth
                                                     value={ct.soLuong}
-                                                    onChange={(event: any) => handleChangeSoLuong(event, ct.id)}></TextField>
+                                                    onChange={(event: any) =>
+                                                        handleChangeSoLuong(event, ct.id)
+                                                    }></TextField>
                                                 <Add className="btnIcon" onClick={() => tangSoLuong(ct.id)} />
                                             </Stack>
                                         </Stack>
@@ -607,7 +619,9 @@ export default function ModalEditChiTietGioHang({
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) => changeGtriChietKhau(event.target.value, ct.id)}
+                                                onChange={(event: any) =>
+                                                    changeGtriChietKhau(event.target.value, ct.id)
+                                                }
                                             />
                                         </Stack>
                                     </Grid>
@@ -667,7 +681,8 @@ export default function ModalEditChiTietGioHang({
                                                             minWidth: 'unset',
                                                             flexGrow: '1',
                                                             fontSize: '12px',
-                                                            color: ct.ptChietKhau === item ? 'white' : 'var(--color-main)',
+                                                            color:
+                                                                ct.ptChietKhau === item ? 'white' : 'var(--color-main)',
                                                             paddingY: '8px ',
                                                             textAlign: 'center',
                                                             border: '1px solid var(--color-main)',
@@ -710,7 +725,9 @@ export default function ModalEditChiTietGioHang({
                                                         color: 'red',
                                                         display: ct?.tienChietKhau > 0 ? '' : 'none'
                                                     }}>
-                                                    <span>-{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}</span>
+                                                    <span>
+                                                        -{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau)}
+                                                    </span>
                                                 </Stack>
                                             </Stack>
 
@@ -721,7 +738,9 @@ export default function ModalEditChiTietGioHang({
                                                 decimalSeparator=","
                                                 thousandSeparator="."
                                                 customInput={TextField}
-                                                onChange={(event: any) => changeGtriChietKhau(event.target.value, ct.id)}
+                                                onChange={(event: any) =>
+                                                    changeGtriChietKhau(event.target.value, ct.id)
+                                                }
                                             />
                                         </Stack>
                                     </Grid>

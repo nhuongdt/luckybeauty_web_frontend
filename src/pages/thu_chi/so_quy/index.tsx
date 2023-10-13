@@ -178,7 +178,10 @@ const PageSoQuy = ({ xx }: any) => {
                     ...pageDataSoQuy,
                     items: pageDataSoQuy.items.filter((x: any) => !rowSelectionModel.toString().includes(x.id)),
                     totalCount: pageDataSoQuy.totalCount - rowSelectionModel.length,
-                    totalPage: utils.getTotalPage(pageDataSoQuy.totalCount - rowSelectionModel.length, paramSearch.pageSize)
+                    totalPage: utils.getTotalPage(
+                        pageDataSoQuy.totalCount - rowSelectionModel.length,
+                        paramSearch.pageSize
+                    )
                 });
                 setRowSelectionModel([]);
             } else {
@@ -404,8 +407,18 @@ const PageSoQuy = ({ xx }: any) => {
                     sx={{
                         padding: '4px 8px',
                         borderRadius: '100px',
-                        backgroundColor: params.value === 'Đã thanh toán' ? '#E8FFF3' : params.value === 'Chưa thanh toán' ? '#FFF8DD' : '#FFF5F8',
-                        color: params.value === 'Đã thanh toán' ? '#50CD89' : params.value === 'Chưa thanh toán' ? '#FF9900' : '#F1416C',
+                        backgroundColor:
+                            params.value === 'Đã thanh toán'
+                                ? '#E8FFF3'
+                                : params.value === 'Chưa thanh toán'
+                                ? '#FFF8DD'
+                                : '#FFF5F8',
+                        color:
+                            params.value === 'Đã thanh toán'
+                                ? '#50CD89'
+                                : params.value === 'Chưa thanh toán'
+                                ? '#FF9900'
+                                : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -420,7 +433,9 @@ const PageSoQuy = ({ xx }: any) => {
             width: 48,
             flex: 0.4,
             disableColumnMenu: true,
-            renderCell: (params) => <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />,
+            renderCell: (params) => (
+                <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />
+            ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
@@ -520,12 +535,16 @@ const PageSoQuy = ({ xx }: any) => {
                                 }}>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.fromDate}
-                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, fromDate: newVal })}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, fromDate: newVal })
+                                    }
                                 />
                                 <Box>-</Box>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.toDate}
-                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, toDate: newVal })}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, toDate: newVal })
+                                    }
                                 />
                             </Box>
                             <Button

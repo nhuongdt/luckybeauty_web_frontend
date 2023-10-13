@@ -208,8 +208,11 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                             minWidth: 'unset',
                             color: 'var(--font-color-main)',
                             fontSize: '12px',
-                            border: `1px solid ${paramSearch.trangThaiBook === item.id ? 'transparent' : '#E6E1E6'}!important`,
-                            bgcolor: paramSearch.trangThaiBook === item.id ? 'var(--color-bg)!important' : '#fff!important'
+                            border: `1px solid ${
+                                paramSearch.trangThaiBook === item.id ? 'transparent' : '#E6E1E6'
+                            }!important`,
+                            bgcolor:
+                                paramSearch.trangThaiBook === item.id ? 'var(--color-bg)!important' : '#fff!important'
                         }}>
                         {item.text}
                     </Button>
@@ -243,10 +246,15 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                 }}>
                                 <Stack spacing={2} direction={'row'} sx={{ width: '100%' }} title={item.tenKhachHang}>
                                     {utils.checkNull(item.avatar) ? (
-                                        <BadgeFistCharOfName firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')} />
+                                        <BadgeFistCharOfName
+                                            firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')}
+                                        />
                                     ) : (
                                         // <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
-                                        <img src={item.avatar} style={{ width: 40, height: 40, borderRadius: '100%' }} />
+                                        <img
+                                            src={item.avatar}
+                                            style={{ width: 40, height: 40, borderRadius: '100%' }}
+                                        />
                                     )}
                                     <Stack sx={{ width: 'calc(100% - 40px)' }} justifyContent={'space-evenly'}>
                                         <Typography
@@ -273,7 +281,11 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                         sx={{
                                             justifyContent: 'space-between'
                                         }}>
-                                        <Typography maxWidth={'70%'} title={ct.tenHangHoa} variant="body2" className="lableOverflow">
+                                        <Typography
+                                            maxWidth={'70%'}
+                                            title={ct.tenHangHoa}
+                                            variant="body2"
+                                            className="lableOverflow">
                                             {ct.tenHangHoa}
                                         </Typography>
 
@@ -295,7 +307,10 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                     <Box marginRight="4px">
                                         <ClockIcon />
                                     </Box>
-                                    <Typography variant="caption">{format(new Date(item.startTime), 'HH:mm')}</Typography> -{' '}
+                                    <Typography variant="caption">
+                                        {format(new Date(item.startTime), 'HH:mm')}
+                                    </Typography>{' '}
+                                    -{' '}
                                     <Typography variant="caption">{format(new Date(item.endTime), 'HH:mm')}</Typography>
                                 </Stack>
                                 <Box

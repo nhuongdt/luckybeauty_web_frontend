@@ -123,9 +123,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     ]);
 
     // used to check update infor cthd
-    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(new PageHoaDonChiTietDto({ id: '', expanded: false }));
+    const [cthdDoing, setCTHDDoing] = useState<PageHoaDonChiTietDto>(
+        new PageHoaDonChiTietDto({ id: '', expanded: false })
+    );
 
-    const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(new PropToChildMauIn({ contentHtml: '', isPrint: false }));
+    const [propMauIn, setPropMauIn] = useState<PropToChildMauIn>(
+        new PropToChildMauIn({ contentHtml: '', isPrint: false })
+    );
     const [allNhanVien, setAllNhanVien] = useState<NhanSuItemDto[]>([]);
     const [propNVThucHien, setPropNVThucHien] = useState<PropModal>(new PropModal({ isShow: false }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
@@ -428,7 +432,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 if (x.id === cthdDoing.id) {
                     return {
                         ...x,
-                        tienChietKhau: (x.ptChietKhau ?? 0) > 0 ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100 : x.tienChietKhau,
+                        tienChietKhau:
+                            (x.ptChietKhau ?? 0) > 0 ? (x.donGiaTruocCK * (x.ptChietKhau ?? 0)) / 100 : x.tienChietKhau,
                         tienThue: (x.ptThue ?? 0) > 0 ? ((x.donGiaSauCK ?? 0) * (x.ptThue ?? 0)) / 100 : x.tienThue
                     };
                 } else {
@@ -528,7 +533,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             .where('idCheckIn')
             .equals(triggerAddCheckIn.id as string)
             .delete()
-            .then((deleteCount: any) => console.log('idcheckindelete ', triggerAddCheckIn.id, 'deletecount', deleteCount));
+            .then((deleteCount: any) =>
+                console.log('idcheckindelete ', triggerAddCheckIn.id, 'deletecount', deleteCount)
+            );
     };
 
     // customer: add/remove
@@ -778,7 +785,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setTienThuaTraKhach(tienKhachTra - hoadon?.tongThanhToan);
     };
 
-    const editInforHoaDon_atPayment = (ptGiamGiaHD: number, tongGiamGiaHD: number, khachPhaiTra: number, ghichuHD: string) => {
+    const editInforHoaDon_atPayment = (
+        ptGiamGiaHD: number,
+        tongGiamGiaHD: number,
+        khachPhaiTra: number,
+        ghichuHD: string
+    ) => {
         setHoaDon({
             ...hoadon,
             pTGiamGiaHD: ptGiamGiaHD,
@@ -1099,7 +1111,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 }}>
                                 <Box>
                                     <Box display="flex" justifyContent="space-between" alignItems="center">
-                                        <Typography variant="h3" fontSize="16px" color="#4C4B4C" fontWeight="700" onClick={() => choseLoaiHang(2)}>
+                                        <Typography
+                                            variant="h3"
+                                            fontSize="16px"
+                                            color="#4C4B4C"
+                                            fontWeight="700"
+                                            onClick={() => choseLoaiHang(2)}>
                                             Nhóm dịch vụ
                                         </Typography>
                                         {/* {isScrollable && (
@@ -1388,7 +1405,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         backgroundColor: CoditionLayout ? 'transparent' : '#fff',
                                         borderRadius: '8px',
                                         height:
-                                            CoditionLayout && innerHeight > 600 ? '75vh' : CoditionLayout && innerHeight < 605 ? '32vh' : '88.5vh',
+                                            CoditionLayout && innerHeight > 600
+                                                ? '75vh'
+                                                : CoditionLayout && innerHeight < 605
+                                                ? '32vh'
+                                                : '88.5vh',
                                         overflowX: 'hidden',
                                         overflowY: 'auto',
                                         scrollBehavior: 'smooth',
@@ -1405,13 +1426,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     }}>
                                     {listProduct.map((nhom: any, index: any) => (
                                         <Box key={index} id={nhom.idNhomHangHoa}>
-                                            <Typography variant="h4" fontSize="16px" color="#000" pt="5px" fontWeight="700" marginBottom="11px">
+                                            <Typography
+                                                variant="h4"
+                                                fontSize="16px"
+                                                color="#000"
+                                                pt="5px"
+                                                fontWeight="700"
+                                                marginBottom="11px">
                                                 {nhom.tenNhomHang}
                                             </Typography>
 
                                             <Grid container spacing={1.5}>
                                                 {nhom.hangHoas.map((item: any) => (
-                                                    <Grid item xs={6} sm={6} md={CoditionLayout ? 4 : 6} lg={CoditionLayout ? 3 : 4} key={item.id}>
+                                                    <Grid
+                                                        item
+                                                        xs={6}
+                                                        sm={6}
+                                                        md={CoditionLayout ? 4 : 6}
+                                                        lg={CoditionLayout ? 3 : 4}
+                                                        key={item.id}>
                                                         <Stack
                                                             spacing={2}
                                                             height={'100%'}
@@ -1524,7 +1557,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                 {utils.checkNull(cusChosing?.id) || cusChosing?.id === Guid.EMPTY ? (
                                     <Avatar sx={{ width: 40, height: 40 }} />
                                 ) : utils.checkNull(cusChosing?.avatar) ? (
-                                    <BadgeFistCharOfName firstChar={utils.getFirstLetter(cusChosing?.tenKhachHang ?? '')} />
+                                    <BadgeFistCharOfName
+                                        firstChar={utils.getFirstLetter(cusChosing?.tenKhachHang ?? '')}
+                                    />
                                 ) : (
                                     <Avatar sx={{ width: 40, height: 40 }} src={cusChosing?.avatar} />
                                 )}
@@ -1596,7 +1631,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                             {hoaDonChiTiet?.map((ct: PageHoaDonChiTietDto, index) => (
                                 <Box
                                     padding={
-                                        ct?.nhanVienThucHien !== undefined && (ct?.nhanVienThucHien.length > 0 || (ct?.tienChietKhau ?? 0) > 0)
+                                        ct?.nhanVienThucHien !== undefined &&
+                                        (ct?.nhanVienThucHien.length > 0 || (ct?.tienChietKhau ?? 0) > 0)
                                             ? '8px 0px'
                                             : '16px 0px'
                                     }
@@ -1635,9 +1671,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                     color: '#4C4B4C',
                                                                     alignItems: 'center',
                                                                     maxWidth:
-                                                                        ct.nhanVienThucHien !== undefined && ct.nhanVienThucHien.length === 1
+                                                                        ct.nhanVienThucHien !== undefined &&
+                                                                        ct.nhanVienThucHien.length === 1
                                                                             ? '100%'
-                                                                            : ct.nhanVienThucHien !== undefined && ct.nhanVienThucHien.length > 2
+                                                                            : ct.nhanVienThucHien !== undefined &&
+                                                                              ct.nhanVienThucHien.length > 2
                                                                             ? 'calc(50% - 23px)'
                                                                             : 'calc(50% - 4px)',
                                                                     backgroundColor: 'var(--color-bg)',
@@ -1725,20 +1763,30 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                 </span>
                                                             </Stack>
                                                             <Box>
-                                                                <Box component="span" onClick={() => showPopChiTietGioHang(ct)} className="price">
-                                                                    {Intl.NumberFormat('vi-VN').format(ct.donGiaTruocCK)}
+                                                                <Box
+                                                                    component="span"
+                                                                    onClick={() => showPopChiTietGioHang(ct)}
+                                                                    className="price">
+                                                                    {Intl.NumberFormat('vi-VN').format(
+                                                                        ct.donGiaTruocCK
+                                                                    )}
                                                                 </Box>
-                                                                {ct?.tienChietKhau !== undefined && ct?.tienChietKhau > 0 && (
-                                                                    <Typography
-                                                                        textAlign="center"
-                                                                        variant="body1"
-                                                                        color="#8492AE"
-                                                                        fontSize="10px"
-                                                                        fontStyle="italic">
-                                                                        <span>Giảm</span>{' '}
-                                                                        <span>{new Intl.NumberFormat('vi-VN').format(ct?.tienChietKhau ?? 0)}</span>
-                                                                    </Typography>
-                                                                )}
+                                                                {ct?.tienChietKhau !== undefined &&
+                                                                    ct?.tienChietKhau > 0 && (
+                                                                        <Typography
+                                                                            textAlign="center"
+                                                                            variant="body1"
+                                                                            color="#8492AE"
+                                                                            fontSize="10px"
+                                                                            fontStyle="italic">
+                                                                            <span>Giảm</span>{' '}
+                                                                            <span>
+                                                                                {new Intl.NumberFormat('vi-VN').format(
+                                                                                    ct?.tienChietKhau ?? 0
+                                                                                )}
+                                                                            </span>
+                                                                        </Typography>
+                                                                    )}
                                                             </Box>
                                                         </Box>
                                                     </Grid>
@@ -1754,7 +1802,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                                     fontWeight: 500,
                                                                     fontSize: '14px'
                                                                 }}>
-                                                                {Intl.NumberFormat('vi-VN').format(ct?.thanhTienSauCK ?? 0)}
+                                                                {Intl.NumberFormat('vi-VN').format(
+                                                                    ct?.thanhTienSauCK ?? 0
+                                                                )}
                                                             </span>
                                                             <Button
                                                                 sx={{
@@ -1846,7 +1896,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             {Intl.NumberFormat('vi-VN').format(hoadon?.tongChietKhauHangHoa)}
                                         </Typography>
                                     </Box>
-                                    <Box display="none" justifyContent="space-between" borderBottom="1px solid #CBADC2" pb="8px">
+                                    <Box
+                                        display="none"
+                                        justifyContent="space-between"
+                                        borderBottom="1px solid #CBADC2"
+                                        pb="8px">
                                         <Typography variant="h6" fontSize="14px" color="#3B4758">
                                             Tổng giảm giá
                                         </Typography>
@@ -1856,7 +1910,11 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     </Box>
                                     <Grid container justifyContent="space-between">
                                         <Grid item xs="auto" sx={{ display: 'flex', alignItems: 'center' }}>
-                                            <Typography variant="body1" fontSize="14px" color="#3D475C" fontWeight="500">
+                                            <Typography
+                                                variant="body1"
+                                                fontSize="14px"
+                                                color="#3D475C"
+                                                fontWeight="500">
                                                 Tiền khách trả
                                             </Typography>
                                         </Grid>
@@ -1878,8 +1936,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     }}>
                                                     {lstQuyCT.map((ctQuy: QuyChiTietDto, index3: number) => (
                                                         <Box key={index3}>
-                                                            <Box className="label item">{ctQuy.sHinhThucThanhToan}:</Box>
-                                                            <Box className="value item">{new Intl.NumberFormat('vi-VN').format(ctQuy.tienThu)}</Box>
+                                                            <Box className="label item">
+                                                                {ctQuy.sHinhThucThanhToan}:
+                                                            </Box>
+                                                            <Box className="value item">
+                                                                {new Intl.NumberFormat('vi-VN').format(ctQuy.tienThu)}
+                                                            </Box>
                                                         </Box>
                                                     ))}
                                                 </Box>
@@ -1896,7 +1958,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                             }}
                                                             key={index}
                                                             label={item?.text}
-                                                            checked={lstQuyCT.length == 1 && lstQuyCT[0].hinhThucThanhToan === item.value}
+                                                            checked={
+                                                                lstQuyCT.length == 1 &&
+                                                                lstQuyCT[0].hinhThucThanhToan === item.value
+                                                            }
                                                             onChange={() => {
                                                                 changeHinhThucThanhToan(item);
                                                             }}
@@ -1936,7 +2001,10 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                         </Grid>
                                     </Grid>
 
-                                    <Box display={tienThuaTraKhach != 0 ? 'flex' : 'none'} justifyContent="space-between" alignItems="center">
+                                    <Box
+                                        display={tienThuaTraKhach != 0 ? 'flex' : 'none'}
+                                        justifyContent="space-between"
+                                        alignItems="center">
                                         <Typography variant="h5" fontWeight="400" fontSize="14px" color="#3B4758">
                                             {tienThuaTraKhach > 0 ? 'Tiền thừa' : 'Tiên khách thiếu'}
                                         </Typography>

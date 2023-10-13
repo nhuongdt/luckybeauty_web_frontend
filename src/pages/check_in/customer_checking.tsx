@@ -37,7 +37,9 @@ const shortNameCus = createTheme({
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const history = useNavigate();
 
-    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY }));
+    const [cusChecking, setCusChecking] = useState<PageKhachHangCheckInDto>(
+        new PageKhachHangCheckInDto({ idKhachHang: Guid.EMPTY })
+    );
     const [listCusChecking, setListCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
 
     const [triggerAddCheckIn, setTriggerAddCheckIn] = useState<PropModal>(new PropModal({ isShow: false }));
@@ -129,7 +131,12 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                         }}>
                         Thêm khách
                     </Button> */}
-                    <Button variant="contained" className="btnIconText" startIcon={<Add />} sx={{ bgcolor: '#7c3367' }} onClick={handleToggle}>
+                    <Button
+                        variant="contained"
+                        className="btnIconText"
+                        startIcon={<Add />}
+                        sx={{ bgcolor: '#7c3367' }}
+                        onClick={handleToggle}>
                         Thêm khách
                     </Button>
                 </Stack>

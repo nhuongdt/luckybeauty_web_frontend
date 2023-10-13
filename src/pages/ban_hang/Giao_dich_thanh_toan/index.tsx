@@ -1,5 +1,16 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import { Box, Typography, Grid, TextField, IconButton, Button, SelectChangeEvent, Stack, Select, MenuItem } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Grid,
+    TextField,
+    IconButton,
+    Button,
+    SelectChangeEvent,
+    Stack,
+    Select,
+    MenuItem
+} from '@mui/material';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { Search } from '@mui/icons-material';
@@ -108,7 +119,13 @@ const GiaoDichThanhToan: React.FC = () => {
             return;
         }
         GetListHoaDon();
-    }, [paramSearch.currentPage, paramSearch.pageSize, paramSearch.fromDate, paramSearch.toDate, paramSearch.idChiNhanhs]);
+    }, [
+        paramSearch.currentPage,
+        paramSearch.pageSize,
+        paramSearch.fromDate,
+        paramSearch.toDate,
+        paramSearch.idChiNhanhs
+    ]);
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
@@ -286,7 +303,9 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 130,
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
+            )
         },
         {
             field: 'tenKhachHang',
@@ -308,7 +327,9 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         // {
         //     field: 'tongGiamGiaHD',
@@ -338,7 +359,9 @@ const GiaoDichThanhToan: React.FC = () => {
             minWidth: 118,
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'daThanhToan',
@@ -381,8 +404,10 @@ const GiaoDichThanhToan: React.FC = () => {
                     sx={{
                         padding: '4px 8px',
                         borderRadius: '100px',
-                        backgroundColor: params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
-                        color: params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
+                        backgroundColor:
+                            params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                        color:
+                            params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -395,7 +420,13 @@ const GiaoDichThanhToan: React.FC = () => {
     return (
         <>
             <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
-                <ThongTinHoaDon idHoaDon={idHoadonChosing} hoadon={hoadon} open={openDetail} handleGotoBack={childGotoBack} listMauIn={lstMauIn} />
+                <ThongTinHoaDon
+                    idHoaDon={idHoadonChosing}
+                    hoadon={hoadon}
+                    open={openDetail}
+                    handleGotoBack={childGotoBack}
+                    listMauIn={lstMauIn}
+                />
             </ChiNhanhContextbyUser.Provider>
 
             <SnackbarAlert
@@ -507,14 +538,18 @@ const GiaoDichThanhToan: React.FC = () => {
                                 <Box>
                                     <DatePickerCustom
                                         defaultVal={paramSearch.fromDate}
-                                        handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, fromDate: newVal })}
+                                        handleChangeDate={(newVal: string) =>
+                                            setParamSearch({ ...paramSearch, fromDate: newVal })
+                                        }
                                     />
                                 </Box>
                                 <Box sx={{ textAlign: 'center', flexBasis: '30%' }}>-</Box>
                                 <Box className="date2">
                                     <DatePickerCustom
                                         defaultVal={paramSearch.toDate}
-                                        handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, toDate: newVal })}
+                                        handleChangeDate={(newVal: string) =>
+                                            setParamSearch({ ...paramSearch, toDate: newVal })
+                                        }
                                     />
                                 </Box>
                             </Box>

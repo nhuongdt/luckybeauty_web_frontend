@@ -1,5 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Grid, Box, Typography, Button, Tabs, Tab, TextField, Select, MenuItem, Dialog, Link, IconButton, DialogContent } from '@mui/material';
+import {
+    Grid,
+    Box,
+    Typography,
+    Button,
+    Tabs,
+    Tab,
+    TextField,
+    Select,
+    MenuItem,
+    Dialog,
+    Link,
+    IconButton,
+    DialogContent
+} from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import AddLogoIcon from '../../../images/add-logo.svg';
@@ -237,7 +251,9 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                 <ModalEditChiTietGioHang
                     formType={0}
                     isShow={isShowEditGioHang}
-                    hoadonChiTiet={idCTHDChosing === '' ? chitietHoaDon : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)}
+                    hoadonChiTiet={
+                        idCTHDChosing === '' ? chitietHoaDon : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)
+                    }
                     handleSave={AgreeGioHang}
                     handleClose={() => setIsShowEditGioHang(false)}
                 />
@@ -348,7 +364,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             }}
                                         />
                                     ) : (
-                                        <img width={100} style={{ backgroundColor: 'var(--color-bg)' }} src={hoadonChosed?.avatar} alt="avatar" />
+                                        <img
+                                            width={100}
+                                            style={{ backgroundColor: 'var(--color-bg)' }}
+                                            src={hoadonChosed?.avatar}
+                                            alt="avatar"
+                                        />
                                     )}
                                 </Box>
                             </Grid>
@@ -375,9 +396,18 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         sx={{
                                             padding: '2px 3px',
                                             borderRadius: '100px',
-                                            color: hoadonChosed?.trangThai === 3 ? '#50CD89' : hoadonChosed?.trangThai === 1 ? '#FF9900' : '#F1416C',
+                                            color:
+                                                hoadonChosed?.trangThai === 3
+                                                    ? '#50CD89'
+                                                    : hoadonChosed?.trangThai === 1
+                                                    ? '#FF9900'
+                                                    : '#F1416C',
                                             bgcolor:
-                                                hoadonChosed?.trangThai === 3 ? '#E8FFF3' : hoadonChosed?.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                                                hoadonChosed?.trangThai === 3
+                                                    ? '#E8FFF3'
+                                                    : hoadonChosed?.trangThai === 1
+                                                    ? '#FFF8DD'
+                                                    : '#FFF5F8',
                                             width: 'fit-content',
                                             fontSize: '12px',
                                             height: 'fit-content'
@@ -394,7 +424,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                     }}
                                     spacing="2.7vw">
                                     <Grid item xs={3}>
-                                        <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
                                             Mã hóa đơn
                                         </Typography>
                                         <TextField
@@ -411,7 +446,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         />
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
                                             Ngày lập
                                         </Typography>
                                         <ThemeProvider theme={themOutlineInput}>
@@ -423,7 +463,12 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         </ThemeProvider>
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                        <Typography
+                                            variant="h5"
+                                            fontSize="12px"
+                                            color="#999699"
+                                            fontWeight="400"
+                                            height={24}>
                                             Chi nhánh
                                         </Typography>
                                         <ThemeProvider theme={themOutlineInput}>
@@ -537,7 +582,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         onClick={showModalEditGioHang}>
                                         Chỉnh sửa
                                     </Button>
-                                    <Button variant="contained" sx={{ color: '#fff' }} className="btn-container-hover" onClick={updateHoaDon}>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ color: '#fff' }}
+                                        className="btn-container-hover"
+                                        onClick={updateHoaDon}>
                                         Lưu
                                     </Button>
 

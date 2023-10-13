@@ -224,7 +224,9 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/ban_hang/Giao_dich_thanh_toan/index'))
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/index')
+                            )
                         }
                     ],
                     showInMenu: true,

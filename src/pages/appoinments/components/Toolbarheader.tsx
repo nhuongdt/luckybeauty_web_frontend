@@ -31,7 +31,11 @@ const ToolbarHeader: React.FC<{
     handleNext: () => void;
 }> = ({ initialView, initialDate, handleChangeViewType, toDayClick, handleNext, handlePrevious }: any) => {
     return (
-        <Grid container justifyContent="space-between" alignItems="center" sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
+        <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ paddingTop: '1.5277777777777777vw', marginBottom: '10px' }}>
             <Grid item xs={12} sm={2}>
                 <Autocomplete
                     options={suggestStore.suggestKyThuatVien || []}
@@ -80,7 +84,11 @@ const ToolbarHeader: React.FC<{
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}>
-                    <Button variant="outlined" sx={{ mr: '16px' }} className="btn-outline-hover" onClick={handlePrevious}>
+                    <Button
+                        variant="outlined"
+                        sx={{ mr: '16px' }}
+                        className="btn-outline-hover"
+                        onClick={handlePrevious}>
                         <ChevronLeftIcon />
                     </Button>
                     <Button

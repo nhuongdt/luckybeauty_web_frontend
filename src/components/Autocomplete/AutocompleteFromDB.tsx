@@ -10,7 +10,14 @@ import { PagedRequestDto } from '../../services/dto/pagedRequestDto';
 import BrandnameService from '../../services/sms/brandname/BrandnameService';
 import tenantService from '../../services/tenant/tenantService';
 
-export default function AutocompleteFromDB({ type, idChosed, handleChoseItem, label, helperText = '', err = false }: any) {
+export default function AutocompleteFromDB({
+    type,
+    idChosed,
+    handleChoseItem,
+    label,
+    helperText = '',
+    err = false
+}: any) {
     const [lstOption, setLstOption] = useState<IDataAutocomplete[]>([]);
     const [itemChosed, setItemChosed] = useState<IDataAutocomplete | null>(null);
     const [paramSearch, setParamSearch] = useState<PagedRequestDto>({
@@ -131,7 +138,9 @@ export default function AutocompleteFromDB({ type, idChosed, handleChoseItem, la
                 //isOptionEqualToValue={(option, value) => option.id === value.id}// bi douple 2 dong neu them dong nay
                 options={lstOption}
                 getOptionLabel={(option: any) => (option.text1 ? option.text1 : '')}
-                renderInput={(params) => <TextField {...params} label={label ?? 'Tìm kiếm'} helperText={helperText} error={err} />}
+                renderInput={(params) => (
+                    <TextField {...params} label={label ?? 'Tìm kiếm'} helperText={helperText} error={err} />
+                )}
                 renderOption={(props, option) => {
                     return (
                         <li

@@ -130,7 +130,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         </label>
                                                     }
                                                     error={touched.tenancyName && errors.tenancyName ? true : false}
-                                                    helperText={touched.tenancyName && errors.tenancyName && <span>{errors.tenancyName}</span>}
+                                                    helperText={
+                                                        touched.tenancyName &&
+                                                        errors.tenancyName && <span>{errors.tenancyName}</span>
+                                                    }
                                                     type="text"
                                                     size="small"
                                                     name="tenancyName"
@@ -154,7 +157,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         </label>
                                                     }
                                                     error={touched.name && errors.name ? true : false}
-                                                    helperText={touched.name && errors.name && <span>{errors.name}</span>}
+                                                    helperText={
+                                                        touched.name && errors.name && <span>{errors.name}</span>
+                                                    }
                                                     type="text"
                                                     size="small"
                                                     name="name"
@@ -179,10 +184,16 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                                     </span>
                                                                 </label>
                                                             }
-                                                            error={touched.adminEmailAddress && errors.adminEmailAddress ? true : false}
+                                                            error={
+                                                                touched.adminEmailAddress && errors.adminEmailAddress
+                                                                    ? true
+                                                                    : false
+                                                            }
                                                             helperText={
                                                                 touched.adminEmailAddress &&
-                                                                errors.adminEmailAddress && <div>{errors.adminEmailAddress}</div>
+                                                                errors.adminEmailAddress && (
+                                                                    <div>{errors.adminEmailAddress}</div>
+                                                                )
                                                             }
                                                             type="email"
                                                             size="small"
@@ -222,10 +233,16 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 <FormGroup>
                                                     <TextField
                                                         label={<label htmlFor="chuoi-ket-noi">Chuỗi kết nối</label>}
-                                                        error={touched.connectionString && errors.connectionString ? true : false}
+                                                        error={
+                                                            touched.connectionString && errors.connectionString
+                                                                ? true
+                                                                : false
+                                                        }
                                                         helperText={
                                                             touched.connectionString &&
-                                                            errors.connectionString && <div>{errors.connectionString}</div>
+                                                            errors.connectionString && (
+                                                                <div>{errors.connectionString}</div>
+                                                            )
                                                         }
                                                         id="chuoi-ket-noi"
                                                         type="text"

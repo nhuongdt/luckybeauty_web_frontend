@@ -105,7 +105,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         }
     };
     handleMoveItemSelectToRight = () => {
-        const newListEmployee = this.state.listEmployee.filter((employee) => !this.state.listIdEmployeeAdd.includes(employee));
+        const newListEmployee = this.state.listEmployee.filter(
+            (employee) => !this.state.listIdEmployeeAdd.includes(employee)
+        );
         this.setState({
             listEmployeeSelected: [...this.state.listEmployeeSelected, ...this.state.listIdEmployeeAdd],
             listIdEmployeeAdd: [],
@@ -114,7 +116,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
     };
     handleMoveItemSelectToLeft = () => {
         const newListEmployee = [...this.state.listEmployee, ...this.state.listIdEmployeeRemove];
-        const newListEmployeeSelected = this.state.listEmployeeSelected.filter((employee) => !this.state.listIdEmployeeRemove.includes(employee));
+        const newListEmployeeSelected = this.state.listEmployeeSelected.filter(
+            (employee) => !this.state.listIdEmployeeRemove.includes(employee)
+        );
         this.setState({
             listEmployeeSelected: newListEmployeeSelected,
             listIdEmployeeRemove: [],
@@ -182,14 +186,17 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         const filteredChucVu =
             this.state.chucVuSearchValue === ''
                 ? suggestStore.suggestChucVu
-                : suggestStore.suggestChucVu?.filter((item) => item.tenChucVu.toLowerCase().includes(this.state.chucVuSearchValue.toLowerCase()));
+                : suggestStore.suggestChucVu?.filter((item) =>
+                      item.tenChucVu.toLowerCase().includes(this.state.chucVuSearchValue.toLowerCase())
+                  );
         const filteredNhanVien = Array.isArray(this.state.listEmployee)
             ? this.state.listEmployee.filter((item) => {
                   const selectedChucVu = filteredChucVu.find((x) => x.idChucVu === this.state.selectedChucVuId);
 
                   // Add null/undefined checks to avoid 'Cannot read properties of undefined'
                   return (
-                      (this.state.selectedChucVuId === '' || (selectedChucVu && selectedChucVu.tenChucVu === item.chucVu)) &&
+                      (this.state.selectedChucVuId === '' ||
+                          (selectedChucVu && selectedChucVu.tenChucVu === item.chucVu)) &&
                       item.tenNhanVien &&
                       item.tenNhanVien.toLowerCase().includes(this.state.nhanVienSearchValue.toLowerCase())
                   );
@@ -198,7 +205,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
 
         const filteredSelectedNhanVien = Array.isArray(this.state.listEmployeeSelected)
             ? this.state.listEmployeeSelected.filter(
-                  (item) => item.tenNhanVien && item.tenNhanVien.toLowerCase().includes(this.state.nhanVienSelectedSearchValue.toLowerCase())
+                  (item) =>
+                      item.tenNhanVien &&
+                      item.tenNhanVien.toLowerCase().includes(this.state.nhanVienSelectedSearchValue.toLowerCase())
               )
             : [];
 
@@ -237,7 +246,11 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                             values.idNhanViens = this.state.listEmployeeSelected.map((item) => {
                                 return item.id;
                             });
-                            if (values.chungTuApDung == '' || values.chungTuApDung == null || values.chungTuApDung == undefined) {
+                            if (
+                                values.chungTuApDung == '' ||
+                                values.chungTuApDung == null ||
+                                values.chungTuApDung == undefined
+                            ) {
                                 formikHepler.setFieldError('chungTuApDung', 'Chứng từ áp dụng không được để trống');
                                 this.setState({ tabIndex: '1' });
                             } else if (values.idNhanViens.length == 0) {
@@ -271,7 +284,11 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 <TabContext value={this.state.tabIndex}>
                                     <TabList onChange={this.handleTabChange}>
                                         <Tab label="Thông tin" value="1" sx={{ textTransform: 'unset!important' }} />
-                                        <Tab label="Nhân viên áp dụng" value="2" sx={{ textTransform: 'unset!important' }} />
+                                        <Tab
+                                            label="Nhân viên áp dụng"
+                                            value="2"
+                                            sx={{ textTransform: 'unset!important' }}
+                                        />
                                     </TabList>
                                     <TabPanel value="1" sx={{ padding: '16px' }}>
                                         <Grid container spacing={4} rowSpacing={2}>
@@ -281,8 +298,16 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     value={values?.loaiChietKhau ?? 1}
                                                     onChange={handleChange}
                                                     sx={{ display: 'flex', flexDirection: 'row' }}>
-                                                    <FormControlLabel value={1} control={<Radio />} label="Theo % thực thu" />
-                                                    <FormControlLabel value={2} control={<Radio />} label=" Theo % doanh thu" />
+                                                    <FormControlLabel
+                                                        value={1}
+                                                        control={<Radio />}
+                                                        label="Theo % thực thu"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={2}
+                                                        control={<Radio />}
+                                                        label=" Theo % doanh thu"
+                                                    />
                                                     <FormControlLabel value={3} control={<Radio />} label="Theo VNĐ" />
                                                 </RadioGroup>
                                                 {errors.loaiChietKhau && touched.loaiChietKhau && (
@@ -297,10 +322,16 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     name="giaTriChietKhau"
                                                     thousandSeparator={'.'}
                                                     decimalSeparator={','}
-                                                    error={errors.giaTriChietKhau && touched.giaTriChietKhau ? true : false}
+                                                    error={
+                                                        errors.giaTriChietKhau && touched.giaTriChietKhau ? true : false
+                                                    }
                                                     helperText={
                                                         errors.giaTriChietKhau &&
-                                                        touched.giaTriChietKhau && <span className="text-danger">{errors.giaTriChietKhau}</span>
+                                                        touched.giaTriChietKhau && (
+                                                            <span className="text-danger">
+                                                                {errors.giaTriChietKhau}
+                                                            </span>
+                                                        )
                                                     }
                                                     value={values?.giaTriChietKhau}
                                                     onChange={(e) => {
@@ -327,8 +358,16 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
-                                                                label={<Typography variant="subtitle2">Chứng từ áp dụng</Typography>}
-                                                                error={errors.chungTuApDung && touched.chungTuApDung ? true : false}
+                                                                label={
+                                                                    <Typography variant="subtitle2">
+                                                                        Chứng từ áp dụng
+                                                                    </Typography>
+                                                                }
+                                                                error={
+                                                                    errors.chungTuApDung && touched.chungTuApDung
+                                                                        ? true
+                                                                        : false
+                                                                }
                                                                 fullWidth
                                                                 sx={{
                                                                     fontSize: '16px',
@@ -378,7 +417,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     <ListItem
                                                         sx={{
                                                             fontSize: '13px !important',
-                                                            backgroundColor: this.state.selectedChucVuId === '' ? '#E6E6E6' : 'transparent' // Apply background color based on selection
+                                                            backgroundColor:
+                                                                this.state.selectedChucVuId === ''
+                                                                    ? '#E6E6E6'
+                                                                    : 'transparent' // Apply background color based on selection
                                                         }}
                                                         onClick={async () => {
                                                             await this.setState({
@@ -386,7 +428,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                 chucVuSearchValue: ''
                                                             });
                                                         }}>
-                                                        <ListItemText primary={<Typography fontSize={'13px'}>Tất cả</Typography>} />
+                                                        <ListItemText
+                                                            primary={<Typography fontSize={'13px'}>Tất cả</Typography>}
+                                                        />
                                                     </ListItem>
                                                     {filteredChucVu.map((item, key) => (
                                                         <ListItem
@@ -394,14 +438,22 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             sx={{
                                                                 fontSize: '13px !important',
                                                                 backgroundColor:
-                                                                    this.state.selectedChucVuId === item.idChucVu ? '#E6E6E6' : 'transparent' // Apply background color based on selection
+                                                                    this.state.selectedChucVuId === item.idChucVu
+                                                                        ? '#E6E6E6'
+                                                                        : 'transparent' // Apply background color based on selection
                                                             }}
                                                             onClick={async () => {
                                                                 this.setState({
                                                                     selectedChucVuId: item.idChucVu
                                                                 });
                                                             }}>
-                                                            <ListItemText primary={<Typography fontSize={'13px'}>{item.tenChucVu}</Typography>} />
+                                                            <ListItemText
+                                                                primary={
+                                                                    <Typography fontSize={'13px'}>
+                                                                        {item.tenChucVu}
+                                                                    </Typography>
+                                                                }
+                                                            />
                                                         </ListItem>
                                                     ))}
                                                 </Box>
@@ -424,7 +476,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                         )
                                                     }}></TextField>
                                                 <Box maxHeight={'300px'} overflow={'auto'} marginTop={2}>
-                                                    <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
+                                                    <Box
+                                                        display={'flex'}
+                                                        alignItems={'center'}
+                                                        justifyContent={'space-between'}>
                                                         <Box paddingLeft={'15px'}>
                                                             <FormControlLabel
                                                                 label="Chọn tất cả"
@@ -435,11 +490,14 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             />
                                                             {this.state.listIdEmployeeAdd.length > 0 ? (
                                                                 <Typography fontSize={'13px'}>
-                                                                    {this.state.listIdEmployeeAdd.length} bản ghi được chọn
+                                                                    {this.state.listIdEmployeeAdd.length} bản ghi được
+                                                                    chọn
                                                                 </Typography>
                                                             ) : null}
                                                         </Box>
-                                                        <Button variant="text" onClick={this.handleMoveItemSelectToRight}>
+                                                        <Button
+                                                            variant="text"
+                                                            onClick={this.handleMoveItemSelectToRight}>
                                                             Thêm
                                                         </Button>
                                                     </Box>
@@ -466,7 +524,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                 <ListItemIcon sx={{ minWidth: 'auto' }}>
                                                                     <Checkbox
                                                                         edge="start"
-                                                                        checked={this.state.listIdEmployeeAdd.includes(item)}
+                                                                        checked={this.state.listIdEmployeeAdd.includes(
+                                                                            item
+                                                                        )}
                                                                         onChange={(event, checked) => {
                                                                             this.handleAddNhanVien(item, checked);
                                                                         }}
@@ -480,7 +540,11 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                     <Avatar src={item.avatar} />
                                                                 </ListItemAvatar>
                                                                 <ListItemText
-                                                                    primary={<Typography fontSize={'14px'}>{item.tenNhanVien}</Typography>}
+                                                                    primary={
+                                                                        <Typography fontSize={'14px'}>
+                                                                            {item.tenNhanVien}
+                                                                        </Typography>
+                                                                    }
                                                                     secondary={item.chucVu}
                                                                 />
                                                             </ListItem>
@@ -520,11 +584,14 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             />
                                                             {this.state.listIdEmployeeRemove.length > 0 ? (
                                                                 <Typography fontSize={'13px'}>
-                                                                    {this.state.listIdEmployeeRemove.length} bản ghi được chọn
+                                                                    {this.state.listIdEmployeeRemove.length} bản ghi
+                                                                    được chọn
                                                                 </Typography>
                                                             ) : null}
                                                         </Box>
-                                                        <Button variant="text" onClick={this.handleMoveItemSelectToLeft}>
+                                                        <Button
+                                                            variant="text"
+                                                            onClick={this.handleMoveItemSelectToLeft}>
                                                             Xóa
                                                         </Button>
                                                     </Box>
@@ -542,7 +609,9 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                 <ListItemIcon sx={{ minWidth: 'auto' }}>
                                                                     <Checkbox
                                                                         edge="start"
-                                                                        checked={this.state.listIdEmployeeRemove.includes(item)}
+                                                                        checked={this.state.listIdEmployeeRemove.includes(
+                                                                            item
+                                                                        )}
                                                                         onChange={(event, checked) => {
                                                                             this.handleRemoveNhanVien(item, checked);
                                                                         }}
@@ -555,7 +624,10 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                     }}>
                                                                     <Avatar src={item.avatar} />
                                                                 </ListItemAvatar>
-                                                                <ListItemText primary={item.tenNhanVien} secondary={item.chucVu} />
+                                                                <ListItemText
+                                                                    primary={item.tenNhanVien}
+                                                                    secondary={item.chucVu}
+                                                                />
                                                             </ListItem>
                                                         ))
                                                     ) : (

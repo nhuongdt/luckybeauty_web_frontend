@@ -1,4 +1,16 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Box, Typography, IconButton } from '@mui/material';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    Stack,
+    TextField,
+    Box,
+    Typography,
+    IconButton
+} from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
 import AutocompleteCustomer from '../../components/Autocomplete/Customer';
 
@@ -130,7 +142,9 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                     showAlert={objAlert.show}
                     type={objAlert.type}
                     title={objAlert.mes}
-                    handleClose={() => setObjAlert({ show: false, mes: '', type: 1 } as PropConfirmOKCancel)}></SnackbarAlert>
+                    handleClose={() =>
+                        setObjAlert({ show: false, mes: '', type: 1 } as PropConfirmOKCancel)
+                    }></SnackbarAlert>
                 <DialogTitle
                     sx={{
                         display: 'flex',
@@ -185,12 +199,19 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                             onClick={() => handleChangeTab(1)}>
                             Cuộc hẹn
                         </Button>
-                        <Button sx={{ color: currentTab === 2 ? 'var(--color-main)' : '#999699' }} variant="text" onClick={() => handleChangeTab(2)}>
+                        <Button
+                            sx={{ color: currentTab === 2 ? 'var(--color-main)' : '#999699' }}
+                            variant="text"
+                            onClick={() => handleChangeTab(2)}>
                             Khách hàng
                         </Button>
                     </Stack>
                     <Box sx={{ marginTop: '20px' }}>
-                        {currentTab === 1 ? <TabCuocHen handleChoseCusBooking={saveCheckIn} /> : <TabKhachHang handleChoseCus={saveCheckIn} />}
+                        {currentTab === 1 ? (
+                            <TabCuocHen handleChoseCusBooking={saveCheckIn} />
+                        ) : (
+                            <TabKhachHang handleChoseCus={saveCheckIn} />
+                        )}
                     </Box>
                 </DialogContent>
                 <DialogActions
@@ -203,7 +224,11 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
                         bgcolor: '#fff'
                     }}>
                     <Stack direction="row" spacing={1} paddingTop={2} justifyContent="flex-end">
-                        <Button variant="contained" className=" btn-container-hover" sx={{ width: '70px' }} onClick={saveCheckIn}>
+                        <Button
+                            variant="contained"
+                            className=" btn-container-hover"
+                            sx={{ width: '70px' }}
+                            onClick={saveCheckIn}>
                             Lưu
                         </Button>
                         <Button

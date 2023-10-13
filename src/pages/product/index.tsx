@@ -57,7 +57,9 @@ import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 
 export default function PageProduct() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(new PropModal({ isShow: false }));
@@ -171,7 +173,9 @@ export default function PageProduct() {
             txtUnsign = utils.strToEnglish(txt);
         }
         const arr = treeNhomHangHoa.filter(
-            (x: ModelNhomHangHoa) => (x.tenNhomHang ?? '').indexOf(txt) > -1 || utils.strToEnglish(x.tenNhomHang ?? '').indexOf(txtUnsign) > -1
+            (x: ModelNhomHangHoa) =>
+                (x.tenNhomHang ?? '').indexOf(txt) > -1 ||
+                utils.strToEnglish(x.tenNhomHang ?? '').indexOf(txtUnsign) > -1
         );
         const obj = new ModelNhomHangHoa({
             id: '',
@@ -298,7 +302,9 @@ export default function PageProduct() {
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${rowItem?.maHangHoa ?? ' '} không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${
+                        rowItem?.maHangHoa ?? ' '
+                    } không?`
                 })
             );
         }
@@ -529,15 +535,23 @@ export default function PageProduct() {
             flex: 1,
             disableColumnMenu: true,
 
-            renderCell: (params) => <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />,
+            renderCell: (params) => (
+                <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />
+            ),
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
 
     return (
         <>
-            <ModalNhomHangHoa dataNhomHang={lstProductGroup} trigger={triggerModalNhomHang} handleSave={saveNhomHang}></ModalNhomHangHoa>
-            <ModalHangHoa dataNhomHang={lstProductGroup} trigger={triggerModalProduct} handleSave={saveProduct}></ModalHangHoa>
+            <ModalNhomHangHoa
+                dataNhomHang={lstProductGroup}
+                trigger={triggerModalNhomHang}
+                handleSave={saveNhomHang}></ModalNhomHangHoa>
+            <ModalHangHoa
+                dataNhomHang={lstProductGroup}
+                trigger={triggerModalProduct}
+                handleSave={saveProduct}></ModalHangHoa>
             <ConfirmDelete
                 isShow={inforDeleteProduct.show}
                 title={inforDeleteProduct.title}
@@ -697,7 +711,10 @@ export default function PageProduct() {
                                         InputProps={{ startAdornment: <Search /> }}
                                         onChange={(e) => searchNhomHang(e.target.value)}
                                     />
-                                    <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
+                                    <AccordionNhomHangHoa
+                                        dataNhomHang={treeSearchNhomHangHoa}
+                                        clickTreeItem={editNhomHangHoa}
+                                    />
                                 </Stack>
                             </Box>
                         </Box>
@@ -750,7 +767,10 @@ export default function PageProduct() {
                                     bottom: '16px'
                                 }}>
                                 <Grid item xs={4} md={4} lg={4} sm={4}>
-                                    <OptionPage changeNumberOfpage={changeNumberOfpage} totalRow={pageDataProduct.totalCount} />
+                                    <OptionPage
+                                        changeNumberOfpage={changeNumberOfpage}
+                                        totalRow={pageDataProduct.totalCount}
+                                    />
                                 </Grid>
                                 <Grid item xs={8} md={8} lg={8} sm={8}>
                                     <Stack direction="row" style={{ float: 'right' }}>

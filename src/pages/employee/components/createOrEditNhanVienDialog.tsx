@@ -1,6 +1,18 @@
 import { Component, ReactNode } from 'react';
 import { CreateOrUpdateNhanSuDto } from '../../../services/nhan-vien/dto/createOrUpdateNhanVienDto';
-import { Autocomplete, Box, Button, Dialog, Grid, Stack, TextField, Typography, RadioGroup, FormControlLabel, Radio } from '@mui/material';
+import {
+    Autocomplete,
+    Box,
+    Button,
+    Dialog,
+    Grid,
+    Stack,
+    TextField,
+    Typography,
+    RadioGroup,
+    FormControlLabel,
+    Radio
+} from '@mui/material';
 import closeIcon from '../../../images/close-square.svg';
 import '../employee.css';
 import { Form, Formik } from 'formik';
@@ -233,7 +245,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                                     staffImage: reader.result?.toString() ?? '',
                                                                     fileImage: file
                                                                 }));
-                                                                setFieldValue('avatar', reader.result?.toString() ?? '');
+                                                                setFieldValue(
+                                                                    'avatar',
+                                                                    reader.result?.toString() ?? ''
+                                                                );
                                                             };
                                                         }
                                                     }}
@@ -257,7 +272,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             error={errors.tenNhanVien && touched.tenNhanVien ? true : false}
                                             helperText={
                                                 errors.tenNhanVien &&
-                                                touched.tenNhanVien && <small className="text-danger">{errors.tenNhanVien}</small>
+                                                touched.tenNhanVien && (
+                                                    <small className="text-danger">{errors.tenNhanVien}</small>
+                                                )
                                             }
                                             onChange={handleChange}
                                             fullWidth
@@ -283,7 +300,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                             error={errors.soDienThoai && touched.soDienThoai ? true : false}
                                             helperText={
                                                 errors.soDienThoai &&
-                                                touched.soDienThoai && <small className="text-danger">{errors.soDienThoai}</small>
+                                                touched.soDienThoai && (
+                                                    <small className="text-danger">{errors.soDienThoai}</small>
+                                                )
                                             }
                                             sx={{ fontSize: '13px' }}
                                             onChange={handleChange}
@@ -315,7 +334,11 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                 label: 'Ngày sinh',
                                                 size: 'small'
                                             }}
-                                            defaultVal={values.ngaySinh ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd') : ''}
+                                            defaultVal={
+                                                values.ngaySinh
+                                                    ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd')
+                                                    : ''
+                                            }
                                             handleChangeDate={(dt: string) => {
                                                 values.ngaySinh = dt;
                                             }}
@@ -323,7 +346,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                     </Grid>
                                     <Grid item xs={12} md={6}>
                                         <Stack spacing={1} direction={'row'}>
-                                            <Stack className="modal-lable " justifyContent={'center'} alignItems={'center'}>
+                                            <Stack
+                                                className="modal-lable "
+                                                justifyContent={'center'}
+                                                alignItems={'center'}>
                                                 <Typography
                                                     //color="#4C4B4C"
                                                     variant="subtitle2">
@@ -348,7 +374,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                         <Box display={'flex'} flexDirection={'row'} gap={1}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestChucVu.filter((x) => x.idChucVu == values.idChucVu)[0] ||
+                                                    suggestStore.suggestChucVu.filter(
+                                                        (x) => x.idChucVu == values.idChucVu
+                                                    )[0] ||
                                                     ({
                                                         idChucVu: '',
                                                         tenChucVu: ''
@@ -375,7 +403,9 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                                                         error={errors.idChucVu && touched.idChucVu ? true : false}
                                                         helperText={
                                                             errors.idChucVu &&
-                                                            touched.idChucVu && <small className="text-danger">{errors.idChucVu}</small>
+                                                            touched.idChucVu && (
+                                                                <small className="text-danger">{errors.idChucVu}</small>
+                                                            )
                                                         }
                                                         placeholder="Nhập tên vị trí"
                                                     />
@@ -489,7 +519,10 @@ class CreateOrEditEmployeeDialog extends Component<ICreateOrEditUserProps> {
                     handleClose={this.onModalChucVu}
                     handleSubmit={this.handleSubmitChucVu}
                 />
-                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.handleDelete}></ConfirmDelete>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.handleDelete}></ConfirmDelete>
             </Dialog>
         );
     }

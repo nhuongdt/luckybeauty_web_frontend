@@ -93,7 +93,9 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'khachDaTra',
@@ -104,7 +106,9 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'conNo',
@@ -115,7 +119,9 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'trangThai',
@@ -131,7 +137,8 @@ const TabMuaHang: React.FC = () => {
                     title={params.value}
                     sx={{
                         color: params.value == 'Hoàn thành' ? '#50CD89' : params.value == 'Hủy' ? '#F1416C' : '#FF9900',
-                        backgroundColor: params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
+                        backgroundColor:
+                            params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
                     }}>
                     {params.value}
                 </Box>

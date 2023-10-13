@@ -1,4 +1,14 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    TextField,
+    Typography
+} from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import { Form, Formik } from 'formik';
@@ -67,7 +77,11 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                                 fontWeight="500">
                                                 Tên chức vụ
                                             </Typography>
-                                            <TextField fullWidth size="small" name="tenChucVu" onChange={handleChange}></TextField>
+                                            <TextField
+                                                fullWidth
+                                                size="small"
+                                                name="tenChucVu"
+                                                onChange={handleChange}></TextField>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Typography
@@ -76,7 +90,11 @@ class CreateOrEditChucVuModal extends Component<ModalProps> {
                                                 fontWeight="500">
                                                 Mô tả
                                             </Typography>
-                                            <TextField fullWidth size="small" name="moTa" onChange={handleChange}></TextField>
+                                            <TextField
+                                                fullWidth
+                                                size="small"
+                                                name="moTa"
+                                                onChange={handleChange}></TextField>
                                         </Grid>
                                     </Grid>
                                     <DialogActions>

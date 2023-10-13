@@ -41,7 +41,9 @@ export default function CmpIListData({ lst, Icon, direction, clickTreeItem, isSh
             txt = txt.trim();
             txtUnsign = utils.strToEnglish(txt);
         }
-        const arr = lst.filter((x: IList) => (x.text ?? '').indexOf(txt) > -1 || utils.strToEnglish(x.text ?? '').indexOf(txtUnsign) > -1);
+        const arr = lst.filter(
+            (x: IList) => (x.text ?? '').indexOf(txt) > -1 || utils.strToEnglish(x.text ?? '').indexOf(txtUnsign) > -1
+        );
         setLstSearch(arr);
     };
     return (
@@ -95,7 +97,12 @@ export default function CmpIListData({ lst, Icon, direction, clickTreeItem, isSh
                         onMouseEnter={(event: any) => {
                             handleHover(event, item, index);
                         }}>
-                        <Stack spacing={2} direction={'row'} position="relative" paddingRight={3} onClick={() => handleClickTreeItem(false, item.id)}>
+                        <Stack
+                            spacing={2}
+                            direction={'row'}
+                            position="relative"
+                            paddingRight={3}
+                            onClick={() => handleClickTreeItem(false, item.id)}>
                             <div style={{ color: item.color }}> {Icon}</div>
 
                             <Typography

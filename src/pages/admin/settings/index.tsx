@@ -1,4 +1,15 @@
-import { Box, Divider, Grid, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import {
+    Box,
+    Divider,
+    Grid,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Typography
+} from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as StoreIcon } from '../../../images/icons/setting_page/shop_active_blue.svg';
 import { ReactComponent as PeopleIcon } from '../../../images/icons/setting_page/people_active_blue.svg';

@@ -83,7 +83,12 @@ class OverView extends Component {
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-                        <Box padding={'32px 24px'} display={'flex'} flexDirection={'row'} bgcolor={'#FFF'} sx={{ borderRadius: '8px' }}>
+                        <Box
+                            padding={'32px 24px'}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            bgcolor={'#FFF'}
+                            sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={56}
                                 height={56}
@@ -143,7 +148,12 @@ class OverView extends Component {
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-                        <Box padding={'32px 24px'} display={'flex'} flexDirection={'row'} bgcolor={'#FFF'} sx={{ borderRadius: '8px' }}>
+                        <Box
+                            padding={'32px 24px'}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            bgcolor={'#FFF'}
+                            sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={56}
                                 height={56}
@@ -203,7 +213,12 @@ class OverView extends Component {
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-                        <Box padding={'32px 24px'} display={'flex'} flexDirection={'row'} bgcolor={'#FFF'} sx={{ borderRadius: '8px' }}>
+                        <Box
+                            padding={'32px 24px'}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            bgcolor={'#FFF'}
+                            sx={{ borderRadius: '8px' }}>
                             <Box
                                 width={56}
                                 height={56}

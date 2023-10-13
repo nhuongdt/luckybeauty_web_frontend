@@ -217,7 +217,9 @@ const RegisterScreen: React.FC = () => {
                                         }}
                                         value={confirmPassword}
                                         error={!passwordMatch}
-                                        helperText={!passwordMatch && <p className="error-password">Mật khẩu không khớp</p>}
+                                        helperText={
+                                            !passwordMatch && <p className="error-password">Mật khẩu không khớp</p>
+                                        }
                                         name="confirmPassword"
                                         label={
                                             <span className="login-label">

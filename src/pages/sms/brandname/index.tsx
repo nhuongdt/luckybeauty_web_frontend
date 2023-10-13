@@ -290,7 +290,9 @@ export default function PageBrandname() {
             align: 'right',
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'daSuDung',
@@ -299,7 +301,9 @@ export default function PageBrandname() {
             align: 'right',
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'conLai',
@@ -308,7 +312,9 @@ export default function PageBrandname() {
             align: 'right',
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'txtTrangThai',
@@ -322,8 +328,10 @@ export default function PageBrandname() {
                     sx={{
                         padding: '4px 8px',
                         borderRadius: '100px',
-                        backgroundColor: params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
-                        color: params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
+                        backgroundColor:
+                            params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                        color:
+                            params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -381,7 +389,12 @@ export default function PageBrandname() {
                 objUpdate={brandChosed}
                 onSave={onSaveBrandname}
             />
-            <NapTienBrandname visiable={isShowModalNapTien} idQuyHD={''} onClose={() => setIsShowModalNapTien(false)} onOk={saveNapTienBrandname} />
+            <NapTienBrandname
+                visiable={isShowModalNapTien}
+                idQuyHD={''}
+                onClose={() => setIsShowModalNapTien(false)}
+                onOk={saveNapTienBrandname}
+            />
 
             <Grid container paddingTop={2}>
                 <Grid item xs={6}>

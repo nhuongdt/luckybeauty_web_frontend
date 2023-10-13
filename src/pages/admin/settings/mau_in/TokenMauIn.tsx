@@ -200,13 +200,21 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongTienHangChuaChietKhau&#125; </label>
-                                        <Typography variant="subtitle2">Tổng tiền hàng (chưa trừ chiết khấu)</Typography>
+                                        <label onClick={(e) => CopyThisText(e)}>
+                                            {' '}
+                                            &#123;TongTienHangChuaChietKhau&#125;{' '}
+                                        </label>
+                                        <Typography variant="subtitle2">
+                                            Tổng tiền hàng (chưa trừ chiết khấu)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongChietKhauHangHoa&#125; </label>
+                                        <label onClick={(e) => CopyThisText(e)}>
+                                            {' '}
+                                            &#123;TongChietKhauHangHoa&#125;{' '}
+                                        </label>
                                         <Typography variant="subtitle2">Tổng chiết khấu hàng hóa</Typography>
                                     </Stack>
                                 </Stack>
@@ -249,7 +257,9 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;TongThanhToan&#125; </label>
-                                        <Typography variant="subtitle2">Tổng tiền hóa đơn (sau VAT, sau giảm giá)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Tổng tiền hóa đơn (sau VAT, sau giảm giá)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
@@ -267,7 +277,9 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;NoHoaDon_BangChu&#125; </label>
-                                        <Typography variant="subtitle2">Tiền khách nợ của hóa đơn hiện tại (bằng chữ)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Tiền khách nợ của hóa đơn hiện tại (bằng chữ)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -324,13 +336,17 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;DonGiaTruocCK&#125; </label>
-                                        <Typography variant="subtitle2">Giá bán mỗi dịch vụ (trước chiết khấu)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Giá bán mỗi dịch vụ (trước chiết khấu)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;ThanhTienTruocCK&#125; </label>
-                                        <Typography variant="subtitle2">Thành tiền mỗi dịch vụ (trước chiết khấu)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Thành tiền mỗi dịch vụ (trước chiết khấu)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
@@ -342,7 +358,9 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;TienChietKhau&#125; </label>
-                                        <Typography variant="subtitle2">Chiết khấu dịch vụ (vnd)/1 đơn vị số lượng</Typography>
+                                        <Typography variant="subtitle2">
+                                            Chiết khấu dịch vụ (vnd)/1 đơn vị số lượng
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
@@ -354,13 +372,17 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;DonGiaSauCK&#125; </label>
-                                        <Typography variant="subtitle2">Giá bán mỗi dịch vụ (sau chiết khấu)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Giá bán mỗi dịch vụ (sau chiết khấu)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;ThanhTienSauCK&#125; </label>
-                                        <Typography variant="subtitle2">Thành tiền mỗi dịch vụ (sau chiết khấu)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Thành tiền mỗi dịch vụ (sau chiết khấu)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
@@ -378,13 +400,17 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;DonGiaSauVAT&#125; </label>
-                                        <Typography variant="subtitle2">Giá bán mỗi dịch vụ (sau VAT, sau CK)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Giá bán mỗi dịch vụ (sau VAT, sau CK)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;ThanhTienSauVAT&#125; </label>
-                                        <Typography variant="subtitle2">Thành tiền mỗi dịch vụ (sau VAT, sau CK)</Typography>
+                                        <Typography variant="subtitle2">
+                                            Thành tiền mỗi dịch vụ (sau VAT, sau CK)
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
@@ -396,7 +422,9 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
                                         <label onClick={(e) => CopyThisText(e)}> &#123;NVTH_GiaTriHoaHong&#125; </label>
-                                        <Typography variant="subtitle2">Giá trị hoa hồng mà NV thực hiện được hưởng</Typography>
+                                        <Typography variant="subtitle2">
+                                            Giá trị hoa hồng mà NV thực hiện được hưởng
+                                        </Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>

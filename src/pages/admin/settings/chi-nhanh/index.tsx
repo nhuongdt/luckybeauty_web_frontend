@@ -1,4 +1,16 @@
-import { Avatar, Box, Button, ButtonGroup, Checkbox, Grid, IconButton, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import {
+    Avatar,
+    Box,
+    Button,
+    ButtonGroup,
+    Checkbox,
+    Grid,
+    IconButton,
+    SelectChangeEvent,
+    Stack,
+    TextField,
+    Typography
+} from '@mui/material';
 import React, { RefObject } from 'react';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
@@ -261,7 +273,12 @@ class ChiNhanhScreen extends Component {
                 flex: 0.8,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} lineHeight="16px" title={params.value}>
+                        <Typography
+                            fontSize="13px"
+                            fontWeight="400"
+                            fontFamily={'Roboto'}
+                            lineHeight="16px"
+                            title={params.value}>
                             {params.value}
                         </Typography>
                     </Box>
@@ -496,7 +513,11 @@ class ChiNhanhScreen extends Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa chi nhánh'}
                                             sx={{
@@ -551,7 +572,10 @@ class ChiNhanhScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
                             }
                         }}
                         disableRowSelectionOnClick
@@ -584,7 +608,10 @@ class ChiNhanhScreen extends Component {
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
-                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.handleDelete}></ConfirmDelete>
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.handleDelete}></ConfirmDelete>
                     <CreateOrEditChiNhanhModal
                         title={this.state.idChiNhanh == '' ? 'Thêm mới chi nhánh' : 'Cập nhật chi nhánh'}
                         formRef={this.state.createOrEditChiNhanhDto}

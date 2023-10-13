@@ -525,7 +525,9 @@ class ChietKhauDichVuScreen extends Component {
                     </ButtonGroup>
                 </Box>
                 <Box display={'flex'} justifyContent={'space-between'} marginBottom={'8px'}>
-                    <ButtonGroup variant="contained" sx={{ gap: '8px', boxShadow: 'none', '. button': { height: '40px' } }}>
+                    <ButtonGroup
+                        variant="contained"
+                        sx={{ gap: '8px', boxShadow: 'none', '. button': { height: '40px' } }}>
                         <Button
                             variant={'outlined'}
                             sx={{
@@ -576,7 +578,9 @@ class ChietKhauDichVuScreen extends Component {
                             await this.setState({ idNhanVien: value?.id });
                             await this.getDataAccordingByNhanVien(value?.id);
                         }}
-                        renderInput={(params) => <TextField sx={{ bgcolor: '#fff' }} {...params} placeholder="Tìm tên" />}
+                        renderInput={(params) => (
+                            <TextField sx={{ bgcolor: '#fff' }} {...params} placeholder="Tìm tên" />
+                        )}
                     />
                 </Box>
                 <Box marginBottom="8px">
@@ -602,7 +606,10 @@ class ChietKhauDichVuScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
                             }
                         }}
                         localeText={TextTranslate}
@@ -612,7 +619,11 @@ class ChietKhauDichVuScreen extends Component {
                         currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={listChietKhauDichVu === undefined ? 0 : listChietKhauDichVu.totalCount}
-                        totalPage={listChietKhauDichVu === undefined ? 0 : Math.ceil(listChietKhauDichVu.totalCount / this.state.maxResultCount)}
+                        totalPage={
+                            listChietKhauDichVu === undefined
+                                ? 0
+                                : Math.ceil(listChietKhauDichVu.totalCount / this.state.maxResultCount)
+                        }
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
@@ -627,7 +638,10 @@ class ChietKhauDichVuScreen extends Component {
                         handleDelete={this.handleDelete}
                         permissionDelete="Pages.ChietKhauDichVu.Delete"
                     />
-                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
                 </Box>
                 <CreateOrEditChietKhauDichVuModal
                     formRef={this.state.createOrEditDto}

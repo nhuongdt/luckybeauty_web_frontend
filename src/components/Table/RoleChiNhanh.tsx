@@ -129,8 +129,13 @@ export default function TableRoleChiNhanh({ allRoles, chiNhanhRoles, userId, pas
                                 {row.roles?.map((itemRole: RoleDtoCheck) => (
                                     <TableCell align="center" key={itemRole.id}>
                                         <Checkbox
-                                            checked={lstChosed.some((x: IUserRoleDto) => x.idChiNhanh === row.idChiNhanh && x.roleId === itemRole.id)}
-                                            onChange={(e) => changeCheckOne(e.target.checked, row.idChiNhanh, itemRole.id)}
+                                            checked={lstChosed.some(
+                                                (x: IUserRoleDto) =>
+                                                    x.idChiNhanh === row.idChiNhanh && x.roleId === itemRole.id
+                                            )}
+                                            onChange={(e) =>
+                                                changeCheckOne(e.target.checked, row.idChiNhanh, itemRole.id)
+                                            }
                                         />
                                     </TableCell>
                                 ))}

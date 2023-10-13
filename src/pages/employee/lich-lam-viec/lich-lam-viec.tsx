@@ -274,7 +274,9 @@ const LichLamViec: React.FC = () => {
                             },
                             maxWidth: window.screen.width <= 650 ? '100%' : '55%'
                         }}
-                        renderInput={(params: any) => <TextField fullWidth {...params} label="Nhân viên" variant="outlined" />}
+                        renderInput={(params: any) => (
+                            <TextField fullWidth {...params} label="Nhân viên" variant="outlined" />
+                        )}
                     />
                 </Grid>
                 <Grid
@@ -338,7 +340,11 @@ const LichLamViec: React.FC = () => {
                     </Button>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                    <Box display="flex" alignItems="center" justifyContent={window.screen.width <= 650 ? 'start' : 'end'} gap="8px">
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent={window.screen.width <= 650 ? 'start' : 'end'}
+                        gap="8px">
                         <ButtonGroup
                             variant="outlined"
                             sx={{
@@ -435,12 +441,24 @@ const LichLamViec: React.FC = () => {
                                             alignItems: 'center',
                                             gap: '5px'
                                         }}>
-                                        <Avatar sx={{ width: 32, height: 32 }} src={item.avatar} alt={item.tenNhanVien} />
+                                        <Avatar
+                                            sx={{ width: 32, height: 32 }}
+                                            src={item.avatar}
+                                            alt={item.tenNhanVien}
+                                        />
                                         <Box>
-                                            <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C">
+                                            <Typography
+                                                fontSize="13px"
+                                                fontWeight="400"
+                                                fontFamily={'Roboto'}
+                                                color="#3D475C">
                                                 {item.tenNhanVien}
                                             </Typography>
-                                            <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C">
+                                            <Typography
+                                                fontSize="13px"
+                                                fontWeight="400"
+                                                fontFamily={'Roboto'}
+                                                color="#3D475C">
                                                 {item.tongThoiGian}h
                                             </Typography>
                                         </Box>
@@ -463,25 +481,39 @@ const LichLamViec: React.FC = () => {
                                     </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.monday === '' || item.monday === null ? 'Trống' : item.monday}</Box>
+                                    <Box className="custom-time">
+                                        {item.monday === '' || item.monday === null ? 'Trống' : item.monday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.tuesday === '' || item.tuesday === null ? 'Trống' : item.tuesday}</Box>
+                                    <Box className="custom-time">
+                                        {item.tuesday === '' || item.tuesday === null ? 'Trống' : item.tuesday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.wednesday === '' || item.wednesday === null ? 'Trống' : item.wednesday}</Box>
+                                    <Box className="custom-time">
+                                        {item.wednesday === '' || item.wednesday === null ? 'Trống' : item.wednesday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.thursday === '' || item.thursday === null ? 'Trống' : item.thursday}</Box>
+                                    <Box className="custom-time">
+                                        {item.thursday === '' || item.thursday === null ? 'Trống' : item.thursday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.friday === '' || item.friday === null ? 'Trống' : item.friday}</Box>
+                                    <Box className="custom-time">
+                                        {item.friday === '' || item.friday === null ? 'Trống' : item.friday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.saturday === '' || item.saturday === null ? 'Trống' : item.saturday}</Box>
+                                    <Box className="custom-time">
+                                        {item.saturday === '' || item.saturday === null ? 'Trống' : item.saturday}
+                                    </Box>
                                 </TableCell>
                                 <TableCell className="bodder-inline">
-                                    <Box className="custom-time">{item.sunday === '' || item.sunday === null ? 'Trống' : item.sunday}</Box>
+                                    <Box className="custom-time">
+                                        {item.sunday === '' || item.sunday === null ? 'Trống' : item.sunday}
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                         ))}

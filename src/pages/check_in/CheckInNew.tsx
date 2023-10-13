@@ -1,4 +1,15 @@
-import { Box, Button, Grid, Stack, InputAdornment, TextField, Typography, IconButton, ButtonGroup, Avatar } from '@mui/material';
+import {
+    Box,
+    Button,
+    Grid,
+    Stack,
+    InputAdornment,
+    TextField,
+    Typography,
+    IconButton,
+    ButtonGroup,
+    Avatar
+} from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, useEffect } from 'react';
@@ -121,7 +132,9 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
                 .where('idCheckIn')
                 .equals(idCheckinDelete)
                 .delete()
-                .then((deleteCount: any) => console.log('idcheckindelete ', idCheckinDelete, 'deletecount', deleteCount));
+                .then((deleteCount: any) =>
+                    console.log('idcheckindelete ', idCheckinDelete, 'deletecount', deleteCount)
+                );
 
             await dbDexie.hoaDon
                 .where('idKhachHang')

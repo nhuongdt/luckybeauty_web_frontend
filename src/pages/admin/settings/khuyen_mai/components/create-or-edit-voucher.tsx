@@ -81,10 +81,18 @@ const CreateOrEditVoucher: React.FC<{
                     initialValues={initValues}
                     //validationSchema={rules}
                     onSubmit={async (values, formikHelpers) => {
-                        if (values.thoiGianApDung === '' || values.thoiGianApDung == null || values.thoiGianApDung == undefined) {
+                        if (
+                            values.thoiGianApDung === '' ||
+                            values.thoiGianApDung == null ||
+                            values.thoiGianApDung == undefined
+                        ) {
                             setTabIndex(1);
                             formikHelpers.setFieldError('thoiGianApDung', 'Thời gian áp dụng không được để trống');
-                        } else if (values.thoiGianKetThuc === '' || values.thoiGianKetThuc == null || values.thoiGianKetThuc == undefined) {
+                        } else if (
+                            values.thoiGianKetThuc === '' ||
+                            values.thoiGianKetThuc == null ||
+                            values.thoiGianKetThuc == undefined
+                        ) {
                             setTabIndex(1);
                             formikHelpers.setFieldError('thoiGianKetThuc', 'Thời gian kết thúc không được để trống');
                         } else {
@@ -104,7 +112,9 @@ const CreateOrEditVoucher: React.FC<{
                                 <Grid item xs={12}>
                                     <FormControlLabel
                                         value="start"
-                                        control={<Switch checked={values?.trangThai === 1 ? true : false} color="primary" />}
+                                        control={
+                                            <Switch checked={values?.trangThai === 1 ? true : false} color="primary" />
+                                        }
                                         label="Kích hoạt"
                                         labelPlacement="start"
                                         onChange={(e, v) => {
@@ -135,7 +145,10 @@ const CreateOrEditVoucher: React.FC<{
                                         }
                                         error={errors.tenKhuyenMai && touched.tenKhuyenMai ? true : false}
                                         helperText={
-                                            errors.tenKhuyenMai && touched.tenKhuyenMai && <span className="text-danger">{errors.tenKhuyenMai}</span>
+                                            errors.tenKhuyenMai &&
+                                            touched.tenKhuyenMai && (
+                                                <span className="text-danger">{errors.tenKhuyenMai}</span>
+                                            )
                                         }
                                         value={values?.tenKhuyenMai}
                                         onChange={handleChange}
@@ -153,9 +166,21 @@ const CreateOrEditVoucher: React.FC<{
                                             borderColor: 'divider',
                                             marginTop: '8px'
                                         }}>
-                                        <Tab sx={{ alignItems: 'start', fontSize: '13px' }} label="Hình thức khuyến mại" {...a11yProps(0)} />
-                                        <Tab sx={{ alignItems: 'start', fontSize: '13px' }} label="Thời gian áp dụng" {...a11yProps(1)} />
-                                        <Tab sx={{ alignItems: 'start', fontSize: '13px' }} label="Phạm vi áp dụng" {...a11yProps(2)} />
+                                        <Tab
+                                            sx={{ alignItems: 'start', fontSize: '13px' }}
+                                            label="Hình thức khuyến mại"
+                                            {...a11yProps(0)}
+                                        />
+                                        <Tab
+                                            sx={{ alignItems: 'start', fontSize: '13px' }}
+                                            label="Thời gian áp dụng"
+                                            {...a11yProps(1)}
+                                        />
+                                        <Tab
+                                            sx={{ alignItems: 'start', fontSize: '13px' }}
+                                            label="Phạm vi áp dụng"
+                                            {...a11yProps(2)}
+                                        />
                                     </Tabs>
                                 </Grid>
 
@@ -172,14 +197,23 @@ const CreateOrEditVoucher: React.FC<{
                                                         label="Loại khuyến mại"
                                                         onChange={(event) => {
                                                             setFieldValue('loaiKhuyenMai', event.target.value);
-                                                            setFieldValue('hinhThucKM', event.target.value == 1 ? 11 : 21);
+                                                            setFieldValue(
+                                                                'hinhThucKM',
+                                                                event.target.value == 1 ? 11 : 21
+                                                            );
                                                         }}
                                                         value={values?.loaiKhuyenMai}>
-                                                        <MenuItem value={AppConsts.loaiKhuyenMai.hangHoa}>Hàng hóa</MenuItem>
-                                                        <MenuItem value={AppConsts.loaiKhuyenMai.hoaDon}>Hóa đơn</MenuItem>
+                                                        <MenuItem value={AppConsts.loaiKhuyenMai.hangHoa}>
+                                                            Hàng hóa
+                                                        </MenuItem>
+                                                        <MenuItem value={AppConsts.loaiKhuyenMai.hoaDon}>
+                                                            Hóa đơn
+                                                        </MenuItem>
                                                     </Select>
                                                     <FormHelperText>
-                                                        {errors.loaiKhuyenMai && <span className="text-danger">{errors.loaiKhuyenMai}</span>}
+                                                        {errors.loaiKhuyenMai && (
+                                                            <span className="text-danger">{errors.loaiKhuyenMai}</span>
+                                                        )}
                                                     </FormHelperText>
                                                 </FormControl>
                                             </Grid>
@@ -194,8 +228,12 @@ const CreateOrEditVoucher: React.FC<{
                                                         getOptionLabel={(option) => `${option.name}`}
                                                         value={
                                                             values.loaiKhuyenMai === AppConsts.loaiKhuyenMai.hoaDon
-                                                                ? AppConsts.hinhThucKhuyenMaiHoaDon.find((x) => x.value == values?.hinhThucKM)
-                                                                : AppConsts.hinhThucKhuyenMaiHangHoa.find((x) => x.value == values?.hinhThucKM)
+                                                                ? AppConsts.hinhThucKhuyenMaiHoaDon.find(
+                                                                      (x) => x.value == values?.hinhThucKM
+                                                                  )
+                                                                : AppConsts.hinhThucKhuyenMaiHangHoa.find(
+                                                                      (x) => x.value == values?.hinhThucKM
+                                                                  )
                                                         }
                                                         size="small"
                                                         fullWidth
@@ -213,7 +251,11 @@ const CreateOrEditVoucher: React.FC<{
                                                                 }
                                                                 error={errors.hinhThucKM ? true : false}
                                                                 helperText={
-                                                                    errors.hinhThucKM && <span className="text-danger">{errors.hinhThucKM}</span>
+                                                                    errors.hinhThucKM && (
+                                                                        <span className="text-danger">
+                                                                            {errors.hinhThucKM}
+                                                                        </span>
+                                                                    )
                                                                 }
                                                                 placeholder="Chọn hình thức khuyễn mãi"
                                                             />
@@ -227,328 +269,405 @@ const CreateOrEditVoucher: React.FC<{
                                                     render={(arrayHelpers) => {
                                                         return (
                                                             <Box>
-                                                                {values?.khuyenMaiChiTiets && values?.khuyenMaiChiTiets.length > 0 ? (
+                                                                {values?.khuyenMaiChiTiets &&
+                                                                values?.khuyenMaiChiTiets.length > 0 ? (
                                                                     <Box>
-                                                                        {values?.khuyenMaiChiTiets.map((item, index) => (
-                                                                            <Box key={index} display="flex" gap="8px" justifyContent="space-between">
-                                                                                {values.loaiKhuyenMai === 1 ? (
-                                                                                    <>
-                                                                                        <NumericFormat
-                                                                                            thousandSeparator={'.'}
-                                                                                            decimalSeparator={','}
-                                                                                            size="small"
-                                                                                            label="Tổng tiền hàng từ"
-                                                                                            sx={{
-                                                                                                marginTop: '6px'
-                                                                                            }}
-                                                                                            type="text"
-                                                                                            fullWidth
-                                                                                            onChange={(e) => {
-                                                                                                const valueChange = e.target.value.replaceAll(
-                                                                                                    '.',
-                                                                                                    ''
-                                                                                                );
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.tongTienHang`,
-                                                                                                    Number.parseInt(valueChange)
-                                                                                                );
-                                                                                            }}
-                                                                                            customInput={TextField}
-                                                                                            value={item.tongTienHang}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets[${index}].tongTienHang`}
-                                                                                            component={'span'}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.loaiKhuyenMai === 2 ? (
-                                                                                    <>
-                                                                                        <NumericFormat
-                                                                                            thousandSeparator={'.'}
-                                                                                            decimalSeparator={','}
-                                                                                            size="small"
-                                                                                            label=""
-                                                                                            sx={{
-                                                                                                width: '20%',
-                                                                                                marginTop: '6px'
-                                                                                            }}
-                                                                                            onChange={(e) => {
-                                                                                                const valueChange = e.target.value.replaceAll(
-                                                                                                    '.',
-                                                                                                    ''
-                                                                                                );
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.soLuongMua`,
-                                                                                                    Number.parseInt(valueChange)
-                                                                                                );
-                                                                                            }}
-                                                                                            customInput={TextField}
-                                                                                            value={item.soLuongMua}
-                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongMua`}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongMua`}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.loaiKhuyenMai === 2 ? (
-                                                                                    <>
-                                                                                        <Autocomplete
-                                                                                            options={suggestStore?.suggestDonViQuiDoi ?? []}
-                                                                                            getOptionLabel={(option) => `${option.tenDonVi}`}
+                                                                        {values?.khuyenMaiChiTiets.map(
+                                                                            (item, index) => (
+                                                                                <Box
+                                                                                    key={index}
+                                                                                    display="flex"
+                                                                                    gap="8px"
+                                                                                    justifyContent="space-between">
+                                                                                    {values.loaiKhuyenMai === 1 ? (
+                                                                                        <>
+                                                                                            <NumericFormat
+                                                                                                thousandSeparator={'.'}
+                                                                                                decimalSeparator={','}
+                                                                                                size="small"
+                                                                                                label="Tổng tiền hàng từ"
+                                                                                                sx={{
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                type="text"
+                                                                                                fullWidth
+                                                                                                onChange={(e) => {
+                                                                                                    const valueChange =
+                                                                                                        e.target.value.replaceAll(
+                                                                                                            '.',
+                                                                                                            ''
+                                                                                                        );
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.tongTienHang`,
+                                                                                                        Number.parseInt(
+                                                                                                            valueChange
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                customInput={TextField}
+                                                                                                value={
+                                                                                                    item.tongTienHang
+                                                                                                }
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets[${index}].tongTienHang`}
+                                                                                                component={'span'}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.loaiKhuyenMai === 2 ? (
+                                                                                        <>
+                                                                                            <NumericFormat
+                                                                                                thousandSeparator={'.'}
+                                                                                                decimalSeparator={','}
+                                                                                                size="small"
+                                                                                                label=""
+                                                                                                sx={{
+                                                                                                    width: '20%',
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                onChange={(e) => {
+                                                                                                    const valueChange =
+                                                                                                        e.target.value.replaceAll(
+                                                                                                            '.',
+                                                                                                            ''
+                                                                                                        );
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.soLuongMua`,
+                                                                                                        Number.parseInt(
+                                                                                                            valueChange
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                customInput={TextField}
+                                                                                                value={item.soLuongMua}
+                                                                                                name={`khuyenMaiChiTiets.${index}.soLuongMua`}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.soLuongMua`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.loaiKhuyenMai === 2 ? (
+                                                                                        <>
+                                                                                            <Autocomplete
+                                                                                                options={
+                                                                                                    suggestStore?.suggestDonViQuiDoi ??
+                                                                                                    []
+                                                                                                }
+                                                                                                getOptionLabel={(
+                                                                                                    option
+                                                                                                ) =>
+                                                                                                    `${option.tenDonVi}`
+                                                                                                }
+                                                                                                value={
+                                                                                                    suggestStore.suggestDonViQuiDoi?.find(
+                                                                                                        (x) =>
+                                                                                                            x.id ==
+                                                                                                            item.idDonViQuiDoiMua
+                                                                                                    ) ?? null
+                                                                                                }
+                                                                                                size="small"
+                                                                                                fullWidth
+                                                                                                disablePortal
+                                                                                                onChange={async (
+                                                                                                    event,
+                                                                                                    value
+                                                                                                ) => {
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.idDonViQuiDoiMua`,
+                                                                                                        value?.id
+                                                                                                    );
+                                                                                                }}
+                                                                                                renderInput={(
+                                                                                                    params
+                                                                                                ) => (
+                                                                                                    <TextField
+                                                                                                        {...params}
+                                                                                                        sx={{
+                                                                                                            marginTop:
+                                                                                                                '6px'
+                                                                                                        }}
+                                                                                                        label={
+                                                                                                            <Typography fontSize="13px">
+                                                                                                                Mặt hàng
+                                                                                                            </Typography>
+                                                                                                        }
+                                                                                                    />
+                                                                                                )}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.idDonViQuiDoiMua`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM === 11 ||
+                                                                                    values.hinhThucKM === 13 ||
+                                                                                    values.hinhThucKM === 21 ? (
+                                                                                        <>
+                                                                                            <NumericFormat
+                                                                                                thousandSeparator={'.'}
+                                                                                                decimalSeparator={','}
+                                                                                                size="small"
+                                                                                                label="Giảm giá"
+                                                                                                sx={{
+                                                                                                    width: '50%',
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                value={item.giamGia}
+                                                                                                onChange={(e) => {
+                                                                                                    const valueChange =
+                                                                                                        e.target.value.replaceAll(
+                                                                                                            '.',
+                                                                                                            ''
+                                                                                                        );
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.giamGia`,
+                                                                                                        Number.parseInt(
+                                                                                                            valueChange
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                customInput={TextField}
+                                                                                                name={`khuyenMaiChiTiets.${index}.giamGia`}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.giamGia`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM === 12 ||
+                                                                                    values.hinhThucKM === 22 ? (
+                                                                                        <>
+                                                                                            <NumericFormat
+                                                                                                thousandSeparator={'.'}
+                                                                                                decimalSeparator={','}
+                                                                                                value={item.soLuongTang}
+                                                                                                name={`khuyenMaiChiTiets.${index}.soLuongTang`}
+                                                                                                size="small"
+                                                                                                label={
+                                                                                                    values.hinhThucKM ===
+                                                                                                    12
+                                                                                                        ? 'Số lượng tặng'
+                                                                                                        : ''
+                                                                                                }
+                                                                                                sx={{
+                                                                                                    width:
+                                                                                                        values.hinhThucKM ===
+                                                                                                        12
+                                                                                                            ? '50%'
+                                                                                                            : '20%',
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                onChange={(e) => {
+                                                                                                    const valueChange =
+                                                                                                        e.target.value.replaceAll(
+                                                                                                            '.',
+                                                                                                            ''
+                                                                                                        );
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.soLuongTang`,
+                                                                                                        Number.parseInt(
+                                                                                                            valueChange
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                customInput={TextField}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.soLuongTang`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM === 11 ||
+                                                                                    values.hinhThucKM === 13 ||
+                                                                                    values.hinhThucKM === 21 ? (
+                                                                                        <ToggleButtonGroup
                                                                                             value={
-                                                                                                suggestStore.suggestDonViQuiDoi?.find(
-                                                                                                    (x) => x.id == item.idDonViQuiDoiMua
-                                                                                                ) ?? null
+                                                                                                item.giamGiaTheoPhanTram ??
+                                                                                                true
                                                                                             }
-                                                                                            size="small"
-                                                                                            fullWidth
-                                                                                            disablePortal
-                                                                                            onChange={async (event, value) => {
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.idDonViQuiDoiMua`,
-                                                                                                    value?.id
-                                                                                                );
-                                                                                            }}
-                                                                                            renderInput={(params) => (
-                                                                                                <TextField
-                                                                                                    {...params}
-                                                                                                    sx={{
-                                                                                                        marginTop: '6px'
-                                                                                                    }}
-                                                                                                    label={
-                                                                                                        <Typography fontSize="13px">
-                                                                                                            Mặt hàng
-                                                                                                        </Typography>
-                                                                                                    }
-                                                                                                />
-                                                                                            )}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets.${index}.idDonViQuiDoiMua`}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.hinhThucKM === 11 ||
-                                                                                values.hinhThucKM === 13 ||
-                                                                                values.hinhThucKM === 21 ? (
-                                                                                    <>
-                                                                                        <NumericFormat
-                                                                                            thousandSeparator={'.'}
-                                                                                            decimalSeparator={','}
-                                                                                            size="small"
-                                                                                            label="Giảm giá"
                                                                                             sx={{
-                                                                                                width: '50%',
                                                                                                 marginTop: '6px'
                                                                                             }}
-                                                                                            value={item.giamGia}
-                                                                                            onChange={(e) => {
-                                                                                                const valueChange = e.target.value.replaceAll(
-                                                                                                    '.',
-                                                                                                    ''
-                                                                                                );
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.giamGia`,
-                                                                                                    Number.parseInt(valueChange)
-                                                                                                );
-                                                                                            }}
-                                                                                            customInput={TextField}
-                                                                                            name={`khuyenMaiChiTiets.${index}.giamGia`}
-                                                                                        />
-                                                                                        <ErrorMessage name={`khuyenMaiChiTiets.${index}.giamGia`} />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.hinhThucKM === 12 || values.hinhThucKM === 22 ? (
-                                                                                    <>
-                                                                                        <NumericFormat
-                                                                                            thousandSeparator={'.'}
-                                                                                            decimalSeparator={','}
-                                                                                            value={item.soLuongTang}
-                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongTang`}
-                                                                                            size="small"
-                                                                                            label={values.hinhThucKM === 12 ? 'Số lượng tặng' : ''}
-                                                                                            sx={{
-                                                                                                width: values.hinhThucKM === 12 ? '50%' : '20%',
-                                                                                                marginTop: '6px'
-                                                                                            }}
-                                                                                            onChange={(e) => {
-                                                                                                const valueChange = e.target.value.replaceAll(
-                                                                                                    '.',
-                                                                                                    ''
-                                                                                                );
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.soLuongTang`,
-                                                                                                    Number.parseInt(valueChange)
-                                                                                                );
-                                                                                            }}
-                                                                                            customInput={TextField}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets.${index}.soLuongTang`}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.hinhThucKM === 11 ||
-                                                                                values.hinhThucKM === 13 ||
-                                                                                values.hinhThucKM === 21 ? (
-                                                                                    <ToggleButtonGroup
-                                                                                        value={item.giamGiaTheoPhanTram ?? true}
-                                                                                        sx={{
-                                                                                            marginTop: '6px'
-                                                                                        }}
-                                                                                        size="small">
-                                                                                        <ToggleButton
-                                                                                            onClick={() => {
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.giamGiaTheoPhanTram`,
-                                                                                                    true
-                                                                                                );
-                                                                                            }}
-                                                                                            value={true}
-                                                                                            sx={{
-                                                                                                width: '32px',
-                                                                                                height: '36px'
-                                                                                            }}>
-                                                                                            %
-                                                                                        </ToggleButton>
-                                                                                        <ToggleButton
-                                                                                            value={false}
-                                                                                            onClick={() => {
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.giamGiaTheoPhanTram`,
-                                                                                                    false
-                                                                                                );
-                                                                                            }}
-                                                                                            sx={{
-                                                                                                padding: '5px',
-                                                                                                width: '32px',
-                                                                                                height: '36px'
-                                                                                            }}>
-                                                                                            đ
-                                                                                        </ToggleButton>
-                                                                                    </ToggleButtonGroup>
-                                                                                ) : null}
+                                                                                            size="small">
+                                                                                            <ToggleButton
+                                                                                                onClick={() => {
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.giamGiaTheoPhanTram`,
+                                                                                                        true
+                                                                                                    );
+                                                                                                }}
+                                                                                                value={true}
+                                                                                                sx={{
+                                                                                                    width: '32px',
+                                                                                                    height: '36px'
+                                                                                                }}>
+                                                                                                %
+                                                                                            </ToggleButton>
+                                                                                            <ToggleButton
+                                                                                                value={false}
+                                                                                                onClick={() => {
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.giamGiaTheoPhanTram`,
+                                                                                                        false
+                                                                                                    );
+                                                                                                }}
+                                                                                                sx={{
+                                                                                                    padding: '5px',
+                                                                                                    width: '32px',
+                                                                                                    height: '36px'
+                                                                                                }}>
+                                                                                                đ
+                                                                                            </ToggleButton>
+                                                                                        </ToggleButtonGroup>
+                                                                                    ) : null}
 
-                                                                                {values.hinhThucKM === 12 ||
-                                                                                values.hinhThucKM === 13 ||
-                                                                                values.hinhThucKM === 22 ||
-                                                                                values.hinhThucKM === 21 ? (
-                                                                                    <>
-                                                                                        <Autocomplete
-                                                                                            options={suggestStore?.suggestDonViQuiDoi ?? []}
-                                                                                            getOptionLabel={(option) => `${option.tenDonVi}`}
-                                                                                            value={
-                                                                                                suggestStore.suggestDonViQuiDoi?.find(
-                                                                                                    (x) => x.id == item.idDonViQuiDoiTang
-                                                                                                ) ?? null
-                                                                                            }
-                                                                                            sx={{
-                                                                                                marginTop: '6px'
-                                                                                            }}
-                                                                                            size="small"
-                                                                                            fullWidth
-                                                                                            disablePortal
-                                                                                            onChange={async (event, value) => {
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.idDonViQuiDoiTang`,
-                                                                                                    value?.id
-                                                                                                );
-                                                                                            }}
-                                                                                            renderInput={(params) => (
-                                                                                                <TextField
-                                                                                                    {...params}
-                                                                                                    label={
-                                                                                                        <Typography fontSize="13px">
-                                                                                                            Mặt hàng
-                                                                                                        </Typography>
-                                                                                                    }
-                                                                                                />
-                                                                                            )}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets.${index}.idDonViQuiDoiTang`}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.hinhThucKM === 14 || values.hinhThucKM === 24 ? (
-                                                                                    <>
-                                                                                        <NumericFormat
-                                                                                            thousandSeparator={'.'}
-                                                                                            decimalSeparator={','}
-                                                                                            sx={{
-                                                                                                marginTop: '6px'
-                                                                                            }}
-                                                                                            size="small"
-                                                                                            label={'Số điểm tặng'}
-                                                                                            fullWidth
-                                                                                            onChange={(e) => {
-                                                                                                const valueChange = e.target.value.replaceAll(
-                                                                                                    '.',
-                                                                                                    ''
-                                                                                                );
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.soDiemTang`,
-                                                                                                    Number.parseInt(valueChange)
-                                                                                                );
-                                                                                            }}
-                                                                                            customInput={TextField}
-                                                                                            value={item.soDiemTang}
-                                                                                            name={`khuyenMaiChiTiets.${index}.soDiemTang`}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets.${index}.soDiemTang`}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                {values.hinhThucKM === 23 ? (
-                                                                                    <>
-                                                                                        <NumericFormat
-                                                                                            thousandSeparator={'.'}
-                                                                                            decimalSeparator={','}
-                                                                                            sx={{
-                                                                                                marginTop: '6px'
-                                                                                            }}
-                                                                                            size="small"
-                                                                                            label={'Giá khuyến mại'}
-                                                                                            fullWidth
-                                                                                            onChange={(e) => {
-                                                                                                const valueChange = e.target.value.replaceAll(
-                                                                                                    '.',
-                                                                                                    ''
-                                                                                                );
-                                                                                                setFieldValue(
-                                                                                                    `khuyenMaiChiTiets.${index}.giaKhuyenMai`,
-                                                                                                    Number.parseInt(valueChange)
-                                                                                                );
-                                                                                            }}
-                                                                                            customInput={TextField}
-                                                                                            value={item.giaKhuyenMai}
-                                                                                            name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
-                                                                                        />
-                                                                                        <ErrorMessage
-                                                                                            name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
-                                                                                        />
-                                                                                    </>
-                                                                                ) : null}
-                                                                                <IconButton
-                                                                                    onClick={() => {
-                                                                                        arrayHelpers.remove(index);
-                                                                                    }}
-                                                                                    sx={{
-                                                                                        marginLeft: '5px',
-                                                                                        marginTop: '6px'
-                                                                                    }}>
-                                                                                    <CloseIcon color="red" />
-                                                                                </IconButton>
-                                                                            </Box>
-                                                                        ))}
+                                                                                    {values.hinhThucKM === 12 ||
+                                                                                    values.hinhThucKM === 13 ||
+                                                                                    values.hinhThucKM === 22 ||
+                                                                                    values.hinhThucKM === 21 ? (
+                                                                                        <>
+                                                                                            <Autocomplete
+                                                                                                options={
+                                                                                                    suggestStore?.suggestDonViQuiDoi ??
+                                                                                                    []
+                                                                                                }
+                                                                                                getOptionLabel={(
+                                                                                                    option
+                                                                                                ) =>
+                                                                                                    `${option.tenDonVi}`
+                                                                                                }
+                                                                                                value={
+                                                                                                    suggestStore.suggestDonViQuiDoi?.find(
+                                                                                                        (x) =>
+                                                                                                            x.id ==
+                                                                                                            item.idDonViQuiDoiTang
+                                                                                                    ) ?? null
+                                                                                                }
+                                                                                                sx={{
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                size="small"
+                                                                                                fullWidth
+                                                                                                disablePortal
+                                                                                                onChange={async (
+                                                                                                    event,
+                                                                                                    value
+                                                                                                ) => {
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.idDonViQuiDoiTang`,
+                                                                                                        value?.id
+                                                                                                    );
+                                                                                                }}
+                                                                                                renderInput={(
+                                                                                                    params
+                                                                                                ) => (
+                                                                                                    <TextField
+                                                                                                        {...params}
+                                                                                                        label={
+                                                                                                            <Typography fontSize="13px">
+                                                                                                                Mặt hàng
+                                                                                                            </Typography>
+                                                                                                        }
+                                                                                                    />
+                                                                                                )}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.idDonViQuiDoiTang`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM === 14 ||
+                                                                                    values.hinhThucKM === 24 ? (
+                                                                                        <>
+                                                                                            <NumericFormat
+                                                                                                thousandSeparator={'.'}
+                                                                                                decimalSeparator={','}
+                                                                                                sx={{
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                size="small"
+                                                                                                label={'Số điểm tặng'}
+                                                                                                fullWidth
+                                                                                                onChange={(e) => {
+                                                                                                    const valueChange =
+                                                                                                        e.target.value.replaceAll(
+                                                                                                            '.',
+                                                                                                            ''
+                                                                                                        );
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.soDiemTang`,
+                                                                                                        Number.parseInt(
+                                                                                                            valueChange
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                customInput={TextField}
+                                                                                                value={item.soDiemTang}
+                                                                                                name={`khuyenMaiChiTiets.${index}.soDiemTang`}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.soDiemTang`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    {values.hinhThucKM === 23 ? (
+                                                                                        <>
+                                                                                            <NumericFormat
+                                                                                                thousandSeparator={'.'}
+                                                                                                decimalSeparator={','}
+                                                                                                sx={{
+                                                                                                    marginTop: '6px'
+                                                                                                }}
+                                                                                                size="small"
+                                                                                                label={'Giá khuyến mại'}
+                                                                                                fullWidth
+                                                                                                onChange={(e) => {
+                                                                                                    const valueChange =
+                                                                                                        e.target.value.replaceAll(
+                                                                                                            '.',
+                                                                                                            ''
+                                                                                                        );
+                                                                                                    setFieldValue(
+                                                                                                        `khuyenMaiChiTiets.${index}.giaKhuyenMai`,
+                                                                                                        Number.parseInt(
+                                                                                                            valueChange
+                                                                                                        )
+                                                                                                    );
+                                                                                                }}
+                                                                                                customInput={TextField}
+                                                                                                value={
+                                                                                                    item.giaKhuyenMai
+                                                                                                }
+                                                                                                name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
+                                                                                            />
+                                                                                            <ErrorMessage
+                                                                                                name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
+                                                                                            />
+                                                                                        </>
+                                                                                    ) : null}
+                                                                                    <IconButton
+                                                                                        onClick={() => {
+                                                                                            arrayHelpers.remove(index);
+                                                                                        }}
+                                                                                        sx={{
+                                                                                            marginLeft: '5px',
+                                                                                            marginTop: '6px'
+                                                                                        }}>
+                                                                                        <CloseIcon color="red" />
+                                                                                    </IconButton>
+                                                                                </Box>
+                                                                            )
+                                                                        )}
                                                                         <Button
                                                                             onClick={() =>
-                                                                                arrayHelpers.insert(values.khuyenMaiChiTiets.length + 1, {
-                                                                                    id: AppConsts.guidEmpty
-                                                                                })
+                                                                                arrayHelpers.insert(
+                                                                                    values.khuyenMaiChiTiets.length + 1,
+                                                                                    {
+                                                                                        id: AppConsts.guidEmpty
+                                                                                    }
+                                                                                )
                                                                             }>
                                                                             Thêm điều kiện
                                                                         </Button>
@@ -583,13 +702,21 @@ const CreateOrEditVoucher: React.FC<{
                                                                 <span className="text-danger"> *</span>
                                                             </Typography>
                                                         ),
-                                                        error: Boolean(errors.thoiGianApDung) && touched.thoiGianApDung ? true : false,
-                                                        helperText: Boolean(errors.thoiGianApDung) && touched?.thoiGianApDung && (
-                                                            <span className="text-danger">{String(errors.thoiGianApDung)}</span>
-                                                        )
+                                                        error:
+                                                            Boolean(errors.thoiGianApDung) && touched.thoiGianApDung
+                                                                ? true
+                                                                : false,
+                                                        helperText: Boolean(errors.thoiGianApDung) &&
+                                                            touched?.thoiGianApDung && (
+                                                                <span className="text-danger">
+                                                                    {String(errors.thoiGianApDung)}
+                                                                </span>
+                                                            )
                                                     }}
                                                     defaultVal={
-                                                        values?.thoiGianApDung ? formatDate(new Date(values?.thoiGianApDung), 'yyyy-MM-dd') : ''
+                                                        values?.thoiGianApDung
+                                                            ? formatDate(new Date(values?.thoiGianApDung), 'yyyy-MM-dd')
+                                                            : ''
                                                     }
                                                     handleChangeDate={(value: string) => {
                                                         values.thoiGianApDung = value;
@@ -607,13 +734,24 @@ const CreateOrEditVoucher: React.FC<{
                                                                 <span className="text-danger"> *</span>
                                                             </Typography>
                                                         ),
-                                                        error: Boolean(errors?.thoiGianKetThuc) && touched?.thoiGianKetThuc ? true : false,
-                                                        helperText: Boolean(errors?.thoiGianKetThuc) && touched.thoiGianKetThuc && (
-                                                            <span className="text-danger">{String(errors?.thoiGianKetThuc)}</span>
-                                                        )
+                                                        error:
+                                                            Boolean(errors?.thoiGianKetThuc) && touched?.thoiGianKetThuc
+                                                                ? true
+                                                                : false,
+                                                        helperText: Boolean(errors?.thoiGianKetThuc) &&
+                                                            touched.thoiGianKetThuc && (
+                                                                <span className="text-danger">
+                                                                    {String(errors?.thoiGianKetThuc)}
+                                                                </span>
+                                                            )
                                                     }}
                                                     defaultVal={
-                                                        values?.thoiGianKetThuc ? formatDate(new Date(values?.thoiGianKetThuc), 'yyyy-MM-dd') : ''
+                                                        values?.thoiGianKetThuc
+                                                            ? formatDate(
+                                                                  new Date(values?.thoiGianKetThuc),
+                                                                  'yyyy-MM-dd'
+                                                              )
+                                                            : ''
                                                     }
                                                     handleChangeDate={(value: string) => {
                                                         values.thoiGianKetThuc = value;
@@ -636,7 +774,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option.displayName}
                                                         </li>
                                                     )}
-                                                    value={ThoiGianConst.thang.filter((x) => values?.thangApDungs?.includes(x.value))}
+                                                    value={ThoiGianConst.thang.filter((x) =>
+                                                        values?.thangApDungs?.includes(x.value)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -646,7 +786,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             value.map((x) => x.value)
                                                         );
                                                     }}
-                                                    renderInput={(params) => <TextField {...params} label="Theo tháng" />}
+                                                    renderInput={(params) => (
+                                                        <TextField {...params} label="Theo tháng" />
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item xs={12}>
@@ -665,7 +807,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option.displayName}
                                                         </li>
                                                     )}
-                                                    value={ThoiGianConst.ngay.filter((x) => values?.ngayApDungs?.includes(x.value))}
+                                                    value={ThoiGianConst.ngay.filter((x) =>
+                                                        values?.ngayApDungs?.includes(x.value)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -675,7 +819,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             value.map((x) => x.value)
                                                         );
                                                     }}
-                                                    renderInput={(params) => <TextField {...params} label="Theo ngày" />}
+                                                    renderInput={(params) => (
+                                                        <TextField {...params} label="Theo ngày" />
+                                                    )}
                                                 />
                                             </Grid>
 
@@ -695,7 +841,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option.displayName}
                                                         </li>
                                                     )}
-                                                    value={ThoiGianConst.thu.filter((x) => values?.thuApDungs?.includes(x.value))}
+                                                    value={ThoiGianConst.thu.filter((x) =>
+                                                        values?.thuApDungs?.includes(x.value)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -724,7 +872,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option}
                                                         </li>
                                                     )}
-                                                    value={ThoiGianConst.gio.filter((x) => values?.gioApDungs?.includes(x))}
+                                                    value={ThoiGianConst.gio.filter((x) =>
+                                                        values?.gioApDungs?.includes(x)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -746,8 +896,14 @@ const CreateOrEditVoucher: React.FC<{
                                                         setFieldValue('idChiNhanhs', []);
                                                         setFieldValue('tatCaChiNhanh', v === 'true' ? true : false);
                                                     }}>
-                                                    <FormControlLabel control={<Radio value="true" />} label="Toàn hệ thống" />
-                                                    <FormControlLabel control={<Radio value="false" />} label="Chi nhánh" />
+                                                    <FormControlLabel
+                                                        control={<Radio value="true" />}
+                                                        label="Toàn hệ thống"
+                                                    />
+                                                    <FormControlLabel
+                                                        control={<Radio value="false" />}
+                                                        label="Chi nhánh"
+                                                    />
                                                 </RadioGroup>
                                                 <Autocomplete
                                                     multiple
@@ -765,7 +921,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option.tenChiNhanh}
                                                         </li>
                                                     )}
-                                                    value={suggestStore.suggestChiNhanh.filter((x) => values?.idChiNhanhs?.includes(x.id))}
+                                                    value={suggestStore.suggestChiNhanh.filter((x) =>
+                                                        values?.idChiNhanhs?.includes(x.id)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -776,7 +934,11 @@ const CreateOrEditVoucher: React.FC<{
                                                         );
                                                     }}
                                                     renderInput={(params) => (
-                                                        <TextField {...params} fullWidth placeholder="Chọn chi nhánh áp dụng..." />
+                                                        <TextField
+                                                            {...params}
+                                                            fullWidth
+                                                            placeholder="Chọn chi nhánh áp dụng..."
+                                                        />
                                                     )}
                                                 />
                                             </FormControl>
@@ -788,8 +950,14 @@ const CreateOrEditVoucher: React.FC<{
                                                         setFieldValue('idNhanViens', []);
                                                         setFieldValue('tatCaNhanVien', v === 'true' ? true : false);
                                                     }}>
-                                                    <FormControlLabel control={<Radio value="true" />} label="Toàn bô người bán" />
-                                                    <FormControlLabel control={<Radio value={'false'} />} label="Người bán" />
+                                                    <FormControlLabel
+                                                        control={<Radio value="true" />}
+                                                        label="Toàn bô người bán"
+                                                    />
+                                                    <FormControlLabel
+                                                        control={<Radio value={'false'} />}
+                                                        label="Người bán"
+                                                    />
                                                 </RadioGroup>
                                                 <Autocomplete
                                                     multiple
@@ -807,7 +975,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option.tenNhanVien}
                                                         </li>
                                                     )}
-                                                    value={suggestStore.suggestNhanVien.filter((x) => values?.idNhanViens?.includes(x.id))}
+                                                    value={suggestStore.suggestNhanVien.filter((x) =>
+                                                        values?.idNhanViens?.includes(x.id)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -818,7 +988,11 @@ const CreateOrEditVoucher: React.FC<{
                                                         );
                                                     }}
                                                     renderInput={(params) => (
-                                                        <TextField {...params} fullWidth placeholder="Chọn nhân viên áp dụng..." />
+                                                        <TextField
+                                                            {...params}
+                                                            fullWidth
+                                                            placeholder="Chọn nhân viên áp dụng..."
+                                                        />
                                                     )}
                                                 />
                                             </FormControl>
@@ -828,10 +1002,19 @@ const CreateOrEditVoucher: React.FC<{
                                                     value={values?.tatCaKhachHang}
                                                     onChange={(e, value) => {
                                                         setFieldValue('idNhomKhachs', []);
-                                                        setFieldValue('tatCaNhomKhach', value === 'true' ? true : false);
+                                                        setFieldValue(
+                                                            'tatCaNhomKhach',
+                                                            value === 'true' ? true : false
+                                                        );
                                                     }}>
-                                                    <FormControlLabel control={<Radio value={'true'} />} label="Toàn bộ khách hàng" />
-                                                    <FormControlLabel control={<Radio value={'false'} />} label="Nhóm khách hàng" />
+                                                    <FormControlLabel
+                                                        control={<Radio value={'true'} />}
+                                                        label="Toàn bộ khách hàng"
+                                                    />
+                                                    <FormControlLabel
+                                                        control={<Radio value={'false'} />}
+                                                        label="Nhóm khách hàng"
+                                                    />
                                                 </RadioGroup>
                                                 <Autocomplete
                                                     multiple
@@ -849,7 +1032,9 @@ const CreateOrEditVoucher: React.FC<{
                                                             {option.tenNhomKhach}
                                                         </li>
                                                     )}
-                                                    value={suggestStore.suggestNhomKhach.filter((x) => values?.idNhomKhachs?.includes(x.id))}
+                                                    value={suggestStore.suggestNhomKhach.filter((x) =>
+                                                        values?.idNhomKhachs?.includes(x.id)
+                                                    )}
                                                     size="small"
                                                     fullWidth
                                                     disablePortal
@@ -860,7 +1045,11 @@ const CreateOrEditVoucher: React.FC<{
                                                         );
                                                     }}
                                                     renderInput={(params) => (
-                                                        <TextField {...params} fullWidth placeholder="Chọn nhóm khách hàng áp dụng..." />
+                                                        <TextField
+                                                            {...params}
+                                                            fullWidth
+                                                            placeholder="Chọn nhóm khách hàng áp dụng..."
+                                                        />
                                                     )}
                                                 />
                                             </FormControl>
@@ -941,7 +1130,12 @@ interface TabPanelProps {
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
     return (
-        <div role="tabpanel" hidden={value !== index} id={`vertical-tabpanel-${index}`} aria-labelledby={`vertical-tab-${index}`} {...other}>
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`vertical-tabpanel-${index}`}
+            aria-labelledby={`vertical-tab-${index}`}
+            {...other}>
             {value === index && <Box sx={{ p: 1 }}>{children}</Box>}
         </div>
     );

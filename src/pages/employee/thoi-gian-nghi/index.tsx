@@ -4,7 +4,17 @@ import React from 'react';
 import { NgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/NgayNghiLeDto';
 import ngayNghiLeService from '../../../services/ngay_nghi_le/ngayNghiLeService';
 import { CreateOrEditNgayNghiLeDto } from '../../../services/ngay_nghi_le/dto/createOrEditNgayNghiLe';
-import { Box, Button, Checkbox, Grid, IconButton, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Grid,
+    IconButton,
+    SelectChangeEvent,
+    Stack,
+    TextField,
+    Typography
+} from '@mui/material';
 import CreateOrEditThoiGianNghi from './create-or-edit-thoi-gian-nghi';
 import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import AddIcon from '../../../images/add.svg';
@@ -307,7 +317,12 @@ class EmployeeHoliday extends Component {
                             justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
+                        <Typography
+                            fontSize="13px"
+                            fontWeight="400"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
+                            lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -339,7 +354,12 @@ class EmployeeHoliday extends Component {
                             justifyContent: 'start'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
+                        <Typography
+                            fontSize="13px"
+                            fontWeight="400"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
+                            lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -367,7 +387,12 @@ class EmployeeHoliday extends Component {
                             width: '100%',
                             textAlign: 'left'
                         }}>
-                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
+                        <Typography
+                            fontSize="13px"
+                            fontWeight="400"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
+                            lineHeight="16px">
                             {params.value} ngày
                         </Typography>
                     </Box>
@@ -537,7 +562,11 @@ class EmployeeHoliday extends Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa ngày nghỉ lễ'}
                                             sx={{
@@ -593,7 +622,10 @@ class EmployeeHoliday extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
                             }
                         }}
                         sx={{
@@ -624,7 +656,10 @@ class EmployeeHoliday extends Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
-                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.showConfirmDelete}></ConfirmDelete>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditThoiGianNghi
                     visible={this.state.modalVisible}
                     title={this.state.IdHoliday == '' ? 'Thêm mới ngày lễ' : 'Cập nhật này lễ'}

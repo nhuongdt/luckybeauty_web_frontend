@@ -70,10 +70,13 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
         });
         const saveOK = createResult != null;
         saveOK
-            ? enqueueSnackbar(values.id === AppConsts.guidEmpty || values.id === '' ? 'Thêm mới thành công' : 'Cập nhật thành công', {
-                  variant: 'success',
-                  autoHideDuration: 3000
-              })
+            ? enqueueSnackbar(
+                  values.id === AppConsts.guidEmpty || values.id === '' ? 'Thêm mới thành công' : 'Cập nhật thành công',
+                  {
+                      variant: 'success',
+                      autoHideDuration: 3000
+                  }
+              )
             : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
                   variant: 'error',
                   autoHideDuration: 3000
@@ -91,7 +94,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                         fontSize="24px"
                         //color="rgb(51, 50, 51)"
                         fontWeight="700">
-                        {initialValues.id === '' || initialValues.id === AppConsts.guidEmpty ? 'Thêm cuộc hẹn' : 'Cập hật lịch hẹn'}
+                        {initialValues.id === '' || initialValues.id === AppConsts.guidEmpty
+                            ? 'Thêm cuộc hẹn'
+                            : 'Cập hật lịch hẹn'}
                     </Typography>
                     <IconButton
                         aria-label="close"
@@ -123,10 +128,14 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                             sx={{ pt: '16px' }}
                                             options={suggestStore.suggestKhachHang}
                                             getOptionLabel={(option) =>
-                                                `${option.tenKhachHang} ${option.soDienThoai !== '' ? option.soDienThoai : ''}`
+                                                `${option.tenKhachHang} ${
+                                                    option.soDienThoai !== '' ? option.soDienThoai : ''
+                                                }`
                                             }
                                             value={
-                                                suggestStore.suggestKhachHang?.filter((x) => x.id == values.idKhachHang)?.[0] ??
+                                                suggestStore.suggestKhachHang?.filter(
+                                                    (x) => x.id == values.idKhachHang
+                                                )?.[0] ??
                                                 ({
                                                     id: '',
                                                     soDienThoai: '',
@@ -183,7 +192,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                 </div>
                                             )}
                                         />
-                                        {errors.idKhachHang && touched.idKhachHang && <small className="text-danger">{errors.idKhachHang}</small>}
+                                        {errors.idKhachHang && touched.idKhachHang && (
+                                            <small className="text-danger">{errors.idKhachHang}</small>
+                                        )}
                                     </Grid>
                                     <Grid item xs={12} sm={7} sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
                                         <FormGroup className="mt-4 mb-1">
@@ -215,7 +226,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         options={suggestStore?.suggestDichVu ?? []}
                                                         getOptionLabel={(option) => `${option.tenDichVu}`}
                                                         value={
-                                                            suggestStore.suggestDichVu?.filter((x) => x.id == values.idDonViQuiDoi)?.[0] ??
+                                                            suggestStore.suggestDichVu?.filter(
+                                                                (x) => x.id == values.idDonViQuiDoi
+                                                            )?.[0] ??
                                                             ({
                                                                 id: '',
                                                                 donGia: 0,
@@ -228,7 +241,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         onChange={async (event, value) => {
                                                             setFieldValue('idDonViQuiDoi', value ? value.id : ''); // Cập nhật giá trị id trong Formik
 
-                                                            await suggestStore.getSuggestKyThuatVienByIdDichVu(value ? value.id : '');
+                                                            await suggestStore.getSuggestKyThuatVienByIdDichVu(
+                                                                value ? value.id : ''
+                                                            );
                                                         }}
                                                         renderInput={(params) => (
                                                             <TextField
@@ -238,11 +253,17 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                         Dịch vụ <span className="text-danger">*</span>
                                                                     </Typography>
                                                                 }
-                                                                error={errors.idDonViQuiDoi && touched.idDonViQuiDoi ? true : false}
+                                                                error={
+                                                                    errors.idDonViQuiDoi && touched.idDonViQuiDoi
+                                                                        ? true
+                                                                        : false
+                                                                }
                                                                 helperText={
                                                                     errors.idDonViQuiDoi &&
                                                                     touched.idDonViQuiDoi && (
-                                                                        <small className="text-danger">{errors.idDonViQuiDoi}</small>
+                                                                        <small className="text-danger">
+                                                                            {errors.idDonViQuiDoi}
+                                                                        </small>
                                                                     )
                                                                 }
                                                                 placeholder="Nhập tên dịch vụ"
@@ -262,7 +283,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                         error={errors.startHours && touched.startHours ? true : false}
                                                         helperText={
                                                             errors.startHours &&
-                                                            touched.startHours && <span className="text-danger">{errors.startHours}</span>
+                                                            touched.startHours && (
+                                                                <span className="text-danger">{errors.startHours}</span>
+                                                            )
                                                         }
                                                         InputLabelProps={{
                                                             shrink: true
@@ -281,7 +304,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                             options={suggestStore?.suggestKyThuatVien ?? []}
                                                             getOptionLabel={(option) => `${option.tenNhanVien}`}
                                                             value={
-                                                                suggestStore.suggestKyThuatVien?.filter((x) => x.id == values.idNhanVien)?.[0] ??
+                                                                suggestStore.suggestKyThuatVien?.filter(
+                                                                    (x) => x.id == values.idNhanVien
+                                                                )?.[0] ??
                                                                 ({
                                                                     id: '',
                                                                     avatar: '',
@@ -319,8 +344,9 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 </Typography>
                                                             }
                                                             value={
-                                                                suggestStore.suggestDichVu.find((x) => x.id == values.idDonViQuiDoi)
-                                                                    ?.thoiGianThucHien ?? '0'
+                                                                suggestStore.suggestDichVu.find(
+                                                                    (x) => x.id == values.idDonViQuiDoi
+                                                                )?.thoiGianThucHien ?? '0'
                                                             }
                                                             type="text"
                                                             size="small"></TextField>

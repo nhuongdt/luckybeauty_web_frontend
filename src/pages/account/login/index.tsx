@@ -109,7 +109,11 @@ const LoginScreen: React.FC = () => {
                                 <Grid xs={12} item>
                                     <TextField
                                         {...formik.getFieldProps('userNameOrEmail')}
-                                        error={formik.touched.userNameOrEmail && formik.errors.userNameOrEmail ? true : false}
+                                        error={
+                                            formik.touched.userNameOrEmail && formik.errors.userNameOrEmail
+                                                ? true
+                                                : false
+                                        }
                                         helperText={formik.touched.userNameOrEmail && formik.errors.userNameOrEmail}
                                         onKeyDown={handleKeyDown}
                                         variant="outlined"

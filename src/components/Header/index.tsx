@@ -54,7 +54,10 @@ interface HeaderProps {
     handleChangeChiNhanh: (currentChiNhanh: SuggestChiNhanhDto) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ collapsed, toggle, isChildHovered, handleChangeChiNhanh }, props: HeaderProps) => {
+const Header: React.FC<HeaderProps> = (
+    { collapsed, toggle, isChildHovered, handleChangeChiNhanh },
+    props: HeaderProps
+) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [ThongBaoAnchorEl, setThongBaoAnchorEl] = React.useState<null | HTMLElement>(null);
     const [settingThongBao, setSettingThongBao] = React.useState<null | HTMLElement>(null);
@@ -234,7 +237,10 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle, isChildHovered, hand
                             transform: collapsed && !isChildHovered ? 'rotate(-180deg)' : 'rotate(0deg)'
                         }}
                         onClick={toggle}>
-                        <ArrowBackIosIcon className="icon1" sx={{ color: 'rgba(49, 157, 255, 0.7)', fontSize: '16px' }} />
+                        <ArrowBackIosIcon
+                            className="icon1"
+                            sx={{ color: 'rgba(49, 157, 255, 0.7)', fontSize: '16px' }}
+                        />
                         <ArrowBackIosIcon
                             className="icon2"
                             sx={{
@@ -391,11 +397,15 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle, isChildHovered, hand
                                                 justifyContent: 'space-between'
                                             }}>
                                             <Box marginRight={'10px'}>
-                                                {item.notification.severity === NotificationSeverity.Info ? <InfoOutlinedIcon color="info" /> : null}
+                                                {item.notification.severity === NotificationSeverity.Info ? (
+                                                    <InfoOutlinedIcon color="info" />
+                                                ) : null}
                                                 {item.notification.severity === NotificationSeverity.Error ? (
                                                     <ErrorOutlineOutlinedIcon color="error" />
                                                 ) : null}
-                                                {item.notification.severity === NotificationSeverity.Fatal ? null : null}
+                                                {item.notification.severity === NotificationSeverity.Fatal
+                                                    ? null
+                                                    : null}
                                                 {item.notification.severity === NotificationSeverity.Success ? (
                                                     <CheckCircleOutlineOutlinedIcon color="success" />
                                                 ) : null}
@@ -436,7 +446,9 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle, isChildHovered, hand
                                                     {item.state === UserNotificationState.Unread ? (
                                                         <Button
                                                             onClick={async () => {
-                                                                await NotificationService.SetNotificationAsRead(item.id);
+                                                                await NotificationService.SetNotificationAsRead(
+                                                                    item.id
+                                                                );
                                                                 await notificationStore.GetUserNotification();
                                                             }}>
                                                             Đánh dấu đã đọc
@@ -526,7 +538,11 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle, isChildHovered, hand
                                                     key={indexChild}
                                                     control={<Checkbox />}
                                                     label={
-                                                        <Typography variant="body1" fontSize="12px" fontWeight="400" color="#333233">
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontSize="12px"
+                                                            fontWeight="400"
+                                                            color="#333233">
                                                             {' '}
                                                             {label}
                                                         </Typography>
@@ -605,7 +621,11 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggle, isChildHovered, hand
                                     navigate('/account/profile');
                                 }}>
                                 <Box sx={{ display: 'flex', gap: '12px' }}>
-                                    <Avatar src={Cookies.get('avatar') ?? ''} alt="avatar" sx={{ width: 40, height: 40 }} />
+                                    <Avatar
+                                        src={Cookies.get('avatar') ?? ''}
+                                        alt="avatar"
+                                        sx={{ width: 40, height: 40 }}
+                                    />
                                     <Box
                                         sx={{
                                             '& h2': {

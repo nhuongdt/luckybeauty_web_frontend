@@ -128,15 +128,18 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             title={item.tenNhomKhach}>
                             {item.tenNhomKhach}
                         </Typography>
-                        {isHover && item.id !== '' && rowHover.id === item.id && !abpCustom.isGrandPermission('Pages.NhomKhach.Update') && (
-                            <OpenInNew
-                                onClick={(event) => {
-                                    event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
-                                    handleClickTreeItem(true, item.id);
-                                }}
-                                sx={{ position: 'absolute', right: 16 }}
-                            />
-                        )}
+                        {isHover &&
+                            item.id !== '' &&
+                            rowHover.id === item.id &&
+                            !abpCustom.isGrandPermission('Pages.NhomKhach.Update') && (
+                                <OpenInNew
+                                    onClick={(event) => {
+                                        event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
+                                        handleClickTreeItem(true, item.id);
+                                    }}
+                                    sx={{ position: 'absolute', right: 16 }}
+                                />
+                            )}
                     </AccordionSummary>
                 </Accordion>
             ))}

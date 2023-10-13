@@ -1,4 +1,16 @@
-import { Box, Radio, Button, TextField, Typography, IconButton, ButtonGroup, Grid, RadioGroup, FormControlLabel, Input } from '@mui/material';
+import {
+    Box,
+    Radio,
+    Button,
+    TextField,
+    Typography,
+    IconButton,
+    ButtonGroup,
+    Grid,
+    RadioGroup,
+    FormControlLabel,
+    Input
+} from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import React, { useContext, useEffect, useState } from 'react';
 import { util } from 'prettier';
@@ -536,7 +548,11 @@ const DetailHoaDon = ({
                                             }
                                         }}>
                                         <Typography variant="body1" color="#525F7A" fontSize="12px">
-                                            {arrHinhThucThanhToan.filter((x: ISelect) => x.value === item.hinhThucThanhToan)[0].text}
+                                            {
+                                                arrHinhThucThanhToan.filter(
+                                                    (x: ISelect) => x.value === item.hinhThucThanhToan
+                                                )[0].text
+                                            }
                                         </Typography>
 
                                         <NumericFormat
@@ -551,7 +567,9 @@ const DetailHoaDon = ({
                                                 }
                                             }}
                                             value={item.tienThu}
-                                            onChange={(event) => onChangeTienKhachTra(event.target.value, item.hinhThucThanhToan)}
+                                            onChange={(event) =>
+                                                onChangeTienKhachTra(event.target.value, item.hinhThucThanhToan)
+                                            }
                                         />
                                     </Box>
                                 </Grid>

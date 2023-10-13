@@ -1,4 +1,15 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    Stack,
+    TextField,
+    Typography
+} from '@mui/material';
 import { Form, Formik } from 'formik';
 import { Component } from 'react';
 import AppConsts from '../../../lib/appconst';
@@ -57,7 +68,9 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                 fontSize="24px"
                                 //color="#333233"
                                 fontWeight="700">
-                                {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty ? 'Cập nhật ' : 'Thêm mới '}
+                                {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty
+                                    ? 'Cập nhật '
+                                    : 'Thêm mới '}
                                 nhóm khách
                             </Typography>
                             <Button
@@ -117,7 +130,8 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                                         className="btn-outline-hover">
                                                         Hủy
                                                     </Button>
-                                                    {khachHangStore.createOrEditNhomKhachDto?.id != AppConsts.guidEmpty && (
+                                                    {khachHangStore.createOrEditNhomKhachDto?.id !=
+                                                        AppConsts.guidEmpty && (
                                                         <Button
                                                             variant="outlined"
                                                             onClick={() =>
@@ -131,7 +145,10 @@ class CreateOrEditNhomKhachModal extends Component<ModalProps> {
                                                         </Button>
                                                     )}
 
-                                                    <Button type="submit" variant="contained" className="btn-container-hover">
+                                                    <Button
+                                                        type="submit"
+                                                        variant="contained"
+                                                        className="btn-container-hover">
                                                         Lưu
                                                     </Button>
                                                 </Stack>

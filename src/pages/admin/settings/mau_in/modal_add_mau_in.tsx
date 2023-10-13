@@ -38,7 +38,16 @@ const zIndexDialog = createTheme({
     }
 });
 
-export default function ModalAddMauIn({ lstMauIn, isShowModal, idUpdate = '', tenLoaiChungTu, idLoaiChungTu, handleSave, onClose, onDelete }: any) {
+export default function ModalAddMauIn({
+    lstMauIn,
+    isShowModal,
+    idUpdate = '',
+    tenLoaiChungTu,
+    idLoaiChungTu,
+    handleSave,
+    onClose,
+    onDelete
+}: any) {
     const [idChosed, setIdChosed] = useState('');
     const [html, setHtml] = useState('');
     const [dataPrint, setDataPrint] = useState('');
@@ -177,7 +186,11 @@ export default function ModalAddMauIn({ lstMauIn, isShowModal, idUpdate = '', te
                                 {' '}
                                 {utils.checkNull(idUpdate) ? 'Thêm' : 'Cập nhật'} mẫu in {txtLoaiChungTu}
                             </span>
-                            <InfoOutlinedIcon titleAccess="Danh sách token mẫu in" sx={{ color: 'chocolate' }} onClick={() => setIsShowToken(true)} />
+                            <InfoOutlinedIcon
+                                titleAccess="Danh sách token mẫu in"
+                                sx={{ color: 'chocolate' }}
+                                onClick={() => setIsShowToken(true)}
+                            />
                         </Stack>
                         <Stack
                             onClick={onClose}
@@ -213,7 +226,10 @@ export default function ModalAddMauIn({ lstMauIn, isShowModal, idUpdate = '', te
                                     </Grid>
                                     <Grid item xs={12} sm={5} md={5} lg={5}>
                                         <Box sx={{ float: 'right' }}>
-                                            <Checkbox checked={isCheckMauMacDinh} onChange={(e) => setIsCheckMauMacDinh(e.target.checked)} />
+                                            <Checkbox
+                                                checked={isCheckMauMacDinh}
+                                                onChange={(e) => setIsCheckMauMacDinh(e.target.checked)}
+                                            />
                                             <span className="modal-lable" style={{ fontSize: '14px' }}>
                                                 Là mẫu in mặc định
                                             </span>

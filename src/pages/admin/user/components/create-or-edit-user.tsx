@@ -135,7 +135,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
         const rules = Yup.object().shape({
             surname: Yup.string().required('Tên là bắt buộc'),
             name: Yup.string().required('Họ là bắt buộc'),
-            emailAddress: Yup.string().matches(AppConsts.emailRegex, 'Email không hợp lệ').required('Email là bắt buộc'),
+            emailAddress: Yup.string()
+                .matches(AppConsts.emailRegex, 'Email không hợp lệ')
+                .required('Email là bắt buộc'),
             userName: Yup.string().required('Tên truy cập là bắt buộc'),
             phoneNumber: Yup.string().matches(AppConsts.phoneRegex, 'Số điện thoại không hợp lệ').notRequired(),
             password: Yup.string().matches(
@@ -185,7 +187,11 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                 <TabContext value={this.state.tabIndex}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                         <TabList onChange={this.handleTabChange} aria-label="lab API tabs example">
-                                            <Tab label="Người dùng" value="1" sx={{ textTransform: 'unset!important' }} />
+                                            <Tab
+                                                label="Người dùng"
+                                                value="1"
+                                                sx={{ textTransform: 'unset!important' }}
+                                            />
                                             <Tab label="Vai trò" value="2" sx={{ textTransform: 'unset!important' }} />
                                         </TabList>
                                     </Box>
@@ -218,7 +224,9 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             this.setState({
                                                                 avatar: value?.avatar
                                                             });
-                                                            const nhanVien = suggestNhanSu.find((x) => x.id === value?.id) || {
+                                                            const nhanVien = suggestNhanSu.find(
+                                                                (x) => x.id === value?.id
+                                                            ) || {
                                                                 avatar: '',
                                                                 chucVu: '',
                                                                 id: '',
@@ -227,10 +235,16 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             };
                                                             setFieldValue('phoneNumber', nhanVien.soDienThoai || '');
 
-                                                            const names = nhanVien.tenNhanVien.split(' ').filter(Boolean);
+                                                            const names = nhanVien.tenNhanVien
+                                                                .split(' ')
+                                                                .filter(Boolean);
                                                             if (names.length > 0) {
                                                                 setFieldValue('name', names[names.length - 1]);
-                                                                setFieldValue('surname', names.slice(0, -1).join(' ') || names[names.length - 1]);
+                                                                setFieldValue(
+                                                                    'surname',
+                                                                    names.slice(0, -1).join(' ') ||
+                                                                        names[names.length - 1]
+                                                                );
                                                             } else {
                                                                 setFieldValue('name', '');
                                                                 setFieldValue('surname', '');
@@ -328,7 +342,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             </label>
                                                         }
                                                         error={touched.userName && errors.userName ? true : false}
-                                                        helperText={touched.userName && errors.userName && <div>{errors.userName}</div>}
+                                                        helperText={
+                                                            touched.userName &&
+                                                            errors.userName && <div>{errors.userName}</div>
+                                                        }
                                                         disabled={userId === 0 ? false : true}
                                                         type="text"
                                                         name="userName"
@@ -352,8 +369,13 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span>
                                                             </label>
                                                         }
-                                                        error={touched.emailAddress && errors.emailAddress ? true : false}
-                                                        helperText={touched.emailAddress && errors.emailAddress && <div>{errors.emailAddress}</div>}
+                                                        error={
+                                                            touched.emailAddress && errors.emailAddress ? true : false
+                                                        }
+                                                        helperText={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress && <div>{errors.emailAddress}</div>
+                                                        }
                                                         type="email"
                                                         name="emailAddress"
                                                         value={values.emailAddress}
@@ -465,7 +487,10 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                             </label>
                                                         }
                                                         error={touched.password && errors.password ? true : false}
-                                                        helperText={touched.password && errors.password && <span>{errors.password}</span>}
+                                                        helperText={
+                                                            touched.password &&
+                                                            errors.password && <span>{errors.password}</span>
+                                                        }
                                                         type="password"
                                                         name="password"
                                                         value={values.password}
@@ -487,9 +512,16 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                                 </span> */}
                                                             </label>
                                                         }
-                                                        error={touched.confirmPassword && errors.confirmPassword ? true : false}
+                                                        error={
+                                                            touched.confirmPassword && errors.confirmPassword
+                                                                ? true
+                                                                : false
+                                                        }
                                                         helperText={
-                                                            touched.confirmPassword && errors.confirmPassword && <span>{errors.confirmPassword}</span>
+                                                            touched.confirmPassword &&
+                                                            errors.confirmPassword && (
+                                                                <span>{errors.confirmPassword}</span>
+                                                            )
                                                         }
                                                         type="password"
                                                         fullWidth

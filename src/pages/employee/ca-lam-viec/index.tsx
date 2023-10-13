@@ -1,4 +1,14 @@
-import { Box, Button, Checkbox, Grid, IconButton, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Checkbox,
+    Grid,
+    IconButton,
+    SelectChangeEvent,
+    Stack,
+    TextField,
+    Typography
+} from '@mui/material';
 import { observer } from 'mobx-react';
 import { Component, ReactNode } from 'react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
@@ -382,7 +392,12 @@ class CaLamViecScreen extends Component {
                             justifyContent: 'start',
                             width: '100%'
                         }}>
-                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
+                        <Typography
+                            fontSize="13px"
+                            fontWeight="400"
+                            fontFamily={'Roboto'}
+                            color="#3D475C"
+                            lineHeight="16px">
                             {params.value} giờ
                         </Typography>
                     </Box>
@@ -552,7 +567,11 @@ class CaLamViecScreen extends Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
+                                    <Stack
+                                        alignContent={'center'}
+                                        justifyContent={'start'}
+                                        textAlign={'left'}
+                                        spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa ca làm việc'}
                                             sx={{
@@ -608,7 +627,10 @@ class CaLamViecScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
                             }
                         }}
                         sx={{
@@ -645,11 +667,15 @@ class CaLamViecScreen extends Component {
                     downloadImportTemplate={this.downloadImportTemplate}
                     importFile={this.handleImportData}
                 />
-                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.showConfirmDelete}></ConfirmDelete>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditCaLamViecDialog
                     visible={this.state.isShowModal}
                     title={
-                        caLamViecStore.createOrEditDto.id == AppConsts.guidEmpty || caLamViecStore.createOrEditDto.id == ''
+                        caLamViecStore.createOrEditDto.id == AppConsts.guidEmpty ||
+                        caLamViecStore.createOrEditDto.id == ''
                             ? 'Thêm mới ca làm việc'
                             : 'Cập nhật ca làm việc'
                     }

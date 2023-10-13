@@ -47,7 +47,11 @@ const Dashboard: React.FC = () => {
     };
     return (
         <div style={{ height: 'auto' }}>
-            <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ paddingTop: '16px', paddingBottom: '16px' }}>
+            <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{ paddingTop: '16px', paddingBottom: '16px' }}>
                 <div className="page-header_col-1">
                     <div className="breadcrumb">Trang chủ</div>
                 </div>
@@ -70,7 +74,11 @@ const Dashboard: React.FC = () => {
                 <Box paddingTop={'16px'}>
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={12} md={6} lg={6} xl={6} sx={{ height: '100%' }}>
-                            <Box bgcolor={'#FFF'} padding={'16px 24px'} borderBottom={'1px solid #EEF0F4'} borderRadius={'8px'}>
+                            <Box
+                                bgcolor={'#FFF'}
+                                padding={'16px 24px'}
+                                borderBottom={'1px solid #EEF0F4'}
+                                borderRadius={'8px'}>
                                 <Typography
                                     sx={{
                                         //color: '#29303D',
@@ -138,7 +146,12 @@ const Dashboard: React.FC = () => {
                                     Doanh thu cửa hàng
                                 </Typography>
                             </Box>
-                            <Grid container display={'flex'} justifyContent={'space-between'} bgcolor={'#FFF'} padding={'8px 24px'}>
+                            <Grid
+                                container
+                                display={'flex'}
+                                justifyContent={'space-between'}
+                                bgcolor={'#FFF'}
+                                padding={'8px 24px'}>
                                 <Grid item xs={12} sm={6}>
                                     <Box width={'100%'} borderRadius={'8px'}>
                                         <Typography
@@ -157,7 +170,11 @@ const Dashboard: React.FC = () => {
                                 </Grid>
                                 <Grid item>
                                     <Box display={'flex'} justifyContent={'end'} width={'100%'}>
-                                        <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} marginRight={'24px'}>
+                                        <Box
+                                            display={'flex'}
+                                            justifyContent={'space-between'}
+                                            alignItems={'center'}
+                                            marginRight={'24px'}>
                                             <Box
                                                 sx={{
                                                     borderRadius: '50%',
@@ -205,7 +222,12 @@ const Dashboard: React.FC = () => {
                             </Box>
                         </Grid>
                         <Grid item xs={12} sm={12} md={3} lg={3} xl={3}>
-                            <Box width={'100%'} bgcolor={'#FFF'} padding={'16px 24px'} borderRadius={'8px'} height={'460px'}>
+                            <Box
+                                width={'100%'}
+                                bgcolor={'#FFF'}
+                                padding={'16px 24px'}
+                                borderRadius={'8px'}
+                                height={'460px'}>
                                 <Typography
                                     sx={{
                                         //color: '#29303D',

@@ -48,10 +48,18 @@ const Delete: React.FC<DialogComponentProps> = ({ open, onClose, onDelete }) => 
                     Bạn có chắc muốn xóa lịch làm việc của ca này không?
                 </Box>
                 <Box display="flex" justifyContent="end" gap="8px" mt="24px">
-                    <Button onClick={onDelete} variant="contained" sx={{ bgcolor: 'var(--color-main)!important' }} className="btn-container-hover">
+                    <Button
+                        onClick={onDelete}
+                        variant="contained"
+                        sx={{ bgcolor: 'var(--color-main)!important' }}
+                        className="btn-container-hover">
                         Xoá
                     </Button>
-                    <Button onClick={onClose} variant="outlined" sx={{ color: 'var(--color-main)!important' }} className="btn-outline-hover">
+                    <Button
+                        onClick={onClose}
+                        variant="outlined"
+                        sx={{ color: 'var(--color-main)!important' }}
+                        className="btn-outline-hover">
                         Hủy
                     </Button>
                 </Box>

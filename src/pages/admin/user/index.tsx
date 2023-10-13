@@ -224,7 +224,10 @@ class UserScreen extends AppComponentBase {
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
+                    <Box
+                        sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
+                        title={params.colDef.headerName}
+                        width="100%">
                         {params.colDef.headerName}
                     </Box>
                 ),
@@ -522,7 +525,10 @@ class UserScreen extends AppComponentBase {
                         allRoles={this.state.roles}
                         onOk={this.handleCreate}
                     />
-                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDelete}></ConfirmDelete>
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDelete}></ConfirmDelete>
                     <ActionMenuTable
                         anchorEl={this.state.anchorEl}
                         selectedRowId={this.state.selectedRowId}

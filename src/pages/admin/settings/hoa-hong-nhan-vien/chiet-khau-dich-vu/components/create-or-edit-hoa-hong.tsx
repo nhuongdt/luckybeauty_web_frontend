@@ -118,7 +118,11 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             multiple
                                             options={suggestStore?.suggestNhanVien ?? []}
                                             getOptionLabel={(item) => item.tenNhanVien}
-                                            value={suggestStore?.suggestNhanVien?.filter((item) => values?.idNhanViens.includes(item.id)) || []}
+                                            value={
+                                                suggestStore?.suggestNhanVien?.filter((item) =>
+                                                    values?.idNhanViens.includes(item.id)
+                                                ) || []
+                                            }
                                             disabled={values.id === AppConsts.guidEmpty ? false : true}
                                             onChange={(event, newValue) => {
                                                 handleChange({
@@ -139,13 +143,19 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                                 />
                                             )}
                                         />
-                                        {errors.idNhanViens && touched.idNhanViens && <small className="text-danger">{errors.idNhanViens}</small>}
+                                        {errors.idNhanViens && touched.idNhanViens && (
+                                            <small className="text-danger">{errors.idNhanViens}</small>
+                                        )}
                                     </Grid>
                                     <Grid item xs={12} sm={6} marginTop={2}>
                                         <Autocomplete
                                             options={suggestStore?.suggestDichVu ?? []}
                                             getOptionLabel={(item) => item.tenDichVu}
-                                            value={suggestStore.suggestDichVu?.find((item) => item.id === values?.idDonViQuiDoi) || null}
+                                            value={
+                                                suggestStore.suggestDichVu?.find(
+                                                    (item) => item.id === values?.idDonViQuiDoi
+                                                ) || null
+                                            }
                                             onChange={(event, newValue) => {
                                                 handleChange({
                                                     target: {
@@ -194,7 +204,10 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
                                             decimalSeparator={','}
                                             sx={{ fontSize: '16px', color: '#4c4b4c' }}
                                             error={errors.giaTri && touched.giaTri ? true : false}
-                                            helperText={errors.giaTri && touched.giaTri && <small className="text-danger">{errors.giaTri}</small>}
+                                            helperText={
+                                                errors.giaTri &&
+                                                touched.giaTri && <small className="text-danger">{errors.giaTri}</small>
+                                            }
                                             InputProps={{ inputMode: 'numeric' }}
                                             fullWidth
                                             name="giaTri"
