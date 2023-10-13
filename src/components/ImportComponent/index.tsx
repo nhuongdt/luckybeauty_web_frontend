@@ -1,14 +1,7 @@
 import { Component, ReactNode } from 'react';
 import './import.scss';
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Typography
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { FileUpload } from '../../services/dto/FileUpload';
 interface ImportProps {
     isOpen: boolean;
@@ -105,9 +98,7 @@ class ImportExcel extends Component<ImportProps> {
                 <DialogContent>
                     <div className="file-container">
                         <div className="file-drop-area">
-                            <h5 className="text-primary">
-                                Vui lòng chọn file Excel để thực hiện import data
-                            </h5>
+                            <h5 className="text-primary">Vui lòng chọn file Excel để thực hiện import data</h5>
                             <div className="d-flex align-items-center">
                                 <input
                                     hidden
@@ -115,17 +106,11 @@ class ImportExcel extends Component<ImportProps> {
                                     onChange={this.handleFileSelect}
                                     accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                     type={'file'}></input>
-                                <button
-                                    className="btn btn-sm btn-outline-primary"
-                                    onClick={this.chooseFile}>
+                                <button className="btn btn-sm btn-outline-primary" onClick={this.chooseFile}>
                                     Chọn file
                                 </button>
-                                {this.state.filePath && (
-                                    <span className="file-msg">{this.state.filePath}</span>
-                                )}
-                                {this.state.error && (
-                                    <span className="error-message">{this.state.error}</span>
-                                )}
+                                {this.state.filePath && <span className="file-msg">{this.state.filePath}</span>}
+                                {this.state.error && <span className="error-message">{this.state.error}</span>}
                             </div>
                         </div>
                     </div>
@@ -134,9 +119,7 @@ class ImportExcel extends Component<ImportProps> {
                     <button className="btn btn-primary" onClick={this.importFile}>
                         Import
                     </button>
-                    <button
-                        className="btn btn-outline-primary mr-2"
-                        onClick={this.props.downloadImportTemplate}>
+                    <button className="btn btn-outline-primary mr-2" onClick={this.props.downloadImportTemplate}>
                         Download File mẫu
                     </button>
                     <button

@@ -122,10 +122,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                     utils.checkNull(formRef.avatar)
                                 ) {
                                     // awlay insert: because image was delete before save
-                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
-                                        fileSelect,
-                                        'KhachHang'
-                                    );
+                                    fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileSelect, 'KhachHang');
                                 }
                             }
                             // gán lại image theo id mới
@@ -173,10 +170,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                                 sx={{
                                                                     position: 'relative'
                                                                 }}>
-                                                                <img
-                                                                    src={this.state.cusImage}
-                                                                    className="user-image-upload"
-                                                                />
+                                                                <img src={this.state.cusImage} className="user-image-upload" />
                                                             </Box>
                                                         ) : (
                                                             <div>
@@ -223,9 +217,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 }
                                                 helperText={
                                                     errors.tenKhachHang && touched.tenKhachHang ? (
-                                                        <small className="text-danger">
-                                                            Tên khách hàng không được để trống
-                                                        </small>
+                                                        <small className="text-danger">Tên khách hàng không được để trống</small>
                                                     ) : null
                                                 }
                                                 fullWidth
@@ -251,9 +243,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 value={values.soDienThoai}
                                                 helperText={
                                                     errors.soDienThoai && touched.soDienThoai ? (
-                                                        <small className="text-danger">
-                                                            Số điện thoại không hợp lệ
-                                                        </small>
+                                                        <small className="text-danger">Số điện thoại không hợp lệ</small>
                                                     ) : null
                                                 }
                                                 sx={{ fontSize: '13px' }}
@@ -268,11 +258,7 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                     label: 'Ngày sinh',
                                                     size: 'small'
                                                 }}
-                                                defaultVal={
-                                                    values.ngaySinh
-                                                        ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd')
-                                                        : ''
-                                                }
+                                                defaultVal={values.ngaySinh ? formatDate(new Date(values.ngaySinh), 'yyyy-MM-dd') : ''}
                                                 handleChangeDate={(dt: string) => {
                                                     values.ngaySinh = new Date(dt);
                                                 }}
@@ -292,11 +278,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={12}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNhomKhach &&
-                                                    suggestStore.suggestNhomKhach.length > 0
-                                                        ? suggestStore.suggestNhomKhach.find(
-                                                              (x) => x.id === values.idNhomKhach
-                                                          ) || { id: '', tenNhomKhach: '' }
+                                                    suggestStore.suggestNhomKhach && suggestStore.suggestNhomKhach.length > 0
+                                                        ? suggestStore.suggestNhomKhach.find((x) => x.id === values.idNhomKhach) || {
+                                                              id: '',
+                                                              tenNhomKhach: ''
+                                                          }
                                                         : { id: '', tenNhomKhach: '' }
                                                 }
                                                 options={suggestStore?.suggestNhomKhach ?? []}
@@ -320,11 +306,11 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                         <Grid item xs={12} sm={6} style={{ display: 'none' }}>
                                             <Autocomplete
                                                 value={
-                                                    suggestStore.suggestNguonKhach &&
-                                                    suggestStore.suggestNguonKhach.length > 0
-                                                        ? suggestStore.suggestNguonKhach.find(
-                                                              (x) => x.id === values.idNguonKhach
-                                                          ) || { id: '', tenNguonKhach: '' }
+                                                    suggestStore.suggestNguonKhach && suggestStore.suggestNguonKhach.length > 0
+                                                        ? suggestStore.suggestNguonKhach.find((x) => x.id === values.idNguonKhach) || {
+                                                              id: '',
+                                                              tenNguonKhach: ''
+                                                          }
                                                         : { id: '', tenNguonKhach: '' }
                                                 }
                                                 options={suggestStore?.suggestNguonKhach ?? []}
@@ -335,22 +321,13 @@ class CreateOrEditCustomerDialog extends Component<ICreateOrEditCustomerProps> {
                                                 onChange={(event, value) => {
                                                     setFieldValue('idNguonKhach', value ? value.id : undefined); // Update the 'idNguonKhach' value in Formik
                                                 }}
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        label="Nguồn khách"
-                                                        placeholder="Chọn nguồn khách"
-                                                    />
-                                                )}
+                                                renderInput={(params) => <TextField {...params} label="Nguồn khách" placeholder="Chọn nguồn khách" />}
                                             />
                                         </Grid>
 
                                         <Grid item xs={12} sm={12}>
                                             <Stack spacing={2} direction={'row'}>
-                                                <Stack
-                                                    className="modal-lable "
-                                                    justifyContent={'center'}
-                                                    alignItems={'center'}>
+                                                <Stack className="modal-lable " justifyContent={'center'} alignItems={'center'}>
                                                     Giới tính
                                                 </Stack>
                                                 <RadioGroup

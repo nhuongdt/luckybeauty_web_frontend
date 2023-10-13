@@ -11,4 +11,5 @@ export interface GetAllQuyHoaDonItemDto {
     trangThai: string;
     ngayLapHoaDon: string;
     idHoaDonLienQuan: string;
+    idBrandname?: string | null;
 }

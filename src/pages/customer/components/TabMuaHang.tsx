@@ -93,9 +93,7 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
-            )
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'khachDaTra',
@@ -106,9 +104,7 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
-            )
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'conNo',
@@ -119,9 +115,7 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
-            )
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'trangThai',
@@ -137,8 +131,7 @@ const TabMuaHang: React.FC = () => {
                     title={params.value}
                     sx={{
                         color: params.value == 'Hoàn thành' ? '#50CD89' : params.value == 'Hủy' ? '#F1416C' : '#FF9900',
-                        backgroundColor:
-                            params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
+                        backgroundColor: params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
                     }}>
                     {params.value}
                 </Box>
@@ -175,6 +168,44 @@ const TabMuaHang: React.FC = () => {
                         }
                     }}
                     localeText={TextTranslate}
+                    sx={{
+                        '& .MuiDataGrid-columnHeaders': {
+                            bgcolor: '#F2EBF0'
+                        },
+                        '& .MuiDataGrid-iconButtonContainer': {
+                            display: 'none'
+                        },
+                        '& .MuiBox-root': {
+                            fontSize: '12px'
+                        },
+                        '& .MuiDataGrid-virtualScroller': {
+                            bgcolor: '#fff'
+                        },
+                        '& .MuiDataGrid-columnHeaderCheckbox:focus': {
+                            outline: 'none!important'
+                        },
+                        '&  .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus': {
+                            outline: 'none '
+                        },
+                        '& .MuiDataGrid-columnHeaderTitleContainer:hover': {
+                            color: '#7C3367'
+                        },
+                        '& .MuiDataGrid-columnHeaderTitleContainer svg path:hover': {
+                            fill: '#7C3367'
+                        },
+                        '& [aria-sort="ascending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(2)': {
+                            fill: '#000'
+                        },
+                        '& [aria-sort="descending"] .MuiDataGrid-columnHeaderTitleContainer svg path:nth-of-type(1)': {
+                            fill: '#000'
+                        },
+                        '& .Mui-checked, &.MuiCheckbox-indeterminate': {
+                            color: '#7C3367!important'
+                        },
+                        '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus-within': {
+                            outline: 'none'
+                        }
+                    }}
                 />
                 <CustomTablePagination
                     currentPage={curentPage}

@@ -41,9 +41,7 @@ class TenantService {
     }
     public async getForEdit(entityDto: number): Promise<GetTenantOutput> {
         try {
-            const result = await http.get(
-                `api/services/app/Tenant/GetTenantForEdit?Id=${entityDto}`
-            );
+            const result = await http.get(`api/services/app/Tenant/GetTenantForEdit?Id=${entityDto}`);
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while retrieving tenant:', error);
@@ -51,9 +49,7 @@ class TenantService {
         }
     }
 
-    public async getAll(
-        pagedFilterAndSortedRequest: PagedTenantResultRequestDto
-    ): Promise<PagedResultDto<GetAllTenantOutput>> {
+    public async getAll(pagedFilterAndSortedRequest: PagedTenantResultRequestDto): Promise<PagedResultDto<GetAllTenantOutput>> {
         try {
             const result = await http.get('api/services/app/Tenant/GetAll', {
                 params: pagedFilterAndSortedRequest
@@ -67,10 +63,7 @@ class TenantService {
 
     public async update(updateTenantInput: UpdateTenantInput): Promise<UpdateTenantOutput> {
         try {
-            const result = await http.post(
-                'api/services/app/Tenant/UpdateTenant',
-                updateTenantInput
-            );
+            const result = await http.post('api/services/app/Tenant/UpdateTenant', updateTenantInput);
             return result.data.result;
         } catch (error) {
             console.error('Error occurred while updating tenant:', error);

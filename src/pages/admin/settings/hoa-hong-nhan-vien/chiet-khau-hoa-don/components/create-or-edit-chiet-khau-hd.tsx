@@ -105,23 +105,16 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         }
     };
     handleMoveItemSelectToRight = () => {
-        const newListEmployee = this.state.listEmployee.filter(
-            (employee) => !this.state.listIdEmployeeAdd.includes(employee)
-        );
+        const newListEmployee = this.state.listEmployee.filter((employee) => !this.state.listIdEmployeeAdd.includes(employee));
         this.setState({
-            listEmployeeSelected: [
-                ...this.state.listEmployeeSelected,
-                ...this.state.listIdEmployeeAdd
-            ],
+            listEmployeeSelected: [...this.state.listEmployeeSelected, ...this.state.listIdEmployeeAdd],
             listIdEmployeeAdd: [],
             listEmployee: newListEmployee
         });
     };
     handleMoveItemSelectToLeft = () => {
         const newListEmployee = [...this.state.listEmployee, ...this.state.listIdEmployeeRemove];
-        const newListEmployeeSelected = this.state.listEmployeeSelected.filter(
-            (employee) => !this.state.listIdEmployeeRemove.includes(employee)
-        );
+        const newListEmployeeSelected = this.state.listEmployeeSelected.filter((employee) => !this.state.listIdEmployeeRemove.includes(employee));
         this.setState({
             listEmployeeSelected: newListEmployeeSelected,
             listIdEmployeeRemove: [],
@@ -132,9 +125,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
     handleMoveToRight = (item: SuggestNhanSuDto) => {
         const { listEmployeeSelected, listEmployee } = this.state;
         const updatedLeftList = listEmployee.filter((employee) => employee.id !== item.id);
-        const selectedItemsData = suggestStore.suggestNhanVien.filter(
-            (employee) => employee.id === item.id
-        );
+        const selectedItemsData = suggestStore.suggestNhanVien.filter((employee) => employee.id === item.id);
         this.setState({
             listEmployee: updatedLeftList,
             listEmployeeSelected: [...listEmployeeSelected, ...selectedItemsData]
@@ -144,9 +135,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
     handleMoveToLeft = (item: SuggestNhanSuDto) => {
         const { listEmployeeSelected, listEmployee } = this.state;
         const updatedRightList = listEmployeeSelected.filter((employee) => employee.id !== item.id);
-        const selectedEmployees = suggestStore.suggestNhanVien.filter(
-            (employee) => employee.id === item.id
-        );
+        const selectedEmployees = suggestStore.suggestNhanVien.filter((employee) => employee.id === item.id);
         this.setState({
             listEmployeeSelected: updatedRightList,
             listEmployee: [...listEmployee, ...selectedEmployees]
@@ -179,12 +168,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
 
                 if (suggestNhanVien && createOrEditDto) {
                     this.setState({
-                        listEmployee: suggestNhanVien.filter(
-                            (x) => !createOrEditDto.idNhanViens.includes(x.id)
-                        ),
-                        listEmployeeSelected: suggestNhanVien.filter((x) =>
-                            createOrEditDto.idNhanViens.includes(x.id)
-                        )
+                        listEmployee: suggestNhanVien.filter((x) => !createOrEditDto.idNhanViens.includes(x.id)),
+                        listEmployeeSelected: suggestNhanVien.filter((x) => createOrEditDto.idNhanViens.includes(x.id))
                     });
                 }
             }
@@ -197,36 +182,23 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
         const filteredChucVu =
             this.state.chucVuSearchValue === ''
                 ? suggestStore.suggestChucVu
-                : suggestStore.suggestChucVu?.filter((item) =>
-                      item.tenChucVu
-                          .toLowerCase()
-                          .includes(this.state.chucVuSearchValue.toLowerCase())
-                  );
+                : suggestStore.suggestChucVu?.filter((item) => item.tenChucVu.toLowerCase().includes(this.state.chucVuSearchValue.toLowerCase()));
         const filteredNhanVien = Array.isArray(this.state.listEmployee)
             ? this.state.listEmployee.filter((item) => {
-                  const selectedChucVu = filteredChucVu.find(
-                      (x) => x.idChucVu === this.state.selectedChucVuId
-                  );
+                  const selectedChucVu = filteredChucVu.find((x) => x.idChucVu === this.state.selectedChucVuId);
 
                   // Add null/undefined checks to avoid 'Cannot read properties of undefined'
                   return (
-                      (this.state.selectedChucVuId === '' ||
-                          (selectedChucVu && selectedChucVu.tenChucVu === item.chucVu)) &&
+                      (this.state.selectedChucVuId === '' || (selectedChucVu && selectedChucVu.tenChucVu === item.chucVu)) &&
                       item.tenNhanVien &&
-                      item.tenNhanVien
-                          .toLowerCase()
-                          .includes(this.state.nhanVienSearchValue.toLowerCase())
+                      item.tenNhanVien.toLowerCase().includes(this.state.nhanVienSearchValue.toLowerCase())
                   );
               })
             : [];
 
         const filteredSelectedNhanVien = Array.isArray(this.state.listEmployeeSelected)
             ? this.state.listEmployeeSelected.filter(
-                  (item) =>
-                      item.tenNhanVien &&
-                      item.tenNhanVien
-                          .toLowerCase()
-                          .includes(this.state.nhanVienSelectedSearchValue.toLowerCase())
+                  (item) => item.tenNhanVien && item.tenNhanVien.toLowerCase().includes(this.state.nhanVienSelectedSearchValue.toLowerCase())
               )
             : [];
 
@@ -265,35 +237,17 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                             values.idNhanViens = this.state.listEmployeeSelected.map((item) => {
                                 return item.id;
                             });
-                            if (
-                                values.chungTuApDung == '' ||
-                                values.chungTuApDung == null ||
-                                values.chungTuApDung == undefined
-                            ) {
-                                formikHepler.setFieldError(
-                                    'chungTuApDung',
-                                    'Chứng từ áp dụng không được để trống'
-                                );
+                            if (values.chungTuApDung == '' || values.chungTuApDung == null || values.chungTuApDung == undefined) {
+                                formikHepler.setFieldError('chungTuApDung', 'Chứng từ áp dụng không được để trống');
                                 this.setState({ tabIndex: '1' });
                             } else if (values.idNhanViens.length == 0) {
-                                formikHepler.setFieldError(
-                                    'idNhanViens',
-                                    'Nhân viên không được để trống'
-                                );
+                                formikHepler.setFieldError('idNhanViens', 'Nhân viên không được để trống');
                                 this.setState({ tabIndex: '2' });
-                            } else if (
-                                values.giaTriChietKhau == null ||
-                                values.giaTriChietKhau == 0
-                            ) {
-                                formikHepler.setFieldError(
-                                    'giaTriChietKhau',
-                                    'Giá trị chiết khấu không được để trống'
-                                );
+                            } else if (values.giaTriChietKhau == null || values.giaTriChietKhau == 0) {
+                                formikHepler.setFieldError('giaTriChietKhau', 'Giá trị chiết khấu không được để trống');
                                 this.setState({ tabIndex: '1' });
                             } else {
-                                const createOrEdit = await chietKhauHoaDonStore.createOrEdit(
-                                    values
-                                );
+                                const createOrEdit = await chietKhauHoaDonStore.createOrEdit(values);
                                 enqueueSnackbar(createOrEdit.message, {
                                     variant: createOrEdit.status,
                                     autoHideDuration: 3000
@@ -316,16 +270,8 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 }}>
                                 <TabContext value={this.state.tabIndex}>
                                     <TabList onChange={this.handleTabChange}>
-                                        <Tab
-                                            label="Thông tin"
-                                            value="1"
-                                            sx={{ textTransform: 'unset!important' }}
-                                        />
-                                        <Tab
-                                            label="Nhân viên áp dụng"
-                                            value="2"
-                                            sx={{ textTransform: 'unset!important' }}
-                                        />
+                                        <Tab label="Thông tin" value="1" sx={{ textTransform: 'unset!important' }} />
+                                        <Tab label="Nhân viên áp dụng" value="2" sx={{ textTransform: 'unset!important' }} />
                                     </TabList>
                                     <TabPanel value="1" sx={{ padding: '16px' }}>
                                         <Grid container spacing={4} rowSpacing={2}>
@@ -335,60 +281,31 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     value={values?.loaiChietKhau ?? 1}
                                                     onChange={handleChange}
                                                     sx={{ display: 'flex', flexDirection: 'row' }}>
-                                                    <FormControlLabel
-                                                        value={1}
-                                                        control={<Radio />}
-                                                        label="Theo % thực thu"
-                                                    />
-                                                    <FormControlLabel
-                                                        value={2}
-                                                        control={<Radio />}
-                                                        label=" Theo % doanh thu"
-                                                    />
-                                                    <FormControlLabel
-                                                        value={3}
-                                                        control={<Radio />}
-                                                        label="Theo VNĐ"
-                                                    />
+                                                    <FormControlLabel value={1} control={<Radio />} label="Theo % thực thu" />
+                                                    <FormControlLabel value={2} control={<Radio />} label=" Theo % doanh thu" />
+                                                    <FormControlLabel value={3} control={<Radio />} label="Theo VNĐ" />
                                                 </RadioGroup>
                                                 {errors.loaiChietKhau && touched.loaiChietKhau && (
-                                                    <span className={'text-danger'}>
-                                                        {errors.loaiChietKhau}
-                                                    </span>
+                                                    <span className={'text-danger'}>{errors.loaiChietKhau}</span>
                                                 )}
                                             </Grid>
                                             <Grid item xs={12} sm={12} md={4}>
                                                 <NumericFormat
-                                                    label={
-                                                        <Typography>Giá trị chiết khấu</Typography>
-                                                    }
+                                                    label={<Typography>Giá trị chiết khấu</Typography>}
                                                     fullWidth
                                                     size="small"
                                                     name="giaTriChietKhau"
                                                     thousandSeparator={'.'}
                                                     decimalSeparator={','}
-                                                    error={
-                                                        errors.giaTriChietKhau &&
-                                                        touched.giaTriChietKhau
-                                                            ? true
-                                                            : false
-                                                    }
+                                                    error={errors.giaTriChietKhau && touched.giaTriChietKhau ? true : false}
                                                     helperText={
                                                         errors.giaTriChietKhau &&
-                                                        touched.giaTriChietKhau && (
-                                                            <span className="text-danger">
-                                                                {errors.giaTriChietKhau}
-                                                            </span>
-                                                        )
+                                                        touched.giaTriChietKhau && <span className="text-danger">{errors.giaTriChietKhau}</span>
                                                     }
                                                     value={values?.giaTriChietKhau}
                                                     onChange={(e) => {
-                                                        const valueChange =
-                                                            e.target.value.replaceAll('.', '');
-                                                        setFieldValue(
-                                                            'giaTriChietKhau',
-                                                            Number.parseInt(valueChange)
-                                                        );
+                                                        const valueChange = e.target.value.replaceAll('.', '');
+                                                        setFieldValue('giaTriChietKhau', Number.parseInt(valueChange));
                                                     }}
                                                     customInput={TextField}
                                                 />
@@ -396,40 +313,22 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             <Grid item xs={12} sm={12} md={8}>
                                                 <FormControl fullWidth>
                                                     <Autocomplete
-                                                        options={
-                                                            suggestStore.suggestLoaiChungTu ?? []
-                                                        }
-                                                        getOptionLabel={(option: any) =>
-                                                            option.tenLoaiChungTu
-                                                        }
+                                                        options={suggestStore.suggestLoaiChungTu ?? []}
+                                                        getOptionLabel={(option: any) => option.tenLoaiChungTu}
                                                         size="small"
                                                         onChange={(_, newValue) => {
-                                                            setFieldValue(
-                                                                'chungTuApDung',
-                                                                newValue?.tenLoaiChungTu
-                                                            );
+                                                            setFieldValue('chungTuApDung', newValue?.tenLoaiChungTu);
                                                         }}
                                                         value={
                                                             suggestStore.suggestLoaiChungTu?.filter(
-                                                                (x) =>
-                                                                    x.tenLoaiChungTu ==
-                                                                    values?.chungTuApDung
+                                                                (x) => x.tenLoaiChungTu == values?.chungTuApDung
                                                             )[0] ?? { id: 0, tenLoaiChungTu: '' }
                                                         }
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
-                                                                label={
-                                                                    <Typography variant="subtitle2">
-                                                                        Chứng từ áp dụng
-                                                                    </Typography>
-                                                                }
-                                                                error={
-                                                                    errors.chungTuApDung &&
-                                                                    touched.chungTuApDung
-                                                                        ? true
-                                                                        : false
-                                                                }
+                                                                label={<Typography variant="subtitle2">Chứng từ áp dụng</Typography>}
+                                                                error={errors.chungTuApDung && touched.chungTuApDung ? true : false}
                                                                 fullWidth
                                                                 sx={{
                                                                     fontSize: '16px',
@@ -440,9 +339,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     />
                                                 </FormControl>
                                                 {errors.chungTuApDung && touched.chungTuApDung && (
-                                                    <span className={'text-danger'}>
-                                                        {errors.chungTuApDung}
-                                                    </span>
+                                                    <span className={'text-danger'}>{errors.chungTuApDung}</span>
                                                 )}
                                             </Grid>
                                             <Grid item xs={12}>
@@ -477,17 +374,11 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             </IconButton>
                                                         )
                                                     }}></TextField>
-                                                <Box
-                                                    maxHeight={'300px'}
-                                                    overflow={'auto'}
-                                                    marginTop={2}>
+                                                <Box maxHeight={'300px'} overflow={'auto'} marginTop={2}>
                                                     <ListItem
                                                         sx={{
                                                             fontSize: '13px !important',
-                                                            backgroundColor:
-                                                                this.state.selectedChucVuId === ''
-                                                                    ? '#E6E6E6'
-                                                                    : 'transparent' // Apply background color based on selection
+                                                            backgroundColor: this.state.selectedChucVuId === '' ? '#E6E6E6' : 'transparent' // Apply background color based on selection
                                                         }}
                                                         onClick={async () => {
                                                             await this.setState({
@@ -495,13 +386,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                 chucVuSearchValue: ''
                                                             });
                                                         }}>
-                                                        <ListItemText
-                                                            primary={
-                                                                <Typography fontSize={'13px'}>
-                                                                    Tất cả
-                                                                </Typography>
-                                                            }
-                                                        />
+                                                        <ListItemText primary={<Typography fontSize={'13px'}>Tất cả</Typography>} />
                                                     </ListItem>
                                                     {filteredChucVu.map((item, key) => (
                                                         <ListItem
@@ -509,23 +394,14 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             sx={{
                                                                 fontSize: '13px !important',
                                                                 backgroundColor:
-                                                                    this.state.selectedChucVuId ===
-                                                                    item.idChucVu
-                                                                        ? '#E6E6E6'
-                                                                        : 'transparent' // Apply background color based on selection
+                                                                    this.state.selectedChucVuId === item.idChucVu ? '#E6E6E6' : 'transparent' // Apply background color based on selection
                                                             }}
                                                             onClick={async () => {
                                                                 this.setState({
                                                                     selectedChucVuId: item.idChucVu
                                                                 });
                                                             }}>
-                                                            <ListItemText
-                                                                primary={
-                                                                    <Typography fontSize={'13px'}>
-                                                                        {item.tenChucVu}
-                                                                    </Typography>
-                                                                }
-                                                            />
+                                                            <ListItemText primary={<Typography fontSize={'13px'}>{item.tenChucVu}</Typography>} />
                                                         </ListItem>
                                                     ))}
                                                 </Box>
@@ -547,40 +423,23 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             </IconButton>
                                                         )
                                                     }}></TextField>
-                                                <Box
-                                                    maxHeight={'300px'}
-                                                    overflow={'auto'}
-                                                    marginTop={2}>
-                                                    <Box
-                                                        display={'flex'}
-                                                        alignItems={'center'}
-                                                        justifyContent={'space-between'}>
+                                                <Box maxHeight={'300px'} overflow={'auto'} marginTop={2}>
+                                                    <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
                                                         <Box paddingLeft={'15px'}>
                                                             <FormControlLabel
                                                                 label="Chọn tất cả"
                                                                 onChange={(event, checked) => {
-                                                                    this.handleSelectAllItemToAdd(
-                                                                        checked
-                                                                    );
+                                                                    this.handleSelectAllItemToAdd(checked);
                                                                 }}
                                                                 control={<Checkbox />}
                                                             />
-                                                            {this.state.listIdEmployeeAdd.length >
-                                                            0 ? (
+                                                            {this.state.listIdEmployeeAdd.length > 0 ? (
                                                                 <Typography fontSize={'13px'}>
-                                                                    {
-                                                                        this.state.listIdEmployeeAdd
-                                                                            .length
-                                                                    }{' '}
-                                                                    bản ghi được chọn
+                                                                    {this.state.listIdEmployeeAdd.length} bản ghi được chọn
                                                                 </Typography>
                                                             ) : null}
                                                         </Box>
-                                                        <Button
-                                                            variant="text"
-                                                            onClick={
-                                                                this.handleMoveItemSelectToRight
-                                                            }>
+                                                        <Button variant="text" onClick={this.handleMoveItemSelectToRight}>
                                                             Thêm
                                                         </Button>
                                                     </Box>
@@ -599,28 +458,17 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                             padding: '2px'
                                                                         }}
                                                                         onClick={() => {
-                                                                            this.handleMoveToRight(
-                                                                                item
-                                                                            );
+                                                                            this.handleMoveToRight(item);
                                                                         }}>
                                                                         <ArrowForwardIosIcon />
                                                                     </IconButton>
                                                                 }>
-                                                                <ListItemIcon
-                                                                    sx={{ minWidth: 'auto' }}>
+                                                                <ListItemIcon sx={{ minWidth: 'auto' }}>
                                                                     <Checkbox
                                                                         edge="start"
-                                                                        checked={this.state.listIdEmployeeAdd.includes(
-                                                                            item
-                                                                        )}
-                                                                        onChange={(
-                                                                            event,
-                                                                            checked
-                                                                        ) => {
-                                                                            this.handleAddNhanVien(
-                                                                                item,
-                                                                                checked
-                                                                            );
+                                                                        checked={this.state.listIdEmployeeAdd.includes(item)}
+                                                                        onChange={(event, checked) => {
+                                                                            this.handleAddNhanVien(item, checked);
                                                                         }}
                                                                     />
                                                                 </ListItemIcon>
@@ -632,12 +480,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                                     <Avatar src={item.avatar} />
                                                                 </ListItemAvatar>
                                                                 <ListItemText
-                                                                    primary={
-                                                                        <Typography
-                                                                            fontSize={'14px'}>
-                                                                            {item.tenNhanVien}
-                                                                        </Typography>
-                                                                    }
+                                                                    primary={<Typography fontSize={'14px'}>{item.tenNhanVien}</Typography>}
                                                                     secondary={item.chucVu}
                                                                 />
                                                             </ListItem>
@@ -657,9 +500,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                     variant="outlined"
                                                     placeholder="Tìm kiếm"
                                                     value={this.state.nhanVienSelectedSearchValue}
-                                                    onChange={
-                                                        this.handleNhanVienSelectedSearchChange
-                                                    }
+                                                    onChange={this.handleNhanVienSelectedSearchChange}
                                                     InputProps={{
                                                         startAdornment: (
                                                             <IconButton type="button">
@@ -667,89 +508,56 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                                             </IconButton>
                                                         )
                                                     }}></TextField>
-                                                <Box
-                                                    maxHeight={'300px'}
-                                                    overflow={'auto'}
-                                                    marginTop={2}>
-                                                    <Box
-                                                        display={'flex'}
-                                                        justifyContent={'space-between'}>
+                                                <Box maxHeight={'300px'} overflow={'auto'} marginTop={2}>
+                                                    <Box display={'flex'} justifyContent={'space-between'}>
                                                         <Box paddingLeft={'15px'}>
                                                             <FormControlLabel
                                                                 label="Chọn tất cả"
                                                                 onChange={(event, checked) => {
-                                                                    this.handleSelectAllItemToRemove(
-                                                                        checked
-                                                                    );
+                                                                    this.handleSelectAllItemToRemove(checked);
                                                                 }}
                                                                 control={<Checkbox />}
                                                             />
-                                                            {this.state.listIdEmployeeRemove
-                                                                .length > 0 ? (
+                                                            {this.state.listIdEmployeeRemove.length > 0 ? (
                                                                 <Typography fontSize={'13px'}>
-                                                                    {
-                                                                        this.state
-                                                                            .listIdEmployeeRemove
-                                                                            .length
-                                                                    }{' '}
-                                                                    bản ghi được chọn
+                                                                    {this.state.listIdEmployeeRemove.length} bản ghi được chọn
                                                                 </Typography>
                                                             ) : null}
                                                         </Box>
-                                                        <Button
-                                                            variant="text"
-                                                            onClick={
-                                                                this.handleMoveItemSelectToLeft
-                                                            }>
+                                                        <Button variant="text" onClick={this.handleMoveItemSelectToLeft}>
                                                             Xóa
                                                         </Button>
                                                     </Box>
                                                     {Array.isArray(filteredSelectedNhanVien) ? (
-                                                        filteredSelectedNhanVien.map(
-                                                            (item, key) => (
-                                                                <ListItem
-                                                                    key={key}
-                                                                    secondaryAction={
-                                                                        <CloseOutlinedIcon
-                                                                            onClick={() => {
-                                                                                this.handleMoveToLeft(
-                                                                                    item
-                                                                                );
-                                                                            }}
-                                                                        />
-                                                                    }>
-                                                                    <ListItemIcon
-                                                                        sx={{ minWidth: 'auto' }}>
-                                                                        <Checkbox
-                                                                            edge="start"
-                                                                            checked={this.state.listIdEmployeeRemove.includes(
-                                                                                item
-                                                                            )}
-                                                                            onChange={(
-                                                                                event,
-                                                                                checked
-                                                                            ) => {
-                                                                                this.handleRemoveNhanVien(
-                                                                                    item,
-                                                                                    checked
-                                                                                );
-                                                                            }}
-                                                                        />
-                                                                    </ListItemIcon>
-                                                                    <ListItemAvatar
-                                                                        sx={{
-                                                                            width: '40px',
-                                                                            height: '40px'
-                                                                        }}>
-                                                                        <Avatar src={item.avatar} />
-                                                                    </ListItemAvatar>
-                                                                    <ListItemText
-                                                                        primary={item.tenNhanVien}
-                                                                        secondary={item.chucVu}
+                                                        filteredSelectedNhanVien.map((item, key) => (
+                                                            <ListItem
+                                                                key={key}
+                                                                secondaryAction={
+                                                                    <CloseOutlinedIcon
+                                                                        onClick={() => {
+                                                                            this.handleMoveToLeft(item);
+                                                                        }}
                                                                     />
-                                                                </ListItem>
-                                                            )
-                                                        )
+                                                                }>
+                                                                <ListItemIcon sx={{ minWidth: 'auto' }}>
+                                                                    <Checkbox
+                                                                        edge="start"
+                                                                        checked={this.state.listIdEmployeeRemove.includes(item)}
+                                                                        onChange={(event, checked) => {
+                                                                            this.handleRemoveNhanVien(item, checked);
+                                                                        }}
+                                                                    />
+                                                                </ListItemIcon>
+                                                                <ListItemAvatar
+                                                                    sx={{
+                                                                        width: '40px',
+                                                                        height: '40px'
+                                                                    }}>
+                                                                    <Avatar src={item.avatar} />
+                                                                </ListItemAvatar>
+                                                                <ListItemText primary={item.tenNhanVien} secondary={item.chucVu} />
+                                                            </ListItem>
+                                                        ))
                                                     ) : (
                                                         // Handle the case when items is not an array
                                                         <div>No items to display</div>

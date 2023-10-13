@@ -32,12 +32,7 @@ http.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (
-            !!error.response &&
-            !!error.response.data.error &&
-            !!error.response.data.error.message &&
-            error.response.data.error.details
-        ) {
+        if (!!error.response && !!error.response.data.error && !!error.response.data.error.message && error.response.data.error.details) {
             // enqueueSnackbar(
             //     <>
             //         <div>
@@ -56,11 +51,7 @@ http.interceptors.response.use(
             //         autoHideDuration: 3000
             //     }
             // );
-        } else if (
-            !!error.response &&
-            !!error.response.data.error &&
-            !!error.response.data.error.message
-        ) {
+        } else if (!!error.response && !!error.response.data.error && !!error.response.data.error.message) {
             error.response.status == 401
                 ? (window.location.href = '/login')
                 : // ? enqueueSnackbar(

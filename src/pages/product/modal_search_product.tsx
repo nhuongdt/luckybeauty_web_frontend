@@ -1,13 +1,5 @@
 import { Search } from '@mui/icons-material';
-import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    TextField,
-    debounce
-} from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, debounce } from '@mui/material';
 import { useRef, useState, useEffect } from 'react';
 import ListProductByGroup from './list_product_by_group';
 import ProductService from '../../services/product/ProductService';
@@ -77,10 +69,7 @@ export default function ModalSearchProduct({ isShow, handlClose, handleChoseProd
                             />
                         </Grid>
                     </Grid>
-                    <ListProductByGroup
-                        listProduct={listProduct}
-                        handleChoseItem={handleChoseProduct}
-                    />
+                    <ListProductByGroup listProduct={listProduct} handleChoseItem={handleChoseProduct} />
                 </DialogContent>
                 <DialogActions></DialogActions>
             </Dialog>

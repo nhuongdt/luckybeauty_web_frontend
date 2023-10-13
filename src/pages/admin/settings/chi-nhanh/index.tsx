@@ -1,16 +1,4 @@
-import {
-    Avatar,
-    Box,
-    Button,
-    ButtonGroup,
-    Checkbox,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Avatar, Box, Button, ButtonGroup, Checkbox, Grid, IconButton, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import React, { RefObject } from 'react';
 import DownloadIcon from '../../../../images/download.svg';
 import UploadIcon from '../../../../images/upload.svg';
@@ -28,13 +16,7 @@ import CreateOrEditChiNhanhModal from './components/create-or-edit-chi-nhanh';
 import { CreateOrEditChiNhanhDto } from '../../../../services/chi_nhanh/Dto/createOrEditChiNhanhDto';
 import Cookies from 'js-cookie';
 import AppConsts from '../../../../lib/appconst';
-import {
-    DataGrid,
-    GridApi,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridApi, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../../../components/TableLanguage';
 import '../../../customer/customerPage.css';
 import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
@@ -160,9 +142,7 @@ class ChiNhanhScreen extends Component {
         fileDowloadService.downloadExportFile(result);
     };
     exportSelectedRow = async () => {
-        const result = await chiNhanhService.exportDanhSachSelected(
-            this.state.listItemSelectedModel
-        );
+        const result = await chiNhanhService.exportDanhSachSelected(this.state.listItemSelectedModel);
         fileDowloadService.downloadExportFile(result);
         this.setState({ listItemSelectedModel: [] });
     };
@@ -181,9 +161,7 @@ class ChiNhanhScreen extends Component {
         this.onImportShow();
     };
     downloadImportTemplate = async () => {
-        const result = await uploadFileService.downloadImportTemplate(
-            'ChiNhanh_ImportTemplate.xlsx'
-        );
+        const result = await uploadFileService.downloadImportTemplate('ChiNhanh_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
     handleEdit = () => {
@@ -247,9 +225,7 @@ class ChiNhanhScreen extends Component {
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
             const allRowRemove = this.state.listChiNhanh.map((row) => row.id);
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = this.state.listChiNhanh.map((row) => row.id);
@@ -269,12 +245,7 @@ class ChiNhanhScreen extends Component {
                 disableColumnMenu: true,
                 width: 65,
                 renderHeader: (params) => {
-                    return (
-                        <Checkbox
-                            onClick={this.handleSelectAllGridRowClick}
-                            checked={this.state.checkAllRow}
-                        />
-                    );
+                    return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
                 renderCell: (params) => (
                     <Checkbox
@@ -290,12 +261,7 @@ class ChiNhanhScreen extends Component {
                 flex: 0.8,
                 renderCell: (params) => (
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            fontFamily={'Roboto'}
-                            lineHeight="16px"
-                            title={params.value}>
+                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} lineHeight="16px" title={params.value}>
                             {params.value}
                         </Typography>
                     </Box>
@@ -358,11 +324,7 @@ class ChiNhanhScreen extends Component {
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography
-                            fontSize="13px"
-                            fontFamily={'Roboto'}
-                            fontWeight="400"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -383,11 +345,7 @@ class ChiNhanhScreen extends Component {
                             width: '100%'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography
-                            fontSize="13px"
-                            fontFamily={'Roboto'}
-                            fontWeight="400"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontFamily={'Roboto'} fontWeight="400" lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -411,9 +369,7 @@ class ChiNhanhScreen extends Component {
                         <MoreHorizIcon />
                     </IconButton>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ] as GridColDef[];
 
@@ -521,8 +477,7 @@ class ChiNhanhScreen extends Component {
                                     endIcon={<ExpandMoreOutlined />}
                                     onClick={() =>
                                         this.setState({
-                                            expendActionSelectedRow:
-                                                !this.state.expendActionSelectedRow
+                                            expendActionSelectedRow: !this.state.expendActionSelectedRow
                                         })
                                     }>
                                     Thao tác
@@ -541,11 +496,7 @@ class ChiNhanhScreen extends Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
+                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa chi nhánh'}
                                             sx={{
@@ -600,10 +551,7 @@ class ChiNhanhScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                         disableRowSelectionOnClick
@@ -636,16 +584,9 @@ class ChiNhanhScreen extends Component {
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
-                    <ConfirmDelete
-                        isShow={this.state.isShowConfirmDelete}
-                        onOk={this.onOkDelete}
-                        onCancel={this.handleDelete}></ConfirmDelete>
+                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.handleDelete}></ConfirmDelete>
                     <CreateOrEditChiNhanhModal
-                        title={
-                            this.state.idChiNhanh == ''
-                                ? 'Thêm mới chi nhánh'
-                                : 'Cập nhật chi nhánh'
-                        }
+                        title={this.state.idChiNhanh == '' ? 'Thêm mới chi nhánh' : 'Cập nhật chi nhánh'}
                         formRef={this.state.createOrEditChiNhanhDto}
                         isShow={this.state.isShowModal}
                         onCLose={this.onCloseModal}

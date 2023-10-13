@@ -10,14 +10,7 @@ import { CreateOrUpdateNhanSuDto } from '../../services/nhan-vien/dto/createOrUp
 import Cookies from 'js-cookie';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
-import {
-    DataGrid,
-    GridColDef,
-    GridInputRowSelectionModel,
-    GridRenderCellParams,
-    GridRowId,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridInputRowSelectionModel, GridRenderCellParams, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import {
     Avatar,
     Box,
@@ -204,9 +197,7 @@ class EmployeeScreen extends React.Component {
         this.getData();
     };
     onOkDelete = () => {
-        this.state.listItemSelectedModel.length > 0
-            ? this.deleteMany(this.state.listItemSelectedModel)
-            : this.delete(this.state.selectedRowId ?? '');
+        this.state.listItemSelectedModel.length > 0 ? this.deleteMany(this.state.listItemSelectedModel) : this.delete(this.state.selectedRowId ?? '');
         this.handleDelete;
         this.handleCloseMenu();
     };
@@ -501,12 +492,7 @@ class EmployeeScreen extends React.Component {
                         width: '100%'
                     }}>
                     <DateIcon style={{ marginRight: 4 }} />
-                    <Typography
-                        fontSize="13px"
-                        fontWeight="400"
-                        fontFamily={'Roboto'}
-                        color="#3D475C"
-                        lineHeight="16px">
+                    <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
                         {new Date(params.value).toLocaleDateString('en-GB')}
                     </Typography>
                 </Box>
@@ -538,17 +524,8 @@ class EmployeeScreen extends React.Component {
                     sx={{
                         margin: 'auto',
                         backgroundColor:
-                            params.row.trangThai === 'Hoạt động'
-                                ? '#E8FFF3'
-                                : params.row.trangThai === 'Ngừng hoạt động'
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 'Hoạt động'
-                                ? '#50CD89'
-                                : params.row.trangThai === 'Ngừng hoạt động'
-                                ? '#FF9900'
-                                : '#F1416C'
+                            params.row.trangThai === 'Hoạt động' ? '#E8FFF3' : params.row.trangThai === 'Ngừng hoạt động' ? '#FFF8DD' : '#FFF5F8',
+                        color: params.row.trangThai === 'Hoạt động' ? '#50CD89' : params.row.trangThai === 'Ngừng hoạt động' ? '#FF9900' : '#F1416C'
                     }}
                     fontSize="13px"
                     fontWeight="400"
@@ -671,9 +648,7 @@ class EmployeeScreen extends React.Component {
                             className="btn-outline-hover">
                             Xuất
                         </Button>
-                        <ButtonGroup
-                            variant="contained"
-                            sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
+                        <ButtonGroup variant="contained" sx={{ gap: '8px', height: '40px', boxShadow: 'unset!important' }}>
                             <Button
                                 size="small"
                                 hidden={!abpCustom.isGrandPermission('Pages.NhanSu.Create')}
@@ -731,11 +706,7 @@ class EmployeeScreen extends React.Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
+                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa nhân viên'}
                                             sx={{
@@ -794,10 +765,7 @@ class EmployeeScreen extends React.Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                     />
@@ -821,10 +789,7 @@ class EmployeeScreen extends React.Component {
                         handlePageChange={this.handlePageChange}
                     />
                 </Box>
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.handleDelete}></ConfirmDelete>
+                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.handleDelete}></ConfirmDelete>
                 <ImportExcel
                     tieude={'Nhập file nhân viên'}
                     isOpen={this.state.importShow}
@@ -840,9 +805,7 @@ class EmployeeScreen extends React.Component {
                     }}
                     onOk={this.handleSubmit}
                     title={
-                        this.state.idNhanSu === '' ||
-                        this.state.idNhanSu == undefined ||
-                        this.state.idNhanSu === AppConsts.guidEmpty
+                        this.state.idNhanSu === '' || this.state.idNhanSu == undefined || this.state.idNhanSu === AppConsts.guidEmpty
                             ? 'Thêm mới nhân viên'
                             : 'Cập nhật thông tin nhân viên'
                     }

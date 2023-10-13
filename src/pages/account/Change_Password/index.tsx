@@ -26,10 +26,7 @@ const ResetPassword = () => {
     }, []);
     const rules = Yup.object().shape({
         password: Yup.string()
-            .matches(
-                AppConsts.passwordRegex,
-                'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-            )
+            .matches(AppConsts.passwordRegex, 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt')
             .required('Mật khẩu không được để trống'),
         confirmPassword: Yup.string()
             .oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận phải trùng khớp')
@@ -222,11 +219,7 @@ const ResetPassword = () => {
                                                                 onClick={() => {
                                                                     setShowConfirmPassword(!showConfirmPassword);
                                                                 }}>
-                                                                {showConfirmPassword ? (
-                                                                    <VisibilityOff />
-                                                                ) : (
-                                                                    <Visibility />
-                                                                )}
+                                                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                     )
@@ -234,12 +227,7 @@ const ResetPassword = () => {
                                                 placeholder="Nhập xác nhận mật khẩu"></TextField>
                                         </FormGroup>
                                         <FormGroup sx={{ padding: '8px' }}>
-                                            <Button
-                                                sx={{ height: '48px' }}
-                                                variant="contained"
-                                                type="submit"
-                                                color="primary"
-                                                fullWidth>
+                                            <Button sx={{ height: '48px' }} variant="contained" type="submit" color="primary" fullWidth>
                                                 Đổi mật khẩu
                                             </Button>
                                         </FormGroup>

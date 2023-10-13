@@ -1,19 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {
-    Grid,
-    Box,
-    Typography,
-    Button,
-    Tabs,
-    Tab,
-    TextField,
-    Select,
-    MenuItem,
-    Dialog,
-    Link,
-    IconButton,
-    DialogContent
-} from '@mui/material';
+import { Grid, Box, Typography, Button, Tabs, Tab, TextField, Select, MenuItem, Dialog, Link, IconButton, DialogContent } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import AddLogoIcon from '../../../images/add-logo.svg';
@@ -233,10 +219,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
     };
     return (
         <>
-            <Dialog
-                open={isShowModalThanhToan}
-                onClose={() => setIsShowModalThanhToan(false)}
-                maxWidth="md">
+            <Dialog open={isShowModalThanhToan} onClose={() => setIsShowModalThanhToan(false)} maxWidth="md">
                 <DetailHoaDon
                     formType={0}
                     toggleDetail={() => setIsShowModalThanhToan(false)}
@@ -250,17 +233,11 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                     showAlert={objAlert.show}
                     type={objAlert.type}
                     title={objAlert.mes}
-                    handleClose={() =>
-                        setObjAlert({ show: false, mes: '', type: 1 })
-                    }></SnackbarAlert>
+                    handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
                 <ModalEditChiTietGioHang
                     formType={0}
                     isShow={isShowEditGioHang}
-                    hoadonChiTiet={
-                        idCTHDChosing === ''
-                            ? chitietHoaDon
-                            : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)
-                    }
+                    hoadonChiTiet={idCTHDChosing === '' ? chitietHoaDon : chitietHoaDon.filter((x: any) => x.id === idCTHDChosing)}
                     handleSave={AgreeGioHang}
                     handleClose={() => setIsShowEditGioHang(false)}
                 />
@@ -272,11 +249,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                         justifyContent: 'space-between',
                         minHeight: 'calc(100vh - 70px)'
                     }}>
-                    <ModalWarning
-                        open={openDialog}
-                        onClose={() => setOpenDialog(false)}
-                        onOK={huyHoaDon}
-                    />
+                    <ModalWarning open={openDialog} onClose={() => setOpenDialog(false)} onOK={huyHoaDon} />
                     <Box padding="16px 2.2222222222222223vw ">
                         <Grid container justifyContent="space-between" alignItems="center">
                             <Grid item xs="auto">
@@ -296,10 +269,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         }}>
                                         {hoadonChosed?.maHoaDon}
                                     </Box>
-                                    <PrintIcon
-                                        sx={{ color: 'var(--color-main)' }}
-                                        onClick={InHoaDon}
-                                    />
+                                    <PrintIcon sx={{ color: 'var(--color-main)' }} onClick={InHoaDon} />
                                 </Stack>
                             </Grid>
                             <Grid item xs="auto">
@@ -378,12 +348,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                             }}
                                         />
                                     ) : (
-                                        <img
-                                            width={100}
-                                            style={{ backgroundColor: 'var(--color-bg)' }}
-                                            src={hoadonChosed?.avatar}
-                                            alt="avatar"
-                                        />
+                                        <img width={100} style={{ backgroundColor: 'var(--color-bg)' }} src={hoadonChosed?.avatar} alt="avatar" />
                                     )}
                                 </Box>
                             </Grid>
@@ -400,34 +365,19 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                 }}>
                                 <Box display="flex" gap="23px" mb="12px">
                                     <Stack direction="row" gap={1}>
-                                        <Typography
-                                            variant="h4"
-                                            color="#3B4758"
-                                            fontWeight="700"
-                                            fontSize="24px">
+                                        <Typography variant="h4" color="#3B4758" fontWeight="700" fontSize="24px">
                                             {hoadonChosed?.tenKhachHang}
                                         </Typography>
-                                        <ModeEditIcon
-                                            style={{ color: '#999699', display: 'none' }}
-                                        />
+                                        <ModeEditIcon style={{ color: '#999699', display: 'none' }} />
                                     </Stack>
 
                                     <Box
                                         sx={{
                                             padding: '2px 3px',
                                             borderRadius: '100px',
-                                            color:
-                                                hoadonChosed?.trangThai === 3
-                                                    ? '#50CD89'
-                                                    : hoadonChosed?.trangThai === 1
-                                                    ? '#FF9900'
-                                                    : '#F1416C',
+                                            color: hoadonChosed?.trangThai === 3 ? '#50CD89' : hoadonChosed?.trangThai === 1 ? '#FF9900' : '#F1416C',
                                             bgcolor:
-                                                hoadonChosed?.trangThai === 3
-                                                    ? '#E8FFF3'
-                                                    : hoadonChosed?.trangThai === 1
-                                                    ? '#FFF8DD'
-                                                    : '#FFF5F8',
+                                                hoadonChosed?.trangThai === 3 ? '#E8FFF3' : hoadonChosed?.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
                                             width: 'fit-content',
                                             fontSize: '12px',
                                             height: 'fit-content'
@@ -444,12 +394,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                     }}
                                     spacing="2.7vw">
                                     <Grid item xs={3}>
-                                        <Typography
-                                            variant="h5"
-                                            fontSize="12px"
-                                            color="#999699"
-                                            fontWeight="400"
-                                            height={24}>
+                                        <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
                                             Mã hóa đơn
                                         </Typography>
                                         <TextField
@@ -466,12 +411,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         />
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <Typography
-                                            variant="h5"
-                                            fontSize="12px"
-                                            color="#999699"
-                                            fontWeight="400"
-                                            height={24}>
+                                        <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
                                             Ngày lập
                                         </Typography>
                                         <ThemeProvider theme={themOutlineInput}>
@@ -483,12 +423,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         </ThemeProvider>
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <Typography
-                                            variant="h5"
-                                            fontSize="12px"
-                                            color="#999699"
-                                            fontWeight="400"
-                                            height={24}>
+                                        <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
                                             Chi nhánh
                                         </Typography>
                                         <ThemeProvider theme={themOutlineInput}>
@@ -602,11 +537,7 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
                                         onClick={showModalEditGioHang}>
                                         Chỉnh sửa
                                     </Button>
-                                    <Button
-                                        variant="contained"
-                                        sx={{ color: '#fff' }}
-                                        className="btn-container-hover"
-                                        onClick={updateHoaDon}>
+                                    <Button variant="contained" sx={{ color: '#fff' }} className="btn-container-hover" onClick={updateHoaDon}>
                                         Lưu
                                     </Button>
 

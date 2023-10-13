@@ -12,11 +12,7 @@ class CaiDatHoaHongScreen extends Component {
                 <Box component={'div'}>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
-                            {chietKhauDichVuStore.isChietKhauDichVu === true ? (
-                                <ChietKhauDichVuScreen />
-                            ) : (
-                                <ChietKhauHoaDonScreen />
-                            )}
+                            {chietKhauDichVuStore.isChietKhauDichVu === true ? <ChietKhauDichVuScreen /> : <ChietKhauHoaDonScreen />}
                         </Grid>
                     </Grid>
                 </Box>

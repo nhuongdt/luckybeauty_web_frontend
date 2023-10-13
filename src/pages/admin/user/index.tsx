@@ -1,14 +1,6 @@
 import React, { ChangeEventHandler } from 'react';
 import AppComponentBase from '../../../components/AppComponentBase';
-import {
-    Box,
-    Grid,
-    TextField,
-    Button,
-    Typography,
-    IconButton,
-    SelectChangeEvent
-} from '@mui/material';
+import { Box, Grid, TextField, Button, Typography, IconButton, SelectChangeEvent } from '@mui/material';
 import { ReactComponent as DateIcon } from '../../../images/calendar-5.svg';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import userService from '../../../services/user/userService';
@@ -117,9 +109,7 @@ class UserScreen extends AppComponentBase {
         });
         this.getAll();
     };
-    handleSearchChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (
-        event: any
-    ) => {
+    handleSearchChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event: any) => {
         const filter = event.target.value;
         this.setState({ filter: filter });
     };
@@ -234,10 +224,7 @@ class UserScreen extends AppComponentBase {
                 minWidth: 125,
                 flex: 1,
                 renderHeader: (params: any) => (
-                    <Box
-                        sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                        title={params.colDef.headerName}
-                        width="100%">
+                    <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                         {params.colDef.headerName}
                     </Box>
                 ),
@@ -361,12 +348,7 @@ class UserScreen extends AppComponentBase {
                             justifyContent: 'center'
                         }}>
                         <DateIcon style={{ marginRight: 4 }} />
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            variant="h6"
-                            color="#333233"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontWeight="400" variant="h6" color="#333233" lineHeight="16px">
                             {new Date(params.value).toLocaleDateString('en-GB')}
                         </Typography>
                     </Box>
@@ -391,9 +373,7 @@ class UserScreen extends AppComponentBase {
                         </IconButton>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ] as GridColDef[];
 
@@ -403,18 +383,10 @@ class UserScreen extends AppComponentBase {
                     paddingTop: '16px'
                 }}>
                 <Box>
-                    <Grid
-                        container
-                        justifyContent="space-between"
-                        alignItems="center"
-                        rowGap="16px">
+                    <Grid container justifyContent="space-between" alignItems="center" rowGap="16px">
                         <Grid item xs="auto">
                             <Box display="flex" gap="10px" alignItems="center">
-                                <Typography
-                                    variant="h1"
-                                    fontWeight="700"
-                                    fontSize="16px"
-                                    color="#333233">
+                                <Typography variant="h1" fontWeight="700" fontSize="16px" color="#333233">
                                     Danh sách người dùng
                                 </Typography>
                                 <Box>
@@ -453,11 +425,7 @@ class UserScreen extends AppComponentBase {
                                 <Box display="flex" alignItems="center">
                                     <Box display="flex" gap="8px">
                                         <Button
-                                            hidden={
-                                                !abpCustom.isGrandPermission(
-                                                    'Pages.Administration.Users.Create'
-                                                )
-                                            }
+                                            hidden={!abpCustom.isGrandPermission('Pages.Administration.Users.Create')}
                                             variant="contained"
                                             startIcon={<img src={AddIcon} />}
                                             size="small"
@@ -554,10 +522,7 @@ class UserScreen extends AppComponentBase {
                         allRoles={this.state.roles}
                         onOk={this.handleCreate}
                     />
-                    <ConfirmDelete
-                        isShow={this.state.isShowConfirmDelete}
-                        onOk={this.onOkDelete}
-                        onCancel={this.onShowDelete}></ConfirmDelete>
+                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDelete}></ConfirmDelete>
                     <ActionMenuTable
                         anchorEl={this.state.anchorEl}
                         selectedRowId={this.state.selectedRowId}

@@ -38,11 +38,7 @@ class Exception extends React.Component<any, any> {
         return (
             <Grid container style={{ marginTop: 150 }}>
                 <Grid item xs={6} sm={6} md={6} lg={4} xl={4}>
-                    <Avatar
-                        variant="square"
-                        sx={{ width: '100%', height: '100%' }}
-                        src={error.errorImg}
-                    />
+                    <Avatar variant="square" sx={{ width: '100%', height: '100%' }} src={error.errorImg} />
                 </Grid>
                 <Grid item xs={6} sm={6} md={6} lg={4} xl={4} style={{ marginTop: 75 }}>
                     <Grid item>

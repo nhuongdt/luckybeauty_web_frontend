@@ -289,11 +289,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik
-                        enableReinitialize={true}
-                        initialValues={initialValues}
-                        onSubmit={this.handleSubmit}
-                        validationSchema={rules}>
+                    <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
                         {({ values, handleChange, errors, touched }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <Box>
@@ -358,11 +354,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     id="name"
                                                     type="text"
                                                     error={errors.name && touched.name ? true : false}
-                                                    helperText={
-                                                        errors.name && (
-                                                            <small className="text-danger">{errors.name}</small>
-                                                        )
-                                                    }
+                                                    helperText={errors.name && <small className="text-danger">{errors.name}</small>}
                                                     name="name"
                                                     value={values.name}
                                                     onChange={handleChange}
@@ -385,11 +377,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                         </label>
                                                     }
                                                     error={errors.displayName && touched.displayName ? true : false}
-                                                    helperText={
-                                                        errors.displayName && (
-                                                            <small className="text-danger">{errors.displayName}</small>
-                                                        )
-                                                    }
+                                                    helperText={errors.displayName && <small className="text-danger">{errors.displayName}</small>}
                                                     size="small"
                                                     id="displayName"
                                                     type="text"

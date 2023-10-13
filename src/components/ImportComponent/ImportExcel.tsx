@@ -21,14 +21,7 @@ import { useEffect, useState } from 'react';
 import { FileUpload } from '../../services/dto/FileUpload';
 import utils from '../../utils/utils';
 
-export default function ImportExcel({
-    tieude,
-    listOption,
-    isOpen,
-    onClose,
-    downloadImportTemplate,
-    importFile
-}: any) {
+export default function ImportExcel({ tieude, listOption, isOpen, onClose, downloadImportTemplate, importFile }: any) {
     const [error, setError] = useState('');
     const [filePath, setFilePath] = useState('');
     const [fileSelect, setFileSelect] = useState<FileUpload>({} as FileUpload);
@@ -100,31 +93,17 @@ export default function ImportExcel({
                         style={{
                             display: listOption != null && listOption.length > 0 ? '' : 'none'
                         }}>
-                        <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            defaultValue="female"
-                            name="radio-buttons-group">
+                        <RadioGroup aria-labelledby="demo-radio-buttons-group-label" defaultValue="female" name="radio-buttons-group">
                             {listOption?.map((item: any, index: number) => (
-                                <FormControlLabel
-                                    key={index}
-                                    control={<Radio />}
-                                    label={item.text}
-                                />
+                                <FormControlLabel key={index} control={<Radio />} label={item.text} />
                             ))}
                         </RadioGroup>
                     </Stack>
                     <Stack spacing={2}>
                         <Stack fontStyle={'italic'} spacing={1} alignItems={'flex-start'}>
-                            <Typography variant="body2">
-                                Tải về file mẫu (.xlsx) hoặc nhập file dữ liệu sẵn có
-                            </Typography>
-                            <Typography variant="body2">
-                                Hệ thống chỉ cho phép nhập tối đa 10000 dòng mỗi lần từ file
-                            </Typography>
-                            <Button
-                                variant="outlined"
-                                startIcon={<VerticalAlignBottomOutlinedIcon />}
-                                onClick={downloadImportTemplate}>
+                            <Typography variant="body2">Tải về file mẫu (.xlsx) hoặc nhập file dữ liệu sẵn có</Typography>
+                            <Typography variant="body2">Hệ thống chỉ cho phép nhập tối đa 10000 dòng mỗi lần từ file</Typography>
+                            <Button variant="outlined" startIcon={<VerticalAlignBottomOutlinedIcon />} onClick={downloadImportTemplate}>
                                 Tải xuống
                             </Button>
                         </Stack>
@@ -134,10 +113,7 @@ export default function ImportExcel({
                                 <Typography variant="body2" fontWeight={600}>
                                     Tải file dữ liệu lên
                                 </Typography>
-                                <span
-                                    style={{ fontSize: '12px', color: 'red', fontStyle: 'italic' }}>
-                                    {error}
-                                </span>
+                                <span style={{ fontSize: '12px', color: 'red', fontStyle: 'italic' }}>{error}</span>
                             </Stack>
 
                             <Stack>
@@ -155,10 +131,7 @@ export default function ImportExcel({
                                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                                         type={'file'}
                                                         onChange={handleFileSelect}></input>
-                                                    <Button
-                                                        variant="outlined"
-                                                        onClick={chooseFile}
-                                                        startIcon={<FileUploadOutlinedIcon />}>
+                                                    <Button variant="outlined" onClick={chooseFile} startIcon={<FileUploadOutlinedIcon />}>
                                                         Chọn file
                                                     </Button>
                                                 </Stack>

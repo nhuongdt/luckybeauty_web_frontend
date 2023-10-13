@@ -86,18 +86,12 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
             const txtUnsign = utils.strToEnglish(txt);
             const data = allNhanVien.filter(
                 (x) =>
-                    (x.maNhanVien !== null &&
-                        x.maNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.tenNhanVien !== null &&
-                        x.tenNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.soDienThoai !== null &&
-                        x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
-                    (x.maNhanVien !== null &&
-                        utils.strToEnglish(x.maNhanVien).indexOf(txtUnsign) > -1) ||
-                    (x.tenNhanVien !== null &&
-                        utils.strToEnglish(x.tenNhanVien).indexOf(txtUnsign) > -1) ||
-                    (x.soDienThoai !== null &&
-                        utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
+                    (x.maNhanVien !== null && x.maNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.tenNhanVien !== null && x.tenNhanVien.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.soDienThoai !== null && x.soDienThoai.trim().toLowerCase().indexOf(txt) > -1) ||
+                    (x.maNhanVien !== null && utils.strToEnglish(x.maNhanVien).indexOf(txtUnsign) > -1) ||
+                    (x.tenNhanVien !== null && utils.strToEnglish(x.tenNhanVien).indexOf(txtUnsign) > -1) ||
+                    (x.soDienThoai !== null && utils.strToEnglish(x.soDienThoai).indexOf(txtUnsign) > -1)
             );
             setLstNhanVien(data);
         } else {
@@ -110,10 +104,7 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
     }, [txtSearch]);
 
     const ChoseNhanVien = async (item: NhanSuItemDto) => {
-        const hoahongDV = await HoaHongDichVuServices.GetHoaHongNV_theoDichVu(
-            item.id,
-            triggerModal.item.idDonViQuyDoi
-        );
+        const hoahongDV = await HoaHongDichVuServices.GetHoaHongNV_theoDichVu(item.id, triggerModal.item.idDonViQuyDoi);
 
         const newNV = new NhanVienThucHienDto({
             idNhanVien: item.id,
@@ -189,24 +180,12 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                             startAdornment: <Search />
                         }}
                     />
-                    <Typography
-                        variant="subtitle1"
-                        fontWeight="700"
-                        color="#999699"
-                        marginTop="20px"
-                        marginBottom={'8px'}>
+                    <Typography variant="subtitle1" fontWeight="700" color="#999699" marginTop="20px" marginBottom={'8px'}>
                         Danh sách kỹ thuật viên
                     </Typography>
                     <Grid container className="list-persons" spacing={2}>
                         {lstNhanVien?.map((person: any, index: any) => (
-                            <Grid
-                                className="person-item"
-                                item
-                                xs={12}
-                                md={4}
-                                lg={4}
-                                key={index}
-                                onClick={() => ChoseNhanVien(person)}>
+                            <Grid className="person-item" item xs={12} md={4} lg={4} key={index} onClick={() => ChoseNhanVien(person)}>
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -246,29 +225,16 @@ const ModelNhanVienThucHien = ({ triggerModal, handleSave }: any) => {
                                     </Box>
                                     <div className="person-avatar">
                                         {utils.checkNull(person?.avatar) ? (
-                                            <BadgeFistCharOfName
-                                                firstChar={utils.getFirstLetter(
-                                                    person?.tenNhanVien ?? ''
-                                                )}
-                                            />
+                                            <BadgeFistCharOfName firstChar={utils.getFirstLetter(person?.tenNhanVien ?? '')} />
                                         ) : (
-                                            <Avatar
-                                                sx={{ width: 40, height: 40 }}
-                                                src={person?.avatar}
-                                            />
+                                            <Avatar sx={{ width: 40, height: 40 }} src={person?.avatar} />
                                         )}
                                     </div>
                                     <Stack maxWidth="calc(100% - 50px)">
-                                        <Typography
-                                            title={person.tenNhanVien}
-                                            variant="subtitle2"
-                                            className="lableOverflow">
+                                        <Typography title={person.tenNhanVien} variant="subtitle2" className="lableOverflow">
                                             {person.tenNhanVien}
                                         </Typography>
-                                        <Typography
-                                            variant="caption"
-                                            className="person-position"
-                                            color={'#333233'}>
+                                        <Typography variant="caption" className="person-position" color={'#333233'}>
                                             {person.tenChucVu}
                                         </Typography>
                                     </Stack>

@@ -1,16 +1,5 @@
 import React, { useEffect, useRef, useState, useContext } from 'react';
-import {
-    Box,
-    Typography,
-    Grid,
-    TextField,
-    IconButton,
-    Button,
-    SelectChangeEvent,
-    Stack,
-    Select,
-    MenuItem
-} from '@mui/material';
+import { Box, Typography, Grid, TextField, IconButton, Button, SelectChangeEvent, Stack, Select, MenuItem } from '@mui/material';
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { Search } from '@mui/icons-material';
@@ -54,9 +43,7 @@ const GiaoDichThanhToan: React.FC = () => {
     const [hoadon, setHoaDon] = useState<PageHoaDonDto>(new PageHoaDonDto({ id: '' }));
     const [allChiNhanh, setAllChiNhanh] = useState<ChiNhanhDto[]>([]);
     const [lstMauIn, setLstMauIn] = useState<MauInDto[]>([]);
-    const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(
-        new PropConfirmOKCancel({ show: false })
-    );
+    const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
 
     const [paramSearch, setParamSearch] = useState<HoaDonRequestDto>({
         textSearch: '',
@@ -121,13 +108,7 @@ const GiaoDichThanhToan: React.FC = () => {
             return;
         }
         GetListHoaDon();
-    }, [
-        paramSearch.currentPage,
-        paramSearch.pageSize,
-        paramSearch.fromDate,
-        paramSearch.toDate,
-        paramSearch.idChiNhanhs
-    ]);
+    }, [paramSearch.currentPage, paramSearch.pageSize, paramSearch.fromDate, paramSearch.toDate, paramSearch.idChiNhanhs]);
 
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
@@ -178,9 +159,7 @@ const GiaoDichThanhToan: React.FC = () => {
                     // remove if huyhoadon or change chinhanh
                     setPageDataHoaDon({
                         ...pageDataHoaDon,
-                        items: pageDataHoaDon.items.filter(
-                            (x: any) => x.id !== hoadonAfterChange.id
-                        )
+                        items: pageDataHoaDon.items.filter((x: any) => x.id !== hoadonAfterChange.id)
                     });
                 } else {
                     setPageDataHoaDon({
@@ -258,10 +237,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             newHtml = DataMauIn.replaceHoaDon(newHtml);
                             newHtml = DataMauIn.replacePhieuThuChi(newHtml);
                             if (i < rowSelectionModel.length - 1) {
-                                htmlPrint = htmlPrint.concat(
-                                    newHtml,
-                                    `<p style="page-break-before:always;"></p>`
-                                );
+                                htmlPrint = htmlPrint.concat(newHtml, `<p style="page-break-before:always;"></p>`);
                             } else {
                                 htmlPrint = htmlPrint.concat(newHtml);
                             }
@@ -295,9 +271,7 @@ const GiaoDichThanhToan: React.FC = () => {
             headerName: 'Mã hóa đơn',
             minWidth: 100,
             flex: 0.8,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box component="span" title={params.value}>
                     {params.value}
@@ -311,21 +285,15 @@ const GiaoDichThanhToan: React.FC = () => {
             align: 'center',
             minWidth: 130,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy HH:mm')}</Box>
         },
         {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
             minWidth: 140,
             flex: 1.5,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} component="span" textOverflow={'ellipsis'}>
                     {params.value}
@@ -339,14 +307,8 @@ const GiaoDichThanhToan: React.FC = () => {
             align: 'right',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         // {
         //     field: 'tongGiamGiaHD',
@@ -375,14 +337,8 @@ const GiaoDichThanhToan: React.FC = () => {
             align: 'right',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
-            renderCell: (params: any) => (
-                <Box title={params.value}>
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            )
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
         },
         {
             field: 'daThanhToan',
@@ -391,9 +347,7 @@ const GiaoDichThanhToan: React.FC = () => {
             align: 'right',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} textAlign="center" width="100%">
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -407,9 +361,7 @@ const GiaoDichThanhToan: React.FC = () => {
             align: 'right',
             minWidth: 100,
             flex: 0.5,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box title={params.value} component={'span'}>
                     {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -422,27 +374,15 @@ const GiaoDichThanhToan: React.FC = () => {
             headerName: 'Trạng thái',
             minWidth: 118,
             flex: 1,
-            renderHeader: (params: any) => (
-                <Box title={params.value}>{params.colDef.headerName}</Box>
-            ),
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
             renderCell: (params: any) => (
                 <Box
                     title={params.value}
                     sx={{
                         padding: '4px 8px',
                         borderRadius: '100px',
-                        backgroundColor:
-                            params.row.trangThai === 3
-                                ? '#E8FFF3'
-                                : params.row.trangThai === 1
-                                ? '#FFF8DD'
-                                : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 3
-                                ? '#50CD89'
-                                : params.row.trangThai === 1
-                                ? '#FF9900'
-                                : '#F1416C',
+                        backgroundColor: params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                        color: params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
@@ -455,13 +395,7 @@ const GiaoDichThanhToan: React.FC = () => {
     return (
         <>
             <ChiNhanhContextbyUser.Provider value={allChiNhanh}>
-                <ThongTinHoaDon
-                    idHoaDon={idHoadonChosing}
-                    hoadon={hoadon}
-                    open={openDetail}
-                    handleGotoBack={childGotoBack}
-                    listMauIn={lstMauIn}
-                />
+                <ThongTinHoaDon idHoaDon={idHoadonChosing} hoadon={hoadon} open={openDetail} handleGotoBack={childGotoBack} listMauIn={lstMauIn} />
             </ChiNhanhContextbyUser.Provider>
 
             <SnackbarAlert
@@ -573,18 +507,14 @@ const GiaoDichThanhToan: React.FC = () => {
                                 <Box>
                                     <DatePickerCustom
                                         defaultVal={paramSearch.fromDate}
-                                        handleChangeDate={(newVal: string) =>
-                                            setParamSearch({ ...paramSearch, fromDate: newVal })
-                                        }
+                                        handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, fromDate: newVal })}
                                     />
                                 </Box>
                                 <Box sx={{ textAlign: 'center', flexBasis: '30%' }}>-</Box>
                                 <Box className="date2">
                                     <DatePickerCustom
                                         defaultVal={paramSearch.toDate}
-                                        handleChangeDate={(newVal: string) =>
-                                            setParamSearch({ ...paramSearch, toDate: newVal })
-                                        }
+                                        handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, toDate: newVal })}
                                     />
                                 </Box>
                             </Box>
@@ -623,18 +553,12 @@ const GiaoDichThanhToan: React.FC = () => {
                                 {
                                     id: '1',
                                     text: 'Xóa hóa đơn',
-                                    icon: (
-                                        <DeleteSweepOutlinedIcon
-                                            sx={{ width: '1rem', height: '1rem' }}
-                                        />
-                                    )
+                                    icon: <DeleteSweepOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
                                 },
                                 {
                                     id: '2',
                                     text: 'In hóa đơn',
-                                    icon: (
-                                        <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
-                                    )
+                                    icon: <PrintOutlinedIcon sx={{ width: '1rem', height: '1rem' }} />
                                 }
                             ]}
                             countRowSelected={rowSelectionModel.length}
@@ -644,15 +568,10 @@ const GiaoDichThanhToan: React.FC = () => {
                     </div>
                 )}
 
-                <Stack
-                    marginTop={rowSelectionModel.length > 0 ? 1 : 5}
-                    className="page-box-right"
-                    spacing={1}>
+                <Stack marginTop={rowSelectionModel.length > 0 ? 1 : 5} className="page-box-right" spacing={1}>
                     <DataGrid
                         disableRowSelectionOnClick
-                        className={
-                            rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
-                        }
+                        className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                         rowHeight={46}
                         autoHeight={pageDataHoaDon.items.length === 0}
                         columns={columns}

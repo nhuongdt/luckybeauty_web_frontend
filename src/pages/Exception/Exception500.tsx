@@ -11,11 +11,7 @@ class Exception500 extends React.Component<any, any> {
         return (
             <Grid container style={{ marginTop: 150 }}>
                 <Grid item xs={6} sm={6} md={6} lg={4} xl={4}>
-                    <Avatar
-                        variant="square"
-                        sx={{ width: '100%', height: '100%' }}
-                        src={error500}
-                    />
+                    <Avatar variant="square" sx={{ width: '100%', height: '100%' }} src={error500} />
                 </Grid>
                 <Grid item xs={6} sm={6} md={6} lg={4} xl={4} style={{ marginTop: 75 }}>
                     <Grid item>
@@ -23,9 +19,8 @@ class Exception500 extends React.Component<any, any> {
                     </Grid>
                     <Grid item>
                         <h5 className={'errorDescription'}>
-                            Xin lỗi, đã xảy ra lỗi trên trang này. Đội ngũ của chúng tôi đã được
-                            thông báo về điều này và chúng tôi sẽ cố gắng giải quyết vấn đề này một
-                            cách tốt nhất có thể
+                            Xin lỗi, đã xảy ra lỗi trên trang này. Đội ngũ của chúng tôi đã được thông báo về điều này và chúng tôi sẽ cố gắng giải
+                            quyết vấn đề này một cách tốt nhất có thể
                         </h5>
                     </Grid>
                     <Grid item textAlign={'center'}>

@@ -19,12 +19,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
     return (
         <>
             <div ref={ref}>
-                <table
-                    style={{ width: '100%' }}
-                    border={0}
-                    cellSpacing={0}
-                    cellPadding={0}
-                    ref={ref}>
+                <table style={{ width: '100%' }} border={0} cellSpacing={0} cellPadding={0} ref={ref}>
                     <tbody>
                         <tr>
                             <td style={{ width: '8%', textAlign: 'center' }} rowSpan={2}>
@@ -72,10 +67,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                 <div style={{ textAlign: 'right' }}>
                     <span style={{ fontSize: 12 }}>
                         <span style={{ fontFamily: 'Tahoma' }}>
-                            Ngày bán:{' '}
-                            <span>
-                                {format(new Date(props?.hoadon.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
-                            </span>
+                            Ngày bán: <span>{format(new Date(props?.hoadon.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}</span>
                         </span>
                     </span>
                 </div>
@@ -163,11 +155,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <td style={{ borderBottom: '1px dashed black' }}>
                                     <span style={{ fontSize: 12 }}>
                                         <span style={{ fontFamily: 'Tahoma' }}>
-                                            <span>
-                                                {new Intl.NumberFormat('vi-VN').format(
-                                                    ct.donGiaTruocCK
-                                                )}
-                                            </span>
+                                            <span>{new Intl.NumberFormat('vi-VN').format(ct.donGiaTruocCK)}</span>
                                         </span>
                                     </span>
                                 </td>
@@ -189,11 +177,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                     }}>
                                     <span style={{ fontSize: 12 }}>
                                         <span style={{ fontFamily: 'Tahoma' }}>
-                                            <span>
-                                                {new Intl.NumberFormat('vi-VN').format(
-                                                    ct.thanhTienTruocCK
-                                                )}
-                                            </span>
+                                            <span>{new Intl.NumberFormat('vi-VN').format(ct.thanhTienTruocCK)}</span>
                                         </span>
                                     </span>
                                 </td>
@@ -213,11 +197,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>
-                                            {new Intl.NumberFormat('vi-VN').format(
-                                                props?.hoadon.tongTienHangChuaChietKhau
-                                            )}
-                                        </span>
+                                        <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongTienHangChuaChietKhau)}</span>
                                     </span>
                                 </span>
                             </td>
@@ -231,11 +211,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>
-                                            {new Intl.NumberFormat('vi-VN').format(
-                                                props?.hoadon.tongChietKhauHangHoa
-                                            )}
-                                        </span>
+                                        <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongChietKhauHangHoa)}</span>
                                     </span>
                                 </span>
                             </td>
@@ -252,11 +228,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <strong>
-                                            <span>
-                                                {new Intl.NumberFormat('vi-VN').format(
-                                                    props?.hoadon.tongThanhToan
-                                                )}
-                                            </span>
+                                            <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongThanhToan)}</span>
                                         </strong>
                                     </span>
                                 </span>
@@ -271,11 +243,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>
-                                            {new Intl.NumberFormat('vi-VN').format(
-                                                props?.hoadon?.daThanhToan
-                                            )}
-                                        </span>
+                                        <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon?.daThanhToan)}</span>
                                     </span>
                                 </span>
                             </td>
@@ -289,11 +257,7 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>
-                                            {new Intl.NumberFormat('vi-VN').format(
-                                                props?.hoadon?.conNo
-                                            )}
-                                        </span>
+                                        <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon?.conNo)}</span>
                                     </span>
                                 </span>
                             </td>

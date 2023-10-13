@@ -37,10 +37,7 @@ import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import { TrendingUpTwoTone } from '@mui/icons-material';
 import { PagedNhanSuRequestDto } from '../../../../services/nhan-vien/dto/PagedNhanSuRequestDto';
-import {
-    TaiKhoanNganHangDto,
-    NganHangDto
-} from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
+import { TaiKhoanNganHangDto, NganHangDto } from '../../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 import TaiKhoanNganHangServices from '../../../../services/so_quy/TaiKhoanNganHangServices';
 import AutocompleteBank from '../../../../components/Autocomplete/Bank';
 
@@ -135,8 +132,7 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                 <DialogTitle>
                     <div className="row">
                         <Box className="col-8" sx={{ float: 'left' }}>
-                            {utils.checkNull(idTaiKhoanNganHang) ? 'Thêm mới' : 'Cập nhật'} tài
-                            khoản ngân hàng
+                            {utils.checkNull(idTaiKhoanNganHang) ? 'Thêm mới' : 'Cập nhật'} tài khoản ngân hàng
                         </Box>
                         <Box
                             className="col-4"
@@ -146,19 +142,12 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                     filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
                                 }
                             }}>
-                            <CloseIcon
-                                style={{ float: 'right', height: '24px', cursor: 'pointer' }}
-                                onClick={onClose}
-                            />
+                            <CloseIcon style={{ float: 'right', height: '24px', cursor: 'pointer' }} onClick={onClose} />
                         </Box>
                     </div>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={taiKhoanNganHang}
-                        validationSchema={validate}
-                        onSubmit={saveAccountBank}
-                        enableReinitialize>
+                    <Formik initialValues={taiKhoanNganHang} validationSchema={validate} onSubmit={saveAccountBank} enableReinitialize>
                         {(formik) => (
                             <>
                                 <Form>
@@ -183,10 +172,7 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                                 listOption={allBank}
                                                 handleChoseItem={(item: any) => {
                                                     {
-                                                        formik.setFieldValue(
-                                                            'idNganHang',
-                                                            item?.id ?? null
-                                                        );
+                                                        formik.setFieldValue('idNganHang', item?.id ?? null);
                                                         setTaiKhoanNganHang({
                                                             ...taiKhoanNganHang,
                                                             idNganHang: item?.id,
@@ -194,14 +180,8 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                                         });
                                                     }
                                                 }}
-                                                error={
-                                                    formik.touched.idNganHang &&
-                                                    Boolean(formik.errors?.idNganHang)
-                                                }
-                                                helperText={
-                                                    formik.touched.idNganHang &&
-                                                    formik.errors.idNganHang
-                                                }
+                                                error={formik.touched.idNganHang && Boolean(formik.errors?.idNganHang)}
+                                                helperText={formik.touched.idNganHang && formik.errors.idNganHang}
                                             />
                                         </Grid>
 
@@ -213,20 +193,11 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                                 fullWidth
                                                 size="small"
                                                 value={taiKhoanNganHang?.tenChuThe}
-                                                helperText={
-                                                    formik.touched.tenChuThe &&
-                                                    formik.errors.tenChuThe
-                                                }
-                                                error={
-                                                    formik.touched.tenChuThe &&
-                                                    Boolean(formik.errors?.tenChuThe)
-                                                }
+                                                helperText={formik.touched.tenChuThe && formik.errors.tenChuThe}
+                                                error={formik.touched.tenChuThe && Boolean(formik.errors?.tenChuThe)}
                                                 onChange={(e) => {
                                                     {
-                                                        formik.setFieldValue(
-                                                            'tenChuThe',
-                                                            e.target.value
-                                                        );
+                                                        formik.setFieldValue('tenChuThe', e.target.value);
                                                         setTaiKhoanNganHang({
                                                             ...taiKhoanNganHang,
                                                             tenChuThe: e.target.value
@@ -243,19 +214,10 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                                 fullWidth
                                                 size="small"
                                                 value={taiKhoanNganHang?.soTaiKhoan}
-                                                error={
-                                                    formik.touched.soTaiKhoan &&
-                                                    Boolean(formik.errors?.soTaiKhoan)
-                                                }
-                                                helperText={
-                                                    formik.touched.soTaiKhoan &&
-                                                    formik.errors.soTaiKhoan
-                                                }
+                                                error={formik.touched.soTaiKhoan && Boolean(formik.errors?.soTaiKhoan)}
+                                                helperText={formik.touched.soTaiKhoan && formik.errors.soTaiKhoan}
                                                 onChange={(e) => {
-                                                    formik.setFieldValue(
-                                                        'soTaiKhoan',
-                                                        e.target.value
-                                                    );
+                                                    formik.setFieldValue('soTaiKhoan', e.target.value);
                                                     setTaiKhoanNganHang({
                                                         ...taiKhoanNganHang,
                                                         soTaiKhoan: e.target.value
@@ -283,11 +245,7 @@ const ModalTaiKhoanNganHang = ({ show = false, idTaiKhoanNganHang = null, onClos
                                         </Grid>
                                     </Grid>
                                     <DialogActions>
-                                        <Button
-                                            variant="contained"
-                                            className="btn-container-hover"
-                                            type="submit"
-                                            disabled={formik.isSubmitting}>
+                                        <Button variant="contained" className="btn-container-hover" type="submit" disabled={formik.isSubmitting}>
                                             Lưu
                                         </Button>
 

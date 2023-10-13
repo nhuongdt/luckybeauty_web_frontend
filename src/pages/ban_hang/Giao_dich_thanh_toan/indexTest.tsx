@@ -25,10 +25,7 @@ import { TextTranslate } from '../../../components/TableLanguage';
 import DatePickerCustom from '../../../components/DatetimePicker/DatePickerCustom';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import ThongTinHoaDonn from '../Hoa_don/ChiTietHoaDon';
-import {
-    ChiNhanhContext,
-    ChiNhanhContextbyUser
-} from '../../../services/chi_nhanh/ChiNhanhContext';
+import { ChiNhanhContext, ChiNhanhContextbyUser } from '../../../services/chi_nhanh/ChiNhanhContext';
 
 import Utils from '../../../utils/utils'; // func common.
 import { format, lastDayOfMonth } from 'date-fns';
@@ -167,11 +164,7 @@ const GiaoDichThanhToanTest: React.FC = () => {
                 <Box padding="16px 2.2222222222222223vw 16px 2.2222222222222223vw">
                     <Grid container justifyContent="space-between">
                         <Grid item md="auto" display="flex" alignItems="center" gap="10px">
-                            <Typography
-                                color="#333233"
-                                variant="h1"
-                                fontSize="16px"
-                                fontWeight="700">
+                            <Typography color="#333233" variant="h1" fontSize="16px" fontWeight="700">
                                 Giao dịch thanh toán
                             </Typography>
                             <Box className="form-search">
@@ -217,15 +210,11 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                 }}>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.fromDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, fromDate: newVal })
-                                    }
+                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, fromDate: newVal })}
                                 />
                                 <DatePickerCustom
                                     defaultVal={paramSearch.toDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, toDate: newVal })
-                                    }
+                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, toDate: newVal })}
                                 />
 
                                 <Button
@@ -272,23 +261,12 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                         color: '#7C3367!important'
                                                     }
                                                 }}
-                                                checked={
-                                                    selectedRows.length ===
-                                                    pageDataHoaDon.items.length
-                                                }
-                                                indeterminate={
-                                                    selectedRows.length > 0 &&
-                                                    selectedRows.length <
-                                                        pageDataHoaDon.items.length
-                                                }
+                                                checked={selectedRows.length === pageDataHoaDon.items.length}
+                                                indeterminate={selectedRows.length > 0 && selectedRows.length < pageDataHoaDon.items.length}
                                                 onChange={(event) => {
                                                     event.stopPropagation();
                                                     if (event.target.checked) {
-                                                        setSelectedRows(
-                                                            pageDataHoaDon.items.map(
-                                                                (item) => item.id
-                                                            )
-                                                        );
+                                                        setSelectedRows(pageDataHoaDon.items.map((item) => item.id));
                                                     } else {
                                                         setSelectedRows([]);
                                                     }
@@ -318,18 +296,11 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                             }
                                                         }}
                                                         checked={selectedRows.includes(item.id)}
-                                                        onChange={(event) =>
-                                                            handleRowSelection(event, item.id)
-                                                        }
+                                                        onChange={(event) => handleRowSelection(event, item.id)}
                                                     />
                                                 </TableCell>
                                                 <TableCell>{item.maHoaDon}</TableCell>
-                                                <TableCell>
-                                                    {format(
-                                                        new Date(item.ngayLapHoaDon),
-                                                        'dd/MM/yyyy HH:mm'
-                                                    )}
-                                                </TableCell>
+                                                <TableCell>{format(new Date(item.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}</TableCell>
                                                 <TableCell>{item.tenKhachHang}</TableCell>
                                                 <TableCell>{item.tongTienHang}</TableCell>
                                                 <TableCell>{item.tongGiamGiaHD}</TableCell>
@@ -343,17 +314,8 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                             padding: '4px 8px',
                                                             borderRadius: '100px',
                                                             backgroundColor:
-                                                                item.trangThai === 3
-                                                                    ? '#E8FFF3'
-                                                                    : item.trangThai === 1
-                                                                    ? '#FFF8DD'
-                                                                    : '#FFF5F8',
-                                                            color:
-                                                                item.trangThai === 3
-                                                                    ? '#50CD89'
-                                                                    : item.trangThai === 1
-                                                                    ? '#FF9900'
-                                                                    : '#F1416C',
+                                                                item.trangThai === 3 ? '#E8FFF3' : item.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                                                            color: item.trangThai === 3 ? '#50CD89' : item.trangThai === 1 ? '#FF9900' : '#F1416C',
                                                             margin: 'auto'
                                                         }}
                                                         className="state-thanh-toan">
@@ -365,10 +327,7 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                 <TableRow>
                                                     <TableCell style={{ padding: 0 }} colSpan={9}>
                                                         <Collapse in={expandedRowId === item.id}>
-                                                            <ThongTinHoaDonn
-                                                                idHoaDon={item.id}
-                                                                hoadon={item}
-                                                            />
+                                                            <ThongTinHoaDonn idHoaDon={item.id} hoadon={item} />
                                                         </Collapse>
                                                     </TableCell>
                                                 </TableRow>

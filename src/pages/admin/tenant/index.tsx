@@ -1,14 +1,6 @@
 import React, { ChangeEventHandler } from 'react';
 import { GetAllTenantOutput } from '../../../services/tenant/dto/getAllTenantOutput';
-import {
-    Box,
-    Grid,
-    Typography,
-    TextField,
-    Button,
-    IconButton,
-    SelectChangeEvent
-} from '@mui/material';
+import { Box, Grid, Typography, TextField, Button, IconButton, SelectChangeEvent } from '@mui/material';
 import { DataGrid, GridRowSelectionModel } from '@mui/x-data-grid';
 import AppComponentBase from '../../../components/AppComponentBase';
 import tenantService from '../../../services/tenant/tenantService';
@@ -269,9 +261,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         </IconButton>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params: any) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
         return (
@@ -281,11 +271,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                         <Grid item>
                             <div>
                                 <Box display="flex" gap="8px" alignItems="center">
-                                    <Typography
-                                        variant="h1"
-                                        fontWeight="700"
-                                        fontSize="16px"
-                                        sx={{ marginTop: '4px' }}>
+                                    <Typography variant="h1" fontWeight="700" fontSize="16px" sx={{ marginTop: '4px' }}>
                                         Danh sách tenant
                                     </Typography>
                                     <Box>
@@ -316,9 +302,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                             <div>
                                 <Box display="flex" alignItems="center" gap="8px">
                                     <Button
-                                        hidden={
-                                            !abpCustom.isGrandPermission('Pages.Tenants.Create')
-                                        }
+                                        hidden={!abpCustom.isGrandPermission('Pages.Tenants.Create')}
                                         variant="contained"
                                         startIcon={<img src={AddIcon} />}
                                         size="small"
@@ -398,10 +382,7 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     }}
                     onOk={this.handleCreate}
                 />
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.onShowDelete}></ConfirmDelete>
+                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDelete}></ConfirmDelete>
             </Box>
         );
     }

@@ -1,14 +1,4 @@
-import {
-    Box,
-    Button,
-    ButtonGroup,
-    Checkbox,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, ButtonGroup, Checkbox, Grid, IconButton, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import AddIcon from '../../../../images/add.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
@@ -139,10 +129,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 90,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -166,10 +153,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -193,10 +177,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -220,10 +201,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -247,10 +225,7 @@ const KhuyenMaiPage: React.FC = () => {
             minWidth: 125,
             flex: 1,
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -276,10 +251,7 @@ const KhuyenMaiPage: React.FC = () => {
             flex: 1,
             headerAlign: 'center',
             renderHeader: (params) => (
-                <Box
-                    sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }}
-                    title={params.colDef.headerName}
-                    width="100%">
+                <Box sx={{ fontWeight: '700', textOverflow: 'ellipsis', overflow: 'hidden' }} title={params.colDef.headerName} width="100%">
                     {params.colDef.headerName}
                 </Box>
             ),
@@ -291,10 +263,8 @@ const KhuyenMaiPage: React.FC = () => {
                     padding={'4px 8px'}
                     sx={{
                         margin: 'auto',
-                        backgroundColor:
-                            params.row.trangThai === 1 ? '#E8FFF3' : params.row.trangThai === 0 ? '#FFF8DD' : '#FFF5F8',
-                        color:
-                            params.row.trangThai === 1 ? '#50CD89' : params.row.trangThai === 0 ? '#FF9900' : '#F1416C'
+                        backgroundColor: params.row.trangThai === 1 ? '#E8FFF3' : params.row.trangThai === 0 ? '#FFF8DD' : '#FFF5F8',
+                        color: params.row.trangThai === 1 ? '#50CD89' : params.row.trangThai === 0 ? '#FF9900' : '#F1416C'
                     }}
                     fontSize="13px"
                     fontWeight="400"

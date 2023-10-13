@@ -45,74 +45,44 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            &#123;Logo&#125;
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}>&#123;Logo&#125;</label>
                                         <Typography variant="subtitle2"> Logo cửa hàng </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TenCuaHang&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TenCuaHang&#125; </label>
                                         <Typography variant="subtitle2"> Tên cửa hàng </Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DiaChiCuaHang&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Địa chỉ cửa hàng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DiaChiCuaHang&#125; </label>
+                                        <Typography variant="subtitle2">Địa chỉ cửa hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DienThoaiCuaHang&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Số điện thoại cửa hàng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DienThoaiCuaHang&#125; </label>
+                                        <Typography variant="subtitle2">Số điện thoại cửa hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TenChiNhanh&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Chi nhánh bán hàng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TenChiNhanh&#125; </label>
+                                        <Typography variant="subtitle2">Chi nhánh bán hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DienThoaiChiNhanh&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Điện thoại chi nhánh
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DienThoaiChiNhanh&#125; </label>
+                                        <Typography variant="subtitle2">Điện thoại chi nhánh</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DiaChiChiNhanh&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Địa chỉ chi nhánh
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DiaChiChiNhanh&#125; </label>
+                                        <Typography variant="subtitle2">Địa chỉ chi nhánh</Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -124,40 +94,26 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;MaKhachHang&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;MaKhachHang&#125; </label>
                                         <Typography variant="subtitle2">Mã khách hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TenKhachHang&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TenKhachHang&#125; </label>
                                         <Typography variant="subtitle2">Tên khách hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DienThoaiKhachHang&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DienThoaiKhachHang&#125; </label>
                                         <Typography variant="subtitle2">SĐT khách hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DiaChiKhachHang&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Địa chỉ khách hàng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DiaChiKhachHang&#125; </label>
+                                        <Typography variant="subtitle2">Địa chỉ khách hàng</Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -169,73 +125,44 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;MaHoaDon&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Mã phiếu thu (chi)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;MaHoaDon&#125; </label>
+                                        <Typography variant="subtitle2">Mã phiếu thu (chi)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NgayLapHoaDon&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NgayLapHoaDon&#125; </label>
                                         <Typography variant="subtitle2">Ngày lập phiếu</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NguoiNopTien&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NguoiNopTien&#125; </label>
                                         <Typography variant="subtitle2">Người nộp tiền</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;SDTNguoiNop&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;SDTNguoiNop&#125; </label>
                                         <Typography variant="subtitle2">SĐT người nộp</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;HoaDonLienQuan&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Mã hóa đơn liên quan
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;HoaDonLienQuan&#125; </label>
+                                        <Typography variant="subtitle2">Mã hóa đơn liên quan</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongTienThu&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng tiền thu (chi)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongTienThu&#125; </label>
+                                        <Typography variant="subtitle2">Tổng tiền thu (chi)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TienBangChu&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng tiền thu (chi) (bằng chữ)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TienBangChu&#125; </label>
+                                        <Typography variant="subtitle2">Tổng tiền thu (chi) (bằng chữ)</Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -249,176 +176,98 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;MaHoaDon&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Mã hóa đơn bán hàng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;MaHoaDon&#125; </label>
+                                        <Typography variant="subtitle2">Mã hóa đơn bán hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NgayLapHoaDon&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Ngày lập hóa đơn
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NgayLapHoaDon&#125; </label>
+                                        <Typography variant="subtitle2">Ngày lập hóa đơn</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NgayBan&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Ngày tạo hóa đơn
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NgayBan&#125; </label>
+                                        <Typography variant="subtitle2">Ngày tạo hóa đơn</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NhanVienBanHang&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Nhân viên bán hàng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NhanVienBanHang&#125; </label>
+                                        <Typography variant="subtitle2">Nhân viên bán hàng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongTienHangChuaChietKhau&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng tiền hàng (chưa trừ chiết khấu)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongTienHangChuaChietKhau&#125; </label>
+                                        <Typography variant="subtitle2">Tổng tiền hàng (chưa trừ chiết khấu)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongChietKhauHangHoa&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng chiết khấu hàng hóa
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongChietKhauHangHoa&#125; </label>
+                                        <Typography variant="subtitle2">Tổng chiết khấu hàng hóa</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongTienHang&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng tiền hàng (sau chiết khấu)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongTienHang&#125; </label>
+                                        <Typography variant="subtitle2">Tổng tiền hàng (sau chiết khấu)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;PTThueHD&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thuế hóa đơn (%)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;PTThueHD&#125; </label>
+                                        <Typography variant="subtitle2">Thuế hóa đơn (%)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongTienThue&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thuế hóa đơn (vnd)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongTienThue&#125; </label>
+                                        <Typography variant="subtitle2">Thuế hóa đơn (vnd)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongTienHDSauVAT&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng tiền hóa đơn (sau VAT)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongTienHDSauVAT&#125; </label>
+                                        <Typography variant="subtitle2">Tổng tiền hóa đơn (sau VAT)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;PTGiamGiaHD&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Giảm giá hóa đơn (%)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;PTGiamGiaHD&#125; </label>
+                                        <Typography variant="subtitle2">Giảm giá hóa đơn (%)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongGiamGiaHD&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Giảm giá hóa đơn (vnd)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongGiamGiaHD&#125; </label>
+                                        <Typography variant="subtitle2">Giảm giá hóa đơn (vnd)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongThanhToan&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng tiền hóa đơn (sau VAT, sau giảm giá)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongThanhToan&#125; </label>
+                                        <Typography variant="subtitle2">Tổng tiền hóa đơn (sau VAT, sau giảm giá)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;GhiChuHD&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;GhiChuHD&#125; </label>
                                         <Typography variant="subtitle2">Ghi chú hóa đơn</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NoHoaDon&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tiền khách nợ của hóa đơn hiện tại
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NoHoaDon&#125; </label>
+                                        <Typography variant="subtitle2">Tiền khách nợ của hóa đơn hiện tại</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NoHoaDon_BangChu&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tiền khách nợ của hóa đơn hiện tại (bằng chữ)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NoHoaDon_BangChu&#125; </label>
+                                        <Typography variant="subtitle2">Tiền khách nợ của hóa đơn hiện tại (bằng chữ)</Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>
@@ -432,214 +281,122 @@ export default function TokenMauIn({ isShow, onClose }: any) {
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;STT&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;STT&#125; </label>
                                         <Typography variant="subtitle2">Số thứ tự</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;MaHangHoa&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;MaHangHoa&#125; </label>
                                         <Typography variant="subtitle2">Mã dịch vụ</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TenHangHoa&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TenHangHoa&#125; </label>
                                         <Typography variant="subtitle2">Tên dịch vụ</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TenNhomHangHoa&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tên nhóm dịch vụ
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TenNhomHangHoa&#125; </label>
+                                        <Typography variant="subtitle2">Tên nhóm dịch vụ</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;MoTaHangHoa&#125;{' '}
-                                        </label>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;MoTaHangHoa&#125; </label>
                                         <Typography variant="subtitle2">Mô tả dịch vụ</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;GhiChu&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Ghi chú chi tiết hóa đơn
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;GhiChu&#125; </label>
+                                        <Typography variant="subtitle2">Ghi chú chi tiết hóa đơn</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;SoLuong&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Số lượng mỗi dịch vụ
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;SoLuong&#125; </label>
+                                        <Typography variant="subtitle2">Số lượng mỗi dịch vụ</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DonGiaTruocCK&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Giá bán mỗi dịch vụ (trước chiết khấu)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DonGiaTruocCK&#125; </label>
+                                        <Typography variant="subtitle2">Giá bán mỗi dịch vụ (trước chiết khấu)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;ThanhTienTruocCK&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thành tiền mỗi dịch vụ (trước chiết khấu)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;ThanhTienTruocCK&#125; </label>
+                                        <Typography variant="subtitle2">Thành tiền mỗi dịch vụ (trước chiết khấu)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;PTChietKhau&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Chiết khấu dịch vụ (%)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;PTChietKhau&#125; </label>
+                                        <Typography variant="subtitle2">Chiết khấu dịch vụ (%)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TienChietKhau&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Chiết khấu dịch vụ (vnd)/1 đơn vị số lượng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TienChietKhau&#125; </label>
+                                        <Typography variant="subtitle2">Chiết khấu dịch vụ (vnd)/1 đơn vị số lượng</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TongChietKhau&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tổng chiết khấu của dịch vụ (vnd)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TongChietKhau&#125; </label>
+                                        <Typography variant="subtitle2">Tổng chiết khấu của dịch vụ (vnd)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DonGiaSauCK&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Giá bán mỗi dịch vụ (sau chiết khấu)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DonGiaSauCK&#125; </label>
+                                        <Typography variant="subtitle2">Giá bán mỗi dịch vụ (sau chiết khấu)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;ThanhTienSauCK&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thành tiền mỗi dịch vụ (sau chiết khấu)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;ThanhTienSauCK&#125; </label>
+                                        <Typography variant="subtitle2">Thành tiền mỗi dịch vụ (sau chiết khấu)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;PTThue&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thuế mỗi dịch vụ (%)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;PTThue&#125; </label>
+                                        <Typography variant="subtitle2">Thuế mỗi dịch vụ (%)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;TienThue&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thuế mỗi dịch vụ (vnd)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;TienThue&#125; </label>
+                                        <Typography variant="subtitle2">Thuế mỗi dịch vụ (vnd)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;DonGiaSauVAT&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Giá bán mỗi dịch vụ (sau VAT, sau CK)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;DonGiaSauVAT&#125; </label>
+                                        <Typography variant="subtitle2">Giá bán mỗi dịch vụ (sau VAT, sau CK)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;ThanhTienSauVAT&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Thành tiền mỗi dịch vụ (sau VAT, sau CK)
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;ThanhTienSauVAT&#125; </label>
+                                        <Typography variant="subtitle2">Thành tiền mỗi dịch vụ (sau VAT, sau CK)</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NVTH_TenNhanVien&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Tên nhân viên thực hiện dịch vụ
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NVTH_TenNhanVien&#125; </label>
+                                        <Typography variant="subtitle2">Tên nhân viên thực hiện dịch vụ</Typography>
                                     </Stack>
                                 </Stack>
                                 <Stack>
                                     <Stack direction={'row'} justifyContent={'space-between'}>
-                                        <label onClick={(e) => CopyThisText(e)}>
-                                            {' '}
-                                            &#123;NVTH_GiaTriHoaHong&#125;{' '}
-                                        </label>
-                                        <Typography variant="subtitle2">
-                                            Giá trị hoa hồng mà NV thực hiện được hưởng
-                                        </Typography>
+                                        <label onClick={(e) => CopyThisText(e)}> &#123;NVTH_GiaTriHoaHong&#125; </label>
+                                        <Typography variant="subtitle2">Giá trị hoa hồng mà NV thực hiện được hưởng</Typography>
                                     </Stack>
                                 </Stack>
                             </Stack>

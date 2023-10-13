@@ -34,11 +34,7 @@ import { ModalHangHoa } from './ModalProduct';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import ProductService from '../../services/product/ProductService';
 import GroupProductService from '../../services/product/GroupProductService';
-import {
-    ModelNhomHangHoa,
-    ModelHangHoaDto,
-    PagedProductSearchDto
-} from '../../services/product/dto';
+import { ModelNhomHangHoa, ModelHangHoaDto, PagedProductSearchDto } from '../../services/product/dto';
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import { ReactComponent as DownIcon } from '../../images/download.svg';
 import Utils from '../../utils/utils'; // func common
@@ -61,17 +57,11 @@ import { ModalChuyenNhom } from '../../components/Dialog/modal_chuyen_nhom';
 
 export default function PageProduct() {
     const [rowHover, setRowHover] = useState<ModelHangHoaDto>();
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
-        new PropConfirmOKCancel({ show: false })
-    );
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
-    const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
-    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(
-        new PropModal({ isShow: false })
-    );
+    const [triggerModalProduct, setTriggerModalProduct] = useState<PropModal>(new PropModal({ isShow: false }));
+    const [triggerModalNhomHang, setTriggerModalNhomHang] = useState<PropModal>(new PropModal({ isShow: false }));
     const [isShowImport, setShowImport] = useState<boolean>(false);
     const [lstProductGroup, setLstProductGroup] = useState<ModelNhomHangHoa[]>([]);
     const [treeNhomHangHoa, setTreeNhomHangHoa] = useState<ModelNhomHangHoa[]>([]);
@@ -133,11 +123,7 @@ export default function PageProduct() {
 
     useEffect(() => {
         GetListHangHoa();
-    }, [
-        filterPageProduct.currentPage,
-        filterPageProduct.pageSize,
-        filterPageProduct.idNhomHangHoas
-    ]);
+    }, [filterPageProduct.currentPage, filterPageProduct.pageSize, filterPageProduct.idNhomHangHoas]);
 
     function showModalAddNhomHang(id = '') {
         setTriggerModalNhomHang({
@@ -185,9 +171,7 @@ export default function PageProduct() {
             txtUnsign = utils.strToEnglish(txt);
         }
         const arr = treeNhomHangHoa.filter(
-            (x: ModelNhomHangHoa) =>
-                (x.tenNhomHang ?? '').indexOf(txt) > -1 ||
-                utils.strToEnglish(x.tenNhomHang ?? '').indexOf(txtUnsign) > -1
+            (x: ModelNhomHangHoa) => (x.tenNhomHang ?? '').indexOf(txt) > -1 || utils.strToEnglish(x.tenNhomHang ?? '').indexOf(txtUnsign) > -1
         );
         const obj = new ModelNhomHangHoa({
             id: '',
@@ -255,10 +239,7 @@ export default function PageProduct() {
                     return {
                         ...olds,
                         totalCount: olds.totalCount + 1,
-                        totalPage: Utils.getTotalPage(
-                            olds.totalCount + 1,
-                            filterPageProduct.pageSize
-                        ),
+                        totalPage: Utils.getTotalPage(olds.totalCount + 1, filterPageProduct.pageSize),
                         items: [objNew, ...olds.items]
                     };
                 });
@@ -317,9 +298,7 @@ export default function PageProduct() {
                 new PropConfirmOKCancel({
                     show: true,
                     title: 'Xác nhận xóa',
-                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${
-                        rowItem?.maHangHoa ?? ' '
-                    } không?`
+                    mes: `Bạn có chắc chắn muốn xóa ${rowItem.tenLoaiHangHoa.toLocaleLowerCase()}  ${rowItem?.maHangHoa ?? ' '} không?`
                 })
             );
         }
@@ -438,9 +417,7 @@ export default function PageProduct() {
         GetTreeNhomHangHoa();
     };
     const downloadImportTemplate = async () => {
-        const result = await uploadFileService.downloadImportTemplate(
-            'HangHoa_DichVu_ImportTemplate.xlsx'
-        );
+        const result = await uploadFileService.downloadImportTemplate('HangHoa_DichVu_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
 
@@ -522,9 +499,7 @@ export default function PageProduct() {
                     </Typography>
                 </Box>
             ),
-            renderHeader: (params) => (
-                <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-            )
+            renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
         },
         {
             field: 'txtTrangThaiHang',
@@ -554,33 +529,21 @@ export default function PageProduct() {
             flex: 1,
             disableColumnMenu: true,
 
-            renderCell: (params) => (
-                <ActionViewEditDelete
-                    handleAction={(action: any) => doActionRow(action, params.row)}
-                />
-            ),
+            renderCell: (params) => <ActionViewEditDelete handleAction={(action: any) => doActionRow(action, params.row)} />,
             renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
 
     return (
         <>
-            <ModalNhomHangHoa
-                dataNhomHang={lstProductGroup}
-                trigger={triggerModalNhomHang}
-                handleSave={saveNhomHang}></ModalNhomHangHoa>
-            <ModalHangHoa
-                dataNhomHang={lstProductGroup}
-                trigger={triggerModalProduct}
-                handleSave={saveProduct}></ModalHangHoa>
+            <ModalNhomHangHoa dataNhomHang={lstProductGroup} trigger={triggerModalNhomHang} handleSave={saveNhomHang}></ModalNhomHangHoa>
+            <ModalHangHoa dataNhomHang={lstProductGroup} trigger={triggerModalProduct} handleSave={saveProduct}></ModalHangHoa>
             <ConfirmDelete
                 isShow={inforDeleteProduct.show}
                 title={inforDeleteProduct.title}
                 mes={inforDeleteProduct.mes}
                 onOk={deleteProduct}
-                onCancel={() =>
-                    setInforDeleteProduct({ ...inforDeleteProduct, show: false })
-                }></ConfirmDelete>
+                onCancel={() => setInforDeleteProduct({ ...inforDeleteProduct, show: false })}></ConfirmDelete>
             <SnackbarAlert
                 showAlert={objAlert.show}
                 type={objAlert.type}
@@ -734,10 +697,7 @@ export default function PageProduct() {
                                         InputProps={{ startAdornment: <Search /> }}
                                         onChange={(e) => searchNhomHang(e.target.value)}
                                     />
-                                    <AccordionNhomHangHoa
-                                        dataNhomHang={treeSearchNhomHangHoa}
-                                        clickTreeItem={editNhomHangHoa}
-                                    />
+                                    <AccordionNhomHangHoa dataNhomHang={treeSearchNhomHangHoa} clickTreeItem={editNhomHangHoa} />
                                 </Stack>
                             </Box>
                         </Box>
@@ -764,15 +724,9 @@ export default function PageProduct() {
                             />
                         )}
 
-                        <Box
-                            className="page-box-right"
-                            marginTop={rowSelectionModel.length > 0 ? 1 : 0}>
+                        <Box className="page-box-right" marginTop={rowSelectionModel.length > 0 ? 1 : 0}>
                             <DataGrid
-                                className={
-                                    rowSelectionModel.length > 0
-                                        ? 'data-grid-row-chosed'
-                                        : 'data-grid-row'
-                                }
+                                className={rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                                 autoHeight={pageDataProduct.items.length === 0}
                                 disableRowSelectionOnClick
                                 rowHeight={46}
@@ -796,10 +750,7 @@ export default function PageProduct() {
                                     bottom: '16px'
                                 }}>
                                 <Grid item xs={4} md={4} lg={4} sm={4}>
-                                    <OptionPage
-                                        changeNumberOfpage={changeNumberOfpage}
-                                        totalRow={pageDataProduct.totalCount}
-                                    />
+                                    <OptionPage changeNumberOfpage={changeNumberOfpage} totalRow={pageDataProduct.totalCount} />
                                 </Grid>
                                 <Grid item xs={8} md={8} lg={8} sm={8}>
                                     <Stack direction="row" style={{ float: 'right' }}>

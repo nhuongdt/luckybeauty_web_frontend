@@ -1,16 +1,4 @@
-import {
-    Box,
-    Radio,
-    Button,
-    TextField,
-    Typography,
-    IconButton,
-    ButtonGroup,
-    Grid,
-    RadioGroup,
-    FormControlLabel,
-    Input
-} from '@mui/material';
+import { Box, Radio, Button, TextField, Typography, IconButton, ButtonGroup, Grid, RadioGroup, FormControlLabel, Input } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../images/close-square.svg';
 import React, { useContext, useEffect, useState } from 'react';
 import { util } from 'prettier';
@@ -308,9 +296,7 @@ const DetailHoaDon = ({
             return currentValue + item.tienThu;
         }, 0);
         const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
-            idChiNhanh: utils.checkNull(dataHoaDonAfterSave.idChiNhanh)
-                ? idChiNhanh
-                : dataHoaDonAfterSave?.idChiNhanh,
+            idChiNhanh: utils.checkNull(dataHoaDonAfterSave.idChiNhanh) ? idChiNhanh : dataHoaDonAfterSave?.idChiNhanh,
             idLoaiChungTu: 11,
             ngayLapHoaDon: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
             tongTienThu: tongThu,
@@ -319,10 +305,7 @@ const DetailHoaDon = ({
         // assign idHoadonLienQuan, idKhachHang for quyCT
         lstQCT_After.map((x: QuyChiTietDto) => {
             x.idHoaDonLienQuan = dataHoaDonAfterSave?.id;
-            x.idKhachHang =
-                dataHoaDonAfterSave.idKhachHang == Guid.EMPTY
-                    ? null
-                    : dataHoaDonAfterSave?.idKhachHang;
+            x.idKhachHang = dataHoaDonAfterSave.idKhachHang == Guid.EMPTY ? null : dataHoaDonAfterSave?.idKhachHang;
         });
         quyHD.quyHoaDon_ChiTiet = lstQCT_After;
         await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
@@ -357,8 +340,7 @@ const DetailHoaDon = ({
                         width: '100%'
                     }
                 }}>
-                <Box
-                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Typography variant="h3" color="#29303D" fontSize="24px" fontWeight="700">
                         {formType === 1 ? 'Chi tiết hóa đơn' : 'Thông tin thanh toán'}
                     </Typography>
@@ -447,8 +429,7 @@ const DetailHoaDon = ({
                         </ButtonGroup>
                     </Box>
                 </Box>
-                <Box
-                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="body1" color="#3D475C" fontWeight="700" fontSize="16px">
                         {formType == 1 ? 'Thanh toán' : 'Còn nợ'}
                     </Typography>
@@ -458,11 +439,7 @@ const DetailHoaDon = ({
                 </Box>
                 <Grid container justifyContent="space-between" alignItems="center" rowGap="16px">
                     <Grid item xs="auto">
-                        <Typography
-                            variant="body1"
-                            color="#3D475C"
-                            fontWeight="700"
-                            fontSize="14px">
+                        <Typography variant="body1" color="#3D475C" fontWeight="700" fontSize="14px">
                             Tiền khách trả
                         </Typography>
                     </Grid>
@@ -514,9 +491,7 @@ const DetailHoaDon = ({
                                 thousandSeparator="."
                                 customInput={TextField}
                                 value={sumTienKhachTra}
-                                onChange={(event) =>
-                                    onChangeTienKhachTra(event.target.value, idHinhThucTT)
-                                }
+                                onChange={(event) => onChangeTienKhachTra(event.target.value, idHinhThucTT)}
                             />
                         )}
                         {hinhThucTT === 0 && (
@@ -533,11 +508,7 @@ const DetailHoaDon = ({
                                 thousandSeparator="."
                                 customInput={TextField}
                                 value={tienKhachTraMax}
-                                onChange={(event) =>
-                                    setTienKhachTraMax(
-                                        utils.formatNumberToFloat(event.target.value)
-                                    )
-                                }
+                                onChange={(event) => setTienKhachTraMax(utils.formatNumberToFloat(event.target.value))}
                             />
                         )}
                     </Grid>
@@ -559,19 +530,13 @@ const DetailHoaDon = ({
                                                 fontSizze: '16px',
                                                 outline: 'none'
                                             },
-                                            '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button':
-                                                {
-                                                    WebkitAppearance: 'none',
-                                                    margin: '0'
-                                                }
+                                            '& input::-webkit-outer-spin-button,& input::-webkit-inner-spin-button': {
+                                                WebkitAppearance: 'none',
+                                                margin: '0'
+                                            }
                                         }}>
                                         <Typography variant="body1" color="#525F7A" fontSize="12px">
-                                            {
-                                                arrHinhThucThanhToan.filter(
-                                                    (x: ISelect) =>
-                                                        x.value === item.hinhThucThanhToan
-                                                )[0].text
-                                            }
+                                            {arrHinhThucThanhToan.filter((x: ISelect) => x.value === item.hinhThucThanhToan)[0].text}
                                         </Typography>
 
                                         <NumericFormat
@@ -586,12 +551,7 @@ const DetailHoaDon = ({
                                                 }
                                             }}
                                             value={item.tienThu}
-                                            onChange={(event) =>
-                                                onChangeTienKhachTra(
-                                                    event.target.value,
-                                                    item.hinhThucThanhToan
-                                                )
-                                            }
+                                            onChange={(event) => onChangeTienKhachTra(event.target.value, item.hinhThucThanhToan)}
                                         />
                                     </Box>
                                 </Grid>
@@ -601,23 +561,13 @@ const DetailHoaDon = ({
                     {tienThuaTraKhach !== 0 && (
                         <Grid container justifyContent="space-between">
                             <Grid item xs="auto">
-                                <Typography
-                                    variant="body1"
-                                    color="#3D475C"
-                                    fontWeight="400"
-                                    fontSize="14px">
+                                <Typography variant="body1" color="#3D475C" fontWeight="400" fontSize="14px">
                                     {tienThuaTraKhach > 0 ? 'Tiền thừa' : 'Tiên khách thiếu'}
                                 </Typography>
                             </Grid>
                             <Grid xs="auto" item>
-                                <Typography
-                                    variant="body1"
-                                    color="#29303D"
-                                    fontWeight="700"
-                                    fontSize="14px">
-                                    {new Intl.NumberFormat('vi-VN').format(
-                                        Math.abs(tienThuaTraKhach)
-                                    )}
+                                <Typography variant="body1" color="#29303D" fontWeight="700" fontSize="14px">
+                                    {new Intl.NumberFormat('vi-VN').format(Math.abs(tienThuaTraKhach))}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -639,9 +589,7 @@ const DetailHoaDon = ({
                     <Typography fontSize="14px" color="#525F7A">
                         Ghi chú
                     </Typography>
-                    <textarea
-                        value={ghichuHD}
-                        onChange={(e) => setGhichuHD(e.target.value)}></textarea>
+                    <textarea value={ghichuHD} onChange={(e) => setGhichuHD(e.target.value)}></textarea>
                 </Box>
                 <Button
                     variant="contained"

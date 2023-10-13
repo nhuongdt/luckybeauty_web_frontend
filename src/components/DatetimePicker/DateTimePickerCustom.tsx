@@ -7,7 +7,7 @@ import { DateValidationError } from '@mui/x-date-pickers/models';
 import { format } from 'date-fns';
 import vi from 'date-fns/locale/vi';
 
-export default function DateTimePickerCustom({ defaultVal, handleChangeDate, labelText }: any) {
+export default function DateTimePickerCustom({ defaultVal, handleChangeDate, labelText, props }: any) {
     const [value, setValue] = useState(new Date());
     const [error, setError] = useState<DateValidationError | null>(null);
     const changeDate = (newVal: any) => {
@@ -54,7 +54,8 @@ export default function DateTimePickerCustom({ defaultVal, handleChangeDate, lab
                         '& .MuiSvgIcon-root': {
                             width: 14,
                             height: 14
-                        }
+                        },
+                        width: props?.width
                     }}
                     value={value}
                     onChange={(newVal) => changeDate(newVal)}

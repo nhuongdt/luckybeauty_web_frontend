@@ -38,11 +38,7 @@ const LichHenDetail: FC = () => {
             fullWidth
             maxWidth="sm">
             <Box>
-                <Box
-                    display={'flex'}
-                    justifyContent={'space-between'}
-                    padding={'16px'}
-                    borderBottom="1px solid #C2C9D6">
+                <Box display={'flex'} justifyContent={'space-between'} padding={'16px 24px'} borderBottom="1px solid #C2C9D6">
                     <Typography fontSize="24px" fontWeight={700}>
                         Chi tiết cuộc hẹn
                     </Typography>
@@ -60,11 +56,7 @@ const LichHenDetail: FC = () => {
                             <Box display={'flex'} justifyContent={'space-between'}>
                                 <Box display={'flex'}>
                                     <Avatar src={bookingStore.bookingInfoDto?.avatarKhachHang} />
-                                    <Box
-                                        display={'flex'}
-                                        flexDirection={'column'}
-                                        justifyContent={'space-between'}
-                                        marginLeft={'5px'}>
+                                    <Box display={'flex'} flexDirection={'column'} justifyContent={'space-between'} marginLeft={'5px'}>
                                         <Typography>{bookingStore.bookingInfoDto?.tenKhachHang}</Typography>
                                         <Typography>{bookingStore.bookingInfoDto?.soDienThoai}</Typography>
                                     </Box>
@@ -89,13 +81,7 @@ const LichHenDetail: FC = () => {
                                 </Box>
                             </Box>
                         </Grid>
-                        <Grid
-                            item
-                            xs={12}
-                            padding={'8px'}
-                            display={'flex'}
-                            justifyContent={'center'}
-                            alignItems={'center'}>
+                        <Grid item xs={12} padding={'8px'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                             <Table>
                                 <TableHead>
                                     <TableRow>
@@ -117,13 +103,8 @@ const LichHenDetail: FC = () => {
                                                     fontWeight: '500',
                                                     marginLeft: '8px'
                                                 }}>
-                                                {formatDate(
-                                                    new Date(bookingStore.bookingInfoDto.bookingDate),
-                                                    'iii, dd/MM/yyyy',
-                                                    { locale: vi }
-                                                )}{' '}
-                                                ({bookingStore.bookingInfoDto.startTime} -{' '}
-                                                {bookingStore.bookingInfoDto.endTime})
+                                                {formatDate(new Date(bookingStore.bookingInfoDto.bookingDate), 'iii, dd/MM/yyyy', { locale: vi })} (
+                                                {bookingStore.bookingInfoDto.startTime} - {bookingStore.bookingInfoDto.endTime})
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
@@ -138,9 +119,7 @@ const LichHenDetail: FC = () => {
                                                 {bookingStore.bookingInfoDto.tenDichVu}
                                             </Typography>
                                         </TableCell>
-                                        <TableCell>
-                                            {new Intl.NumberFormat('vi-VN').format(bookingStore.bookingInfoDto.donGia)}
-                                        </TableCell>
+                                        <TableCell>{new Intl.NumberFormat('vi-VN').format(bookingStore.bookingInfoDto.donGia)}</TableCell>
                                         <TableCell>
                                             <Typography
                                                 sx={{
@@ -170,11 +149,7 @@ const LichHenDetail: FC = () => {
                             </Table>
                         </Grid>
                         <Grid item xs={12} padding={'8px 24px'}>
-                            <Box
-                                padding={'12px'}
-                                display={'flex'}
-                                alignItems={'center'}
-                                justifyContent={'space-between'}>
+                            <Box padding={'12px'} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
                                 <Typography fontSize={'13px'}>Trạng thái:</Typography>
                                 <Stack direction="row">
                                     <Button
@@ -187,15 +162,8 @@ const LichHenDetail: FC = () => {
                                                 background: '#FF9900',
                                                 color: '#FFF'
                                             },
-                                            fontSize: '13px',
-                                            background:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait
-                                                    ? '#FF9900'
-                                                    : '#FF99001a',
-                                            color:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait
-                                                    ? '#FFF'
-                                                    : '#FF9900'
+                                            background: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait ? '#FF9900' : '#FF99001a',
+                                            color: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Wait ? '#FFF' : '#FF9900'
                                         }}>
                                         Đang chờ
                                     </Button>
@@ -208,15 +176,8 @@ const LichHenDetail: FC = () => {
                                                 background: '#7DC1FF',
                                                 color: '#FFF'
                                             },
-                                            fontSize: '13px',
-                                            background:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm
-                                                    ? '#7DC1FF'
-                                                    : '#7DC1FF1a',
-                                            color:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm
-                                                    ? '#FFF'
-                                                    : '#7DC1FF'
+                                            background: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm ? '#7DC1FF' : '#7DC1FF1a',
+                                            color: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Confirm ? '#FFF' : '#7DC1FF'
                                         }}>
                                         Đã xác nhận
                                     </Button>
@@ -229,15 +190,8 @@ const LichHenDetail: FC = () => {
                                                 background: '#009EF7',
                                                 color: '#FFF'
                                             },
-                                            fontSize: '13px',
-                                            background:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn
-                                                    ? '#009EF7'
-                                                    : '#009EF71a',
-                                            color:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn
-                                                    ? '#FFF'
-                                                    : '#009EF7'
+                                            background: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn ? '#009EF7' : '#009EF71a',
+                                            color: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.CheckIn ? '#FFF' : '#009EF7'
                                         }}>
                                         Đã checkin
                                     </Button>
@@ -250,15 +204,8 @@ const LichHenDetail: FC = () => {
                                                 background: '#50CD89',
                                                 color: '#FFF'
                                             },
-                                            fontSize: '13px',
-                                            background:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success
-                                                    ? '#50CD89'
-                                                    : '#50CD891a',
-                                            color:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success
-                                                    ? '#FFF'
-                                                    : '#50CD89'
+                                            background: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success ? '#50CD89' : '#50CD891a',
+                                            color: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Success ? '#FFF' : '#50CD89'
                                         }}>
                                         Đã hoàn thành
                                     </Button>
@@ -271,15 +218,8 @@ const LichHenDetail: FC = () => {
                                                 background: '#F1416C',
                                                 color: '#FFF'
                                             },
-                                            fontSize: '13px',
-                                            background:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel
-                                                    ? '#F1416C'
-                                                    : '#F1416C1a',
-                                            color:
-                                                bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel
-                                                    ? '#FFF'
-                                                    : '#F1416C'
+                                            background: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel ? '#F1416C' : '#F1416C1a',
+                                            color: bookingStore.bookingInfoDto?.trangThai == TrangThaiBooking.Cancel ? '#FFF' : '#F1416C'
                                         }}>
                                         Hủy
                                     </Button>

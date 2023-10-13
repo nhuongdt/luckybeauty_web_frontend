@@ -12,12 +12,7 @@ import {
     ButtonGroup
 } from '@mui/material';
 import { TextTranslate } from '../../../../../components/TableLanguage';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
@@ -192,12 +187,8 @@ class ChietKhauDichVuScreen extends Component {
     };
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
-            const allRowRemove = chietKhauDichVuStore.listChietKhauDichVu?.items.map(
-                (row) => row.id
-            );
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const allRowRemove = chietKhauDichVuStore.listChietKhauDichVu?.items.map((row) => row.id);
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = chietKhauDichVuStore.listChietKhauDichVu?.items.map((row) => row.id);
@@ -261,18 +252,14 @@ class ChietKhauDichVuScreen extends Component {
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'tenNhomDichVu',
                 headerName: 'Nhóm dịch vụ',
                 minWidth: 114,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <Box
                         title={params.value}
@@ -294,9 +281,7 @@ class ChietKhauDichVuScreen extends Component {
                 headerName: 'Hoa hồng thực hiện',
                 minWidth: 150,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <TextField
                         type="text"
@@ -313,10 +298,9 @@ class ChietKhauDichVuScreen extends Component {
                             '&>div': {
                                 height: '100%'
                             },
-                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
-                                {
-                                    appearance: 'none'
-                                },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                appearance: 'none'
+                            },
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             },
@@ -332,9 +316,7 @@ class ChietKhauDichVuScreen extends Component {
                 headerName: 'Hoa hồng theo yêu cầu',
                 minWidth: 170,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <TextField
                         type="text"
@@ -354,10 +336,9 @@ class ChietKhauDichVuScreen extends Component {
                             '&>div': {
                                 height: '100%'
                             },
-                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
-                                {
-                                    appearance: 'none'
-                                },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                appearance: 'none'
+                            },
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             }
@@ -371,9 +352,7 @@ class ChietKhauDichVuScreen extends Component {
                 headerName: 'Hoa hồng tư vấn',
                 minWidth: 130,
                 flex: 1,
-                renderHeader: (params: any) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params: any) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params: any) => (
                     <TextField
                         type="text"
@@ -393,10 +372,9 @@ class ChietKhauDichVuScreen extends Component {
                             '&>div': {
                                 height: '100%'
                             },
-                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button':
-                                {
-                                    appearance: 'none'
-                                },
+                            '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                                appearance: 'none'
+                            },
                             '& .MuiOutlinedInput-root': {
                                 paddingRight: '8px'
                             }
@@ -455,9 +433,7 @@ class ChietKhauDichVuScreen extends Component {
                         </IconButton>
                     </Box>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
         return (
@@ -549,9 +525,7 @@ class ChietKhauDichVuScreen extends Component {
                     </ButtonGroup>
                 </Box>
                 <Box display={'flex'} justifyContent={'space-between'} marginBottom={'8px'}>
-                    <ButtonGroup
-                        variant="contained"
-                        sx={{ gap: '8px', boxShadow: 'none', '. button': { height: '40px' } }}>
+                    <ButtonGroup variant="contained" sx={{ gap: '8px', boxShadow: 'none', '. button': { height: '40px' } }}>
                         <Button
                             variant={'outlined'}
                             sx={{
@@ -591,12 +565,8 @@ class ChietKhauDichVuScreen extends Component {
                         options={suggestStore.suggestNhanVien}
                         getOptionLabel={(option) => `${option.tenNhanVien}`}
                         value={
-                            suggestStore.suggestNhanVien?.find(
-                                (x) => x.id === this.state.idNhanVien
-                            ) ||
-                            (suggestStore.suggestNhanVien?.length > 0
-                                ? suggestStore.suggestNhanVien[0]
-                                : null)
+                            suggestStore.suggestNhanVien?.find((x) => x.id === this.state.idNhanVien) ||
+                            (suggestStore.suggestNhanVien?.length > 0 ? suggestStore.suggestNhanVien[0] : null)
                         }
                         size="small"
                         sx={{ width: '15%', border: '1px soid #319DFF' }}
@@ -606,9 +576,7 @@ class ChietKhauDichVuScreen extends Component {
                             await this.setState({ idNhanVien: value?.id });
                             await this.getDataAccordingByNhanVien(value?.id);
                         }}
-                        renderInput={(params) => (
-                            <TextField sx={{ bgcolor: '#fff' }} {...params} placeholder="Tìm tên" />
-                        )}
+                        renderInput={(params) => <TextField sx={{ bgcolor: '#fff' }} {...params} placeholder="Tìm tên" />}
                     />
                 </Box>
                 <Box marginBottom="8px">
@@ -634,10 +602,7 @@ class ChietKhauDichVuScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                         localeText={TextTranslate}
@@ -646,16 +611,8 @@ class ChietKhauDichVuScreen extends Component {
                     <CustomTablePagination
                         currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
-                        totalRecord={
-                            listChietKhauDichVu === undefined ? 0 : listChietKhauDichVu.totalCount
-                        }
-                        totalPage={
-                            listChietKhauDichVu === undefined
-                                ? 0
-                                : Math.ceil(
-                                      listChietKhauDichVu.totalCount / this.state.maxResultCount
-                                  )
-                        }
+                        totalRecord={listChietKhauDichVu === undefined ? 0 : listChietKhauDichVu.totalCount}
+                        totalPage={listChietKhauDichVu === undefined ? 0 : Math.ceil(listChietKhauDichVu.totalCount / this.state.maxResultCount)}
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />
@@ -670,10 +627,7 @@ class ChietKhauDichVuScreen extends Component {
                         handleDelete={this.handleDelete}
                         permissionDelete="Pages.ChietKhauDichVu.Delete"
                     />
-                    <ConfirmDelete
-                        isShow={this.state.isShowConfirmDelete}
-                        onOk={this.onOkDelete}
-                        onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
+                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
                 </Box>
                 <CreateOrEditChietKhauDichVuModal
                     formRef={this.state.createOrEditDto}

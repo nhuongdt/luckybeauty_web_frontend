@@ -7,9 +7,7 @@ import { ModelNhomHangHoa } from '../../services/product/dto';
 //import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: any) {
-    const [rowHover, setRowHover] = React.useState<ModelNhomHangHoa>(
-        new ModelNhomHangHoa({ id: '' })
-    );
+    const [rowHover, setRowHover] = React.useState<ModelNhomHangHoa>(new ModelNhomHangHoa({ id: '' }));
     const [isHover, setIsHover] = React.useState(false);
 
     const handleHover = (event: any, rowData: any, index: number) => {
@@ -28,9 +26,7 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
         clickTreeItem(isEdit, rowHover);
     };
     return (
-        <TreeView
-            aria-label="file system navigator"
-            sx={{ flexGrow: 1, minWidth: 200, overflowY: 'auto' }}>
+        <TreeView aria-label="file system navigator" sx={{ flexGrow: 1, minWidth: 200, overflowY: 'auto' }}>
             {dataNhomHang.map((item: any, index: any) => (
                 <TreeItem
                     key={item.id}
@@ -38,9 +34,7 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                     label={
                         <Stack direction="row">
                             <Typography sx={{ width: 8 / 10 }}>{item.tenNhomHang}</Typography>
-                            {isHover && rowHover.id === item.id && (
-                                <OpenInNew onClick={() => handleClickTreeItem(true)} />
-                            )}
+                            {isHover && rowHover.id === item.id && <OpenInNew onClick={() => handleClickTreeItem(true)} />}
                         </Stack>
                     }
                     icon={<LocalOffer style={{ color: item.color }} />}
@@ -58,12 +52,8 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                             onClick={() => handleClickTreeItem(false)}
                             label={
                                 <Stack direction="row">
-                                    <Typography sx={{ width: 7.9 / 10 }}>
-                                        {child.tenNhomHang}
-                                    </Typography>
-                                    {isHover && rowHover.id === child.id && (
-                                        <OpenInNew onClick={() => handleClickTreeItem(true)} />
-                                    )}
+                                    <Typography sx={{ width: 7.9 / 10 }}>{child.tenNhomHang}</Typography>
+                                    {isHover && rowHover.id === child.id && <OpenInNew onClick={() => handleClickTreeItem(true)} />}
                                 </Stack>
                             }
                             onMouseLeave={(event: any) => {

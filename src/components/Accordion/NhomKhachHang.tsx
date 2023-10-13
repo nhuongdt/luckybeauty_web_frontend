@@ -1,11 +1,4 @@
-import {
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    Box,
-    Typography,
-    Button
-} from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Box, Typography, Button } from '@mui/material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useState } from 'react';
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
@@ -114,12 +107,7 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                         onClick={() => handleClickTreeItem(false, item.id)}>
                         <PersonOutlineIcon
                             sx={{
-                                color:
-                                    index % 3 == 1
-                                        ? '#5654A8'
-                                        : index % 3 == 2
-                                        ? '#d525a1'
-                                        : '#FF5677'
+                                color: index % 3 == 1 ? '#5654A8' : index % 3 == 2 ? '#d525a1' : '#FF5677'
                             }}
                         />
                         <Typography
@@ -140,18 +128,15 @@ export default function AccordionNhomKhachHang({ dataNhomKhachHang, clickTreeIte
                             title={item.tenNhomKhach}>
                             {item.tenNhomKhach}
                         </Typography>
-                        {isHover &&
-                            item.id !== '' &&
-                            rowHover.id === item.id &&
-                            !abpCustom.isGrandPermission('Pages.NhomKhach.Update') && (
-                                <OpenInNew
-                                    onClick={(event) => {
-                                        event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
-                                        handleClickTreeItem(true, item.id);
-                                    }}
-                                    sx={{ position: 'absolute', right: 16 }}
-                                />
-                            )}
+                        {isHover && item.id !== '' && rowHover.id === item.id && !abpCustom.isGrandPermission('Pages.NhomKhach.Update') && (
+                            <OpenInNew
+                                onClick={(event) => {
+                                    event.stopPropagation(); // dừng không cho gọi đến sự kiện click của parent
+                                    handleClickTreeItem(true, item.id);
+                                }}
+                                sx={{ position: 'absolute', right: 16 }}
+                            />
+                        )}
                     </AccordionSummary>
                 </Accordion>
             ))}

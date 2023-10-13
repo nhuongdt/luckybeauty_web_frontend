@@ -1,25 +1,7 @@
 import * as React from 'react';
-import {
-    DataGrid,
-    GridColDef,
-    GridColumnVisibilityModel,
-    GridRenderCellParams,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridColumnVisibilityModel, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import { TextTranslate } from '../../components/TableLanguage';
-import {
-    Button,
-    ButtonGroup,
-    Typography,
-    Grid,
-    Box,
-    Stack,
-    TextField,
-    IconButton,
-    Avatar,
-    SelectChangeEvent,
-    Checkbox
-} from '@mui/material';
+import { Button, ButtonGroup, Typography, Grid, Box, Stack, TextField, IconButton, Avatar, SelectChangeEvent, Checkbox } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import './customerPage.css';
 import DownloadIcon from '../../images/download.svg';
@@ -366,9 +348,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
             txtUnsign = utils.strToEnglish(txt);
         }
         const arr = this.state.listAllNhomKhach.filter(
-            (x: SuggestNhomKhachDto) =>
-                (x.tenNhomKhach ?? '').indexOf(txt) > -1 ||
-                utils.strToEnglish(x.tenNhomKhach ?? '').indexOf(txtUnsign) > -1
+            (x: SuggestNhomKhachDto) => (x.tenNhomKhach ?? '').indexOf(txt) > -1 || utils.strToEnglish(x.tenNhomKhach ?? '').indexOf(txtUnsign) > -1
         );
         this.setState({ listNhomKhachSearch: arr });
     };
@@ -478,11 +458,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                             width: '100%'
                         }}
                         title={params.value}>
-                        <Avatar
-                            src={params.row.avatar}
-                            alt="Avatar"
-                            style={{ width: 24, height: 24, marginRight: 8 }}
-                        />
+                        <Avatar src={params.row.avatar} alt="Avatar" style={{ width: 24, height: 24, marginRight: 8 }} />
                         <Typography
                             variant="body2"
                             sx={{
@@ -677,10 +653,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 </Grid>
                             </Grid>
                             <Grid xs={12} md={6} lg={6} item display="flex" gap="8px" justifyContent="end">
-                                <ButtonGroup
-                                    variant="contained"
-                                    sx={{ gap: '8px' }}
-                                    className="rounded-4px resize-height">
+                                <ButtonGroup variant="contained" sx={{ gap: '8px' }} className="rounded-4px resize-height">
                                     <Button
                                         className="border-color btn-outline-hover"
                                         hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Import')}
@@ -915,11 +888,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         disableRowSelectionOnClick
                                         rowHeight={46}
                                         autoHeight={this.state.totalItems === 0}
-                                        className={
-                                            this.state.listItemSelectedModel.length > 0
-                                                ? 'data-grid-row-chosed'
-                                                : 'data-grid-row'
-                                        }
+                                        className={this.state.listItemSelectedModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'}
                                         rows={this.state.rowTable}
                                         columns={columns}
                                         onRowClick={() => this.handleOpenInfor}
@@ -937,10 +906,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         ]}
                                         onSortModelChange={(newSortModel) => {
                                             if (newSortModel.length > 0) {
-                                                this.onSort(
-                                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                                    newSortModel[0].field ?? 'desc'
-                                                );
+                                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                                             }
                                         }}
                                         onRowSelectionModelChange={(newRowSelectionModel) => {
@@ -975,23 +941,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         visible={this.state.toggle}
                                         onCancel={this.handleToggle}
                                         onOk={this.handleSubmit}
-                                        title={
-                                            this.state.idkhachHang == ''
-                                                ? 'Thêm mới khách hàng'
-                                                : 'Cập nhật thông tin khách hàng'
-                                        }
+                                        title={this.state.idkhachHang == '' ? 'Thêm mới khách hàng' : 'Cập nhật thông tin khách hàng'}
                                         formRef={khachHangStore.createEditKhachHangDto}
                                     />
                                 </div>
-                                <div
-                                    className={this.state.toggle ? 'show customer-overlay' : 'customer-overlay'}
-                                    onClick={this.handleToggle}></div>
+                                <div className={this.state.toggle ? 'show customer-overlay' : 'customer-overlay'} onClick={this.handleToggle}></div>
                             </Grid>
                         </Grid>
-                        <CreateOrEditNhomKhachModal
-                            visiable={this.state.isShowNhomKhachModal}
-                            handleClose={this.onNhomKhachModal}
-                        />
+                        <CreateOrEditNhomKhachModal visiable={this.state.isShowNhomKhachModal} handleClose={this.onNhomKhachModal} />
                         <ConfirmDelete
                             isShow={this.state.isShowConfirmDelete}
                             onOk={this.onOkDelete}

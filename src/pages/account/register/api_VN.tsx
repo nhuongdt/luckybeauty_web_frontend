@@ -33,9 +33,7 @@ const ApiVN: React.FC = () => {
     const handleProvinceChange = (e: React.ChangeEvent<{ value: unknown }>) => {
         const provinceCode = e.target.value as string;
         setSelectedProvince(provinceCode);
-        const selectedProvinceObj = provinces.find(
-            (province) => province.code.toString() === provinceCode
-        );
+        const selectedProvinceObj = provinces.find((province) => province.code.toString() === provinceCode);
         if (selectedProvinceObj) {
             setDistricts(selectedProvinceObj.districts);
         }

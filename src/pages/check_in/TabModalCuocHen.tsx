@@ -1,25 +1,12 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-    Box,
-    TextField,
-    Button,
-    Typography,
-    Grid,
-    InputAdornment,
-    Avatar,
-    Stack,
-    debounce
-} from '@mui/material';
+import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, Stack, debounce } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import avatar from '../../images/avatar.png';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
 import useWindowWidth from '../../components/StateWidth';
-import {
-    BookingDetailDto,
-    BookingDetail_ofCustomerDto
-} from '../../services/dat-lich/dto/BookingGetAllItemDto';
+import { BookingDetailDto, BookingDetail_ofCustomerDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
 import CreateOrEditLichHenModal from '../appoinments/components/create-or-edit-lich-hen';
 import datLichService from '../../services/dat-lich/datLichService';
 import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
@@ -98,10 +85,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
 
     const choseBooking = async (itemBook: any) => {
         // if not exist cache & cus booking
-        const dataCache = await dbDexie.hoaDon
-            .where('idKhachHang')
-            .equals(itemBook.idKhachHang)
-            .toArray();
+        const dataCache = await dbDexie.hoaDon.where('idKhachHang').equals(itemBook.idKhachHang).toArray();
         if (dataCache.length === 0) {
             const hoadonCT = [];
             let tongTienHang = 0;
@@ -184,9 +168,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                         sx={{ maxWidth: '375px' }}
                         placeholder="Tìm kiếm"
                         value={paramSearch.textSearch}
-                        onChange={(e) =>
-                            setParamSearch({ ...paramSearch, textSearch: e.target.value })
-                        }
+                        onChange={(e) => setParamSearch({ ...paramSearch, textSearch: e.target.value })}
                         InputProps={{
                             startAdornment: (
                                 <>
@@ -226,13 +208,8 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                             minWidth: 'unset',
                             color: 'var(--font-color-main)',
                             fontSize: '12px',
-                            border: `1px solid ${
-                                paramSearch.trangThaiBook === item.id ? 'transparent' : '#E6E1E6'
-                            }!important`,
-                            bgcolor:
-                                paramSearch.trangThaiBook === item.id
-                                    ? 'var(--color-bg)!important'
-                                    : '#fff!important'
+                            border: `1px solid ${paramSearch.trangThaiBook === item.id ? 'transparent' : '#E6E1E6'}!important`,
+                            bgcolor: paramSearch.trangThaiBook === item.id ? 'var(--color-bg)!important' : '#fff!important'
                         }}>
                         {item.text}
                     </Button>
@@ -264,27 +241,14 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                 sx={{
                                     display: 'flex'
                                 }}>
-                                <Stack
-                                    spacing={2}
-                                    direction={'row'}
-                                    sx={{ width: '100%' }}
-                                    title={item.tenKhachHang}>
+                                <Stack spacing={2} direction={'row'} sx={{ width: '100%' }} title={item.tenKhachHang}>
                                     {utils.checkNull(item.avatar) ? (
-                                        <BadgeFistCharOfName
-                                            firstChar={utils.getFirstLetter(
-                                                item?.tenKhachHang ?? ''
-                                            )}
-                                        />
+                                        <BadgeFistCharOfName firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')} />
                                     ) : (
                                         // <Avatar src={item.avatar} sx={{ width: 40, height: 40 }} />
-                                        <img
-                                            src={item.avatar}
-                                            style={{ width: 40, height: 40, borderRadius: '100%' }}
-                                        />
+                                        <img src={item.avatar} style={{ width: 40, height: 40, borderRadius: '100%' }} />
                                     )}
-                                    <Stack
-                                        sx={{ width: 'calc(100% - 40px)' }}
-                                        justifyContent={'space-evenly'}>
+                                    <Stack sx={{ width: 'calc(100% - 40px)' }} justifyContent={'space-evenly'}>
                                         <Typography
                                             variant="subtitle2"
                                             sx={{
@@ -309,11 +273,7 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                         sx={{
                                             justifyContent: 'space-between'
                                         }}>
-                                        <Typography
-                                            maxWidth={'70%'}
-                                            title={ct.tenHangHoa}
-                                            variant="body2"
-                                            className="lableOverflow">
+                                        <Typography maxWidth={'70%'} title={ct.tenHangHoa} variant="body2" className="lableOverflow">
                                             {ct.tenHangHoa}
                                         </Typography>
 
@@ -335,21 +295,15 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
                                     <Box marginRight="4px">
                                         <ClockIcon />
                                     </Box>
-                                    <Typography variant="caption">
-                                        {format(new Date(item.startTime), 'HH:mm')}
-                                    </Typography>{' '}
-                                    -{' '}
-                                    <Typography variant="caption">
-                                        {format(new Date(item.endTime), 'HH:mm')}
-                                    </Typography>
+                                    <Typography variant="caption">{format(new Date(item.startTime), 'HH:mm')}</Typography> -{' '}
+                                    <Typography variant="caption">{format(new Date(item.endTime), 'HH:mm')}</Typography>
                                 </Stack>
                                 <Box
                                     sx={{
                                         fontSize: '12px',
                                         padding: '4px 12px',
                                         borderRadius: '8px',
-                                        color:
-                                            item.trangThai == 2 ? 'var(--color-main)' : '#75753a',
+                                        color: item.trangThai == 2 ? 'var(--color-main)' : '#75753a',
                                         bgcolor: item.trangThai == 2 ? 'var(--color-bg)' : '#ededc8'
                                     }}>
                                     {item.txtTrangThaiBook}

@@ -17,14 +17,7 @@ export default function ListProductByGroup({ listProduct, handleChoseItem }: any
                     </Grid>
 
                     {nhom.hangHoas.map((item: any, index2: any) => (
-                        <Grid
-                            key={index2}
-                            item
-                            xs={12}
-                            sm={4}
-                            md={3}
-                            lg={3}
-                            onClick={() => handleChoseItem(item)}>
+                        <Grid key={index2} item xs={12} sm={4} md={3} lg={3} onClick={() => handleChoseItem(item)}>
                             <Stack
                                 direction="column"
                                 padding={2}

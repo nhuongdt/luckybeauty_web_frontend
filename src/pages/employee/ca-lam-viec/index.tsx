@@ -1,23 +1,8 @@
-import {
-    Box,
-    Button,
-    Checkbox,
-    Grid,
-    IconButton,
-    SelectChangeEvent,
-    Stack,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, Checkbox, Grid, IconButton, SelectChangeEvent, Stack, TextField, Typography } from '@mui/material';
 import { observer } from 'mobx-react';
 import { Component, ReactNode } from 'react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import {
-    DataGrid,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowSelectionModel
-} from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
 import caLamViecStore from '../../../stores/caLamViecStore';
 import { TextTranslate } from '../../../components/TableLanguage';
 import AddIcon from '../../../images/add.svg';
@@ -177,9 +162,7 @@ class CaLamViecScreen extends Component {
         fileDowloadService.downloadExportFile(result);
     };
     exportSelectedRow = async () => {
-        const result = await caLamViecService.exportSelectedItemToExcel(
-            this.state.listItemSelectedModel
-        );
+        const result = await caLamViecService.exportSelectedItemToExcel(this.state.listItemSelectedModel);
         fileDowloadService.downloadExportFile(result);
     };
     onImportShow = () => {
@@ -196,9 +179,7 @@ class CaLamViecScreen extends Component {
         });
     };
     downloadImportTemplate = async () => {
-        const result = await uploadFileService.downloadImportTemplate(
-            'CaLamViec_ImportTemplate.xlsx'
-        );
+        const result = await uploadFileService.downloadImportTemplate('CaLamViec_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
     handleCheckboxGridRowClick = (params: GridRenderCellParams) => {
@@ -220,9 +201,7 @@ class CaLamViecScreen extends Component {
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
             const allRowRemove = caLamViecStore.caLamViecs?.items.map((row) => row.id);
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = caLamViecStore.caLamViecs?.items.map((row) => row.id);
@@ -242,12 +221,7 @@ class CaLamViecScreen extends Component {
                 disableColumnMenu: true,
                 width: 65,
                 renderHeader: (params) => {
-                    return (
-                        <Checkbox
-                            onClick={this.handleSelectAllGridRowClick}
-                            checked={this.state.checkAllRow}
-                        />
-                    );
+                    return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
                 renderCell: (params) => (
                     <Checkbox
@@ -408,12 +382,7 @@ class CaLamViecScreen extends Component {
                             justifyContent: 'start',
                             width: '100%'
                         }}>
-                        <Typography
-                            fontSize="13px"
-                            fontWeight="400"
-                            fontFamily={'Roboto'}
-                            color="#3D475C"
-                            lineHeight="16px">
+                        <Typography fontSize="13px" fontWeight="400" fontFamily={'Roboto'} color="#3D475C" lineHeight="16px">
                             {params.value} giờ
                         </Typography>
                     </Box>
@@ -446,9 +415,7 @@ class CaLamViecScreen extends Component {
                         <MoreHorizIcon />
                     </IconButton>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
         return (
@@ -566,8 +533,7 @@ class CaLamViecScreen extends Component {
                                     endIcon={<ExpandMoreOutlined />}
                                     onClick={() =>
                                         this.setState({
-                                            expendActionSelectedRow:
-                                                !this.state.expendActionSelectedRow
+                                            expendActionSelectedRow: !this.state.expendActionSelectedRow
                                         })
                                     }>
                                     Thao tác
@@ -586,11 +552,7 @@ class CaLamViecScreen extends Component {
                                             backgroundColor: '#cccc'
                                         }
                                     }}>
-                                    <Stack
-                                        alignContent={'center'}
-                                        justifyContent={'start'}
-                                        textAlign={'left'}
-                                        spacing={0.5}>
+                                    <Stack alignContent={'center'} justifyContent={'start'} textAlign={'left'} spacing={0.5}>
                                         <Button
                                             startIcon={'Xóa ca làm việc'}
                                             sx={{
@@ -633,11 +595,7 @@ class CaLamViecScreen extends Component {
                     ) : null}
                     <DataGrid
                         rowHeight={46}
-                        rows={
-                            caLamViecStore.caLamViecs === undefined
-                                ? []
-                                : caLamViecStore.caLamViecs.items
-                        }
+                        rows={caLamViecStore.caLamViecs === undefined ? [] : caLamViecStore.caLamViecs.items}
                         columns={columns}
                         disableRowSelectionOnClick
                         checkboxSelection={false}
@@ -650,10 +608,7 @@ class CaLamViecScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(
-                                    newSortModel[0].sort?.toString() ?? 'creationTime',
-                                    newSortModel[0].field ?? 'desc'
-                                );
+                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
                             }
                         }}
                         sx={{
@@ -690,15 +645,11 @@ class CaLamViecScreen extends Component {
                     downloadImportTemplate={this.downloadImportTemplate}
                     importFile={this.handleImportData}
                 />
-                <ConfirmDelete
-                    isShow={this.state.isShowConfirmDelete}
-                    onOk={this.onOkDelete}
-                    onCancel={this.showConfirmDelete}></ConfirmDelete>
+                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.showConfirmDelete}></ConfirmDelete>
                 <CreateOrEditCaLamViecDialog
                     visible={this.state.isShowModal}
                     title={
-                        caLamViecStore.createOrEditDto.id == AppConsts.guidEmpty ||
-                        caLamViecStore.createOrEditDto.id == ''
+                        caLamViecStore.createOrEditDto.id == AppConsts.guidEmpty || caLamViecStore.createOrEditDto.id == ''
                             ? 'Thêm mới ca làm việc'
                             : 'Cập nhật ca làm việc'
                     }

@@ -1,10 +1,7 @@
-import { StringSchema } from 'yup';
 import { RequestFromToDto } from '../dto/ParamSearchDto';
 import { PagedResultDto } from '../dto/pagedResultDto';
 import http from '../httpService';
 import QuyHoaDonDto from '../so_quy/QuyHoaDonDto';
-import { PagedQuyHoaDonRequestDto } from './Dto/PagedQuyHoaDonRequest';
-import { GetAllQuyHoaDonItemDto } from './Dto/QuyHoaDonViewItemDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { IFileDto } from '../dto/FileDto';
@@ -24,23 +21,16 @@ class SoQuyServices {
         return result.data.result;
     };
     DeleteMultiple_QuyHoaDon = async (lstId: any) => {
-        const result = await http.post(
-            'api/services/app/QuyHoaDon/DeleteMultiple_QuyHoaDon',
-            lstId
-        );
+        const result = await http.post('api/services/app/QuyHoaDon/DeleteMultiple_QuyHoaDon', lstId);
         return result.data.success;
     };
     GetNhatKyThanhToan_ofHoaDon = async (idHoaDonLienQuan: string): Promise<QuyHoaDonDto[]> => {
         if (utils.checkNull(idHoaDonLienQuan)) return [];
-        const result = await http.get(
-            `api/services/app/QuyHoaDon/GetNhatKyThanhToan_ofHoaDon?idHoaDonLienQuan=${idHoaDonLienQuan}`
-        );
+        const result = await http.get(`api/services/app/QuyHoaDon/GetNhatKyThanhToan_ofHoaDon?idHoaDonLienQuan=${idHoaDonLienQuan}`);
         return result.data.result;
     };
     HuyPhieuThuChi_ofHoaDonLienQuan = async (idHoaDonLienQuan: string) => {
-        const result = await http.get(
-            `api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`
-        );
+        const result = await http.get(`api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`);
         return result.data.result;
     };
     async getAll(input: RequestFromToDto): Promise<PagedResultDto<QuyHoaDonDto>> {
@@ -59,9 +49,7 @@ class SoQuyServices {
         return response.data.result;
     }
     async GetQuyChiTiet_byIQuyHoaDon(idQuyHD: string): Promise<QuyChiTietDto[]> {
-        const response = await http.get(
-            `api/services/app/QuyHoaDon/GetQuyChiTiet_byIQuyHoaDon?idQuyHoaDon=${idQuyHD}`
-        );
+        const response = await http.get(`api/services/app/QuyHoaDon/GetQuyChiTiet_byIQuyHoaDon?idQuyHoaDon=${idQuyHD}`);
         return response.data.result;
     }
     CheckExistsMaPhieuThuChi = async (maHoaDon: string, idQuy: string | null = null) => {
@@ -71,9 +59,7 @@ class SoQuyServices {
             if (utils.checkNull(idQuy)) {
                 idQuy = Guid.EMPTY;
             }
-            const response = await http.get(
-                `api/services/app/QuyHoaDon/CheckExistsMaPhieuThuChi?maphieu=${maHoaDon}&id=${idQuy}`
-            );
+            const response = await http.get(`api/services/app/QuyHoaDon/CheckExistsMaPhieuThuChi?maphieu=${maHoaDon}&id=${idQuy}`);
             return response.data.result;
         }
     };
@@ -168,11 +154,7 @@ class SoQuyServices {
             }
         }
     };
-    AssignAgainQuyChiTiet = (
-        lstQuyCT: QuyChiTietDto[],
-        sumTienKhachTra: number,
-        tongPhaiTra: number
-    ) => {
+    AssignAgainQuyChiTiet = (lstQuyCT: QuyChiTietDto[], sumTienKhachTra: number, tongPhaiTra: number) => {
         let lstQuyCT_After: QuyChiTietDto[] = [];
         let tienMat = 0,
             tienPos = 0,
@@ -203,15 +185,7 @@ class SoQuyServices {
             }
         }
         if (sumTienKhachTra > tongPhaiTra) {
-            const shareMoney = this.ShareMoney_QuyHD(
-                tongPhaiTra,
-                0,
-                tienMat,
-                tienPos,
-                tienCK,
-                0,
-                0
-            );
+            const shareMoney = this.ShareMoney_QuyHD(tongPhaiTra, 0, tienMat, tienPos, tienCK, 0, 0);
             const tienMatNew = shareMoney.TienMat,
                 tienPosNew = shareMoney.TienPOS,
                 tienCKNew = shareMoney.TienChuyenKhoan;

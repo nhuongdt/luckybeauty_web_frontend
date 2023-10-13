@@ -71,18 +71,10 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                         display: 'flex',
                         gap: '8px'
                     }}>
-                    <Button
-                        variant="outlined"
-                        sx={{ color: '#666466' }}
-                        className="btn-outline-hover"
-                        startIcon={<PrintIcon />}>
+                    <Button variant="outlined" sx={{ color: '#666466' }} className="btn-outline-hover" startIcon={<PrintIcon />}>
                         In
                     </Button>
-                    <Button
-                        className="btn-outline-hover"
-                        startIcon={<ExportIcon />}
-                        variant="outlined"
-                        sx={{ color: '#666466' }}>
+                    <Button className="btn-outline-hover" startIcon={<ExportIcon />} variant="outlined" sx={{ color: '#666466' }}>
                         Xuất
                     </Button>
                     <Button className="btn-container-hover" variant="contained" sx={{ bgcolor: '#7C3367' }}>

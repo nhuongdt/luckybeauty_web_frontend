@@ -1,14 +1,4 @@
-import {
-    Box,
-    Button,
-    CircularProgress,
-    FormGroup,
-    Grid,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Box, Button, CircularProgress, FormGroup, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { observer } from 'mobx-react';
@@ -55,10 +45,7 @@ class ProfileScreen extends Component {
         const changePasswordSchema = Yup.object({
             currentPassword: Yup.string().required('Vui lòng nhập mật khẩu hiện tại.'),
             newPassword: Yup.string()
-                .matches(
-                    AppConsts.passwordRegex,
-                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
-                )
+                .matches(AppConsts.passwordRegex, 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt')
                 .required('Mật khẩu không được để trống'),
             confirmPassword: Yup.string()
                 .oneOf([Yup.ref('newPassword'), ''], 'Mật khẩu xác nhận phải trùng khớp')
@@ -92,12 +79,7 @@ class ProfileScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box padding={2} bgcolor="#fff">
-                    <Grid
-                        container
-                        columnSpacing={12}
-                        rowSpacing={4}
-                        justifyContent="space-evenly"
-                        alignItems={'center'}>
+                    <Grid container columnSpacing={12} rowSpacing={4} justifyContent="space-evenly" alignItems={'center'}>
                         <Grid item xs={12} sm={5}>
                             <Box>
                                 <Typography
@@ -154,9 +136,7 @@ class ProfileScreen extends Component {
                                                                 value={values.name}
                                                                 onChange={handleChange}
                                                             />
-                                                            {errors.name && (
-                                                                <small className="text-danger">{errors.name}</small>
-                                                            )}
+                                                            {errors.name && <small className="text-danger">{errors.name}</small>}
                                                         </FormGroup>
                                                     </Grid>
                                                     <Grid item xs={7}>
@@ -169,9 +149,7 @@ class ProfileScreen extends Component {
                                                                 value={values.surname}
                                                                 onChange={handleChange}
                                                             />
-                                                            {errors.surname && (
-                                                                <small className="text-danger">{errors.surname}</small>
-                                                            )}
+                                                            {errors.surname && <small className="text-danger">{errors.surname}</small>}
                                                         </FormGroup>
                                                     </Grid>
                                                 </Grid>
@@ -185,9 +163,7 @@ class ProfileScreen extends Component {
                                                         value={values.userName}
                                                         onChange={handleChange}
                                                     />
-                                                    {errors.userName && (
-                                                        <small className="text-danger">{errors.userName}</small>
-                                                    )}
+                                                    {errors.userName && <small className="text-danger">{errors.userName}</small>}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     {LableForm('Số điện thoại')}
@@ -198,9 +174,7 @@ class ProfileScreen extends Component {
                                                         value={values.phoneNumber}
                                                         onChange={handleChange}
                                                     />
-                                                    {errors.phoneNumber && (
-                                                        <small className="text-danger">{errors.phoneNumber}</small>
-                                                    )}
+                                                    {errors.phoneNumber && <small className="text-danger">{errors.phoneNumber}</small>}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     {LableForm('Địa chỉ email')}
@@ -211,9 +185,7 @@ class ProfileScreen extends Component {
                                                         value={values.emailAddress}
                                                         onChange={handleChange}
                                                     />
-                                                    {errors.emailAddress && (
-                                                        <small className="text-danger">{errors.emailAddress}</small>
-                                                    )}
+                                                    {errors.emailAddress && <small className="text-danger">{errors.emailAddress}</small>}
                                                 </FormGroup>
                                                 <Button
                                                     type="submit"
@@ -290,23 +262,16 @@ class ProfileScreen extends Component {
                                                                     edge="end"
                                                                     onClick={() => {
                                                                         this.setState({
-                                                                            showCurrentPassword:
-                                                                                !this.state.showCurrentPassword
+                                                                            showCurrentPassword: !this.state.showCurrentPassword
                                                                         });
                                                                     }}>
-                                                                    {this.state.showCurrentPassword ? (
-                                                                        <VisibilityOff />
-                                                                    ) : (
-                                                                        <Visibility />
-                                                                    )}
+                                                                    {this.state.showCurrentPassword ? <VisibilityOff /> : <Visibility />}
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
                                                     }}
                                                 />
-                                                {errors.currentPassword && (
-                                                    <small className="text-danger">{errors.currentPassword}</small>
-                                                )}
+                                                {errors.currentPassword && <small className="text-danger">{errors.currentPassword}</small>}
                                             </FormGroup>
                                             <FormGroup>
                                                 {LableForm('Mật khẩu mới')}
@@ -326,19 +291,13 @@ class ProfileScreen extends Component {
                                                                             showNewPassword: !this.state.showNewPassword
                                                                         });
                                                                     }}>
-                                                                    {this.state.showNewPassword ? (
-                                                                        <VisibilityOff />
-                                                                    ) : (
-                                                                        <Visibility />
-                                                                    )}
+                                                                    {this.state.showNewPassword ? <VisibilityOff /> : <Visibility />}
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
                                                     }}
                                                 />
-                                                {errors.newPassword && (
-                                                    <small className="text-danger">{errors.newPassword}</small>
-                                                )}
+                                                {errors.newPassword && <small className="text-danger">{errors.newPassword}</small>}
                                             </FormGroup>
                                             <FormGroup>
                                                 {LableForm('Nhập lại mật khẩu mới')}
@@ -355,23 +314,16 @@ class ProfileScreen extends Component {
                                                                     edge="end"
                                                                     onClick={() => {
                                                                         this.setState({
-                                                                            showConfirmPassword:
-                                                                                !this.state.showConfirmPassword
+                                                                            showConfirmPassword: !this.state.showConfirmPassword
                                                                         });
                                                                     }}>
-                                                                    {this.state.showConfirmPassword ? (
-                                                                        <VisibilityOff />
-                                                                    ) : (
-                                                                        <Visibility />
-                                                                    )}
+                                                                    {this.state.showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
                                                     }}
                                                 />
-                                                {errors.confirmPassword && (
-                                                    <small className="text-danger">{errors.confirmPassword}</small>
-                                                )}
+                                                {errors.confirmPassword && <small className="text-danger">{errors.confirmPassword}</small>}
                                             </FormGroup>
                                             <Button
                                                 type="submit"
@@ -384,12 +336,7 @@ class ProfileScreen extends Component {
                                                     marginTop: 2,
                                                     border: 'none'
                                                 }}>
-                                                <Typography
-                                                    color={'#FFFAFF'}
-                                                    fontSize="14px"
-                                                    fontWeight="400"
-                                                    fontFamily="Roboto"
-                                                    fontStyle="normal">
+                                                <Typography color={'#FFFAFF'} fontSize="14px" fontWeight="400" fontFamily="Roboto" fontStyle="normal">
                                                     Lưu
                                                 </Typography>
                                             </Button>

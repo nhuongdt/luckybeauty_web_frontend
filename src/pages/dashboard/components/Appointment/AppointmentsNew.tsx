@@ -13,22 +13,10 @@ const AppoimentsNew: React.FC = () => {
             {datas.length > 0 ? (
                 datas.map((data, key) => {
                     return (
-                        <Box
-                            key={key}
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            borderBottom={'1px solid #EEF0F4'}>
-                            <Box
-                                display={'flex'}
-                                justifyContent={'start'}
-                                alignItems={'center'}
-                                padding={'6px 4px'}>
+                        <Box key={key} display={'flex'} justifyContent={'space-between'} borderBottom={'1px solid #EEF0F4'}>
+                            <Box display={'flex'} justifyContent={'start'} alignItems={'center'} padding={'6px 4px'}>
                                 <Avatar src={data.avatar} />
-                                <Box
-                                    sx={{ marginLeft: '24px' }}
-                                    display={'flex'}
-                                    justifyContent={'space-between'}
-                                    flexDirection={'column'}>
+                                <Box sx={{ marginLeft: '24px' }} display={'flex'} justifyContent={'space-between'} flexDirection={'column'}>
                                     <Typography
                                         sx={{
                                             // color: '#525F7A',
@@ -38,10 +26,7 @@ const AppoimentsNew: React.FC = () => {
                                         }}>
                                         {data.tenKhachHang}
                                     </Typography>
-                                    <Box
-                                        display={'flex'}
-                                        justifyContent={'start'}
-                                        alignItems={'center'}>
+                                    <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
                                         <img src={clockIcon} alt="clock" />
                                         <Typography
                                             sx={{
@@ -51,13 +36,9 @@ const AppoimentsNew: React.FC = () => {
                                                 fontWeight: '400',
                                                 marginLeft: '4px'
                                             }}>
-                                            {data.startTime != undefined
-                                                ? format(new Date(data.startTime), 'HH:mm')
-                                                : ''}
+                                            {data.startTime != undefined ? format(new Date(data.startTime), 'HH:mm') : ''}
                                             {' - '}
-                                            {data.endTime != undefined
-                                                ? format(new Date(data.endTime), 'HH:mm')
-                                                : ''}
+                                            {data.endTime != undefined ? format(new Date(data.endTime), 'HH:mm') : ''}
                                         </Typography>
                                     </Box>
 
@@ -72,11 +53,7 @@ const AppoimentsNew: React.FC = () => {
                                     </Typography>
                                 </Box>
                             </Box>
-                            <Box
-                                display={'flex'}
-                                justifyContent={'end'}
-                                flexDirection={'column'}
-                                alignItems={'end'}>
+                            <Box display={'flex'} justifyContent={'end'} flexDirection={'column'} alignItems={'end'}>
                                 <Typography
                                     sx={{
                                         color: '#009EF7',
