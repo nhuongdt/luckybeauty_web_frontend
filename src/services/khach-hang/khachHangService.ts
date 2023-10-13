@@ -1,6 +1,5 @@
 import { Guid } from 'guid-typescript';
 import { PagedKhachHangResultRequestDto } from './dto/PagedKhachHangResultRequestDto';
-import { PagedResultDto } from '../dto/pagedResultDto';
 import { KhachHangItemDto } from './dto/KhachHangItemDto';
 import Cookies from 'js-cookie';
 import http from '../httpService';
@@ -13,11 +12,11 @@ import { ExecuteResultDto } from '../dto/ExecuteResultDto';
 import { FileUpload } from '../dto/FileUpload';
 import QueryString from 'qs';
 import { CreateOrEditNhomKhachDto } from './dto/CreateOrEditNhomKhachDto';
+import { PagedRequestDto } from '../dto/pagedRequestDto';
+import { PagedResultDto } from '../dto/pagedResultDto';
 
 class KhachHangService {
-    public async getAll(
-        input: PagedKhachHangResultRequestDto
-    ): Promise<PagedResultDto<KhachHangItemDto>> {
+    public async getAll(input: PagedKhachHangResultRequestDto): Promise<PagedResultDto<KhachHangItemDto>> {
         const result = await http.post(`api/services/app/KhachHang/Search`, input);
         return result.data.result;
     }
@@ -72,10 +71,7 @@ class KhachHangService {
         return response.data.result;
     }
     public async exportSelectedDanhSach(input: Guid[]): Promise<IFileDto> {
-        const response = await http.post(
-            `api/services/app/KhachHang/ExporSelectedtDanhSach`,
-            input
-        );
+        const response = await http.post(`api/services/app/KhachHang/ExporSelectedtDanhSach`, input);
         return response.data.result;
     }
     jqAutoCustomer = async (input: PagedKhachHangResultRequestDto) => {
@@ -86,9 +82,7 @@ class KhachHangService {
         if (Utils.checkNull(id)) {
             id = Guid.EMPTY;
         }
-        const result = await http.get(
-            `api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`
-        );
+        const result = await http.get(`api/services/app/KhachHang/CheckExistSoDienThoai?phone=${phone}&id=${id}`);
         return result.data.result;
     }
     async GetKhachHang_noBooking(input: PagedKhachHangResultRequestDto) {
@@ -97,22 +91,15 @@ class KhachHangService {
         return result.data.result;
     }
     async importKhachHang(input: FileUpload) {
-        const response = await http.post(
-            'api/services/app/KhachHang/ImportFile_DanhMucKhachHang',
-            input
-        );
+        const response = await http.post('api/services/app/KhachHang/ImportFile_DanhMucKhachHang', input);
         return response.data.result;
     }
-    async lichSuGiaoDich(idKhachHang: string) {
-        const response = await http.post(
-            `api/services/app/KhachHang/LichSuGiaoDich?idKhachHang=${idKhachHang}`
-        );
+    async lichSuGiaoDich(idKhachHang: string, input: PagedRequestDto) {
+        const response = await http.post(`api/services/app/KhachHang/LichSuGiaoDich?idKhachHang=${idKhachHang}`, input);
         return response.data.result;
     }
-    async lichSuDatLich(idKhachHang: string) {
-        const response = await http.post(
-            `api/services/app/KhachHang/LichSuDatLich?idKhachHang=${idKhachHang}`
-        );
+    async lichSuDatLich(idKhachHang: string, input: PagedRequestDto) {
+        const response = await http.post(`api/services/app/KhachHang/LichSuDatLich?idKhachHang=${idKhachHang}`, input);
         return response.data.result;
     }
 }

@@ -390,8 +390,33 @@ export const appRouters: AppRouteProps = {
                     iconActive: <ReportActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
+                    children: [
+                        {
+                            path: '/bao-cao/bao-cao-ban-hang',
+                            permission: 'Pages',
+                            title: 'Báo cáo bán hàng',
+                            name: 'baoCaoBanHang',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_ban_hang'))
+                        },
+                        {
+                            path: '/bao-cao/bao-cao-dat-lich',
+                            permission: 'Pages',
+                            title: 'Báo cáo đặt lịch',
+                            name: 'baoCaoBanHang',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/Bao_cao_dat_lich'))
+                        }
+                    ],
+                    component: null
                 },
                 {
                     path: 'admin',

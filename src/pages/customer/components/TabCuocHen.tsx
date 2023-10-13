@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, SelectChangeEvent } from '@mui/material';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
@@ -7,7 +7,37 @@ import { observer } from 'mobx-react';
 import khachHangStore from '../../../stores/khachHangStore';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { format as formatDate } from 'date-fns';
+import { useParams } from 'react-router-dom';
+import AppConsts from '../../../lib/appconst';
 const TabCuocHen: React.FC = () => {
+    const { khachHangId } = useParams();
+    const [curentPage, setCurrentPage] = useState<number>(1);
+    const [maxResultCount, setMaxResultCount] = useState<number>(10);
+    const [sortBy, setSortBy] = useState('creationTime');
+    const [sortType, setSortType] = useState('desc');
+    useEffect(() => {
+        getLichSuDatLich();
+    }, [curentPage, maxResultCount, sortBy, sortType]);
+    const getLichSuDatLich = async () => {
+        await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty, {
+            keyword: '',
+            maxResultCount: maxResultCount,
+            skipCount: curentPage,
+            sortBy: sortBy,
+            sortType: sortType
+        });
+    };
+    const handlePageChange = async (event: any, newPage: number) => {
+        setCurrentPage(newPage);
+    };
+    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        setCurrentPage(1);
+        setMaxResultCount(parseInt(event.target.value.toString(), 10));
+    };
+    const onSort = async (sortType: string, sortBy: string) => {
+        setSortType(sortType);
+        setSortBy(sortBy);
+    };
     const columns = [
         {
             field: 'bookingDate',
@@ -35,9 +65,7 @@ const TabCuocHen: React.FC = () => {
                 </Box>
             ),
             renderCell: (params: any) => (
-                <Box
-                    title={params.value}
-                    sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
+                <Box title={params.value} sx={{ textOverflow: 'ellipsis', overflow: 'hidden', width: '100%' }}>
                     {params.value}
                 </Box>
             )
@@ -118,14 +146,10 @@ const TabCuocHen: React.FC = () => {
             <Box mt="24px">
                 <DataGrid
                     disableRowSelectionOnClick
-                    //hideFooter
+                    hideFooter
                     autoHeight
                     columns={columns}
-                    rows={
-                        khachHangStore.lichSuDatLich === undefined
-                            ? []
-                            : khachHangStore.lichSuDatLich.items
-                    }
+                    rows={khachHangStore.lichSuDatLich === undefined ? [] : khachHangStore.lichSuDatLich.items}
                     getRowId={(row) => row.bookingDate}
                     initialState={{
                         pagination: {
@@ -134,6 +158,18 @@ const TabCuocHen: React.FC = () => {
                     }}
                     pageSizeOptions={[5, 10, 20, 50, 100]}
                     localeText={TextTranslate}
+                    sortingOrder={['desc', 'asc']}
+                    // sortModel={[
+                    //     {
+                    //         field: sortBy,
+                    //         sort: sortType == 'desc' ? 'desc' : 'asc'
+                    //     }
+                    // ]}
+                    onSortModelChange={(newSortModel) => {
+                        if (newSortModel.length > 0) {
+                            onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                        }
+                    }}
                     sx={{
                         '& .MuiDataGrid-columnHeaders': {
                             bgcolor: '#F2EBF0'
@@ -141,14 +177,18 @@ const TabCuocHen: React.FC = () => {
                     }}
                 />
             </Box>
-            {/* <CustomTablePagination
-                currentPage={1}
-                rowPerPage={10}
-                totalRecord={8}
-                totalPage={1}
+            <CustomTablePagination
+                currentPage={curentPage}
+                rowPerPage={maxResultCount}
+                totalRecord={khachHangStore.lichSuDatLich === undefined ? 0 : khachHangStore.lichSuDatLich.totalCount}
+                totalPage={
+                    khachHangStore.lichSuDatLich === undefined
+                        ? 0
+                        : Math.ceil(khachHangStore.lichSuDatLich.totalCount / maxResultCount)
+                }
                 handlePerPageChange={handlePerPageChange}
                 handlePageChange={handlePageChange}
-            /> */}
+            />
         </>
     );
 };

@@ -76,9 +76,13 @@ class SuggestService {
             return [];
         }
     }
-    public async SuggestDichVu(): Promise<SuggestDichVuDto[]> {
+    public async SuggestDichVu(idNhanVien?: string): Promise<SuggestDichVuDto[]> {
         try {
-            const result = await http.post('api/services/app/Suggest/SuggestDichVu');
+            let apiUrl = 'api/services/app/Suggest/SuggestDichVu';
+            if (idNhanVien !== null && idNhanVien !== undefined && idNhanVien != '') {
+                apiUrl += `?idNhanVien=${idNhanVien}`;
+            }
+            const result = await http.post(apiUrl);
             return result.data.result;
         } catch (error) {
             console.error('Có lỗi sảy ra khi lấy dữ liệu:', error);
@@ -165,9 +169,7 @@ class SuggestService {
             return [];
         }
     }
-    public async SuggestNhanVienLamDichVu(
-        idNhanVien?: string
-    ): Promise<SuggestNhanVienDichVuDto[]> {
+    public async SuggestNhanVienLamDichVu(idNhanVien?: string): Promise<SuggestNhanVienDichVuDto[]> {
         try {
             let apiUrl = `api/services/app/Suggest/SuggestNhanVienThucHienDichVu?idChiNhanh=${Cookies.get(
                 'IdChiNhanh'
@@ -186,9 +188,7 @@ class SuggestService {
     }
     public async SuggestNhanVienByIdDichVu(idDichVu: string): Promise<SuggestNhanVienDichVuDto[]> {
         try {
-            let apiUrl = `api/services/app/Suggest/SuggestNhanVienByIdDichVu?idChiNhanh=${Cookies.get(
-                'IdChiNhanh'
-            )}`;
+            let apiUrl = `api/services/app/Suggest/SuggestNhanVienByIdDichVu?idChiNhanh=${Cookies.get('IdChiNhanh')}`;
 
             apiUrl += `&idDichVu=${idDichVu}`;
 

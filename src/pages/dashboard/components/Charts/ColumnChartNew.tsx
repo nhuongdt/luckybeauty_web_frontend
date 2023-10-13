@@ -31,8 +31,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 const ColumnChartNew: React.FC = () => {
     const data =
-        dashboardStore.thongKeDoanhThu !== undefined ||
-        dashboardStore.thongKeDoanhThu == ([] as ThongKeDoanhThu[])
+        dashboardStore.thongKeDoanhThu !== undefined || dashboardStore.thongKeDoanhThu == ([] as ThongKeDoanhThu[])
             ? dashboardStore.thongKeDoanhThu
             : [
                   { month: 'Tháng 1', thangNay: 0, thangTruoc: 0 },
@@ -51,7 +50,7 @@ const ColumnChartNew: React.FC = () => {
     //const yTicks = [];
 
     return (
-        <div style={{ marginTop: '30px', background: '#FFF' }}>
+        <div style={{ marginTop: '30px', background: '#FFF', borderRadius: '8px' }}>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data}>
                     <CartesianGrid strokeDasharray="0 0" vertical={false} />

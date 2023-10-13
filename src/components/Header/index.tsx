@@ -615,7 +615,11 @@ const Header: React.FC<HeaderProps> = (
                                     filter: 'var(--color-hoverIcon)'
                                 }
                             }}>
-                            <MenuItem>
+                            <MenuItem
+                                onClick={() => {
+                                    handleClose();
+                                    navigate('/account/profile');
+                                }}>
                                 <Box sx={{ display: 'flex', gap: '12px' }}>
                                     <Avatar
                                         src={Cookies.get('avatar') ?? ''}

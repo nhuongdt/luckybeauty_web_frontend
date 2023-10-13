@@ -35,8 +35,8 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
     }, [khachHangId]);
     const getKhachHangInfo = async () => {
         await khachHangStore.getDetail(khachHangId ?? AppConsts.guidEmpty);
-        await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty);
-        await khachHangStore.getLichSuGiaoDich(khachHangId ?? AppConsts.guidEmpty);
+        //await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty);
+        //await khachHangStore.getLichSuGiaoDich(khachHangId ?? AppConsts.guidEmpty);
     };
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
         return (
@@ -85,10 +85,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                         sx={{ color: '#666466' }}>
                         Xuất
                     </Button>
-                    <Button
-                        className="btn-container-hover"
-                        variant="contained"
-                        sx={{ bgcolor: '#7C3367' }}>
+                    <Button className="btn-container-hover" variant="contained" sx={{ bgcolor: '#7C3367' }}>
                         Sao chép
                     </Button>
                 </Box>
@@ -127,20 +124,13 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                     padding: '4px'
                                 }
                             }}>
-                            <Typography
-                                variant="h3"
-                                color="#3B4758"
-                                fontWeight="700"
-                                fontSize="24px"
-                                mr="12px">
+                            <Typography variant="h3" color="#3B4758" fontWeight="700" fontSize="24px" mr="12px">
                                 {khachHangStore.khachHangDetail.tenKhachHang}
                             </Typography>
                             <IconButton>
                                 <EditIcon
                                     onClick={async () => {
-                                        await khachHangStore.getForEdit(
-                                            khachHangStore.khachHangDetail.id
-                                        );
+                                        await khachHangStore.getForEdit(khachHangStore.khachHangDetail.id);
                                         setIsShowEditKhachHang(true);
                                     }}
                                 />
@@ -161,7 +151,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                 display: 'flex',
                                 marginTop: '12px',
                                 '& p': {
-                                    fontSize: '14px',
+                                    fontSize: '13px',
                                     color: '#333233',
                                     mt: '4px'
                                 },
@@ -169,7 +159,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             }}>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography sx={{ mt: '0' }} variant="body1">
-                                    Nhóm khách :
+                                    Nhóm khách :{' '}
                                 </Typography>
                                 <Typography sx={{ mt: '0' }} variant="body1">
                                     {khachHangStore.khachHangDetail.nhomKhach}
@@ -178,14 +168,12 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography variant="body1">Số điện thoại : </Typography>
                                 <Typography variant="body1">
-                                    {khachHangStore.khachHangDetail.soDienThoai}
+                                    {' ' + khachHangStore.khachHangDetail.soDienThoai}
                                 </Typography>
                             </Box>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography variant="body1">Địa chỉ : </Typography>
-                                <Typography variant="body1">
-                                    {khachHangStore.khachHangDetail.diaChi}
-                                </Typography>
+                                <Typography variant="body1"> {' ' + khachHangStore.khachHangDetail.diaChi}</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -262,9 +250,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
             <ConfirmDelete
                 isShow={isShowDeleteKhachHang}
                 onOk={async () => {
-                    const deleteReult = await khachHangService.delete(
-                        khachHangStore.khachHangDetail.id
-                    );
+                    const deleteReult = await khachHangService.delete(khachHangStore.khachHangDetail.id);
                     deleteReult != null
                         ? enqueueSnackbar('Xóa bản ghi thành công', {
                               variant: 'success',

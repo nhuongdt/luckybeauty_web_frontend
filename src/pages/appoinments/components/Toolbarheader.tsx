@@ -21,6 +21,7 @@ import { vi } from 'date-fns/locale';
 import { observer } from 'mobx-react';
 import suggestStore from '../../../stores/suggestStore';
 import bookingStore from '../../../stores/bookingStore';
+import AppConsts from '../../../lib/appconst';
 const ToolbarHeader: React.FC<{
     initialView: string;
     initialDate: Date;
@@ -28,14 +29,7 @@ const ToolbarHeader: React.FC<{
     toDayClick: () => void;
     handlePrevious: () => void;
     handleNext: () => void;
-}> = ({
-    initialView,
-    initialDate,
-    handleChangeViewType,
-    toDayClick,
-    handleNext,
-    handlePrevious
-}: any) => {
+}> = ({ initialView, initialDate, handleChangeViewType, toDayClick, handleNext, handlePrevious }: any) => {
     return (
         <Grid
             container
@@ -51,7 +45,8 @@ const ToolbarHeader: React.FC<{
                     fullWidth
                     disablePortal
                     onChange={async (event, value) => {
-                        await bookingStore.onChangeEmployee(value?.id ?? ''); // Cập nhật giá trị id trong Formik
+                        await bookingStore.onChangeEmployee(value?.id ?? '');
+                        bookingStore.createOrEditBookingDto.idNhanVien = value?.id ?? ''; // Cập nhật giá trị id trong Formik
                     }}
                     renderInput={(params) => (
                         <TextField
@@ -172,7 +167,9 @@ const ToolbarHeader: React.FC<{
                     fullWidth
                     disablePortal
                     onChange={async (event, value) => {
-                        await bookingStore.onChangeService(value?.id ?? ''); // Cập nhật giá trị id trong Formik
+                        await bookingStore.onChangeService(value?.id ?? '');
+                        bookingStore.createOrEditBookingDto.idDonViQuiDoi = value?.id ?? '';
+                        // Cập nhật giá trị id trong Formik
                     }}
                     renderInput={(params) => (
                         <TextField

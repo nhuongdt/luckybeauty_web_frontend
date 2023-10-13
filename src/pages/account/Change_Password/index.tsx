@@ -1,12 +1,4 @@
-import {
-    Button,
-    FormGroup,
-    Grid,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Typography
-} from '@mui/material';
+import { Button, FormGroup, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Formik, Form } from 'formik';
 import { useEffect, useState } from 'react';
@@ -49,11 +41,7 @@ const ResetPassword = () => {
                 <Grid item xs={12}>
                     <Box className={'change-password-page-inner'}>
                         <Box textAlign={'center'}>
-                            <Box
-                                display={'flex'}
-                                justifyContent={'center'}
-                                alignItems={'center'}
-                                padding={'12px 0px'}>
+                            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} padding={'12px 0px'}>
                                 <img src={logo} alt="Lucky Beauty" />
                                 <Typography
                                     marginLeft={'5px'}
@@ -145,16 +133,10 @@ const ResetPassword = () => {
                                                 name="password"
                                                 value={values.password}
                                                 onChange={handleChange}
-                                                error={
-                                                    errors.password && touched.password
-                                                        ? true
-                                                        : false
-                                                }
+                                                error={errors.password && touched.password ? true : false}
                                                 helperText={
                                                     errors.password && touched.password ? (
-                                                        <span className="text-danger">
-                                                            {String(errors.password)}
-                                                        </span>
+                                                        <span className="text-danger">{String(errors.password)}</span>
                                                     ) : (
                                                         ''
                                                     )
@@ -184,11 +166,7 @@ const ResetPassword = () => {
                                                                 onClick={() => {
                                                                     setShowPassword(!showPassword);
                                                                 }}>
-                                                                {showPassword ? (
-                                                                    <VisibilityOff />
-                                                                ) : (
-                                                                    <Visibility />
-                                                                )}
+                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                     )
@@ -209,15 +187,9 @@ const ResetPassword = () => {
                                                 name="confirmPassword"
                                                 value={values.confirmPassword}
                                                 onChange={handleChange}
-                                                error={
-                                                    errors.confirmPassword &&
-                                                    touched.confirmPassword
-                                                        ? true
-                                                        : false
-                                                }
+                                                error={errors.confirmPassword && touched.confirmPassword ? true : false}
                                                 helperText={
-                                                    errors.confirmPassword &&
-                                                    touched.confirmPassword ? (
+                                                    errors.confirmPassword && touched.confirmPassword ? (
                                                         <span className="text-danger">
                                                             {String(errors.confirmPassword)}
                                                         </span>
@@ -248,9 +220,7 @@ const ResetPassword = () => {
                                                         <InputAdornment position="end">
                                                             <IconButton
                                                                 onClick={() => {
-                                                                    setShowConfirmPassword(
-                                                                        !showConfirmPassword
-                                                                    );
+                                                                    setShowConfirmPassword(!showConfirmPassword);
                                                                 }}>
                                                                 {showConfirmPassword ? (
                                                                     <VisibilityOff />

@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {
-    Grid,
-    TextField,
-    FormControlLabel,
-    Checkbox,
-    InputAdornment,
-    IconButton,
-    Typography
-} from '@mui/material';
+import { Grid, TextField, FormControlLabel, Checkbox, InputAdornment, IconButton, Typography } from '@mui/material';
 import './login.css';
 import LoginModel from '../../../models/Login/loginModel';
 import LoginService from '../../../services/login/loginService';
@@ -96,11 +88,7 @@ const LoginScreen: React.FC = () => {
                                 <Grid xs={12} item>
                                     <TextField
                                         {...formik.getFieldProps('tenant')}
-                                        error={
-                                            formik.touched.tenant && formik.errors.tenant
-                                                ? true
-                                                : false
-                                        }
+                                        error={formik.touched.tenant && formik.errors.tenant ? true : false}
                                         helperText={formik.touched.tenant && formik.errors.tenant}
                                         onKeyDown={handleKeyDown}
                                         variant="outlined"
@@ -122,15 +110,11 @@ const LoginScreen: React.FC = () => {
                                     <TextField
                                         {...formik.getFieldProps('userNameOrEmail')}
                                         error={
-                                            formik.touched.userNameOrEmail &&
-                                            formik.errors.userNameOrEmail
+                                            formik.touched.userNameOrEmail && formik.errors.userNameOrEmail
                                                 ? true
                                                 : false
                                         }
-                                        helperText={
-                                            formik.touched.userNameOrEmail &&
-                                            formik.errors.userNameOrEmail
-                                        }
+                                        helperText={formik.touched.userNameOrEmail && formik.errors.userNameOrEmail}
                                         onKeyDown={handleKeyDown}
                                         variant="outlined"
                                         name="userNameOrEmail"
@@ -153,14 +137,8 @@ const LoginScreen: React.FC = () => {
                                         variant="outlined"
                                         name="password"
                                         placeholder="Nhập mật khẩu"
-                                        error={
-                                            formik.touched.password && formik.errors.password
-                                                ? true
-                                                : false
-                                        }
-                                        helperText={
-                                            formik.touched.password && formik.errors.password
-                                        }
+                                        error={formik.touched.password && formik.errors.password ? true : false}
+                                        helperText={formik.touched.password && formik.errors.password}
                                         sx={{
                                             '& .MuiOutlinedInput-root': {
                                                 display: 'block',
@@ -183,11 +161,7 @@ const LoginScreen: React.FC = () => {
                                             endAdornment: (
                                                 <InputAdornment position="end">
                                                     <IconButton onClick={handleShowPassword}>
-                                                        {showPassword ? (
-                                                            <VisibilityOff />
-                                                        ) : (
-                                                            <Visibility />
-                                                        )}
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />}
                                                     </IconButton>
                                                 </InputAdornment>
                                             )

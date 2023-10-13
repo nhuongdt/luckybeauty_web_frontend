@@ -7,6 +7,7 @@ import AppConsts from '../lib/appconst';
 import { CreateBookingDto } from '../services/dat-lich/dto/CreateBookingDto';
 import { FullCalendarEvent } from '../services/dat-lich/dto/FullCalendarEvent';
 import { format as formatDate, parse } from 'date-fns';
+import suggestStore from './suggestStore';
 class BookingStore {
     selectedDate: string = new Date().toString();
     listBooking!: BookingGetAllItemDto[];
@@ -115,10 +116,17 @@ class BookingStore {
     }
     async onChangeEmployee(idNhanVien: string) {
         this.idNhanVien = idNhanVien;
+        await suggestStore.getSuggestDichVu(idNhanVien);
         await this.getData();
     }
     async onChangeService(idService: string) {
         this.idService = idService;
+        if (idService == '' || idService == null || idService == undefined) {
+            await suggestStore.getSuggestKyThuatVien();
+        } else {
+            await suggestStore.getSuggestKyThuatVienByIdDichVu(idService);
+        }
+
         await this.getData();
     }
 }

@@ -46,8 +46,7 @@ const LichHen: React.FC = () => {
     const calendarRef = useRef<FullCalendar>(null);
     const [idBooking, setIdBooking] = useState<string>('');
     const [connection, setConnection] = useState<signalR.HubConnection>();
-    const [notificationConnectionHub, setNotificationConnectionHub] =
-        useState<signalR.HubConnection>();
+    const [notificationConnectionHub, setNotificationConnectionHub] = useState<signalR.HubConnection>();
     const getData = async () => {
         let calendarView = 'week';
         const lichHenView = Cookies.get('lich-hen-view') ?? 'timeGridWeek';
@@ -71,7 +70,7 @@ const LichHen: React.FC = () => {
     const suggestData = async () => {
         await suggestStore.getSuggestKhachHang();
         await suggestStore.getSuggestKyThuatVien();
-        await suggestStore.getSuggestDichVu();
+        await suggestStore.getSuggestDichVu(bookingStore.idNhanVien);
     };
     useEffect(() => {
         getData();
@@ -192,21 +191,18 @@ const LichHen: React.FC = () => {
         const startHours = formatDateFns(parsedDate, 'HH:mm');
         const startTime = formatDateFns(parsedDate, 'yyyy-MM-dd');
         calendarApi.unselect(); // clear date selection
-        bookingStore.createNewBookingDto();
+        //bookingStore.createNewBookingDto();
         bookingStore.createOrEditBookingDto.startHours = startHours;
         bookingStore.createOrEditBookingDto.startTime = startTime;
-        bookingStore.createOrEditBookingDto.idNhanVien =
-            selectInfo.resource?.id ?? AppConsts.guidEmpty;
+        if (selectInfo.view.type === 'resourceTimeGridDay') {
+            bookingStore.createOrEditBookingDto.idNhanVien = selectInfo.resource?.id ?? AppConsts.guidEmpty;
+        }
         bookingStore.isShowCreateOrEdit = true;
     };
 
     const handleEventClick = async (clickInfo: EventClickArg) => {
         bookingStore.idBooking = clickInfo.event.id;
-        if (
-            clickInfo.event.id != null ||
-            clickInfo.event.id != '' ||
-            clickInfo.event.id !== undefined
-        ) {
+        if (clickInfo.event.id != null || clickInfo.event.id != '' || clickInfo.event.id !== undefined) {
             const modal = document.getElementsByClassName('fc-popover')[0] as HTMLElement | null;
             if (modal) {
                 modal.style.display = 'none';
@@ -341,11 +337,7 @@ const LichHen: React.FC = () => {
                         minute: '2-digit',
                         omitZeroMinute: false // Set this to true if you want to omit ":00" for minutes
                     }}
-                    events={
-                        bookingStore.fullCalendarEvents !== undefined
-                            ? bookingStore.fullCalendarEvents
-                            : []
-                    }
+                    events={bookingStore.fullCalendarEvents !== undefined ? bookingStore.fullCalendarEvents : []}
                     weekends={true}
                     select={handleDateSelect}
                     eventContent={renderEventContent} // custom render function
@@ -474,11 +466,7 @@ function renderEventContent(eventContent: EventContentArg) {
                     {eventContent.event.display}
                 </Typography>
             ) : (
-                <Typography
-                    variant="body1"
-                    fontSize="12px"
-                    whiteSpace="normal"
-                    color={eventContent.event.textColor}>
+                <Typography variant="body1" fontSize="12px" whiteSpace="normal" color={eventContent.event.textColor}>
                     <Box display={'flex'} alignItems={'center'} sx={{ overflow: 'hidden' }}>
                         {formattedStartTime} - {formattedEndTime}{' '}
                         <QueryBuilder

@@ -1,11 +1,14 @@
-import { Button, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { Form, Formik, FormikHelpers, FormikValues } from 'formik';
 import { useEffect, useState } from 'react';
 import { EmailSettingsEditDto } from '../../../../services/settings/dto/EmailSettingsEditDto';
 import SettingService from '../../../../services/settings/settingService';
-
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import settingService from '../../../../services/settings/settingService';
+import { enqueueSnackbar } from 'notistack';
 const EmailSetting = () => {
+    const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
     const [settingEmail, setSettingEmail] = useState<EmailSettingsEditDto>({
         defaultFromAddress: '',
         defaultFromDisplayName: '',
@@ -30,11 +33,21 @@ const EmailSetting = () => {
             <Formik
                 enableReinitialize={true}
                 initialValues={settingEmail}
-                onSubmit={(values) => {
-                    throw new Error('Function not implemented.');
+                onSubmit={async (values) => {
+                    const result = await settingService.updateEmailSettings(values);
+                    enqueueSnackbar(result.message, {
+                        variant: result.status,
+                        autoHideDuration: 3000
+                    });
                 }}>
                 {({ values, errors, touched, handleChange }) => (
-                    <Form>
+                    <Form
+                        onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                            if (event.key === 'Enter') {
+                                event.preventDefault(); // Prevent form submission
+                            }
+                        }}
+                        autoComplete="off">
                         <Box
                             sx={{ borderBottom: '1px soild black' }}
                             paddingBottom={'16px 0px'}
@@ -44,7 +57,9 @@ const EmailSetting = () => {
                             <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
                                 Email (SMTP)
                             </Typography>
-                            <Button variant="contained">Lưu</Button>
+                            <Button variant="contained" type="submit">
+                                Lưu
+                            </Button>
                         </Box>
                         <Box marginTop={'24px'} gap={4}>
                             <Typography marginTop={2}>Địa chỉ email người gửi mặc định</Typography>
@@ -61,12 +76,12 @@ const EmailSetting = () => {
                                 name={'defaultFromDisplayName'}
                                 value={values.defaultFromDisplayName}
                                 onChange={handleChange}></TextField>
-                            <Typography marginTop={2}>Địa chỉ máy chủ SMTP</Typography>
+                            <Typography marginTop={2}>Địa chỉ IP máy chủ SMTP</Typography>
                             <TextField
                                 fullWidth
                                 size="small"
-                                name={'smtpDomain'}
-                                value={values.smtpDomain}
+                                name={'smtpHost'}
+                                value={values.smtpHost}
                                 onChange={handleChange}
                             />
                             <Typography marginTop={2}>Cổng SMTP</Typography>
@@ -76,12 +91,55 @@ const EmailSetting = () => {
                                 name={'smtpPort'}
                                 value={values.smtpPort}
                                 onChange={handleChange}></TextField>
-                            <Typography marginTop={2}>Mật khẩu</Typography>
-                            <TextField
-                                fullWidth
-                                size="small"
-                                name={'smtpPassword'}
-                                value={values.smtpPassword}></TextField>
+                            <FormControlLabel
+                                checked={values.smtpEnableSsl}
+                                name="smtpEnableSsl"
+                                onChange={handleChange}
+                                control={<Checkbox />}
+                                label="Sử dụng SSL"
+                            />
+                            <div>
+                                <FormControlLabel
+                                    name="smtpUseDefaultCredentials"
+                                    checked={values.smtpUseDefaultCredentials}
+                                    onChange={handleChange}
+                                    control={<Checkbox />}
+                                    label="Sử dụng thông tin xác thực mặc định"
+                                />
+                            </div>
+                            {values.smtpUseDefaultCredentials === false ? (
+                                <div>
+                                    <Typography marginTop={2}>Tên truy cập</Typography>
+                                    <TextField
+                                        fullWidth
+                                        autoComplete="off"
+                                        size="small"
+                                        name={'smtpUserName'}
+                                        value={values.smtpUserName}
+                                        onChange={handleChange}></TextField>
+                                    <Typography marginTop={2}>Mật khẩu</Typography>
+                                    <TextField
+                                        fullWidth
+                                        type={isShowPassword === true ? 'text' : 'password'}
+                                        size="small"
+                                        autoComplete="off"
+                                        name={'smtpPassword'}
+                                        value={values.smtpPassword}
+                                        onChange={handleChange}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        onClick={() => {
+                                                            setIsShowPassword(!isShowPassword);
+                                                        }}>
+                                                        {isShowPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            )
+                                        }}></TextField>
+                                </div>
+                            ) : null}
                         </Box>
                     </Form>
                 )}

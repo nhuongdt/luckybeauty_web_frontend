@@ -275,9 +275,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         this.onImportShow();
     };
     downloadImportTemplate = async () => {
-        const result = await uploadFileService.downloadImportTemplate(
-            'KhachHang_ImportTemplate.xlsx'
-        );
+        const result = await uploadFileService.downloadImportTemplate('KhachHang_ImportTemplate.xlsx');
         fileDowloadService.downloadExportFile(result);
     };
     handlePageChange = async (event: any, newPage: number) => {
@@ -314,9 +312,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     };
     onOkDelete = async () => {
         if (this.state.listItemSelectedModel.length > 0) {
-            const ok = await khachHangService.DeleteMultipleCustomer(
-                this.state.listItemSelectedModel
-            );
+            const ok = await khachHangService.DeleteMultipleCustomer(this.state.listItemSelectedModel);
             ok
                 ? enqueueSnackbar('Xóa khách hàng  thành công', {
                       variant: 'success',
@@ -382,9 +378,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         });
     };
     exportSelectedRow = async () => {
-        const result = await khachHangService.exportSelectedDanhSach(
-            this.state.listItemSelectedModel
-        );
+        const result = await khachHangService.exportSelectedDanhSach(this.state.listItemSelectedModel);
         fileDowloadService.downloadExportFile(result);
         this.setState({ listItemSelectedModel: [] });
     };
@@ -408,10 +402,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         }
     };
     chuyenNhomKhach = async (itemChosed: IList) => {
-        const ok = await khachHangService.ChuyenNhomKhachHang(
-            this.state.rowSelectionModel,
-            itemChosed.id
-        );
+        const ok = await khachHangService.ChuyenNhomKhachHang(this.state.rowSelectionModel, itemChosed.id);
         this.setState({ isShowModalChuyenNhom: false });
         ok
             ? enqueueSnackbar('Chuyển nhóm khách hàng  thành công', {
@@ -443,9 +434,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
     handleSelectAllGridRowClick = () => {
         if (this.state.checkAllRow) {
             const allRowRemove = this.state.rowTable.map((row) => row.id);
-            const newRows = this.state.listItemSelectedModel.filter(
-                (item) => !allRowRemove.includes(item)
-            );
+            const newRows = this.state.listItemSelectedModel.filter((item) => !allRowRemove.includes(item));
             this.setState({ listItemSelectedModel: newRows });
         } else {
             const allRowIds = this.state.rowTable.map((row) => row.id);
@@ -466,12 +455,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 disableColumnMenu: true,
                 width: 65,
                 renderHeader: (params) => {
-                    return (
-                        <Checkbox
-                            onClick={this.handleSelectAllGridRowClick}
-                            checked={this.state.checkAllRow}
-                        />
-                    );
+                    return <Checkbox onClick={this.handleSelectAllGridRowClick} checked={this.state.checkAllRow} />;
                 },
                 renderCell: (params) => (
                     <Checkbox
@@ -510,18 +494,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         </Typography>
                     </Box>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'soDienThoai',
                 headerName: 'Số điện thoại',
                 minWidth: 114,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
                     <Box textAlign="left" width="100%" fontSize="13px">
                         {params.value}
@@ -533,9 +513,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 headerName: 'Ngày sinh',
                 minWidth: 112,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
                     <Box textAlign="left" width="100%" fontSize="13px">
                         {params.value ? format(new Date(params.value), 'dd/MM/yyyy') : ''}
@@ -562,18 +540,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                 headerName: 'Nhóm khách',
                 minWidth: 112,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
             },
             {
                 field: 'tongChiTieu',
                 headerName: 'Tổng mua',
                 minWidth: 113,
                 flex: 1,
-                renderHeader: (params) => (
-                    <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>
-                ),
+                renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
                 renderCell: (params) => (
                     <Box title={params.value} fontSize="13px" textAlign="right" width="100%">
                         {new Intl.NumberFormat('vi-VN').format(params.value)}
@@ -633,9 +607,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                         </IconButton>
                     </Box>
                 ),
-                renderHeader: (params) => (
-                    <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
-                )
+                renderHeader: (params) => <Box sx={{ display: 'none' }}>{params.colDef.headerName}</Box>
             }
         ];
 
@@ -659,12 +631,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     return {
                                         id: item.id,
                                         text: item.tenNhomKhach,
-                                        color:
-                                            index % 3 == 1
-                                                ? '#5654A8'
-                                                : index % 3 == 2
-                                                ? '#d525a1'
-                                                : '#FF5677'
+                                        color: index % 3 == 1 ? '#5654A8' : index % 3 == 2 ? '#d525a1' : '#FF5677'
                                     };
                                 })}
                             onClose={() => this.setState({ isShowModalChuyenNhom: false })}
@@ -709,23 +676,14 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Grid>
                                 </Grid>
                             </Grid>
-                            <Grid
-                                xs={12}
-                                md={6}
-                                lg={6}
-                                item
-                                display="flex"
-                                gap="8px"
-                                justifyContent="end">
+                            <Grid xs={12} md={6} lg={6} item display="flex" gap="8px" justifyContent="end">
                                 <ButtonGroup
                                     variant="contained"
                                     sx={{ gap: '8px' }}
                                     className="rounded-4px resize-height">
                                     <Button
                                         className="border-color btn-outline-hover"
-                                        hidden={
-                                            !abpCustom.isGrandPermission('Pages.KhachHang.Import')
-                                        }
+                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Import')}
                                         variant="outlined"
                                         onClick={this.onImportShow}
                                         startIcon={<img src={DownloadIcon} />}
@@ -740,9 +698,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     <Button
                                         className="border-color btn-outline-hover"
                                         variant="outlined"
-                                        hidden={
-                                            !abpCustom.isGrandPermission('Pages.KhachHang.Export')
-                                        }
+                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Export')}
                                         onClick={() => {
                                             this.exportToExcel();
                                         }}
@@ -759,9 +715,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     </Button>
                                     <Button
                                         className=" btn-container-hover"
-                                        hidden={
-                                            !abpCustom.isGrandPermission('Pages.KhachHang.Create')
-                                        }
+                                        hidden={!abpCustom.isGrandPermission('Pages.KhachHang.Create')}
                                         onClick={() => {
                                             this.createOrUpdateModalOpen('');
                                         }}
@@ -826,9 +780,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                                 fullWidth
                                                 placeholder="Tìm kiếm nhóm"
                                                 InputProps={{ startAdornment: <SearchIcon /> }}
-                                                onChange={(e) =>
-                                                    this.searchNhomKhach(e.target.value)
-                                                }
+                                                onChange={(e) => this.searchNhomKhach(e.target.value)}
                                             />
                                             <AccordionNhomKhachHang
                                                 dataNhomKhachHang={this.state.listNhomKhachSearch}
@@ -957,8 +909,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                 <div
                                     className="page-box-right"
                                     style={{
-                                        marginTop:
-                                            this.state.listItemSelectedModel.length > 0 ? '8px' : 0
+                                        marginTop: this.state.listItemSelectedModel.length > 0 ? '8px' : 0
                                     }}>
                                     <DataGrid
                                         disableRowSelectionOnClick
@@ -987,8 +938,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                         onSortModelChange={(newSortModel) => {
                                             if (newSortModel.length > 0) {
                                                 this.onSort(
-                                                    newSortModel[0].sort?.toString() ??
-                                                        'creationTime',
+                                                    newSortModel[0].sort?.toString() ?? 'creationTime',
                                                     newSortModel[0].field ?? 'desc'
                                                 );
                                             }
@@ -1034,11 +984,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
                                     />
                                 </div>
                                 <div
-                                    className={
-                                        this.state.toggle
-                                            ? 'show customer-overlay'
-                                            : 'customer-overlay'
-                                    }
+                                    className={this.state.toggle ? 'show customer-overlay' : 'customer-overlay'}
                                     onClick={this.handleToggle}></div>
                             </Grid>
                         </Grid>

@@ -7,6 +7,7 @@ import { LichSuDatLich } from '../services/khach-hang/dto/LichSuDatLich';
 import { PagedResultDto } from '../services/dto/pagedResultDto';
 import { LichSuGiaoDich } from '../services/khach-hang/dto/LichSuGiaoDich';
 import { CreateOrEditNhomKhachDto } from '../services/khach-hang/dto/CreateOrEditNhomKhachDto';
+import { PagedRequestDto } from '../services/dto/pagedRequestDto';
 
 class KhachHangSrore {
     createEditKhachHangDto!: CreateOrEditKhachHangDto;
@@ -46,12 +47,12 @@ class KhachHangSrore {
         const result = await khachHangService.getDetail(id);
         this.khachHangDetail = result;
     }
-    async getLichSuDatLich(idKhachHang: string) {
-        const result = await khachHangService.lichSuDatLich(idKhachHang);
+    async getLichSuDatLich(idKhachHang: string, input: PagedRequestDto) {
+        const result = await khachHangService.lichSuDatLich(idKhachHang, input);
         this.lichSuDatLich = result;
     }
-    async getLichSuGiaoDich(idKhachHang: string) {
-        const result = await khachHangService.lichSuGiaoDich(idKhachHang);
+    async getLichSuGiaoDich(idKhachHang: string, input: PagedRequestDto) {
+        const result = await khachHangService.lichSuGiaoDich(idKhachHang, input);
         this.lichSuGiaoDich = result;
     }
     async createKhachHangDto() {

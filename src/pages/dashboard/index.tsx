@@ -30,10 +30,7 @@ const Dashboard: React.FC = () => {
         //     idChiNhanh: Cookies.get('IdChiNhanh') ?? AppConsts.guidEmpty
         // });
     };
-    const sumTongTien = dashboardStore.thongKeDoanhThu?.reduce(
-        (sum, item) => sum + item.thangNay,
-        0
-    );
+    const sumTongTien = dashboardStore.thongKeDoanhThu?.reduce((sum, item) => sum + item.thangNay, 0);
     const handleChangeDateType = async (event: SelectChangeEvent<string>) => {
         const newValue = event.target.value as string;
         setDashboardDateView(newValue);
@@ -104,6 +101,7 @@ const Dashboard: React.FC = () => {
                             <Box
                                 bgcolor={'#FFF'}
                                 padding={'8px 24px 16px 24px'}
+                                borderRadius={'8px'}
                                 sx={{ height: '300px' }}>
                                 <AppoimentsNew />
                             </Box>
@@ -131,8 +129,8 @@ const Dashboard: React.FC = () => {
                 </Box>
                 <Box marginTop={'16px'}>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={12} md={9} lg={9} xl={9}>
-                            <Box bgcolor={'#FFF'} padding={'8px 24px'}>
+                        <Grid item xs={12} sm={12} md={9} lg={9} xl={9} borderRadius={'8px'}>
+                            <Box bgcolor={'#FFF'} padding={'8px 24px'} borderRadius={'8px'}>
                                 <Typography
                                     sx={{
                                         //color: '#29303D',
@@ -200,10 +198,7 @@ const Dashboard: React.FC = () => {
                                             </Typography>
                                         </Box>
 
-                                        <Box
-                                            display={'flex'}
-                                            justifyContent={'space-between'}
-                                            alignItems={'center'}>
+                                        <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                                             <Box
                                                 sx={{
                                                     borderRadius: '50%',
@@ -226,7 +221,7 @@ const Dashboard: React.FC = () => {
                                 </Grid>
                             </Grid>
 
-                            <Box bgcolor={'#FFF'} padding={'8px 24px'}>
+                            <Box bgcolor={'#FFF'} padding={'8px 24px'} borderRadius={'8px'}>
                                 <ColumnChartNew />
                             </Box>
                         </Grid>
