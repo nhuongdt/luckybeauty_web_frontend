@@ -57,11 +57,7 @@ class Utils {
                         continue;
                     }
                     srcType = Array.isArray(src) ? 'array' : typeof src;
-                    if (
-                        deep &&
-                        copy &&
-                        ((copyIsArray = Array.isArray(copy)) || typeof copy === 'object')
-                    ) {
+                    if (deep && copy && ((copyIsArray = Array.isArray(copy)) || typeof copy === 'object')) {
                         if (copyIsArray) {
                             copyIsArray = false;
                             clone = src && srcType === 'array' ? src : [];
@@ -143,12 +139,7 @@ class Utils {
         }
     };
     checkNull = (input: string | null | undefined) => {
-        return (
-            input === 'null' ||
-            input === null ||
-            input === undefined ||
-            input.toString().replace(/\s+/g, '') === ''
-        );
+        return input === 'null' || input === null || input === undefined || input.toString().replace(/\s+/g, '') === '';
     };
     formatNumberToFloat = (objVal: any) => {
         if (objVal === undefined || objVal === null) {
@@ -209,21 +200,10 @@ class Utils {
         else return month + 1;
     };
     formatDatetoYYYYMMDD = (date: Date) => {
-        return concat(
-            date.getFullYear(),
-            '-',
-            this.getMonthfromDatetime(date),
-            '-' + date.getDate()
-        );
+        return concat(date.getFullYear(), '-', this.getMonthfromDatetime(date), '-' + date.getDate());
     };
     formatDatetoDDMMYYY = (date: Date) => {
-        return (
-            this.getDatefromDatetime(date) +
-            '/' +
-            this.getMonthfromDatetime(date) +
-            '/' +
-            date.getFullYear()
-        );
+        return this.getDatefromDatetime(date) + '/' + this.getMonthfromDatetime(date) + '/' + date.getFullYear();
     };
     formatDatetime_AMPM(date: Date) {
         let hours = date.getHours();
@@ -323,9 +303,7 @@ class Utils {
             }
             hauto = ' tỷ';
         } while (so > 0);
-        return (
-            chuoi.trim().substr(0, 1).toUpperCase() + chuoi.substr(2) + ' đồng'
-        ); /*; chuoi + ' đồng';*/
+        return chuoi.trim().substr(0, 1).toUpperCase() + chuoi.substr(2) + ' đồng'; /*; chuoi + ' đồng';*/
     }
 }
 

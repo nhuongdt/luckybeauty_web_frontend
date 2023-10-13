@@ -4,9 +4,7 @@ import { GetNotificationsOutput } from './dto/GetNotificationsOutput';
 import { GetUserNotificationsInput } from './dto/GetUserNotificationsInput';
 
 class NotificationService {
-    async GetNotifiationByCurrentUser(
-        input: GetUserNotificationsInput
-    ): Promise<GetNotificationsOutput> {
+    async GetNotifiationByCurrentUser(input: GetUserNotificationsInput): Promise<GetNotificationsOutput> {
         const response = await http.get('api/services/app/Notification/GetUserNotifications', {
             params: input
         });

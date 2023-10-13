@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
-
 import { Input, Checkbox, Grid, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
-
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 import logo from '../../../images/Lucky_beauty.jpg';

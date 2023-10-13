@@ -26,6 +26,7 @@ import ModalAddUser from './components/modal_add_user';
 import { ChiNhanhDto } from '../../../services/chi_nhanh/Dto/chiNhanhDto';
 import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
+
 class UserScreen extends AppComponentBase {
     state = {
         modalVisible: false,

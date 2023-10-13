@@ -25,9 +25,7 @@ class RoleService {
     };
     GetRolebyChiNhanh_ofUser = async (userId: number) => {
         if (!utils.checkNull(userId?.toString())) {
-            const result = await http.get(
-                `api/services/app/UserRole/GetRolebyChiNhanh_ofUser?userId=${userId}`
-            );
+            const result = await http.get(`api/services/app/UserRole/GetRolebyChiNhanh_ofUser?userId=${userId}`);
             return result.data.result;
         }
     };

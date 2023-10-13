@@ -26,6 +26,7 @@ import { format } from 'date-fns';
 interface Detail {
     toggleDetail: () => void;
 }
+
 const DetailHoaDon = ({
     toggleDetail,
     tongTienHang,

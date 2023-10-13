@@ -18,8 +18,7 @@ import {
     Radio,
     FormControl,
     FormLabel,
-    FormControlLabel,
-    Autocomplete
+    FormControlLabel
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
 import avatar from '../../../images/avatar.png';

@@ -20,9 +20,7 @@ class CuaHangService {
         return result.data.result;
     }
     async getCongTyEdit(idChiNhanh: string): Promise<EditCuaHangDto> {
-        const result = await http.get(
-            `api/services/app/CuaHang/GetCongTyForEdit?idChiNhanh=${idChiNhanh}`
-        );
+        const result = await http.get(`api/services/app/CuaHang/GetCongTyForEdit?idChiNhanh=${idChiNhanh}`);
         Cookies.set('IdCuaHang', result.data.result['id'], { expires: 1 });
         return result.data.result;
     }

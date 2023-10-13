@@ -28,27 +28,21 @@ class GroupProductService {
         return xx;
     };
     InsertNhomHangHoa = async (param: ModelNhomHangHoa) => {
-        const xx = await http
-            .post(`api/services/app/NhomHangHoa/CreateNhomHangHoa`, param)
-            .then((res) => {
-                return res.data.result;
-            });
+        const xx = await http.post(`api/services/app/NhomHangHoa/CreateNhomHangHoa`, param).then((res) => {
+            return res.data.result;
+        });
         return xx;
     };
     UpdateNhomHangHoa = async (param: ModelNhomHangHoa) => {
-        const xx = await http
-            .post(`api/services/app/NhomHangHoa/UpdateNhomHangHoa`, param)
-            .then((res) => {
-                return res.data.result;
-            });
+        const xx = await http.post(`api/services/app/NhomHangHoa/UpdateNhomHangHoa`, param).then((res) => {
+            return res.data.result;
+        });
         return xx;
     };
     XoaNhomHangHoa = async (idNhomHangHoa: string) => {
-        const xx = await http
-            .post(`api/services/app/NhomHangHoa/XoaNhomHangHoa?id=${idNhomHangHoa}`)
-            .then((res) => {
-                return res.data.result;
-            });
+        const xx = await http.post(`api/services/app/NhomHangHoa/XoaNhomHangHoa?id=${idNhomHangHoa}`).then((res) => {
+            return res.data.result;
+        });
         return xx;
     };
 }

@@ -21,7 +21,6 @@ import {
     Typography
 } from '@mui/material';
 import { Form, Formik } from 'formik';
-
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';

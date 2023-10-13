@@ -19,14 +19,8 @@ class NhanVienService {
         });
         return result.data.result;
     }
-    public async search(
-        keyword: string,
-        input: PagedFilterAndSortedRequest
-    ): Promise<PagedResultDto<NhanSuItemDto>> {
-        const result = await http.post(
-            `api/services/app/NhanSu/Search?keyWord=${keyword.toString()}`,
-            input
-        );
+    public async search(keyword: string, input: PagedFilterAndSortedRequest): Promise<PagedResultDto<NhanSuItemDto>> {
+        const result = await http.post(`api/services/app/NhanSu/Search?keyWord=${keyword.toString()}`, input);
         return result.data.result;
     }
     public async getNhanSu(id: string): Promise<CreateOrUpdateNhanSuDto> {

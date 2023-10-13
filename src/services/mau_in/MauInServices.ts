@@ -13,9 +13,7 @@ class MauInServices {
     };
     GetContentMauInMacDinh = async (type = 1, idLoaiChungTu = 1) => {
         const xx = await http
-            .get(
-                `api/services/app/MauIn/GetContentMauInMacDinh?type=${type}&idLoaiChungTu=${idLoaiChungTu}`
-            )
+            .get(`api/services/app/MauIn/GetContentMauInMacDinh?type=${type}&idLoaiChungTu=${idLoaiChungTu}`)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });

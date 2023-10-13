@@ -1,5 +1,4 @@
 import { Box, TextField, Typography, Select, Checkbox, Button, Grid, MenuItem, FormControlLabel } from '@mui/material';
-
 import { SelectChangeEvent } from '@mui/material/Select';
 import React, { useState } from 'react';
 import { ReactComponent as HelpIcon } from '../../../../images/help-circle.svg';

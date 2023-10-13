@@ -6,9 +6,7 @@ import Cookies from 'js-cookie';
 
 class UpLoadFileService {
     async downloadImportTemplate(fileName: string): Promise<IFileDto> {
-        const res = await http.get(
-            `/api/upload-file/download-import-template?fileName=${fileName}`
-        );
+        const res = await http.get(`/api/upload-file/download-import-template?fileName=${fileName}`);
         return res.data;
     }
 

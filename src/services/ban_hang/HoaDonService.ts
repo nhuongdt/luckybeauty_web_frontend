@@ -17,10 +17,7 @@ class HoaDonService {
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon', input);
         return result.data.result;
     };
-    CreateHoaDon2 = async (input: {
-        hoadon: PageHoaDonDto;
-        hoadonChiTiet: PageHoaDonChiTietDto[];
-    }) => {
+    CreateHoaDon2 = async (input: { hoadon: PageHoaDonDto; hoadonChiTiet: PageHoaDonChiTietDto[] }) => {
         const result = await http.post('api/services/app/HoaDon/CreateHoaDon2', input);
 
         return result.data.result;
@@ -37,10 +34,7 @@ class HoaDonService {
     };
     Update_ChiTietHoaDon = async (input: any, idHoaDon: string) => {
         // only update chitiet
-        const result = await http.put(
-            `api/services/app/HoaDon/Update_ChiTietHoaDon?idHoadon=${idHoaDon}`,
-            input
-        );
+        const result = await http.put(`api/services/app/HoaDon/Update_ChiTietHoaDon?idHoadon=${idHoaDon}`, input);
         return result.data.result;
     };
     GetListHoaDon = async (input: HoaDonRequestDto): Promise<PagedResultDto<PageHoaDonDto>> => {
@@ -58,9 +52,7 @@ class HoaDonService {
         if (utils.checkNull(idHoaDon)) {
             return [];
         }
-        const result = await http.get(
-            `api/services/app/HoaDon/GetChiTietHoaDon_byIdHoaDon?idHoaDon=${idHoaDon}`
-        );
+        const result = await http.get(`api/services/app/HoaDon/GetChiTietHoaDon_byIdHoaDon?idHoaDon=${idHoaDon}`);
         return result.data.result;
     };
     DeleteHoaDon = async (idHoaDon: string) => {

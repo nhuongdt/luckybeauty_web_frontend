@@ -17,7 +17,6 @@ import AppConsts from '../../../../lib/appconst';
 import suggestStore from '../../../../stores/suggestStore';
 import { observer } from 'mobx-react';
 import nhanVienStore from '../../../../stores/nhanVienStore';
-
 interface ModalProps {
     visiable: boolean;
     handleClose: () => void;

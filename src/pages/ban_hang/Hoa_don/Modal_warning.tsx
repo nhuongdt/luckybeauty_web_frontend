@@ -7,6 +7,7 @@ interface DialogComponentProps {
     onClose: () => void;
     onOK: () => void;
 }
+
 const ModalWarning: React.FC<DialogComponentProps> = ({ open, onClose, onOK }) => {
     return (
         <Dialog open={open} onClose={onClose}>

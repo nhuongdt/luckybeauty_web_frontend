@@ -1,11 +1,9 @@
 import React, { useContext } from 'react';
-
 import { Box, Grid, Tabs, Tab, Stack, Button, Select, IconButton } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import TabPanel from '../../../../components/TabPanel/TabPanel';
 import { OpenInNew, LocalOffer } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import PageHoaDonDto from '../../../../services/ban_hang/PageHoaDonDto';
 import PageHoaDonChiTietDto from '../../../../services/ban_hang/PageHoaDonChiTietDto';
@@ -340,7 +338,11 @@ export default function PageMauIn({ xx }: any) {
                                 }
                             }}
                             aria-label="basic tabs example">
-                            <InfoOutlinedIcon titleAccess="Danh sách token mẫu in" sx={{ color: 'chocolate' }} onClick={() => setIsShowToken(true)} />
+                            <InfoOutlinedIcon
+                                titleAccess="Danh sách token mẫu in"
+                                sx={{ color: 'chocolate' }}
+                                onClick={() => setIsShowToken(true)}
+                            />
 
                             <Tab label="Hóa đơn" value={1} />
                             <Tab label="Phiếu thu" value={11} />

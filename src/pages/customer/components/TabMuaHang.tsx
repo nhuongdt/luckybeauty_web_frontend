@@ -9,6 +9,7 @@ import CustomTablePagination from '../../../components/Pagination/CustomTablePag
 import { format as formatDate } from 'date-fns';
 import AppConsts from '../../../lib/appconst';
 import { useParams } from 'react-router-dom';
+
 const TabMuaHang: React.FC = () => {
     const { khachHangId } = useParams();
     const [curentPage, setCurrentPage] = useState<number>(1);
