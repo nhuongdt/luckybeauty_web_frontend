@@ -404,6 +404,18 @@ export const appRouters: AppRouteProps = {
                             component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_ban_hang'))
                         },
                         {
+                            path: '/bao-cao/bao-cao-tai-chinh',
+                            permission: 'Pages',
+                            title: 'Báo cáo tài chính',
+                            name: 'baoCaoBanHang',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_tai_chinh'))
+                        },
+                        {
                             path: '/bao-cao/bao-cao-dat-lich',
                             permission: 'Pages',
                             title: 'Báo cáo đặt lịch',

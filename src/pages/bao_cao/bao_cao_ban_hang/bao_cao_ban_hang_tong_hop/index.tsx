@@ -12,7 +12,7 @@ import {
     TextField,
     Typography
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import UploadIcon from '../../../../images/upload.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
 import suggestStore from '../../../../stores/suggestStore';
@@ -26,6 +26,7 @@ import CustomTablePagination from '../../../../components/Pagination/CustomTable
 import fileDowloadService from '../../../../services/file-dowload.service';
 import { startOfDay, endOfDay, format as formatDate, endOfMonth, startOfMonth } from 'date-fns';
 import DateTimeFilterCustom from '../../components/DateTimeFilterCustom';
+import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 const BAN_HANG_CHI_TIET = 2;
 const BAN_HANG_TONG_HOP = 1;
 const HOM_NAY = 'Hôm nay';
@@ -40,6 +41,8 @@ const NAM_NAY = 'Năm này';
 const NAM_TRUOC = 'Năm trước';
 const TUY_CHON = 'Tùy chọn';
 const BaoCaoBanHangTongHop = ({ handleChangeTab }: any) => {
+    const appContext = useContext(AppContext);
+    const chinhanh = appContext.chinhanhCurrent;
     const [filter, setFilter] = useState('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [maxResultCount, setMaxResultCount] = useState<number>(10);
@@ -63,7 +66,7 @@ const BaoCaoBanHangTongHop = ({ handleChangeTab }: any) => {
     const getData = async () => {
         const result = await baoCaoService.getBaoCaoBanHangTongHop({
             filter: filter,
-            idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
+            idChiNhanh: chinhanh.id,
             idDichVu: idDichVu === '' ? undefined : idDichVu,
             maxResultCount: maxResultCount,
             skipCount: currentPage,
@@ -78,7 +81,7 @@ const BaoCaoBanHangTongHop = ({ handleChangeTab }: any) => {
     };
     useEffect(() => {
         getData();
-    }, [currentPage, maxResultCount, sortBy, sortType, idDichVu]);
+    }, [currentPage, maxResultCount, sortBy, sortType, idDichVu, chinhanh.id]);
     const handlePageChange = async (event: any, value: number) => {
         setCurrentPage(value);
     };

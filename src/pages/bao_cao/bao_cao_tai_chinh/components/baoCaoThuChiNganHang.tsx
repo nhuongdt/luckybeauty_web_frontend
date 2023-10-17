@@ -3,73 +3,54 @@ import {
     Box,
     Button,
     ButtonGroup,
-    Checkbox,
     Grid,
     IconButton,
     InputAdornment,
-    Popover,
     SelectChangeEvent,
     TextField,
     Typography
 } from '@mui/material';
-import { useContext, useEffect, useState } from 'react';
+import { observer } from 'mobx-react';
+import { TextTranslate } from '../../../../components/TableLanguage';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import suggestStore from '../../../../stores/suggestStore';
 import UploadIcon from '../../../../images/upload.svg';
 import SearchIcon from '../../../../images/search-normal.svg';
-import abpCustom from '../../../../components/abp-custom';
-import suggestStore from '../../../../stores/suggestStore';
-import { observer } from 'mobx-react';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { TextTranslate } from '../../../../components/TableLanguage';
-import baoCaoService from '../../../../services/bao_cao/bao_cao_ban_hang/baoCaoService';
+import { useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
-import { BaoCaoBanHangChiTietDto } from '../../../../services/bao_cao/bao_cao_ban_hang/dto/BaoCaoBanHangChiTiet';
-import { format as formatDate, startOfDay, endOfDay, startOfMonth, endOfMonth } from 'date-fns';
-import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
-const BAN_HANG_CHI_TIET = 2;
-const BAN_HANG_TONG_HOP = 1;
-const HOM_NAY = 'Hôm nay';
-const HOM_QUA = 'Hôm qua';
-const TUAN_NAY = 'Tuần này';
-const TUAN_TRUOC = 'Tuần trước';
-const THANG_NAY = 'Tháng này';
-const THANG_TRUOC = 'Tháng trước';
-const QUY_NAY = 'Quý này';
-const QUY_TRUOC = 'Quý trước';
-const NAM_NAY = 'Năm này';
-const NAM_TRUOC = 'Năm trước';
-const TUY_CHON = 'Tùy chọn';
+import { format as formatDate, startOfMonth, endOfMonth } from 'date-fns';
+import baoCaoService from '../../../../services/bao_cao/bao_cao_ban_hang/baoCaoService';
 import fileDowloadService from '../../../../services/file-dowload.service';
 import DateTimeFilterCustom from '../../components/DateTimeFilterCustom';
+import CustomTablePagination from '../../../../components/Pagination/CustomTablePagination';
+import { BaoCaoSoQuyDto } from '../../../../services/bao_cao/bao_cao_ban_hang/dto/BaoCaoSoQuyDto';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
-const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
+const TIEN_MAT = 1;
+const NGAN_HANG = 2;
+const TONG_QUY = 3;
+const CHI_NHANH = 4;
+
+const BaoCaoSoQuy_HinhThucThanhToanNganHang = ({ handleChangeTab }: any) => {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const [filter, setFilter] = useState('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [maxResultCount, setMaxResultCount] = useState<number>(10);
-    const [sortBy, setSortBy] = useState('maHoaDon');
+    const [sortBy, setSortBy] = useState('tenHangHoa');
     const [sortType, setSortType] = useState('desc');
     const [timeFrom, setTimeFrom] = useState<Date>(startOfMonth(new Date()));
     const [timeTo, setTimeTo] = useState<Date>(endOfMonth(new Date()));
-    const [dateTimeType, setDateTimeType] = useState(THANG_NAY);
+    const [dateTimeType, setDateTimeType] = useState('Tháng này');
     const [idDichVu, setIdDichVu] = useState('');
-    const [dataRow, setDataRow] = useState<BaoCaoBanHangChiTietDto[]>([]);
+    const [dataRow, setDataRow] = useState<BaoCaoSoQuyDto[]>([]);
     const [totalPage, setTotalPage] = useState(0);
     const [totalDataRow, setTotalDataRow] = useState(0);
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLButtonElement | null>(null);
     const [disableSelectDate, setDisableSelectDate] = useState(true);
-    useEffect(() => {
-        getSuggest();
-    }, []);
-    const getSuggest = async () => {
-        await suggestStore.getSuggestDichVu();
-    };
     const getData = async () => {
-        setDataRow([]);
-        const result = await baoCaoService.getBaoCaoBanHangChiTiet({
+        const result = await baoCaoService.getBaoCaoTaiChinh_ThuChiNganHang({
             filter: filter,
             idChiNhanh: chinhanh.id,
-            idDichVu: idDichVu === '' ? undefined : idDichVu,
             maxResultCount: maxResultCount,
             skipCount: currentPage,
             timeFrom: formatDate(timeFrom, 'yyyy/MM/dd HH:mm:ss'),
@@ -81,7 +62,6 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
         setTotalDataRow(result.totalCount);
         setTotalPage(Math.ceil(result.totalCount / maxResultCount));
     };
-
     useEffect(() => {
         getData();
     }, [currentPage, maxResultCount, sortBy, sortType, idDichVu, chinhanh.id]);
@@ -103,10 +83,9 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
         setSortType(sortType);
     };
     const exportToExcel = async () => {
-        const result = await baoCaoService.exportBaoCaoBanHangChiTiet({
+        const result = await baoCaoService.exportBaoCaoTaiChinh_ThuChiNganHang({
             filter: filter,
             idChiNhanh: Cookies.get('IdChiNhanh') ?? undefined,
-            idDichVu: idDichVu === '' ? undefined : idDichVu,
             maxResultCount: maxResultCount,
             skipCount: currentPage,
             timeFrom: formatDate(timeFrom, 'yyyy/MM/dd HH:mm:ss'),
@@ -119,8 +98,8 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
     const columns: GridColDef[] = [
         {
             field: 'maHoaDon',
-            headerName: 'Mã hóa đơn',
-            minWidth: 90,
+            headerName: 'Mã phiếu',
+            minWidth: 100,
             flex: 0.8,
             renderHeader: (params) => <Box sx={{ fontWeight: '700' }}>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
@@ -134,8 +113,8 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
         },
         {
             field: 'ngayLapHoaDon',
-            headerName: 'Ngày lập',
-            minWidth: 120,
+            headerName: 'Thời gian',
+            minWidth: 150,
             flex: 0.8,
             renderCell: (params) => (
                 <Typography
@@ -148,16 +127,16 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         },
         {
-            field: 'tenKhachHang',
-            headerName: 'Tên khách hàng',
-            minWidth: 150,
+            field: 'tienThu',
+            headerName: 'Tiền thu',
+            minWidth: 90,
             flex: 0.7,
             renderCell: (params) => (
                 <Typography
                     fontSize="13px"
                     fontWeight="400"
                     sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Typography>
             ),
             renderHeader: (params) => (
@@ -172,9 +151,9 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
             )
         },
         {
-            field: 'soDienThoai',
-            headerName: 'Số điện thoại',
-            minWidth: 75,
+            field: 'tienChi',
+            headerName: 'Tiền chi',
+            minWidth: 150,
             flex: 1,
             renderHeader: (params) => (
                 <Box
@@ -191,112 +170,45 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
                     fontSize="13px"
                     fontWeight="400"
                     sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Typography>
             )
         },
         {
-            field: 'nhomHangHoa',
-            headerName: 'Tên nhóm dịch vụ',
+            field: 'tonLuyKe',
+            headerName: 'Lũy kế',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
+                return (
+                    <Typography
+                        fontSize="13px"
+                        fontWeight="400"
+                        sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                        {params.value}
+                    </Typography>
+                );
+            },
+            renderHeader: (params) => (
+                <Box
+                    sx={{
+                        fontWeight: '500',
+                        color: '#525F7A',
+                        fontSize: '13px',
+                        fontFamily: 'Roboto'
+                    }}>
+                    {params.colDef.headerName}
+                </Box>
+            )
+        },
+        {
+            field: 'ghiChu',
+            headerName: 'Ghi chú',
             minWidth: 120,
             flex: 1,
             renderCell: (params) => (
-                <Typography
-                    fontSize="13px"
-                    fontWeight="400"
-                    sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                <Box width="100%" textAlign="left" fontSize="13px">
                     {params.value}
-                </Typography>
-            ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
-        },
-        {
-            field: 'tenHangHoa',
-            headerName: 'Tên dịch vụ',
-            minWidth: 120,
-            flex: 1,
-            renderCell: (params) => (
-                <Typography
-                    fontSize="13px"
-                    fontWeight="400"
-                    sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {params.value}
-                </Typography>
-            ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
-        },
-        {
-            field: 'giaBan',
-            headerName: 'Đơn giá',
-            minWidth: 75,
-            flex: 1,
-            renderCell: (params) => (
-                <Box width="100%" textAlign="left" fontSize="13px">
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
-        },
-        {
-            field: 'soLuong',
-            headerName: 'Số lượng',
-            minWidth: 50,
-            flex: 1,
-            renderCell: (params) => (
-                <Box width="100%" textAlign="left" fontSize="13px">
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
-                </Box>
-            ),
-            renderHeader: (params) => (
-                <Box
-                    sx={{
-                        fontWeight: '500',
-                        color: '#525F7A',
-                        fontSize: '13px',
-                        fontFamily: 'Roboto'
-                    }}>
-                    {params.colDef.headerName}
-                </Box>
-            )
-        },
-        {
-            field: 'thanhTien',
-            headerName: 'Thành tiền',
-            minWidth: 120,
-            flex: 1,
-            renderCell: (params) => (
-                <Box width="100%" textAlign="left" fontSize="13px">
-                    {new Intl.NumberFormat('vi-VN').format(params.value)}
                 </Box>
             ),
             renderHeader: (params) => (
@@ -319,7 +231,7 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
             <Grid container alignItems="center" justifyContent="space-between">
                 <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                     <Typography variant="h1" fontSize="16px" fontWeight="700" color="#333233">
-                        Báo cáo bán hàng chi tiết
+                        Báo cáo sổ quỹ ngân hàng
                     </Typography>
                     <Box className="form-search">
                         <TextField
@@ -371,7 +283,6 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
                             height: '40px',
                             borderRadius: '4px!important'
                         }}
-                        aria-describedby={idDateSelect}
                         onClick={handOpenDateSelect}
                         className="btn-outline-hover">
                         {dateTimeType}
@@ -428,9 +339,9 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
                                 }
                             }}
                             onClick={() => {
-                                handleChangeTab(BAN_HANG_TONG_HOP);
+                                handleChangeTab(TIEN_MAT);
                             }}>
-                            Tổng hợp
+                            Tiền mặt
                         </Button>
                         <Button
                             variant={'outlined'}
@@ -443,9 +354,54 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
                                 boxShadow: 'none!important'
                             }}
                             onClick={() => {
-                                handleChangeTab(BAN_HANG_CHI_TIET);
+                                handleChangeTab(NGAN_HANG);
                             }}>
-                            Chi tiết
+                            Ngân hàng
+                        </Button>
+
+                        <Button
+                            variant={'outlined'}
+                            sx={{
+                                fontSize: '16px',
+                                textTransform: 'unset',
+                                color: '#8492AE',
+
+                                borderColor: 'transparent!important',
+                                boxShadow: 'none!important',
+                                '&:hover': {
+                                    color: '#319DFF',
+                                    backgroundColor: '#FFF',
+                                    border: 'none !important',
+                                    borderBottom: '2px outset #319DFF !important',
+                                    boxShadow: 'none!important'
+                                }
+                            }}
+                            onClick={() => {
+                                handleChangeTab(TONG_QUY);
+                            }}>
+                            Tổng quỹ
+                        </Button>
+                        <Button
+                            variant={'outlined'}
+                            sx={{
+                                fontSize: '16px',
+                                textTransform: 'unset',
+                                color: '#8492AE',
+
+                                borderColor: 'transparent!important',
+                                boxShadow: 'none!important',
+                                '&:hover': {
+                                    color: '#319DFF',
+                                    backgroundColor: '#FFF',
+                                    border: 'none !important',
+                                    borderBottom: '2px outset #319DFF !important',
+                                    boxShadow: 'none!important'
+                                }
+                            }}
+                            onClick={() => {
+                                handleChangeTab(CHI_NHANH);
+                            }}>
+                            Chi nhánh
                         </Button>
                     </ButtonGroup>
                 </Grid>
@@ -485,7 +441,6 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
                 disableRowSelectionOnClick
                 rowHeight={46}
                 rows={dataRow}
-                getRowId={(row) => row.maHoaDon}
                 columns={columns}
                 checkboxSelection={false}
                 hideFooter
@@ -493,10 +448,11 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
                 sortingOrder={['desc', 'asc']}
                 onSortModelChange={(newSortModel) => {
                     if (newSortModel.length > 0) {
-                        onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                        onSort(newSortModel[0].sort?.toString() ?? '', newSortModel[0].field ?? '');
                     }
                 }}
             />
+
             <CustomTablePagination
                 currentPage={currentPage}
                 rowPerPage={maxResultCount}
@@ -526,4 +482,4 @@ const BaoCaoBanHangChiTietPage = ({ handleChangeTab }: any) => {
         </Box>
     );
 };
-export default observer(BaoCaoBanHangChiTietPage);
+export default observer(BaoCaoSoQuy_HinhThucThanhToanNganHang);

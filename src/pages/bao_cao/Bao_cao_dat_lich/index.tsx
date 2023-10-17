@@ -44,7 +44,7 @@ const BaoCaoDatLichPage = () => {
     const [filter, setFilter] = useState('');
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [maxResultCount, setMaxResultCount] = useState<number>(10);
-    const [sortBy, setSortBy] = useState('tenHangHoa');
+    const [sortBy, setSortBy] = useState('bookingDate');
     const [sortType, setSortType] = useState('desc');
     const [timeFrom, setTimeFrom] = useState<Date>(startOfMonth(new Date()));
     const [timeTo, setTimeTo] = useState<Date>(endOfMonth(new Date()));

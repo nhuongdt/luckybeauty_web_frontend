@@ -6,6 +6,7 @@ import {
     Grid,
     IconButton,
     InputAdornment,
+    Stack,
     TextField,
     Typography
 } from '@mui/material';
@@ -20,12 +21,17 @@ import { enqueueSnackbar } from 'notistack';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AuthenticationStore from '../../../stores/authenticationStore';
 import Cookies from 'js-cookie';
+import PersonIcon from '@mui/icons-material/Person';
+import utils from '../../../utils/utils';
+import uploadFileService from '../../../services/uploadFileService';
 class ProfileScreen extends Component {
     state = {
         showCurrentPassword: false,
         showNewPassword: false,
         showConfirmPassword: false,
-        profileAvartar: ''
+        profileAvartar: '',
+        googleDrive_fileId: '',
+        fileImage: {} as File
     };
     componentDidMount(): void {
         this.getData();
@@ -113,6 +119,18 @@ class ProfileScreen extends Component {
                                         initialValues={profileDto}
                                         validationSchema={profileSchema}
                                         onSubmit={async (values) => {
+                                            let fileId = this.state.googleDrive_fileId;
+                                            const fileSelect = this.state.fileImage;
+                                            if (!utils.checkNull(this.state.profileAvartar)) {
+                                                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
+                                                    fileSelect,
+                                                    'NhanVien'
+                                                );
+                                                values.avatar =
+                                                    fileId !== ''
+                                                        ? `https://drive.google.com/uc?export=view&id=${fileId}`
+                                                        : '';
+                                            }
                                             const createOrEdit = await userService.updateProfile(values);
                                             if (createOrEdit === true) {
                                                 await enqueueSnackbar('Cập nhật thành công', {
@@ -125,9 +143,9 @@ class ProfileScreen extends Component {
                                                 await Cookies.set('email', values.emailAddress, {
                                                     expires: 1
                                                 });
-                                                //await Cookies.set('avatar', values.avatar, {
-                                                //     expires: 1
-                                                // });
+                                                await Cookies.set('avatar', values.avatar, {
+                                                    expires: 1
+                                                });
                                                 window.location.reload();
                                             } else {
                                                 enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau', {
@@ -136,7 +154,7 @@ class ProfileScreen extends Component {
                                                 });
                                             }
                                         }}>
-                                        {({ handleChange, errors, values }) => (
+                                        {({ handleChange, errors, values, setFieldValue }) => (
                                             <Form
                                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                                     if (event.key === 'Enter') {
@@ -144,6 +162,66 @@ class ProfileScreen extends Component {
                                                     }
                                                 }}>
                                                 <Grid container alignItems={'center'} spacing={2}>
+                                                    <Grid item xs={12} marginTop={2}>
+                                                        <Box>
+                                                            <Stack alignItems="center" position={'relative'}>
+                                                                {!utils.checkNull(values.avatar) ? (
+                                                                    <Box
+                                                                        sx={{
+                                                                            position: 'relative'
+                                                                        }}>
+                                                                        <img
+                                                                            src={values.avatar}
+                                                                            className="user-image-upload"
+                                                                        />
+                                                                    </Box>
+                                                                ) : (
+                                                                    <div>
+                                                                        <PersonIcon className="user-icon-upload" />
+                                                                    </div>
+                                                                )}
+                                                                <TextField
+                                                                    type="file"
+                                                                    name="avatar"
+                                                                    sx={{
+                                                                        position: 'absolute',
+                                                                        top: 0,
+                                                                        left: 0,
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        opacity: 0,
+                                                                        '& input': {
+                                                                            height: '100%'
+                                                                        },
+                                                                        '& div': {
+                                                                            height: '100%'
+                                                                        }
+                                                                    }}
+                                                                    onChange={(
+                                                                        e: React.ChangeEvent<HTMLInputElement>
+                                                                    ) => {
+                                                                        if (e.target.files && e.target.files[0]) {
+                                                                            const file: File = e.target.files[0];
+                                                                            const reader = new FileReader();
+                                                                            reader.readAsDataURL(file);
+                                                                            reader.onload = () => {
+                                                                                this.setState((prev) => ({
+                                                                                    ...prev,
+                                                                                    profileAvartar:
+                                                                                        reader.result?.toString() ?? '',
+                                                                                    fileImage: file
+                                                                                }));
+                                                                                setFieldValue(
+                                                                                    'avatar',
+                                                                                    reader.result?.toString() ?? ''
+                                                                                );
+                                                                            };
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </Stack>
+                                                        </Box>
+                                                    </Grid>
                                                     <Grid item container xs={5}>
                                                         <FormGroup>
                                                             {LableForm('Họ')}
