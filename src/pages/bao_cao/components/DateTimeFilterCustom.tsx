@@ -217,6 +217,10 @@ const DateTimeFilterCustom = ({
                                         open={false}
                                         disableOpenPicker={true}
                                         value={timeFrom}
+                                        disabled={disableSelectDate}
+                                        onChange={(value) => {
+                                            setTimeFrom(startOfDay(new Date(value)));
+                                        }}
                                         slotProps={{
                                             textField: {
                                                 size: 'small',
@@ -292,6 +296,10 @@ const DateTimeFilterCustom = ({
                                         open={false}
                                         disableOpenPicker={true}
                                         value={timeTo}
+                                        disabled={disableSelectDate}
+                                        onChange={(value) => {
+                                            setTimeTo(endOfDay(new Date(value)));
+                                        }}
                                         slotProps={{
                                             textField: {
                                                 size: 'small',

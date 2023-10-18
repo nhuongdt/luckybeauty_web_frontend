@@ -19,7 +19,13 @@ import {
     IconButton,
     Checkbox,
     FormGroup,
-    FormControlLabel
+    FormControlLabel,
+    List,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Divider,
+    ListItem
 } from '@mui/material';
 import './header.css';
 import { ReactComponent as LogoNew } from '../../images/logoNew.svg';
@@ -77,6 +83,9 @@ const Header: React.FC<HeaderProps> = (
         setAnchorEl(null);
     };
     const handleCloseThongBao = () => {
+        notificationStore.skipCountNotification = 0;
+        notificationStore.maxResultCountNotification = 5;
+        notificationStore.GetUserNotification();
         setThongBaoAnchorEl(null);
     };
     const CloseSettingThongBao = () => {
@@ -374,90 +383,132 @@ const Header: React.FC<HeaderProps> = (
                                                     {notificationStore.notifications?.unreadCount ?? 0}
                                                 </Box>
                                             </Box>
-                                            <IconButton
-                                                onClick={handleSettingClick}
-                                                sx={{
-                                                    '&:hover svg': {
-                                                        filter: 'var(--color-hoverIcon)'
-                                                    }
-                                                }}>
-                                                <SettingIcon />
-                                            </IconButton>
+                                            <Box display={'flex'} justifyContent={'end'} alignItems={'center'}>
+                                                <Button
+                                                    sx={{ fontSize: '14px' }}
+                                                    onClick={() => {
+                                                        notificationStore.setAllNotificationAsRead();
+                                                    }}>
+                                                    Đánh dấu đã đọc tất cả
+                                                </Button>
+                                                <IconButton
+                                                    onClick={handleSettingClick}
+                                                    sx={{
+                                                        '&:hover svg': {
+                                                            filter: 'var(--color-hoverIcon)'
+                                                        }
+                                                    }}>
+                                                    <SettingIcon />
+                                                </IconButton>
+                                            </Box>
                                         </Box>
                                     </MenuItem>
                                 </Box>
                                 <Box alignItems={'center'}>
-                                    {notificationStore.notifications?.items.map((item, index) => (
-                                        <Box
-                                            key={index}
-                                            sx={{
-                                                padding: '0px 16px',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'space-between'
-                                            }}>
-                                            <Box marginRight={'10px'}>
-                                                {item.notification.severity === NotificationSeverity.Info ? (
-                                                    <InfoOutlinedIcon color="info" />
-                                                ) : null}
-                                                {item.notification.severity === NotificationSeverity.Error ? (
-                                                    <ErrorOutlineOutlinedIcon color="error" />
-                                                ) : null}
-                                                {item.notification.severity === NotificationSeverity.Fatal
-                                                    ? null
-                                                    : null}
-                                                {item.notification.severity === NotificationSeverity.Success ? (
-                                                    <CheckCircleOutlineOutlinedIcon color="success" />
-                                                ) : null}
-                                                {item.notification.severity === NotificationSeverity.Warn ? (
-                                                    <WarningAmberOutlinedIcon color="warning" />
-                                                ) : null}
-                                            </Box>
-                                            <Box
-                                                sx={{
-                                                    width: '100%',
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    gap: '10px',
-                                                    paddingY: '8px',
-                                                    borderBottom: '1px solid #F2F2F2'
+                                    <List>
+                                        {notificationStore.notifications?.items.map((item, key) => (
+                                            <ListItemButton
+                                                key={key}
+                                                disableGutters
+                                                divider
+                                                onClick={async () => {
+                                                    if (item.state === UserNotificationState.Unread) {
+                                                        await NotificationService.SetNotificationAsRead(item.id);
+                                                        await notificationStore.GetUserNotification();
+                                                    }
+                                                    if (item.url != '' && item.url != undefined && item.url != null) {
+                                                        handleCloseThongBao();
+                                                        navigate(item.url);
+                                                    }
                                                 }}>
-                                                <Typography fontSize="16px" fontWeight="500">
-                                                    {item.notification.notificationName}
-                                                </Typography>
-                                                <Typography fontSize="13px">{item.notification.content}</Typography>
-                                                <Box
+                                                <ListItemIcon
                                                     sx={{
                                                         display: 'flex',
-                                                        flexDirection: 'row',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center'
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center'
                                                     }}>
-                                                    <Typography
-                                                        sx={{
-                                                            fontSize: '10px',
-                                                            fontWeight: '300',
-                                                            float: 'left'
-                                                        }}>
-                                                        {formatDistanceToNow(new Date(item.notification.creationTime), {
-                                                            addSuffix: true
-                                                        })}
-                                                    </Typography>
-                                                    {item.state === UserNotificationState.Unread ? (
-                                                        <Button
-                                                            onClick={async () => {
-                                                                await NotificationService.SetNotificationAsRead(
-                                                                    item.id
-                                                                );
-                                                                await notificationStore.GetUserNotification();
-                                                            }}>
-                                                            Đánh dấu đã đọc
-                                                        </Button>
+                                                    {item.notification.severity === NotificationSeverity.Info ? (
+                                                        <InfoOutlinedIcon
+                                                            sx={{
+                                                                color:
+                                                                    item.state == UserNotificationState.Read
+                                                                        ? '#ccc'
+                                                                        : ''
+                                                            }}
+                                                            color="info"
+                                                        />
                                                     ) : null}
-                                                </Box>
-                                            </Box>
-                                        </Box>
-                                    ))}
+                                                    {item.notification.severity === NotificationSeverity.Error ? (
+                                                        <ErrorOutlineOutlinedIcon
+                                                            sx={{
+                                                                color:
+                                                                    item.state == UserNotificationState.Read
+                                                                        ? '#ccc'
+                                                                        : ''
+                                                            }}
+                                                            color="error"
+                                                        />
+                                                    ) : null}
+                                                    {item.notification.severity === NotificationSeverity.Fatal
+                                                        ? null
+                                                        : null}
+                                                    {item.notification.severity === NotificationSeverity.Success ? (
+                                                        <CheckCircleOutlineOutlinedIcon
+                                                            sx={{
+                                                                color:
+                                                                    item.state == UserNotificationState.Read
+                                                                        ? '#ccc'
+                                                                        : ''
+                                                            }}
+                                                            color="success"
+                                                        />
+                                                    ) : null}
+                                                    {item.notification.severity === NotificationSeverity.Warn ? (
+                                                        <WarningAmberOutlinedIcon
+                                                            sx={{
+                                                                color:
+                                                                    item.state == UserNotificationState.Read
+                                                                        ? '#ccc'
+                                                                        : ''
+                                                            }}
+                                                            color="warning"
+                                                        />
+                                                    ) : null}
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    sx={{
+                                                        color: item.state == UserNotificationState.Read ? '#ccc' : ''
+                                                    }}
+                                                    primary={
+                                                        <Box display={'flex'} justifyContent={'space-between'}>
+                                                            <Typography fontSize="14px" fontWeight="500">
+                                                                {item.notification.notificationName}
+                                                            </Typography>
+                                                            <Typography
+                                                                sx={{
+                                                                    fontSize: '10px',
+                                                                    marginRight: '5px',
+                                                                    fontWeight: '300',
+                                                                    float: 'left'
+                                                                }}>
+                                                                {formatDistanceToNow(
+                                                                    new Date(item.notification.creationTime),
+                                                                    {
+                                                                        addSuffix: true
+                                                                    }
+                                                                )}
+                                                            </Typography>
+                                                        </Box>
+                                                    }
+                                                    secondary={
+                                                        <Typography fontSize="12px" fontWeight={'400'}>
+                                                            {item.notification.content}
+                                                        </Typography>
+                                                    }
+                                                />
+                                            </ListItemButton>
+                                        ))}
+                                    </List>
                                 </Box>
                                 <MenuItem
                                     sx={{
@@ -467,9 +518,19 @@ const Header: React.FC<HeaderProps> = (
                                             display: 'none'
                                         }
                                     }}>
-                                    <Button variant="text" sx={{ color: '#319DFF', margin: 'auto' }}>
-                                        Xem tất cả
-                                    </Button>
+                                    {notificationStore.maxResultCountNotification >=
+                                    notificationStore.notifications?.totalCount ? null : (
+                                        <Button
+                                            variant="text"
+                                            sx={{ color: '#319DFF', margin: 'auto' }}
+                                            onClick={async () => {
+                                                notificationStore.skipCountNotification = 0;
+                                                notificationStore.maxResultCountNotification += 5;
+                                                notificationStore.GetUserNotification();
+                                            }}>
+                                            Xem thêm
+                                        </Button>
+                                    )}
                                 </MenuItem>
                             </Box>
                         </Menu>
@@ -658,20 +719,6 @@ const Header: React.FC<HeaderProps> = (
                                     </Box>
                                 </Link>
                             </MenuItem>
-                            {/* <MenuItem
-                                className="hover"
-                                onClick={() => {
-                                    handleClose();
-                                    navigate('/settings');
-                                }}>
-                                <Box component="a" sx={{ textDecoration: 'none' }}>
-                                    <SettingIcon />
-                                    <Box component="button" className="typo">
-                                        Cài đặt
-                                    </Box>
-                                </Box>
-                            </MenuItem> */}
-
                             <MenuItem
                                 className="hover"
                                 onClick={() => {
@@ -708,28 +755,6 @@ const Header: React.FC<HeaderProps> = (
                     </Box>
                 </Grid>
             </Grid>
-            {/* <Button
-                variant="contained"
-                sx={{
-                    position: 'fixed',
-                    transition: '.1s',
-                    left: `${position.x}px`,
-                    top: `${position.y}px`,
-                    width: '48px',
-                    height: '48px',
-                    paddingX: '12px!important',  
-                    minWidth: 'unset',
-                    borderRadius: '50%',
-                    bgcolor: 'var(--color-main)!important',
-                    '& svg': {
-                        width: '24px',
-                        height: '24px'
-                    }
-                }}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}>
-                <SuportIcon /> 
-            </Button> */}
         </Box>
     );
 };
