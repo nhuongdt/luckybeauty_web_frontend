@@ -182,7 +182,7 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                 </DialogTitle>
                 <DialogContent sx={{ paddingBottom: '0' }}>
                     <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
-                        {({ handleChange, values, errors, touched, setFieldValue }) => (
+                        {({ handleChange, values, errors, touched, setFieldValue, isSubmitting }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <TabContext value={this.state.tabIndex}>
                                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -263,70 +263,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                         )}
                                                     />
                                                 </FormGroup>
-                                                {/* <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Họ
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                        }
-                                                        error={
-                                                            touched.surname && errors.surname
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.surname &&
-                                                            errors.surname && (
-                                                                <div>{errors.surname}</div>
-                                                            )
-                                                        }
-                                                        name="surname"
-                                                        type="text"
-                                                        value={values.surname}
-                                                        fullWidth
-                                                        onChange={handleChange}
-                                                        size="small"
-                                                    />
-                                                </FormGroup> */}
-                                                {/* <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Tên
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                        }
-                                                        error={
-                                                            touched.name && errors.name
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.name &&
-                                                            errors.name && <div>{errors.name}</div>
-                                                        }
-                                                        type="text"
-                                                        name="name"
-                                                        value={values.name}
-                                                        fullWidth
-                                                        onChange={handleChange}
-                                                        size="small"
-                                                    />
-                                                </FormGroup> */}
                                                 <FormGroup>
                                                     <TextField
                                                         label={
@@ -386,96 +322,6 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                                 </FormGroup>
                                             </Grid>
                                             <Grid item xs={12} display="flex" flexDirection="column" gap="16px">
-                                                {/* <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Email
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                        }
-                                                        error={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.emailAddress &&
-                                                            errors.emailAddress && (
-                                                                <div>{errors.emailAddress}</div>
-                                                            )
-                                                        }
-                                                        type="email"
-                                                        name="emailAddress"
-                                                        value={values.emailAddress}
-                                                        onChange={handleChange}
-                                                        fullWidth
-                                                        size="small"
-                                                    />
-                                                </FormGroup> */}
-                                                {/* <FormGroup>
-                                                    <NumericFormat
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Số điện thoại
-                                                            </label>
-                                                        }
-                                                        helperText={
-                                                            errors.phoneNumber && (
-                                                                <div>{errors.phoneNumber}</div>
-                                                            )
-                                                        }
-                                                        type="text"
-                                                        name="phoneNumber"
-                                                        value={values.phoneNumber}
-                                                        onChange={handleChange}
-                                                        fullWidth
-                                                        size="small"
-                                                        customInput={TextField}
-                                                    />
-                                                </FormGroup> */}
-                                                {/* <FormGroup>
-                                                    <TextField
-                                                        label={
-                                                            <label style={{ fontSize: '14px' }}>
-                                                                Tên truy cập
-                                                                <span
-                                                                    style={{
-                                                                        color: 'red',
-                                                                        marginLeft: '2px'
-                                                                    }}>
-                                                                    *
-                                                                </span>
-                                                            </label>
-                                                        }
-                                                        error={
-                                                            touched.userName && errors.userName
-                                                                ? true
-                                                                : false
-                                                        }
-                                                        helperText={
-                                                            touched.userName &&
-                                                            errors.userName && (
-                                                                <div>{errors.userName}</div>
-                                                            )
-                                                        }
-                                                        disabled={userId === 0 ? false : true}
-                                                        type="text"
-                                                        name="userName"
-                                                        value={values.userName}
-                                                        onChange={handleChange}
-                                                        fullWidth
-                                                        size="small"
-                                                    />
-                                                </FormGroup> */}
-
                                                 <FormGroup>
                                                     <TextField
                                                         label={
@@ -625,18 +471,24 @@ class CreateOrEditUser extends React.Component<ICreateOrEditUserProps> {
                                             className="btn-outline-hover">
                                             Hủy
                                         </Button>
-                                        <Button
-                                            variant="contained"
-                                            sx={{ fontSize: '14px' }}
-                                            size="small"
-                                            type="submit"
-                                            // onClick={() => {
-                                            //     this.handleSubmit(values);
-                                            // }}
-
-                                            className="btn-container-hover">
-                                            Lưu
-                                        </Button>
+                                        {!isSubmitting ? (
+                                            <Button
+                                                variant="contained"
+                                                sx={{ fontSize: '14px' }}
+                                                size="small"
+                                                type="submit"
+                                                className="btn-container-hover">
+                                                Lưu
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                sx={{ fontSize: '14px' }}
+                                                size="small"
+                                                className="btn-container-hover">
+                                                Đang lưu
+                                            </Button>
+                                        )}
                                     </Box>
                                 </DialogActions>
                             </Form>

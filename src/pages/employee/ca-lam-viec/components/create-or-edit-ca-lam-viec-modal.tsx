@@ -81,7 +81,7 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                 </DialogTitle>
                 <DialogContent>
                     <Formik initialValues={initValues} validationSchema={rules} onSubmit={handleSubmit}>
-                        {({ values, handleChange, errors, touched }) => (
+                        {({ values, handleChange, errors, touched, isSubmitting }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -254,13 +254,22 @@ class CreateOrEditCaLamViecDialog extends Component<CreateOrEditProps> {
                                         className="btn-cancel-dialog btn-outline-hover">
                                         Hủy
                                     </Button>
-                                    <Button
-                                        sx={{ height: '40px' }}
-                                        variant="contained"
-                                        type="submit"
-                                        className="btn-container-hover">
-                                        Lưu
-                                    </Button>
+                                    {!isSubmitting ? (
+                                        <Button
+                                            sx={{ height: '40px' }}
+                                            variant="contained"
+                                            type="submit"
+                                            className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            sx={{ height: '40px' }}
+                                            variant="contained"
+                                            className="btn-container-hover">
+                                            Đang lưu
+                                        </Button>
+                                    )}
                                 </DialogActions>
                             </Form>
                         )}

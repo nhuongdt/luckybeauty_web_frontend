@@ -274,7 +274,7 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 await onSave();
                             }
                         }}>
-                        {({ handleChange, errors, touched, values, setFieldValue }) => (
+                        {({ handleChange, errors, touched, values, setFieldValue, isSubmitting }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -680,19 +680,34 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                             }}>
                                             Hủy
                                         </Button>
-                                        <Button
-                                            className="btn-container-hover"
-                                            variant="contained"
-                                            sx={{
-                                                fontSize: '14px',
-                                                textTransform: 'unset',
-                                                color: '#fff',
+                                        {!isSubmitting ? (
+                                            <Button
+                                                className="btn-container-hover"
+                                                variant="contained"
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    textTransform: 'unset',
+                                                    color: '#fff',
 
-                                                border: 'none'
-                                            }}
-                                            type="submit">
-                                            Lưu
-                                        </Button>
+                                                    border: 'none'
+                                                }}
+                                                type="submit">
+                                                Lưu
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                className="btn-container-hover"
+                                                variant="contained"
+                                                sx={{
+                                                    fontSize: '14px',
+                                                    textTransform: 'unset',
+                                                    color: '#fff',
+
+                                                    border: 'none'
+                                                }}>
+                                                Đang lưu
+                                            </Button>
+                                        )}
                                     </Box>
                                 </DialogActions>
                             </Form>

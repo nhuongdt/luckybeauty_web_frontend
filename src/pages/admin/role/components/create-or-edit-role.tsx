@@ -262,7 +262,18 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             id: formRef.id
         };
         return (
-            <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
+            <Dialog
+                open={visible}
+                onClose={() => {
+                    this.setState({
+                        tabIndex: '1',
+                        selectedPermissions: [],
+                        tabChange: false
+                    });
+                    onCancel();
+                }}
+                fullWidth
+                maxWidth="sm">
                 <DialogTitle>
                     <Typography variant="h3" fontSize="24px" fontWeight="700">
                         {modalType}
@@ -272,7 +283,8 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         onClick={() => {
                             this.setState({
                                 tabIndex: '1',
-                                selectedPermissions: []
+                                selectedPermissions: [],
+                                tabChange: false
                             });
                             onCancel();
                         }}
@@ -289,7 +301,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                 </DialogTitle>
                 <DialogContent>
                     <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
-                        {({ values, handleChange, errors, touched }) => (
+                        {({ values, handleChange, errors, touched, isSubmitting }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <Box>
                                     <TabContext value={this.state.tabIndex}>
@@ -464,21 +476,32 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 onClick={() => {
                                                     this.setState({
                                                         tabIndex: '1',
-                                                        selectedPermissions: []
+                                                        selectedPermissions: [],
+                                                        tabChange: false
                                                     });
                                                     onCancel();
                                                 }}
                                                 className="btn-outline-hover">
                                                 Hủy
                                             </Button>
-                                            <Button
-                                                variant="contained"
-                                                type="submit"
-                                                sx={{ fontSize: '14px', textTransform: 'unset' }}
-                                                size="small"
-                                                className="btn-container-hover">
-                                                Lưu
-                                            </Button>
+                                            {!isSubmitting ? (
+                                                <Button
+                                                    variant="contained"
+                                                    type="submit"
+                                                    sx={{ fontSize: '14px', textTransform: 'unset' }}
+                                                    size="small"
+                                                    className="btn-container-hover">
+                                                    Lưu
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{ fontSize: '14px', textTransform: 'unset' }}
+                                                    size="small"
+                                                    className="btn-container-hover">
+                                                    Đang lưu
+                                                </Button>
+                                            )}
                                         </Box>
                                     </DialogActions>
                                 </Box>

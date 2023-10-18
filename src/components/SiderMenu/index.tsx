@@ -128,6 +128,7 @@ const AppSiderMenu: React.FC<Props> = ({ collapsed, toggle, onHoverChange, Cooki
                         marginTop: '80px',
                         display: 'flex',
                         flexDirection: 'column',
+                        padding: '0px 8px',
                         gap: '4px',
                         '& .Mui-selected': {
                             bgcolor: 'transparent!important'

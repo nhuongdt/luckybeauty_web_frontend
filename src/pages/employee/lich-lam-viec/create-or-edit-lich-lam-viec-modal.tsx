@@ -132,7 +132,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                             onClose();
                         }
                     }}>
-                    {({ values, handleChange, errors, touched, setFieldValue }) => (
+                    {({ values, handleChange, errors, touched, setFieldValue, isSubmitting }) => (
                         <Form
                             onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                 if (event.key === 'Enter') {
@@ -474,9 +474,15 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                         className="btn-outline-hover">
                                         Hủy
                                     </Button>
-                                    <Button type="submit" variant="contained" className="btn-container-hover">
-                                        Lưu
-                                    </Button>
+                                    {!isSubmitting ? (
+                                        <Button type="submit" variant="contained" className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    ) : (
+                                        <Button type="submit" variant="contained" className="btn-container-hover">
+                                            Đang lưu
+                                        </Button>
+                                    )}
                                 </Box>
                             </DialogActions>
                         </Form>

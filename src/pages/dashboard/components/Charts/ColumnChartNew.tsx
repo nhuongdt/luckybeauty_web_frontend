@@ -31,7 +31,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 const ColumnChartNew: React.FC = () => {
     const data =
-        dashboardStore.thongKeDoanhThu !== undefined || dashboardStore.thongKeDoanhThu == ([] as ThongKeDoanhThu[])
+        dashboardStore.thongKeDoanhThu !== undefined &&
+        dashboardStore.thongKeDoanhThu != ([] as ThongKeDoanhThu[]) &&
+        dashboardStore.thongKeDoanhThu.length > 0
             ? dashboardStore.thongKeDoanhThu
             : [
                   { month: 'Tháng 1', thangNay: 0, thangTruoc: 0 },

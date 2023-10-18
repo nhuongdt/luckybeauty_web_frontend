@@ -91,7 +91,7 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                 </DialogTitle>
                 <DialogContent>
                     <Formik initialValues={initialValues} validationSchema={rules} onSubmit={handleSubmit}>
-                        {({ values, handleChange, errors, touched }) => (
+                        {({ values, handleChange, errors, touched, isSubmitting }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -197,9 +197,15 @@ class CreateOrEditThoiGianNghi extends React.Component<CreateOrEditProps> {
                                         className="btn-outline-hover">
                                         Hủy
                                     </Button>
-                                    <Button variant="contained" type="submit" className="btn-container-hover">
-                                        Lưu
-                                    </Button>
+                                    {!isSubmitting ? (
+                                        <Button variant="contained" type="submit" className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    ) : (
+                                        <Button variant="contained" type="submit" className="btn-container-hover">
+                                            Đang lưu
+                                        </Button>
+                                    )}
                                 </DialogActions>
                             </Form>
                         )}

@@ -114,7 +114,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                 </DialogTitle>
                 <DialogContent sx={{ pr: '0', pb: '0' }}>
                     <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
-                        {({ errors, touched, values, handleChange, setFieldValue }) => (
+                        {({ errors, touched, values, handleChange, setFieldValue, isSubmitting }) => (
                             <Form
                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                     if (event.key === 'Enter') {
@@ -424,15 +424,27 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                     onClick={onCancel}>
                                                     Hủy
                                                 </Button>
-                                                <Button
-                                                    className="btn-container-hover"
-                                                    variant="contained"
-                                                    type="submit"
-                                                    sx={{
-                                                        backgroundColor: 'var(--color-main)!important'
-                                                    }}>
-                                                    Lưu
-                                                </Button>
+                                                {!isSubmitting ? (
+                                                    <Button
+                                                        className="btn-container-hover"
+                                                        variant="contained"
+                                                        type="submit"
+                                                        sx={{
+                                                            backgroundColor: 'var(--color-main)!important'
+                                                        }}>
+                                                        Lưu
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        className="btn-container-hover"
+                                                        variant="contained"
+                                                        type="submit"
+                                                        sx={{
+                                                            backgroundColor: 'var(--color-main)!important'
+                                                        }}>
+                                                        Đang lưu
+                                                    </Button>
+                                                )}
                                             </Box>
                                         </Grid>
                                     </Grid>

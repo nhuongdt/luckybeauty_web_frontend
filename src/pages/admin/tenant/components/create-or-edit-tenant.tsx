@@ -100,7 +100,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                 initialValues={initialValues}
                                 validationSchema={rules}
                                 onSubmit={(e) => {
-                                    console.log(e);
+                                    this.handleSubmit(e);
                                 }}>
                                 {({ handleChange, values, errors, touched, isSubmitting }) => (
                                     <Form onKeyPress={this.handleFormKeyPress}>
@@ -300,9 +300,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     variant="contained"
                                                     sx={{ fontSize: '14px' }}
                                                     size="small"
-                                                    onClick={() => {
-                                                        this.handleSubmit(values);
-                                                    }}
+                                                    type="submit"
                                                     className="btn-container-hover">
                                                     Lưu
                                                 </Button>

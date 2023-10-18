@@ -31,7 +31,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 const LineChartNew: React.FC = () => {
     const data =
-        dashboardStore.thongKeLichHen !== undefined || dashboardStore.thongKeLichHen !== ([] as ThongKeLichHen[])
+        dashboardStore.thongKeLichHen !== undefined &&
+        dashboardStore.thongKeLichHen !== ([] as ThongKeLichHen[]) &&
+        dashboardStore.thongKeLichHen.length > 0
             ? dashboardStore.thongKeLichHen
             : [
                   { tuan: 'Thứ 2', tuanNay: 0, tuanTruoc: 0 },
