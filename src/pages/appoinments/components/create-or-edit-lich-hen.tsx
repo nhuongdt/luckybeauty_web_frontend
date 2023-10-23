@@ -15,7 +15,8 @@ import {
     Autocomplete,
     InputAdornment,
     InputLabel,
-    FormControl
+    FormControl,
+    Avatar
 } from '@mui/material';
 import { Component, ReactNode } from 'react';
 import { ReactComponent as AddIcon } from '../../../images/add.svg';
@@ -26,6 +27,7 @@ import Cookies from 'js-cookie';
 import { enqueueSnackbar } from 'notistack';
 import { ReactComponent as SearchIcon } from '../../../images/search-normal.svg';
 import { ReactComponent as IconMore } from '../../../images/iconContainer.svg';
+import { ReactComponent as CustomerIcon } from '../../../images/icons/profile-2user.svg';
 import rules from './create-or-edit-lich-hen.validate';
 import khachHangStore from '../../../stores/khachHangStore';
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
@@ -124,79 +126,109 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                 <Grid container spacing={2}>
                                     <Grid item xs={12} sm={5}>
                                         {/* <FormGroup> */}
-                                        <Autocomplete
-                                            sx={{ pt: '16px' }}
-                                            options={suggestStore.suggestKhachHang}
-                                            getOptionLabel={(option) =>
-                                                `${option.tenKhachHang} ${
-                                                    option.soDienThoai !== '' ? option.soDienThoai : ''
-                                                }`
-                                            }
-                                            value={
-                                                suggestStore.suggestKhachHang?.filter(
-                                                    (x) => x.id == values.idKhachHang
-                                                )?.[0] ??
-                                                ({
-                                                    id: '',
-                                                    soDienThoai: '',
-                                                    tenKhachHang: ''
-                                                } as SuggestKhachHangDto)
-                                            }
-                                            size="small"
-                                            fullWidth
-                                            disablePortal
-                                            onChange={(event, value) => {
-                                                setFieldValue('idKhachHang', value ? value.id : ''); // Cập nhật giá trị id trong Formik
-                                            }}
-                                            renderInput={(params) => (
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '8px'
-                                                    }}>
-                                                    <TextField
-                                                        {...params}
-                                                        placeholder="Tìm tên"
-                                                        InputProps={{
-                                                            ...params.InputProps,
-                                                            startAdornment: (
-                                                                <>
-                                                                    {params.InputProps.startAdornment}
-                                                                    <InputAdornment position="start">
-                                                                        <SearchIcon />
-                                                                    </InputAdornment>
-                                                                </>
-                                                            )
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        size="small"
-                                                        variant="text"
-                                                        sx={{
-                                                            color: 'var(--color-main)',
-                                                            '& svg': {
-                                                                filter: 'var(--color-hoverIcon)',
-                                                                width: '24px',
-                                                                height: '24px'
-                                                            },
-                                                            minWidth: '36px',
-                                                            width: '36px',
-                                                            height: '36px',
-                                                            borderRadius: '8px',
-                                                            border: '1px solid #319DFF'
-                                                        }}
-                                                        onClick={this.onOpenKhachHangModal}>
-                                                        <AddIcon />
-                                                    </Button>
-                                                </div>
-                                            )}
-                                        />
-                                        {errors.idKhachHang && touched.idKhachHang && (
-                                            <small className="text-danger">{errors.idKhachHang}</small>
-                                        )}
+                                        <Box
+                                            display={'flex'}
+                                            justifyContent={'space-between'}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            flexDirection={'column'}>
+                                            <Box>
+                                                <Autocomplete
+                                                    sx={{ pt: '24px' }}
+                                                    options={suggestStore.suggestKhachHang}
+                                                    getOptionLabel={(option) =>
+                                                        `${option.tenKhachHang} ${
+                                                            option.soDienThoai !== '' ? option.soDienThoai : ''
+                                                        }`
+                                                    }
+                                                    value={
+                                                        suggestStore.suggestKhachHang?.filter(
+                                                            (x) => x.id == values.idKhachHang
+                                                        )?.[0] ??
+                                                        ({
+                                                            id: '',
+                                                            soDienThoai: '',
+                                                            tenKhachHang: ''
+                                                        } as SuggestKhachHangDto)
+                                                    }
+                                                    size="small"
+                                                    fullWidth
+                                                    disablePortal
+                                                    onChange={(event, value) => {
+                                                        setFieldValue('idKhachHang', value ? value.id : ''); // Cập nhật giá trị id trong Formik
+                                                    }}
+                                                    placeholder="Chọn khách hàng"
+                                                    renderInput={(params) => (
+                                                        <div
+                                                            style={{
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                gap: '8px'
+                                                            }}>
+                                                            <TextField
+                                                                {...params}
+                                                                placeholder="Chọn khách hàng"
+                                                                InputProps={{
+                                                                    ...params.InputProps,
+                                                                    startAdornment: (
+                                                                        <>
+                                                                            {params.InputProps.startAdornment}
+                                                                            <InputAdornment position="start">
+                                                                                <SearchIcon />
+                                                                            </InputAdornment>
+                                                                        </>
+                                                                    )
+                                                                }}
+                                                            />
+                                                            <Button
+                                                                size="small"
+                                                                variant="text"
+                                                                sx={{
+                                                                    color: 'var(--color-main)',
+                                                                    '& svg': {
+                                                                        filter: 'var(--color-hoverIcon)',
+                                                                        width: '24px',
+                                                                        height: '24px'
+                                                                    },
+                                                                    minWidth: '36px',
+                                                                    width: '36px',
+                                                                    height: '36px',
+                                                                    borderRadius: '4px',
+                                                                    border: '1px solid #319DFF'
+                                                                }}
+                                                                onClick={this.onOpenKhachHangModal}>
+                                                                <AddIcon />
+                                                            </Button>
+                                                        </div>
+                                                    )}
+                                                />
+                                                {errors.idKhachHang && touched.idKhachHang && (
+                                                    <small className="text-danger">{errors.idKhachHang}</small>
+                                                )}
+                                            </Box>
+                                            <Box
+                                                display={'flex'}
+                                                justifyContent={'center'}
+                                                alignItems={'center'}
+                                                flexDirection={'column'}>
+                                                <Avatar sx={{ width: '140px', height: '140px', bgcolor: '#EEF0F4' }}>
+                                                    <CustomerIcon width={'60px'} height={'60px'} />
+                                                </Avatar>
+                                                <Typography
+                                                    marginTop={'40px'}
+                                                    marginBottom={'12px'}
+                                                    color={'#3D475C'}
+                                                    fontSize={'18px'}
+                                                    fontWeight={'700'}>
+                                                    Thêm khách hàng
+                                                </Typography>
+                                                <Typography color={'#8492AE'} fontSize={'14px'} fontWeight={400}>
+                                                    Sử dụng tìm kiếm để thêm khách hàng
+                                                </Typography>
+                                            </Box>
+                                        </Box>
                                     </Grid>
-                                    <Grid item xs={12} sm={7} sx={{ bgcolor: '#F9FAFC', pr: '24px', mt: '16px' }}>
+                                    <Grid item xs={12} sm={7} sx={{ bgcolor: '#F9FAFC', pr: '24px' }}>
                                         <FormGroup className="mt-4 mb-1">
                                             <DatePickerRequiredCustom
                                                 props={{

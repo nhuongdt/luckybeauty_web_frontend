@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import CreateTenantInput from '../../../../services/tenant/dto/createTenantInput';
 import tenantService from '../../../../services/tenant/tenantService';
 import rules from './createOrUpdateTenant.validation';
@@ -32,7 +32,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
     state = {
         isHostDatabase: false
     };
-    handleSubmit = async (values: CreateTenantInput) => {
+    handleSubmit = async (values: CreateTenantInput, formikHelper: FormikHelpers<any>) => {
         try {
             if (this.props.tenantId === 0) {
                 await tenantService.create(values);
@@ -40,6 +40,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
+                this.props.onOk();
             } else {
                 await tenantService.update({
                     id: this.props.tenantId,
@@ -51,13 +52,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
+                this.props.onOk();
             }
-            this.props.onOk();
         } catch (error) {
-            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
-                variant: 'error',
-                autoHideDuration: 3000
-            });
+            formikHelper.setSubmitting(false);
         }
     };
     handleFormKeyPress = (event: React.KeyboardEvent<HTMLFormElement>) => {
@@ -99,8 +97,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                             <Formik
                                 initialValues={initialValues}
                                 validationSchema={rules}
-                                onSubmit={(e) => {
-                                    this.handleSubmit(e);
+                                onSubmit={(e, formikHelper) => {
+                                    this.handleSubmit(e, formikHelper);
                                 }}>
                                 {({ handleChange, values, errors, touched, isSubmitting }) => (
                                     <Form onKeyPress={this.handleFormKeyPress}>

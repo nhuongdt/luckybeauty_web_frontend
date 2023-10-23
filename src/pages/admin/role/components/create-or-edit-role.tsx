@@ -113,26 +113,18 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             ...values,
             grantedPermissions: permission
         });
-        createOrEdit != null
-            ? values.id === 0
-                ? enqueueSnackbar('Thêm mới thành công', {
-                      variant: 'success',
-                      autoHideDuration: 3000
-                  })
-                : enqueueSnackbar('Cập nhật thành công', {
-                      variant: 'success',
-                      autoHideDuration: 3000
-                  })
-            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                  variant: 'error',
-                  autoHideDuration: 3000
-              });
-        this.setState({
-            tabIndex: '1',
-            selectedPermissions: [],
-            tabChange: false
+        enqueueSnackbar(createOrEdit.message, {
+            variant: createOrEdit.status,
+            autoHideDuration: 3000
         });
-        this.props.onOk();
+        if (createOrEdit.status == 'success') {
+            this.setState({
+                tabIndex: '1',
+                selectedPermissions: [],
+                tabChange: false
+            });
+            this.props.onOk();
+        }
     };
     handleCheck = (event: any, node: PermissionTree) => {
         const checked = event.target.checked;

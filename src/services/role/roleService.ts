@@ -29,7 +29,7 @@ class RoleService {
             return result.data.result;
         }
     };
-    public async createOrEdit(input: CreateOrEditRoleDto): Promise<RoleDto> {
+    public async createOrEdit(input: CreateOrEditRoleDto) {
         const result = await http.post('api/services/app/Role/CreateOrUpdateRole', input);
         return result.data.result;
     }
