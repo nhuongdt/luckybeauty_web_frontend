@@ -53,7 +53,10 @@ const TabInfor: React.FC = () => {
         <Box mt="24px">
             <Grid container spacing={3}>
                 <Grid item xs={3}>
-                    <Box bgcolor="#fff" padding="24px" sx={{ boxShadow: '0px 4px 20px 0px #AAA9B81A', borderRadius: '12px' }}>
+                    <Box
+                        bgcolor="#fff"
+                        padding="24px"
+                        sx={{ boxShadow: '0px 4px 20px 0px #AAA9B81A', borderRadius: '12px' }}>
                         <Typography variant="h3" fontWeight="700" color="#3B4758" fontSize="16px">
                             Cài đặt
                         </Typography>

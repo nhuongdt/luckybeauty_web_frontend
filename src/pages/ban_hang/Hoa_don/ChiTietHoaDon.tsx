@@ -164,8 +164,18 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                                     sx={{
                                         padding: '2px 3px',
                                         borderRadius: '100px',
-                                        color: hoadonChosed?.trangThai === 3 ? '#50CD89' : hoadonChosed?.trangThai === 1 ? '#FF9900' : '#F1416C',
-                                        bgcolor: hoadonChosed?.trangThai === 3 ? '#E8FFF3' : hoadonChosed?.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                                        color:
+                                            hoadonChosed?.trangThai === 3
+                                                ? '#50CD89'
+                                                : hoadonChosed?.trangThai === 1
+                                                ? '#FF9900'
+                                                : '#F1416C',
+                                        bgcolor:
+                                            hoadonChosed?.trangThai === 3
+                                                ? '#E8FFF3'
+                                                : hoadonChosed?.trangThai === 1
+                                                ? '#FFF8DD'
+                                                : '#FFF5F8',
                                         width: 'fit-content',
                                         fontSize: '12px',
                                         height: 'fit-content'
@@ -207,7 +217,12 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                         <Grid container spacing={2}>
                             <Grid item xs={3}>
                                 <Box>
-                                    <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
                                         Mã hóa đơn
                                     </Typography>
                                     <TextField
@@ -226,7 +241,12 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                             </Grid>
                             <Grid item xs={3}>
                                 <Box>
-                                    <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
                                         Ngày lập
                                     </Typography>
                                     <ThemeProvider theme={themOutlineInput}>
@@ -241,7 +261,12 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                             </Grid>
                             <Grid item xs={3}>
                                 <Box>
-                                    <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
                                         Chi nhánh
                                     </Typography>
                                     <ThemeProvider theme={themOutlineInput}>
@@ -255,10 +280,20 @@ const ThongTinHoaDonn = ({ idHoaDon, hoadon, handleGotoBack, open, onClose }: an
                             </Grid>
                             <Grid item xs={3}>
                                 <Box>
-                                    <Typography variant="h5" fontSize="12px" color="#999699" fontWeight="400" height={24}>
+                                    <Typography
+                                        variant="h5"
+                                        fontSize="12px"
+                                        color="#999699"
+                                        fontWeight="400"
+                                        height={24}>
                                         User lập phiếu
                                     </Typography>
-                                    <TextField fullWidth size="small" className="inputEdit" value={hoadonChosed?.userName} />
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        className="inputEdit"
+                                        value={hoadonChosed?.userName}
+                                    />
                                 </Box>
                             </Grid>
                             {/* <Grid item xs={3}>

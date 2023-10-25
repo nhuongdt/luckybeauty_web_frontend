@@ -1,4 +1,15 @@
-import { Box, Button, CircularProgress, FormGroup, Grid, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    FormGroup,
+    Grid,
+    IconButton,
+    InputAdornment,
+    Stack,
+    TextField,
+    Typography
+} from '@mui/material';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { observer } from 'mobx-react';
@@ -9,12 +20,18 @@ import userService from '../../../services/user/userService';
 import { enqueueSnackbar } from 'notistack';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import AuthenticationStore from '../../../stores/authenticationStore';
+import Cookies from 'js-cookie';
+import PersonIcon from '@mui/icons-material/Person';
+import utils from '../../../utils/utils';
+import uploadFileService from '../../../services/uploadFileService';
 class ProfileScreen extends Component {
     state = {
         showCurrentPassword: false,
         showNewPassword: false,
         showConfirmPassword: false,
-        profileAvartar: ''
+        profileAvartar: '',
+        googleDrive_fileId: '',
+        fileImage: {} as File
     };
     componentDidMount(): void {
         this.getData();
@@ -44,7 +61,10 @@ class ProfileScreen extends Component {
         const changePasswordSchema = Yup.object({
             currentPassword: Yup.string().required('Vui lòng nhập mật khẩu hiện tại.'),
             newPassword: Yup.string()
-                .matches(AppConsts.passwordRegex, 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt')
+                .matches(
+                    AppConsts.passwordRegex,
+                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                )
                 .required('Mật khẩu không được để trống'),
             confirmPassword: Yup.string()
                 .oneOf([Yup.ref('newPassword'), ''], 'Mật khẩu xác nhận phải trùng khớp')
@@ -78,7 +98,12 @@ class ProfileScreen extends Component {
                     </Grid>
                 </Grid>
                 <Box padding={2} bgcolor="#fff">
-                    <Grid container columnSpacing={12} rowSpacing={4} justifyContent="space-evenly" alignItems={'center'}>
+                    <Grid
+                        container
+                        columnSpacing={12}
+                        rowSpacing={4}
+                        justifyContent="space-evenly"
+                        alignItems={'center'}>
                         <Grid item xs={12} sm={5}>
                             <Box>
                                 <Typography
@@ -89,33 +114,47 @@ class ProfileScreen extends Component {
                                 >
                                     Thông tin tài khoản
                                 </Typography>
-                                {/* <Typography
-                                    sx={{ marginTop: 2 }}
-                                    variant="h3"
-                                    fontSize="14px"
-                                    fontWeight="400"
-                                    fontFamily="Roboto"
-                                    fontStyle="normal"
-                                    color="#637381">
-                                    Chỉnh sửa thông tin
-                                </Typography> */}
                                 <Box>
                                     <Formik
                                         initialValues={profileDto}
                                         validationSchema={profileSchema}
                                         onSubmit={async (values) => {
+                                            let fileId = this.state.googleDrive_fileId;
+                                            const fileSelect = this.state.fileImage;
+                                            if (!utils.checkNull(this.state.profileAvartar)) {
+                                                fileId = await uploadFileService.GoogleApi_UploaFileToDrive(
+                                                    fileSelect,
+                                                    'NhanVien'
+                                                );
+                                                values.avatar =
+                                                    fileId !== ''
+                                                        ? `https://drive.google.com/uc?export=view&id=${fileId}`
+                                                        : '';
+                                            }
                                             const createOrEdit = await userService.updateProfile(values);
-                                            createOrEdit != false
-                                                ? enqueueSnackbar('Cập nhật thành công', {
-                                                      variant: 'success',
-                                                      autoHideDuration: 3000
-                                                  })
-                                                : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                                                      variant: 'error',
-                                                      autoHideDuration: 3000
-                                                  });
+                                            if (createOrEdit === true) {
+                                                await enqueueSnackbar('Cập nhật thành công', {
+                                                    variant: 'success',
+                                                    autoHideDuration: 3000
+                                                });
+                                                await Cookies.set('fullname', values.name + ' ' + values.surname, {
+                                                    expires: 1
+                                                });
+                                                await Cookies.set('email', values.emailAddress, {
+                                                    expires: 1
+                                                });
+                                                await Cookies.set('avatar', values.avatar, {
+                                                    expires: 1
+                                                });
+                                                window.location.reload();
+                                            } else {
+                                                enqueueSnackbar('Có lỗi xảy ra vui lòng thử lại sau', {
+                                                    variant: 'error',
+                                                    autoHideDuration: 3000
+                                                });
+                                            }
                                         }}>
-                                        {({ handleChange, errors, values }) => (
+                                        {({ handleChange, errors, values, setFieldValue }) => (
                                             <Form
                                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                                     if (event.key === 'Enter') {
@@ -123,6 +162,66 @@ class ProfileScreen extends Component {
                                                     }
                                                 }}>
                                                 <Grid container alignItems={'center'} spacing={2}>
+                                                    <Grid item xs={12} marginTop={2}>
+                                                        <Box>
+                                                            <Stack alignItems="center" position={'relative'}>
+                                                                {!utils.checkNull(values.avatar) ? (
+                                                                    <Box
+                                                                        sx={{
+                                                                            position: 'relative'
+                                                                        }}>
+                                                                        <img
+                                                                            src={values.avatar}
+                                                                            className="user-image-upload"
+                                                                        />
+                                                                    </Box>
+                                                                ) : (
+                                                                    <div>
+                                                                        <PersonIcon className="user-icon-upload" />
+                                                                    </div>
+                                                                )}
+                                                                <TextField
+                                                                    type="file"
+                                                                    name="avatar"
+                                                                    sx={{
+                                                                        position: 'absolute',
+                                                                        top: 0,
+                                                                        left: 0,
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                        opacity: 0,
+                                                                        '& input': {
+                                                                            height: '100%'
+                                                                        },
+                                                                        '& div': {
+                                                                            height: '100%'
+                                                                        }
+                                                                    }}
+                                                                    onChange={(
+                                                                        e: React.ChangeEvent<HTMLInputElement>
+                                                                    ) => {
+                                                                        if (e.target.files && e.target.files[0]) {
+                                                                            const file: File = e.target.files[0];
+                                                                            const reader = new FileReader();
+                                                                            reader.readAsDataURL(file);
+                                                                            reader.onload = () => {
+                                                                                this.setState((prev) => ({
+                                                                                    ...prev,
+                                                                                    profileAvartar:
+                                                                                        reader.result?.toString() ?? '',
+                                                                                    fileImage: file
+                                                                                }));
+                                                                                setFieldValue(
+                                                                                    'avatar',
+                                                                                    reader.result?.toString() ?? ''
+                                                                                );
+                                                                            };
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </Stack>
+                                                        </Box>
+                                                    </Grid>
                                                     <Grid item container xs={5}>
                                                         <FormGroup>
                                                             {LableForm('Họ')}
@@ -133,7 +232,9 @@ class ProfileScreen extends Component {
                                                                 value={values.name}
                                                                 onChange={handleChange}
                                                             />
-                                                            {errors.name && <small className="text-danger">{errors.name}</small>}
+                                                            {errors.name && (
+                                                                <small className="text-danger">{errors.name}</small>
+                                                            )}
                                                         </FormGroup>
                                                     </Grid>
                                                     <Grid item xs={7}>
@@ -146,7 +247,9 @@ class ProfileScreen extends Component {
                                                                 value={values.surname}
                                                                 onChange={handleChange}
                                                             />
-                                                            {errors.surname && <small className="text-danger">{errors.surname}</small>}
+                                                            {errors.surname && (
+                                                                <small className="text-danger">{errors.surname}</small>
+                                                            )}
                                                         </FormGroup>
                                                     </Grid>
                                                 </Grid>
@@ -160,7 +263,9 @@ class ProfileScreen extends Component {
                                                         value={values.userName}
                                                         onChange={handleChange}
                                                     />
-                                                    {errors.userName && <small className="text-danger">{errors.userName}</small>}
+                                                    {errors.userName && (
+                                                        <small className="text-danger">{errors.userName}</small>
+                                                    )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     {LableForm('Số điện thoại')}
@@ -171,7 +276,9 @@ class ProfileScreen extends Component {
                                                         value={values.phoneNumber}
                                                         onChange={handleChange}
                                                     />
-                                                    {errors.phoneNumber && <small className="text-danger">{errors.phoneNumber}</small>}
+                                                    {errors.phoneNumber && (
+                                                        <small className="text-danger">{errors.phoneNumber}</small>
+                                                    )}
                                                 </FormGroup>
                                                 <FormGroup>
                                                     {LableForm('Địa chỉ email')}
@@ -182,7 +289,9 @@ class ProfileScreen extends Component {
                                                         value={values.emailAddress}
                                                         onChange={handleChange}
                                                     />
-                                                    {errors.emailAddress && <small className="text-danger">{errors.emailAddress}</small>}
+                                                    {errors.emailAddress && (
+                                                        <small className="text-danger">{errors.emailAddress}</small>
+                                                    )}
                                                 </FormGroup>
                                                 <Button
                                                     type="submit"
@@ -259,16 +368,23 @@ class ProfileScreen extends Component {
                                                                     edge="end"
                                                                     onClick={() => {
                                                                         this.setState({
-                                                                            showCurrentPassword: !this.state.showCurrentPassword
+                                                                            showCurrentPassword:
+                                                                                !this.state.showCurrentPassword
                                                                         });
                                                                     }}>
-                                                                    {this.state.showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                                                                    {this.state.showCurrentPassword ? (
+                                                                        <VisibilityOff />
+                                                                    ) : (
+                                                                        <Visibility />
+                                                                    )}
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
                                                     }}
                                                 />
-                                                {errors.currentPassword && <small className="text-danger">{errors.currentPassword}</small>}
+                                                {errors.currentPassword && (
+                                                    <small className="text-danger">{errors.currentPassword}</small>
+                                                )}
                                             </FormGroup>
                                             <FormGroup>
                                                 {LableForm('Mật khẩu mới')}
@@ -288,13 +404,19 @@ class ProfileScreen extends Component {
                                                                             showNewPassword: !this.state.showNewPassword
                                                                         });
                                                                     }}>
-                                                                    {this.state.showNewPassword ? <VisibilityOff /> : <Visibility />}
+                                                                    {this.state.showNewPassword ? (
+                                                                        <VisibilityOff />
+                                                                    ) : (
+                                                                        <Visibility />
+                                                                    )}
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
                                                     }}
                                                 />
-                                                {errors.newPassword && <small className="text-danger">{errors.newPassword}</small>}
+                                                {errors.newPassword && (
+                                                    <small className="text-danger">{errors.newPassword}</small>
+                                                )}
                                             </FormGroup>
                                             <FormGroup>
                                                 {LableForm('Nhập lại mật khẩu mới')}
@@ -311,16 +433,23 @@ class ProfileScreen extends Component {
                                                                     edge="end"
                                                                     onClick={() => {
                                                                         this.setState({
-                                                                            showConfirmPassword: !this.state.showConfirmPassword
+                                                                            showConfirmPassword:
+                                                                                !this.state.showConfirmPassword
                                                                         });
                                                                     }}>
-                                                                    {this.state.showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                                                    {this.state.showConfirmPassword ? (
+                                                                        <VisibilityOff />
+                                                                    ) : (
+                                                                        <Visibility />
+                                                                    )}
                                                                 </IconButton>
                                                             </InputAdornment>
                                                         )
                                                     }}
                                                 />
-                                                {errors.confirmPassword && <small className="text-danger">{errors.confirmPassword}</small>}
+                                                {errors.confirmPassword && (
+                                                    <small className="text-danger">{errors.confirmPassword}</small>
+                                                )}
                                             </FormGroup>
                                             <Button
                                                 type="submit"
@@ -333,7 +462,12 @@ class ProfileScreen extends Component {
                                                     marginTop: 2,
                                                     border: 'none'
                                                 }}>
-                                                <Typography color={'#FFFAFF'} fontSize="14px" fontWeight="400" fontFamily="Roboto" fontStyle="normal">
+                                                <Typography
+                                                    color={'#FFFAFF'}
+                                                    fontSize="14px"
+                                                    fontWeight="400"
+                                                    fontFamily="Roboto"
+                                                    fontStyle="normal">
                                                     Lưu
                                                 </Typography>
                                             </Button>

@@ -111,7 +111,12 @@ const MainAppLayout: React.FC = () => {
         <Container maxWidth={false} disableGutters={true}>
             {window.screen.width > 650 ? (
                 <Box>
-                    <AppSiderMenu collapsed={!collapsed} toggle={toggle} onHoverChange={handleChildHoverChange} CookieSidebar={CookieSidebar} />
+                    <AppSiderMenu
+                        collapsed={!collapsed}
+                        toggle={toggle}
+                        onHoverChange={handleChildHoverChange}
+                        CookieSidebar={CookieSidebar}
+                    />
                     <Box
                         sx={{
                             marginLeft: !collapsed ? '240px' : '0px',

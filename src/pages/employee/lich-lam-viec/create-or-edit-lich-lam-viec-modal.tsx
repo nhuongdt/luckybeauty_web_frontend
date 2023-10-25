@@ -132,7 +132,7 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                             onClose();
                         }
                     }}>
-                    {({ values, handleChange, errors, touched, setFieldValue }) => (
+                    {({ values, handleChange, errors, touched, setFieldValue, isSubmitting }) => (
                         <Form
                             onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                 if (event.key === 'Enter') {
@@ -215,7 +215,11 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                         <span className="text-danger">{String(errors.denNgay)}</span>
                                                     )
                                                 }}
-                                                defaultVal={values.denNgay ? formatDate(new Date(values.denNgay), 'yyyy-MM-dd') : ''}
+                                                defaultVal={
+                                                    values.denNgay
+                                                        ? formatDate(new Date(values.denNgay), 'yyyy-MM-dd')
+                                                        : ''
+                                                }
                                                 handleChangeDate={(value: string) => {
                                                     values.denNgay = value;
                                                 }}
@@ -240,8 +244,16 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                         //idNhanVien = value?.id;
                                                     }}
                                                     options={suggestStore?.suggestNhanVien ?? []}
-                                                    value={suggestStore.suggestNhanVien?.find((x) => x.id == values.idNhanVien) ?? null}
-                                                    disabled={idNhanVien !== AppConsts.guidEmpty || idNhanVien === '' ? true : false}
+                                                    value={
+                                                        suggestStore.suggestNhanVien?.find(
+                                                            (x) => x.id == values.idNhanVien
+                                                        ) ?? null
+                                                    }
+                                                    disabled={
+                                                        idNhanVien !== AppConsts.guidEmpty || idNhanVien === ''
+                                                            ? true
+                                                            : false
+                                                    }
                                                     getOptionLabel={(item) => item.tenNhanVien}
                                                     size="small"
                                                     sx={{
@@ -258,10 +270,16 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                     }}
                                                     renderInput={(params: any) => (
                                                         <TextField
-                                                            error={touched.idNhanVien && errors.idNhanVien ? true : false}
+                                                            error={
+                                                                touched.idNhanVien && errors.idNhanVien ? true : false
+                                                            }
                                                             helperText={
                                                                 touched.idNhanVien &&
-                                                                errors.idNhanVien && <span className="text-danger">{errors.idNhanVien}</span>
+                                                                errors.idNhanVien && (
+                                                                    <span className="text-danger">
+                                                                        {errors.idNhanVien}
+                                                                    </span>
+                                                                )
                                                             }
                                                             fullWidth
                                                             {...params}
@@ -281,7 +299,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                     size="small"
                                                     options={suggestCaLamViec ?? []}
                                                     getOptionLabel={(option) => option.tenCa}
-                                                    value={suggestCaLamViec.find((x) => x.id == values.idCaLamViec) ?? null}
+                                                    value={
+                                                        suggestCaLamViec.find((x) => x.id == values.idCaLamViec) ?? null
+                                                    }
                                                     onChange={(e, v) => {
                                                         setFieldValue('idCaLamViec', v?.id);
                                                     }}
@@ -294,10 +314,16 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                                     <span className="text-danger">*</span>
                                                                 </Typography>
                                                             }
-                                                            error={touched.idCaLamViec && errors.idCaLamViec ? true : false}
+                                                            error={
+                                                                touched.idCaLamViec && errors.idCaLamViec ? true : false
+                                                            }
                                                             helperText={
                                                                 touched.idCaLamViec &&
-                                                                errors.idCaLamViec && <span className="text-danger">{errors.idCaLamViec}</span>
+                                                                errors.idCaLamViec && (
+                                                                    <span className="text-danger">
+                                                                        {errors.idCaLamViec}
+                                                                    </span>
+                                                                )
                                                             }
                                                         />
                                                     )}
@@ -336,7 +362,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                             value={AppConsts.dayOfWeek.tuesday}
                                                             aria-label="Tuesday"
                                                             style={
-                                                                values.ngayLamViec?.includes(AppConsts.dayOfWeek.tuesday)
+                                                                values.ngayLamViec?.includes(
+                                                                    AppConsts.dayOfWeek.tuesday
+                                                                )
                                                                     ? {
                                                                           backgroundColor: 'var(--color-main)',
                                                                           color: '#FFFFFF'
@@ -349,7 +377,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                             value={AppConsts.dayOfWeek.wednesday}
                                                             aria-label="Wednesday"
                                                             style={
-                                                                values.ngayLamViec?.includes(AppConsts.dayOfWeek.wednesday)
+                                                                values.ngayLamViec?.includes(
+                                                                    AppConsts.dayOfWeek.wednesday
+                                                                )
                                                                     ? {
                                                                           backgroundColor: 'var(--color-main)',
                                                                           color: '#FFFFFF'
@@ -362,7 +392,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                             value={AppConsts.dayOfWeek.thursday}
                                                             aria-label="Thursday"
                                                             style={
-                                                                values.ngayLamViec?.includes(AppConsts.dayOfWeek.thursday)
+                                                                values.ngayLamViec?.includes(
+                                                                    AppConsts.dayOfWeek.thursday
+                                                                )
                                                                     ? {
                                                                           backgroundColor: 'var(--color-main)',
                                                                           color: '#FFFFFF'
@@ -388,7 +420,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                             value={AppConsts.dayOfWeek.saturday}
                                                             aria-label="Saturday"
                                                             style={
-                                                                values.ngayLamViec?.includes(AppConsts.dayOfWeek.saturday)
+                                                                values.ngayLamViec?.includes(
+                                                                    AppConsts.dayOfWeek.saturday
+                                                                )
                                                                     ? {
                                                                           backgroundColor: 'var(--color-main)',
                                                                           color: '#FFFFFF'
@@ -411,7 +445,9 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                                             CN
                                                         </ToggleButton>
                                                     </ToggleButtonGroup>
-                                                    {errors.ngayLamViec && <span className="text-danger">{errors.ngayLamViec}</span>}
+                                                    {errors.ngayLamViec && (
+                                                        <span className="text-danger">{errors.ngayLamViec}</span>
+                                                    )}
                                                 </Box>
                                             </Grid>
                                         </Grid>
@@ -438,9 +474,15 @@ const CreateOrEditLichLamViecModal: React.FC<DialogComponentProps> = ({ open, on
                                         className="btn-outline-hover">
                                         Hủy
                                     </Button>
-                                    <Button type="submit" variant="contained" className="btn-container-hover">
-                                        Lưu
-                                    </Button>
+                                    {!isSubmitting ? (
+                                        <Button type="submit" variant="contained" className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    ) : (
+                                        <Button type="submit" variant="contained" className="btn-container-hover">
+                                            Đang lưu
+                                        </Button>
+                                    )}
                                 </Box>
                             </DialogActions>
                         </Form>

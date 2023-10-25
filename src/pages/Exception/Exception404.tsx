@@ -22,7 +22,8 @@ class Exception404 extends React.Component<any, any> {
                     </Grid>
                     <Grid item>
                         <h5 className={'errorDescription'}>
-                            Trang bạn muốn truy cập có thể đã bị xóa, đổi tên hoặc địa chỉ của trang không đúng. Xin vui lòng thử lại.
+                            Trang bạn muốn truy cập có thể đã bị xóa, đổi tên hoặc địa chỉ của trang không đúng. Xin vui
+                            lòng thử lại.
                         </h5>
                     </Grid>
                     <Grid item textAlign={'center'}>

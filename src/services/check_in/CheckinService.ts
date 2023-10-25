@@ -10,9 +10,7 @@ class CheckinService {
             idCheckIn = Guid.EMPTY;
         }
         const xx = await http
-            .post(
-                `api/services/app/CheckIn/CheckExistCusCheckin?idCus=${idCus}&idCheckIn=${idCheckIn}`
-            )
+            .post(`api/services/app/CheckIn/CheckExistCusCheckin?idCus=${idCus}&idCheckIn=${idCheckIn}`)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });
@@ -47,9 +45,7 @@ class CheckinService {
             return;
         }
         const xx = await http
-            .post(
-                `api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`
-            )
+            .post(`api/services/app/CheckIn/UpdateTrangThaiCheckin?idCheckIn=${idCheckIn}&trangThai=${trangThai}`)
             .then((res: { data: { result: any } }) => {
                 return res.data.result;
             });

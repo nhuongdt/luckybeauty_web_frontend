@@ -36,7 +36,9 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
             )
         },
         {
@@ -48,7 +50,10 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}> {new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {' '}
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
             )
         },
         {
@@ -60,7 +65,9 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
             )
         },
         // {
@@ -91,7 +98,9 @@ export default function TabInfo({ hoadon, chitietHoaDon }: any) {
             flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
-                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+                <Box title={new Intl.NumberFormat('vi-VN').format(params.value)}>
+                    {new Intl.NumberFormat('vi-VN').format(params.value)}
+                </Box>
             )
         }
     ];

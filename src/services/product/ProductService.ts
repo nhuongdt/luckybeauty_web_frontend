@@ -9,9 +9,7 @@ class ProductService {
     CheckExistsMaHangHoa = async (maHangHoa: string, id?: string) => {
         if (!Utils.checkNull(maHangHoa)) {
             const data = await http
-                .get(
-                    `api/services/app/HangHoa/CheckExistsMaHangHoa?mahanghoa=${maHangHoa}&id=${id}`
-                )
+                .get(`api/services/app/HangHoa/CheckExistsMaHangHoa?mahanghoa=${maHangHoa}&id=${id}`)
                 .then((res) => {
                     return res.data.result;
                 });
@@ -21,11 +19,9 @@ class ProductService {
         }
     };
     GetDetailProduct = async (id: string) => {
-        const data = await http
-            .get(`api/services/app/HangHoa/GetDetailProduct?idDonViQuyDoi=${id}`)
-            .then((res) => {
-                return res.data.result;
-            });
+        const data = await http.get(`api/services/app/HangHoa/GetDetailProduct?idDonViQuyDoi=${id}`).then((res) => {
+            return res.data.result;
+        });
         return data;
     };
     Get_DMHangHoa = async (input: any) => {
@@ -42,10 +38,7 @@ class ProductService {
         return response.data.result;
     };
     async importHangHoa(input: FileUpload) {
-        const response = await http.post(
-            'api/services/app/HangHoa/ImportFile_DanhMucHangHoa',
-            input
-        );
+        const response = await http.post('api/services/app/HangHoa/ImportFile_DanhMucHangHoa', input);
         return response.data.result;
     }
     CreateOrEditProduct = async (input: ModelHangHoaDto) => {
@@ -69,10 +62,7 @@ class ProductService {
         return xx.data.success;
     };
     ChuyenNhomHang = async (lstIdHangHoa: any, idNhomHangNew: string) => {
-        const xx = await http.post(
-            `api/services/app/HangHoa/ChuyenNhomHang?idNhomHang=${idNhomHangNew}`,
-            lstIdHangHoa
-        );
+        const xx = await http.post(`api/services/app/HangHoa/ChuyenNhomHang?idNhomHang=${idNhomHangNew}`, lstIdHangHoa);
         return xx.data.success;
     };
     RestoreProduct_byIdHangHoa = async (idHangHoa: string) => {

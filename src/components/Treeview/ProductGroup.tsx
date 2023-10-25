@@ -34,7 +34,9 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                     label={
                         <Stack direction="row">
                             <Typography sx={{ width: 8 / 10 }}>{item.tenNhomHang}</Typography>
-                            {isHover && rowHover.id === item.id && <OpenInNew onClick={() => handleClickTreeItem(true)} />}
+                            {isHover && rowHover.id === item.id && (
+                                <OpenInNew onClick={() => handleClickTreeItem(true)} />
+                            )}
                         </Stack>
                     }
                     icon={<LocalOffer style={{ color: item.color }} />}
@@ -53,7 +55,9 @@ export default function TreeViewGroupProduct({ dataNhomHang, clickTreeItem }: an
                             label={
                                 <Stack direction="row">
                                     <Typography sx={{ width: 7.9 / 10 }}>{child.tenNhomHang}</Typography>
-                                    {isHover && rowHover.id === child.id && <OpenInNew onClick={() => handleClickTreeItem(true)} />}
+                                    {isHover && rowHover.id === child.id && (
+                                        <OpenInNew onClick={() => handleClickTreeItem(true)} />
+                                    )}
                                 </Stack>
                             }
                             onMouseLeave={(event: any) => {

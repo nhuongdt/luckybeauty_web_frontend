@@ -41,7 +41,15 @@ import { Guid } from 'guid-typescript';
 import authenticationStore from '../../../../stores/authenticationStore';
 import Cookies from 'js-cookie';
 
-export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataChiNhanh, allRoles, onCancel, onOk }: any) {
+export default function ModalAddUser({
+    isShowModal,
+    dataNhanVien,
+    userId,
+    dataChiNhanh,
+    allRoles,
+    onCancel,
+    onOk
+}: any) {
     const appContext = useContext(AppContext);
     const chinhanhCurrent = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanhCurrent?.id;
@@ -73,12 +81,21 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
         surname: ''
     };
 
-    const confirmPasswordValidation = (userId: number, changePassword: boolean, password: string, passwordNew: string) => {
+    const confirmPasswordValidation = (
+        userId: number,
+        changePassword: boolean,
+        password: string,
+        passwordNew: string
+    ) => {
         if (userId === 0) {
-            return Yup.string().required('Vui lòng xác nhận mật khẩu').oneOf([password], 'Mật khẩu xác nhận phải trùng khớp');
+            return Yup.string()
+                .required('Vui lòng xác nhận mật khẩu')
+                .oneOf([password], 'Mật khẩu xác nhận phải trùng khớp');
         } else {
             if (changePassword) {
-                return Yup.string().required('Vui lòng xác nhận mật khẩu').oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
+                return Yup.string()
+                    .required('Vui lòng xác nhận mật khẩu')
+                    .oneOf([passwordNew], 'Mật khẩu xác nhận phải trùng khớp');
             }
             return Yup.string();
         }
@@ -88,7 +105,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
         if (userId === 0) {
             return Yup.string()
                 .required('Vui lòng nhập mật khẩu')
-                .matches(AppConsts.passwordRegex, 'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt');
+                .matches(
+                    AppConsts.passwordRegex,
+                    'Mật khẩu tối thiểu 6 ký tự, phải có ít nhất 1 ký tự in hoa, 1 ký tự thường và 1 ký tự đặc biệt'
+                );
         } else {
             if (changePassword) {
                 return Yup.string().required('Vui lòng nhập khẩu hiện tại');
@@ -119,7 +139,12 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
         }),
 
         confirmPassword: Yup.lazy((value: any, schema: any) => {
-            return confirmPasswordValidation(schema.parent.id, schema.parent.changePassword, schema.parent.password, schema.parent.passwordNew);
+            return confirmPasswordValidation(
+                schema.parent.id,
+                schema.parent.changePassword,
+                schema.parent.password,
+                schema.parent.passwordNew
+            );
         })
     });
 
@@ -323,7 +348,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                     <DialogButtonClose onClose={onCancel} />
                 </DialogTitle>
                 <DialogContent sx={{ '& .MuiTabPanel-root': { padding: 0 } }}>
-                    <Formik initialValues={initialValues} validationSchema={rules} onSubmit={(values) => saveUser(values)}>
+                    <Formik
+                        initialValues={initialValues}
+                        validationSchema={rules}
+                        onSubmit={(values) => saveUser(values)}>
                         {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }) => (
                             <Form>
                                 <TabContext value={tabIndex}>
@@ -345,7 +373,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                 <Stack spacing={2}>
                                                     <AutocompleteNhanVien
                                                         label="Chọn nhân sự đã có"
-                                                        helperText={touched.nhanSuId && errors.nhanSuId && <span>{errors.nhanSuId}</span>}
+                                                        helperText={
+                                                            touched.nhanSuId &&
+                                                            errors.nhanSuId && <span>{errors.nhanSuId}</span>
+                                                        }
                                                         dataNhanVien={dataNhanVien}
                                                         idChosed={values?.nhanSuId}
                                                         handleChoseItem={(item: any) => {
@@ -381,7 +412,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                         onChange={(e) => {
                                                             setFieldValue('userName', e.target.value);
                                                         }}
-                                                        helperText={touched.userName && errors.userName && <span>{errors.userName}</span>}
+                                                        helperText={
+                                                            touched.userName &&
+                                                            errors.userName && <span>{errors.userName}</span>
+                                                        }
                                                     />
                                                     <TextField
                                                         size="small"
@@ -403,7 +437,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                         onChange={(e) => {
                                                             setFieldValue('emailAddress', e.target.value);
                                                         }}
-                                                        helperText={touched.emailAddress && errors.emailAddress && <span>{errors.emailAddress}</span>}
+                                                        helperText={
+                                                            touched.emailAddress &&
+                                                            errors.emailAddress && <span>{errors.emailAddress}</span>
+                                                        }
                                                     />
                                                 </Stack>
                                             </Grid>
@@ -460,7 +497,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                                 </span>
                                                             </label>
                                                         }
-                                                        helperText={touched.password && errors.password && <span>{errors.password}</span>}
+                                                        helperText={
+                                                            touched.password &&
+                                                            errors.password && <span>{errors.password}</span>
+                                                        }
                                                         InputProps={iconPassword}
                                                     />
                                                 </Grid>
@@ -494,7 +534,8 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                             }
                                                             onChange={handleChange}
                                                             helperText={
-                                                                touched.passwordNew && errors.passwordNew && <span>{errors.passwordNew}</span>
+                                                                touched.passwordNew &&
+                                                                errors.passwordNew && <span>{errors.passwordNew}</span>
                                                             }
                                                             InputProps={iconPasswordNew(values.passwordNew)}
                                                         />
@@ -523,7 +564,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                             </label>
                                                         }
                                                         helperText={
-                                                            touched.confirmPassword && errors.confirmPassword && <span>{errors.confirmPassword}</span>
+                                                            touched.confirmPassword &&
+                                                            errors.confirmPassword && (
+                                                                <span>{errors.confirmPassword}</span>
+                                                            )
                                                         }
                                                     />
                                                 </Grid>
@@ -533,7 +577,10 @@ export default function ModalAddUser({ isShowModal, dataNhanVien, userId, dataCh
                                                 item
                                                 xs={12}
                                                 sx={{
-                                                    paddingTop: userId !== 0 && !changePassword ? '0px!important' : '8px!important'
+                                                    paddingTop:
+                                                        userId !== 0 && !changePassword
+                                                            ? '0px!important'
+                                                            : '8px!important'
                                                 }}>
                                                 <FormGroup>
                                                     {/* {isActive && (

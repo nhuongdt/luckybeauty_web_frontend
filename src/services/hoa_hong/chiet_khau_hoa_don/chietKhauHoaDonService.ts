@@ -7,10 +7,7 @@ import { ChietKhauHoaDonItemDto } from './Dto/ChietKhauHoaDonItemDto';
 import { CreateOrEditChietKhauHoaDonDto } from './Dto/CreateOrEditChietKhauHoaDonDto';
 
 class ChietKhauHoaDonService {
-    public async GetAll(
-        input: PagedRequestDto,
-        idChiNhanh?: string
-    ): Promise<PagedResultDto<ChietKhauHoaDonItemDto>> {
+    public async GetAll(input: PagedRequestDto, idChiNhanh?: string): Promise<PagedResultDto<ChietKhauHoaDonItemDto>> {
         const result = await http.get('api/services/app/ChietKhauHoaDon/GetAll', {
             params: { ...input, idChiNhanh }
         });

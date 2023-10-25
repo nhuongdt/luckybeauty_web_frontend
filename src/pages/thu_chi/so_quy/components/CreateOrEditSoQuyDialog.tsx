@@ -238,7 +238,9 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
     useEffect(() => {
         setQuyHoaDon({
             ...quyHoaDon,
-            sHinhThucThanhToan: AppConsts.hinhThucThanhToan.filter((x: ISelect) => x.value === quyHoaDon.hinhThucThanhToan)[0]?.text
+            sHinhThucThanhToan: AppConsts.hinhThucThanhToan.filter(
+                (x: ISelect) => x.value === quyHoaDon.hinhThucThanhToan
+            )[0]?.text
         });
     }, [quyHoaDon.hinhThucThanhToan]);
 
@@ -320,7 +322,11 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                     </Box>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={quyHoaDon} validationSchema={validate} onSubmit={saveSoQuy} enableReinitialize>
+                    <Formik
+                        initialValues={quyHoaDon}
+                        validationSchema={validate}
+                        onSubmit={saveSoQuy}
+                        enableReinitialize>
                         {(formik) => (
                             <>
                                 <Form
@@ -379,7 +385,10 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                             ngayLapHoaDon: dt
                                                         });
                                                     }}
-                                                    helperText={formik.touched.idDoiTuongNopTien && formik.errors.idDoiTuongNopTien}
+                                                    helperText={
+                                                        formik.touched.idDoiTuongNopTien &&
+                                                        formik.errors.idDoiTuongNopTien
+                                                    }
                                                 />
                                             </ThemeProvider>
                                         </Grid>
@@ -433,7 +442,10 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                         idChosed={quyHoaDon?.idDoiTuongNopTien}
                                                         handleChoseItem={(item: any) => {
                                                             {
-                                                                formik.setFieldValue('idDoiTuongNopTien', item?.id ?? null);
+                                                                formik.setFieldValue(
+                                                                    'idDoiTuongNopTien',
+                                                                    item?.id ?? null
+                                                                );
                                                                 setQuyHoaDon({
                                                                     ...quyHoaDon,
                                                                     idDoiTuongNopTien: item?.id,
@@ -442,8 +454,14 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                                 });
                                                             }
                                                         }}
-                                                        error={formik.touched.idDoiTuongNopTien && Boolean(formik.errors?.idDoiTuongNopTien)}
-                                                        helperText={formik.touched.idDoiTuongNopTien && formik.errors.idDoiTuongNopTien}
+                                                        error={
+                                                            formik.touched.idDoiTuongNopTien &&
+                                                            Boolean(formik.errors?.idDoiTuongNopTien)
+                                                        }
+                                                        helperText={
+                                                            formik.touched.idDoiTuongNopTien &&
+                                                            formik.errors.idDoiTuongNopTien
+                                                        }
                                                     />
                                                 </>
                                             )}
@@ -454,7 +472,10 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                         dataNhanVien={allNhanVien}
                                                         handleChoseItem={(item: any) => {
                                                             {
-                                                                formik.setFieldValue('idDoiTuongNopTien', item?.id ?? null);
+                                                                formik.setFieldValue(
+                                                                    'idDoiTuongNopTien',
+                                                                    item?.id ?? null
+                                                                );
                                                                 setQuyHoaDon({
                                                                     ...quyHoaDon,
                                                                     idDoiTuongNopTien: item?.id,
@@ -463,8 +484,14 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                                 });
                                                             }
                                                         }}
-                                                        error={formik.touched.idDoiTuongNopTien && Boolean(formik.errors?.idDoiTuongNopTien)}
-                                                        helperText={formik.touched.idDoiTuongNopTien && formik.errors.idDoiTuongNopTien}
+                                                        error={
+                                                            formik.touched.idDoiTuongNopTien &&
+                                                            Boolean(formik.errors?.idDoiTuongNopTien)
+                                                        }
+                                                        helperText={
+                                                            formik.touched.idDoiTuongNopTien &&
+                                                            formik.errors.idDoiTuongNopTien
+                                                        }
                                                     />
                                                 </>
                                             )}
@@ -486,7 +513,9 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                         tongTienThu: utils.formatNumberToFloat(e.target.value)
                                                     });
                                                 }}
-                                                error={formik.touched?.tongTienThu && Boolean(formik.errors?.tongTienThu)}
+                                                error={
+                                                    formik.touched?.tongTienThu && Boolean(formik.errors?.tongTienThu)
+                                                }
                                                 helperText={formik.touched.tongTienThu && formik.errors.tongTienThu}
                                             />
                                         </Grid>
@@ -503,7 +532,10 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                         handleClickBtnAdd={() => setIsShowModalAccountBank(true)}
                                                         handleChoseItem={(item: any) => {
                                                             {
-                                                                formik.setFieldValue('idTaiKhoanNganHang', item?.id ?? null);
+                                                                formik.setFieldValue(
+                                                                    'idTaiKhoanNganHang',
+                                                                    item?.id ?? null
+                                                                );
                                                                 setQuyHoaDon({
                                                                     ...quyHoaDon,
                                                                     idTaiKhoanNganHang: item?.id,
@@ -512,8 +544,14 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                                 });
                                                             }
                                                         }}
-                                                        error={formik.touched.idTaiKhoanNganHang && Boolean(formik.errors?.idTaiKhoanNganHang)}
-                                                        helperText={formik.touched.idTaiKhoanNganHang && formik.errors.idTaiKhoanNganHang}
+                                                        error={
+                                                            formik.touched.idTaiKhoanNganHang &&
+                                                            Boolean(formik.errors?.idTaiKhoanNganHang)
+                                                        }
+                                                        helperText={
+                                                            formik.touched.idTaiKhoanNganHang &&
+                                                            formik.errors.idTaiKhoanNganHang
+                                                        }
                                                     />
                                                 </Grid>
                                             </>
@@ -599,9 +637,9 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                                     new PropConfirmOKCancel({
                                                                         show: true,
                                                                         title: 'Xác nhận xóa',
-                                                                        mes: `Bạn có chắc chắn muốn xóa ${quyHoaDon?.loaiPhieu ?? ' '}  ${
-                                                                            quyHoaDon?.maHoaDon ?? ' '
-                                                                        } không?`
+                                                                        mes: `Bạn có chắc chắn muốn xóa ${
+                                                                            quyHoaDon?.loaiPhieu ?? ' '
+                                                                        }  ${quyHoaDon?.maHoaDon ?? ' '} không?`
                                                                     })
                                                                 );
                                                             }}>

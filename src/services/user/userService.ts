@@ -25,18 +25,14 @@ class UserService {
 
     CheckExistUser = async (userId: number, userName: string) => {
         if (!utils.checkNull(userName)) {
-            const result = await http.get(
-                `api/services/app/User/CheckExistUser?userId=${userId}&userName=${userName}`
-            );
+            const result = await http.get(`api/services/app/User/CheckExistUser?userId=${userId}&userName=${userName}`);
             return result.data.result;
         }
         return false;
     };
     CheckExistEmail = async (userId: number, email: string) => {
         if (!utils.checkNull(email)) {
-            const result = await http.get(
-                `api/services/app/User/CheckExistEmail?userId=${userId}&email=${email}`
-            );
+            const result = await http.get(`api/services/app/User/CheckExistEmail?userId=${userId}&email=${email}`);
             return result.data.result;
         }
         return false;
@@ -94,10 +90,7 @@ class UserService {
 
     public async changeLanguage(changeLanguageInput: ChangeLanguagaInput) {
         try {
-            const result = await http.post(
-                'api/services/app/User/ChangeLanguage',
-                changeLanguageInput
-            );
+            const result = await http.post('api/services/app/User/ChangeLanguage', changeLanguageInput);
             return result.data;
         } catch (error) {
             console.error('Error occurred while changing language:', error);

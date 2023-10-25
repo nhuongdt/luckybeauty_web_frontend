@@ -21,7 +21,6 @@ import {
     Typography
 } from '@mui/material';
 import { Form, Formik } from 'formik';
-
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -47,6 +46,7 @@ interface ICreateOrEditRoleState {
     tabIndex: string;
     searchKeyWord: string;
     filteredPermissions: PermissionTree[];
+    tabChange: boolean;
 }
 class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrEditRoleState> {
     state = {
@@ -54,8 +54,18 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
         expandedPermissions: ['Pages'],
         tabIndex: '1',
         searchKeyWord: '',
+        tabChange: false,
         filteredPermissions: this.props.permissionTree
     };
+    componentDidUpdate(
+        prevProps: Readonly<ICreateOrEditRoleProps>,
+        prevState: Readonly<ICreateOrEditRoleState>,
+        snapshot?: any
+    ): void {
+        if (this.state.tabChange === false && this.props.formRef.grantedPermissions.length > 0) {
+            this.setState({ selectedPermissions: this.props.formRef.grantedPermissions, tabChange: true });
+        }
+    }
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         const defaultExpand = this.getDefaultExpandPermission(this.props.permissionTree);
         const permissions =
@@ -67,7 +77,8 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             tabIndex: newValue,
             selectedPermissions: permissions,
             expandedPermissions: defaultExpand,
-            filteredPermissions: this.props.permissionTree
+            filteredPermissions: this.props.permissionTree,
+            tabChange: true
         });
     };
     filterPermissions = (permissions: PermissionTree[], searchKeyword: string): PermissionTree[] => {
@@ -102,25 +113,18 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             ...values,
             grantedPermissions: permission
         });
-        createOrEdit != null
-            ? values.id === 0
-                ? enqueueSnackbar('Thêm mới thành công', {
-                      variant: 'success',
-                      autoHideDuration: 3000
-                  })
-                : enqueueSnackbar('Cập nhật thành công', {
-                      variant: 'success',
-                      autoHideDuration: 3000
-                  })
-            : enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau', {
-                  variant: 'error',
-                  autoHideDuration: 3000
-              });
-        this.setState({
-            tabIndex: '1',
-            selectedPermissions: []
+        enqueueSnackbar(createOrEdit.message, {
+            variant: createOrEdit.status,
+            autoHideDuration: 3000
         });
-        this.props.onOk();
+        if (createOrEdit.status == 'success') {
+            this.setState({
+                tabIndex: '1',
+                selectedPermissions: [],
+                tabChange: false
+            });
+            this.props.onOk();
+        }
     };
     handleCheck = (event: any, node: PermissionTree) => {
         const checked = event.target.checked;
@@ -250,7 +254,18 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
             id: formRef.id
         };
         return (
-            <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="sm">
+            <Dialog
+                open={visible}
+                onClose={() => {
+                    this.setState({
+                        tabIndex: '1',
+                        selectedPermissions: [],
+                        tabChange: false
+                    });
+                    onCancel();
+                }}
+                fullWidth
+                maxWidth="sm">
                 <DialogTitle>
                     <Typography variant="h3" fontSize="24px" fontWeight="700">
                         {modalType}
@@ -260,7 +275,8 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                         onClick={() => {
                             this.setState({
                                 tabIndex: '1',
-                                selectedPermissions: []
+                                selectedPermissions: [],
+                                tabChange: false
                             });
                             onCancel();
                         }}
@@ -277,7 +293,7 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                 </DialogTitle>
                 <DialogContent>
                     <Formik initialValues={initialValues} onSubmit={this.handleSubmit} validationSchema={rules}>
-                        {({ values, handleChange, errors, touched }) => (
+                        {({ values, handleChange, errors, touched, isSubmitting }) => (
                             <Form onKeyPress={this.handleFormKeyPress}>
                                 <Box>
                                     <TabContext value={this.state.tabIndex}>
@@ -341,7 +357,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                     id="name"
                                                     type="text"
                                                     error={errors.name && touched.name ? true : false}
-                                                    helperText={errors.name && <small className="text-danger">{errors.name}</small>}
+                                                    helperText={
+                                                        errors.name && (
+                                                            <small className="text-danger">{errors.name}</small>
+                                                        )
+                                                    }
                                                     name="name"
                                                     value={values.name}
                                                     onChange={handleChange}
@@ -364,7 +384,11 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                         </label>
                                                     }
                                                     error={errors.displayName && touched.displayName ? true : false}
-                                                    helperText={errors.displayName && <small className="text-danger">{errors.displayName}</small>}
+                                                    helperText={
+                                                        errors.displayName && (
+                                                            <small className="text-danger">{errors.displayName}</small>
+                                                        )
+                                                    }
                                                     size="small"
                                                     id="displayName"
                                                     type="text"
@@ -444,21 +468,32 @@ class CreateOrEditRoleModal extends Component<ICreateOrEditRoleProps, ICreateOrE
                                                 onClick={() => {
                                                     this.setState({
                                                         tabIndex: '1',
-                                                        selectedPermissions: []
+                                                        selectedPermissions: [],
+                                                        tabChange: false
                                                     });
                                                     onCancel();
                                                 }}
                                                 className="btn-outline-hover">
                                                 Hủy
                                             </Button>
-                                            <Button
-                                                variant="contained"
-                                                type="submit"
-                                                sx={{ fontSize: '14px', textTransform: 'unset' }}
-                                                size="small"
-                                                className="btn-container-hover">
-                                                Lưu
-                                            </Button>
+                                            {!isSubmitting ? (
+                                                <Button
+                                                    variant="contained"
+                                                    type="submit"
+                                                    sx={{ fontSize: '14px', textTransform: 'unset' }}
+                                                    size="small"
+                                                    className="btn-container-hover">
+                                                    Lưu
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="contained"
+                                                    sx={{ fontSize: '14px', textTransform: 'unset' }}
+                                                    size="small"
+                                                    className="btn-container-hover">
+                                                    Đang lưu
+                                                </Button>
+                                            )}
                                         </Box>
                                     </DialogActions>
                                 </Box>

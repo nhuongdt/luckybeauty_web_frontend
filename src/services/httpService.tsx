@@ -32,7 +32,12 @@ http.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (!!error.response && !!error.response.data.error && !!error.response.data.error.message && error.response.data.error.details) {
+        if (
+            !!error.response &&
+            !!error.response.data.error &&
+            !!error.response.data.error.message &&
+            error.response.data.error.details
+        ) {
             // enqueueSnackbar(
             //     <>
             //         <div>

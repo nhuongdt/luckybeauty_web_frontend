@@ -28,12 +28,18 @@ function ForgotPasswordPage() {
             return;
         }
         const tenantId = Cookies.get('Abp.TenantId') ?? 'null';
-        const result = await accountService.SendPasswordResetCode(formData.email.trim(), tenantId === 'null' ? undefined : Number.parseInt(tenantId));
+        const result = await accountService.SendPasswordResetCode(
+            formData.email.trim(),
+            tenantId === 'null' ? undefined : Number.parseInt(tenantId)
+        );
         if (result === true) {
-            enqueueSnackbar('Mã xác nhận đã được gửi qua địa chỉ email vui lòng kiểm tra và thao tác đổi lại mật khẩu', {
-                variant: 'success',
-                autoHideDuration: undefined
-            });
+            enqueueSnackbar(
+                'Mã xác nhận đã được gửi qua địa chỉ email vui lòng kiểm tra và thao tác đổi lại mật khẩu',
+                {
+                    variant: 'success',
+                    autoHideDuration: undefined
+                }
+            );
         } else {
             enqueueSnackbar('Địa chỉ email không tồn tại tong Tenant hiện tại, Vui lòng kiểm tra lại', {
                 variant: 'error',
@@ -42,7 +48,9 @@ function ForgotPasswordPage() {
         }
     };
     useEffect(() => {
-        Cookies.get('TenantName') == '' ? setTenancyName('Chưa lựa chọn') : setTenancyName(Cookies.get('TenantName') ?? '');
+        Cookies.get('TenantName') == ''
+            ? setTenancyName('Chưa lựa chọn')
+            : setTenancyName(Cookies.get('TenantName') ?? '');
     }, []);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -88,7 +96,10 @@ function ForgotPasswordPage() {
                 </Box>
 
                 <Typography variant="h1">Quên mật khẩu</Typography>
-                <Typography>Nhập địa chỉ email bạn đã sử dụng khi tạo tài khoản và chúng tôi sẽ gửi cho bạn mã để đặt lại mật khẩu</Typography>
+                <Typography>
+                    Nhập địa chỉ email bạn đã sử dụng khi tạo tài khoản và chúng tôi sẽ gửi cho bạn mã để đặt lại mật
+                    khẩu
+                </Typography>
                 <form onSubmit={handleSubmit}>
                     <TextField
                         type="email"

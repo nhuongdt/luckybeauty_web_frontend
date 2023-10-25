@@ -48,8 +48,7 @@ export default class HoaDonChiTietDto {
         this.laPTChietKhau = laPTChietKhau;
         this.tienChietKhau = ptChietKhau > 0 ? (donGiaTruocCK * ptChietKhau) / 100 : tienChietKhau;
         this.ptThue = ptThue;
-        this.tienThue =
-            ptThue > 0 ? ((donGiaTruocCK - this.tienChietKhau) * ptThue) / 100 : tienThue;
+        this.tienThue = ptThue > 0 ? ((donGiaTruocCK - this.tienChietKhau) * ptThue) / 100 : tienThue;
         this.ghiChu = ghiChu;
         this.trangThai = trangThai;
         this.nhanVienThucHien = [];
@@ -63,10 +62,7 @@ export default class HoaDonChiTietDto {
             donGiaSauCK: {
                 get() {
                     if (this.ptChietKhau ?? 0 > 0) {
-                        return (
-                            this.donGiaTruocCK -
-                            (this.donGiaTruocCK * (this.ptChietKhau ?? 0)) / 100
-                        );
+                        return this.donGiaTruocCK - (this.donGiaTruocCK * (this.ptChietKhau ?? 0)) / 100;
                     }
                     return this.donGiaTruocCK - (this.tienChietKhau ?? 0);
                 }

@@ -14,8 +14,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 {payload.map((entry: any, index: number) => (
                     <div key={index}>
                         <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
-                            {entry.name == 'thangTruoc' ? 'Tháng trước' : entry.name == 'thangNay' ? 'Tháng này' : entry.name}:{' '}
-                            {formatCurrency(entry.value)}
+                            {entry.name == 'thangTruoc'
+                                ? 'Tháng trước'
+                                : entry.name == 'thangNay'
+                                ? 'Tháng này'
+                                : entry.name}
+                            : {formatCurrency(entry.value)}
                         </p>
                     </div>
                 ))}
@@ -27,7 +31,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 const ColumnChartNew: React.FC = () => {
     const data =
-        dashboardStore.thongKeDoanhThu !== undefined || dashboardStore.thongKeDoanhThu == ([] as ThongKeDoanhThu[])
+        dashboardStore.thongKeDoanhThu !== undefined &&
+        dashboardStore.thongKeDoanhThu != ([] as ThongKeDoanhThu[]) &&
+        dashboardStore.thongKeDoanhThu.length > 0
             ? dashboardStore.thongKeDoanhThu
             : [
                   { month: 'Tháng 1', thangNay: 0, thangTruoc: 0 },
@@ -46,11 +52,17 @@ const ColumnChartNew: React.FC = () => {
     //const yTicks = [];
 
     return (
-        <div style={{ marginTop: '30px', background: '#FFF' }}>
+        <div style={{ marginTop: '30px', background: '#FFF', borderRadius: '8px' }}>
             <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data}>
                     <CartesianGrid strokeDasharray="0 0" vertical={false} />
-                    <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#666466' }} axisLine={{ stroke: '#E6E1E6' }} tickMargin={9} tickSize={0} />
+                    <XAxis
+                        dataKey="month"
+                        tick={{ fontSize: 12, fill: '#666466' }}
+                        axisLine={{ stroke: '#E6E1E6' }}
+                        tickMargin={9}
+                        tickSize={0}
+                    />
                     <YAxis
                         tickCount={4}
                         //ticks={yTicks}

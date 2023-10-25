@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import './register.css';
-
 import { Input, Checkbox, Grid, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
-
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Visibility from '@mui/icons-material/Visibility';
 import logo from '../../../images/Lucky_beauty.jpg';
@@ -217,7 +215,9 @@ const RegisterScreen: React.FC = () => {
                                         }}
                                         value={confirmPassword}
                                         error={!passwordMatch}
-                                        helperText={!passwordMatch && <p className="error-password">Mật khẩu không khớp</p>}
+                                        helperText={
+                                            !passwordMatch && <p className="error-password">Mật khẩu không khớp</p>
+                                        }
                                         name="confirmPassword"
                                         label={
                                             <span className="login-label">

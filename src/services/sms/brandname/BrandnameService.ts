@@ -6,9 +6,11 @@ import { BrandnameDto } from './BrandnameDto';
 class BrandnameService {
     Brandname_CheckExistSDT = async (phoneNumber: string, id: string) => {
         if (!utils.checkNull(phoneNumber)) {
-            const data = await http.get(`api/services/app/Brandname/Brandname_CheckExistSDT?phoneNumber=${phoneNumber}&id=${id}`).then((res) => {
-                return res.data.result;
-            });
+            const data = await http
+                .get(`api/services/app/Brandname/Brandname_CheckExistSDT?phoneNumber=${phoneNumber}&id=${id}`)
+                .then((res) => {
+                    return res.data.result;
+                });
             return data;
         } else {
             return false;

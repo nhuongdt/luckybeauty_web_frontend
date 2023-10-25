@@ -174,13 +174,7 @@ var abp = abp || {};
     abp.auth.tokenCookieName = 'Abp.AuthToken';
 
     abp.auth.setToken = function (authToken, expireDate) {
-        abp.utils.setCookieValue(
-            abp.auth.tokenCookieName,
-            authToken,
-            expireDate,
-            abp.appPath,
-            abp.domain
-        );
+        abp.utils.setCookieValue(abp.auth.tokenCookieName, authToken, expireDate, abp.appPath, abp.domain);
     };
 
     abp.auth.getToken = function () {
@@ -194,13 +188,7 @@ var abp = abp || {};
     abp.auth.refreshTokenCookieName = 'Abp.AuthRefreshToken';
 
     abp.auth.setRefreshToken = function (refreshToken, expireDate) {
-        abp.utils.setCookieValue(
-            abp.auth.refreshTokenCookieName,
-            refreshToken,
-            expireDate,
-            abp.appPath,
-            abp.domain
-        );
+        abp.utils.setCookieValue(abp.auth.refreshTokenCookieName, refreshToken, expireDate, abp.appPath, abp.domain);
     };
 
     abp.auth.getRefreshToken = function () {
@@ -303,42 +291,35 @@ var abp = abp || {};
 
     abp.notifications.messageFormatters = {};
 
-    abp.notifications.messageFormatters['Abp.Notifications.MessageNotificationData'] = function (
-        userNotification
-    ) {
-        return (
-            userNotification.notification.data.message ||
-            userNotification.notification.data.properties.Message
-        );
+    abp.notifications.messageFormatters['Abp.Notifications.MessageNotificationData'] = function (userNotification) {
+        return userNotification.notification.data.message || userNotification.notification.data.properties.Message;
     };
 
-    abp.notifications.messageFormatters['Abp.Notifications.LocalizableMessageNotificationData'] =
-        function (userNotification) {
-            var message =
-                userNotification.notification.data.message ||
-                userNotification.notification.data.properties.Message;
-            var localizedMessage = abp.localization.localize(message.name, message.sourceName);
+    abp.notifications.messageFormatters['Abp.Notifications.LocalizableMessageNotificationData'] = function (
+        userNotification
+    ) {
+        var message =
+            userNotification.notification.data.message || userNotification.notification.data.properties.Message;
+        var localizedMessage = abp.localization.localize(message.name, message.sourceName);
 
-            if (userNotification.notification.data.properties) {
-                var properties = Object.keys(userNotification.notification.data.properties);
-                for (var i = 0; i < properties.length; i++) {
-                    localizedMessage = localizedMessage.replace(
-                        '{' + properties[i] + '}',
-                        userNotification.notification.data.properties[properties[i]]
-                    );
-                }
+        if (userNotification.notification.data.properties) {
+            var properties = Object.keys(userNotification.notification.data.properties);
+            for (var i = 0; i < properties.length; i++) {
+                localizedMessage = localizedMessage.replace(
+                    '{' + properties[i] + '}',
+                    userNotification.notification.data.properties[properties[i]]
+                );
             }
+        }
 
-            return localizedMessage;
-        };
+        return localizedMessage;
+    };
 
     abp.notifications.getFormattedMessageFromUserNotification = function (userNotification) {
-        var formatter =
-            abp.notifications.messageFormatters[userNotification.notification.data.type];
+        var formatter = abp.notifications.messageFormatters[userNotification.notification.data.type];
         if (!formatter) {
             abp.log.warn(
-                'No message formatter defined for given data type: ' +
-                    userNotification.notification.data.type
+                'No message formatter defined for given data type: ' + userNotification.notification.data.type
             );
             return '?';
         }
@@ -356,9 +337,7 @@ var abp = abp || {};
 
     abp.notifications.showUiNotifyForUserNotification = function (userNotification, options) {
         var message = abp.notifications.getFormattedMessageFromUserNotification(userNotification);
-        var uiNotifyFunc = abp.notifications.getUiNotifyFuncBySeverity(
-            userNotification.notification.severity
-        );
+        var uiNotifyFunc = abp.notifications.getUiNotifyFuncBySeverity(userNotification.notification.severity);
         uiNotifyFunc(message, undefined, options);
     };
 
@@ -689,24 +668,14 @@ var abp = abp || {};
             addSeperator();
 
             if (parameterInfo.value.toJSON && typeof parameterInfo.value.toJSON === 'function') {
-                qs =
-                    qs +
-                    parameterInfo.name +
-                    '=' +
-                    encodeURIComponent(parameterInfo.value.toJSON());
+                qs = qs + parameterInfo.name + '=' + encodeURIComponent(parameterInfo.value.toJSON());
             } else if (Array.isArray(parameterInfo.value) && parameterInfo.value.length) {
                 for (var j = 0; j < parameterInfo.value.length; j++) {
                     if (j > 0) {
                         addSeperator();
                     }
 
-                    qs =
-                        qs +
-                        parameterInfo.name +
-                        '[' +
-                        j +
-                        ']=' +
-                        encodeURIComponent(parameterInfo.value[j]);
+                    qs = qs + parameterInfo.name + '[' + j + ']=' + encodeURIComponent(parameterInfo.value[j]);
                 }
             } else {
                 qs = qs + parameterInfo.name + '=' + encodeURIComponent(parameterInfo.value);
@@ -784,8 +753,7 @@ var abp = abp || {};
     abp.utils.deleteCookie = function (key, path) {
         var cookieValue = encodeURIComponent(key) + '=';
 
-        cookieValue =
-            cookieValue + '; expires=' + new Date(new Date().getTime() - 86400000).toUTCString();
+        cookieValue = cookieValue + '; expires=' + new Date(new Date().getTime() - 86400000).toUTCString();
 
         if (path) {
             cookieValue = cookieValue + '; path=' + path;
@@ -897,9 +865,7 @@ var abp = abp || {};
     abp.timing.convertToUserTimezone = function (date) {
         var localTime = date.getTime();
         var utcTime = localTime + date.getTimezoneOffset() * 60000;
-        var targetTime =
-            parseInt(utcTime) +
-            parseInt(abp.timing.timeZoneInfo.windows.currentUtcOffsetInMilliseconds);
+        var targetTime = parseInt(utcTime) + parseInt(abp.timing.timeZoneInfo.windows.currentUtcOffsetInMilliseconds);
         return new Date(targetTime);
     };
 

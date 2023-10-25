@@ -8,10 +8,14 @@ class NotificationStore {
     notifications!: GetNotificationsOutput;
     getNotificationInput!: GetUserNotificationsInput;
     notificationHubConnection!: signalR.HubConnection | null;
+    maxResultCountNotification!: number;
+    skipCountNotification!: number;
     constructor() {
+        this.maxResultCountNotification = 5;
+        this.skipCountNotification = 0;
         this.getNotificationInput = {
-            maxResultCount: 1000,
-            skipCount: 0
+            maxResultCount: this.maxResultCountNotification,
+            skipCount: this.skipCountNotification
         };
         this.createHubConnection();
         makeAutoObservable(this);
@@ -34,10 +38,14 @@ class NotificationStore {
         await this.GetUserNotification();
     };
     async GetUserNotification() {
-        const data = await NotificationService.GetNotifiationByCurrentUser(
-            this.getNotificationInput
-        );
+        this.getNotificationInput.maxResultCount = this.maxResultCountNotification;
+        this.getNotificationInput.skipCount = this.skipCountNotification;
+        const data = await NotificationService.GetNotifiationByCurrentUser(this.getNotificationInput);
         this.notifications = data;
+    }
+    async setAllNotificationAsRead() {
+        await NotificationService.SetAllNotificationsAsRead();
+        await this.GetUserNotification();
     }
 }
 export default new NotificationStore();

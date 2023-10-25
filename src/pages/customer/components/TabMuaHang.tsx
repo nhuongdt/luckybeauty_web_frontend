@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, SelectChangeEvent } from '@mui/material';
 import { ReactComponent as IconSorting } from '../../../images/column-sorting.svg';
@@ -7,7 +7,38 @@ import khachHangStore from '../../../stores/khachHangStore';
 import { observer } from 'mobx-react';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
 import { format as formatDate } from 'date-fns';
+import AppConsts from '../../../lib/appconst';
+import { useParams } from 'react-router-dom';
+
 const TabMuaHang: React.FC = () => {
+    const { khachHangId } = useParams();
+    const [curentPage, setCurrentPage] = useState<number>(1);
+    const [maxResultCount, setMaxResultCount] = useState<number>(10);
+    const [sortBy, setSortBy] = useState('creationTime');
+    const [sortType, setSortType] = useState('desc');
+    useEffect(() => {
+        getLichSuMuaHang();
+    }, [maxResultCount, curentPage, sortBy, sortType]);
+    const getLichSuMuaHang = async () => {
+        await khachHangStore.getLichSuGiaoDich(khachHangId ?? AppConsts.guidEmpty, {
+            keyword: '',
+            maxResultCount: maxResultCount,
+            skipCount: curentPage,
+            sortBy: sortBy,
+            sortType: sortType
+        });
+    };
+    const handlePageChange = async (event: any, newPage: number) => {
+        setCurrentPage(newPage);
+    };
+    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
+        setCurrentPage(1);
+        setMaxResultCount(parseInt(event.target.value.toString(), 10));
+    };
+    const onSort = async (sortType: string, sortBy: string) => {
+        setSortType(sortType);
+        setSortBy(sortBy);
+    };
     const columns = [
         {
             field: 'maHoaDon',
@@ -63,7 +94,9 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'khachDaTra',
@@ -74,7 +107,9 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'conNo',
@@ -85,7 +120,9 @@ const TabMuaHang: React.FC = () => {
                     {params.colDef.headerName}
                 </Box>
             ),
-            renderCell: (params: any) => <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            renderCell: (params: any) => (
+                <Box title={params.value}>{new Intl.NumberFormat('vi-VN').format(params.value)}</Box>
+            )
         },
         {
             field: 'trangThai',
@@ -101,7 +138,8 @@ const TabMuaHang: React.FC = () => {
                     title={params.value}
                     sx={{
                         color: params.value == 'Hoàn thành' ? '#50CD89' : params.value == 'Hủy' ? '#F1416C' : '#FF9900',
-                        backgroundColor: params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
+                        backgroundColor:
+                            params.value == 'Hoàn thành' ? '#E8FFF3' : params.value == 'Hủy' ? '#FFF5F8' : '#FFF8DD'
                     }}>
                     {params.value}
                 </Box>
@@ -114,7 +152,7 @@ const TabMuaHang: React.FC = () => {
             <Box mt="24px">
                 <DataGrid
                     disableRowSelectionOnClick
-                    //hideFooter
+                    hideFooter
                     autoHeight
                     columns={columns}
                     rows={khachHangStore.lichSuGiaoDich === undefined ? [] : khachHangStore.lichSuGiaoDich.items}
@@ -125,6 +163,18 @@ const TabMuaHang: React.FC = () => {
                         }
                     }}
                     pageSizeOptions={[5, 10, 20, 50, 100]}
+                    sortingOrder={['desc', 'asc']}
+                    // sortModel={[
+                    //     {
+                    //         field: sortBy,
+                    //         sort: sortType == 'desc' ? 'desc' : 'asc'
+                    //     }
+                    // ]}
+                    onSortModelChange={(newSortModel) => {
+                        if (newSortModel.length > 0) {
+                            onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                        }
+                    }}
                     localeText={TextTranslate}
                     sx={{
                         '& .MuiDataGrid-columnHeaders': {
@@ -165,14 +215,20 @@ const TabMuaHang: React.FC = () => {
                         }
                     }}
                 />
-                {/* <CustomTablePagination
-                    currentPage={1}
-                    rowPerPage={10}
-                    totalRecord={8}
-                    totalPage={1}
+                <CustomTablePagination
+                    currentPage={curentPage}
+                    rowPerPage={maxResultCount}
+                    totalRecord={
+                        khachHangStore.lichSuGiaoDich === undefined ? 0 : khachHangStore.lichSuGiaoDich.totalCount
+                    }
+                    totalPage={
+                        khachHangStore.lichSuGiaoDich === undefined
+                            ? 0
+                            : Math.ceil(khachHangStore.lichSuGiaoDich.totalCount / maxResultCount)
+                    }
                     handlePerPageChange={handlePerPageChange}
                     handlePageChange={handlePageChange}
-                /> */}
+                />
             </Box>
         </>
     );

@@ -224,7 +224,9 @@ export const appRouters: AppRouteProps = {
                             children: [],
                             showInMenu: true,
                             isLayout: false,
-                            component: LoadableComponent(() => import('../../pages/ban_hang/Giao_dich_thanh_toan/index'))
+                            component: LoadableComponent(
+                                () => import('../../pages/ban_hang/Giao_dich_thanh_toan/index')
+                            )
                         }
                     ],
                     showInMenu: true,
@@ -388,8 +390,45 @@ export const appRouters: AppRouteProps = {
                     iconActive: <ReportActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/dashboard'))
+                    children: [
+                        {
+                            path: '/bao-cao/bao-cao-ban-hang',
+                            permission: 'Pages',
+                            title: 'Báo cáo bán hàng',
+                            name: 'baoCaoBanHang',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_ban_hang'))
+                        },
+                        {
+                            path: '/bao-cao/bao-cao-tai-chinh',
+                            permission: 'Pages',
+                            title: 'Báo cáo tài chính',
+                            name: 'baoCaoBanHang',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/bao_cao_tai_chinh'))
+                        },
+                        {
+                            path: '/bao-cao/bao-cao-dat-lich',
+                            permission: 'Pages',
+                            title: 'Báo cáo đặt lịch',
+                            name: 'baoCaoBanHang',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/bao_cao/Bao_cao_dat_lich'))
+                        }
+                    ],
+                    component: null
                 },
                 {
                     path: 'admin',
@@ -537,6 +576,18 @@ export const appRouters: AppRouteProps = {
                     isLayout: false,
                     children: [],
                     component: LoadableComponent(() => import('../../pages/admin/settings/khuyen_mai'))
+                },
+                {
+                    path: '/settings/email',
+                    permission: 'Pages.CongTy',
+                    title: 'Email',
+                    name: 'email',
+                    icon: <SettingIcon width="20px" />,
+                    iconActive: <SetingActive width="20px" />,
+                    showInMenu: false,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/admin/settings/Email'))
                 },
 
                 {

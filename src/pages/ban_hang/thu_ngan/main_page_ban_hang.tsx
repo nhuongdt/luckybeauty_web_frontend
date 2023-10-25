@@ -62,7 +62,8 @@ export default function MainPageBanHang() {
     //ẩn thanh cuộn dọc của trình duyệt khi vào trang bán hàng
     useEffect(() => {
         activeTab === 2
-            ? ((document.documentElement.style.overflowY = 'hidden'), (document.documentElement.style.maxHeight = '100vh'))
+            ? ((document.documentElement.style.overflowY = 'hidden'),
+              (document.documentElement.style.maxHeight = '100vh'))
             : (document.documentElement.style.overflowY = 'auto');
 
         return () => {
@@ -139,10 +140,14 @@ export default function MainPageBanHang() {
                                             textTransform: 'unset',
 
                                             color: activeTab == 1 ? '#fff' : '#999699',
-                                            backgroundColor: activeTab == 1 ? 'var(--color-main)!important' : 'var(--color-bg)',
+                                            backgroundColor:
+                                                activeTab == 1 ? 'var(--color-main)!important' : 'var(--color-bg)',
                                             borderColor: 'transparent!important',
                                             '&:hover': {
-                                                borderColor: activeTab == 2 ? 'var(--color-main)!important' : 'transparent!important'
+                                                borderColor:
+                                                    activeTab == 2
+                                                        ? 'var(--color-main)!important'
+                                                        : 'transparent!important'
                                             }
                                         }}
                                         onClick={() => handleTab(1)}
@@ -156,9 +161,13 @@ export default function MainPageBanHang() {
 
                                             color: activeTab == 2 ? '#fff' : '#999699',
                                             borderColor: 'transparent!important',
-                                            backgroundColor: activeTab == 2 ? 'var(--color-main)!important' : 'var(--color-bg)',
+                                            backgroundColor:
+                                                activeTab == 2 ? 'var(--color-main)!important' : 'var(--color-bg)',
                                             '&:hover': {
-                                                borderColor: activeTab == 1 ? 'var(--color-main)!important' : 'transparent!important'
+                                                borderColor:
+                                                    activeTab == 1
+                                                        ? 'var(--color-main)!important'
+                                                        : 'transparent!important'
                                             }
                                         }}
                                         onClick={() => handleTab(2)}

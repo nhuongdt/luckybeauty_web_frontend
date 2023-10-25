@@ -18,7 +18,13 @@ import AppConsts from '../../lib/appconst';
 import * as signalR from '@microsoft/signalr';
 import notificationStore from '../../stores/notificationStore';
 import ToolbarHeader from './components/Toolbarheader';
-import { CustomContentGenerator, DateSelectArg, DayHeaderContentArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
+import {
+    CustomContentGenerator,
+    DateSelectArg,
+    DayHeaderContentArg,
+    EventClickArg,
+    EventContentArg
+} from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -64,7 +70,7 @@ const LichHen: React.FC = () => {
     const suggestData = async () => {
         await suggestStore.getSuggestKhachHang();
         await suggestStore.getSuggestKyThuatVien();
-        await suggestStore.getSuggestDichVu();
+        await suggestStore.getSuggestDichVu(bookingStore.idNhanVien);
     };
     useEffect(() => {
         getData();
@@ -185,10 +191,12 @@ const LichHen: React.FC = () => {
         const startHours = formatDateFns(parsedDate, 'HH:mm');
         const startTime = formatDateFns(parsedDate, 'yyyy-MM-dd');
         calendarApi.unselect(); // clear date selection
-        bookingStore.createNewBookingDto();
+        //bookingStore.createNewBookingDto();
         bookingStore.createOrEditBookingDto.startHours = startHours;
         bookingStore.createOrEditBookingDto.startTime = startTime;
-        bookingStore.createOrEditBookingDto.idNhanVien = selectInfo.resource?.id ?? AppConsts.guidEmpty;
+        if (selectInfo.view.type === 'resourceTimeGridDay') {
+            bookingStore.createOrEditBookingDto.idNhanVien = selectInfo.resource?.id ?? AppConsts.guidEmpty;
+        }
         bookingStore.isShowCreateOrEdit = true;
     };
 
@@ -232,7 +240,10 @@ const LichHen: React.FC = () => {
                         display: 'flex',
                         gap: '8px'
                     }}>
-                    <Button variant="outlined" className="btn-outline-hover" sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>
+                    <Button
+                        variant="outlined"
+                        className="btn-outline-hover"
+                        sx={{ bgcolor: '#fff!important', paddingX: '8px' }}>
                         <SettingIcon />
                     </Button>
                     <Button
@@ -275,7 +286,14 @@ const LichHen: React.FC = () => {
                 />
                 <FullCalendar
                     ref={calendarRef}
-                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin, resourceTimelinePlugin, resourceTimeGridPlugin]}
+                    plugins={[
+                        dayGridPlugin,
+                        timeGridPlugin,
+                        interactionPlugin,
+                        listPlugin,
+                        resourceTimelinePlugin,
+                        resourceTimeGridPlugin
+                    ]}
                     schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
                     resources={
                         bookingStore.idNhanVien !== undefined && bookingStore.idNhanVien !== ''
@@ -379,7 +397,12 @@ function renderResourceLabelContent(args: any) {
                     <Avatar src={lable.avatar} alt={lable.tenNhanVien} />
                 </Box>
             </Box>
-            <Box marginLeft={'5px'} display={'flex'} flexDirection={'column'} justifyContent={'space-between'} alignItems={'start'}>
+            <Box
+                marginLeft={'5px'}
+                display={'flex'}
+                flexDirection={'column'}
+                justifyContent={'space-between'}
+                alignItems={'start'}>
                 <Typography
                     fontSize="12px"
                     fontWeight="700"
@@ -408,7 +431,9 @@ function renderDayHeaderContent(args: DayHeaderContentArg) {
             flexDirection={initialView === 'timeGridWeek' ? 'column' : 'row'}
             alignItems={'center'}
             minHeight={'65px'}>
-            <Box fontSize={initialView === 'timeGridWeek' ? '12px' : '14px'}>{formatDateFns(args.date, 'EEEE', { locale: vi })}</Box>
+            <Box fontSize={initialView === 'timeGridWeek' ? '12px' : '14px'}>
+                {formatDateFns(args.date, 'EEEE', { locale: vi })}
+            </Box>
             {initialView === 'timeGridWeek' ? (
                 <Box fontSize={'18px'} mt={1}>
                     {formatDateFns(args.date, 'd', { locale: vi })}
@@ -431,7 +456,12 @@ function renderEventContent(eventContent: EventContentArg) {
                 overflow: 'hidden'
             }}>
             {eventContent.view.type === 'dayGridMonth' ? (
-                <Typography variant="body1" fontSize="12px" whiteSpace="nowrap" width={'100%'} color={eventContent.event.textColor}>
+                <Typography
+                    variant="body1"
+                    fontSize="12px"
+                    whiteSpace="nowrap"
+                    width={'100%'}
+                    color={eventContent.event.textColor}>
                     {formattedStartTime} {eventContent.event.title + ':'}
                     {eventContent.event.display}
                 </Typography>

@@ -3,17 +3,12 @@ import { BookingDto } from './dto/BookingDto';
 import { BookingGetAllItemDto } from './dto/BookingGetAllItemDto';
 import { CreateBookingDto } from './dto/CreateBookingDto';
 import qs from 'qs';
-import {
-    BookingRequestDto,
-    PagedBookingResultRequestDto
-} from './dto/PagedBookingResultRequestDto';
+import { BookingRequestDto, PagedBookingResultRequestDto } from './dto/PagedBookingResultRequestDto';
 import utils from '../../utils/utils';
 import { Guid } from 'guid-typescript';
 import { BookingInfoDto } from './dto/BookingInfoDto';
 class BookingServices {
-    public async getAllBooking(
-        input: PagedBookingResultRequestDto
-    ): Promise<BookingGetAllItemDto[]> {
+    public async getAllBooking(input: PagedBookingResultRequestDto): Promise<BookingGetAllItemDto[]> {
         const result = await http.get('api/services/app/Booking/GetAll', { params: input });
         return result.data.result;
     }
@@ -38,9 +33,7 @@ class BookingServices {
     }
     GetInforBooking_byID = async (idBooking: string) => {
         if (utils.checkNull(idBooking) || idBooking == Guid.EMPTY) return null;
-        const xx = await http.get(
-            `api/services/app/Booking/GetInforBooking_byID?idBooking=${idBooking}`
-        );
+        const xx = await http.get(`api/services/app/Booking/GetInforBooking_byID?idBooking=${idBooking}`);
         return xx.data.result;
     };
     GetInforBooking = async (idBooking: string): Promise<BookingInfoDto> => {

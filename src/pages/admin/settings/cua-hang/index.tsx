@@ -378,13 +378,25 @@ class StoreDetail extends Component {
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Website</Typography>
-                                        <TextField size="small" fullWidth name="website" onChange={this.handleChange} value={editCuaHang.website} />
+                                        <TextField
+                                            size="small"
+                                            fullWidth
+                                            name="website"
+                                            onChange={this.handleChange}
+                                            value={editCuaHang.website}
+                                        />
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12} md={6}>
                                     <Stack spacing={1}>
                                         <Typography variant="subtitle2">Facebook</Typography>
-                                        <TextField size="small" fullWidth name="facebook" onChange={this.handleChange} value={editCuaHang.facebook} />
+                                        <TextField
+                                            size="small"
+                                            fullWidth
+                                            name="facebook"
+                                            onChange={this.handleChange}
+                                            value={editCuaHang.facebook}
+                                        />
                                     </Stack>
                                 </Grid>
                                 <Grid item xs={12} md={6}>

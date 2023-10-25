@@ -54,7 +54,10 @@ export default function AutocompleteAccountBank({ handleChoseItem, idChosed, lis
                                     </Button>
                                 )}
                                 {option.id != '' && (
-                                    <Grid item key={option.id} sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
+                                    <Grid
+                                        item
+                                        key={option.id}
+                                        sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
                                         <Typography style={{ fontSize: '14px' }}>
                                             {option.tenChuThe.toString().concat(` ${option.soTaiKhoan}`)}
                                         </Typography>

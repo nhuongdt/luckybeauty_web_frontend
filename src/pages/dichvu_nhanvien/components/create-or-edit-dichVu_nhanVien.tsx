@@ -75,7 +75,9 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
     render(): React.ReactNode {
         const { visiable, handleClose } = this.props;
         const { searchQuery } = this.state;
-        const filteredSuggestDichVu = suggestStore.suggestDichVu?.filter((item) => item.tenDichVu.toLowerCase().includes(searchQuery.toLowerCase()));
+        const filteredSuggestDichVu = suggestStore.suggestDichVu?.filter((item) =>
+            item.tenDichVu.toLowerCase().includes(searchQuery.toLowerCase())
+        );
         return (
             <Dialog
                 open={visiable}
@@ -105,7 +107,13 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                         }}>
                         <CloseIcon />
                     </Button>
-                    <TextField fullWidth size="small" value={searchQuery} onChange={this.handleSearchChange} placeholder="Tìm kiếm dịch vụ..." />
+                    <TextField
+                        fullWidth
+                        size="small"
+                        value={searchQuery}
+                        onChange={this.handleSearchChange}
+                        placeholder="Tìm kiếm dịch vụ..."
+                    />
                 </DialogTitle>
                 <DialogContent>
                     <Box>
@@ -141,15 +149,22 @@ class CreateOrEditDichVuNhanVienModal extends Component<ModalProps> {
                                                 />
                                             </TableCell>
                                             <TableCell align="left" width={'250px'}>
-                                                <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap="8px">
-                                                    <Avatar variant="square" /> <Typography fontSize={'13px'}>{item.tenDichVu}</Typography>
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    alignItems={'center'}
+                                                    gap="8px">
+                                                    <Avatar variant="square" />{' '}
+                                                    <Typography fontSize={'13px'}>{item.tenDichVu}</Typography>
                                                 </Box>
                                             </TableCell>
                                             <TableCell align={'right'}>
                                                 <Typography fontSize={'13px'}>{item.thoiGianThucHien}</Typography>
                                             </TableCell>
                                             <TableCell align={'right'}>
-                                                <Typography fontSize={'13px'}>{new Intl.NumberFormat('vi-VN').format(item.donGia)}</Typography>
+                                                <Typography fontSize={'13px'}>
+                                                    {new Intl.NumberFormat('vi-VN').format(item.donGia)}
+                                                </Typography>
                                             </TableCell>
                                         </TableRow>
                                     ))}

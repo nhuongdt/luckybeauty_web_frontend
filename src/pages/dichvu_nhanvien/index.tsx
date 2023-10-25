@@ -96,7 +96,11 @@ class SettingDichVuNhanVien extends Component {
                                     options={suggestStore.suggestNhanVien ?? []}
                                     getOptionLabel={(option) => `${option.tenNhanVien}`}
                                     renderOption={(props, option) => (
-                                        <Box key={option.id} component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                                        <Box
+                                            key={option.id}
+                                            component="li"
+                                            sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                                            {...props}>
                                             <Avatar src={option.avatar} />
                                             <Box display={'flex'} flexDirection={'column'} ml={'5px'}>
                                                 <Typography fontSize={'13px'}>{option?.tenNhanVien}</Typography>
@@ -108,7 +112,9 @@ class SettingDichVuNhanVien extends Component {
                                     fullWidth
                                     disablePortal
                                     onChange={async (event, option) => {
-                                        await dichVuNhanVienStore.getDichVuNhanVienDetail(option?.id ?? AppConsts.guidEmpty);
+                                        await dichVuNhanVienStore.getDichVuNhanVienDetail(
+                                            option?.id ?? AppConsts.guidEmpty
+                                        );
                                         dichVuNhanVienStore.idNhanVien = option?.id ?? AppConsts.guidEmpty;
                                         this.setState({
                                             selectedItemId: option?.id ?? AppConsts.guidEmpty
@@ -166,12 +172,17 @@ class SettingDichVuNhanVien extends Component {
                                             <ListItem
                                                 key={key}
                                                 onClick={async () => {
-                                                    await dichVuNhanVienStore.getDichVuNhanVienDetail(item.id ?? AppConsts.guidEmpty);
+                                                    await dichVuNhanVienStore.getDichVuNhanVienDetail(
+                                                        item.id ?? AppConsts.guidEmpty
+                                                    );
                                                     dichVuNhanVienStore.idNhanVien = item.id;
                                                     this.setState({ selectedItemId: item.id });
                                                 }}
                                                 sx={{
-                                                    backgroundColor: this.state.selectedItemId === item.id ? '#E6E6E6' : 'transparent', // Apply background color based on selection
+                                                    backgroundColor:
+                                                        this.state.selectedItemId === item.id
+                                                            ? '#E6E6E6'
+                                                            : 'transparent', // Apply background color based on selection
                                                     padding: '0px 8px',
                                                     fontSize: '13px !important'
                                                 }}>
@@ -179,7 +190,9 @@ class SettingDichVuNhanVien extends Component {
                                                     <Avatar src={item.avatar} />
                                                 </ListItemAvatar>
                                                 <ListItemText
-                                                    primary={<Typography fontSize={'13px'}>{item.tenNhanVien}</Typography>}
+                                                    primary={
+                                                        <Typography fontSize={'13px'}>{item.tenNhanVien}</Typography>
+                                                    }
                                                     secondary={item.chucVu}
                                                 />
                                             </ListItem>
@@ -204,10 +217,24 @@ class SettingDichVuNhanVien extends Component {
                                     alignItems={'center'}
                                     padding={'8px'}
                                     borderBottom={'1px solid #EBEBEB'}>
-                                    <Avatar sx={{ width: '64px', height: '64px' }} src={dichVuNhanVienStore.dichVuNhanVienDetail?.avatar} />
-                                    <Typography fontSize={'14px'}>{dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien}</Typography>
-                                    <Box display={'flex'} flexDirection={'row'} alignItems={'center'} textAlign={'center'} gap={2}>
-                                        <Box display={'flex'} flexDirection={'row'} alignItems={'center'} textAlign={'center'}>
+                                    <Avatar
+                                        sx={{ width: '64px', height: '64px' }}
+                                        src={dichVuNhanVienStore.dichVuNhanVienDetail?.avatar}
+                                    />
+                                    <Typography fontSize={'14px'}>
+                                        {dichVuNhanVienStore.dichVuNhanVienDetail?.tenNhanVien}
+                                    </Typography>
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        alignItems={'center'}
+                                        textAlign={'center'}
+                                        gap={2}>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            alignItems={'center'}
+                                            textAlign={'center'}>
                                             <Typography fontSize={'14px'}>
                                                 {dichVuNhanVienStore.dichVuNhanVienDetail?.rate === 0
                                                     ? 5
@@ -224,7 +251,9 @@ class SettingDichVuNhanVien extends Component {
                                             -
                                         </Box>
                                         <Chip label={dichVuNhanVienStore.dichVuNhanVienDetail?.chucVu} />
-                                        <Typography fontSize={'14px'}>{dichVuNhanVienStore.dichVuNhanVienDetail?.soDienThoai}</Typography>
+                                        <Typography fontSize={'14px'}>
+                                            {dichVuNhanVienStore.dichVuNhanVienDetail?.soDienThoai}
+                                        </Typography>
                                     </Box>
                                 </Box>
                                 <Box>
@@ -244,28 +273,39 @@ class SettingDichVuNhanVien extends Component {
                                         }}>
                                         <Table>
                                             <TableBody>
-                                                {dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens.length > 0 ? (
-                                                    dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens?.map((item, index) => (
-                                                        <TableRow key={index}>
-                                                            <TableCell align="left">
-                                                                <Box display={'flex'} flexDirection={'row'} alignItems={'center'} gap="8px">
-                                                                    <Avatar src={item.avatar} variant="square" />{' '}
-                                                                    <Typography fontSize={'13px'}>{item.tenDichVu}</Typography>
-                                                                </Box>
-                                                            </TableCell>
-                                                            <TableCell align={'right'}>
-                                                                <Typography fontSize={'13px'}>
-                                                                    {item.soPhutThucHien}
-                                                                    {' phút'}
-                                                                </Typography>
-                                                            </TableCell>
-                                                            <TableCell align={'right'}>
-                                                                <Typography fontSize={'13px'}>
-                                                                    {new Intl.NumberFormat('vi-VN').format(item.donGia)}
-                                                                </Typography>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))
+                                                {dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens.length >
+                                                0 ? (
+                                                    dichVuNhanVienStore.dichVuNhanVienDetail?.dichVuThucHiens?.map(
+                                                        (item, index) => (
+                                                            <TableRow key={index}>
+                                                                <TableCell align="left">
+                                                                    <Box
+                                                                        display={'flex'}
+                                                                        flexDirection={'row'}
+                                                                        alignItems={'center'}
+                                                                        gap="8px">
+                                                                        <Avatar src={item.avatar} variant="square" />{' '}
+                                                                        <Typography fontSize={'13px'}>
+                                                                            {item.tenDichVu}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                </TableCell>
+                                                                <TableCell align={'right'}>
+                                                                    <Typography fontSize={'13px'}>
+                                                                        {item.soPhutThucHien}
+                                                                        {' phút'}
+                                                                    </Typography>
+                                                                </TableCell>
+                                                                <TableCell align={'right'}>
+                                                                    <Typography fontSize={'13px'}>
+                                                                        {new Intl.NumberFormat('vi-VN').format(
+                                                                            item.donGia
+                                                                        )}
+                                                                    </Typography>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    )
                                                 ) : (
                                                     <Box
                                                         display={'flex'}
@@ -293,7 +333,11 @@ class SettingDichVuNhanVien extends Component {
                         </Grid>
                     </Grid>
                 </Box>
-                <CreateOrEditDichVuNhanVienModal visiable={this.state.visiableModal} handleClose={this.handleCloseModal} handleOk={this.onModal} />
+                <CreateOrEditDichVuNhanVienModal
+                    visiable={this.state.visiableModal}
+                    handleClose={this.handleCloseModal}
+                    handleOk={this.onModal}
+                />
             </Box>
         );
     }

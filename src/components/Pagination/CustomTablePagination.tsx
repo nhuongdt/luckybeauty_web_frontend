@@ -54,7 +54,8 @@ class CustomTablePagination extends Component<TablePaginationProps> {
                         }}>
                         <Typography variant="body2">
                             Hiển thị {(currentPage - 1) * rowPerPage + 1} -{' '}
-                            {rowPerPage * currentPage > totalRecord ? totalRecord : rowPerPage * currentPage} của {totalRecord} mục
+                            {rowPerPage * currentPage > totalRecord ? totalRecord : rowPerPage * currentPage} của{' '}
+                            {totalRecord} mục
                         </Typography>
                         <Pagination
                             count={totalPage}

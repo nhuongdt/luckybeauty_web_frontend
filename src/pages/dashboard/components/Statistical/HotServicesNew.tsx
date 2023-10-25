@@ -4,7 +4,7 @@ import { Box, Grid, LinearProgress, Typography } from '@mui/material';
 import dashboardStore from '../../../../stores/dashboardStore';
 const HotServicesNew: React.FC = () => {
     return (
-        <Box>
+        <Box borderRadius={'8px'}>
             <Grid container spacing={5}>
                 {dashboardStore.danhSachDichVuHot?.map((item, key) => (
                     <Grid item xs={12} key={key}>

@@ -5,7 +5,17 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
-import { Grid, Box, Autocomplete, InputAdornment, TextField, Typography, Checkbox, FormGroup, Stack } from '@mui/material';
+import {
+    Grid,
+    Box,
+    Autocomplete,
+    InputAdornment,
+    TextField,
+    Typography,
+    Checkbox,
+    FormGroup,
+    Stack
+} from '@mui/material';
 import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 
@@ -85,7 +95,9 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     );
     const [nhomGoc, setNhomGoc] = useState<ModelNhomHangHoa | null>(null);
 
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
 
     const showModal = async (id: string) => {
         if (id) {
@@ -187,7 +199,11 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                 mes={inforDeleteProduct.mes}
                 onOk={xoaNhomHang}
                 onCancel={() => setInforDeleteProduct({ ...inforDeleteProduct, show: false })}></ConfirmDelete>
-            <Dialog open={isShow} onClose={() => setIsShow(false)} aria-labelledby="draggable-dialog-title" maxWidth="xs">
+            <Dialog
+                open={isShow}
+                onClose={() => setIsShow(false)}
+                aria-labelledby="draggable-dialog-title"
+                maxWidth="xs">
                 <DialogTitle className="modal-title" id="draggable-dialog-title">
                     {isNew ? 'Thêm' : 'Cập nhật'} {groupProduct.sLoaiNhomHang}
                 </DialogTitle>
@@ -337,7 +353,9 @@ export function ModalNhomHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 new PropConfirmOKCancel({
                                     show: true,
                                     title: 'Xác nhận xóa',
-                                    mes: `Bạn có chắc chắn muốn xóa ${groupProduct.sLoaiNhomHang}  ${groupProduct?.tenNhomHang ?? ' '} không?`
+                                    mes: `Bạn có chắc chắn muốn xóa ${groupProduct.sLoaiNhomHang}  ${
+                                        groupProduct?.tenNhomHang ?? ' '
+                                    } không?`
                                 })
                             );
                         }}>

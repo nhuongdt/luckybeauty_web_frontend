@@ -210,11 +210,15 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                 }}>
                                 <DatePickerCustom
                                     defaultVal={paramSearch.fromDate}
-                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, fromDate: newVal })}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, fromDate: newVal })
+                                    }
                                 />
                                 <DatePickerCustom
                                     defaultVal={paramSearch.toDate}
-                                    handleChangeDate={(newVal: string) => setParamSearch({ ...paramSearch, toDate: newVal })}
+                                    handleChangeDate={(newVal: string) =>
+                                        setParamSearch({ ...paramSearch, toDate: newVal })
+                                    }
                                 />
 
                                 <Button
@@ -262,7 +266,10 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                     }
                                                 }}
                                                 checked={selectedRows.length === pageDataHoaDon.items.length}
-                                                indeterminate={selectedRows.length > 0 && selectedRows.length < pageDataHoaDon.items.length}
+                                                indeterminate={
+                                                    selectedRows.length > 0 &&
+                                                    selectedRows.length < pageDataHoaDon.items.length
+                                                }
                                                 onChange={(event) => {
                                                     event.stopPropagation();
                                                     if (event.target.checked) {
@@ -300,7 +307,9 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                     />
                                                 </TableCell>
                                                 <TableCell>{item.maHoaDon}</TableCell>
-                                                <TableCell>{format(new Date(item.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}</TableCell>
+                                                <TableCell>
+                                                    {format(new Date(item.ngayLapHoaDon), 'dd/MM/yyyy HH:mm')}
+                                                </TableCell>
                                                 <TableCell>{item.tenKhachHang}</TableCell>
                                                 <TableCell>{item.tongTienHang}</TableCell>
                                                 <TableCell>{item.tongGiamGiaHD}</TableCell>
@@ -314,8 +323,17 @@ const GiaoDichThanhToanTest: React.FC = () => {
                                                             padding: '4px 8px',
                                                             borderRadius: '100px',
                                                             backgroundColor:
-                                                                item.trangThai === 3 ? '#E8FFF3' : item.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
-                                                            color: item.trangThai === 3 ? '#50CD89' : item.trangThai === 1 ? '#FF9900' : '#F1416C',
+                                                                item.trangThai === 3
+                                                                    ? '#E8FFF3'
+                                                                    : item.trangThai === 1
+                                                                    ? '#FFF8DD'
+                                                                    : '#FFF5F8',
+                                                            color:
+                                                                item.trangThai === 3
+                                                                    ? '#50CD89'
+                                                                    : item.trangThai === 1
+                                                                    ? '#FF9900'
+                                                                    : '#F1416C',
                                                             margin: 'auto'
                                                         }}
                                                         className="state-thanh-toan">

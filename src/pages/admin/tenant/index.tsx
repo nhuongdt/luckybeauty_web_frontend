@@ -382,7 +382,10 @@ class TenantScreen extends AppComponentBase<ITenantProps> {
                     }}
                     onOk={this.handleCreate}
                 />
-                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDelete}></ConfirmDelete>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.onShowDelete}></ConfirmDelete>
             </Box>
         );
     }

@@ -10,7 +10,17 @@ import { ReactComponent as IconSorting } from '../.././../../../images/column-so
 import ClearIcon from '@mui/icons-material/Clear';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
-import { Box, Button, IconButton, TextField, Grid, SelectChangeEvent, Checkbox, Typography, ButtonGroup } from '@mui/material';
+import {
+    Box,
+    Button,
+    IconButton,
+    TextField,
+    Grid,
+    SelectChangeEvent,
+    Checkbox,
+    Typography,
+    ButtonGroup
+} from '@mui/material';
 import CreateOrEditChietKhauHoaDonModal from './components/create-or-edit-chiet-khau-hd';
 import Cookies from 'js-cookie';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -330,7 +340,10 @@ class ChietKhauHoaDonScreen extends Component {
                         ]}
                         onSortModelChange={(newSortModel) => {
                             if (newSortModel.length > 0) {
-                                this.onSort(newSortModel[0].sort?.toString() ?? 'creationTime', newSortModel[0].field ?? 'desc');
+                                this.onSort(
+                                    newSortModel[0].sort?.toString() ?? 'creationTime',
+                                    newSortModel[0].field ?? 'desc'
+                                );
                             }
                         }}
                         hideFooter
@@ -346,12 +359,19 @@ class ChietKhauHoaDonScreen extends Component {
                         handleDelete={this.handleDelete}
                         permissionDelete="Pages.ChietKhauHoaDon.Delete"
                     />
-                    <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
+                    <ConfirmDelete
+                        isShow={this.state.isShowConfirmDelete}
+                        onOk={this.onOkDelete}
+                        onCancel={this.onShowDeleteConfirm}></ConfirmDelete>
                     <CustomTablePagination
                         currentPage={this.state.skipCount}
                         rowPerPage={this.state.maxResultCount}
                         totalRecord={chietKhauHoaDons === undefined ? 0 : chietKhauHoaDons.totalCount}
-                        totalPage={chietKhauHoaDons === undefined ? 0 : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)}
+                        totalPage={
+                            chietKhauHoaDons === undefined
+                                ? 0
+                                : Math.ceil(chietKhauHoaDons.totalCount / this.state.maxResultCount)
+                        }
                         handlePerPageChange={this.handlePerPageChange}
                         handlePageChange={this.handlePageChange}
                     />

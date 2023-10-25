@@ -35,8 +35,8 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
     }, [khachHangId]);
     const getKhachHangInfo = async () => {
         await khachHangStore.getDetail(khachHangId ?? AppConsts.guidEmpty);
-        await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty);
-        await khachHangStore.getLichSuGiaoDich(khachHangId ?? AppConsts.guidEmpty);
+        //await khachHangStore.getLichSuDatLich(khachHangId ?? AppConsts.guidEmpty);
+        //await khachHangStore.getLichSuGiaoDich(khachHangId ?? AppConsts.guidEmpty);
     };
     const TabPanel: React.FC<TabPanelProps> = ({ children, value, index }) => {
         return (
@@ -71,10 +71,18 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                         display: 'flex',
                         gap: '8px'
                     }}>
-                    <Button variant="outlined" sx={{ color: '#666466' }} className="btn-outline-hover" startIcon={<PrintIcon />}>
+                    <Button
+                        variant="outlined"
+                        sx={{ color: '#666466' }}
+                        className="btn-outline-hover"
+                        startIcon={<PrintIcon />}>
                         In
                     </Button>
-                    <Button className="btn-outline-hover" startIcon={<ExportIcon />} variant="outlined" sx={{ color: '#666466' }}>
+                    <Button
+                        className="btn-outline-hover"
+                        startIcon={<ExportIcon />}
+                        variant="outlined"
+                        sx={{ color: '#666466' }}>
                         Xuất
                     </Button>
                     <Button className="btn-container-hover" variant="contained" sx={{ bgcolor: '#7C3367' }}>
@@ -143,7 +151,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                                 display: 'flex',
                                 marginTop: '12px',
                                 '& p': {
-                                    fontSize: '14px',
+                                    fontSize: '13px',
                                     color: '#333233',
                                     mt: '4px'
                                 },
@@ -151,7 +159,7 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             }}>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography sx={{ mt: '0' }} variant="body1">
-                                    Nhóm khách :
+                                    Nhóm khách :{' '}
                                 </Typography>
                                 <Typography sx={{ mt: '0' }} variant="body1">
                                     {khachHangStore.khachHangDetail.nhomKhach}
@@ -159,11 +167,13 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             </Box>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography variant="body1">Số điện thoại : </Typography>
-                                <Typography variant="body1">{khachHangStore.khachHangDetail.soDienThoai}</Typography>
+                                <Typography variant="body1">
+                                    {' ' + khachHangStore.khachHangDetail.soDienThoai}
+                                </Typography>
                             </Box>
                             <Box display={'flex'} flexDirection={'row'}>
                                 <Typography variant="body1">Địa chỉ : </Typography>
-                                <Typography variant="body1">{khachHangStore.khachHangDetail.diaChi}</Typography>
+                                <Typography variant="body1"> {' ' + khachHangStore.khachHangDetail.diaChi}</Typography>
                             </Box>
                         </Box>
                     </Box>

@@ -49,7 +49,9 @@ class TenantService {
         }
     }
 
-    public async getAll(pagedFilterAndSortedRequest: PagedTenantResultRequestDto): Promise<PagedResultDto<GetAllTenantOutput>> {
+    public async getAll(
+        pagedFilterAndSortedRequest: PagedTenantResultRequestDto
+    ): Promise<PagedResultDto<GetAllTenantOutput>> {
         try {
             const result = await http.get('api/services/app/Tenant/GetAll', {
                 params: pagedFilterAndSortedRequest

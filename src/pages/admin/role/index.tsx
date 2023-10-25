@@ -361,7 +361,10 @@ class RoleScreen extends React.Component<IRoleProps> {
                     permissionTree={this.state.permissionTree}
                     formRef={roleStore.createOrEditRoleDto}
                 />
-                <ConfirmDelete isShow={this.state.isShowConfirmDelete} onOk={this.onOkDelete} onCancel={this.onShowDelete}></ConfirmDelete>
+                <ConfirmDelete
+                    isShow={this.state.isShowConfirmDelete}
+                    onOk={this.onOkDelete}
+                    onCancel={this.onShowDelete}></ConfirmDelete>
             </Box>
         );
     }

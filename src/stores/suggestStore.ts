@@ -11,6 +11,7 @@ import { SuggestNhomHangHoaDto } from '../services/suggests/dto/SuggestNhomHangH
 import { SuggestLoaiChungTu } from '../services/suggests/dto/SuggestLoaiChungTu';
 import { SuggestChiNhanhDto } from '../services/suggests/dto/SuggestChiNhanhDto';
 import { SuggestDonViQuiDoiDto } from '../services/suggests/dto/SuggestDonViQuiDoi';
+import chiNhanhService from '../services/chi_nhanh/chiNhanhService';
 
 class SuggestStore {
     suggestKyThuatVien!: SuggestNhanVienDichVuDto[];
@@ -23,6 +24,7 @@ class SuggestStore {
     suggestKhachHang!: SuggestKhachHangDto[];
     suggestLoaiChungTu!: SuggestLoaiChungTu[];
     suggestChiNhanh!: SuggestChiNhanhDto[];
+    suggestChiNhanhByUser!: SuggestChiNhanhDto[];
     suggestDonViQuiDoi!: SuggestDonViQuiDoiDto[];
     constructor() {
         makeAutoObservable(this);
@@ -43,8 +45,8 @@ class SuggestStore {
         const data = await SuggestService.SuggestNhomHangHoa();
         this.suggestNhomHangHoa = data;
     }
-    async getSuggestDichVu() {
-        const data = await SuggestService.SuggestDichVu();
+    async getSuggestDichVu(idNhanVien?: string) {
+        const data = await SuggestService.SuggestDichVu(idNhanVien);
         this.suggestDichVu = data;
     }
     async getSuggestChucVu() {
@@ -70,6 +72,10 @@ class SuggestStore {
     async getSuggestChiNhanh() {
         const data = await SuggestService.SuggestChiNhanh();
         this.suggestChiNhanh = data;
+    }
+    async getSuggestChiNhanhByUser() {
+        const data = await chiNhanhService.GetChiNhanhByUser();
+        this.suggestChiNhanhByUser = data;
     }
     async getSuggestDonViQuiDoi() {
         const data = await SuggestService.SuggestDonViQuiDoi();

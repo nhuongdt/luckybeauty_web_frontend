@@ -3,6 +3,7 @@ export interface UserNotification {
     tenantId?: number;
     userId: number;
     state: number;
+    url: string;
     notification: NotificationData;
 }
 interface NotificationData {

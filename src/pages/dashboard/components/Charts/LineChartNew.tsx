@@ -14,7 +14,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
                 {payload.map((entry: any, index: number) => (
                     <div key={index}>
                         <p key={`value-${index}`} className="value" style={{ color: entry.color }}>
-                            {entry.name == 'tuanTruoc' ? 'Tuần trước' : entry.name == 'tuanNay' ? 'Tuần này' : entry.name}: {entry.value}
+                            {entry.name == 'tuanTruoc'
+                                ? 'Tuần trước'
+                                : entry.name == 'tuanNay'
+                                ? 'Tuần này'
+                                : entry.name}
+                            : {entry.value}
                         </p>
                     </div>
                 ))}
@@ -26,7 +31,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 const LineChartNew: React.FC = () => {
     const data =
-        dashboardStore.thongKeLichHen !== undefined || dashboardStore.thongKeLichHen !== ([] as ThongKeLichHen[])
+        dashboardStore.thongKeLichHen !== undefined &&
+        dashboardStore.thongKeLichHen !== ([] as ThongKeLichHen[]) &&
+        dashboardStore.thongKeLichHen.length > 0
             ? dashboardStore.thongKeLichHen
             : [
                   { tuan: 'Thứ 2', tuanNay: 0, tuanTruoc: 0 },
@@ -42,8 +49,22 @@ const LineChartNew: React.FC = () => {
     const renderLineChart = (
         <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data} margin={{ top: 8, right: 35, bottom: 24, left: 0 }}>
-                <Line type="monotone" dataKey="tuanNay" stroke="var(--color-main)" dot={false} activeDot={{ r: 4 }} animationDuration={8000} />
-                <Line type="monotone" dataKey={'tuanTruoc'} stroke="#ff9900" dot={false} activeDot={{ r: 4 }} animationDuration={8000} />
+                <Line
+                    type="monotone"
+                    dataKey="tuanNay"
+                    stroke="var(--color-main)"
+                    dot={false}
+                    activeDot={{ r: 4 }}
+                    animationDuration={8000}
+                />
+                <Line
+                    type="monotone"
+                    dataKey={'tuanTruoc'}
+                    stroke="#ff9900"
+                    dot={false}
+                    activeDot={{ r: 4 }}
+                    animationDuration={8000}
+                />
                 <CartesianGrid stroke="#E6E1E6" strokeDasharray="0 0 " />
                 <XAxis
                     dataKey="tuan"

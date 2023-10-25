@@ -38,7 +38,10 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
         <>
             <Stack spacing={1} direction={'row'} alignItems={'center'}>
                 <Box sx={{ position: 'relative' }}>
-                    <Button variant="contained" endIcon={<ExpandMoreOutlined />} onClick={() => setExpandAction(!expandAction)}>
+                    <Button
+                        variant="contained"
+                        endIcon={<ExpandMoreOutlined />}
+                        onClick={() => setExpandAction(!expandAction)}>
                         Thao tác
                     </Button>
 
@@ -57,7 +60,12 @@ export default function ActionRowSelect({ lstOption, countRowSelected, title, ch
                         }}>
                         <Stack alignContent={'center'}>
                             {lstOption?.map((item: IList, index: number) => (
-                                <Stack direction={'row'} key={index} spacing={1} padding={'6px'} onClick={() => clickAction(item)}>
+                                <Stack
+                                    direction={'row'}
+                                    key={index}
+                                    spacing={1}
+                                    padding={'6px'}
+                                    onClick={() => clickAction(item)}>
                                     {/* {item.icon} */}
                                     <Typography variant="subtitle2" marginLeft={1}>
                                         {item.text}

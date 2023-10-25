@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, IconButton, debounce, Stack } from '@mui/material';
+import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, debounce, Stack } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';

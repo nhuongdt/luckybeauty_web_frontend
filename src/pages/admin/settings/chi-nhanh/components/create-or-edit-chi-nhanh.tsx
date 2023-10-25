@@ -122,7 +122,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                         sx={{
                                                             position: 'relative'
                                                         }}>
-                                                        <img src={this.state.branchLogo} className="user-image-upload" />
+                                                        <img
+                                                            src={this.state.branchLogo}
+                                                            className="user-image-upload"
+                                                        />
                                                     </Box>
                                                 ) : (
                                                     <Box
@@ -169,7 +172,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             label={<Typography variant="subtitle2">Tên chi nhánh</Typography>}
                                             error={errors.tenChiNhanh && touched.tenChiNhanh ? true : false}
                                             helperText={
-                                                errors.tenChiNhanh && touched.tenChiNhanh && <span className="text-danger">{errors.tenChiNhanh}</span>
+                                                errors.tenChiNhanh &&
+                                                touched.tenChiNhanh && (
+                                                    <span className="text-danger">{errors.tenChiNhanh}</span>
+                                                )
                                             }
                                             size="small"
                                             placeholder="Nhập tên chi nhánh"
@@ -184,7 +190,10 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                             label={<Typography variant="subtitle2">Số điện thoại</Typography>}
                                             error={errors.soDienThoai && touched.soDienThoai ? true : false}
                                             helperText={
-                                                errors.soDienThoai && touched.soDienThoai && <span className="text-danger">{errors.soDienThoai}</span>
+                                                errors.soDienThoai &&
+                                                touched.soDienThoai && (
+                                                    <span className="text-danger">{errors.soDienThoai}</span>
+                                                )
                                             }
                                             size="small"
                                             name="soDienThoai"
@@ -218,7 +227,11 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                     <span className="text-danger">{String(errors.ngayApDung)}</span>
                                                 )
                                             }}
-                                            defaultVal={values.ngayApDung ? formatDate(new Date(values.ngayApDung), 'yyyy/MM/dd') : ''}
+                                            defaultVal={
+                                                values.ngayApDung
+                                                    ? formatDate(new Date(values.ngayApDung), 'yyyy/MM/dd')
+                                                    : ''
+                                            }
                                             handleChangeDate={(value: string) => {
                                                 values.ngayApDung = new Date(value);
                                             }}
@@ -235,7 +248,11 @@ class CreateOrEditChiNhanhModal extends Component<ChiNhanhProps> {
                                                     <span className="text-danger">{String(errors.ngayHetHan)}</span>
                                                 )
                                             }}
-                                            defaultVal={values.ngayHetHan ? formatDate(new Date(values.ngayHetHan), 'yyyy/MM/dd') : ''}
+                                            defaultVal={
+                                                values.ngayHetHan
+                                                    ? formatDate(new Date(values.ngayHetHan), 'yyyy/MM/dd')
+                                                    : ''
+                                            }
                                             handleChangeDate={(value: string) => {
                                                 values.ngayHetHan = new Date(value);
                                             }}

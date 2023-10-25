@@ -197,7 +197,11 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongTienHangChuaChietKhau)}</span>
+                                        <span>
+                                            {new Intl.NumberFormat('vi-VN').format(
+                                                props?.hoadon.tongTienHangChuaChietKhau
+                                            )}
+                                        </span>
                                     </span>
                                 </span>
                             </td>
@@ -211,7 +215,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                             <td style={{ textAlign: 'right' }}>
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
-                                        <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongChietKhauHangHoa)}</span>
+                                        <span>
+                                            {new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongChietKhauHangHoa)}
+                                        </span>
                                     </span>
                                 </span>
                             </td>
@@ -228,7 +234,9 @@ export const MauInHoaDon = forwardRef(function MauInHoaDon({ props }: any, ref: 
                                 <span style={{ fontSize: 12 }}>
                                     <span style={{ fontFamily: 'Tahoma' }}>
                                         <strong>
-                                            <span>{new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongThanhToan)}</span>
+                                            <span>
+                                                {new Intl.NumberFormat('vi-VN').format(props?.hoadon.tongThanhToan)}
+                                            </span>
                                         </strong>
                                     </span>
                                 </span>

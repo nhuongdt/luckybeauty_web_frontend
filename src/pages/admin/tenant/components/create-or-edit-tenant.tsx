@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import CreateTenantInput from '../../../../services/tenant/dto/createTenantInput';
 import tenantService from '../../../../services/tenant/tenantService';
 import rules from './createOrUpdateTenant.validation';
@@ -32,7 +32,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
     state = {
         isHostDatabase: false
     };
-    handleSubmit = async (values: CreateTenantInput) => {
+    handleSubmit = async (values: CreateTenantInput, formikHelper: FormikHelpers<any>) => {
         try {
             if (this.props.tenantId === 0) {
                 await tenantService.create(values);
@@ -40,6 +40,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
+                this.props.onOk();
             } else {
                 await tenantService.update({
                     id: this.props.tenantId,
@@ -51,13 +52,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                     variant: 'success',
                     autoHideDuration: 3000
                 });
+                this.props.onOk();
             }
-            this.props.onOk();
         } catch (error) {
-            enqueueSnackbar('Có lỗi sảy ra vui lòng thử lại sau!', {
-                variant: 'error',
-                autoHideDuration: 3000
-            });
+            formikHelper.setSubmitting(false);
         }
     };
     handleFormKeyPress = (event: React.KeyboardEvent<HTMLFormElement>) => {
@@ -99,8 +97,8 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                             <Formik
                                 initialValues={initialValues}
                                 validationSchema={rules}
-                                onSubmit={(e) => {
-                                    console.log(e);
+                                onSubmit={(e, formikHelper) => {
+                                    this.handleSubmit(e, formikHelper);
                                 }}>
                                 {({ handleChange, values, errors, touched, isSubmitting }) => (
                                     <Form onKeyPress={this.handleFormKeyPress}>
@@ -130,7 +128,10 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         </label>
                                                     }
                                                     error={touched.tenancyName && errors.tenancyName ? true : false}
-                                                    helperText={touched.tenancyName && errors.tenancyName && <span>{errors.tenancyName}</span>}
+                                                    helperText={
+                                                        touched.tenancyName &&
+                                                        errors.tenancyName && <span>{errors.tenancyName}</span>
+                                                    }
                                                     type="text"
                                                     size="small"
                                                     name="tenancyName"
@@ -154,7 +155,9 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                         </label>
                                                     }
                                                     error={touched.name && errors.name ? true : false}
-                                                    helperText={touched.name && errors.name && <span>{errors.name}</span>}
+                                                    helperText={
+                                                        touched.name && errors.name && <span>{errors.name}</span>
+                                                    }
                                                     type="text"
                                                     size="small"
                                                     name="name"
@@ -179,10 +182,16 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                                     </span>
                                                                 </label>
                                                             }
-                                                            error={touched.adminEmailAddress && errors.adminEmailAddress ? true : false}
+                                                            error={
+                                                                touched.adminEmailAddress && errors.adminEmailAddress
+                                                                    ? true
+                                                                    : false
+                                                            }
                                                             helperText={
                                                                 touched.adminEmailAddress &&
-                                                                errors.adminEmailAddress && <div>{errors.adminEmailAddress}</div>
+                                                                errors.adminEmailAddress && (
+                                                                    <div>{errors.adminEmailAddress}</div>
+                                                                )
                                                             }
                                                             type="email"
                                                             size="small"
@@ -222,10 +231,16 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                 <FormGroup>
                                                     <TextField
                                                         label={<label htmlFor="chuoi-ket-noi">Chuỗi kết nối</label>}
-                                                        error={touched.connectionString && errors.connectionString ? true : false}
+                                                        error={
+                                                            touched.connectionString && errors.connectionString
+                                                                ? true
+                                                                : false
+                                                        }
                                                         helperText={
                                                             touched.connectionString &&
-                                                            errors.connectionString && <div>{errors.connectionString}</div>
+                                                            errors.connectionString && (
+                                                                <div>{errors.connectionString}</div>
+                                                            )
                                                         }
                                                         id="chuoi-ket-noi"
                                                         type="text"
@@ -283,9 +298,7 @@ class CreateOrEditTenantModal extends Component<ICreateOrEditTenantProps> {
                                                     variant="contained"
                                                     sx={{ fontSize: '14px' }}
                                                     size="small"
-                                                    onClick={() => {
-                                                        this.handleSubmit(values);
-                                                    }}
+                                                    type="submit"
                                                     className="btn-container-hover">
                                                     Lưu
                                                 </Button>

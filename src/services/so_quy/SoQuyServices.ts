@@ -26,11 +26,15 @@ class SoQuyServices {
     };
     GetNhatKyThanhToan_ofHoaDon = async (idHoaDonLienQuan: string): Promise<QuyHoaDonDto[]> => {
         if (utils.checkNull(idHoaDonLienQuan)) return [];
-        const result = await http.get(`api/services/app/QuyHoaDon/GetNhatKyThanhToan_ofHoaDon?idHoaDonLienQuan=${idHoaDonLienQuan}`);
+        const result = await http.get(
+            `api/services/app/QuyHoaDon/GetNhatKyThanhToan_ofHoaDon?idHoaDonLienQuan=${idHoaDonLienQuan}`
+        );
         return result.data.result;
     };
     HuyPhieuThuChi_ofHoaDonLienQuan = async (idHoaDonLienQuan: string) => {
-        const result = await http.get(`api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`);
+        const result = await http.get(
+            `api/services/app/QuyHoaDon/HuyPhieuThuChi_ofHoaDonLienQuan?idHoaDonLienQuan=${idHoaDonLienQuan}`
+        );
         return result.data.result;
     };
     async getAll(input: RequestFromToDto): Promise<PagedResultDto<QuyHoaDonDto>> {
@@ -59,7 +63,9 @@ class SoQuyServices {
             if (utils.checkNull(idQuy)) {
                 idQuy = Guid.EMPTY;
             }
-            const response = await http.get(`api/services/app/QuyHoaDon/CheckExistsMaPhieuThuChi?maphieu=${maHoaDon}&id=${idQuy}`);
+            const response = await http.get(
+                `api/services/app/QuyHoaDon/CheckExistsMaPhieuThuChi?maphieu=${maHoaDon}&id=${idQuy}`
+            );
             return response.data.result;
         }
     };

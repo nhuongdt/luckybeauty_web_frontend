@@ -52,7 +52,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
     const [errMaHangHoa, setErrMaHangHoa] = useState(false);
 
     const [nhomChosed, setNhomChosed] = useState<ModelNhomHangHoa | null>(null);
-    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
+    const [inforDeleteProduct, setInforDeleteProduct] = useState<PropConfirmOKCancel>(
+        new PropConfirmOKCancel({ show: false })
+    );
 
     const showModal = async (id: string) => {
         if (id) {
@@ -148,7 +150,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
             return false;
         }
         if (!utils.checkNull(product.maHangHoa ?? '')) {
-            const exists = await ProductService.CheckExistsMaHangHoa(product.maHangHoa ?? '', product.idDonViQuyDoi ?? Guid.EMPTY);
+            const exists = await ProductService.CheckExistsMaHangHoa(
+                product.maHangHoa ?? '',
+                product.idDonViQuyDoi ?? Guid.EMPTY
+            );
             if (exists) {
                 setErrMaHangHoa(true);
                 return false;
@@ -224,7 +229,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
         let fileId = googleDrive_fileId;
         if (!utils.checkNull(productImage)) {
             // nếu cập nhật hàng: chỉ upload nếu chọn lại ảnh
-            if (isNew || (!isNew && !utils.checkNull(product.image) && utils.checkNull(googleDrive_fileId)) || utils.checkNull(product.image)) {
+            if (
+                isNew ||
+                (!isNew && !utils.checkNull(product.image) && utils.checkNull(googleDrive_fileId)) ||
+                utils.checkNull(product.image)
+            ) {
                 // awlay insert: because iamge was delete before save
                 fileId = await uploadFileService.GoogleApi_UploaFileToDrive(fileImage, 'HangHoa');
             }
@@ -297,7 +306,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                 {!utils.checkNull(productImage) ? (
                                     <Box sx={{ position: 'relative', height: '100%' }}>
                                         <img src={productImage} style={{ width: '100%', height: '100%' }} />
-                                        <Close onClick={closeImage} sx={{ left: 0, color: 'red', position: 'absolute' }} />
+                                        <Close
+                                            onClick={closeImage}
+                                            sx={{ left: 0, color: 'red', position: 'absolute' }}
+                                        />
                                     </Box>
                                 ) : (
                                     <>
@@ -351,7 +363,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     value={product.maHangHoa}
                                     error={errMaHangHoa && wasClickSave}
                                     label={`Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`}
-                                    helperText={errMaHangHoa && wasClickSave ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại` : ''}
+                                    helperText={
+                                        errMaHangHoa && wasClickSave
+                                            ? `Mã ${product.tenLoaiHangHoa?.toLocaleLowerCase()} đã tồn tại`
+                                            : ''
+                                    }
                                     onChange={(event) => {
                                         setProduct((itemOlds) => {
                                             return {
@@ -375,7 +391,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     }
                                     error={wasClickSave && errTenHangHoa}
                                     helperText={
-                                        wasClickSave && errTenHangHoa ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}` : ''
+                                        wasClickSave && errTenHangHoa
+                                            ? `Vui lòng nhập tên ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`
+                                            : ''
                                     }
                                     value={product.tenHangHoa}
                                     onChange={(event) => {
@@ -400,7 +418,10 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                         onChange={(event, newValue) => handleChangeNhom(newValue)}
                                         getOptionLabel={(option: any) => (option.tenNhomHang ? option.tenNhomHang : '')}
                                         renderInput={(params) => (
-                                            <TextField {...params} label={`Nhóm ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`} />
+                                            <TextField
+                                                {...params}
+                                                label={`Nhóm ${product.tenLoaiHangHoa?.toLocaleLowerCase()}`}
+                                            />
                                         )}
                                         renderOption={(props, item) => (
                                             <Box component={'li'} {...props} className="autocomplete-option">
@@ -486,7 +507,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                                             ...olds,
                                                             laHangHoa: event.target.checked,
                                                             idLoaiHangHoa: event.target.checked ? 2 : 1,
-                                                            tenLoaiHangHoa: event.target.checked ? 'hàng hóa' : 'dịch vụ'
+                                                            tenLoaiHangHoa: event.target.checked
+                                                                ? 'hàng hóa'
+                                                                : 'dịch vụ'
                                                         };
                                                     });
                                                 }}
@@ -506,7 +529,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Grid>
                 </DialogContent>
                 <DialogActions style={{ paddingBottom: '20px' }}>
-                    <Button variant="outlined" sx={{ color: 'var(--color-main)' }} onClick={() => setOpen(false)} className="btn-outline-hover">
+                    <Button
+                        variant="outlined"
+                        sx={{ color: 'var(--color-main)' }}
+                        onClick={() => setOpen(false)}
+                        className="btn-outline-hover">
                         Hủy
                     </Button>
                     <Button
@@ -538,7 +565,9 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                                     new PropConfirmOKCancel({
                                         show: true,
                                         title: 'Xác nhận xóa',
-                                        mes: `Bạn có chắc chắn muốn xóa ${product.tenHangHoa}  ${product?.tenLoaiHangHoa ?? ' '} không?`
+                                        mes: `Bạn có chắc chắn muốn xóa ${product.tenHangHoa}  ${
+                                            product?.tenLoaiHangHoa ?? ' '
+                                        } không?`
                                     })
                                 );
                                 setActionProduct(3);
@@ -550,7 +579,11 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     {product.trangThai !== 0 && (
                         <>
                             {!wasClickSave && (
-                                <Button variant="contained" sx={{ bgcolor: '#7C3367' }} onClick={saveProduct} className="btn-container-hover">
+                                <Button
+                                    variant="contained"
+                                    sx={{ bgcolor: '#7C3367' }}
+                                    onClick={saveProduct}
+                                    className="btn-container-hover">
                                     Lưu
                                 </Button>
                             )}
