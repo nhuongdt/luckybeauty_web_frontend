@@ -25,6 +25,8 @@ import { ReactComponent as SetingActive } from '../../images/settingActive.svg';
 import { ReactComponent as AdminActive } from '../../images/admin2.svg';
 import { ReactComponent as MoneyIcon } from '../../images/moneys.svg';
 import { ReactComponent as MoneyActive } from '../../images/moneysActive.svg';
+import { ReactComponent as BankIcon } from '../../images/icons/bankMenuIcon.svg';
+import { ReactComponent as BankIconActive } from '../../images/icons/bankMenuIconActive.svg';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -492,6 +494,18 @@ export const appRouters: AppRouteProps = {
                         }
                     ],
                     component: null
+                },
+                {
+                    path: '/tai-khoan-ngan-hang',
+                    permission: 'Pages.Administration',
+                    title: 'Tài khoản ngân hàng',
+                    name: 'taiKhoanNganHang',
+                    icon: <BankIcon width="20px" />,
+                    iconActive: <BankIconActive width="20px" />,
+                    showInMenu: true,
+                    isLayout: false,
+                    children: [],
+                    component: LoadableComponent(() => import('../../pages/tai_khoan_ngan_hang'))
                 },
                 {
                     path: '/settings',

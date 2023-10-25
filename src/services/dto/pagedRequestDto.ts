@@ -4,4 +4,5 @@ export interface PagedRequestDto {
     skipCount: number;
     sortBy?: string;
     sortType?: string;
+    idChiNhanh?: string;
 }

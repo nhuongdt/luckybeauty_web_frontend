@@ -90,7 +90,7 @@ class ProfileScreen extends Component {
         }
         return (
             <Box paddingTop={'16px'}>
-                <Grid container alignItems="center" justifyContent="space-between">
+                <Grid container alignItems="center" justifyContent="space-between" marginBottom={2}>
                     <Grid item xs={12} md="auto" display="flex" alignItems="center" gap="10px">
                         <Typography variant="h1" fontSize="18px" fontWeight="700" color="#0C050A">
                             Hồ sơ tài khoản
@@ -154,7 +154,7 @@ class ProfileScreen extends Component {
                                                 });
                                             }
                                         }}>
-                                        {({ handleChange, errors, values, setFieldValue }) => (
+                                        {({ handleChange, errors, values, setFieldValue, isSubmitting }) => (
                                             <Form
                                                 onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                                     if (event.key === 'Enter') {
@@ -294,7 +294,7 @@ class ProfileScreen extends Component {
                                                     )}
                                                 </FormGroup>
                                                 <Button
-                                                    type="submit"
+                                                    type={!isSubmitting ? 'submit' : undefined}
                                                     variant="outlined"
                                                     className="btn-container-hover"
                                                     sx={{
@@ -315,7 +315,7 @@ class ProfileScreen extends Component {
                                                         fontWeight="400"
                                                         fontFamily="Roboto"
                                                         fontStyle="normal">
-                                                        Cập nhật ngay
+                                                        {isSubmitting ? 'Đang cập nhật' : 'Cập nhật ngay'}
                                                     </Typography>
                                                 </Button>
                                             </Form>
@@ -346,7 +346,7 @@ class ProfileScreen extends Component {
                                         values.currentPassword = '';
                                         values.newPassword = '';
                                     }}>
-                                    {({ handleChange, values, errors }) => (
+                                    {({ handleChange, values, errors, isSubmitting }) => (
                                         <Form
                                             onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
                                                 if (event.key === 'Enter') {
@@ -452,7 +452,7 @@ class ProfileScreen extends Component {
                                                 )}
                                             </FormGroup>
                                             <Button
-                                                type="submit"
+                                                type={!isSubmitting ? 'submit' : undefined}
                                                 variant="contained"
                                                 className="btn-container-hover"
                                                 sx={{
@@ -468,7 +468,7 @@ class ProfileScreen extends Component {
                                                     fontWeight="400"
                                                     fontFamily="Roboto"
                                                     fontStyle="normal">
-                                                    Lưu
+                                                    {isSubmitting ? 'Đang lưu' : 'Lưu'}
                                                 </Typography>
                                             </Button>
                                         </Form>
