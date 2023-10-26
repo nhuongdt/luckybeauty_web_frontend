@@ -485,13 +485,13 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, setHtmlEl
             .equals(hoadon.id)
             .delete()
             .then((deleteCount: any) => console.log('idhoadondelete ', hoadon.id, 'deletecount', deleteCount));
-        await dbDexie.khachCheckIn
-            .where('idCheckIn')
-            .equals(customerChosed.idCheckIn)
-            .delete()
-            .then((deleteCount: any) =>
-                console.log('idcheckindelete ', customerChosed.idCheckIn, 'deletecount', deleteCount)
-            );
+        // await dbDexie.khachCheckIn
+        //     .where('idCheckIn')
+        //     .equals(customerChosed.idCheckIn)
+        //     .delete()
+        //     .then((deleteCount: any) =>
+        //         console.log('idcheckindelete ', customerChosed.idCheckIn, 'deletecount', deleteCount)
+        //     );
     };
 
     const handlePrint = useReactToPrint({
