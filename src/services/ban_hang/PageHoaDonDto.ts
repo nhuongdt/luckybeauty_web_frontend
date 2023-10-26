@@ -16,6 +16,7 @@ export default class PageHoaDonDto extends HoaDonDto {
 
     userName = ''; // user lap phieu
     tenChiNhanh = '';
+    idCheckIn = ''; // 1 khách hàng có thể check in nhiều lần cùng lúc, và tạo nhiều hóa đơn # nhau (phân biệt cache dexieDB)
 
     daThanhToan? = 0;
     conNo? = 0;
@@ -57,5 +58,6 @@ export default class PageHoaDonDto extends HoaDonDto {
         this.tenNhanVien = tenNhanVien;
         this.daThanhToan = daThanhToan;
         this.hoaDonChiTiet = [];
+        this.idCheckIn = Guid.EMPTY;
     }
 }
