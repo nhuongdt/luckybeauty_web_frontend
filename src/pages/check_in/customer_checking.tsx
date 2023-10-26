@@ -1,20 +1,16 @@
-import { Box, Button, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Grid, Stack, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Add, Menu, CalendarMonth, MoreHoriz, QueryBuilder } from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
 import { PropModal } from '../../utils/PropParentToChild';
-import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
-import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 
 import { Guid } from 'guid-typescript';
-import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';
 import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
-
-import { dbDexie } from '../../lib/dexie/dexieDB';
 
 const shortNameCus = createTheme({
     components: {
@@ -69,19 +65,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
         setListCusChecking([...listCusChecking, cusChecking]);
-
-        dbDexie.khachCheckIn.add(cusChecking);
-
-        // check exist dexie
-        const cus = await dbDexie.khachCheckIn.where('idKhachHang').equals(dataCheckIn.idKhachHang).toArray();
-        if (cus.length === 0) {
-            // remove & add again
-            await dbDexie.khachCheckIn.delete(dataCheckIn.idKhachHang);
-            await dbDexie.khachCheckIn.add(dataCheckIn);
-        } else {
-            // add to dexie
-            await dbDexie.khachCheckIn.add(dataCheckIn);
-        }
     };
 
     const handleClickCustomer = async (item: any) => {
@@ -97,12 +80,6 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             };
         });
         hanleChoseCustomer(item);
-
-        // add to dexie
-        const cus = await dbDexie.khachCheckIn.where('idKhachHang').equals(item.idKhachHang).toArray();
-        if (cus.length === 0) {
-            await dbDexie.khachCheckIn.add(item);
-        }
     };
     const [show, setShow] = useState(false);
     const handleToggle = () => {
