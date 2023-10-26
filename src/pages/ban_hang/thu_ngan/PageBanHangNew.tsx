@@ -2105,7 +2105,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             />
                                             <img
                                                 src={qrCode}
-                                                style={{ width: '150px', height: '150px', marginTop: '8px' }}
+                                                style={{ width: '128px', height: '128px', marginTop: '8px' }}
                                             />
                                         </Box>
                                     )}
