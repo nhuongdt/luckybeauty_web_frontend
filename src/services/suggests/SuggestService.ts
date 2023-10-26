@@ -16,6 +16,8 @@ import Cookies from 'js-cookie';
 import { SuggestDichVuDto } from './dto/SuggestDichVuDto';
 import { SuggestNhomHangHoaDto } from './dto/SuggestNhomHangHoaDto';
 import { SuggestLoaiChungTu } from './dto/SuggestLoaiChungTu';
+import { SuggestNganHangDto } from './dto/SuggestNganHangDto';
+import { SuggestTaiKhoanNganHangQrDto } from './dto/SuggestTaiKhoanNganHangQrDTo';
 
 class SuggestService {
     public async SuggestPhongBan(): Promise<SuggestPhongBanDto[]> {
@@ -198,6 +200,14 @@ class SuggestService {
             console.error('Error occurred while suggesting nhan vien:', error);
             return [];
         }
+    }
+    public async SuggestNganHang(): Promise<SuggestNganHangDto[]> {
+        const response = await http.post('api/services/app/Suggest/SuggestNganHang');
+        return response.data.result;
+    }
+    public async SuggestTaiKhoanNganHangQr(idChiNhanh: string): Promise<SuggestTaiKhoanNganHangQrDto[]> {
+        const response = await http.post(`api/services/app/Suggest/SuggestTaiKhoanNganHangQr?idChiNhanh=${idChiNhanh}`);
+        return response.data.result;
     }
 }
 

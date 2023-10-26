@@ -63,7 +63,7 @@ const LichHen: React.FC = () => {
         } else {
             calendarView = 'day';
         }
-        bookingStore.selectedDate = formatDateFns(new Date(), 'yyyy-MM-dd');
+        bookingStore.selectedDate = formatDateFns(initialDate, 'yyyy-MM-dd');
         bookingStore.typeView = calendarView;
         await bookingStore.getData();
     };

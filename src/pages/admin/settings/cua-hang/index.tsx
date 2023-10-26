@@ -1,5 +1,5 @@
 import React, { ChangeEvent, Component, ReactNode } from 'react';
-import { Box, Typography, Grid, TextField, Button, Stack } from '@mui/material';
+import { Box, Typography, Grid, TextField, Button, Stack, InputAdornment } from '@mui/material';
 import AddLogoIcon from '../../../../images/add-logo.svg';
 import cuaHangService from '../../../../services/cua_hang/cuaHangService';
 import Cookies from 'js-cookie';
@@ -9,6 +9,10 @@ import utils from '../../../../utils/utils';
 import uploadFileService from '../../../../services/uploadFileService';
 import abpCustom from '../../../../components/abp-custom';
 import AppConsts from '../../../../lib/appconst';
+import { ReactComponent as FacebookIcon } from '../../../../images/icons/facebook.svg';
+import { ReactComponent as WebsiteIcon } from '../../../../images/icons/website.svg';
+import { ReactComponent as InstagramIcon } from '../../../../images/icons/instagram.svg';
+import { ReactComponent as TwitterIcon } from '../../../../images/icons/twitter.svg';
 class StoreDetail extends Component {
     state = {
         fileSelect: {} as File,
@@ -231,7 +235,7 @@ class StoreDetail extends Component {
                             </Stack>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} padding={2}>
                         <Grid item xs={12} sm={4}>
                             <Box padding="20px" border="1px solid #E6E1E6" borderRadius="8px">
                                 <Typography variant="body1" fontSize="14px" fontWeight="500">
@@ -251,8 +255,8 @@ class StoreDetail extends Component {
                                     ) : (
                                         <img
                                             style={{
-                                                width: '6.944444444444445vw',
-                                                height: '6.944444444444445vw'
+                                                width: '100px',
+                                                height: '100px'
                                             }}
                                             src={AddLogoIcon}
                                             alt="default logo"
@@ -382,6 +386,13 @@ class StoreDetail extends Component {
                                             size="small"
                                             fullWidth
                                             name="website"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <WebsiteIcon />
+                                                    </InputAdornment>
+                                                )
+                                            }}
                                             onChange={this.handleChange}
                                             value={editCuaHang.website}
                                         />
@@ -394,6 +405,13 @@ class StoreDetail extends Component {
                                             size="small"
                                             fullWidth
                                             name="facebook"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <FacebookIcon />
+                                                    </InputAdornment>
+                                                )
+                                            }}
                                             onChange={this.handleChange}
                                             value={editCuaHang.facebook}
                                         />
@@ -406,6 +424,13 @@ class StoreDetail extends Component {
                                             size="small"
                                             fullWidth
                                             name="instagram"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <InstagramIcon />
+                                                    </InputAdornment>
+                                                )
+                                            }}
                                             onChange={this.handleChange}
                                             value={editCuaHang.instagram ?? ''}
                                         />
@@ -418,6 +443,13 @@ class StoreDetail extends Component {
                                             size="small"
                                             fullWidth
                                             name="twitter"
+                                            InputProps={{
+                                                startAdornment: (
+                                                    <InputAdornment position="start">
+                                                        <TwitterIcon />
+                                                    </InputAdornment>
+                                                )
+                                            }}
                                             onChange={this.handleChange}
                                             value={editCuaHang.twitter ?? ''}
                                         />

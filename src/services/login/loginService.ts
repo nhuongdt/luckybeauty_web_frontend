@@ -29,7 +29,7 @@ class LoginService {
 
     async Login(loginModel: LoginModel): Promise<boolean> {
         try {
-            this.CheckTenant(loginModel.tenancyName, loginModel.rememberMe);
+            //this.CheckTenant(loginModel.tenancyName, loginModel.rememberMe);
             const requestBody = {
                 userNameOrEmailAddress: loginModel.userNameOrEmailAddress,
                 password: loginModel.password,
