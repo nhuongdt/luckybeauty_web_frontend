@@ -13,6 +13,7 @@ import { SuggestChiNhanhDto } from '../services/suggests/dto/SuggestChiNhanhDto'
 import { SuggestDonViQuiDoiDto } from '../services/suggests/dto/SuggestDonViQuiDoi';
 import chiNhanhService from '../services/chi_nhanh/chiNhanhService';
 import { SuggestNganHangDto } from '../services/suggests/dto/SuggestNganHangDto';
+import { SuggestTaiKhoanNganHangQrDto } from '../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
 
 class SuggestStore {
     suggestKyThuatVien!: SuggestNhanVienDichVuDto[];
@@ -28,6 +29,7 @@ class SuggestStore {
     suggestChiNhanhByUser!: SuggestChiNhanhDto[];
     suggestDonViQuiDoi!: SuggestDonViQuiDoiDto[];
     suggestNganHang!: SuggestNganHangDto[];
+    suggestTaiKhoanNganHangQr!: SuggestTaiKhoanNganHangQrDto[];
     constructor() {
         makeAutoObservable(this);
     }
@@ -86,6 +88,10 @@ class SuggestStore {
     async getSuggestNganHang() {
         const data = await SuggestService.SuggestNganHang();
         this.suggestNganHang = data;
+    }
+    async getSuggestTaiKhoanNganHangQr(idChiNhanh: string) {
+        const data = await SuggestService.SuggestTaiKhoanNganHangQr(idChiNhanh);
+        this.suggestTaiKhoanNganHangQr = data;
     }
 }
 export default new SuggestStore();

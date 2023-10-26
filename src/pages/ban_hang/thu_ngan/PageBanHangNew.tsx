@@ -18,7 +18,9 @@ import {
     Radio,
     FormControl,
     FormLabel,
-    FormControlLabel
+    FormControlLabel,
+    Autocomplete,
+    ListItemAvatar
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
 import avatar from '../../../images/avatar.png';
@@ -90,6 +92,11 @@ import { KhachHangDto } from '../../../services/khach-hang/dto/KhachHangDto';
 import cuaHangService from '../../../services/cua_hang/cuaHangService';
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 import { CuaHangDto } from '../../../services/cua_hang/Dto/CuaHangDto';
+import axios from 'axios';
+import suggestStore from '../../../stores/suggestStore';
+import { SuggestTaiKhoanNganHangQrDto } from '../../../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
+import SuggestService from '../../../services/suggests/SuggestService';
+import { observer } from 'mobx-react';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
@@ -987,6 +994,55 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     }, [hoadon.tongThanhToan]);
 
     // end thanhtoan new
+
+    //QR
+    const [suggestTaiKhoanNganHang, setSuggestTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto[]>([]);
+    const [taiKhoanNganHang, setTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto>({
+        bin: '',
+        soTaiKhoan: '',
+        tenRutGon: '',
+        tenTaiKhoan: ''
+    });
+    useEffect(() => {
+        suggestData();
+    }, [chiNhanhCurrent?.id]);
+    const suggestData = async () => {
+        await suggestStore.getSuggestNganHang();
+        const suggestTKNH = await SuggestService.SuggestTaiKhoanNganHangQr(idChiNhanh ?? AppConsts.guidEmpty);
+        setSuggestTaiKhoanNganHang(suggestTKNH);
+        if (suggestTKNH.length > 0) {
+            setTaiKhoanNganHang(suggestTKNH[0]);
+        }
+    };
+    useEffect(() => {
+        genarateQrCode();
+    }, [hoadon.tongThanhToan, taiKhoanNganHang]);
+    const [qrCode, setQRCode] = useState('');
+
+    const genarateQrCode = async () => {
+        if (taiKhoanNganHang.soTaiKhoan != '' && taiKhoanNganHang.tenTaiKhoan != null && taiKhoanNganHang.bin != null) {
+            const result = await axios.post(
+                'https://api.vietqr.io/v2/generate',
+                {
+                    accountNo: taiKhoanNganHang.soTaiKhoan,
+                    accountName: taiKhoanNganHang.tenTaiKhoan,
+                    acqId: taiKhoanNganHang.bin,
+                    addInfo: 'Thanh toán hóa đơn: ' + hoadon.maHoaDon,
+                    amount: hoadon.tongThanhToan,
+                    template: 'qr_only'
+                },
+                {
+                    headers: {
+                        'x-client-id': process.env.CLIENT_ID_VIET_QR,
+                        'x-api-key': process.env.API_KEY_VIET_QR,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            setQRCode(result.data.data.qrDataURL);
+        }
+    };
+    //
     return (
         <>
             <ListNhanVienDataContext.Provider value={allNhanVien}>
@@ -2011,6 +2067,48 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                             {new Intl.NumberFormat('vi-VN').format(Math.abs(tienThuaTraKhach))}
                                         </Typography>
                                     </Box>
+                                    {lstQuyCT[0].hinhThucThanhToan === 2 && (
+                                        <Box>
+                                            <Autocomplete
+                                                options={suggestTaiKhoanNganHang ?? []}
+                                                getOptionLabel={(option) =>
+                                                    option.tenRutGon +
+                                                    ' - ' +
+                                                    option.soTaiKhoan +
+                                                    ' - ' +
+                                                    option.tenTaiKhoan
+                                                }
+                                                value={taiKhoanNganHang}
+                                                fullWidth
+                                                onChange={(event, value) => {
+                                                    setTaiKhoanNganHang(
+                                                        value ?? {
+                                                            bin: '',
+                                                            soTaiKhoan: '',
+                                                            tenRutGon: '',
+                                                            tenTaiKhoan: ''
+                                                        }
+                                                    );
+                                                }}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        size="small"
+                                                        label={
+                                                            <Typography>
+                                                                Ngân hàng <span className="text-danger"> *</span>
+                                                            </Typography>
+                                                        }
+                                                        placeholder="Nhập tên ngân hàng"
+                                                    />
+                                                )}
+                                            />
+                                            <img
+                                                src={qrCode}
+                                                style={{ width: '150px', height: '150px', marginTop: '8px' }}
+                                            />
+                                        </Box>
+                                    )}
                                 </Box>
                                 <Box
                                     sx={{
@@ -2049,4 +2147,4 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         </>
     );
 };
-export default PageBanHang;
+export default observer(PageBanHang);
