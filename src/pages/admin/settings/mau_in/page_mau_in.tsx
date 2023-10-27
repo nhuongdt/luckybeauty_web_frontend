@@ -27,6 +27,7 @@ import { Guid } from 'guid-typescript';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';
 import TokenMauIn from './TokenMauIn';
+import { width } from '@mui/system';
 
 export default function PageMauIn({ xx }: any) {
     const [html, setHtml] = useState('');
@@ -55,7 +56,7 @@ export default function PageMauIn({ xx }: any) {
         setListMauInHoaDon(data);
     };
 
-    const BindDataPrint = (shtml: string) => {
+    const BindDataPrint = async (shtml: string) => {
         // !import: replace cthd --> hoadon
         switch (idLoaiChungTu) {
             case 1:
@@ -63,6 +64,9 @@ export default function PageMauIn({ xx }: any) {
                     let dataAfter = DataMauIn.replaceChiTietHoaDon(shtml);
                     dataAfter = DataMauIn.replaceChiNhanh(dataAfter);
                     dataAfter = DataMauIn.replaceHoaDon(dataAfter);
+                    if (shtml.includes('QRCode')) {
+                        dataAfter = await DataMauIn.replacePhieuThuChi(dataAfter);
+                    }
                     setdataPrint(dataAfter);
                 }
                 break;
@@ -70,7 +74,7 @@ export default function PageMauIn({ xx }: any) {
             case 12:
                 {
                     let dataAfter = DataMauIn.replaceChiNhanh(shtml);
-                    dataAfter = DataMauIn.replacePhieuThuChi(dataAfter);
+                    dataAfter = await DataMauIn.replacePhieuThuChi(dataAfter);
                     setdataPrint(dataAfter);
                 }
                 break;
@@ -350,6 +354,7 @@ export default function PageMauIn({ xx }: any) {
                         </Tabs>
                     </Box>
                 </Grid>
+
                 <Grid item xs={12} sm={12} md={12} lg={12}>
                     <Grid container>
                         <Grid item xs={12} sm={12} md={6} lg={6}>

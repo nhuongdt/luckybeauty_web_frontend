@@ -18,7 +18,7 @@ import {
     Autocomplete
 } from '@mui/material';
 import closeIcon from '../../../images/closeSmall.svg';
-import { Close, Add, ElectricalServicesSharp } from '@mui/icons-material';
+import { Close, Add, ElectricalServicesSharp, SosTwoTone } from '@mui/icons-material';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { debounce } from '@mui/material/utils';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -62,7 +62,7 @@ import { CreateOrEditKhachHangDto } from '../../../services/khach-hang/dto/Creat
 import CreateOrEditCustomerDialog from '../../customer/components/create-or-edit-customer-modal';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../../services/check_in/CheckinDto';
 import ModalAddCustomerCheckIn from '../../check_in/modal_add_cus_checkin';
-import AppConsts from '../../../lib/appconst';
+import AppConsts, { ISelect } from '../../../lib/appconst';
 import { NumericFormat } from 'react-number-format';
 import khachHangService from '../../../services/khach-hang/khachHangService';
 import { ListNhanVienDataContext } from '../../../services/nhan-vien/dto/NhanVienDataContext';
@@ -73,11 +73,12 @@ import { MauInDto } from '../../../services/mau_in/MauInDto';
 import cuaHangService from '../../../services/cua_hang/cuaHangService';
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 import { CuaHangDto } from '../../../services/cua_hang/Dto/CuaHangDto';
-import axios from 'axios';
-import suggestStore from '../../../stores/suggestStore';
 import { SuggestTaiKhoanNganHangQrDto } from '../../../services/suggests/dto/SuggestTaiKhoanNganHangQrDTo';
 import SuggestService from '../../../services/suggests/SuggestService';
 import { observer } from 'mobx-react';
+import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
+import AutocompleteAccountBank from '../../../components/Autocomplete/AccountBank';
+import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataToParent }: any) => {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
@@ -693,7 +694,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         //     return false;
         // }
 
-        // const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
+        // const itemPos = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
         // if (itemPos.length > 0 && utils.checkNull(itemPos[0].idTaiKhoanNganHang)) {
         //     setObjAlert({
         //         show: true,
@@ -703,7 +704,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         //     return false;
         // }
 
-        // const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
+        // const itemCK = lstQuyCT.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 2);
         // if (itemCK.length > 0 && utils.checkNull(itemCK[0].idTaiKhoanNganHang)) {
         //     setObjAlert({
         //         show: true,
@@ -800,11 +801,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         const tongThu = lstQCT_After.reduce((currentValue: number, item: any) => {
             return currentValue + item.tienThu;
         }, 0);
+        let quyHD = new QuyHoaDonDto({});
         if (tongThu > 0) {
-            const quyHD: QuyHoaDonDto = new QuyHoaDonDto({
+            quyHD = new QuyHoaDonDto({
                 idChiNhanh: utils.checkNull(chiNhanhCurrent?.id) ? idChiNhanh : chiNhanhCurrent?.id,
                 idLoaiChungTu: 11,
-                ngayLapHoaDon: hoadon.ngayLapHoaDon,
+                ngayLapHoaDon: hodaDonDB.ngayLapHoaDon,
                 tongTienThu: tongThu
             });
             lstQCT_After = lstQCT_After.filter((x: QuyChiTietDto) => x.tienThu > 0);
@@ -812,6 +814,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             lstQCT_After.map((x: QuyChiTietDto) => {
                 x.idHoaDonLienQuan = hodaDonDB.id;
                 x.idKhachHang = hoadon.idKhachHang == Guid.EMPTY ? null : hoadon.idKhachHang;
+                x.maHoaDonLienQuan = hodaDonDB.maHoaDon;
             });
             quyHD.quyHoaDon_ChiTiet = lstQCT_After;
             await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
@@ -824,9 +827,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         });
 
         // print
-        await GetDataPrint(hodaDonDB.maHoaDon, tongThu);
+        await GetDataPrint(hodaDonDB.maHoaDon, quyHD);
 
         // reset after save
+        ResetState_AfterSave();
+        await RemoveCache();
+    };
+
+    const ResetState_AfterSave = () => {
         setClickSave(false);
         setFormShow(0);
         setShowPayment(false);
@@ -851,10 +859,9 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             tongTichDiem: 0,
             avatar: ''
         } as CreateOrEditKhachHangDto);
-        await RemoveCache();
     };
 
-    const GetDataPrint = async (mahoadon = '', daThanhToan = 0) => {
+    const GetDataPrint = async (mahoadon = '', quyHD: QuyHoaDonDto) => {
         const chinhanhPrint = await getInforChiNhanh_byID();
         const tempMauIn = await MauInServices.GetContentMauInMacDinh(1, 1);
         const allCongTy = await cuaHangService.GetAllCongTy({} as PagedRequestDto);
@@ -866,19 +873,20 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         DataMauIn.congty = congty;
         DataMauIn.hoadon = hoadon;
         DataMauIn.hoadon.maHoaDon = mahoadon;
-        DataMauIn.hoadon.daThanhToan = daThanhToan;
-        DataMauIn.hoadon.conNo = hoadon.tongThanhToan - daThanhToan;
+        DataMauIn.hoadon.daThanhToan = quyHD?.tongTienThu;
+        DataMauIn.hoadon.conNo = hoadon.tongThanhToan - quyHD?.tongTienThu;
         DataMauIn.hoadonChiTiet = hoaDonChiTiet;
         DataMauIn.khachhang = {
             maKhachHang: hoadon?.maKhachHang,
             tenKhachHang: hoadon?.tenKhachHang,
             soDienThoai: hoadon?.soDienThoai
         } as KhachHangItemDto;
+        DataMauIn.phieuthu = quyHD;
 
         let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
         newHtml = DataMauIn.replaceChiNhanh(newHtml);
         newHtml = DataMauIn.replaceHoaDon(newHtml);
-        newHtml = DataMauIn.replacePhieuThuChi(newHtml);
+        newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
         DataMauIn.Print(newHtml);
     };
 
@@ -931,12 +939,54 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         sendDataToParent(!showDetail);
     };
 
-    const changeHinhThucThanhToan = (item: any) => {
-        setLstQuyCT(
-            lstQuyCT.map((itemCT: QuyChiTietDto) => {
-                return { ...itemCT, hinhThucThanhToan: item.value, sHinhThucThanhToan: item?.text };
-            })
-        );
+    const changeHinhThucThanhToan = (item: ISelect) => {
+        if (item?.value === 2 && allAccountBank.length > 0) {
+            // chuyen khoan: set default taikhoan ngan hang first
+            const accFirst = allAccountBank[0];
+            setLstQuyCT(
+                lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                    return {
+                        ...itemCT,
+                        hinhThucThanhToan: item.value,
+                        sHinhThucThanhToan: item?.text,
+                        idTaiKhoanNganHang: accFirst.id,
+                        tenNganHang: accFirst.tenNganHang,
+                        tenChuThe: accFirst.tenChuThe,
+                        soTaiKhoan: accFirst.soTaiKhoan,
+                        maPinNganHang: accFirst.maPinNganHang
+                    };
+                })
+            );
+            setTaiKhoanNganHang({
+                id: accFirst?.id,
+                soTaiKhoan: accFirst?.soTaiKhoan,
+                tenRutGon: accFirst.tenRutGon,
+                tenTaiKhoan: accFirst?.tenChuThe,
+                bin: accFirst?.maPinNganHang
+            });
+        } else {
+            setLstQuyCT(
+                lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                    return {
+                        ...itemCT,
+                        hinhThucThanhToan: item.value,
+                        sHinhThucThanhToan: item?.text,
+                        idTaiKhoanNganHang: null,
+                        tenNganHang: '',
+                        tenChuThe: '',
+                        soTaiKhoan: '',
+                        maPinNganHang: ''
+                    };
+                })
+            );
+            setTaiKhoanNganHang({
+                id: null,
+                soTaiKhoan: '',
+                tenRutGon: '',
+                tenTaiKhoan: '',
+                bin: ''
+            });
+        }
     };
 
     useEffect(() => {
@@ -962,19 +1012,51 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     // end thanhtoan new
 
     //QR
+    const [qrCode, setQRCode] = useState('');
     const [suggestTaiKhoanNganHang, setSuggestTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto[]>([]);
+    const [allAccountBank, setAllAccountBank] = useState<TaiKhoanNganHangDto[]>([]);
     const [taiKhoanNganHang, setTaiKhoanNganHang] = useState<SuggestTaiKhoanNganHangQrDto>({
+        id: null,
         bin: '',
         soTaiKhoan: '',
         tenRutGon: '',
         tenTaiKhoan: ''
     });
+    const GetAllTaiKhoanNganHang = async () => {
+        const data = await TaiKhoanNganHangServices.GetAllBankAccount(idChiNhanh as undefined);
+        setAllAccountBank(data);
+    };
+
+    const changeTaiKhoanNganHang = async (item: TaiKhoanNganHangDto) => {
+        console.log('changeTK ', item);
+        setTaiKhoanNganHang({
+            id: item?.id,
+            soTaiKhoan: item?.soTaiKhoan,
+            tenRutGon: item.tenRutGon,
+            tenTaiKhoan: item?.tenChuThe,
+            bin: item?.maPinNganHang
+        });
+        setLstQuyCT(
+            lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                if (itemCT.hinhThucThanhToan === 2) {
+                    return {
+                        ...itemCT,
+                        idTaiKhoanNganHang: item?.id
+                    };
+                } else {
+                    return { ...itemCT };
+                }
+            })
+        );
+    };
+
     useEffect(() => {
-        suggestData();
+        // suggestData();
+        GetAllTaiKhoanNganHang();
     }, [chiNhanhCurrent?.id]);
     const suggestData = async () => {
-        await suggestStore.getSuggestNganHang();
         const suggestTKNH = await SuggestService.SuggestTaiKhoanNganHangQr(idChiNhanh ?? AppConsts.guidEmpty);
+        console.log('suggestTKNH ', suggestTKNH);
         setSuggestTaiKhoanNganHang(suggestTKNH);
         if (suggestTKNH.length > 0) {
             setTaiKhoanNganHang(suggestTKNH[0]);
@@ -983,29 +1065,19 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     useEffect(() => {
         genarateQrCode();
     }, [hoadon.tongThanhToan, taiKhoanNganHang]);
-    const [qrCode, setQRCode] = useState('');
 
     const genarateQrCode = async () => {
-        if (taiKhoanNganHang.soTaiKhoan != '' && taiKhoanNganHang.tenTaiKhoan != null && taiKhoanNganHang.bin != null) {
-            const result = await axios.post(
-                'https://api.vietqr.io/v2/generate',
-                {
-                    accountNo: taiKhoanNganHang.soTaiKhoan,
-                    accountName: taiKhoanNganHang.tenTaiKhoan,
-                    acqId: taiKhoanNganHang.bin,
-                    addInfo: 'Thanh toán hóa đơn: ' + hoadon.maHoaDon,
-                    amount: hoadon.tongThanhToan,
-                    template: 'qr_only'
-                },
-                {
-                    headers: {
-                        'x-client-id': process.env.CLIENT_ID_VIET_QR,
-                        'x-api-key': process.env.API_KEY_VIET_QR,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            setQRCode(result.data.data.qrDataURL);
+        if (!utils.checkNull(taiKhoanNganHang.id)) {
+            const accountBank: TaiKhoanNganHangDto = {
+                id: taiKhoanNganHang?.id as unknown as string,
+                soTaiKhoan: taiKhoanNganHang?.soTaiKhoan,
+                tenChuThe: taiKhoanNganHang?.tenTaiKhoan,
+                maPinNganHang: taiKhoanNganHang?.bin
+            } as TaiKhoanNganHangDto;
+            const qrCode = await TaiKhoanNganHangServices.GetQRCode(accountBank, hoadon.tongThanhToan);
+            setQRCode(qrCode);
+        } else {
+            setQRCode('');
         }
     };
     //
@@ -2032,7 +2104,14 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                     </Box>
                                     {lstQuyCT[0].hinhThucThanhToan === 2 && (
                                         <Box>
-                                            <Autocomplete
+                                            <AutocompleteAccountBank
+                                                handleChoseItem={changeTaiKhoanNganHang}
+                                                idChosed={
+                                                    utils.checkNull(taiKhoanNganHang.id) ? '' : taiKhoanNganHang.id
+                                                }
+                                                listOption={allAccountBank}
+                                            />
+                                            {/* <Autocomplete
                                                 options={suggestTaiKhoanNganHang ?? []}
                                                 getOptionLabel={(option) =>
                                                     option.tenRutGon +
@@ -2046,11 +2125,25 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                 onChange={(event, value) => {
                                                     setTaiKhoanNganHang(
                                                         value ?? {
+                                                            id: null,
                                                             bin: '',
                                                             soTaiKhoan: '',
                                                             tenRutGon: '',
                                                             tenTaiKhoan: ''
                                                         }
+                                                    );
+                                                    console.log('change ', value);
+                                                    setLstQuyCT(
+                                                        lstQuyCT.map((itemCT: QuyChiTietDto) => {
+                                                            if (itemCT.hinhThucThanhToan === 2) {
+                                                                return {
+                                                                    ...itemCT,
+                                                                    idTaiKhoanNganHang: value?.id
+                                                                };
+                                                            } else {
+                                                                return { ...itemCT };
+                                                            }
+                                                        })
                                                     );
                                                 }}
                                                 renderInput={(params) => (
@@ -2065,7 +2158,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                         placeholder="Nhập tên ngân hàng"
                                                     />
                                                 )}
-                                            />
+                                            /> */}
                                             <img
                                                 src={qrCode}
                                                 style={{ width: '128px', height: '128px', marginTop: '8px' }}

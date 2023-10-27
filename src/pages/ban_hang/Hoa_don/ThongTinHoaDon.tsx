@@ -52,6 +52,8 @@ import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
 import { MauInDto } from '../../../services/mau_in/MauInDto';
 import MauInServices from '../../../services/mau_in/MauInServices';
+import TaiKhoanNganHangServices from '../../../services/so_quy/TaiKhoanNganHangServices';
+import { TaiKhoanNganHangDto } from '../../../services/so_quy/Dto/TaiKhoanNganHangDto';
 const themOutlineInput = createTheme({
     components: {
         MuiOutlinedInput: {
@@ -211,7 +213,27 @@ const ThongTinHoaDon = ({ idHoaDon, hoadon, handleGotoBack, open, listMauIn }: a
         let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
         newHtml = DataMauIn.replaceChiNhanh(newHtml);
         newHtml = DataMauIn.replaceHoaDon(newHtml);
-        newHtml = DataMauIn.replacePhieuThuChi(newHtml);
+
+        if (newHtml.includes('QRCode')) {
+            // Nếu mẫu in có mã QR, luôn luôn in ra QRCode mặc định
+            let qrCode = '';
+            // get default first tknganhang (order by createtime desc)
+            const firstAcc = await TaiKhoanNganHangServices.GetDefault_TaiKhoanNganHang(
+                hoadonChosed.idChiNhanh as undefined
+            );
+            if (firstAcc !== null) {
+                qrCode = await TaiKhoanNganHangServices.GetQRCode(
+                    {
+                        tenChuThe: firstAcc.tenChuThe,
+                        soTaiKhoan: firstAcc.soTaiKhoan,
+                        tenNganHang: firstAcc.tenNganHang,
+                        maPinNganHang: firstAcc.maPinNganHang
+                    } as TaiKhoanNganHangDto,
+                    hoadonChosed.tongThanhToan
+                );
+            }
+            newHtml = newHtml.replace('{QRCode}', `<img style="width: 100%" src=${qrCode} />`);
+        }
         DataMauIn.Print(newHtml);
     };
 
