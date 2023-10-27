@@ -818,6 +818,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
             });
             quyHD.quyHoaDon_ChiTiet = lstQCT_After;
             await SoQuyServices.CreateQuyHoaDon(quyHD); // todo hoahong NV hoadon
+
+            quyHD.tenNguoiNop = hoadon.tenKhachHang; // used to print qrCode
         }
 
         setObjAlert({
@@ -1032,7 +1034,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
         setTaiKhoanNganHang({
             id: item?.id,
             soTaiKhoan: item?.soTaiKhoan,
-            tenRutGon: item.tenRutGon,
+            tenRutGon: item?.tenRutGon,
             tenTaiKhoan: item?.tenChuThe,
             bin: item?.maPinNganHang
         });
@@ -1051,17 +1053,8 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
     };
 
     useEffect(() => {
-        // suggestData();
         GetAllTaiKhoanNganHang();
     }, [chiNhanhCurrent?.id]);
-    const suggestData = async () => {
-        const suggestTKNH = await SuggestService.SuggestTaiKhoanNganHangQr(idChiNhanh ?? AppConsts.guidEmpty);
-        console.log('suggestTKNH ', suggestTKNH);
-        setSuggestTaiKhoanNganHang(suggestTKNH);
-        if (suggestTKNH.length > 0) {
-            setTaiKhoanNganHang(suggestTKNH[0]);
-        }
-    };
     useEffect(() => {
         genarateQrCode();
     }, [hoadon.tongThanhToan, taiKhoanNganHang]);
@@ -1114,7 +1107,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 container
                 spacing={2}
                 width={'100%'} // width={'100%'}: khong duoc xoa dong nay: fix loi MUI tự động set width calc(100% + 16px)
-                marginTop={showPayment ? '0' : '24px'}
+                marginTop={3}
                 ml="0"
                 sx={{
                     height: '100%',
@@ -2159,10 +2152,12 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                                                     />
                                                 )}
                                             /> */}
-                                            <img
-                                                src={qrCode}
-                                                style={{ width: '128px', height: '128px', marginTop: '8px' }}
-                                            />
+                                            {qrCode && (
+                                                <img
+                                                    src={qrCode}
+                                                    style={{ width: '128px', height: '128px', marginTop: '8px' }}
+                                                />
+                                            )}
                                         </Box>
                                     )}
                                 </Box>

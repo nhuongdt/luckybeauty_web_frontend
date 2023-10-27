@@ -14,7 +14,6 @@ export default function AutocompleteAccountBank({
     const [itemChosed, setItemChosed] = useState<TaiKhoanNganHangDto | null>(null);
     React.useEffect(() => {
         const item = listOption.filter((x: TaiKhoanNganHangDto) => x.id == idChosed);
-        console.log('item ', item);
         if (item.length > 0) {
             setItemChosed(item[0]);
         } else {
@@ -23,7 +22,7 @@ export default function AutocompleteAccountBank({
     }, [idChosed]);
 
     const choseItem = (item: any) => {
-        if (item !== null && item.id !== '') handleChoseItem(item);
+        handleChoseItem(item);
     };
 
     return (
