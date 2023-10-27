@@ -18,6 +18,7 @@ import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuR
 import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
+import Cookies from 'js-cookie';
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [txtSearch, setTextSeach] = useState('');
@@ -35,7 +36,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
-        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
+        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50, idChiNhanh: Cookies.get('IdChiNhanh') };
         const list = await CheckinService.GetListCustomerChecking(input);
         setAllCusChecking([...list]);
     };
