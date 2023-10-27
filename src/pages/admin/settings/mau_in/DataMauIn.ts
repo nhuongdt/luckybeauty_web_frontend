@@ -135,35 +135,6 @@ class DataMauIn {
             const tienCK = quyCK.length > 0 ? quyCK[0].tienThu : 0;
             const quyPos = this.phieuthu.quyHoaDon_ChiTiet.filter((x: QuyChiTietDto) => x.hinhThucThanhToan === 3);
             const tienPOS = quyPos.length > 0 ? quyPos[0].tienThu : 0;
-            let qrCode = '';
-
-            if (quyCK.length > 0) {
-                qrCode = await TaiKhoanNganHangServices.GetQRCode(
-                    {
-                        tenChuThe: quyCK[0].tenChuThe,
-                        soTaiKhoan: quyCK[0].soTaiKhoan,
-                        tenNganHang: quyCK[0].tenNganHang,
-                        maPinNganHang: quyCK[0].maPinNganHang
-                    } as TaiKhoanNganHangDto,
-                    tienCK
-                );
-            } else {
-                // get default first tknganhang (order by createtime desc)
-                const firstAcc = await TaiKhoanNganHangServices.GetDefault_TaiKhoanNganHang(
-                    this.phieuthu.idChiNhanh as undefined
-                );
-                if (firstAcc !== null) {
-                    qrCode = await TaiKhoanNganHangServices.GetQRCode(
-                        {
-                            tenChuThe: firstAcc.tenChuThe,
-                            soTaiKhoan: firstAcc.soTaiKhoan,
-                            tenNganHang: firstAcc.tenNganHang,
-                            maPinNganHang: firstAcc.maPinNganHang
-                        } as TaiKhoanNganHangDto,
-                        this.hoadon.tongThanhToan
-                    );
-                }
-            }
 
             data = data.replaceAll('{TienMat}', new Intl.NumberFormat('vi-VN').format(tienMat));
             data = data.replaceAll('{TienPOS}', new Intl.NumberFormat('vi-VN').format(tienPOS));
@@ -171,23 +142,60 @@ class DataMauIn {
             data = data.replaceAll('{TienMat_BangChu}', utils.DocSo(tienMat));
             data = data.replaceAll('{TienPOS_BangChu}', utils.DocSo(tienPOS));
             data = data.replaceAll('{TienChuyenKhoan_BangChu}', utils.DocSo(tienCK));
-            data = data.replaceAll('{QRCode}', `<img style="width: 100%" src=${qrCode} />`);
+            let sHoaDonLienQuan = '';
+            const arrHDLienQuan = this.phieuthu.quyHoaDon_ChiTiet?.filter(
+                (x: QuyChiTietDto) => !utils.checkNull(x?.maHoaDonLienQuan)
+            );
+            if (arrHDLienQuan !== undefined && arrHDLienQuan?.length > 0) {
+                const arrMa = arrHDLienQuan
+                    ?.map((item: QuyChiTietDto) => {
+                        return item.maHoaDonLienQuan;
+                    })
+                    .sort();
+                sHoaDonLienQuan = Array.from(new Set(arrMa))?.toString();
+                console.log('arrHDLienQuan', arrMa);
+            }
+            data = data.replaceAll('{HoaDonLienQuan}', sHoaDonLienQuan);
+
+            if (shtml.includes('QRCode')) {
+                let qrCode = '';
+
+                if (quyCK.length > 0) {
+                    qrCode = await TaiKhoanNganHangServices.GetQRCode(
+                        {
+                            tenChuThe: quyCK[0].tenChuThe,
+                            soTaiKhoan: quyCK[0].soTaiKhoan,
+                            tenNganHang: quyCK[0].tenNganHang,
+                            maPinNganHang: quyCK[0].maPinNganHang
+                        } as TaiKhoanNganHangDto,
+                        tienCK,
+                        this.phieuthu?.tenNguoiNop,
+                        sHoaDonLienQuan
+                    );
+                }
+                if (utils.checkNull(qrCode)) {
+                    // get default first tknganhang (order by createtime desc)
+                    const firstAcc = await TaiKhoanNganHangServices.GetDefault_TaiKhoanNganHang(
+                        this.phieuthu.idChiNhanh as undefined
+                    );
+                    if (firstAcc !== null) {
+                        qrCode = await TaiKhoanNganHangServices.GetQRCode(
+                            {
+                                tenChuThe: firstAcc.tenChuThe,
+                                soTaiKhoan: firstAcc.soTaiKhoan,
+                                tenNganHang: firstAcc.tenNganHang,
+                                maPinNganHang: firstAcc.maPinNganHang
+                            } as TaiKhoanNganHangDto,
+                            tienCK > 0 ? tienCK : this.hoadon.tongThanhToan,
+                            this.phieuthu?.tenNguoiNop,
+                            sHoaDonLienQuan
+                        );
+                    }
+                }
+                data = data.replaceAll('{QRCode}', `<img style="width: 100%" src=${qrCode} />`);
+            }
         }
 
-        let sHoaDonLienQuan = '';
-        const arrHDLienQuan = this.phieuthu.quyHoaDon_ChiTiet?.filter(
-            (x: QuyChiTietDto) => !utils.checkNull(x?.maHoaDonLienQuan)
-        );
-        if (arrHDLienQuan !== undefined && arrHDLienQuan?.length > 0) {
-            const arrMa = arrHDLienQuan
-                ?.map((item: QuyChiTietDto) => {
-                    return item.maHoaDonLienQuan;
-                })
-                .sort();
-            sHoaDonLienQuan = Array.from(new Set(arrMa))?.toString();
-            console.log('arrHDLienQuan', arrMa);
-        }
-        data = data.replaceAll('{HoaDonLienQuan}', sHoaDonLienQuan);
         return data;
     };
 

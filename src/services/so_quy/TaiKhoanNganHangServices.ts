@@ -1,3 +1,4 @@
+import { Guid } from 'guid-typescript';
 import utils from '../../utils/utils';
 import http from '../httpService';
 import { TaiKhoanNganHangDto } from './Dto/TaiKhoanNganHangDto';
@@ -12,11 +13,11 @@ class TaiKhoanNganHangServices {
         const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAll`);
         return xx.data.result;
     }
-    async GetAllBankAccount(idChiNhanh = null) {
+    async GetAllBankAccount(idChiNhanh = Guid.EMPTY) {
         const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAllBankAccount?idChiNhanh=${idChiNhanh}`);
         return xx.data.result;
     }
-    async GetDefault_TaiKhoanNganHang(idChiNhanh = null) {
+    async GetDefault_TaiKhoanNganHang(idChiNhanh = Guid.EMPTY) {
         const xx = await http.get(
             `api/services/app/TaiKhoanNganHang/GetDefault_TaiKhoanNganHang?idChiNhanh=${idChiNhanh}`
         );
@@ -26,14 +27,14 @@ class TaiKhoanNganHangServices {
         const xx = await http.post(`api/services/app/TaiKhoanNganHang/CreateOrEdit`, params);
         return xx.data.result;
     };
-    GetQRCode = async (taiKhoanNganHang: TaiKhoanNganHangDto, tongThanhToan = 0) => {
+    GetQRCode = async (taiKhoanNganHang: TaiKhoanNganHangDto, tongThanhToan = 0, tenKhachHang = '', maHoaDon = '') => {
         const result = await axios.post(
             'https://api.vietqr.io/v2/generate',
             {
                 accountNo: taiKhoanNganHang.soTaiKhoan,
                 accountName: taiKhoanNganHang.tenChuThe,
                 acqId: taiKhoanNganHang.maPinNganHang,
-                addInfo: 'Thanh toán hóa đơn ',
+                addInfo: `${tenKhachHang} thanh toán hóa đơn ${maHoaDon}`,
                 amount: tongThanhToan,
                 template: 'qr_only'
             },
