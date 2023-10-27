@@ -314,7 +314,7 @@ const PageSoQuy = ({ xx }: any) => {
                                 tempMauIn = await MauInServices.GetFileMauIn('K80_PhieuChi.txt');
                             }
                             let newHtml = DataMauIn.replaceChiNhanh(tempMauIn);
-                            newHtml = DataMauIn.replacePhieuThuChi(newHtml);
+                            newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
                             if (i < rowSelectionModel.length - 1) {
                                 htmlPrint = htmlPrint.concat(newHtml, `<p style="page-break-before:always;"></p>`);
                             } else {
