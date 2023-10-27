@@ -21,6 +21,7 @@ export default class QuyChiTietDto {
     tenKhoanThuChi? = '';
     sHinhThucThanhToan? = '';
     maHoaDonLienQuan? = '';
+    maPinNganHang? = '';
 
     constructor({
         id = Guid.create().toString(),
