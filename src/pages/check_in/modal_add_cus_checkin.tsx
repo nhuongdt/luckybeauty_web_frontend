@@ -69,11 +69,14 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         // 0.from tab customer, 1.add from booking
         if (type === 1) {
             cusChosed.id = cusChosed.idKhachHang;
+        } else {
+            // only check if checkin from tabKhachHang
+            const check = await checkSaveCheckin(cusChosed.id);
+            if (!check) {
+                return;
+            }
         }
-        const check = await checkSaveCheckin(cusChosed.id);
-        if (!check) {
-            return;
-        }
+
         setIsShow(false);
 
         setNewCus((itemOlds: any) => {
