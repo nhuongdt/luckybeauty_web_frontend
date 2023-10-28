@@ -51,14 +51,10 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
         setSelectedTab(newValue);
     };
     return (
-        <Box
-            paddingLeft="2.2222222222222223vw"
-            paddingRight="2.2222222222222223vw"
-            paddingTop="1.5277777777777777vw"
-            sx={{ height: 'calc(100vh - 70px)', display: 'flex', flexDirection: 'column' }}>
+        <Box paddingTop="16px" sx={{ height: 'calc(100vh - 90px)', display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h3" fontWeight="700" fontSize="16px" color="#333233">
-                    Khách hàng {khachHangStore.khachHangDetail.tenKhachHang}
+                <Typography fontWeight="700" fontSize="16px" color="#333233">
+                    Khách hàng
                 </Typography>
                 <Box
                     sx={{
@@ -201,18 +197,18 @@ const CustomerInfo: React.FC<Custom> = ({ onClose }) => {
                             gap: '32px'
                         }
                     }}>
-                    {/* <Tab label="Thông tin" /> */}
+                    <Tab label="Thông tin" />
                     <Tab label="Cuộc hẹn" />
                     <Tab label="Mua hàng" />
                 </Tabs>
             </Box>
-            {/* <TabPanel value={selectedTab} index={0}>
-                <TabInfor />
-            </TabPanel> */}
             <TabPanel value={selectedTab} index={0}>
-                <TabCuocHen />
+                <TabInfor />
             </TabPanel>
             <TabPanel value={selectedTab} index={1}>
+                <TabCuocHen />
+            </TabPanel>
+            <TabPanel value={selectedTab} index={2}>
                 <TabMuaHang />
             </TabPanel>
             <Box
