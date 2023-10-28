@@ -58,8 +58,13 @@ class CreateOrEditChietKhauDichVuModal extends Component<DialogProps> {
             loaiChietKhau: Yup.number().required('Vui lòng chọn loại chiết khấu'),
             giaTri: Yup.number()
                 .required('Vui lòng nhập giá trị chiết khấu')
-                .test('non-zero', 'Giá trị chiết khấu phải khác 0', function (value) {
-                    return value !== 0;
+                .test({
+                    name: 'non-zero',
+                    exclusive: true,
+                    message: 'Giá trị chiết khấu phải lớn hơn 0',
+                    test: function (value) {
+                        return value > 0;
+                    }
                 })
         });
         return (

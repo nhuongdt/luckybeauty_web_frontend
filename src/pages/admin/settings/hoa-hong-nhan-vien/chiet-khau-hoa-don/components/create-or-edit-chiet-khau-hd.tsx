@@ -166,20 +166,22 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
     handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         this.setState({ tabIndex: newValue });
         if (newValue === '2') {
-            if (suggestStore && chietKhauHoaDonStore) {
-                const { suggestNhanVien } = suggestStore;
-                const { createOrEditDto } = chietKhauHoaDonStore;
+            this.fillDataEmployee();
+        }
+    };
+    fillDataEmployee = async () => {
+        if (suggestStore && chietKhauHoaDonStore) {
+            const { suggestNhanVien } = suggestStore;
+            const { createOrEditDto } = chietKhauHoaDonStore;
 
-                if (suggestNhanVien && createOrEditDto) {
-                    this.setState({
-                        listEmployee: suggestNhanVien.filter((x) => !createOrEditDto.idNhanViens.includes(x.id)),
-                        listEmployeeSelected: suggestNhanVien.filter((x) => createOrEditDto.idNhanViens.includes(x.id))
-                    });
-                }
+            if (suggestNhanVien && createOrEditDto) {
+                this.setState({
+                    listEmployee: suggestNhanVien.filter((x) => !createOrEditDto.idNhanViens.includes(x.id)),
+                    listEmployeeSelected: suggestNhanVien.filter((x) => createOrEditDto.idNhanViens.includes(x.id))
+                });
             }
         }
     };
-
     render(): ReactNode {
         const { title, onClose, onSave, visited } = this.props;
         const initValues: CreateOrEditChietKhauHoaDonDto = chietKhauHoaDonStore.createOrEditDto;
@@ -255,9 +257,13 @@ class CreateOrEditChietKhauHoaDonModal extends Component<DialogProps> {
                                 this.setState({ tabIndex: '1' });
                             } else if (values.idNhanViens.length == 0) {
                                 formikHepler.setFieldError('idNhanViens', 'Nhân viên không được để trống');
+                                this.fillDataEmployee();
                                 this.setState({ tabIndex: '2' });
                             } else if (values.giaTriChietKhau == null || values.giaTriChietKhau == 0) {
                                 formikHepler.setFieldError('giaTriChietKhau', 'Giá trị chiết khấu không được để trống');
+                                this.setState({ tabIndex: '1' });
+                            } else if (values.giaTriChietKhau <= 0) {
+                                formikHepler.setFieldError('giaTriChietKhau', 'Giá trị chiết khấu phải là số dương');
                                 this.setState({ tabIndex: '1' });
                             } else {
                                 const createOrEdit = await chietKhauHoaDonStore.createOrEdit(values);
