@@ -1,17 +1,13 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, debounce, Stack } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import avatar from '../../images/avatar.png';
 import '../../pages/customer/customerPage.css';
 
 import useWindowWidth from '../../components/StateWidth';
 import CreateOrEditCustomerDialog from '../customer/components/create-or-edit-customer-modal';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
-import { DataCustomerContext } from '../../services/khach-hang/dto/DataContext';
 import { Guid } from 'guid-typescript';
-import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
@@ -21,9 +17,6 @@ import utils from '../../utils/utils';
 const TabKhachHang = ({ handleChoseCus }: any) => {
     const firsLoad = useRef(true);
     const windowWidth = useWindowWidth();
-    const dataContext_ofCustomer = useContext(DataCustomerContext);
-    const listNguonKhach = dataContext_ofCustomer.listNguonKhach;
-    const listNhomKhach = dataContext_ofCustomer.listNhomkhach;
 
     const [isShowModalAddCus, setIsShowModalAddCus] = useState(false);
     const [newCus, setNewCus] = useState<CreateOrEditKhachHangDto>({} as CreateOrEditKhachHangDto);
@@ -65,7 +58,7 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
 
     const saveOKCustomer = (dataSave: any) => {
         setIsShowModalAddCus(false);
-        handleChoseCus(dataSave);
+        handleChoseCus(dataSave, 0);
     };
 
     const showModalAddCus = () => {
@@ -83,25 +76,14 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
         } as CreateOrEditKhachHangDto);
     };
 
-    const onChangeInforCus = (event: any) => {
-        const { name, value } = event.target;
-        setNewCus({
-            ...newCus,
-            [name]: value
-        });
-    };
-
     return (
         <Box>
             <CreateOrEditCustomerDialog
                 visible={isShowModalAddCus}
                 onCancel={() => setIsShowModalAddCus(false)}
                 onOk={saveOKCustomer}
-                //handleChange={onChangeInforCus}
                 title="Thêm mới khách hàng"
                 formRef={newCus}
-                // suggestNguonKhach={listNguonKhach}
-                // suggestNhomKhach={listNhomKhach}
             />
             <Grid container rowGap={2}>
                 <Grid item xs={12} sm={6}>
@@ -158,7 +140,6 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                                     borderColor: 'var(--color-main)'
                                 }
                             }}>
-                            {/* <Box sx={{ justifyContent: 'space-between' }}> */}
                             <Stack spacing={2} direction={'row'}>
                                 {utils.checkNull(item.avatar) ? (
                                     <BadgeFistCharOfName firstChar={utils.getFirstLetter(item?.tenKhachHang ?? '')} />
@@ -174,12 +155,6 @@ const TabKhachHang = ({ handleChoseCus }: any) => {
                                     </Typography>
                                 </Stack>
                             </Stack>
-                            {/* <Box>
-                                    <IconButton sx={{ padding: '0' }}>
-                                        <MoreHorizIcon sx={{ color: '#231F20', width: '15px' }} />
-                                    </IconButton>
-                                </Box> */}
-                            {/* </Box> */}
                             <Stack direction={'row'} spacing={2}>
                                 <Stack>
                                     <Typography variant="body2">Checkin</Typography>

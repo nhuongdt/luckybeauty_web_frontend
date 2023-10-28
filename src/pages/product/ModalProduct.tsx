@@ -455,7 +455,7 @@ export function ModalHangHoa({ dataNhomHang, handleSave, trigger }: any) {
                     </Grid>
                     <Grid container>
                         <Grid item xs={0} sm={4} md={4} lg={4}></Grid>
-                        <Grid xs={12} sm={8} md={8} lg={8} paddingTop={2} pl={{ sm: 0, md: 0.5 }}>
+                        <Grid item xs={12} sm={8} md={8} lg={8} paddingTop={2} pl={{ sm: 0, md: 0.5 }}>
                             <TextField
                                 variant="outlined"
                                 size="small"

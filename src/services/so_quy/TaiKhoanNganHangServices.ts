@@ -1,4 +1,8 @@
+import { Guid } from 'guid-typescript';
+import utils from '../../utils/utils';
 import http from '../httpService';
+import { TaiKhoanNganHangDto } from './Dto/TaiKhoanNganHangDto';
+import axios from 'axios';
 
 class TaiKhoanNganHangServices {
     async GetAllBank() {
@@ -9,13 +13,43 @@ class TaiKhoanNganHangServices {
         const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAll`);
         return xx.data.result;
     }
-    async GetAllBankAccount() {
-        const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAllBankAccount`);
+    async GetAllBankAccount(idChiNhanh = Guid.EMPTY) {
+        const xx = await http.get(`api/services/app/TaiKhoanNganHang/GetAllBankAccount?idChiNhanh=${idChiNhanh}`);
+        return xx.data.result;
+    }
+    async GetDefault_TaiKhoanNganHang(idChiNhanh = Guid.EMPTY) {
+        const xx = await http.get(
+            `api/services/app/TaiKhoanNganHang/GetDefault_TaiKhoanNganHang?idChiNhanh=${idChiNhanh}`
+        );
         return xx.data.result;
     }
     CreateOrEditBankAccount = async (params: any) => {
         const xx = await http.post(`api/services/app/TaiKhoanNganHang/CreateOrEdit`, params);
         return xx.data.result;
+    };
+    GetQRCode = async (taiKhoanNganHang: TaiKhoanNganHangDto, tongThanhToan = 0, tenKhachHang = '', maHoaDon = '') => {
+        const result = await axios.post(
+            'https://api.vietqr.io/v2/generate',
+            {
+                accountNo: taiKhoanNganHang.soTaiKhoan,
+                accountName: taiKhoanNganHang.tenChuThe,
+                acqId: taiKhoanNganHang.maPinNganHang,
+                addInfo: `${tenKhachHang} thanh toán hóa đơn ${maHoaDon}`,
+                amount: tongThanhToan,
+                template: 'qr_only'
+            },
+            {
+                headers: {
+                    'x-client-id': process.env.CLIENT_ID_VIET_QR,
+                    'x-api-key': process.env.API_KEY_VIET_QR,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        if (!utils.checkNull(result.data.data)) return result.data.data.qrDataURL;
+        else {
+            return '';
+        }
     };
 }
 

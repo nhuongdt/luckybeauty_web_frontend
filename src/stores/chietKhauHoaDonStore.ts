@@ -19,10 +19,7 @@ class ChietKhauHoaDonStore {
         });
     }
     async getAll(filter: PagedRequestDto) {
-        const data = await ChietKhauHoaDonService.GetAll(
-            filter,
-            Cookies.get('IdChiNhanh') ?? undefined
-        );
+        const data = await ChietKhauHoaDonService.GetAll(filter, Cookies.get('IdChiNhanh') ?? undefined);
         this.chietKhauHoaDons = data;
     }
     async createOrEdit(input: CreateOrEditChietKhauHoaDonDto) {

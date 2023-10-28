@@ -92,7 +92,6 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
             <Dialog open={visible} onClose={onCancel} fullWidth maxWidth="md">
                 <DialogTitle sx={{ borderBottom: '1px solid #E6E1E6' }}>
                     <Typography
-                        variant="h3"
                         fontSize="24px"
                         //color="rgb(51, 50, 51)"
                         fontWeight="700">

@@ -51,6 +51,7 @@ import NotificationSeverity from '../../enum/NotificationSeverity';
 import UserNotificationState from '../../enum/UserNotificationState';
 import NotificationService from '../../services/notification/NotificationService';
 import utils from '../../utils/utils';
+import { ElectricalServicesSharp } from '@mui/icons-material';
 interface HeaderProps {
     collapsed: boolean;
     toggle: () => void;
@@ -113,10 +114,20 @@ const Header: React.FC<HeaderProps> = (
                     setListChiNhanh(listChiNhanh);
 
                     const idChiNhanhMacDinh = Cookies.get('idChiNhanhMacDinh');
+                    let idChiNhanh = Cookies.get('IdChiNhanh')?.toString() as unknown as string;
+                    let tenChiNhanh = '';
                     const remember = Cookies.get('isRememberMe');
-                    if (utils.checkNull(idChiNhanhMacDinh) || idChiNhanhMacDinh == 'null' || idChiNhanhMacDinh == '') {
-                        const idChiNhanh = listChiNhanh[0].id;
-                        const tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+                    if (utils.checkNull(idChiNhanh)) {
+                        idChiNhanh = listChiNhanh[0].id;
+                        tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+                        if (!utils.checkNull(idChiNhanhMacDinh)) {
+                            idChiNhanh = idChiNhanhMacDinh ?? '';
+                            // find chinhanh mac dinh
+                            const cnMacDinh = listChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
+                            if (cnMacDinh.length > 0) {
+                                tenChiNhanh = cnMacDinh[0].tenChiNhanh;
+                            }
+                        }
 
                         setCurrentChiNhanh(idChiNhanh);
 
@@ -125,10 +136,14 @@ const Header: React.FC<HeaderProps> = (
                         });
                         handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
                     } else {
-                        const idChiNhanh = idChiNhanhMacDinh ?? '';
+                        // if chinhanh was change: set this
                         setCurrentChiNhanh(idChiNhanh);
-                        // todo tenChiNhanh
-                        handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: '' });
+                        tenChiNhanh = listChiNhanh[0].tenChiNhanh;
+                        const cnMacDinh = listChiNhanh.filter((x: SuggestChiNhanhDto) => x.id === idChiNhanh);
+                        if (cnMacDinh.length > 0) {
+                            tenChiNhanh = cnMacDinh[0].tenChiNhanh;
+                        }
+                        handleChangeChiNhanh({ id: idChiNhanh, tenChiNhanh: tenChiNhanh });
 
                         Cookies.set('IdChiNhanh', idChiNhanh, {
                             expires: remember === 'true' ? 1 : undefined

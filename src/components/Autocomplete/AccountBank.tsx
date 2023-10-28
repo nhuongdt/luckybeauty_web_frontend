@@ -4,11 +4,16 @@ import { Autocomplete, Button, Grid, TextField, Typography, Box } from '@mui/mat
 import AddIcon from '@mui/icons-material/Add';
 import { TaiKhoanNganHangDto } from '../../services/so_quy/Dto/TaiKhoanNganHangDto';
 
-export default function AutocompleteAccountBank({ handleChoseItem, idChosed, listOption, handleClickBtnAdd }: any) {
+export default function AutocompleteAccountBank({
+    handleChoseItem,
+    idChosed,
+    listOption,
+    handleClickBtnAdd,
+    roleAdd = false
+}: any) {
     const [itemChosed, setItemChosed] = useState<TaiKhoanNganHangDto | null>(null);
     React.useEffect(() => {
         const item = listOption.filter((x: TaiKhoanNganHangDto) => x.id == idChosed);
-        console.log('item ', item);
         if (item.length > 0) {
             setItemChosed(item[0]);
         } else {
@@ -17,7 +22,7 @@ export default function AutocompleteAccountBank({ handleChoseItem, idChosed, lis
     }, [idChosed]);
 
     const choseItem = (item: any) => {
-        if (item !== null && item.id !== '') handleChoseItem(item);
+        handleChoseItem(item);
     };
 
     return (
@@ -33,14 +38,15 @@ export default function AutocompleteAccountBank({ handleChoseItem, idChosed, lis
                 filterOptions={(x) => x}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={[{ id: '', soTaiKhoan: '' } as TaiKhoanNganHangDto, ...listOption]}
-                getOptionLabel={(option: any) => (option.tenChuThe ? option.tenChuThe : '')}
+                getOptionLabel={(option: any) =>
+                    option.tenChuThe ? option.tenRutGon.concat(` - `, option.soTaiKhoan, ` - `, option.tenChuThe) : ''
+                }
                 renderInput={(params) => <TextField {...params} label="Tìm kiếm" />}
                 renderOption={(props, option) => {
                     return (
-                        <>
+                        <div key={option.id == '' ? 0 : option.id}>
                             <li {...props} key={option.id == '' ? 0 : option.id}>
-                                {/* {todo check role} */}
-                                {option.id == '' && (
+                                {option.id == '' && roleAdd && (
                                     <Button
                                         key={0}
                                         sx={{
@@ -58,8 +64,8 @@ export default function AutocompleteAccountBank({ handleChoseItem, idChosed, lis
                                         item
                                         key={option.id}
                                         sx={{ width: 'calc(100% - 44px)', wordWrap: 'break-word' }}>
-                                        <Typography style={{ fontSize: '14px' }}>
-                                            {option.tenChuThe.toString().concat(` ${option.soTaiKhoan}`)}
+                                        <Typography style={{ fontSize: '14px', fontWeight: 500 }}>
+                                            {option.tenChuThe.toString().concat(` (`, `${option.soTaiKhoan}`, `)`)}
                                         </Typography>
                                         <Box
                                             component="span"
@@ -73,7 +79,7 @@ export default function AutocompleteAccountBank({ handleChoseItem, idChosed, lis
                                     </Grid>
                                 )}
                             </li>
-                        </>
+                        </div>
                     );
                 }}
             />

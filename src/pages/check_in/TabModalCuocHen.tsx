@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Box, TextField, Button, Typography, Grid, InputAdornment, Avatar, Stack, debounce } from '@mui/material';
+import { Box, TextField, Button, Typography, Grid, InputAdornment, Stack, debounce } from '@mui/material';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
 import { ReactComponent as AddIcon } from '../../images/add.svg';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import avatar from '../../images/avatar.png';
 import { ReactComponent as ClockIcon } from '../../images/clock.svg';
 import useWindowWidth from '../../components/StateWidth';
 import { BookingDetailDto, BookingDetail_ofCustomerDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
@@ -11,12 +9,7 @@ import CreateOrEditLichHenModal from '../appoinments/components/create-or-edit-l
 import datLichService from '../../services/dat-lich/datLichService';
 import { BookingRequestDto } from '../../services/dat-lich/dto/PagedBookingResultRequestDto';
 import { format } from 'date-fns';
-import { dbDexie } from '../../lib/dexie/dexieDB';
-import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
-import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
-import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
-import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
 import { SuggestKhachHangDto } from '../../services/suggests/dto/SuggestKhachHangDto';
 import { SuggestDichVuDto } from '../../services/suggests/dto/SuggestDichVuDto';
 import SuggestService from '../../services/suggests/SuggestService';
@@ -24,6 +17,8 @@ import suggestStore from '../../stores/suggestStore';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
 import utils from '../../utils/utils';
 import Cookies from 'js-cookie';
+import { SuggestNhanVienDichVuDto } from '../../services/suggests/dto/SuggestNhanVienDichVuDto';
+import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
 const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     const arrTrangThaiBook = [
         {
@@ -78,49 +73,15 @@ const TabCuocHen = ({ handleChoseCusBooking }: any) => {
     };
     useEffect(() => {
         GetListCustomer_wasBooking(paramSearch);
+        // khachhang, nvien, dichvu: mục đích chỉ để get thông tin cho form them lich hen
         GetAllListCustomer();
         GetAllDichVu();
         GetAllKyThuatVien();
     }, []);
 
-    const choseBooking = async (itemBook: any) => {
-        // if not exist cache & cus booking
-        const dataCache = await dbDexie.hoaDon.where('idKhachHang').equals(itemBook.idKhachHang).toArray();
-        if (dataCache.length === 0) {
-            const hoadonCT = [];
-            let tongTienHang = 0;
-
-            for (let i = 0; i < itemBook.details.length; i++) {
-                const itFor = itemBook.details[i];
-                const newCT = new PageHoaDonChiTietDto({
-                    idDonViQuyDoi: itFor.idDonViQuyDoi,
-                    maHangHoa: itFor.maHangHoa,
-                    tenHangHoa: itFor.tenHangHoa,
-                    giaBan: itFor.giaBan,
-                    idNhomHangHoa: itFor.idNhomHangHoa,
-                    idHangHoa: itFor.idHangHoa,
-                    soLuong: 1
-                });
-                hoadonCT.push(newCT);
-                tongTienHang += itFor.giaBan;
-            }
-            const hoadon = new PageHoaDonDto({
-                idChiNhanh: idChiNhanh,
-                idKhachHang: itemBook.idKhachHang,
-                maKhachHang: itemBook.maKhachHang,
-                tenKhachHang: itemBook.tenKhachHang,
-                soDienThoai: itemBook.soDienThoai,
-                tongTienHang: tongTienHang
-            });
-            hoadon.tongTienHangChuaChietKhau = tongTienHang;
-            hoadon.tongTienHDSauVAT = tongTienHang;
-            hoadon.tongThanhToan = tongTienHang;
-            hoadon.hoaDonChiTiet = hoadonCT;
-            await dbDexie.hoaDon.add(hoadon);
-        }
+    const choseBooking = async (itemBook: BookingDetail_ofCustomerDto) => {
         const dataCus = { ...itemBook };
-        dataCus.id = itemBook.idKhachHang;
-        handleChoseCusBooking(dataCus);
+        handleChoseCusBooking(dataCus, 1);
     };
 
     const debounceCustomer = useRef(

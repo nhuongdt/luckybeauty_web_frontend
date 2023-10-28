@@ -253,7 +253,7 @@ const GiaoDichThanhToan: React.FC = () => {
                             let newHtml = DataMauIn.replaceChiTietHoaDon(tempMauIn);
                             newHtml = DataMauIn.replaceChiNhanh(newHtml);
                             newHtml = DataMauIn.replaceHoaDon(newHtml);
-                            newHtml = DataMauIn.replacePhieuThuChi(newHtml);
+                            newHtml = await DataMauIn.replacePhieuThuChi(newHtml);
                             if (i < rowSelectionModel.length - 1) {
                                 htmlPrint = htmlPrint.concat(newHtml, `<p style="page-break-before:always;"></p>`);
                             } else {

@@ -1,36 +1,16 @@
-import {
-    Box,
-    Button,
-    Grid,
-    Stack,
-    InputAdornment,
-    TextField,
-    Typography,
-    IconButton,
-    ButtonGroup,
-    Avatar
-} from '@mui/material';
-import { useMediaQuery } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useState, useContext, useEffect } from 'react';
+import { Box, Button, Grid, Stack, InputAdornment, TextField, Typography } from '@mui/material';
+import { useState, useEffect } from 'react';
 import utils from '../../utils/utils';
 
-import { Add, Menu, CalendarMonth, MoreHoriz, QueryBuilder, Search } from '@mui/icons-material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Add, QueryBuilder } from '@mui/icons-material';
 import ModalAddCustomerCheckIn from './modal_add_cus_checkin';
 import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
-import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
-import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
+import { PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import CloseIcon from '@mui/icons-material/Close';
-import { Guid } from 'guid-typescript';
-import Utils from '../../utils/utils';
 import CheckinService from '../../services/check_in/CheckinService';
-import ModelNhanVienThucHien from '../nhan_vien_thuc_hien/modelNhanVienThucHien';
 
 import { dbDexie } from '../../lib/dexie/dexieDB';
-import MauInServices from '../../services/mau_in/MauInServices';
 import { ReactComponent as SearchIcon } from '../../images/search-normal.svg';
-import { ReactComponent as DateIcon } from '../../images/calendar-5.svg';
 import EventIcon from '@mui/icons-material/Event';
 import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
 import nhanVienService from '../../services/nhan-vien/nhanVienService';
@@ -38,27 +18,9 @@ import { PagedNhanSuRequestDto } from '../../services/nhan-vien/dto/PagedNhanSuR
 import { ListNhanVienDataContext } from '../../services/nhan-vien/dto/NhanVienDataContext';
 import NhanSuItemDto from '../../services/nhan-vien/dto/nhanSuItemDto';
 import BadgeFistCharOfName from '../../components/Badge/FistCharOfName';
-
-const shortNameCus = createTheme({
-    components: {
-        MuiButton: {
-            styleOverrides: {
-                root: {
-                    minWidth: 'unset',
-                    borderRadius: '35px',
-                    width: '37px',
-                    height: '35px',
-                    border: 'none',
-                    backgroundColor: '#e4cdde',
-                    color: 'var(--color-main)'
-                }
-            }
-        }
-    }
-});
+import Cookies from 'js-cookie';
 
 export default function CustomersChecking({ hanleChoseCustomer }: any) {
-    const MaxPc1490 = useMediaQuery('(max-width: 1490px)');
     const [txtSearch, setTextSeach] = useState('');
     const [allCusChecking, setAllCusChecking] = useState<PageKhachHangCheckInDto[]>([]);
     const [idCheckinDelete, setIdCheckinDelete] = useState('');
@@ -74,7 +36,7 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
     const [lstNhanVien, setLstNhanVien] = useState<NhanSuItemDto[]>([]);
 
     const GetListCustomerChecking = async () => {
-        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50 };
+        const input = { keyword: '', SkipCount: 0, MaxResultCount: 50, idChiNhanh: Cookies.get('IdChiNhanh') };
         const list = await CheckinService.GetListCustomerChecking(input);
         setAllCusChecking([...list]);
     };
@@ -126,21 +88,9 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             })
         );
 
-        const dataCheckIn_Dexie = await dbDexie.khachCheckIn.where('idCheckIn').equals(idCheckinDelete).toArray();
+        const dataCheckIn_Dexie = await dbDexie.hoaDon.where('idCheckIn').equals(idCheckinDelete).toArray();
         if (dataCheckIn_Dexie.length > 0) {
-            await dbDexie.khachCheckIn
-                .where('idCheckIn')
-                .equals(idCheckinDelete)
-                .delete()
-                .then((deleteCount: any) =>
-                    console.log('idcheckindelete ', idCheckinDelete, 'deletecount', deleteCount)
-                );
-
-            await dbDexie.hoaDon
-                .where('idKhachHang')
-                .equals(dataCheckIn_Dexie[0].idKhachHang as string)
-                .delete()
-                .then((deleteCount: any) => console.log('deleteHoadon', deleteCount));
+            await dbDexie.hoaDon.delete(dataCheckIn_Dexie[0].id);
         }
     };
 
@@ -157,29 +107,10 @@ export default function CustomersChecking({ hanleChoseCustomer }: any) {
             dateTimeCheckIn: dataCheckIn.dateTimeCheckIn
         });
         setAllCusChecking([...allCusChecking, cusChecking]);
-
-        // check exist dexie
-        if (dataCheckIn.idKhachHang !== Guid.EMPTY) {
-            const cus = await dbDexie.khachCheckIn.where('idCheckIn').equals(dataCheckIn.idCheckIn).toArray();
-            if (cus.length > 0) {
-                // remove & add again
-                await dbDexie.khachCheckIn.delete(dataCheckIn.idCheckIn);
-                await dbDexie.khachCheckIn.add(cusChecking);
-            } else {
-                // add to dexie
-                await dbDexie.khachCheckIn.add(cusChecking);
-            }
-        }
     };
 
     const handleClickCustomer = async (item: any) => {
         hanleChoseCustomer(item);
-
-        // add to dexie
-        const cus = await dbDexie.khachCheckIn.where('idCheckIn').equals(item.idCheckIn).toArray();
-        if (cus.length === 0) {
-            await dbDexie.khachCheckIn.add(item);
-        }
     };
 
     return (

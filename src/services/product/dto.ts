@@ -66,13 +66,7 @@ export class ModelNhomHangHoa {
     children?: ModelNhomHangHoa[] = [];
     sLoaiNhomHang?: string;
 
-    constructor({
-        id = Utils.GuidEmpty,
-        maNhomHang = '',
-        tenNhomHang = '',
-        laNhomHangHoa = false,
-        color = '#D2691E'
-    }) {
+    constructor({ id = Utils.GuidEmpty, maNhomHang = '', tenNhomHang = '', laNhomHangHoa = false, color = '#D2691E' }) {
         this.id = id;
         if (maNhomHang == '') this.maNhomHang = Utils.getFirstLetter(this.tenNhomHang) ?? '';
         else this.maNhomHang = maNhomHang;

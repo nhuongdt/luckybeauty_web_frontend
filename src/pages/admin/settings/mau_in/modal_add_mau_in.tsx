@@ -60,13 +60,13 @@ export default function ModalAddMauIn({
     // const errtenMauIn = isClickSave && utils.checkNull(tenMauIn) ? 'Vui lòng nhập tên mẫu in' : '';
     const errtenMauIn = '';
 
-    const BindDataPrint = (html: string) => {
+    const BindDataPrint = async (html: string) => {
         switch (tenLoaiChungTu) {
             case 'SQPT':
             case 'SQPC':
                 {
                     let dataAfter = DataMauIn.replaceChiNhanh(html);
-                    dataAfter = DataMauIn.replacePhieuThuChi(dataAfter);
+                    dataAfter = await DataMauIn.replacePhieuThuChi(dataAfter);
                     setDataPrint(() => dataAfter);
                 }
                 break;

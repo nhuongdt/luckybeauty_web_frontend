@@ -1,3 +1,5 @@
+import { ModelHangHoaDto } from '../../product/dto';
+
 export interface BookingGetAllItemDto {
     id: string;
     sourceId: string;
@@ -10,16 +12,10 @@ export interface BookingGetAllItemDto {
     color: string;
     bookingDate: Date;
 }
-export class BookingDetailDto {
+export class BookingDetailDto extends ModelHangHoaDto {
     maHangHoa = '';
     tenHangHoa = '';
     giaBan = 0;
-
-    // constructor({ maHangHoa = '', tenHangHoa = '', giaBan = 0 }) {
-    //     this.maHangHoa = maHangHoa;
-    //     this.tenHangHoa = tenHangHoa;
-    //     this.giaBan = giaBan;
-    // }
 }
 
 export class BookingDetail_ofCustomerDto {

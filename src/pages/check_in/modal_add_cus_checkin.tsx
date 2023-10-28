@@ -1,37 +1,21 @@
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Grid,
-    Stack,
-    TextField,
-    Box,
-    Typography,
-    IconButton
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Box, IconButton } from '@mui/material';
 import { useEffect, useState, useContext } from 'react';
-import AutocompleteCustomer from '../../components/Autocomplete/Customer';
 import { CreateOrEditKhachHangDto } from '../../services/khach-hang/dto/CreateOrEditKhachHangDto';
-import { KhachHangItemDto } from '../../services/khach-hang/dto/KhachHangItemDto';
-import KhachHangService from '../../services/khach-hang/khachHangService';
 import CheckinService from '../../services/check_in/CheckinService';
 import { KHCheckInDto, PageKhachHangCheckInDto } from '../../services/check_in/CheckinDto';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
 
-import Utils from '../../utils/utils'; // func common
 import { ReactComponent as CloseIcon } from '../../images/close-square.svg';
 import { Guid } from 'guid-typescript';
 import TabKhachHang from './TabModalKhachHang';
 import TabCuocHen from './TabModalCuocHen';
-import { PagedResultDto } from '../../services/dto/pagedResultDto';
-import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
-import khachHangService from '../../services/khach-hang/khachHangService';
-import { PropConfirmOKCancel, PropModal } from '../../utils/PropParentToChild';
+import { PropConfirmOKCancel } from '../../utils/PropParentToChild';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
-import utils from '../../utils/utils';
 import Cookies from 'js-cookie';
+import { BookingDetail_ofCustomerDto } from '../../services/dat-lich/dto/BookingGetAllItemDto';
+import { dbDexie } from '../../lib/dexie/dexieDB';
+import PageHoaDonChiTietDto from '../../services/ban_hang/PageHoaDonChiTietDto';
+import PageHoaDonDto from '../../services/ban_hang/PageHoaDonDto';
 export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
     const appContext = useContext(AppContext);
     const chiNhanhCurrent = appContext.chinhanhCurrent;
@@ -81,11 +65,18 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
         }
         return true;
     };
-    const saveCheckIn = async (cusChosed: any) => {
-        const check = await checkSaveCheckin(cusChosed.id);
-        if (!check) {
-            return;
+    const saveCheckIn = async (cusChosed: any, type = 0) => {
+        // 0.from tab customer, 1.add from booking
+        if (type === 1) {
+            cusChosed.id = cusChosed.idKhachHang;
+        } else {
+            // only check if checkin from tabKhachHang
+            const check = await checkSaveCheckin(cusChosed.id);
+            if (!check) {
+                return;
+            }
         }
+
         setIsShow(false);
 
         setNewCus((itemOlds: any) => {
@@ -118,7 +109,47 @@ export default function ModalAddCustomerCheckIn({ trigger, handleSave }: any) {
             idCheckIn: dataCheckIn.id,
             idBooking: cusChosed?.idBooking
         });
-        handleSave(objCheckInNew);
+        if (type === 1) {
+            // save to cache hdDB
+            await addDataBooking_toCacheHD(cusChosed, dataCheckIn.id);
+        }
+        handleSave(objCheckInNew, type);
+    };
+
+    const addDataBooking_toCacheHD = async (itemBook: BookingDetail_ofCustomerDto, idCheckIn: string) => {
+        // always add new cache hoadon
+        const hoadonCT = [];
+        let tongTienHang = 0;
+
+        for (let i = 0; i < itemBook.details.length; i++) {
+            const itFor = itemBook.details[i];
+            const newCT = new PageHoaDonChiTietDto({
+                idDonViQuyDoi: itFor.idDonViQuyDoi as unknown as null,
+                maHangHoa: itFor.maHangHoa,
+                tenHangHoa: itFor.tenHangHoa,
+                giaBan: itFor.giaBan,
+                idNhomHangHoa: itFor.idNhomHangHoa as unknown as null,
+                idHangHoa: itFor.idHangHoa as unknown as null,
+                soLuong: 1
+            });
+            hoadonCT.push(newCT);
+            tongTienHang += itFor.giaBan;
+        }
+        // create cache hd with new id
+        const hoadon = new PageHoaDonDto({
+            idChiNhanh: idChiNhanh,
+            idKhachHang: itemBook.idKhachHang as unknown as null,
+            maKhachHang: itemBook.maKhachHang,
+            tenKhachHang: itemBook.tenKhachHang,
+            soDienThoai: itemBook.soDienThoai,
+            tongTienHang: tongTienHang
+        });
+        hoadon.idCheckIn = idCheckIn;
+        hoadon.tongTienHangChuaChietKhau = tongTienHang;
+        hoadon.tongTienHDSauVAT = tongTienHang;
+        hoadon.tongThanhToan = tongTienHang;
+        hoadon.hoaDonChiTiet = hoadonCT;
+        await dbDexie.hoaDon.add(hoadon);
     };
 
     const [currentTab, setCurrentTab] = useState(1);

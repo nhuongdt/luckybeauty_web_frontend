@@ -170,7 +170,15 @@ export default function MainPageBanHang() {
                                                         : 'transparent!important'
                                             }
                                         }}
-                                        onClick={() => handleTab(2)}
+                                        onClick={() => {
+                                            handleTab(2);
+                                            setCusChosing(
+                                                new PageKhachHangCheckInDto({
+                                                    idKhachHang: Guid.EMPTY,
+                                                    tenKhachHang: 'Khách lẻ'
+                                                })
+                                            );
+                                        }}
                                         className={activeTab === 2 ? 'active' : ''}
                                         variant={activeTab === 2 ? 'contained' : 'outlined'}>
                                         Thanh toán
