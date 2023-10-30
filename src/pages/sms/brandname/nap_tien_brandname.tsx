@@ -31,7 +31,7 @@ import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import SoQuyServices from '../../../services/so_quy/SoQuyServices';
 import QuyChiTietDto from '../../../services/so_quy/QuyChiTietDto';
-import SelectWithData from '../../../components/Menu/SelectWithData';
+import SelectWithData from '../../../components/Select/SelectWithData';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import AutocompleteFromDB from '../../../components/Autocomplete/AutocompleteFromDB';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
