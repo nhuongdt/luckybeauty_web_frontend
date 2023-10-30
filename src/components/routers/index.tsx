@@ -27,6 +27,7 @@ import { ReactComponent as MoneyIcon } from '../../images/moneys.svg';
 import { ReactComponent as MoneyActive } from '../../images/moneysActive.svg';
 import { ReactComponent as BankIcon } from '../../images/icons/bankMenuIcon.svg';
 import { ReactComponent as BankIconActive } from '../../images/icons/bankMenuIconActive.svg';
+import SettingRoutes from '../../pages/admin/settings/settingRoutes';
 type RenderRouteProps = {
     layout: React.ElementType;
     name: string;
@@ -244,21 +245,47 @@ export const appRouters: AppRouteProps = {
                     iconActive: <ClientActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/customer'))
+                    children: [
+                        {
+                            path: '/khach-hangs',
+                            permission: 'Pages.KhachHang',
+                            title: 'Quản lý khách hàng',
+                            name: 'khachhang',
+                            icon: <BsDot width="20px" />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/customer'))
+                        },
+                        {
+                            path: '/khach-hang/tin-nhan',
+                            permission: 'Pages.KhachHang',
+                            title: 'Tin nhắn',
+                            name: 'khachhang',
+                            icon: <BsDot width="20px" />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/sms/index'))
+                        },
+                        {
+                            path: '/khach-hang-chi-tiet/:khachHangId',
+                            permission: 'Pages.KhachHang',
+                            title: 'Khách hàng',
+                            name: 'khachhang',
+                            icon: <ClientIcon width="20px" />,
+                            iconActive: <ClientActive width="20px" />,
+                            showInMenu: false,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/customer/components/CustomerInfo'))
+                        }
+                    ],
+                    component: null
                 },
-                {
-                    path: '/khach-hang-chi-tiet/:khachHangId',
-                    permission: 'Pages.KhachHang',
-                    title: 'Khách hàng',
-                    name: 'khachhang',
-                    icon: <ClientIcon width="20px" />,
-                    iconActive: <ClientActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/customer/components/CustomerInfo'))
-                },
+
                 {
                     path: '/dich-vus',
                     permission: 'Pages.DM_HangHoa',
@@ -507,103 +534,7 @@ export const appRouters: AppRouteProps = {
                     children: [],
                     component: LoadableComponent(() => import('../../pages/tai_khoan_ngan_hang'))
                 },
-                {
-                    path: '/settings',
-                    permission: 'Pages.CongTy',
-                    title: 'Cài đặt',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: true,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings'))
-                },
-                {
-                    path: '/settings/cua-hang',
-                    permission: 'Pages.CongTy',
-                    title: 'Cửa hàng',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/cua-hang/index'))
-                },
-                {
-                    path: '/settings/chi-nhanhs',
-                    permission: 'Pages.CongTy',
-                    title: 'Chi nhánh',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/chi-nhanh'))
-                },
-                {
-                    path: '/settings/dat-lich',
-                    permission: 'Pages.CongTy',
-                    title: 'Đặt lịch',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/Booking'))
-                },
-                {
-                    path: '/settings/hoa-hong',
-                    permission: 'Pages.CongTy',
-                    title: 'Hoa hồng',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/hoa-hong-nhan-vien'))
-                },
-                {
-                    path: '/settings/mau-in',
-                    permission: 'Pages.CongTy',
-                    title: 'Hoa hồng',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/mau_in/page_mau_in'))
-                },
-                {
-                    path: '/settings/voucher',
-                    permission: 'Pages.CongTy',
-                    title: 'Hoa hồng',
-                    name: 'caidat',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/khuyen_mai'))
-                },
-                {
-                    path: '/settings/email',
-                    permission: 'Pages.CongTy',
-                    title: 'Email',
-                    name: 'email',
-                    icon: <SettingIcon width="20px" />,
-                    iconActive: <SetingActive width="20px" />,
-                    showInMenu: false,
-                    isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/admin/settings/Email'))
-                },
-
+                ...SettingRoutes,
                 {
                     path: '/account',
                     permission: '',

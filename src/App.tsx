@@ -1,10 +1,11 @@
-import React, { StrictMode } from 'react';
+import React, { StrictMode, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import { Routes } from './components/routers';
 import { SnackbarProvider, MaterialDesignContent } from 'notistack';
 import { ReactComponent as SuccessIcon } from './images/success.svg';
 import styled from 'styled-components';
+import notificationStore from './stores/notificationStore';
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     '&.notistack-MuiContent-success': {
@@ -22,6 +23,9 @@ const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
 }));
 
 const App = () => {
+    useEffect(() => {
+        notificationStore.createHubConnection();
+    });
     return (
         <div>
             <BrowserRouter>{Routes}</BrowserRouter>
