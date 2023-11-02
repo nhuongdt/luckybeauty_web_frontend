@@ -9,33 +9,63 @@ import {
 } from '@mui/icons-material';
 import { Grid, Box, Stack, Typography, IconButton, TextField, Button, SelectChangeEvent } from '@mui/material';
 import ActionRowSelect from '../../../components/DataGrid/ActionRowSelect';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataGrid, GridColDef, GridRowSelectionModel, GridValidRowModel } from '@mui/x-data-grid';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import { PagedRequestDto } from '../../../services/dto/pagedRequestDto';
 import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
-import { CreateOrEditSMSDto, PagedResultSMSDto } from '../../../services/sms/gui_tin_nhan/create_or_edit_sms_dto';
+import { CreateOrEditSMSDto, PagedResultSMSDto } from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
 import { TextTranslate } from '../../../components/TableLanguage';
 import ActionViewEditDelete from '../../../components/Menu/ActionViewEditDelete';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth } from 'date-fns';
+import BrandnameService from '../../../services/sms/brandname/BrandnameService';
+import Cookies from 'js-cookie';
+import { BrandnameDto } from '../../../services/sms/brandname/BrandnameDto';
+import { isNaN } from 'lodash';
+import ModalGuiTinNhan from './modal_gui_tin_nhan';
+import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
+import HeThongSMServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
+import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
+import AppConsts, { TrangThaiSMS } from '../../../lib/appconst';
 
 export default function PageSMS({ xx }: any) {
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
-    const [isShowModalNapTien, setIsShowModalNapTien] = useState(false);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
     const [dataGrid_typeAction, setDataGrid_typeAction] = useState(0);
     const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
+    const [lstBrandname, setLstBrandname] = useState<BrandnameDto[]>([]);
 
     const [pageSMS, setPageSMS] = useState<PagedResultSMSDto>(new PagedResultSMSDto({ items: [] }));
-    const [paramSearch, setParamSearch] = useState<PagedRequestDto>({
-        keyword: '',
-        skipCount: 1,
-        maxResultCount: 5,
-        sortBy: 'createTime',
-        sortType: 'DESC'
-    } as PagedRequestDto);
+    const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
+        textSearch: '',
+        fromDate: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
+        toDate: format(endOfMonth(new Date()), 'yyyy-MM-dd')
+    } as RequestFromToDto);
 
+    const GetListBrandname = async () => {
+        let tenantId = parseInt(Cookies.get('Abp.TenantId') ?? '1') ?? 1;
+        tenantId = isNaN(tenantId) ? 1 : tenantId;
+        const param = {
+            keyword: ''
+        } as PagedRequestDto;
+        const data = await BrandnameService.GetListBandname(param, tenantId);
+        if (data !== null) {
+            setLstBrandname(data.items);
+        }
+    };
+
+    const GetListSMS = async () => {
+        const data = await HeThongSMServices.GetListSMS(paramSearch);
+        if (data != null) {
+            setPageSMS({ items: data.items, totalCount: data.totalCount, totalPage: 1 });
+        }
+    };
+
+    useEffect(() => {
+        GetListBrandname();
+        GetListSMS();
+    }, []);
     const handleKeyDownTextSearch = (event: any) => {
         if (event.keyCode === 13) {
             hanClickIconSearch();
@@ -43,10 +73,10 @@ export default function PageSMS({ xx }: any) {
     };
 
     const hanClickIconSearch = () => {
-        if (paramSearch.skipCount !== 1) {
+        if (paramSearch.currentPage !== 1) {
             setParamSearch({
                 ...paramSearch,
-                skipCount: 1
+                currentPage: 1
             });
         } else {
             //
@@ -82,19 +112,19 @@ export default function PageSMS({ xx }: any) {
 
     const exportToExcel = async () => {
         const param = { ...paramSearch };
-        param.skipCount = 1;
+        param.currentPage = 1;
     };
 
     const handleChangePage = (event: any, value: number) => {
         setParamSearch({
             ...paramSearch,
-            skipCount: value
+            currentPage: value
         });
     };
     const handlePerPageChange = (event: SelectChangeEvent<number>) => {
         setParamSearch({
             ...paramSearch,
-            maxResultCount: parseInt(event.target.value.toString(), 10)
+            pageSize: parseInt(event.target.value.toString(), 10)
         });
     };
     const doActionRow = (action: number, item: any) => {
@@ -114,7 +144,22 @@ export default function PageSMS({ xx }: any) {
         }
     };
 
+    const saveSMSOK = (obinew: CreateOrEditSMSDto) => {
+        setPageSMS({ ...pageSMS, items: [obinew, ...pageSMS.items], totalCount: pageSMS.totalCount + 1 });
+        setIsShowModalAdd(false);
+        setObjAlert({ show: true, mes: 'Thêm mới tin nhắn thành công', type: 1 });
+    };
+
     const columns: GridColDef[] = [
+        {
+            field: 'thoiGianGui',
+            headerName: 'Thời gian gửi',
+            headerAlign: 'center',
+            align: 'center',
+            flex: 0.8,
+            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
+            renderCell: (params: any) => <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy')}</Box>
+        },
         {
             field: 'tenKhachHang',
             headerName: 'Tên khách hàng',
@@ -128,16 +173,7 @@ export default function PageSMS({ xx }: any) {
             renderHeader: (params: GridValidRowModel) => <Box title={params.value}>{params.colDef.headerName}</Box>
         },
         {
-            field: 'thoiGianGui',
-            headerName: 'Thời gian gửi',
-            headerAlign: 'center',
-            align: 'center',
-            flex: 0.8,
-            renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>,
-            renderCell: (params: any) => <Box title={params.value}>{format(new Date(params.value), 'dd/MM/yyyy')}</Box>
-        },
-        {
-            field: 'loaiTinNhan',
+            field: 'loaiTin',
             headerName: 'Loại tin nhắn',
             flex: 1,
             renderHeader: (params: any) => <Box title={params.value}>{params.colDef.headerName}</Box>
@@ -161,47 +197,42 @@ export default function PageSMS({ xx }: any) {
                         padding: '4px 8px',
                         borderRadius: '100px',
                         backgroundColor:
-                            params.row.trangThai === 3 ? '#E8FFF3' : params.row.trangThai === 1 ? '#FFF8DD' : '#FFF5F8',
+                            params.row.trangThai === TrangThaiSMS.SUCCESS
+                                ? '#E8FFF3'
+                                : params.row.trangThai !== TrangThaiSMS.SUCCESS
+                                ? '#FFF8DD'
+                                : '#FFF5F8',
                         color:
-                            params.row.trangThai === 3 ? '#50CD89' : params.row.trangThai === 1 ? '#FF9900' : '#F1416C',
+                            params.row.trangThai !== TrangThaiSMS.SUCCESS
+                                ? '#50CD89'
+                                : params.row.trangThai === TrangThaiSMS.SUCCESS
+                                ? '#FF9900'
+                                : '#F1416C',
                         margin: 'auto'
                     }}
                     className="state-thanh-toan">
                     {params.value}
                 </Box>
             )
-        },
-        {
-            field: '#',
-            headerAlign: 'center',
-            width: 48,
-            flex: 0.4,
-            disableColumnMenu: true,
-            renderCell: (params) => (
-                <ActionViewEditDelete
-                    lstOption={[
-                        {
-                            id: '1',
-                            text: 'Sửa',
-                            color: '#009EF7',
-                            icon: <Edit sx={{ color: '#009EF7' }} />
-                        },
-                        {
-                            id: '2',
-                            text: 'Xóa',
-                            color: '#F1416C',
-                            icon: <DeleteForever sx={{ color: '#F1416C' }} />
-                        }
-                    ]}
-                    handleAction={(action: any) => doActionRow(action, params.row)}
-                />
-            ),
-            renderHeader: (params) => <Box component={'span'}>{params.colDef.headerName}</Box>
         }
     ];
 
     return (
         <>
+            <ModalGuiTinNhan
+                lstBrandname={lstBrandname.map((x: BrandnameDto) => {
+                    return { value: x.id, text: x.brandname };
+                })}
+                isShow={isShowModalAdd}
+                idTinNhan={''}
+                onClose={() => setIsShowModalAdd(false)}
+                onSaveOK={saveSMSOK}
+            />
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid container paddingTop={2}>
                 <Grid item xs={6}>
                     <Grid container alignItems={'center'}>
@@ -307,8 +338,8 @@ export default function PageSMS({ xx }: any) {
                             rowSelectionModel={rowSelectionModel}
                         />
                         <CustomTablePagination
-                            currentPage={paramSearch.skipCount ?? 1}
-                            rowPerPage={paramSearch.maxResultCount ?? 10}
+                            currentPage={paramSearch.currentPage ?? 1}
+                            rowPerPage={paramSearch.pageSize ?? 10}
                             totalRecord={pageSMS.totalCount}
                             totalPage={pageSMS.totalPage}
                             handlePerPageChange={handlePerPageChange}
