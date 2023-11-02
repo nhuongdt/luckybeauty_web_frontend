@@ -14,7 +14,7 @@ export default function SelectWithData({ idChosed, data, handleChange, label }: 
                     {label}
                 </InputLabel>
                 <Select value={idChosed} label={label}>
-                    {data.map((item: ISelect, index: number) => (
+                    {data?.map((item: ISelect, index: number) => (
                         <MenuItem key={index} value={item.value} onClick={() => changeItem(item)}>
                             {item.text}
                         </MenuItem>
