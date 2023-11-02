@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 
 import { ReactComponent as CloseIcon } from '../../../../images/close-square.svg';
-import SelectWithData from '../../../../components/Menu/SelectWithData';
+import SelectWithData from '../../../../components/Select/SelectWithData';
 import { Formik, Form } from 'formik';
 import { useEffect, useState, useRef, useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
@@ -417,7 +417,7 @@ const CreateOrEditSoQuyDialog = ({ visiable = false, idQuyHD = null, onClose, on
                                                 handleChange={(item: ISelect) =>
                                                     setQuyHoaDon({
                                                         ...quyHoaDon,
-                                                        hinhThucThanhToan: item.value
+                                                        hinhThucThanhToan: item.value as number
                                                     })
                                                 }
                                             />
