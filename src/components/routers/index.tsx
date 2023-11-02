@@ -244,8 +244,35 @@ export const appRouters: AppRouteProps = {
                     iconActive: <ClientActive width="20px" />,
                     showInMenu: true,
                     isLayout: false,
-                    children: [],
-                    component: LoadableComponent(() => import('../../pages/customer'))
+                    component: LoadableComponent(() => import('../../pages/customer')),
+                    children: [
+                        {
+                            path: '/khach-hangs',
+                            permission: '',
+                            title: 'Danh mục khách hàng',
+                            name: 'pageCustomer',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(() => import('../../pages/customer'))
+                        },
+                        {
+                            path: '/sms',
+                            permission: '',
+                            title: 'Tin nhắn SMS',
+                            name: 'thungan',
+                            icon: <BsDot style={{ fontSize: 20 }} />,
+                            iconActive: null,
+                            children: [],
+
+                            showInMenu: true,
+                            isLayout: false,
+                            component: LoadableComponent(() => import('../../pages/sms/gui_tin_nhan'))
+                        }
+                    ]
                 },
                 {
                     path: '/khach-hang-chi-tiet/:khachHangId',
