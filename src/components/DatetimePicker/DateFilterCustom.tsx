@@ -76,8 +76,17 @@ export function DateFieldCustomer({ defaultVal, handleChangeDate, label, disable
     );
 }
 
-export default function DateFilterCustom({ id, open, anchorEl, onClose, onApplyDate, isFuture = 0 }: any) {
+export default function DateFilterCustom({
+    id,
+    open,
+    anchorEl,
+    onClose,
+    onApplyDate,
+    isFuture = 0,
+    dateTypeDefault
+}: any) {
     const today = new Date();
+    const [dateTypeText, setDateTypeText] = useState('Tháng này');
     const [dateType, setDateType] = useState(DateType.THANG_NAY);
     const [disableSelectDate, setDisableSelectDate] = useState(true);
     const [dateFrom, setDateFrom] = useState<Date | null>(startOfDay(new Date(today)));
@@ -105,9 +114,17 @@ export default function DateFilterCustom({ id, open, anchorEl, onClose, onApplyD
                   ].includes(x.id)
           );
 
+    useEffect(() => {
+        if (dateTypeDefault !== undefined) {
+            setDateType(dateTypeDefault);
+        }
+    }, [dateTypeDefault]);
+
     const changeDateType = async (item: IList) => {
         setDateType(item.id);
+        setDateTypeText(item.text);
         setDisableSelectDate(true);
+
         switch (item.id) {
             case DateType.HOM_NAY:
                 {
@@ -220,7 +237,11 @@ export default function DateFilterCustom({ id, open, anchorEl, onClose, onApplyD
         if (dateFrom != null && dateTo != null) {
             const dateFrom_Format = format(dateFrom, 'yyyy-MM-dd');
             const dateTo_Format = format(dateTo, 'yyyy-MM-dd');
-            onApplyDate(dateFrom_Format, dateTo_Format);
+            // const text =
+            //     dateType == DateType.TUY_CHON
+            //         ? `${format(dateFrom, 'dd/MM/yyyy')} - ${format(dateTo, 'dd/MM/yyyy')}`
+            //         : dateTypeText;
+            onApplyDate(dateFrom_Format, dateTo_Format, dateType, dateTypeText);
         }
     };
 
