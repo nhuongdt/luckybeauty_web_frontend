@@ -138,6 +138,24 @@ const AppConsts = {
             name: 'Mua hàng tặng điểm'
         }
     ],
+    loaiTinNhan: [
+        {
+            name: 'Tin thường',
+            value: 1
+        },
+        {
+            name: 'Sinh nhật',
+            value: 2
+        },
+        {
+            name: 'Lịch hẹn',
+            value: 3
+        },
+        {
+            name: 'Đánh giá',
+            value: 4
+        }
+    ],
     loaiBooking: {
         online: 0,
         offline: 1,

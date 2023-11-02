@@ -96,13 +96,13 @@ const Header: React.FC<HeaderProps> = (
     const [chiNhanhs, setListChiNhanh] = useState([] as SuggestChiNhanhDto[]);
     const [currentChiNhanh, setCurrentChiNhanh] = useState('');
     useEffect(() => {
-        getNotification();
+        //getNotification();
         notificationStore.GetUserNotification();
     }, []);
 
-    const getNotification = async () => {
-        await notificationStore.createHubConnection();
-    };
+    // const getNotification = async () => {
+    //     await notificationStore.createHubConnection();
+    // };
 
     useEffect(() => {
         // Call API to get list of permissions here

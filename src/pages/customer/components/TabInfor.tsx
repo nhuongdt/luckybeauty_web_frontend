@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Box, Typography, Button, Grid } from '@mui/material';
 import useWindowWidth from '../../../components/StateWidth';
 import { observer } from 'mobx-react';
+import { ThongTinKhachHangTongHopDto } from '../../../services/khach-hang/dto/ThongTinKhachHangTongHopDto';
+import khachHangService from '../../../services/khach-hang/khachHangService';
+import AppConsts from '../../../lib/appconst';
+import { useParams } from 'react-router-dom';
+import { format as formatDate } from 'date-fns';
 const TabInfor: React.FC = () => {
     const [listBtn, setListBtn] = useState([
         {
@@ -49,6 +54,21 @@ const TabInfor: React.FC = () => {
             value: '200.000Đ'
         }
     ];
+    useEffect(() => {
+        getInfor();
+    }, []);
+    const { khachHangId } = useParams();
+    const [thongTinKhachHang, setThongTinKhachHang] = useState<ThongTinKhachHangTongHopDto>({
+        cuocHenHoanThanh: 0,
+        cuocHenHuy: 0,
+        tongCuocHen: 0,
+        tongChiTieu: 0,
+        hoatDongs: []
+    });
+    const getInfor = async () => {
+        const thongTin = await khachHangService.thongTinTongHop(khachHangId ?? AppConsts.guidEmpty);
+        setThongTinKhachHang(thongTin);
+    };
     return (
         <Box mt="24px">
             <Grid container spacing={3}>
@@ -134,24 +154,70 @@ const TabInfor: React.FC = () => {
                 <Grid item xs={9}>
                     <Box bgcolor="#fff" padding="24px" borderRadius="12px">
                         <Grid container>
-                            {Datas.map((item, index) => (
-                                <Grid item xs={3} key={index}>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '12px',
-                                            alignItems: 'center'
-                                        }}>
-                                        <Typography color="#333233" variant="body1" fontSize="24px" fontWeight="700">
-                                            {item.value}
-                                        </Typography>
-                                        <Typography color="#666466" fontSize="14px" variant="body1">
-                                            {item.text}
-                                        </Typography>
-                                    </Box>
-                                </Grid>
-                            ))}
+                            <Grid item xs={3}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '12px',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Typography color="#333233" variant="body1" fontSize="24px" fontWeight="700">
+                                        {thongTinKhachHang.tongCuocHen}
+                                    </Typography>
+                                    <Typography color="#666466" fontSize="14px" variant="body1">
+                                        Tổng cuộc hẹn
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '12px',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Typography color="#333233" variant="body1" fontSize="24px" fontWeight="700">
+                                        {thongTinKhachHang.cuocHenHoanThanh}
+                                    </Typography>
+                                    <Typography color="#666466" fontSize="14px" variant="body1">
+                                        Cuộc hẹn hoàn thành
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '12px',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Typography color="#333233" variant="body1" fontSize="24px" fontWeight="700">
+                                        {thongTinKhachHang.cuocHenHuy}
+                                    </Typography>
+                                    <Typography color="#666466" fontSize="14px" variant="body1">
+                                        Cuộc hẹn hủy
+                                    </Typography>
+                                </Box>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '12px',
+                                        alignItems: 'center'
+                                    }}>
+                                    <Typography color="#333233" variant="body1" fontSize="24px" fontWeight="700">
+                                        {new Intl.NumberFormat('vi-VN').format(thongTinKhachHang.tongChiTieu)} đ
+                                    </Typography>
+                                    <Typography color="#666466" fontSize="14px" variant="body1">
+                                        Tổng chi tiêu
+                                    </Typography>
+                                </Box>
+                            </Grid>
                         </Grid>
                     </Box>
                     <Box bgcolor="#fff" mt="24px" padding="24px" borderRadius="12px">
@@ -165,32 +231,28 @@ const TabInfor: React.FC = () => {
                                 marginX: '-24px',
                                 mb: '16px'
                             }}></Box>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
-                            <Typography variant="body1" fontSize="14px" color="#3B4758">
-                                Đã đặt lịch hẹn ngày 30-06-2023
-                            </Typography>
-                            <Typography variant="body1" fontSize="14px" color="#3B4758">
-                                Ngày 30-06-2023 09:00
-                            </Typography>
-                        </Box>
-                        <Box
-                            sx={{
-                                mt: '24px',
-                                display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center'
-                            }}>
-                            <Typography variant="body1" fontSize="14px" color="#3B4758">
-                                Đã tạo khách hàng
-                            </Typography>
-                            <Typography variant="body1" fontSize="14px" color="#3B4758">
-                                Ngày 30-06-2023 09:00
-                            </Typography>
+                        <Box maxHeight={'100px'} overflow={'auto'} padding={'4px 16px'}>
+                            {thongTinKhachHang.hoatDongs.length > 0
+                                ? thongTinKhachHang.hoatDongs.map((item, key) => {
+                                      return (
+                                          <Box
+                                              key={key}
+                                              sx={{
+                                                  display: 'flex',
+                                                  justifyContent: 'space-between',
+                                                  alignItems: 'center',
+                                                  marginBottom: '8px'
+                                              }}>
+                                              <Typography variant="body1" fontSize="14px" color="#3B4758">
+                                                  {item.hoatDong}
+                                              </Typography>
+                                              <Typography variant="body1" fontSize="14px" color="#3B4758">
+                                                  Ngày {formatDate(new Date(item.thoiGian), 'dd-MM-yyyy HH:mm')}
+                                              </Typography>
+                                          </Box>
+                                      );
+                                  })
+                                : null}
                         </Box>
                     </Box>
                 </Grid>
