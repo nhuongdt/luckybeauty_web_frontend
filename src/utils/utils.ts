@@ -215,6 +215,36 @@ class Utils {
         let strTime = hours + ':' + sMinutes + ' ' + ampm;
         return strTime;
     }
+    Mui_GetDayOfWeekFormatter(day: string) {
+        // định dạng các thứ trong tuần (kiểu Vietnam)
+        if (day.length > 2) {
+            const dayOfWeek = day.substring(day.length - 1);
+            let sDay = '';
+            switch (dayOfWeek) {
+                case '2':
+                    sDay = 'T2';
+                    break;
+                case '3':
+                    sDay = 'T3';
+                    break;
+                case '4':
+                    sDay = 'T4';
+                    break;
+                case '5':
+                    sDay = 'T5';
+                    break;
+                case '6':
+                    sDay = 'T6';
+                    break;
+                case '7':
+                    sDay = 'T7';
+                    break;
+            }
+            return sDay;
+        } else {
+            return day;
+        }
+    }
 
     DocHangThapPhan(so: any, daydu: any) {
         // todo
