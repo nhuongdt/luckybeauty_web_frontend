@@ -949,7 +949,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 lstQuyCT.map((itemCT: QuyChiTietDto) => {
                     return {
                         ...itemCT,
-                        hinhThucThanhToan: item.value,
+                        hinhThucThanhToan: item.value as number,
                         sHinhThucThanhToan: item?.text,
                         idTaiKhoanNganHang: accFirst.id,
                         tenNganHang: accFirst.tenNganHang,
@@ -971,7 +971,7 @@ const PageBanHang = ({ customerChosed, CoditionLayout, onPaymentChild, sendDataT
                 lstQuyCT.map((itemCT: QuyChiTietDto) => {
                     return {
                         ...itemCT,
-                        hinhThucThanhToan: item.value,
+                        hinhThucThanhToan: item.value as number,
                         sHinhThucThanhToan: item?.text,
                         idTaiKhoanNganHang: null,
                         tenNganHang: '',
