@@ -20,7 +20,6 @@ import { useEffect, useState, useContext } from 'react';
 import { NumericFormat } from 'react-number-format';
 import utils from '../../../utils/utils';
 import DateTimePickerCustom from '../../../components/DatetimePicker/DateTimePickerCustom';
-import AutocompleteCustomer from '../../../components/Autocomplete/Customer';
 import * as yup from 'yup';
 import { format } from 'date-fns';
 import AppConsts, { ISelect } from '../../../lib/appconst';
