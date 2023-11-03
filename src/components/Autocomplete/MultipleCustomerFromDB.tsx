@@ -93,7 +93,7 @@ export default function AutocompleteMultipleCustomerFromDB({
                         );
                         if (data !== null) {
                             setLstOption(
-                                data.map((x: any) => {
+                                data?.map((x: any) => {
                                     return {
                                         id: x.id,
                                         text1: x.tenKhachHang,
