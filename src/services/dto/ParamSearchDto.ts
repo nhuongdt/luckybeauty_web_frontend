@@ -5,7 +5,7 @@ export class ParamSearchDto {
     pageSize? = 10;
     columnSort?: string;
     typeSort?: string;
-    trangThais?: string[] = [];
+    trangThais?: number[] = [];
 
     constructor({
         idChiNhanhs = [],

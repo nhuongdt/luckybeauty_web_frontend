@@ -19,7 +19,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
 import SelectWithData from '../../../components/Select/SelectWithData';
-import AppConsts, { DateType, ISelect } from '../../../lib/appconst';
+import AppConsts, { DateType, ISelect, LoaiTin, TrangThaiSMS } from '../../../lib/appconst';
 import AutocompleteMultipleCustomerFromDB from '../../../components/Autocomplete/MultipleCustomerFromDB';
 import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 import AutocompleteWithData from '../../../components/Autocomplete/AutocompleteWithData';
@@ -35,7 +35,8 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
     const [newSMS, setNewSMS] = useState<CreateOrEditSMSDto>(new CreateOrEditSMSDto({}) as CreateOrEditSMSDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [lstCustomerChosed, setLstCustomerChosed] = useState<IDataAutocomplete[]>([]);
-    const [txtFromTo, setTextFromTo] = useState('Hôm nay');
+    const [txtFromTo, setTextFromTo] = useState(`Hôm nay (${format(new Date(), 'dd/MM')})`);
+    const [lblLoaiKhach, setLblLoaiKhach] = useState(`Khách sinh nhật`);
     const [fromDate, setFromDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [toDate, setToDate] = useState(format(new Date(), 'yyyy-MM-dd'));
 
@@ -57,7 +58,7 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
     const choseCustomer = (abc: IDataAutocomplete[]) => {
         setLstCustomerChosed(abc);
     };
-    const [anchorDateEl, setAnchorDateEl] = useState<HTMLButtonElement | null>(null);
+    const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
 
     const onApplyFilterDate = async (fromDate: string, toDate: string, dateType: string, dateTypeText = '') => {
@@ -115,6 +116,38 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
         }
     };
 
+    const saveDraft = async (params: any) => {
+        console.log('newSMS ', newSMS, 'params ', params);
+        const noiDungTin = params.noiDungTin;
+        if (lstCustomerChosed.length > 0) {
+            for (let i = 0; i < lstCustomerChosed.length; i++) {
+                const itFor = lstCustomerChosed[i];
+                const objSMS = new CreateOrEditSMSDto({
+                    idLoaiTin: params?.idLoaiTin,
+                    idChiNhanh: idChiNhanh,
+                    idKhachHang: itFor.id,
+                    noiDungTin: noiDungTin,
+                    soTinGui: 0,
+                    soDienThoai: itFor.text2
+                });
+                objSMS.trangThai = TrangThaiSMS.DRAFT;
+                await HeThongSMSServices.Insert_HeThongSMS(objSMS);
+            }
+        } else {
+            // only save hethong sms
+            const objSMS = new CreateOrEditSMSDto({
+                idLoaiTin: params?.idLoaiTin,
+                idChiNhanh: idChiNhanh,
+                noiDungTin: noiDungTin,
+                soTinGui: 0,
+                soDienThoai: ''
+            });
+            objSMS.trangThai = TrangThaiSMS.DRAFT;
+            await HeThongSMSServices.Insert_HeThongSMS(objSMS);
+        }
+        onSaveOK(1);
+    };
+
     const saveSMS = async (params: any) => {
         console.log('param ', params);
         if (lstBrandname.length > 0) {
@@ -152,7 +185,7 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                 objSMS.sTrangThaiGuiTinNhan = trangThaiTin.length > 0 ? trangThaiTin[0].text : '';
 
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
-                onSaveOK(htSMS);
+                onSaveOK(1);
             }
         }
     };
@@ -163,7 +196,7 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                 type={objAlert.type}
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
-            <Dialog open={isShow} onClose={onClose} aria-labelledby="draggable-dialog-title" maxWidth="xs">
+            <Dialog open={isShow} onClose={onClose} aria-labelledby="draggable-dialog-title" maxWidth="sm">
                 <DialogTitle className="modal-title" id="draggable-dialog-title">
                     {utils.checkNull(idTinNhan) ? 'Thêm mới' : 'Cập nhật'} SMS
                 </DialogTitle>
@@ -173,7 +206,7 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                         <Form>
                             <DialogContent sx={{ overflow: 'unset' }}>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12}>
+                                    <Grid item xs={12} sx={{ display: 'none' }}>
                                         <SelectWithData
                                             label="Brandname"
                                             data={lstBrandname}
@@ -188,6 +221,20 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                                             idChosed={values.idLoaiTin ?? 1}
                                             handleChange={(item: ISelect) => {
                                                 setFieldValue('idLoaiTin', item.value);
+                                                switch (item.value) {
+                                                    case LoaiTin.TIN_SINH_NHAT:
+                                                        setLblLoaiKhach('Khách sinh nhật');
+                                                        break;
+                                                    case LoaiTin.TIN_GIAO_DICH:
+                                                        setLblLoaiKhach('Khách giao dịch');
+                                                        break;
+                                                    case LoaiTin.TIN_LICH_HEN:
+                                                        setLblLoaiKhach('Khách có hẹn');
+                                                        break;
+                                                    case LoaiTin.TIN_THUONG:
+                                                        setLblLoaiKhach('');
+                                                        break;
+                                                }
                                             }}
                                         />
                                     </Grid>
@@ -207,40 +254,21 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                                             </Stack>
                                         ) : (
                                             <Stack spacing={2}>
-                                                <Grid container alignItems={'center'}>
-                                                    <Grid item xs={4} justifyContent={'center'}>
-                                                        <Typography variant="body2" fontWeight={500}>
-                                                            Khách sinh nhật
-                                                        </Typography>
-                                                    </Grid>
-                                                    <Grid item xs={8}>
-                                                        <Button
-                                                            variant="outlined"
-                                                            size="small"
-                                                            fullWidth
-                                                            sx={{
-                                                                backgroundColor: '#fff!important',
-                                                                textTransform: 'capitalize',
-                                                                fontWeight: '400',
-                                                                color: '#666466',
-                                                                padding: '10px 16px',
-                                                                height: '40px',
-                                                                borderRadius: '4px!important'
-                                                            }}
-                                                            onClick={(event) => setAnchorDateEl(event.currentTarget)}>
-                                                            {txtFromTo}
-                                                        </Button>
-                                                        <DateFilterCustom
-                                                            id="popover-date-filter"
-                                                            isFuture={1}
-                                                            dateTypeDefault={DateType.HOM_NAY}
-                                                            open={openDateFilter}
-                                                            anchorEl={anchorDateEl}
-                                                            onClose={() => setAnchorDateEl(null)}
-                                                            onApplyDate={onApplyFilterDate}
-                                                        />
-                                                    </Grid>
-                                                </Grid>
+                                                <TextField
+                                                    size="small"
+                                                    label={lblLoaiKhach}
+                                                    value={txtFromTo}
+                                                    onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                                />
+                                                <DateFilterCustom
+                                                    id="popover-date-filter"
+                                                    isFuture={1}
+                                                    dateTypeDefault={DateType.HOM_NAY}
+                                                    open={openDateFilter}
+                                                    anchorEl={anchorDateEl}
+                                                    onClose={() => setAnchorDateEl(null)}
+                                                    onApplyDate={onApplyFilterDate}
+                                                />
 
                                                 <AutocompleteMultipleCustomerFromDB
                                                     type={values?.idLoaiTin}
@@ -266,6 +294,8 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                                             size="small"
                                             name="noiDungTin"
                                             fullWidth
+                                            multiline
+                                            rows={3}
                                             label={`Nội dung tin`}
                                             onChange={handleChange}
                                             value={values.noiDungTin}
@@ -296,13 +326,22 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                                         Đang lưu
                                     </Button>
                                 ) : (
-                                    <Button
-                                        variant="contained"
-                                        sx={{ bgcolor: 'var(--color-main)!important' }}
-                                        type="submit"
-                                        className="btn-container-hover">
-                                        Lưu
-                                    </Button>
+                                    <>
+                                        <Button
+                                            variant="contained"
+                                            sx={{ bgcolor: 'var(--color-main)!important' }}
+                                            onClick={() => saveDraft(values)}
+                                            className="btn-container-hover">
+                                            Lưu nháp
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            sx={{ bgcolor: 'var(--color-main)!important' }}
+                                            type="submit"
+                                            className="btn-container-hover">
+                                            Lưu
+                                        </Button>
+                                    </>
                                 )}
                             </DialogActions>
                         </Form>
