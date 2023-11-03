@@ -1,5 +1,6 @@
 import { Guid } from 'guid-typescript';
 import { PagedResultDto } from '../../dto/pagedResultDto';
+import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
 
 export class CreateOrEditSMSDto {
     id = Guid.EMPTY;
@@ -70,5 +71,22 @@ export class ResultESMSDto {
     constructor({ messageId = '', messageStatus = 100 }) {
         this.messageId = messageId;
         this.messageStatus = messageStatus;
+    }
+}
+
+export class CustomerSMSDto extends CustomerBasicDto {
+    ngaySinh?: Date | null;
+
+    maHoaDon?: Date | null;
+    ngayLapHoaDon?: Date | null;
+
+    tenDichVu?: Date | null;
+    bookingDate?: Date | null;
+    thoiGianHen?: string;
+
+    sTrangThaiGuiTinNhan = '';
+
+    constructor({ id = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
+        super({ id: id, maKhachHang: maKhachHang, tenKhachHang: tenKhachHang, soDienThoai: soDienThoai });
     }
 }

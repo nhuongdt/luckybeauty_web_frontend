@@ -22,7 +22,7 @@ import BrandnameService from '../../../services/sms/brandname/BrandnameService';
 import Cookies from 'js-cookie';
 import { BrandnameDto } from '../../../services/sms/brandname/BrandnameDto';
 import { isNaN } from 'lodash';
-import ModalGuiTinNhan from './modal_gui_tin_nhan';
+import ModalGuiTinNhan from '../components/modal_gui_tin_nhan';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import HeThongSMServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
