@@ -90,3 +90,12 @@ export class CustomerSMSDto extends CustomerBasicDto {
         super({ id: id, maKhachHang: maKhachHang, tenKhachHang: tenKhachHang, soDienThoai: soDienThoai });
     }
 }
+
+export class NhatKyGuiTinSMSDto {
+    idHeThongSMS!: string;
+    idKhachHang!: string;
+    idChiNhanh!: string;
+    idLoaiTin!: number;
+    thoiGianTu!: string;
+    thoiGianDen!: string;
+}
