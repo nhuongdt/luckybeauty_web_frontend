@@ -37,10 +37,13 @@ import ModalGuiTinNhan from './components/modal_gui_tin_nhan';
 import CustomTablePagination from '../../components/Pagination/CustomTablePagination';
 import SnackbarAlert from '../../components/AlertDialog/SnackbarAlert';
 import { Add, Search, SvgIconComponent } from '@mui/icons-material';
-import AppConsts, { ISelect, LoaiTin, TrangThaiSMS } from '../../lib/appconst';
+import AppConsts, { ISelect, LoaiTin, TrangThaiSMS, TypeAction } from '../../lib/appconst';
 import DateFilterCustom from '../../components/DatetimePicker/DateFilterCustom';
 import he_thong_sms_services from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { PagedResultDto } from '../../services/dto/pagedResultDto';
+import ModalSmsTemplate from './mau_tin_nhan/components/modal_sms_template';
+import { MauTinSMSDto } from '../../services/sms/mau_tin_sms/mau_tin_dto';
+import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMService';
 
 const styleListItem = createTheme({
     components: {
@@ -98,6 +101,18 @@ export function ListItemButtonCustomer({ listItem, handleListItemClick, tabActiv
         </>
     );
 }
+
+export function CellDate({ date, dateType = 'dd/MM/yyyy' }: any) {
+    // dateType: kiểu định dạng của date ('dd/MM/yyyy',....)
+    const [dateValue, setDateValue] = useState('');
+
+    useEffect(() => {
+        if (date != null && date !== undefined) {
+            setDateValue(format(new Date(date), dateType));
+        }
+    }, [date]);
+    return <Box title={dateValue}>{dateValue}</Box>;
+}
 const TinNhanPage = () => {
     const columns: GridColDef[] = [
         {
@@ -107,11 +122,7 @@ const TinNhanPage = () => {
             align: 'center',
             flex: 0.8,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-            renderCell: (params) => (
-                <Box title={params.value} width="100%">
-                    {format(new Date(params.value), 'dd/MM/yyyy HH:mm')}
-                </Box>
-            )
+            renderCell: (params) => <CellDate date={params.value} dateType="dd/MM/yyyy HH:mm" />
         },
         {
             field: 'tenKhachHang',
@@ -157,7 +168,9 @@ const TinNhanPage = () => {
     const [dataGrid_typeAction, setDataGrid_typeAction] = useState(0);
     const [inforDelete, setInforDelete] = useState<PropConfirmOKCancel>(new PropConfirmOKCancel({ show: false }));
     const [lstBrandname, setLstBrandname] = useState<BrandnameDto[]>([]);
+    const [lstAllMauTinSMS, setLstAllMauTinSMS] = useState<MauTinSMSDto[]>([]);
     const [pageSMS, setPageSMS] = useState<PagedResultSMSDto>(new PagedResultSMSDto({ items: [] }));
+
     const [pageCutomerSMS, setPageCutomerSMS] = useState<PagedResultDto<CustomerSMSDto[]>>({
         items: [],
         totalCount: 0,
@@ -185,24 +198,30 @@ const TinNhanPage = () => {
             setLstBrandname(data.items);
         }
     };
+    const GetAllMauTinSMS = async () => {
+        const data = await MauTinSMService.GetAllMauTinSMS();
+        if (data !== null) {
+            setLstAllMauTinSMS(data);
+        }
+    };
 
     const GetListSMS = async () => {
         const data = await HeThongSMServices.GetListSMS(paramSearch);
         if (data !== null) {
-            setPageSMS({ items: data.items, totalCount: data.totalCount, totalPage: 1 });
+            setPageSMS({ items: [...data.items], totalCount: data.totalCount, totalPage: 1 });
         }
     };
 
     const GetListCustomer_byLoaiTin = async (idLoaiTin: number) => {
         const data = await he_thong_sms_services.GetListCustomer_byIdLoaiTin(paramSearch, idLoaiTin);
         if (data !== null) {
-            setPageCutomerSMS({ items: data.items, totalCount: data.totalCount, totalPage: 1 });
-            console.log('data.items ', data.items);
+            setPageCutomerSMS({ items: [...data.items], totalCount: data.totalCount, totalPage: 1 });
         }
     };
 
     useEffect(() => {
         GetListBrandname();
+        GetAllMauTinSMS();
     }, []);
 
     useEffect(() => {
@@ -254,7 +273,7 @@ const TinNhanPage = () => {
                 currentPage: 1
             });
         } else {
-            GetListBrandname();
+            LoadData_byTabActive();
         }
     };
     const choseRow = (item: any) => {
@@ -325,6 +344,35 @@ const TinNhanPage = () => {
     const saveSMSOK = (type: number) => {
         setIsShowModalAdd(false);
         GetListSMS();
+    };
+
+    const saveMauTinOK = (objMauTin: MauTinSMSDto, type: number) => {
+        setIsShowModalAddMauTin(false);
+        switch (type) {
+            case TypeAction.INSEART:
+                setLstAllMauTinSMS([...lstAllMauTinSMS, objMauTin]);
+                break;
+            case TypeAction.UPDATE:
+                setLstAllMauTinSMS([
+                    ...lstAllMauTinSMS.map((x: MauTinSMSDto) => {
+                        if (x.id === objMauTin.id) {
+                            return {
+                                ...x,
+                                tenMauTin: objMauTin.tenMauTin,
+                                noiDungTinMau: objMauTin.noiDungTinMau,
+                                laMacDinh: objMauTin.laMacDinh,
+                                trangThai: objMauTin.trangThai
+                            };
+                        } else {
+                            return x;
+                        }
+                    })
+                ]);
+                break;
+            case TypeAction.DELETE:
+                setLstAllMauTinSMS([...lstAllMauTinSMS.filter((x: MauTinSMSDto) => x.id !== objMauTin.id)]);
+                break;
+        }
     };
 
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
@@ -414,11 +462,7 @@ const TinNhanPage = () => {
                         align: 'center',
                         flex: 1,
                         renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-                        renderCell: (params) => (
-                            <Box title={params.value} width="100%" textAlign="center">
-                                {format(new Date(params.value), 'dd/MM/yyyy HH:mm')}
-                            </Box>
-                        )
+                        renderCell: (params) => <CellDate date={params.value} dateType="dd/MM/yyyy HH:mm" />
                     },
                     {
                         field: 'sTrangThaiGuiTinNhan',
@@ -457,13 +501,9 @@ const TinNhanPage = () => {
                         headerName: 'Ngày hẹn',
                         headerAlign: 'center',
                         align: 'center',
-                        flex: 0.8,
+                        flex: 0.6,
                         renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-                        renderCell: (params) => (
-                            <Box title={params.value} width="100%" textAlign="center">
-                                {format(new Date(params.value), 'dd/MM/yyyy')}
-                            </Box>
-                        )
+                        renderCell: (params) => <CellDate date={params.value} />
                     },
                     {
                         field: 'thoiGianHen',
@@ -484,7 +524,7 @@ const TinNhanPage = () => {
                         headerName: 'Trạng thái',
                         headerAlign: 'center',
                         align: 'center',
-                        flex: 0.5,
+                        flex: 0.8,
                         renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
                     }
                 ];
@@ -518,11 +558,7 @@ const TinNhanPage = () => {
                         align: 'center',
                         flex: 1,
                         renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
-                        renderCell: (params) => (
-                            <Box title={params.value} width="100%" textAlign="center">
-                                {format(new Date(params.value), 'dd/MM/yyyy')}
-                            </Box>
-                        )
+                        renderCell: (params) => <CellDate date={params.value} />
                     },
                     {
                         field: 'sTrangThaiGuiTinNhan',
@@ -534,7 +570,7 @@ const TinNhanPage = () => {
                 break;
         }
         console.log('arr ', arr);
-        setColumnGrid(arr);
+        setColumnGrid([...arr]);
     };
 
     return (
@@ -543,10 +579,16 @@ const TinNhanPage = () => {
                 lstBrandname={lstBrandname.map((x: BrandnameDto) => {
                     return { value: x.id, text: x.brandname };
                 })}
+                lstMauTinSMS={lstAllMauTinSMS}
                 isShow={isShowModalAdd}
                 idTinNhan={''}
                 onClose={() => setIsShowModalAdd(false)}
                 onSaveOK={saveSMSOK}
+            />
+            <ModalSmsTemplate
+                visiable={isShowModalAddMauTin}
+                onCancel={() => setIsShowModalAddMauTin(false)}
+                onOK={saveMauTinOK}
             />
             <SnackbarAlert
                 showAlert={objAlert.show}
