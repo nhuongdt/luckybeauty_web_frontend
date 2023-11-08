@@ -10,6 +10,7 @@ import { format, startOfMonth, endOfMonth } from 'date-fns';
 import { LoaiTin } from '../../lib/appconst';
 import khachHangService from '../../services/khach-hang/khachHangService';
 import HeThongSMSServices from '../../services/sms/gui_tin_nhan/he_thong_sms_services';
+import { PagedKhachHangResultRequestDto } from '../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 
 export default function AutocompleteMultipleCustomerFromDB({
     paramFilter,
@@ -69,7 +70,13 @@ export default function AutocompleteMultipleCustomerFromDB({
                 case LoaiTin.TIN_THUONG:
                     {
                         // only search by textsearch
-                        const data = await khachHangService.jqAutoCustomer(paramFilter);
+                        const param = {
+                            keyword: textSearch,
+                            loaiDoiTuong: 1,
+                            skipCount: 0,
+                            maxResultCount: 50
+                        } as PagedKhachHangResultRequestDto;
+                        const data = await khachHangService.jqAutoCustomer(param);
                         if (data !== null) {
                             setLstOption(
                                 data.map((x: any) => {
@@ -95,10 +102,10 @@ export default function AutocompleteMultipleCustomerFromDB({
                             setLstOption(
                                 data?.map((x: any) => {
                                     return {
-                                        id: x.id,
+                                        id: x.idKhachHang,
                                         text1: x.tenKhachHang,
                                         text2: x.soDienThoai
-                                    };
+                                    } as IDataAutocomplete;
                                 })
                             );
                         }
@@ -110,7 +117,7 @@ export default function AutocompleteMultipleCustomerFromDB({
 
     React.useEffect(() => {
         debounceDropDown(paramFilter, textSearch);
-    }, [paramFilter, textSearch]);
+    }, [paramFilter?.fromDate, paramFilter?.toDate, paramFilter?.idChiNhanhs, textSearch]);
 
     React.useEffect(() => {
         setLstChosed(
@@ -142,12 +149,13 @@ export default function AutocompleteMultipleCustomerFromDB({
                 multiple={true}
                 filterSelectedOptions
                 value={lstChosed}
+                filterOptions={(x) => x}
                 onChange={(event: any, newValue: any) => choseItem(newValue)}
                 onInputChange={(event, newInputValue) => {
                     handleInputChange(newInputValue);
                 }}
                 options={lstOption}
-                getOptionLabel={(option: any) => (option?.text1 ? option.text1 : '')}
+                getOptionLabel={(option: IDataAutocomplete) => (option?.text1 ? option.text1 : '')}
                 renderInput={(params) => (
                     <TextField {...params} label={label ?? 'Tìm kiếm'} helperText={helperText} error={err} />
                 )}
