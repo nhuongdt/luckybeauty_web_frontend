@@ -1,6 +1,7 @@
 import { Guid } from 'guid-typescript';
 import { PagedResultDto } from '../../dto/pagedResultDto';
 import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
+import { IDataAutocomplete } from '../../dto/IDataAutocomplete';
 
 export class CreateOrEditSMSDto {
     id = Guid.EMPTY;
@@ -13,6 +14,7 @@ export class CreateOrEditSMSDto {
     soDienThoai = '';
     idHoaDon?: string | null;
     trangThai = 100;
+    giaTienMoiTinNhan = 1000;
 
     idLoaiTin = 1;
     idNguoiGui?: string | null = null;
@@ -22,13 +24,17 @@ export class CreateOrEditSMSDto {
     thoiGianGui = new Date();
     sTrangThaiGuiTinNhan = '';
 
+    idMauTin?: string | null = '';
+    lstCustomer?: IDataAutocomplete[]; // hiện tại chỉ dung cái này với mục đích check lỗi khi click lưu (formik)
+
     constructor({
         idLoaiTin = 1,
         idChiNhanh = Guid.EMPTY,
         idKhachHang = Guid.EMPTY,
         noiDungTin = '',
         soTinGui = 1,
-        soDienThoai = ''
+        soDienThoai = '',
+        lstCustomer = []
     }) {
         this.idLoaiTin = idLoaiTin;
         this.idChiNhanh = idChiNhanh;
@@ -36,6 +42,7 @@ export class CreateOrEditSMSDto {
         this.noiDungTin = noiDungTin;
         this.soTinGui = soTinGui;
         this.soDienThoai = soDienThoai;
+        this.lstCustomer = lstCustomer;
     }
 }
 
