@@ -375,7 +375,7 @@ class CreateOrEditLichHenModal extends Component<ICreateOrEditProps> {
                                                                 </Typography>
                                                             }
                                                             value={
-                                                                suggestStore.suggestDichVu.find(
+                                                                suggestStore.suggestDichVu?.find(
                                                                     (x) => x.id == values.idDonViQuiDoi
                                                                 )?.thoiGianThucHien ?? '0'
                                                             }
