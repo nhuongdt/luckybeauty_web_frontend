@@ -35,11 +35,18 @@ export const LoaiTin = {
     TIN_GIAO_DICH: 4
 };
 export const TrangThaiSMS = {
+    DRAFT: 1,
     SUCCESS: 100,
     NOT_BALANCE: 103,
     BRANDNAME_NOTEXIST: 104,
     MESSAGE_NOT_VALID: 118,
     ERROR_UNDEFINED: 99
+};
+
+export const TypeAction = {
+    INSEART: 1,
+    UPDATE: 2,
+    DELETE: 3
 };
 
 const AppConsts = {
