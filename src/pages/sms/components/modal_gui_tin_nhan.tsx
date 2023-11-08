@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
-import { CreateOrEditSMSDto, ESMSDto } from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
+import { CreateOrEditSMSDto, ESMSDto, NhatKyGuiTinSMSDto } from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
 import utils from '../../../utils/utils';
 import {
     Dialog,
@@ -27,8 +27,9 @@ import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCusto
 import { format } from 'date-fns';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
+import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 
-export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClose, onSaveOK }: any) {
+export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, idTinNhan, onClose, onSaveOK }: any) {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanh.id;
@@ -117,7 +118,6 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
     };
 
     const saveDraft = async (params: any) => {
-        console.log('newSMS ', newSMS, 'params ', params);
         const noiDungTin = params.noiDungTin;
         if (lstCustomerChosed.length > 0) {
             for (let i = 0; i < lstCustomerChosed.length; i++) {
@@ -185,6 +185,16 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                 objSMS.sTrangThaiGuiTinNhan = trangThaiTin.length > 0 ? trangThaiTin[0].text : '';
 
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
+                if (params?.idLoaiTin !== 1) {
+                    const nky = new NhatKyGuiTinSMSDto();
+                    nky.idHeThongSMS = htSMS.id;
+                    nky.idChiNhanh = idChiNhanh;
+                    nky.idKhachHang = itFor.id;
+                    nky.idLoaiTin = params?.idLoaiTin;
+                    nky.thoiGianTu = fromDate;
+                    nky.thoiGianDen = toDate;
+                    await HeThongSMSServices.ThemMoi_NhatKyGuiTin(nky);
+                }
                 onSaveOK(1);
             }
         }
@@ -206,7 +216,7 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                         <Form>
                             <DialogContent sx={{ overflow: 'unset' }}>
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12} sx={{ display: 'none' }}>
+                                    <Grid item xs={12}>
                                         <SelectWithData
                                             label="Brandname"
                                             data={lstBrandname}
@@ -286,6 +296,21 @@ export default function ModalGuiTinNhan({ lstBrandname, isShow, idTinNhan, onClo
                                                 />
                                             </Stack>
                                         )}
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <AutocompleteWithData
+                                            label="Mẫu tin"
+                                            lstData={lstMauTinSMS
+                                                ?.filter((x: MauTinSMSDto) => x.idLoaiTin === values?.idLoaiTin)
+                                                .map((x: MauTinSMSDto) => {
+                                                    return { id: x.id, text1: x.tenMauTin, text2: x.noiDungTinMau };
+                                                })}
+                                            // idChosed={values.idMauTin}
+                                            handleChoseItem={(item: IDataAutocomplete) => {
+                                                // setFieldValue('idMauTin', item.id);
+                                                setFieldValue('noiDungTin', item.text2);
+                                            }}
+                                        />
                                     </Grid>
 
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
