@@ -6,7 +6,7 @@ import { IDataAutocomplete } from '../../services/dto/IDataAutocomplete';
 export default function AutocompleteWithData({ handleChoseItem, idChosed, lstData, label, helperText }: any) {
     const [itemChosed, setItemChosed] = useState<IDataAutocomplete | null>(null);
     React.useEffect(() => {
-        const item = lstData.filter((x: IDataAutocomplete) => x.id == idChosed);
+        const item = lstData?.filter((x: IDataAutocomplete) => x.id == idChosed);
         if (item.length > 0) {
             setItemChosed(item[0]);
         } else {
@@ -14,7 +14,7 @@ export default function AutocompleteWithData({ handleChoseItem, idChosed, lstDat
         }
     }, [idChosed]);
 
-    const choseItem = (item: any) => {
+    const choseItem = (item: IDataAutocomplete) => {
         handleChoseItem(item);
     };
 
@@ -31,7 +31,7 @@ export default function AutocompleteWithData({ handleChoseItem, idChosed, lstDat
                 filterOptions={(x) => x}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 options={lstData}
-                getOptionLabel={(option: any) => (option.text1 ? option.text1 : '')}
+                getOptionLabel={(option: IDataAutocomplete) => (option.text1 ? option.text1 : '')}
                 renderInput={(params) => <TextField {...params} label={label ?? 'Tìm kiếm'} helperText={helperText} />}
                 renderOption={(props, option) => {
                     return (
