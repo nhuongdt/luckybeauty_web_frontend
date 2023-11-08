@@ -343,7 +343,7 @@ const TinNhanPage = () => {
 
     const saveSMSOK = (type: number) => {
         setIsShowModalAdd(false);
-        GetListSMS();
+        LoadData_byTabActive();
     };
 
     const saveMauTinOK = (objMauTin: MauTinSMSDto, type: number) => {
@@ -569,7 +569,6 @@ const TinNhanPage = () => {
                 ];
                 break;
         }
-        console.log('arr ', arr);
         setColumnGrid([...arr]);
     };
 
