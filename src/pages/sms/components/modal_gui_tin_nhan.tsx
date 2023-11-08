@@ -11,8 +11,7 @@ import {
     Button,
     TextField,
     Stack,
-    Typography,
-    IconButton
+    Typography
 } from '@mui/material';
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -36,15 +35,17 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
     const [newSMS, setNewSMS] = useState<CreateOrEditSMSDto>(new CreateOrEditSMSDto({}) as CreateOrEditSMSDto);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [lstCustomerChosed, setLstCustomerChosed] = useState<IDataAutocomplete[]>([]);
-    const [txtFromTo, setTextFromTo] = useState(`Hôm nay (${format(new Date(), 'dd/MM')})`);
+    const [txtFromTo, setTextFromTo] = useState('');
     const [lblLoaiKhach, setLblLoaiKhach] = useState(`Khách sinh nhật`);
     const [fromDate, setFromDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [toDate, setToDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+    const [dateType, setDateType] = useState<string>(DateType.HOM_NAY);
+    const [dateTypeText, setDateTypeText] = useState<string>('Hôm nay');
 
     useEffect(() => {
         if (isShow) {
             if (utils.checkNull(idTinNhan)) {
-                setNewSMS(new CreateOrEditSMSDto({}) as CreateOrEditSMSDto);
+                setNewSMS({ ...newSMS, id: '', idLoaiTin: 1 });
             } else {
                 // get data from db
             }
@@ -53,71 +54,156 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
     }, [isShow]);
 
     const rules = yup.object().shape({
-        idKhachHang: yup.string().required('Vui lòng chọn khách hàng')
+        noiDungTin: yup.string().required('Vui lòng nhập nội dung tin nhắn'),
+        lstCustomer: yup.array().required('Vui lòng chọn khách hàng')
     });
 
-    const choseCustomer = (abc: IDataAutocomplete[]) => {
-        setLstCustomerChosed(abc);
+    const choseCustomer = (lstCustomer: IDataAutocomplete[]) => {
+        setLstCustomerChosed(lstCustomer);
     };
     const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
 
-    const onApplyFilterDate = async (fromDate: string, toDate: string, dateType: string, dateTypeText = '') => {
+    useEffect(() => {
+        onApplyFilterDate(fromDate, toDate, dateType, dateTypeText);
+        setLstCustomerChosed([]); //?? chưa reset dược khách hàng đã chọn
+    }, [newSMS?.idLoaiTin]);
+
+    const onApplyFilterDate = (fromDate: string, toDate: string, dateType: string, dateTypeText = '') => {
         setAnchorDateEl(null);
         setFromDate(fromDate);
         setToDate(toDate);
+        setDateType(dateType);
+        setDateTypeText(dateTypeText);
 
-        switch (dateType) {
-            case DateType.HOM_NAY:
-            case DateType.HOM_QUA:
-            case DateType.NGAY_MAI:
+        switch (newSMS?.idLoaiTin) {
+            case LoaiTin.TIN_SINH_NHAT:
                 {
-                    const txtNgayThang = format(new Date(fromDate), 'dd/MM');
-                    setTextFromTo(`${dateTypeText} (${txtNgayThang})`);
+                    switch (dateType) {
+                        case DateType.HOM_NAY:
+                        case DateType.HOM_QUA:
+                        case DateType.NGAY_MAI:
+                            {
+                                const txtNgayThang = format(new Date(fromDate), 'dd/MM');
+                                setTextFromTo(`${dateTypeText} (${txtNgayThang})`);
+                            }
+                            break;
+                        case DateType.TUAN_NAY:
+                        case DateType.TUAN_TRUOC:
+                        case DateType.TUAN_TOI:
+                        case DateType.TUY_CHON:
+                            {
+                                const txtFrom = format(new Date(fromDate), 'dd/MM');
+                                const txtTo = format(new Date(toDate), 'dd/MM');
+                                setTextFromTo(`${dateTypeText} (${txtFrom} đến ${txtTo})`);
+                            }
+                            break;
+                        case DateType.THANG_NAY:
+                        case DateType.THANG_TRUOC:
+                        case DateType.THANG_TOI:
+                            {
+                                const txtMonth = format(new Date(fromDate), 'MM');
+                                setTextFromTo(`Tháng ${txtMonth}`);
+                            }
+                            break;
+                        case DateType.QUY_NAY:
+                        case DateType.QUY_TRUOC:
+                            {
+                                const txtMonthFrom = format(new Date(fromDate), 'MM');
+                                const txtMonthTo = format(new Date(toDate), 'MM');
+                                setTextFromTo(`Tháng ${txtMonthFrom} - Tháng ${txtMonthTo}`);
+                            }
+                            break;
+                        case DateType.NAM_NAY:
+                        case DateType.NAM_TRUOC:
+                            {
+                                const txtYear = format(new Date(fromDate), 'yyyy');
+                                setTextFromTo('Năm '.concat(txtYear));
+                            }
+                            break;
+                        case DateType.TAT_CA:
+                            {
+                                setTextFromTo(`${dateTypeText}`);
+                            }
+                            break;
+                    }
                 }
                 break;
-            case DateType.TUAN_NAY:
-            case DateType.TUAN_TRUOC:
-            case DateType.TUAN_TOI:
-            case DateType.TUY_CHON:
+            case LoaiTin.TIN_GIAO_DICH:
+            case LoaiTin.TIN_LICH_HEN:
                 {
-                    const txtFrom = format(new Date(fromDate), 'dd/MM');
-                    const txtTo = format(new Date(toDate), 'dd/MM');
-                    setTextFromTo(`${dateTypeText} (${txtFrom} đến ${txtTo})`);
+                    switch (dateType) {
+                        case DateType.HOM_NAY:
+                        case DateType.HOM_QUA:
+                        case DateType.NGAY_MAI:
+                            {
+                                const txtNgayThang = format(new Date(fromDate), 'dd/MM/yyyy');
+                                setTextFromTo(`${txtNgayThang}`);
+                            }
+                            break;
+                        case DateType.TUAN_NAY:
+                        case DateType.TUAN_TRUOC:
+                        case DateType.TUAN_TOI:
+                        case DateType.TUY_CHON:
+                            {
+                                const txtFrom = format(new Date(fromDate), 'dd/MM/yyyy');
+                                const txtTo = format(new Date(toDate), 'dd/MM/yyyy');
+                                setTextFromTo(`${txtFrom} đến ${txtTo}`);
+                            }
+                            break;
+                        case DateType.THANG_NAY:
+                        case DateType.THANG_TRUOC:
+                        case DateType.THANG_TOI:
+                            {
+                                const txtMonth = format(new Date(fromDate), 'MM/yyyy');
+                                setTextFromTo(`Tháng ${txtMonth}`);
+                            }
+                            break;
+                        case DateType.QUY_NAY:
+                        case DateType.QUY_TRUOC:
+                            {
+                                const txtMonthFrom = format(new Date(fromDate), 'MM/yyyy');
+                                const txtMonthTo = format(new Date(toDate), 'MM/yyyy');
+                                setTextFromTo(`Tháng ${txtMonthFrom} - Tháng ${txtMonthTo}`);
+                            }
+                            break;
+                        case DateType.NAM_NAY:
+                        case DateType.NAM_TRUOC:
+                            {
+                                const txtYear = format(new Date(fromDate), 'yyyy');
+                                setTextFromTo('Năm '.concat(txtYear));
+                            }
+                            break;
+                        case DateType.TAT_CA:
+                            {
+                                setTextFromTo(`${dateTypeText}`);
+                            }
+                            break;
+                    }
                 }
                 break;
-            case DateType.THANG_NAY:
-            case DateType.THANG_TRUOC:
-            case DateType.THANG_TOI:
-                {
-                    const txtMonth = format(new Date(fromDate), 'MM');
-                    setTextFromTo(`Tháng ${txtMonth}`);
-                }
-                break;
-            case DateType.QUY_NAY:
-            case DateType.QUY_TRUOC:
-                {
-                    const txtMonthFrom = format(new Date(fromDate), 'MM');
-                    const txtMonthTo = format(new Date(toDate), 'MM');
-                    setTextFromTo(`Tháng ${txtMonthFrom} - Tháng ${txtMonthTo}`);
-                }
-                break;
-            case DateType.NAM_NAY:
-            case DateType.NAM_TRUOC:
-                {
-                    const txtYear = format(new Date(fromDate), 'yyyy');
-                    setTextFromTo('Năm '.concat(txtYear));
-                }
-                break;
-            case DateType.TAT_CA:
-                {
-                    setTextFromTo(`${dateTypeText}`);
-                }
+            default:
+                setTextFromTo('');
                 break;
         }
     };
 
-    const saveDraft = async (params: any) => {
+    const saveNhatKyGuiTin = async (idHeThongSMS: string, idKhachHang: string, idLoaiTin: number) => {
+        if (idLoaiTin !== 1) {
+            const nky = new NhatKyGuiTinSMSDto();
+            nky.idHeThongSMS = idHeThongSMS;
+            nky.idChiNhanh = idChiNhanh;
+            nky.idKhachHang = idKhachHang;
+            nky.idLoaiTin = idLoaiTin;
+            nky.thoiGianTu = fromDate;
+            nky.thoiGianDen = toDate;
+
+            // lưu nháp: vẫn lưu nhật ký, để check trangthai gửi tin
+            await HeThongSMSServices.ThemMoi_NhatKyGuiTin(nky);
+        }
+    };
+
+    const saveDraft = async (params: CreateOrEditSMSDto) => {
         const noiDungTin = params.noiDungTin;
         if (lstCustomerChosed.length > 0) {
             for (let i = 0; i < lstCustomerChosed.length; i++) {
@@ -131,7 +217,9 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                     soDienThoai: itFor.text2
                 });
                 objSMS.trangThai = TrangThaiSMS.DRAFT;
-                await HeThongSMSServices.Insert_HeThongSMS(objSMS);
+                objSMS.giaTienMoiTinNhan = 1500;
+                const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
+                await saveNhatKyGuiTin(htSMS.id, itFor.id, params?.idLoaiTin);
             }
         } else {
             // only save hethong sms
@@ -148,8 +236,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
         onSaveOK(1);
     };
 
-    const saveSMS = async (params: any) => {
-        console.log('param ', params);
+    const saveSMS = async (params: CreateOrEditSMSDto) => {
         if (lstBrandname.length > 0) {
             const tenBranname = lstBrandname[0].text;
             const noiDungTin = params.noiDungTin;
@@ -172,6 +259,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                     soTinGui: Math.ceil(noiDungTin?.length / 160),
                     soDienThoai: itFor.text2
                 });
+                objSMS.giaTienMoiTinNhan = 1588; // todo
                 objSMS.idTinNhan = sendSMS.messageId;
                 objSMS.trangThai = sendSMS.messageStatus;
                 objSMS.tenKhachHang = itFor.text1;
@@ -185,16 +273,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                 objSMS.sTrangThaiGuiTinNhan = trangThaiTin.length > 0 ? trangThaiTin[0].text : '';
 
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
-                if (params?.idLoaiTin !== 1) {
-                    const nky = new NhatKyGuiTinSMSDto();
-                    nky.idHeThongSMS = htSMS.id;
-                    nky.idChiNhanh = idChiNhanh;
-                    nky.idKhachHang = itFor.id;
-                    nky.idLoaiTin = params?.idLoaiTin;
-                    nky.thoiGianTu = fromDate;
-                    nky.thoiGianDen = toDate;
-                    await HeThongSMSServices.ThemMoi_NhatKyGuiTin(nky);
-                }
+                await saveNhatKyGuiTin(htSMS.id, itFor.id, params?.idLoaiTin);
                 onSaveOK(1);
             }
         }
@@ -212,7 +291,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                 </DialogTitle>
                 <DialogButtonClose onClose={onClose} />
                 <Formik initialValues={newSMS} validationSchema={rules} onSubmit={saveSMS} enableReinitialize>
-                    {({ isSubmitting, handleChange, values, errors, touched, setFieldValue }: any) => (
+                    {({ isSubmitting, values, errors, touched, setFieldValue }: any) => (
                         <Form>
                             <DialogContent sx={{ overflow: 'unset' }}>
                                 <Grid container spacing={2}>
@@ -221,7 +300,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                             label="Brandname"
                                             data={lstBrandname}
                                             idChosed={lstBrandname.length > 0 ? lstBrandname[0].value : ''}
-                                            handleChange={(item: ISelect) => setFieldValue('idBrandname', item.value)}
+                                            handleChange={(item: ISelect) => setFieldValue('idBrandname', item?.value)}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -231,6 +310,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                             idChosed={values.idLoaiTin ?? 1}
                                             handleChange={(item: ISelect) => {
                                                 setFieldValue('idLoaiTin', item.value);
+                                                setNewSMS({ ...newSMS, idLoaiTin: item.value as number });
                                                 switch (item.value) {
                                                     case LoaiTin.TIN_SINH_NHAT:
                                                         setLblLoaiKhach('Khách sinh nhật');
@@ -256,9 +336,12 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                                     label="Gửi đến"
                                                     paramFilter={{ idLoaiTin: values?.idLoaiTin }}
                                                     arrIdChosed={[]}
-                                                    handleChoseItem={choseCustomer}
-                                                    // error={touched.idDoiTuongNopTien && Boolean(errors?.idDoiTuongNopTien)}
-                                                    // helperText={touched.idDoiTuongNopTien && errors.idDoiTuongNopTien}
+                                                    handleChoseItem={(lst: IDataAutocomplete[]) => {
+                                                        choseCustomer(lst);
+                                                        setFieldValue('lstCustomer', lst);
+                                                    }}
+                                                    error={touched.lstCustomer && Boolean(errors?.lstCustomer)}
+                                                    helperText={touched.lstCustomer && errors.lstCustomer}
                                                 />
                                                 <MenuIcon className="btnIcon" />
                                             </Stack>
@@ -290,9 +373,12 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                                         fromDate: fromDate,
                                                         toDate: toDate
                                                     }}
-                                                    handleChoseItem={choseCustomer}
-                                                    // error={touched.idDoiTuongNopTien && Boolean(errors?.idDoiTuongNopTien)}
-                                                    // helperText={touched.idDoiTuongNopTien && errors.idDoiTuongNopTien}
+                                                    handleChoseItem={(lst: IDataAutocomplete[]) => {
+                                                        choseCustomer(lst);
+                                                        setFieldValue('lstCustomer', lst);
+                                                    }}
+                                                    error={touched.lstCustomer && Boolean(errors?.lstCustomer)}
+                                                    helperText={touched.lstCustomer && errors.lstCustomer}
                                                 />
                                             </Stack>
                                         )}
@@ -300,37 +386,49 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                     <Grid item xs={12}>
                                         <AutocompleteWithData
                                             label="Mẫu tin"
+                                            idChosed={values?.idMauTin}
                                             lstData={lstMauTinSMS
                                                 ?.filter((x: MauTinSMSDto) => x.idLoaiTin === values?.idLoaiTin)
                                                 .map((x: MauTinSMSDto) => {
                                                     return { id: x.id, text1: x.tenMauTin, text2: x.noiDungTinMau };
                                                 })}
-                                            // idChosed={values.idMauTin}
                                             handleChoseItem={(item: IDataAutocomplete) => {
-                                                // setFieldValue('idMauTin', item.id);
-                                                setFieldValue('noiDungTin', item.text2);
+                                                setFieldValue('idMauTin', item?.id);
+                                                setFieldValue('noiDungTin', item?.text2);
                                             }}
                                         />
                                     </Grid>
 
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
-                                        <TextField
-                                            variant="outlined"
-                                            size="small"
-                                            name="noiDungTin"
-                                            fullWidth
-                                            multiline
-                                            rows={3}
-                                            label={`Nội dung tin`}
-                                            onChange={handleChange}
-                                            value={values.noiDungTin}
-                                            helperText={
-                                                touched.noiDungTin &&
-                                                errors.noiDungTin && <span>{errors.noiDungTin}</span>
-                                            }
-                                        />
+                                        <Stack spacing={1}>
+                                            <TextField
+                                                variant="outlined"
+                                                size="small"
+                                                name="noiDungTin"
+                                                fullWidth
+                                                multiline
+                                                rows={3}
+                                                label={`Nội dung tin`}
+                                                onChange={(e) => {
+                                                    setFieldValue('noiDungTin', e.target.value);
+                                                    setFieldValue(
+                                                        'soTinGui',
+                                                        Math.ceil(values?.noiDungTin?.length / 160)
+                                                    );
+                                                }}
+                                                value={values?.noiDungTin}
+                                                helperText={
+                                                    touched.noiDungTin &&
+                                                    errors.noiDungTin && <span>{errors.noiDungTin}</span>
+                                                }
+                                            />
+                                            <Typography
+                                                variant="caption"
+                                                color={
+                                                    '#9b9090'
+                                                }>{`${values?.noiDungTin?.length}/160 (${values?.soTinGui} tin nhắn)`}</Typography>
+                                        </Stack>
                                     </Grid>
-                                    <Grid item xs={12} sm={12} md={12} lg={12}></Grid>
                                 </Grid>
                             </DialogContent>
                             <DialogActions style={{ paddingBottom: '20px' }}>
