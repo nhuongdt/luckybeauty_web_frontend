@@ -1,6 +1,6 @@
 import { RequestFromToDto } from '../../dto/ParamSearchDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
-import { CreateOrEditSMSDto, CustomerSMSDto, ESMSDto, ResultESMSDto } from './gui_tin_nhan_dto';
+import { CreateOrEditSMSDto, CustomerSMSDto, ESMSDto, NhatKyGuiTinSMSDto, ResultESMSDto } from './gui_tin_nhan_dto';
 import http from '../../httpService';
 import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
 
@@ -34,6 +34,10 @@ class HeThongSMSServices {
     SendSMS_Json = async (input: ESMSDto): Promise<ResultESMSDto> => {
         // api cua ben ESMS: tra ve idTinNhan + trangthaiTin
         const result = await http.post(`api/services/app/ESMS/SendSMS_Json`, input);
+        return result.data.result;
+    };
+    ThemMoi_NhatKyGuiTin = async (input: NhatKyGuiTinSMSDto): Promise<ResultESMSDto> => {
+        const result = await http.post(`api/services/app/HeThongSMS/ThemMoi_NhatKyGuiTin`, input);
         return result.data.result;
     };
 }
