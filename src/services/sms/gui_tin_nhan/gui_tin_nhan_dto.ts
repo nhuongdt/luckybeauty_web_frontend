@@ -14,7 +14,7 @@ export class CreateOrEditSMSDto {
     soDienThoai = '';
     idHoaDon?: string | null;
     trangThai = 100;
-    giaTienMoiTinNhan = 1000;
+    giaTienMoiTinNhan = 950; // hiện tại, đang mặc định giá này cho all nhà mạng (nếu sau cần thì thêm data)
 
     idLoaiTin = 1;
     idNguoiGui?: string | null = null;
