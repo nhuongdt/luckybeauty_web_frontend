@@ -262,13 +262,25 @@ export const appRouters: AppRouteProps = {
                             path: '/khach-hang/tin-nhan',
                             permission: 'Pages.KhachHang',
                             title: 'Tin nhắn',
-                            name: 'khachhang',
+                            name: 'sms',
                             icon: <BsDot width="20px" />,
                             iconActive: null,
                             showInMenu: true,
                             isLayout: false,
                             children: [],
                             component: LoadableComponent(() => import('../../pages/sms/index'))
+                        },
+                        {
+                            path: '/khach-hang/tin-nhan-mau',
+                            permission: 'Pages.KhachHang',
+                            title: 'Tin nhắn mẫu',
+                            name: 'templateSMS',
+                            icon: <BsDot width="20px" />,
+                            iconActive: null,
+                            showInMenu: true,
+                            isLayout: false,
+                            children: [],
+                            component: LoadableComponent(() => import('../../pages/sms/mau_tin_nhan/index'))
                         },
                         {
                             path: '/khach-hang-chi-tiet/:khachHangId',
