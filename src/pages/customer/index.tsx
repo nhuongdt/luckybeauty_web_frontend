@@ -314,7 +314,7 @@ class CustomerScreen extends React.Component<any, CustomerScreenState> {
         if (this.state.listItemSelectedModel.length > 0) {
             const ok = await khachHangService.DeleteMultipleCustomer(this.state.listItemSelectedModel);
             ok
-                ? enqueueSnackbar('Xóa khách hàng  thành công', {
+                ? enqueueSnackbar('Xóa khách hàng thành công', {
                       variant: 'success',
                       autoHideDuration: 3000
                   })

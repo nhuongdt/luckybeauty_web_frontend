@@ -19,7 +19,7 @@ const rules = Yup.object().shape({
     hinhThucKM: Yup.number().required('Hình thức khuyến mại không được để trống'),
     loaiKhuyenMai: Yup.number().required('Loại khuyến mại không được để trống'),
     thoiGianApDung: Yup.string().required('Thời gian áp dụng không được để trống'),
-    thoiGianKetThuc: Yup.string().required('Thời gian kết thúc không được để trống'),
+    //thoiGianKetThuc: Yup.string().required('Thời gian kết thúc không được để trống'),
     khuyenMaiChiTiets: Yup.array().of(KhuyenMaiChiTietSchema)
 });
 export default rules;

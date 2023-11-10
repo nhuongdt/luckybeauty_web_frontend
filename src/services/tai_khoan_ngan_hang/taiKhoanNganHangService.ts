@@ -17,5 +17,9 @@ class TaiKhoanNganHangService {
         const response = await http.get(`api/services/app/TaiKhoanNganHang/GetForEdit?id=${id}`);
         return response.data.result;
     }
+    public async delete(id: string) {
+        const response = await http.post(`api/services/app/TaiKhoanNganHang/Delete?id=${id}`);
+        return response.data.result;
+    }
 }
 export default new TaiKhoanNganHangService();

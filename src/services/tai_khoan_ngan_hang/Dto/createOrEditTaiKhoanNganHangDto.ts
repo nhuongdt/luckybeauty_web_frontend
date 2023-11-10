@@ -6,4 +6,5 @@ export interface CreateOrEditTaiKhoanNganHangDto {
     tenChuThe: string;
     ghiChu: string;
     trangThai: number;
+    isDefault: boolean;
 }

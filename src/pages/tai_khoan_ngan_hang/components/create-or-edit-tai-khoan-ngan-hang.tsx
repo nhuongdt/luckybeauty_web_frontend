@@ -26,6 +26,8 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { CreateOrEditTaiKhoanNganHangDto } from '../../../services/tai_khoan_ngan_hang/Dto/createOrEditTaiKhoanNganHangDto';
 import taiKhoanNganHangService from '../../../services/tai_khoan_ngan_hang/taiKhoanNganHangService';
+import { enqueueSnackbar } from 'notistack';
+import AppConsts from '../../../lib/appconst';
 interface Props {
     visiable: boolean;
     onCancel: () => void;
@@ -41,9 +43,11 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
     });
     return (
         <Dialog open={visiable} fullWidth maxWidth={'sm'} onClose={onCancel}>
-            <DialogTitle>
+            <DialogTitle sx={{ borderBottom: '1px solid #F0F0F0' }}>
                 <Typography fontSize="24px" fontWeight="700" mb={3}>
-                    Thêm mới tài khoản ngân hàng
+                    {formRef.id === AppConsts.guidEmpty
+                        ? ' Thêm mới tài khoản ngân hàng'
+                        : ' Cập nhật tài khoản ngân hàng'}
                 </Typography>
                 <Button
                     sx={{
@@ -65,11 +69,20 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                     initialValues={initValues}
                     validationSchema={rules}
                     onSubmit={async (values) => {
-                        await taiKhoanNganHangService.createOrEdit(values);
+                        const result = await taiKhoanNganHangService.createOrEdit(values);
+                        enqueueSnackbar(result.message, {
+                            variant: result.status,
+                            autoHideDuration: 3000
+                        });
                         onOk();
                     }}>
                     {({ values, handleChange, isSubmitting, errors, setFieldValue, touched }) => (
-                        <Form>
+                        <Form
+                            onKeyPress={(event: React.KeyboardEvent<HTMLFormElement>) => {
+                                if (event.key === 'Enter') {
+                                    event.preventDefault(); // Prevent form submission
+                                }
+                            }}>
                             <Grid container spacing={2} paddingTop={2}>
                                 <Grid item xs={12}>
                                     <Autocomplete
@@ -197,8 +210,19 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                             color: '#4c4b4c'
                                         }}></TextField>
                                 </Grid>
+                            </Grid>
+                            <Box>
                                 <FormControlLabel
-                                    sx={{ padding: '0px 16px' }}
+                                    label="Tài khoản mặc định"
+                                    checked={values.isDefault}
+                                    onChange={(event, value) => {
+                                        setFieldValue('isDefault', value);
+                                    }}
+                                    control={<Checkbox />}
+                                />
+                            </Box>
+                            <Box>
+                                <FormControlLabel
                                     label="Kích hoạt"
                                     checked={values.trangThai === 1 ? true : false}
                                     onChange={(event, value) => {
@@ -206,7 +230,7 @@ const CreateOrEditTaiKhoanNganHangModal = ({ visiable, onCancel, onOk, formRef }
                                     }}
                                     control={<Checkbox />}
                                 />
-                            </Grid>
+                            </Box>
                             <DialogActions sx={{ paddingRight: '0!important' }}>
                                 <Button
                                     variant="outlined"

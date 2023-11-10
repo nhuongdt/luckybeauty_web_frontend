@@ -28,7 +28,7 @@ import {
     FormHelperText
 } from '@mui/material';
 import { ReactComponent as CloseIcon } from '../../../../../images/close-square.svg';
-import { ErrorMessage, FieldArray, Form, Formik } from 'formik';
+import { ErrorMessage, FieldArray, Form, Formik, FormikErrors } from 'formik';
 import { format as formatDate } from 'date-fns';
 import DatePickerRequiredCustom from '../../../../../components/DatetimePicker/DatePickerRequiredCustom';
 import suggestStore from '../../../../../stores/suggestStore';
@@ -41,6 +41,11 @@ import ThoiGianConst from '../../../../../lib/thoiGianConst';
 import khuyenMaiStore from '../../../../../stores/khuyenMaiStore';
 import { NumericFormat } from 'react-number-format';
 import rules from './create-or-edit-khuyen-mai.validate';
+import {
+    CreateOrEditKhuyenMaiDto,
+    KhuyenMaiChiTiet
+} from '../../../../../services/khuyen_mai/dto/CreateOrEditKhuyenMaiDto';
+import { StringFormat } from '@firebase/storage';
 function a11yProps(index: number) {
     return {
         id: `vertical-tab-${index}`,
@@ -50,7 +55,8 @@ function a11yProps(index: number) {
 const CreateOrEditVoucher: React.FC<{
     visiable: boolean;
     handleClose: () => void;
-}> = ({ visiable, handleClose }: any) => {
+    onOk: () => void;
+}> = ({ visiable, handleClose, onOk }: any) => {
     const [tabIndex, setTabIndex] = useState(0);
     const handleTabChange = (event: any, value: number) => {
         setTabIndex(value);
@@ -60,7 +66,7 @@ const CreateOrEditVoucher: React.FC<{
         <Dialog open={visiable} maxWidth="md" fullWidth onClose={handleClose}>
             <DialogTitle>
                 <Typography fontSize="24px" fontWeight={700}>
-                    Thêm mới voucher
+                    {initValues.id == AppConsts.guidEmpty ? 'Thêm mới voucher' : 'Cập nhật voucher'}
                 </Typography>
                 <IconButton
                     aria-label="close"
@@ -79,27 +85,114 @@ const CreateOrEditVoucher: React.FC<{
             <DialogContent>
                 <Formik
                     initialValues={initValues}
-                    //validationSchema={rules}
-                    onSubmit={async (values, formikHelpers) => {
+                    validationSchema={rules}
+                    validate={(values) => {
+                        const errors = { thoiGianKetThuc: '', khuyenMaiChiTiets: [] as any[] };
                         if (
-                            values.thoiGianApDung === '' ||
-                            values.thoiGianApDung == null ||
-                            values.thoiGianApDung == undefined
-                        ) {
-                            setTabIndex(1);
-                            formikHelpers.setFieldError('thoiGianApDung', 'Thời gian áp dụng không được để trống');
-                        } else if (
                             values.thoiGianKetThuc === '' ||
                             values.thoiGianKetThuc == null ||
                             values.thoiGianKetThuc == undefined
                         ) {
                             setTabIndex(1);
-                            formikHelpers.setFieldError('thoiGianKetThuc', 'Thời gian kết thúc không được để trống');
-                        } else {
-                            await khuyenMaiStore.CreateOrEditKhuyenMai(values);
-                            formikHelpers.resetForm();
-                            handleClose();
+                            errors.thoiGianKetThuc = 'Thời gian kết thúc không được để trống';
+                        } else if (values.khuyenMaiChiTiets && values.khuyenMaiChiTiets.length > 0) {
+                            values.khuyenMaiChiTiets.forEach((item, index) => {
+                                let errorKhuyenMai = {
+                                    tongTienHang: '',
+                                    soLuongMua: '',
+                                    idDonViQuiDoiTang: '',
+                                    giamGia: '',
+                                    soLuongTang: '',
+                                    idDonViQuiDoiMua: '',
+                                    soDiemTang: '',
+                                    giaKhuyenMai: ''
+                                };
+                                if (values.loaiKhuyenMai === 1) {
+                                    if (!item.tongTienHang) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            tongTienHang: 'Tổng tiền hàng không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                }
+                                if (values.loaiKhuyenMai === 2) {
+                                    if (!item.soLuongMua) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            soLuongMua: 'Số lượng mua không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                    if (!item.idDonViQuiDoiMua) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            idDonViQuiDoiMua: 'Đơn vị quy đổi mua không được để trống'
+                                        };
+
+                                        setTabIndex(0);
+                                    }
+                                }
+                                if (values.hinhThucKM === 11 || values.hinhThucKM === 13 || values.hinhThucKM === 21) {
+                                    if (!item.giamGia || item.giamGia <= 0) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            giamGia: 'Giảm giá không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                }
+                                if (values.hinhThucKM === 12 || values.hinhThucKM === 22) {
+                                    if (!item.soLuongTang || item?.soLuongTang <= 0) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            soLuongTang: 'Số lượng tặng không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                }
+                                if (
+                                    values.hinhThucKM === 12 ||
+                                    values.hinhThucKM === 13 ||
+                                    values.hinhThucKM === 22 ||
+                                    values.hinhThucKM === 21
+                                ) {
+                                    if (!item.idDonViQuiDoiTang) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            idDonViQuiDoiTang: 'Mặt hàng tặng không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                }
+                                if (values.hinhThucKM === 14 || values.hinhThucKM === 24) {
+                                    if (!item.soDiemTang || item?.soDiemTang <= 0) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            soDiemTang: 'Số điểm tặng không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                }
+                                if (values.hinhThucKM === 23) {
+                                    if (!item.giaKhuyenMai || item?.giaKhuyenMai <= 0) {
+                                        errorKhuyenMai = {
+                                            ...errorKhuyenMai,
+                                            giaKhuyenMai: 'Giá khuyến mãi không được để trống'
+                                        };
+                                        setTabIndex(0);
+                                    }
+                                }
+                                errors.khuyenMaiChiTiets.push(errorKhuyenMai);
+                            });
                         }
+
+                        return errors;
+                    }}
+                    onSubmit={async (values, formikHelper) => {
+                        await khuyenMaiStore.CreateOrEditKhuyenMai(values);
+                        formikHelper.resetForm();
+                        onOk();
                     }}>
                     {({ values, errors, touched, handleChange, setFieldValue, isSubmitting }) => (
                         <Form
@@ -239,7 +332,7 @@ const CreateOrEditVoucher: React.FC<{
                                                         fullWidth
                                                         disablePortal
                                                         onChange={(event, value) => {
-                                                            setFieldValue('hinhThucKM', value ? value.value : 0);
+                                                            setFieldValue('hinhThucKM', value ? value.value : null);
                                                         }}
                                                         renderInput={(params) => (
                                                             <TextField
@@ -249,9 +342,14 @@ const CreateOrEditVoucher: React.FC<{
                                                                         Hình thức
                                                                     </Typography>
                                                                 }
-                                                                error={errors.hinhThucKM ? true : false}
+                                                                error={
+                                                                    errors.hinhThucKM && touched.hinhThucKM
+                                                                        ? true
+                                                                        : false
+                                                                }
                                                                 helperText={
-                                                                    errors.hinhThucKM && (
+                                                                    errors.hinhThucKM &&
+                                                                    touched.hinhThucKM && (
                                                                         <span className="text-danger">
                                                                             {errors.hinhThucKM}
                                                                         </span>
@@ -277,10 +375,13 @@ const CreateOrEditVoucher: React.FC<{
                                                                                 <Box
                                                                                     key={index}
                                                                                     display="flex"
-                                                                                    gap="8px"
+                                                                                    gap="4px"
+                                                                                    alignItems={'start'}
                                                                                     justifyContent="space-between">
                                                                                     {values.loaiKhuyenMai === 1 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <NumericFormat
                                                                                                 thousandSeparator={'.'}
                                                                                                 decimalSeparator={','}
@@ -309,21 +410,34 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                     item.tongTienHang
                                                                                                 }
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets[${index}].tongTienHang`}
-                                                                                                component={'span'}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            )
+                                                                                                                .tongTienHang
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.loaiKhuyenMai === 2 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}
+                                                                                            sx={{ width: '64px' }}>
                                                                                             <NumericFormat
                                                                                                 thousandSeparator={'.'}
                                                                                                 decimalSeparator={','}
                                                                                                 size="small"
                                                                                                 label=""
                                                                                                 sx={{
-                                                                                                    width: '20%',
                                                                                                     marginTop: '6px'
                                                                                                 }}
                                                                                                 onChange={(e) => {
@@ -343,13 +457,26 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                 value={item.soLuongMua}
                                                                                                 name={`khuyenMaiChiTiets.${index}.soLuongMua`}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.soLuongMua`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            ).soLuongMua
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.loaiKhuyenMai === 2 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <Autocomplete
                                                                                                 options={
                                                                                                     suggestStore?.suggestDonViQuiDoi ??
@@ -396,22 +523,35 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                     />
                                                                                                 )}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.idDonViQuiDoiMua`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            )
+                                                                                                                .idDonViQuiDoiMua
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.hinhThucKM === 11 ||
                                                                                     values.hinhThucKM === 13 ||
                                                                                     values.hinhThucKM === 21 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <NumericFormat
                                                                                                 thousandSeparator={'.'}
                                                                                                 decimalSeparator={','}
                                                                                                 size="small"
                                                                                                 label="Giảm giá"
                                                                                                 sx={{
-                                                                                                    width: '50%',
                                                                                                     marginTop: '6px'
                                                                                                 }}
                                                                                                 value={item.giamGia}
@@ -431,14 +571,27 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                 customInput={TextField}
                                                                                                 name={`khuyenMaiChiTiets.${index}.giamGia`}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.giamGia`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            ).giamGia
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.hinhThucKM === 12 ||
                                                                                     values.hinhThucKM === 22 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <NumericFormat
                                                                                                 thousandSeparator={'.'}
                                                                                                 decimalSeparator={','}
@@ -452,11 +605,6 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                         : ''
                                                                                                 }
                                                                                                 sx={{
-                                                                                                    width:
-                                                                                                        values.hinhThucKM ===
-                                                                                                        12
-                                                                                                            ? '50%'
-                                                                                                            : '20%',
                                                                                                     marginTop: '6px'
                                                                                                 }}
                                                                                                 onChange={(e) => {
@@ -474,10 +622,22 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                 }}
                                                                                                 customInput={TextField}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.soLuongTang`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            )
+                                                                                                                .soLuongTang
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.hinhThucKM === 11 ||
                                                                                     values.hinhThucKM === 13 ||
@@ -527,7 +687,9 @@ const CreateOrEditVoucher: React.FC<{
                                                                                     values.hinhThucKM === 13 ||
                                                                                     values.hinhThucKM === 22 ||
                                                                                     values.hinhThucKM === 21 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <Autocomplete
                                                                                                 options={
                                                                                                     suggestStore?.suggestDonViQuiDoi ??
@@ -573,14 +735,28 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                     />
                                                                                                 )}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.idDonViQuiDoiTang`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            )
+                                                                                                                .idDonViQuiDoiTang
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.hinhThucKM === 14 ||
                                                                                     values.hinhThucKM === 24 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <NumericFormat
                                                                                                 thousandSeparator={'.'}
                                                                                                 decimalSeparator={','}
@@ -607,13 +783,26 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                 value={item.soDiemTang}
                                                                                                 name={`khuyenMaiChiTiets.${index}.soDiemTang`}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.soDiemTang`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            ).soDiemTang
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     {values.hinhThucKM === 23 ? (
-                                                                                        <>
+                                                                                        <Box
+                                                                                            display={'flex'}
+                                                                                            flexDirection={'column'}>
                                                                                             <NumericFormat
                                                                                                 thousandSeparator={'.'}
                                                                                                 decimalSeparator={','}
@@ -642,10 +831,22 @@ const CreateOrEditVoucher: React.FC<{
                                                                                                 }
                                                                                                 name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
                                                                                             />
-                                                                                            <ErrorMessage
-                                                                                                name={`khuyenMaiChiTiets.${index}.giaKhuyenMai`}
-                                                                                            />
-                                                                                        </>
+                                                                                            {errors.khuyenMaiChiTiets &&
+                                                                                                errors
+                                                                                                    .khuyenMaiChiTiets[
+                                                                                                    index
+                                                                                                ] && (
+                                                                                                    <span className="text-danger">
+                                                                                                        {
+                                                                                                            (
+                                                                                                                errors
+                                                                                                                    .khuyenMaiChiTiets[0] as FormikErrors<KhuyenMaiChiTiet>
+                                                                                                            )
+                                                                                                                .giaKhuyenMai
+                                                                                                        }
+                                                                                                    </span>
+                                                                                                )}
+                                                                                        </Box>
                                                                                     ) : null}
                                                                                     <IconButton
                                                                                         onClick={() => {
