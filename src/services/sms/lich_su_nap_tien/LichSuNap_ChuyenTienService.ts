@@ -22,7 +22,7 @@ class LichSuNap_ChuyenTienService {
         const userId = Cookies.get('userId');
         if (!utils.checkNull(userId)) {
             const result = await http.get(
-                `api/services/app/LichSuNap_ChuyenTien/GetBrandnameBalance_byUserLogin?tenantId=${userId}`
+                `api/services/app/LichSuNap_ChuyenTien/GetBrandnameBalance_byUserLogin?userId=${userId}`
             );
             return result.data.result;
         }
