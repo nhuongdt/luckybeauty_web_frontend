@@ -33,6 +33,7 @@ import chiNhanhService from '../../../services/chi_nhanh/chiNhanhService';
 import PageHoaDonDto from '../../../services/ban_hang/PageHoaDonDto';
 import QuyHoaDonDto from '../../../services/so_quy/QuyHoaDonDto';
 import NapTienBrandname from '../../sms/brandname/nap_tien_brandname';
+import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 
 const PageSoQuy = ({ xx }: any) => {
     const today = new Date();
@@ -328,6 +329,14 @@ const PageSoQuy = ({ xx }: any) => {
         }
     };
 
+    const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
+    const openDateFilter = Boolean(anchorDateEl);
+
+    const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
+        setAnchorDateEl(null);
+        setParamSearch({ ...paramSearch, fromDate: from, toDate: to });
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'loaiPhieu',
@@ -518,35 +527,31 @@ const PageSoQuy = ({ xx }: any) => {
                                     height: '40px'
                                 }
                             }}>
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    bgcolor: '#fff',
-                                    alignItems: 'center',
-                                    border: '1px solid #E6E1E6',
-                                    borderRadius: '4px',
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        border: 'none'
-                                    },
-                                    '& .MuiInputBase-root': {
-                                        paddingRight: '0',
-                                        flexDirection: 'row-reverse'
-                                    }
-                                }}>
-                                <DatePickerCustom
-                                    defaultVal={paramSearch.fromDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, fromDate: newVal })
-                                    }
+                            <Stack>
+                                <TextField
+                                    label="Thời gian"
+                                    size="small"
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={{
+                                        '& .MuiInputBase-root': {
+                                            height: '40px!important'
+                                        }
+                                    }}
+                                    onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                    value={`${format(
+                                        new Date(paramSearch.fromDate as string),
+                                        'dd/MM/yyyy'
+                                    )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
                                 />
-                                <Box>-</Box>
-                                <DatePickerCustom
-                                    defaultVal={paramSearch.toDate}
-                                    handleChangeDate={(newVal: string) =>
-                                        setParamSearch({ ...paramSearch, toDate: newVal })
-                                    }
+                                <DateFilterCustom
+                                    id="popover-date-filter"
+                                    open={openDateFilter}
+                                    anchorEl={anchorDateEl}
+                                    onClose={() => setAnchorDateEl(null)}
+                                    onApplyDate={onApplyFilterDate}
                                 />
-                            </Box>
+                            </Stack>
                             <Button
                                 hidden={!abpCustom.isGrandPermission('Pages.QuyHoaDon.Export')}
                                 variant="outlined"

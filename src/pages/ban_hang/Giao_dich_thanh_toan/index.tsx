@@ -285,7 +285,7 @@ const GiaoDichThanhToan: React.FC = () => {
         });
     };
 
-    const [anchorDateEl, setAnchorDateEl] = useState<HTMLButtonElement | null>(null);
+    const [anchorDateEl, setAnchorDateEl] = useState<HTMLDivElement | null>(null);
     const openDateFilter = Boolean(anchorDateEl);
 
     const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
@@ -501,29 +501,31 @@ const GiaoDichThanhToan: React.FC = () => {
                                 gap: '8px',
                                 justifyContent: { lg: 'end' }
                             }}>
-                            <Button
-                                variant="outlined"
-                                size="small"
-                                sx={{
-                                    backgroundColor: '#fff!important',
-                                    textTransform: 'capitalize',
-                                    fontWeight: '400',
-                                    color: '#666466',
-                                    padding: '10px 16px',
-                                    height: '40px',
-                                    borderRadius: '4px!important'
-                                }}
-                                onClick={(event) => setAnchorDateEl(event.currentTarget)}>
-                                {format(new Date(paramSearch?.fromDate ?? new Date()), 'dd/MM/yyyy')} {' - '}
-                                {format(new Date(paramSearch?.toDate ?? new Date()), 'dd/MM/yyyy')}
-                            </Button>
-                            <DateFilterCustom
-                                id="popover-date-filter"
-                                open={openDateFilter}
-                                anchorEl={anchorDateEl}
-                                onClose={() => setAnchorDateEl(null)}
-                                onApplyDate={onApplyFilterDate}
-                            />
+                            <Stack>
+                                <TextField
+                                    label="Thời gian"
+                                    size="small"
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={{
+                                        '& .MuiInputBase-root': {
+                                            height: '40px!important'
+                                        }
+                                    }}
+                                    onClick={(event) => setAnchorDateEl(event.currentTarget)}
+                                    value={`${format(
+                                        new Date(paramSearch.fromDate as string),
+                                        'dd/MM/yyyy'
+                                    )} - ${format(new Date(paramSearch.toDate as string), 'dd/MM/yyyy')}`}
+                                />
+                                <DateFilterCustom
+                                    id="popover-date-filter"
+                                    open={openDateFilter}
+                                    anchorEl={anchorDateEl}
+                                    onClose={() => setAnchorDateEl(null)}
+                                    onApplyDate={onApplyFilterDate}
+                                />
+                            </Stack>
 
                             <Button
                                 variant="outlined"
