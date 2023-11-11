@@ -15,3 +15,15 @@ export class MauTinSMSDto {
         this.trangThai = trangThai;
     }
 }
+
+export class GroupMauTinSMSDto {
+    idLoaiTin: number;
+    loaiTin: string;
+    lstDetail: MauTinSMSDto[];
+
+    constructor({ idLoaiTin = 2, loaiTin = '', lstDetail = [] }) {
+        this.idLoaiTin = idLoaiTin;
+        this.loaiTin = loaiTin;
+        this.lstDetail = lstDetail;
+    }
+}

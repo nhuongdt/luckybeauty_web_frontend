@@ -27,6 +27,7 @@ import { format } from 'date-fns';
 import { AppContext } from '../../../services/chi_nhanh/ChiNhanhContext';
 import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_services';
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
+import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
 
 export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, idTinNhan, onClose, onSaveOK }: any) {
     const appContext = useContext(AppContext);
@@ -41,14 +42,16 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
     const [toDate, setToDate] = useState(format(new Date(), 'yyyy-MM-dd'));
     const [dateType, setDateType] = useState<string>(DateType.HOM_NAY);
     const [dateTypeText, setDateTypeText] = useState<string>('Hôm nay');
+    const [soduTaiKhoan, setSoDuTaiKhoan] = useState(0);
 
     useEffect(() => {
         if (isShow) {
             if (utils.checkNull(idTinNhan)) {
-                setNewSMS({ ...newSMS, id: '', idLoaiTin: 1 });
+                setNewSMS({ ...newSMS, id: '', idLoaiTin: 1, soTinGui: 0 });
             } else {
                 // get data from db
             }
+            GetBrandnameBalance_byUserLogin();
         }
         console.log('modetinnhan');
     }, [isShow]);
@@ -57,6 +60,13 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
         noiDungTin: yup.string().required('Vui lòng nhập nội dung tin nhắn'),
         lstCustomer: yup.array().required('Vui lòng chọn khách hàng')
     });
+
+    const GetBrandnameBalance_byUserLogin = async () => {
+        const data = await LichSuNap_ChuyenTienService.GetBrandnameBalance_byUserLogin();
+        if (data != null) {
+            setSoDuTaiKhoan(data);
+        }
+    };
 
     const choseCustomer = (lstCustomer: IDataAutocomplete[]) => {
         setLstCustomerChosed(lstCustomer);
@@ -217,7 +227,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                     soDienThoai: itFor.text2
                 });
                 objSMS.trangThai = TrangThaiSMS.DRAFT;
-                objSMS.giaTienMoiTinNhan = 1500;
+                objSMS.giaTienMoiTinNhan = 950;
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
                 await saveNhatKyGuiTin(htSMS.id, itFor.id, params?.idLoaiTin);
             }
@@ -259,7 +269,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                     soTinGui: Math.ceil(noiDungTin?.length / 160),
                     soDienThoai: itFor.text2
                 });
-                objSMS.giaTienMoiTinNhan = 1588; // todo
+                objSMS.giaTienMoiTinNhan = 950;
                 objSMS.idTinNhan = sendSMS.messageId;
                 objSMS.trangThai = sendSMS.messageStatus;
                 objSMS.tenKhachHang = itFor.text1;
@@ -422,11 +432,16 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                                     errors.noiDungTin && <span>{errors.noiDungTin}</span>
                                                 }
                                             />
-                                            <Typography
-                                                variant="caption"
-                                                color={
-                                                    '#9b9090'
-                                                }>{`${values?.noiDungTin?.length}/160 (${values?.soTinGui} tin nhắn)`}</Typography>
+                                            <Stack justifyContent={'space-between'} direction={'row'}>
+                                                <Typography
+                                                    variant="caption"
+                                                    color={
+                                                        '#9b9090'
+                                                    }>{`${values?.noiDungTin?.length}/160 (${values?.soTinGui} tin nhắn)`}</Typography>
+                                                <Typography fontSize={'14px'}>
+                                                    {new Intl.NumberFormat('vi-VN').format(soduTaiKhoan)}
+                                                </Typography>
+                                            </Stack>
                                         </Stack>
                                     </Grid>
                                 </Grid>

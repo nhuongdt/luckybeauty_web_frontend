@@ -67,10 +67,10 @@ const AppConsts = {
         { value: 20, text: '20/ trang' }
     ],
     smsLoaiTin: [
-        { value: LoaiTin.TIN_THUONG, text: 'Tin nhắn thường' },
-        { value: LoaiTin.TIN_SINH_NHAT, text: 'Tin nhắn sinh nhật' },
-        { value: LoaiTin.TIN_LICH_HEN, text: 'Tin nhắn lịch hẹn' },
-        { value: LoaiTin.TIN_GIAO_DICH, text: 'Tin nhắn giao dịch' }
+        { value: LoaiTin.TIN_THUONG, text: 'Tin thường' },
+        { value: LoaiTin.TIN_SINH_NHAT, text: 'Tin sinh nhật' },
+        { value: LoaiTin.TIN_LICH_HEN, text: 'Tin lịch hẹn' },
+        { value: LoaiTin.TIN_GIAO_DICH, text: 'Tin giao dịch' }
     ] as ISelect[],
     ListTrangThaiGuiTin: [
         { value: TrangThaiSMS.SUCCESS, text: 'Thành công' },

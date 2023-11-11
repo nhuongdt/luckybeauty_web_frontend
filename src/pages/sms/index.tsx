@@ -44,6 +44,8 @@ import { PagedResultDto } from '../../services/dto/pagedResultDto';
 import ModalSmsTemplate from './mau_tin_nhan/components/modal_sms_template';
 import { MauTinSMSDto } from '../../services/sms/mau_tin_sms/mau_tin_dto';
 import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMService';
+import fileDowloadService from '../../services/file-dowload.service';
+import { FileDto, IFileDto } from '../../services/dto/FileDto';
 
 const styleListItem = createTheme({
     components: {
@@ -178,6 +180,7 @@ const TinNhanPage = () => {
     } as PagedResultDto<CustomerSMSDto[]>);
     const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
         textSearch: '',
+        trangThais: [TrangThaiSMS.SUCCESS],
         fromDate: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
         toDate: format(endOfMonth(new Date()), 'yyyy-MM-dd')
     } as RequestFromToDto);
@@ -307,9 +310,41 @@ const TinNhanPage = () => {
     const exportToExcel = async () => {
         const param = { ...paramSearch };
         param.currentPage = 1;
-        param.pageSize = pageSMS.totalCount;
-        // const result = await ProductService.ExportToExcel(filterPageProduct);
-        // fileDowloadService.downloadExportFile(result);
+
+        let fileDowload: IFileDto = {} as IFileDto;
+        switch (tabActive) {
+            case 0:
+            case 1:
+            case 2:
+                {
+                    param.pageSize = pageSMS.totalCount;
+                    fileDowload = await HeThongSMServices.ExportToExcel_DanhSachTinNhan(param);
+                }
+                break;
+            case 3:
+            case 4:
+            case 5:
+                {
+                    param.pageSize = pageCutomerSMS.totalCount;
+                    let idLoaiTin = 2;
+                    switch (tabActive) {
+                        case 3:
+                            idLoaiTin = LoaiTin.TIN_GIAO_DICH;
+                            break;
+                        case 4:
+                            idLoaiTin = LoaiTin.TIN_LICH_HEN;
+                            break;
+                        case 5:
+                            idLoaiTin = LoaiTin.TIN_SINH_NHAT;
+                            break;
+                    }
+                    param.pageSize = 50;
+                    fileDowload = await HeThongSMServices.ExportToExcel_DanhSachKhachHang_SMS(param, idLoaiTin);
+                }
+                break;
+        }
+
+        fileDowloadService.downloadExportFile(fileDowload);
     };
 
     const handleChangePage = (event: any, value: number) => {

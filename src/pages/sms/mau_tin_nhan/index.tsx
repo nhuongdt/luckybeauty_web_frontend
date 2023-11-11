@@ -1,169 +1,99 @@
-import {
-    Box,
-    Button,
-    Chip,
-    Divider,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
-    SelectChangeEvent,
-    Typography
-} from '@mui/material';
+import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import AddIcon from '../../../images/add.svg';
-import CreateOrEditMauTinNhanModal from './components/modal_sms_template';
+import ModalSmsTemplate from './components/modal_sms_template';
 import { useEffect, useState } from 'react';
-import abpCustom from '../../../components/abp-custom';
-import { SMSTempalteViewDto } from '../../../services/sms/template/dto/SMSTemplateVIewDto';
-import { CreateOrEditSMSTemplateDto } from '../../../services/sms/template/dto/CreateOrEditSMSTemplateDto';
-import smsTemplateService from '../../../services/sms/template/smsTemplateService';
-import AppConsts from '../../../lib/appconst';
-import CustomTablePagination from '../../../components/Pagination/CustomTablePagination';
+import { GroupMauTinSMSDto, MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
+import MauTinSMService from '../../../services/sms/mau_tin_sms/MauTinSMService';
 const MauTinNhan = () => {
     const [visiable, setVisiable] = useState(false);
-    const [selectedRowId, setSelectedRowId] = useState('');
-    const [filter, setFilter] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [maxResultCount, setMaxResultCount] = useState(5);
-    const [totalPage, setTotalPage] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
-    const [formRef, setFormRef] = useState<CreateOrEditSMSTemplateDto>({
-        id: AppConsts.guidEmpty,
-        idLoaiTin: 1,
-        laMacDinh: false,
-        tenMauTin: '',
-        noiDungTinMau: '',
-        trangThai: 1
-    });
-    const [data, setData] = useState<SMSTempalteViewDto[]>([]);
-    const getData = async () => {
-        const result = await smsTemplateService.getAll({
-            keyword: filter,
-            maxResultCount: maxResultCount,
-            skipCount: currentPage
-        });
-        setData(result.items);
-        setTotalCount(result.totalCount);
-        setTotalPage(Math.ceil(result.totalCount / maxResultCount));
-    };
+    const [dataGroupMauTin, setDataGroupMauTin] = useState<GroupMauTinSMSDto[]>([]);
+    const [idMauTin, setIdMauTin] = useState('');
+    const [objMauTin, setObjMauTin] = useState<MauTinSMSDto>({} as MauTinSMSDto);
+
     useEffect(() => {
-        getData();
-    }, [maxResultCount, currentPage]);
-    const onModal = () => {
-        setVisiable(!visiable);
-    };
-    const onCreateOrEditModal = async (id: string) => {
-        if (id === '') {
-            setFormRef({
-                id: AppConsts.guidEmpty,
-                idLoaiTin: 1,
-                laMacDinh: false,
-                tenMauTin: '',
-                noiDungTinMau: '',
-                trangThai: 1
-            });
-        } else {
-            const data = await smsTemplateService.getForEdit(id);
-            setFormRef(data);
+        GetAllMauTinSMS();
+    }, []);
+
+    const GetAllMauTinSMS = async () => {
+        const data = await MauTinSMService.GetAllMauTinSMS_GroupLoaiTin();
+        if (data !== null) {
+            setDataGroupMauTin(data);
         }
-        onModal();
     };
-    const handlePageChange = async (event: any, value: number) => {
-        await setCurrentPage(value);
+
+    const editMauTin = async (item: MauTinSMSDto) => {
+        setVisiable(true);
+        setIdMauTin(item.id);
+        setObjMauTin(item);
     };
-    const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
-        await setMaxResultCount(parseInt(event.target.value.toString(), 10));
-        setCurrentPage(1);
+
+    const saveMauTinOK = async (objMauTin: MauTinSMSDto, type: number) => {
+        GetAllMauTinSMS();
+        setVisiable(false);
     };
+
     return (
-        <Box paddingTop={2}>
-            <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} paddingRight={2} pb={2}>
-                <Typography color={'#3D475C'} fontSize={'18px'} fontWeight={700}>
-                    Bản mẫu tin nhắn
-                </Typography>
-                <Button
-                    size="small"
-                    sx={{ height: '40px' }}
-                    variant="contained"
-                    startIcon={<img src={AddIcon} />}
-                    hidden={!abpCustom.isGrandPermission('Pages.Administration')}
-                    onClick={() => {
-                        onCreateOrEditModal('');
-                    }}>
-                    Thêm mới
-                </Button>
-            </Box>
-            <Box bgcolor={'#FFF'}>
-                <List sx={{ padding: '4px 16px 16px 16px' }}>
-                    {data.map((item, key) => (
-                        <ListItemButton
-                            key={key}
-                            divider
-                            onClick={() => {
-                                setSelectedRowId(item.id);
-                            }}
-                            onDoubleClick={() => {
-                                onCreateOrEditModal(item.id);
-                            }}>
-                            <ListItemText
-                                primary={
-                                    <Typography fontSize={'16px'} color={'#525F7A'} fontWeight={500}>
-                                        {item.tenMauTin}
-                                    </Typography>
-                                }
-                                secondary={
-                                    <Box display={'flex'} justifyContent={'start'} alignItems={'center'}>
-                                        <Chip
-                                            label={
-                                                <Typography fontSize={'12px'} color={'#525F7A'} fontWeight={400}>
-                                                    {(() => {
-                                                        switch (item.idLoaiTin) {
-                                                            case 1:
-                                                                return 'Tin thường';
-                                                            case 2:
-                                                                return 'Sinh nhật';
-                                                            case 3:
-                                                                return 'Lịch hẹn';
-                                                            case 4:
-                                                                return 'Đánh giá';
-                                                            default:
-                                                                return 'Tin thường';
-                                                        }
-                                                    })()}
-                                                </Typography>
-                                            }
-                                            sx={{ marginRight: '10px' }}
-                                        />
-                                        <Typography fontSize={'14px'} color={'#525F7A'} fontWeight={400}>
-                                            {item.noiDungTinMau}
-                                        </Typography>
-                                    </Box>
-                                }
-                            />
-                        </ListItemButton>
-                    ))}
-                </List>
-                <CustomTablePagination
-                    currentPage={currentPage}
-                    rowPerPage={maxResultCount}
-                    totalPage={totalPage}
-                    totalRecord={totalCount}
-                    handlePerPageChange={handlePerPageChange}
-                    handlePageChange={handlePageChange}
-                />
-            </Box>
-            <CreateOrEditMauTinNhanModal
+        <>
+            <ModalSmsTemplate
                 visiable={visiable}
-                formRef={formRef}
-                onCancel={() => {
-                    setVisiable(!visiable);
-                }}
-                onOk={() => {
-                    getData();
-                    setVisiable(!visiable);
-                }}
+                idMauTin={idMauTin}
+                objMauTinOld={objMauTin}
+                onCancel={() => setVisiable(false)}
+                onOK={saveMauTinOK}
             />
-        </Box>
+
+            <Box paddingTop={2}>
+                <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'} paddingRight={2} pb={2}>
+                    <Typography color={'#3D475C'} fontSize={'18px'} fontWeight={700}>
+                        Bản mẫu tin nhắn
+                    </Typography>
+                    <Button
+                        size="small"
+                        sx={{ height: '40px' }}
+                        variant="contained"
+                        startIcon={<img src={AddIcon} />}
+                        onClick={() => {
+                            setVisiable(true);
+                            setIdMauTin('');
+                        }}>
+                        Thêm mới
+                    </Button>
+                </Box>
+                <Box bgcolor={'#FFF'}>
+                    <Box padding={'16px 16px 16px 32px'}>
+                        {dataGroupMauTin?.map((item, key) => (
+                            <Stack paddingBottom={2}>
+                                <Stack spacing={1.5}>
+                                    <Typography fontSize={'16px'} color={'#525F7A'} fontWeight={600}>
+                                        {item?.loaiTin}
+                                    </Typography>
+                                    {item?.lstDetail?.map((detail, index2) => (
+                                        <Stack spacing={1} direction={'row'} alignItems={'center'}>
+                                            <Chip
+                                                label={
+                                                    <Typography fontSize={'12px'} color={'#525F7A'} fontWeight={400}>
+                                                        {detail?.tenMauTin}
+                                                    </Typography>
+                                                }
+                                                sx={{ marginRight: '10px' }}
+                                                onClick={() => editMauTin(detail)}
+                                            />
+                                            <Typography
+                                                key={index2}
+                                                variant={'body2'}
+                                                fontWeight={400}
+                                                color={'#525F7A'}>
+                                                {detail?.noiDungTinMau}
+                                            </Typography>
+                                        </Stack>
+                                    ))}
+                                </Stack>
+                            </Stack>
+                        ))}
+                    </Box>
+                </Box>
+            </Box>
+        </>
     );
 };
 export default MauTinNhan;
