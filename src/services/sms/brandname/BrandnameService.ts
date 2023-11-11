@@ -1,5 +1,6 @@
 import utils from '../../../utils/utils';
 import { PagedRequestDto } from '../../dto/pagedRequestDto';
+import { PagedResultDto } from '../../dto/pagedResultDto';
 import http from '../../httpService';
 import { BrandnameDto } from './BrandnameDto';
 
@@ -20,8 +21,8 @@ class BrandnameService {
         const result = await http.get(`api/services/app/Brandname/GetInforBrandnamebyID?id=${id}`);
         return result.data.result;
     };
-    GetListBandname = async (params: PagedRequestDto) => {
-        const result = await http.post(`api/services/app/Brandname/GetListBandname`, params);
+    GetListBandname = async (params: PagedRequestDto, tenantId = 1): Promise<PagedResultDto<BrandnameDto>> => {
+        const result = await http.post(`api/services/app/Brandname/GetListBandname?tenantId=${tenantId}`, params);
         return result.data.result;
     };
     CreateBrandname = async (input: BrandnameDto) => {

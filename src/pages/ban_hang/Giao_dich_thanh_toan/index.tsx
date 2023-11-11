@@ -43,6 +43,7 @@ import ConfirmDelete from '../../../components/AlertDialog/ConfirmDelete';
 import { PropConfirmOKCancel } from '../../../utils/PropParentToChild';
 import DataMauIn from '../../admin/settings/mau_in/DataMauIn';
 import { KhachHangItemDto } from '../../../services/khach-hang/dto/KhachHangItemDto';
+import DateFilterCustom from '../../../components/DatetimePicker/DateFilterCustom';
 
 const GiaoDichThanhToan: React.FC = () => {
     const today = new Date();
@@ -283,6 +284,15 @@ const GiaoDichThanhToan: React.FC = () => {
             })
         });
     };
+
+    const [anchorDateEl, setAnchorDateEl] = useState<HTMLButtonElement | null>(null);
+    const openDateFilter = Boolean(anchorDateEl);
+
+    const onApplyFilterDate = async (from: string, to: string, txtShow: string) => {
+        setAnchorDateEl(null);
+        setParamSearch({ ...paramSearch, fromDate: from, toDate: to });
+    };
+
     const columns: GridColDef[] = [
         {
             field: 'maHoaDon',
@@ -491,69 +501,30 @@ const GiaoDichThanhToan: React.FC = () => {
                                 gap: '8px',
                                 justifyContent: { lg: 'end' }
                             }}>
-                            <Box
+                            <Button
+                                variant="outlined"
+                                size="small"
                                 sx={{
-                                    display: 'flex',
-                                    bgcolor: '#fff',
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        border: 'none!important'
-                                    },
-                                    '& input': {
-                                        padding: '0!important'
-                                    },
-                                    border: '1px solid #CDC9CD',
-                                    padding: '7px 16px',
-                                    borderRadius: '4px',
-                                    transition: '.4s',
-                                    maxWidth: '300px',
-                                    '&:hover': {
-                                        borderColor: 'var(--color-main)'
-                                    },
-                                    '& .MuiOutlinedInput-root': {
-                                        pr: '0'
-                                    },
-                                    '& button': {
-                                        // position: 'absolute',
-                                        // height: '100%',
-                                        // width: '100%',
-                                        // left: '0',
-                                        // top: '0',
-                                        // borderRadius: '0',
-                                        // bgcolor: 'unset!important',
-                                        // opacity: '0'
-                                        padding: '0',
-                                        margin: '0'
-                                    },
-                                    '&  .MuiOutlinedInput-root': {
-                                        display: 'flex',
-                                        flexDirection: 'row-reverse',
-                                        gap: '10px'
-                                    },
-                                    '& .date2 input': {
-                                        textAlign: 'right'
-                                    },
-                                    '& .MuiFormControl-root': {
-                                        width: 'unset'
-                                    }
-                                }}>
-                                <Box>
-                                    <DatePickerCustom
-                                        defaultVal={paramSearch.fromDate}
-                                        handleChangeDate={(newVal: string) =>
-                                            setParamSearch({ ...paramSearch, fromDate: newVal })
-                                        }
-                                    />
-                                </Box>
-                                <Box sx={{ textAlign: 'center', flexBasis: '30%' }}>-</Box>
-                                <Box className="date2">
-                                    <DatePickerCustom
-                                        defaultVal={paramSearch.toDate}
-                                        handleChangeDate={(newVal: string) =>
-                                            setParamSearch({ ...paramSearch, toDate: newVal })
-                                        }
-                                    />
-                                </Box>
-                            </Box>
+                                    backgroundColor: '#fff!important',
+                                    textTransform: 'capitalize',
+                                    fontWeight: '400',
+                                    color: '#666466',
+                                    padding: '10px 16px',
+                                    height: '40px',
+                                    borderRadius: '4px!important'
+                                }}
+                                onClick={(event) => setAnchorDateEl(event.currentTarget)}>
+                                {format(new Date(paramSearch?.fromDate ?? new Date()), 'dd/MM/yyyy')} {' - '}
+                                {format(new Date(paramSearch?.toDate ?? new Date()), 'dd/MM/yyyy')}
+                            </Button>
+                            <DateFilterCustom
+                                id="popover-date-filter"
+                                open={openDateFilter}
+                                anchorEl={anchorDateEl}
+                                onClose={() => setAnchorDateEl(null)}
+                                onApplyDate={onApplyFilterDate}
+                            />
+
                             <Button
                                 variant="outlined"
                                 onClick={exportToExcel}

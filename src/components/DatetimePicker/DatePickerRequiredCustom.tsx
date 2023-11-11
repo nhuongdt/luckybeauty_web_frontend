@@ -41,9 +41,9 @@ export default function DatePickerRequireCustom({ defaultVal, handleChangeDate, 
                     label={props?.label}
                     slotProps={{
                         textField: {
-                            size: props.size,
-                            error: props.error,
-                            helperText: props.helperText,
+                            size: props?.size,
+                            error: props?.error,
+                            helperText: props?.helperText,
                             InputProps: {
                                 startAdornment: (
                                     <React.Fragment>

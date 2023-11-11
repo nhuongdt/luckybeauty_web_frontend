@@ -11,7 +11,7 @@ import {
     Typography
 } from '@mui/material';
 import AddIcon from '../../../images/add.svg';
-import CreateOrEditMauTinNhanModal from './components/create_or_edit_tin_nhan_template_modal';
+import CreateOrEditMauTinNhanModal from './components/modal_sms_template';
 import { useEffect, useState } from 'react';
 import abpCustom from '../../../components/abp-custom';
 import { SMSTempalteViewDto } from '../../../services/sms/template/dto/SMSTemplateVIewDto';

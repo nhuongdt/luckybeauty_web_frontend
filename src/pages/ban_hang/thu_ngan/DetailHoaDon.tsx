@@ -237,7 +237,7 @@ const DetailHoaDon = ({
             setLstQuyCT(() => [
                 new QuyChiTietDto({
                     tienThu: khachPhaiTra,
-                    hinhThucThanhToan: item.value
+                    hinhThucThanhToan: item.value as number
                 })
             ]);
         } else {

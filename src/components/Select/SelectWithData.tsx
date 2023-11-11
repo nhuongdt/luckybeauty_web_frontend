@@ -1,7 +1,7 @@
 import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { ISelect } from '../../lib/appconst';
 export default function SelectWithData({ idChosed, data, handleChange, label }: any) {
-    const changeItem = (item: any) => {
+    const changeItem = (item: ISelect) => {
         handleChange(item);
     };
     return (
@@ -14,7 +14,7 @@ export default function SelectWithData({ idChosed, data, handleChange, label }: 
                     {label}
                 </InputLabel>
                 <Select value={idChosed} label={label}>
-                    {data.map((item: any, index: number) => (
+                    {data?.map((item: ISelect, index: number) => (
                         <MenuItem key={index} value={item.value} onClick={() => changeItem(item)}>
                             {item.text}
                         </MenuItem>

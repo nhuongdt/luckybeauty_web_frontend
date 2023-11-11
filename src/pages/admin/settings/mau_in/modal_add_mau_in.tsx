@@ -19,7 +19,7 @@ import CustomCkeditor from '../../../../components/ckeditor/CustomCkeditor';
 import MauInServices from '../../../../services/mau_in/MauInServices';
 import DataMauIn from './DataMauIn';
 import utils from '../../../../utils/utils';
-import SelectMauIn from '../../../../components/Menu/SelectMauIn';
+import SelectMauIn from '../../../../components/Select/SelectMauIn';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
 import { PropConfirmOKCancel } from '../../../../utils/PropParentToChild';
 import ConfirmDelete from '../../../../components/AlertDialog/ConfirmDelete';

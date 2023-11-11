@@ -11,14 +11,13 @@ import { ChiNhanhDto } from '../../../../services/chi_nhanh/Dto/chiNhanhDto';
 import { KhachHangItemDto } from '../../../../services/khach-hang/dto/KhachHangItemDto';
 import logoChiNhanh from '../../../../images/Lucky_beauty.jpg';
 
-import SelectWithData from '../../../../components/Menu/SelectWithData';
 import { MauInDto } from '../../../../services/mau_in/MauInDto';
 import AppConsts, { ISelect } from '../../../../lib/appconst';
 import ModalAddMauIn from './modal_add_mau_in';
 import utils from '../../../../utils/utils';
 import { AppContext } from '../../../../services/chi_nhanh/ChiNhanhContext';
 import DataMauIn from './DataMauIn';
-import SelectMauIn from '../../../../components/Menu/SelectMauIn';
+import SelectMauIn from '../../../../components/Select/SelectMauIn';
 import { number } from 'yup';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 
