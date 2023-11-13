@@ -60,7 +60,7 @@ const DateTimeFilterCustom = ({
                 vertical: 'bottom',
                 horizontal: 'left'
             }}>
-            <div style={{ width: '690px' }}>
+            <div style={{ maxWidth: '690px' }}>
                 <Grid container spacing={2} padding={'16px'}>
                     <Grid item xs={3}>
                         <Box display={'flex'} flexDirection={'column'} borderRight={'1px solid #EEF0F4'}>
@@ -242,13 +242,13 @@ const DateTimeFilterCustom = ({
                                     <DateCalendar
                                         value={timeFrom}
                                         sx={{
-                                            width: '240px',
+                                            maxWidth: '240px',
                                             '& .MuiPickersCalendarHeader-label': {
                                                 fontSize: '13px'
                                             },
                                             '& .MuiPickersDay-root': {
-                                                width: '32px',
-                                                height: '32px'
+                                                maxWidth: '32px',
+                                                maxHeight: '32px'
                                             }
                                         }}
                                         onChange={(value) => {
@@ -321,13 +321,13 @@ const DateTimeFilterCustom = ({
                                     <DateCalendar
                                         value={timeTo}
                                         sx={{
-                                            width: '240px',
+                                            maxWidth: '240px',
                                             '& .MuiPickersCalendarHeader-label': {
                                                 fontSize: '13px'
                                             },
                                             '& .MuiPickersDay-root': {
-                                                width: '32px',
-                                                height: '32px'
+                                                maxWidth: '32px',
+                                                maxHeight: '32px'
                                             }
                                         }}
                                         disabled={disableSelectDate}

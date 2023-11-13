@@ -15,7 +15,7 @@ const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) =>
             }}>
             <DialogTitle>
                 <Stack direction="row" spacing={2} justifyContent="space-between">
-                    <Typography variant="h6" component="h6" style={{ color: 'blue' }}>
+                    <Typography color={'#3D475C'} fontSize={'18px'} fontWeight={700}>
                         {title != '' ? title : 'Thông báo xóa'}
                     </Typography>
                     <CloseOutlinedIcon sx={{ height: '24px' }} onClick={onCancel} />
@@ -23,15 +23,32 @@ const ConfirmDelete = ({ isShow, onOk, onCancel, title = '', mes = '' }: any) =>
             </DialogTitle>
             <DialogContent>
                 <Stack direction="column">
-                    <Typography variant="subtitle1" component="h2">
+                    <Typography color="#679" fontSize={'14px'} fontWeight={400}>
                         {mes != '' ? mes : 'Bạn có chắc chắn muốn xóa bản ghi này không?'}
                     </Typography>
                     <Stack mt={3} direction="row" justifyContent="flex-end" alignItems="center" spacing={2}>
-                        <Button variant="contained" color="error" onClick={onCancel}>
+                        <Button
+                            variant="outlined"
+                            onClick={onCancel}
+                            sx={{
+                                fontSize: '14px',
+                                textTransform: 'unset',
+                                color: '#666466'
+                            }}
+                            className="btn-outline-hover">
                             Bỏ qua
                         </Button>
-                        <Button variant="contained" onClick={onOk}>
-                            Đồng ý
+                        <Button
+                            sx={{
+                                background: '#F1416C',
+                                color: '#EEF0F4',
+                                '&:hover': {
+                                    background: '#FF316A',
+                                    color: '#FFF'
+                                }
+                            }}
+                            onClick={onOk}>
+                            Xóa
                         </Button>
                     </Stack>
                 </Stack>

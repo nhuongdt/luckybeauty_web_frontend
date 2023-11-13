@@ -15,6 +15,9 @@ import CustomTablePagination from '../../components/Pagination/CustomTablePagina
 import { TextTranslate } from '../../components/TableLanguage';
 import axios from 'axios';
 import { AppContext } from '../../services/chi_nhanh/ChiNhanhContext';
+import ConfirmDelete from '../../components/AlertDialog/ConfirmDelete';
+import { enqueueSnackbar } from 'notistack';
+import abpCustom from '../../components/abp-custom';
 const TaiKhoanNganHangPage = () => {
     const [filter, setFilter] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -35,8 +38,10 @@ const TaiKhoanNganHangPage = () => {
         soTaiKhoan: '',
         tenChuThe: '',
         ghiChu: '',
-        trangThai: 1
+        trangThai: 1,
+        isDefault: false
     });
+    const [isShowConfirmDelete, setIsShowConfirmDelete] = useState(false);
     const [dataRow, setDataRow] = useState<TaiKhoanNganHangDto[]>([]);
     useEffect(() => {
         suggestData();
@@ -65,6 +70,22 @@ const TaiKhoanNganHangPage = () => {
         await getData();
         onModal();
     };
+    const onConfirmDelete = () => {
+        setIsShowConfirmDelete(!isShowConfirmDelete);
+    };
+    const deleteRow = async (id: string) => {
+        const deleteReult = await taiKhoanNganHangService.delete(id);
+        enqueueSnackbar(deleteReult.message, {
+            variant: deleteReult.status,
+            autoHideDuration: 3000
+        });
+        await getData();
+        onConfirmDelete();
+    };
+    const onOkDelete = () => {
+        deleteRow(selectedRowId ?? AppConsts.guidEmpty);
+        handleCloseMenu();
+    };
     const onCreateOrEditModal = async (id: string) => {
         if (id != '') {
             const data = await taiKhoanNganHangService.getForEdit(id);
@@ -77,7 +98,8 @@ const TaiKhoanNganHangPage = () => {
                 soTaiKhoan: '',
                 tenChuThe: '',
                 ghiChu: '',
-                trangThai: 1
+                trangThai: 1,
+                isDefault: false
             });
         }
         onModal();
@@ -105,31 +127,6 @@ const TaiKhoanNganHangPage = () => {
     const handlePerPageChange = async (event: SelectChangeEvent<number>) => {
         await setMaxResultCount(parseInt(event.target.value.toString(), 10));
         setCurrentPage(1);
-    };
-    useEffect(() => {
-        genarateQrCode();
-    }, []);
-    const [qrCode, setQRCode] = useState('');
-    const genarateQrCode = async () => {
-        const result = await axios.post(
-            'https://api.vietqr.io/v2/generate',
-            {
-                accountNo: '0348016447',
-                accountName: 'LUONG DUC MANH',
-                acqId: '970422',
-                addInfo: 'Check',
-                amount: 1000,
-                template: 'qr_only'
-            },
-            {
-                headers: {
-                    'x-client-id': process.env.CLIENT_ID_VIET_QR,
-                    'x-api-key': process.env.API_KEY_VIET_QR,
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-        setQRCode(result.data.data.qrDataURL);
     };
     const columns: GridColDef[] = [
         {
@@ -298,7 +295,7 @@ const TaiKhoanNganHangPage = () => {
                     aria-label="Actions"
                     aria-controls={`actions-menu-${params.row.id}`}
                     aria-haspopup="true"
-                    onClick={(event: any) => {
+                    onClick={(event) => {
                         handleOpenMenu(event, params.row.id);
                     }}>
                     <MoreHorizIcon />
@@ -324,6 +321,7 @@ const TaiKhoanNganHangPage = () => {
                         borderRadius: '4px!important',
                         backgroundColor: 'var(--color-main)!important'
                     }}
+                    hidden={!abpCustom.isGrandPermission('Pages.Administration')}
                     className="btn-container-hover"
                     onClick={() => {
                         onCreateOrEditModal('');
@@ -339,13 +337,11 @@ const TaiKhoanNganHangPage = () => {
                 anchorEl={anchorEl}
                 closeMenu={handleCloseMenu}
                 handleView={handleEdit}
-                permissionView="Pages"
+                permissionView="Pages.Administration"
                 handleEdit={handleEdit}
-                permissionEdit="Pages"
-                handleDelete={() => {
-                    console.log('delete');
-                }}
-                permissionDelete="Pages"
+                permissionEdit="Pages.Administration"
+                handleDelete={onConfirmDelete}
+                permissionDelete="Pages.Administration"
             />
             <CustomTablePagination
                 currentPage={currentPage}
@@ -361,6 +357,7 @@ const TaiKhoanNganHangPage = () => {
                 visiable={isShowModal}
                 formRef={formRef}
             />
+            <ConfirmDelete isShow={isShowConfirmDelete} onOk={onOkDelete} onCancel={onConfirmDelete}></ConfirmDelete>
         </Box>
     );
 };

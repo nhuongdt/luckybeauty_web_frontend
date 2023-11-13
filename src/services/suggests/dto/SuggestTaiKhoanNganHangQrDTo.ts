@@ -4,4 +4,5 @@ export interface SuggestTaiKhoanNganHangQrDto {
     tenTaiKhoan: string;
     bin: string;
     tenRutGon: string;
+    isDefault?: boolean;
 }

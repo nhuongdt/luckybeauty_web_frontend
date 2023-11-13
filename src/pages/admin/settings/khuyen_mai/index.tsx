@@ -439,7 +439,14 @@ const KhuyenMaiPage: React.FC = () => {
                 handlePerPageChange={handlePerPageChange}
                 handlePageChange={handlePageChange}
             />
-            <CreateOrEditVoucher visiable={isShowCreate} handleClose={Modal} />
+            <CreateOrEditVoucher
+                visiable={isShowCreate}
+                handleClose={Modal}
+                onOk={async () => {
+                    Modal();
+                    await getAll();
+                }}
+            />
         </Box>
     );
 };
