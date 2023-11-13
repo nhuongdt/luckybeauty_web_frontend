@@ -231,7 +231,7 @@ class SettingPages extends Component {
                                     <Divider />
                                     <ListItem
                                         component={Link as React.ElementType}
-                                        to={'/settings/mau-tin-nhan'}
+                                        to={'/settings/nhac_nho_tu_dong'}
                                         secondaryAction={
                                             <IconButton>
                                                 <ArrowRightIcon />

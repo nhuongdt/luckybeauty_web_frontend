@@ -88,7 +88,7 @@ const SettingRoutes: RouteProps[] = [
         component: LoadableComponent(() => import('../../../pages/admin/settings/khuyen_mai'))
     },
     {
-        path: '/settings/mau-tin-nhan',
+        path: '/settings/nhac_nho_tu_dong',
         permission: 'Pages',
         title: 'Email',
         name: 'email',
@@ -97,7 +97,7 @@ const SettingRoutes: RouteProps[] = [
         showInMenu: false,
         isLayout: false,
         children: [],
-        component: LoadableComponent(() => import('../../../pages/sms/mau_tin_nhan'))
+        component: LoadableComponent(() => import('../../../pages/admin/settings/nhac_nho_tu_dong'))
     },
     {
         path: '/settings/email',
