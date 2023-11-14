@@ -49,6 +49,14 @@ export const TypeAction = {
     DELETE: 3
 };
 
+export const TimeType = {
+    SECOND: 1,
+    MINUTES: 2,
+    HOUR: 3,
+    DAY: 4,
+    MONTH: 5
+};
+
 const AppConsts = {
     userManagement: {
         defaultAdminUserName: 'admin'
@@ -66,6 +74,30 @@ const AppConsts = {
         { value: 10, text: '10/ trang' },
         { value: 20, text: '20/ trang' }
     ],
+
+    TimeType: {
+        HOUR: 'HOUR',
+        MINUTES: 'MINUTES',
+        SECOND: 'SECOND'
+    },
+    ListTimeType: [
+        { value: TimeType.SECOND, text: 'Giây' },
+        { value: TimeType.MINUTES, text: 'Phút' },
+        { value: TimeType.HOUR, text: 'Giờ' },
+        { value: TimeType.DAY, text: 'Ngày' },
+        { value: TimeType.MONTH, text: 'Tháng' }
+    ] as ISelect[],
+    DanhSachBienSMS: [
+        { value: '{TenKhachHang}', text: 'Tên khách hàng' },
+        { value: '{BookingDate}', text: 'Ngày hẹn' },
+        { value: '{ThoiGianHen}', text: 'Thời gian hẹn' },
+        { value: '{MaHoaDon}', text: 'Mã giao dịch' },
+        { value: '{NgayLapHoaDon}', text: 'Ngày giao dịch' },
+        { value: '{TenHangHoa}', text: 'Dịch vụ hẹn' },
+        { value: '{TenCuaHang}', text: 'Tên cửa hàng' },
+        { value: '{SDTCuaHang}', text: 'Số điện thoại của hàng' }
+    ] as ISelect[],
+
     smsLoaiTin: [
         { value: LoaiTin.TIN_THUONG, text: 'Tin thường' },
         { value: LoaiTin.TIN_SINH_NHAT, text: 'Tin sinh nhật' },
