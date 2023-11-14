@@ -84,14 +84,14 @@ export class ResultESMSDto {
 export class CustomerSMSDto extends CustomerBasicDto {
     ngaySinh?: Date | null;
 
-    maHoaDon?: Date | null;
+    maHoaDon?: string | null;
     ngayLapHoaDon?: Date | null;
 
-    tenDichVu?: Date | null;
+    tenDichVu?: string | null;
     bookingDate?: Date | null;
     thoiGianHen?: string;
 
-    sTrangThaiGuiTinNhan = '';
+    sTrangThaiGuiTinNhan? = '';
 
     constructor({ id = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
         super({ id: id, maKhachHang: maKhachHang, tenKhachHang: tenKhachHang, soDienThoai: soDienThoai });
