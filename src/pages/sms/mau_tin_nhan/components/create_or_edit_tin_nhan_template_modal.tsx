@@ -17,10 +17,10 @@ import {
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import AppConsts from '../../../../lib/appconst';
-import closeIcon from '../../../../images/close-square.svg';
 import { CreateOrEditSMSTemplateDto } from '../../../../services/sms/template/dto/CreateOrEditSMSTemplateDto';
 import smsTemplateService from '../../../../services/sms/template/smsTemplateService';
 import { enqueueSnackbar } from 'notistack';
+import React from 'react';
 const CreateOrEditMauTinNhanModal = ({ visiable, onCancel, formRef, onOk }: any) => {
     const initValues = formRef as CreateOrEditSMSTemplateDto;
     const rules = Yup.object().shape({
@@ -41,9 +41,7 @@ const CreateOrEditMauTinNhanModal = ({ visiable, onCancel, formRef, onOk }: any)
                             '&:hover img': {
                                 filter: 'brightness(0) saturate(100%) invert(36%) sepia(74%) saturate(1465%) hue-rotate(318deg) brightness(94%) contrast(100%)'
                             }
-                        }}>
-                        <img src={closeIcon} />
-                    </Button>
+                        }}></Button>
                 </Box>
             </DialogTitle>
             <DialogContent>
