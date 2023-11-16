@@ -18,7 +18,7 @@ import {
 import { Form, Formik } from 'formik';
 import AppConsts, { ISelect, LoaiTin, TypeAction, TimeType } from '../../../../lib/appconst';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import * as yup from 'yup';
 import utils from '../../../../utils/utils';
 import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
@@ -32,7 +32,7 @@ import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
 import { IDataAutocomplete } from '../../../../services/dto/IDataAutocomplete';
 import { ExpandMoreOutlined } from '@mui/icons-material';
 
-const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSetup, objSetupOld, onOK }: any) => {
+const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSetup, onOK }: any) => {
     const [objSetup, setObjSetup] = useState<CaiDatNhacNhoDto>(
         new CaiDatNhacNhoDto({ id: '', trangThai: 1, noiDungTin: '' })
     );
@@ -42,7 +42,7 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
 
     useEffect(() => {
         if (visiable) {
-            if (utils.checkNull(idSetup)) {
+            if (utils.checkNull(idSetup) || idSetup === Guid.EMPTY) {
                 switch (idLoaiTin) {
                     case LoaiTin.TIN_SINH_NHAT:
                     case LoaiTin.TIN_GIAO_DICH:
@@ -57,15 +57,7 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                         break;
                 }
             } else {
-                setObjSetup({
-                    id: idSetup,
-                    idLoaiTin: idLoaiTin,
-                    idMauTin: objSetupOld.idMauTin,
-                    nhacTruocKhoangThoiGian: objSetupOld.nhacTruocKhoangThoiGian,
-                    loaiThoiGian: objSetupOld.loaiThoiGian,
-                    noiDungTin: objSetupOld.noiDungTin,
-                    trangThai: objSetupOld.trangThai
-                });
+                GetInforCaiDatNhacNho_byId(idSetup);
             }
             switch (idLoaiTin) {
                 case LoaiTin.TIN_SINH_NHAT:
@@ -87,21 +79,36 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
         }
     }, [visiable]);
 
-    const noiDungXemTruoc = CaiDatNhacNhoService.ReplaceBienSMS(objSetup.noiDungTin as string);
+    const GetInforCaiDatNhacNho_byId = async (idSetup: string) => {
+        const data = await CaiDatNhacNhoService.GetInforCaiDatNhacNho_byId(idSetup);
+        if (data != null) {
+            setObjSetup({
+                id: idSetup,
+                idLoaiTin: idLoaiTin,
+                idMauTin: data.idMauTin,
+                nhacTruocKhoangThoiGian: data.nhacTruocKhoangThoiGian,
+                loaiThoiGian: data.loaiThoiGian,
+                noiDungTin: data.noiDungTin,
+                trangThai: data.trangThai,
+                noiDungXemTruoc: CaiDatNhacNhoService.ReplaceBienSMS(data.noiDungTin as string)
+            });
+        }
+        return data;
+    };
 
     const rules = yup.object().shape({
         noiDungTin: yup.string().required('Vui lòng nhập nội dung tin')
     });
 
     const saveCaiDatNhacNho = async (params: CaiDatNhacNhoDto) => {
-        if (utils.checkNull(params.id)) {
+        if (utils.checkNull(params.id) || params.id === Guid.EMPTY) {
             params.id = Guid.EMPTY;
             const data = await CaiDatNhacNhoService.CreateCaiDatNhacNho(params);
             params.id = data.id;
             onOK(params, TypeAction.INSEART);
             setObjAlert({ ...objAlert, show: true, mes: 'Thêm mới mẫu tin thành công' });
         } else {
-            await CaiDatNhacNhoService.CreateCaiDatNhacNho(params);
+            await CaiDatNhacNhoService.UpdateCaiDatNhacNho(params);
             onOK(params, TypeAction.UPDATE);
             setObjAlert({ ...objAlert, show: true, mes: 'Cập nhật mẫu tin thành công' });
         }
@@ -244,7 +251,12 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                                                                     item.value.toString()
                                                                 );
                                                                 setFieldValue('noiDungTin', content);
-                                                                setObjSetup({ ...objSetup, noiDungTin: content });
+                                                                setFieldValue(
+                                                                    'noiDungXemTruoc',
+                                                                    CaiDatNhacNhoService.ReplaceBienSMS(
+                                                                        content as string
+                                                                    )
+                                                                );
                                                                 setExpandAction(false);
                                                             }}>
                                                             <Typography variant="subtitle2" marginLeft={1}>
@@ -273,7 +285,7 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                                                     alignItems: 'center'
                                                 }}>
                                                 <Typography fontSize={14} padding={1}>
-                                                    {noiDungXemTruoc}
+                                                    {values?.noiDungXemTruoc}
                                                 </Typography>
                                             </Stack>
                                         </Stack>

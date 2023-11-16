@@ -90,7 +90,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
 
     const [isShowModalSetup, setIsShowModalSetup] = useState(false);
     const [idLoaiTin, setIdLoaiTin] = useState(0);
-    const [objSetupOld, setObjSetupOld] = useState<CaiDatNhacNhoDto>({} as CaiDatNhacNhoDto);
+    const [idSetup, setIdSetup] = useState('');
     const [lstAllMauTinSMS, setLstAllMauTinSMS] = useState<MauTinSMSDto[]>([]);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
@@ -147,9 +147,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
     const showModalSetup = (item: ICaiDatNhacNho) => {
         setIsShowModalSetup(true);
         setIdLoaiTin(item.type);
-        if (item.id !== Guid.EMPTY) {
-            setObjSetupOld({ ...objSetupOld, id: item.id, idLoaiTin: item.type, trangThai: item.trangThai });
-        }
+        setIdSetup(item.id);
     };
 
     const saveDataSetup = async (item: ICaiDatNhacNho, trangThai = 0): Promise<string> => {
@@ -202,6 +200,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 }
             })
         );
+        setIsShowModalSetup(false);
     };
 
     const saveCaiDatNhacNhoChiTiet = async (
@@ -230,7 +229,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 if (o.type === itemSetup.type) {
                     return {
                         ...o,
-                        id: idSetup, // !important: again idnew for parent
+                        id: idSetup, // !important: assign again idnew for parent
                         listButton: o.listButton?.map((xx: IButtonCaiDatNhacNho) => {
                             if (xx.value === itemHinhThuc.value) {
                                 return { ...xx, id: dataDetail.id, trangThai: trangThaiNew }; // assign again id for detail
@@ -257,6 +256,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 onCancel={() => setIsShowModalSetup(false)}
                 lstMauTinSMS={lstAllMauTinSMS}
                 idLoaiTin={idLoaiTin}
+                idSetup={idSetup}
                 onOK={saveCaiDatOK}
             />
             <SnackbarAlert
@@ -265,6 +265,11 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 title={objAlert.mes}
                 handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid container spacing={3} paddingTop={2}>
+                <Grid item xs={12}>
+                    <Typography fontSize={18} fontWeight={600}>
+                        Tin nhắn tự động
+                    </Typography>
+                </Grid>
                 {arrSetup?.map((item: ICaiDatNhacNho, index) => (
                     <Grid item xs={4} key={index}>
                         <Stack
@@ -294,19 +299,20 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                                 {item.listButton?.map((itemButton: IButtonCaiDatNhacNho, indexButton) => (
                                     <div key={indexButton}>
                                         {itemButton?.text == '' ? (
-                                            <Button
-                                                variant="outlined"
-                                                sx={{
-                                                    border: '1px solid #ccc',
-                                                    bgcolor: '#fff',
-                                                    minWidth: 'unset',
-                                                    width: '36.5px',
-                                                    height: '36.5px',
-                                                    borderRadius: '4px'
-                                                }}>
-                                                <DeleteOutlinedIcon sx={{ color: '#cccc' }} />
-                                            </Button>
+                                            <div></div>
                                         ) : (
+                                            // <Button
+                                            //     variant="outlined"
+                                            //     sx={{
+                                            //         border: '1px solid #ccc',
+                                            //         bgcolor: '#fff',
+                                            //         minWidth: 'unset',
+                                            //         width: '36.5px',
+                                            //         height: '36.5px',
+                                            //         borderRadius: '4px'
+                                            //     }}>
+                                            //     <DeleteOutlinedIcon sx={{ color: '#cccc' }} />
+                                            // </Button>
                                             <Button
                                                 variant="outlined"
                                                 onClick={() =>
