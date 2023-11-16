@@ -9,6 +9,7 @@ export class CaiDatNhacNhoDto {
     loaiThoiGian = 0;
     trangThai = 1;
 
+    noiDungXemTruoc = '';
     caiDatNhacNhoChiTiets?: CaiDatNhacNhoChiTietDto[] = [];
 
     constructor({
@@ -29,6 +30,7 @@ export class CaiDatNhacNhoDto {
         this.loaiThoiGian = loaiThoiGian;
         this.trangThai = trangThai;
         this.caiDatNhacNhoChiTiets = caiDatNhacNhoChiTiets;
+        this.noiDungXemTruoc = '';
     }
 }
 

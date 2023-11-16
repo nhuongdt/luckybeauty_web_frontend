@@ -34,7 +34,7 @@ class CaiDatNhacNhoService {
         const xx = await http.get(`api/services/app/CaiDatNhacNho/GetAllCaiDat`);
         return xx.data.result;
     };
-    GetInforCaiDatNhacNho_byId = async (idSetup: string): Promise<CaiDatNhacNhoDto[]> => {
+    GetInforCaiDatNhacNho_byId = async (idSetup: string): Promise<CaiDatNhacNhoDto> => {
         const xx = await http.get(
             `api/services/app/CaiDatNhacNho/GetInforCaiDatNhacNho_byId?idCaiDatNhacNho=${idSetup}`
         );
