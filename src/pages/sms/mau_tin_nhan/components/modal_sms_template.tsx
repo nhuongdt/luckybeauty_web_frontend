@@ -18,7 +18,6 @@ import {
 } from '@mui/material';
 import { Form, Formik } from 'formik';
 import AppConsts, { ISelect, TypeAction } from '../../../../lib/appconst';
-import closeIcon from '../../../../images/close-square.svg';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
 import { useEffect, useState } from 'react';
 import { MauTinSMSDto } from '../../../../services/sms/mau_tin_sms/mau_tin_dto';
@@ -29,10 +28,12 @@ import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 import DialogButtonClose from '../../../../components/Dialog/ButtonClose';
 import { Guid } from 'guid-typescript';
 import SelectWithData from '../../../../components/Select/SelectWithData';
+import { ExpandMoreOutlined } from '@mui/icons-material';
 
 const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: any) => {
     const [objMauTin, setObjMauTin] = useState<MauTinSMSDto>(new MauTinSMSDto({ id: '', trangThai: 1 }));
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
+    const [expandAction, setExpandAction] = useState(false);
 
     useEffect(() => {
         if (visiable) {
@@ -88,7 +89,7 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                         <DialogButtonClose onClose={onCancel}></DialogButtonClose>
                     </Box>
                 </DialogTitle>
-                <DialogContent>
+                <DialogContent sx={{ overflow: 'hidden' }}>
                     <Formik enableReinitialize initialValues={objMauTin} validationSchema={rules} onSubmit={saveMauTin}>
                         {({ values, handleChange, errors, touched, isSubmitting, setFieldValue }) => (
                             <Form>
@@ -147,6 +148,52 @@ const ModalSmsTemplate = ({ visiable, onCancel, idMauTin, objMauTinOld, onOK }: 
                                                 errors.noiDungTinMau && <span>{errors.noiDungTinMau}</span>
                                             }
                                         />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Box sx={{ position: 'relative' }}>
+                                            <Button
+                                                variant="contained"
+                                                endIcon={<ExpandMoreOutlined />}
+                                                onClick={() => setExpandAction(!expandAction)}>
+                                                Chèn
+                                            </Button>
+
+                                            <Box
+                                                sx={{
+                                                    display: expandAction ? '' : 'none',
+                                                    overflow: 'auto',
+                                                    maxHeight: '180px',
+                                                    position: 'absolute',
+                                                    borderRadius: '4px',
+                                                    border: '1px solid #cccc',
+                                                    minWidth: 160,
+                                                    backgroundColor: 'rgba(248,248,248,1)',
+                                                    '& .MuiStack-root .MuiStack-root:hover': {
+                                                        backgroundColor: '#cccc'
+                                                    }
+                                                }}>
+                                                <Stack alignContent={'center'}>
+                                                    {AppConsts.DanhSachBienSMS?.map((item: ISelect, index: number) => (
+                                                        <Stack
+                                                            direction={'row'}
+                                                            key={index}
+                                                            spacing={1}
+                                                            padding={'6px'}
+                                                            onClick={() => {
+                                                                const content = values.noiDungTinMau?.concat(
+                                                                    item.value.toString()
+                                                                );
+                                                                setFieldValue('noiDungTinMau', content);
+                                                                setExpandAction(false);
+                                                            }}>
+                                                            <Typography variant="subtitle2" marginLeft={1}>
+                                                                {item.text}
+                                                            </Typography>
+                                                        </Stack>
+                                                    ))}
+                                                </Stack>
+                                            </Box>
+                                        </Box>
                                     </Grid>
                                     <Grid item xs={12} sm={12} md={12} lg={12}>
                                         <FormGroup>
