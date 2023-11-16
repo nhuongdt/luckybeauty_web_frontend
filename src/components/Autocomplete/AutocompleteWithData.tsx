@@ -46,7 +46,7 @@ export default function AutocompleteWithData({ handleChoseItem, idChosed, lstDat
                                             color: '#acaca5',
                                             fontSize: '12px'
                                         }}>
-                                        {option.text1}
+                                        {option.text2}
                                     </Box>
                                 </Grid>
                             </Grid>
