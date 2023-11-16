@@ -444,6 +444,12 @@ const TinNhanPage = () => {
                 });
                 break;
             case 3:
+            case 4:
+            case 5:
+                setParamSearch({
+                    ...paramSearch,
+                    trangThais: [] // all trangthai
+                });
                 break;
             default:
                 break;
