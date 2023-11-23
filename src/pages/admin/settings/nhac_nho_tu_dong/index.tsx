@@ -6,7 +6,7 @@ import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { IOSSwitch } from '../../../../components/Switch/IOSSwitch';
 import { ReactComponentElement, useEffect, useState } from 'react';
-import { SvgIconComponent } from '@mui/icons-material';
+import { Dataset, SvgIconComponent } from '@mui/icons-material';
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
 import { LoaiTin, TypeAction } from '../../../../lib/appconst';
 import ModalCaiDatNhacNho from './modal_cai_dat_nhac_nho';
@@ -40,7 +40,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
     const lstButton: IButtonCaiDatNhacNho[] = [
         {
             id: Guid.EMPTY,
-            text: '',
+            text: '', // nút xóa
             value: 0,
             trangThai: 0
         },
@@ -150,8 +150,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
         setIdSetup(item.id);
     };
 
-    const saveDataSetup = async (item: ICaiDatNhacNho, trangThai = 0): Promise<string> => {
-        let idSetup = item.id;
+    const saveDataSetup = async (item: ICaiDatNhacNho, trangThai = 0): Promise<CaiDatNhacNhoDto> => {
         if (item.id === Guid.EMPTY) {
             const objSetUp: CaiDatNhacNhoDto = new CaiDatNhacNhoDto({
                 id: Guid.EMPTY,
@@ -163,31 +162,69 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 trangThai: trangThai
             });
             const data = await CaiDatNhacNhoService.CreateCaiDatNhacNho(objSetUp);
-            if (data !== null) {
-                objSetUp.id = data.id;
-                idSetup = data.id;
-                saveCaiDatOK(data, TypeAction.INSEART);
-            }
+            return data;
         } else {
             // get data from DB
             const data = await CaiDatNhacNhoService.CaiDatNhacNho_UpdateTrangThai(item.id, trangThai);
-            if (data != null) {
-                saveCaiDatOK(data, TypeAction.UPDATE);
-            }
+            return data;
         }
-        return idSetup;
     };
 
     const changeTrangThai = async (item: ICaiDatNhacNho, event: React.ChangeEvent<HTMLInputElement>) => {
         const check = event.target.checked;
         const trangThai = check ? 1 : 0;
 
-        await saveDataSetup(item, trangThai);
+        const dataSetup = await saveDataSetup(item, trangThai);
         setObjAlert({
             ...objAlert,
             show: true,
             mes: `Bạn vừa ${trangThai == 1 ? 'kích hoạt' : 'tắt'} tự động gửi tin cho ${item.title}`
         });
+
+        // turn on/off details
+        const idSetup = dataSetup.id;
+        const arrDetail: CaiDatNhacNhoChiTietDto[] = [];
+        if (item.listButton != undefined) {
+            for (let i = 0; i < item.listButton?.length; i++) {
+                const itDetail = item.listButton[i];
+                if (itDetail.value !== 0) {
+                    // = 0: nut xoa
+                    const objDetail = {
+                        id: itDetail.id,
+                        idCaiDatNhacTuDong: idSetup,
+                        hinhThucGui: itDetail.value,
+                        trangThai: trangThai
+                    } as CaiDatNhacNhoChiTietDto;
+
+                    const dataDetail = await CaiDatNhacNhoService.CreateOrUpdateCaiDatNhacNhoChiTiet(
+                        idSetup,
+                        objDetail
+                    );
+                    arrDetail.push(dataDetail);
+                }
+            }
+            setArrSetup(
+                arrSetup?.map((o: ICaiDatNhacNho) => {
+                    if (o.type === item.type) {
+                        return {
+                            ...o,
+                            id: idSetup, // !important: assign again idnew for parent
+                            trangThai: trangThai,
+                            listButton: o.listButton?.map((xx: IButtonCaiDatNhacNho) => {
+                                const ex = arrDetail.filter((x: CaiDatNhacNhoChiTietDto) => x.hinhThucGui == xx.value);
+                                if (ex.length > 0) {
+                                    return { ...xx, id: ex[0].id, trangThai: trangThai };
+                                } else {
+                                    return xx;
+                                }
+                            })
+                        };
+                    } else {
+                        return o;
+                    }
+                })
+            );
+        }
     };
 
     const saveCaiDatOK = (objSetup: CaiDatNhacNhoDto, typeAction: number) => {
@@ -210,10 +247,10 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
     ) => {
         const trangThaiNew = trangthai == 0 ? 1 : 0;
         let idSetup = itemSetup.id;
-        if (itemSetup.id === Guid.EMPTY) {
-            idSetup = await saveDataSetup(itemSetup, itemSetup.trangThai);
+        if (idSetup === Guid.EMPTY) {
+            const dataSetup = await saveDataSetup(itemSetup, itemSetup.trangThai);
+            idSetup = dataSetup.id;
         }
-
         // save detail
         const objDetail = {
             id: itemHinhThuc.id,
@@ -229,7 +266,7 @@ export default function PageCaiDatNhacTuDong({ aa }: any) {
                 if (o.type === itemSetup.type) {
                     return {
                         ...o,
-                        id: idSetup, // !important: assign again idnew for parent
+                        id: idSetup,
                         listButton: o.listButton?.map((xx: IButtonCaiDatNhacNho) => {
                             if (xx.value === itemHinhThuc.value) {
                                 return { ...xx, id: dataDetail.id, trangThai: trangThaiNew }; // assign again id for detail
