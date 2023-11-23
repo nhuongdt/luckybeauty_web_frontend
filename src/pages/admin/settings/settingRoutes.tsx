@@ -52,6 +52,18 @@ const SettingRoutes: RouteProps[] = [
         component: LoadableComponent(() => import('../../../pages/admin/settings/Booking'))
     },
     {
+        path: '/settings/ket-noi-zalo-gmail',
+        permission: 'Pages.CongTy',
+        title: 'Kết nối zalo - gmail',
+        name: 'caidat',
+        icon: <SettingIcon width="20px" />,
+        iconActive: <SetingActive width="20px" />,
+        showInMenu: false,
+        isLayout: false,
+        children: [],
+        component: LoadableComponent(() => import('../../../pages/admin/settings/ket-noi-zalo-gmail/index'))
+    },
+    {
         path: '/settings/hoa-hong',
         permission: 'Pages.CongTy',
         title: 'Hoa hồng',

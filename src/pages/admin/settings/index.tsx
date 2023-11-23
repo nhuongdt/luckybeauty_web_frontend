@@ -100,6 +100,24 @@ class SettingPages extends Component {
                                             Cài đặt booking
                                         </ListItemText>
                                     </ListItem>
+                                    <ListItem
+                                        component={Link as React.ElementType}
+                                        to={'/settings/ket-noi-zalo-gmail'}
+                                        secondaryAction={
+                                            <IconButton>
+                                                <ArrowRightIcon />
+                                            </IconButton>
+                                        }>
+                                        <ListItemText
+                                            sx={{
+                                                color: 'black',
+                                                fontSize: '14px',
+                                                fontWeight: '400',
+                                                fontFamily: 'Roboto'
+                                            }}>
+                                            Kết nối zalo- email
+                                        </ListItemText>
+                                    </ListItem>
                                 </List>
                             </Box>
                         </Grid>
