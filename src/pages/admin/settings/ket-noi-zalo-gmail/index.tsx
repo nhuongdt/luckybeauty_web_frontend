@@ -12,58 +12,95 @@ import ZaloService from '../../../../services/sms/gui_tin_nhan/ZaloService';
 import { useParams } from 'react-router-dom';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import LinkOffOutlinedIcon from '@mui/icons-material/LinkOffOutlined';
-import { InforZOA } from '../../../../services/sms/gui_tin_nhan/zalo_dto';
+import { InforZOA, ZaloAuthorizationDto } from '../../../../services/sms/gui_tin_nhan/zalo_dto';
 import utils from '../../../../utils/utils';
+import { Guid } from 'guid-typescript';
 
 export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     const [tabActive, setTabActive] = useState('2');
     const [openZaloLogin, setOpenZaloLogin] = useState(false);
     const [url, setUrl] = useState('');
-    const [codeVerifier, setCodeVerifier] = useState('');
-    const [codeChallenge, setCodeChallenge] = useState('');
-    const [authenCode, setAuthenCode] = useState<string>('');
     const [inforZOA, setInforZOA] = useState<InforZOA>({} as InforZOA);
+    const [zaloToken, setZaloToken] = useState<ZaloAuthorizationDto>(new ZaloAuthorizationDto({ id: Guid.EMPTY }));
 
     useEffect(() => {
-        GetCodeVerifier();
-        GetAuthenCode();
+        GetTokenfromDB();
     }, []);
 
-    const GetCodeVerifier = async () => {
-        // check exist db or create new
-        const code = ZaloService.CreateCodeVerifier();
-        setCodeVerifier(code);
-        console.log(' setCodeVerifier ', code);
-
-        const code_challenge = await ZaloService.GenerateCodeChallenge(code);
-        setCodeChallenge(code_challenge);
+    const GetTokenfromDB = async () => {
+        const objAuthen = await ZaloService.GetTokenfromDB();
+        if (objAuthen !== null) {
+            setZaloToken(objAuthen);
+            if (utils.checkNull(objAuthen?.accessToken)) {
+                await GetAuthenCode(objAuthen.codeVerifier, objAuthen);
+            } else {
+                const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(objAuthen?.accessToken);
+                setInforZOA(newOA);
+            }
+        }
     };
 
-    const GetAuthenCode = async () => {
+    const CreateConnectZOA = async () => {
+        setOpenZaloLogin(true);
+
+        // save code verifier , code challenge to db
+        const objnew = { ...zaloToken };
+        objnew.codeVerifier = ZaloService.CreateCodeVerifier();
+        objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
+        const data = await ZaloService.InsertCodeVerifier(objnew);
+        console.log('InsertCodeVerifier ', data, 'objnew ', objnew);
+
+        window.open(
+            `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings%2Fket-noi-zalo-gmail&code_challenge=${objnew.codeChallenge}`
+        );
+    };
+
+    const GetAuthenCode = async (codeVerifier: string, zaloToken: ZaloAuthorizationDto) => {
         // check exist db or create new
         const params = new URLSearchParams(window.location.search);
+        console.log('GetAuthenCode', params);
         if (params.size > 0) {
             const authenCode = params.get('code');
             if (authenCode !== null) {
-                setAuthenCode(authenCode); // todo save db
-                console.log('codeVerifier ', codeVerifier);
+                // setAuthenCode(authenCode); // todo save db
                 if (!utils.checkNull(codeVerifier)) {
                     const dataAccessToken = await ZaloService.GetAccessToken_fromAuthorizationCode(
                         authenCode,
                         codeVerifier
                     );
 
+                    // update authenCode if is first connect
+                    const objUpdate = { ...zaloToken };
+                    objUpdate.authorizationCode = authenCode;
+                    objUpdate.accessToken = dataAccessToken?.access_token;
+                    objUpdate.refreshToken = dataAccessToken?.refresh_token;
+                    objUpdate.expiresToken = dataAccessToken?.expires_in;
+                    if (utils.checkNull(zaloToken.refreshToken)) {
+                        setZaloToken({
+                            ...zaloToken,
+                            authorizationCode: authenCode,
+                            accessToken: dataAccessToken?.access_token,
+                            refreshToken: dataAccessToken?.refresh_token,
+                            expiresToken: dataAccessToken?.expires_in
+                        });
+                        await ZaloService.UpdateZaloToken(objUpdate);
+                    }
+
                     if (dataAccessToken != null) {
-                        const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(dataAccessToken.access_token);
+                        const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(dataAccessToken?.access_token);
                         setInforZOA(newOA);
                     }
                 }
             }
+        } else {
+            const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(zaloToken?.accessToken);
+            setInforZOA(newOA);
         }
     };
 
     const onClickXoaKetNoi = () => {
-        setAuthenCode('');
+        // delete in DB
+        setZaloToken({ ...zaloToken, authorizationCode: '' });
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -92,7 +129,7 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
                             </TabList>
                         </Box>
                         <TabPanel value="2">
-                            {!authenCode && (
+                            {!zaloToken?.accessToken && (
                                 <Grid container spacing={3}>
                                     <Grid item xs={5}></Grid>
                                     <Grid item xs={2}>
@@ -102,12 +139,7 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
                                                 variant="contained"
                                                 fullWidth
                                                 sx={{ height: 50, fontSize: '18px', borderRadius: '20px' }}
-                                                onClick={() => {
-                                                    setOpenZaloLogin(true);
-                                                    window.open(
-                                                        `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings%2Fket-noi-zalo-gmail&code_challenge=${codeChallenge}`
-                                                    );
-                                                }}>
+                                                onClick={CreateConnectZOA}>
                                                 Thêm kết nối
                                             </Button>
                                         </Box>
@@ -134,7 +166,7 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
                                 </Grid>
                             )}
 
-                            {authenCode && (
+                            {zaloToken?.accessToken && (
                                 <Grid container>
                                     <Grid item xs={6}>
                                         <Stack direction={'row'} spacing={1} alignItems={'center'}>
@@ -158,6 +190,7 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
                                             spacing={1}
                                             justifyContent={'end'}
                                             alignItems={'center'}>
+                                            <img src={inforZOA?.avatar} width={50} height={50} />
                                             <Typography fontSize={'14px'} fontWeight={600}>
                                                 {inforZOA?.name}
                                             </Typography>
