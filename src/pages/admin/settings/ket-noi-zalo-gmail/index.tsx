@@ -41,6 +41,25 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     };
 
     const CreateConnectZOA = async () => {
+        const objnew = { ...zaloToken };
+        objnew.codeVerifier = ZaloService.CreateCodeVerifier();
+        objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
+        await ZaloService.InsertCodeVerifier(objnew);
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings%2Fket-noi-zalo-gmail&code_challenge=${objnew.codeChallenge}`;
+        iframe.id = 'iframe';
+        iframe.style.position = 'absolute';
+        iframe.style.zIndex = '999';
+        iframe.style.height = '100%';
+        iframe.style.width = '100%';
+        iframe.style.top = '0';
+        iframe.style.backgroundColor = 'white';
+        iframe.style.border = 'none';
+        document.body.prepend(iframe);
+        document.body.style.overflow = 'hidden';
+    };
+
+    const CreateConnectZOA2 = async () => {
         setOpenZaloLogin(true);
 
         // save code verifier , code challenge to db
@@ -101,6 +120,9 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     const onClickXoaKetNoi = () => {
         // delete in DB
         setZaloToken({ ...zaloToken, authorizationCode: '' });
+        // const data = await ZaloService.XoaKetNoi(zaloToken?.id);
+        // if(data=='')
+        // setobj
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {

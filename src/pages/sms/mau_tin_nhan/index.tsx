@@ -54,7 +54,6 @@ const MauTinNhan = () => {
                         startIcon={<img src={AddIcon} />}
                         onClick={() => {
                             setVisiable(true);
-                            setIdMauTin('');
                         }}>
                         Thêm mới
                     </Button>

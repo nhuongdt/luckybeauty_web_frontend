@@ -8,7 +8,7 @@ export class ParamSearchDto {
     trangThais?: number[] = [];
 
     constructor({
-        idChiNhanhs = [],
+        idChiNhanhs = [''],
         textSearch = '',
         currentPage = 0,
         pageSize = 10,
@@ -31,7 +31,7 @@ export class RequestFromToDto extends ParamSearchDto {
     toDate?: string | null = null;
 
     constructor({
-        idChiNhanhs = [],
+        idChiNhanhs = [''],
         textSearch = '',
         currentPage = 0,
         pageSize = 10,

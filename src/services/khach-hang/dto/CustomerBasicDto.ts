@@ -1,11 +1,11 @@
 export class CustomerBasicDto {
-    id: string;
+    idKhachHang: string;
     maKhachHang: string;
     tenKhachHang: string;
     soDienThoai: string;
 
-    constructor({ id = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
-        this.id = id;
+    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
+        this.idKhachHang = idKhachHang;
         this.maKhachHang = maKhachHang;
         this.tenKhachHang = tenKhachHang;
         this.soDienThoai = soDienThoai;

@@ -1,12 +1,18 @@
 import { RequestFromToDto } from '../../dto/ParamSearchDto';
 import { PagedResultDto } from '../../dto/pagedResultDto';
-import { CreateOrEditSMSDto, CustomerSMSDto, ESMSDto, NhatKyGuiTinSMSDto, ResultESMSDto } from './gui_tin_nhan_dto';
+import {
+    CreateOrEditSMSDto,
+    CustomerSMSDto,
+    CustomerZaloDto,
+    ESMSDto,
+    NhatKyGuiTinSMSDto,
+    ResultESMSDto
+} from './gui_tin_nhan_dto';
 import http from '../../httpService';
-import { CustomerBasicDto } from '../../khach-hang/dto/CustomerBasicDto';
 import { IFileDto } from '../../dto/FileDto';
 
 class HeThongSMSServices {
-    JqAutoCustomer_byIdLoaiTin = async (input: RequestFromToDto, idLoaiTin: number): Promise<CustomerBasicDto[]> => {
+    JqAutoCustomer_byIdLoaiTin = async (input: RequestFromToDto, idLoaiTin: number): Promise<CustomerZaloDto[]> => {
         // get ds khachhang co: sinhnhat, lichhen, giaodich
         const result = await http.post(
             `api/services/app/HeThongSMS/JqAutoCustomer_byIdLoaiTin?idLoaiTin=${idLoaiTin}`,

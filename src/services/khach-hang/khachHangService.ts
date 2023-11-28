@@ -107,5 +107,9 @@ class KhachHangService {
         const response = await http.post(`api/services/app/KhachHang/ThongTinKhachHang?id=${id}`);
         return response.data.result;
     }
+    GetListCustomerId_byPhone = async (memberPhone: string): Promise<string> => {
+        const result = await http.get(`api/services/app/KhachHang/GetListCustomerId_byPhone?phone=${memberPhone}`);
+        return result.data.result;
+    };
 }
 export default new KhachHangService();

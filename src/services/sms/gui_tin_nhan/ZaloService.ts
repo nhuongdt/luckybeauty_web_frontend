@@ -1,20 +1,38 @@
 import axios from 'axios';
 import qs from 'qs';
-import { InforZOA } from './zalo_dto';
+import { IInforUserZOA, IMemberZOA, InforZOA, ZaloAuthorizationDto } from './zalo_dto';
+import http from '../../httpService';
 
 class ZaloService {
     dec2hex = (dec: any) => {
         return ('0' + dec.toString(16)).substring(-2);
     };
+    GenerateCodeVerifier = () => {
+        /**
+         * This function generates a random code verifier for PKCE (Proof Key for Code Exchange).
+         * It generates a random string of 43 characters using the characters A-Z, a-z, 0-9, "-", and "_".
+         *
+         * Returns:
+         * string: The generated code verifier
+         */
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.';
+        let codeVerifier = '';
+
+        for (let i = 0; i < 43; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            codeVerifier += characters[randomIndex];
+        }
+
+        return codeVerifier;
+    };
 
     CreateCodeVerifier = (): string => {
-        // Tạo một chuỗi ngẫu nhiên có độ dài 32 byte
-        let array = new Uint8Array(32);
+        // Tạo một chuỗi ngẫu nhiên có độ dài 40 byte
+        let array = new Uint8Array(40);
         array = globalThis.crypto.getRandomValues(array);
-        return Array.from(array, this.dec2hex).join('');
-        // const xx = String.fromCharCode.apply(null, Array.from(array));
-        // return xx;
-        // return this.base64URLEncode(xx);
+        // fromCharCode: chuyen thanh ky tu Unicode
+        const xx = String.fromCharCode.apply(null, Array.from(array));
+        return this.base64URLEncode(xx);
     };
     base64URLEncode = (str: string): string => {
         const b64 = btoa(str);
@@ -23,26 +41,13 @@ class ZaloService {
     };
     GenerateCodeChallenge = async (code_verifier: string) => {
         const hashArray = await crypto.subtle.digest({ name: 'SHA-256' }, new TextEncoder().encode(code_verifier));
-        // const endcode = Buffer.from(code_verifier, 'utf8').toString('base64');
         const uIntArray = new Uint8Array(hashArray);
         const numberArray = Array.from(uIntArray);
         const hashString = String.fromCharCode.apply(null, numberArray);
         return this.base64URLEncode(hashString);
     };
-    CreateAcccesToken = async () => {
-        const param = {
-            secret_key: process.env.REACT_APP_ZALO_APP_SECRET,
-            app_id: process.env.REACT_APP_ZALO_APP_ID,
-            grant_type: 'authorization_code'
-        };
-        const xx = await axios.post(`https://oauth.zaloapp.com/v4/oa/access_token`, param, {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        });
-        return xx;
-    };
-    GetNewToken_fromRefreshToken = async (refresh_token = process.env.REACT_APP_ZALO_REFRESH_TOKEN) => {
+
+    GetNewAccessToken_fromRefreshToken = async (refresh_token = '') => {
         const param = {
             refresh_token: refresh_token,
             app_id: process.env.REACT_APP_ZALO_APP_ID,
@@ -58,21 +63,25 @@ class ZaloService {
         return xx.data;
     };
     GetInfor_ZaloOfficialAccount = async (access_token = ''): Promise<InforZOA> => {
-        const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getoa?access_token=${access_token}`);
+        const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getoa`, {
+            headers: {
+                access_token: access_token
+            }
+        });
         console.log('GetInfor_ZaloOfficialAccount ', xx);
-
-        if (xx.status === 200) {
+        if (xx.data.error === 0) {
+            const dataOA = xx.data.data;
             return {
-                oaid: xx.data.oaid,
-                name: xx.data.name,
+                oaid: dataOA?.oaid,
+                name: dataOA?.name,
                 description: xx.data.description,
-                oa_alias: xx.data.oa_alias,
-                oa_type: xx.data.oa_type,
-                num_follower: xx.data.num_follower,
-                avatar: xx.data.avatar,
-                package_valid_through_date: xx.data.package_valid_through_date,
-                package_auto_renew_date: xx.data.package_auto_renew_date,
-                linked_ZCA: xx.data.linked_ZCA
+                oa_alias: dataOA?.oa_alias,
+                oa_type: dataOA?.oa_type,
+                num_follower: dataOA?.num_follower,
+                avatar: dataOA?.avatar,
+                package_valid_through_date: dataOA?.package_valid_through_date,
+                package_auto_renew_date: dataOA?.package_auto_renew_date,
+                linked_ZCA: dataOA?.linked_ZCA
             } as InforZOA;
         }
         return {} as InforZOA;
@@ -91,13 +100,11 @@ class ZaloService {
             }
         });
         console.log('GetAccessToken_fromAuthorizationCode ', xx, param);
-        if (xx.status === 200) {
-            return {
-                access_token: xx.data.access_token,
-                refresh_token: xx.data.refresh_token,
-                expires_in: xx.data.expires_in
-            };
-        }
+        return {
+            access_token: xx.data.access_token,
+            refresh_token: xx.data.refresh_token,
+            expires_in: xx.data.expires_in
+        };
         return null;
     };
     GuiTinNhanTruyenThuong = async (params: any) => {
@@ -176,30 +183,103 @@ class ZaloService {
         // });
         // console.log('zalo test ', result);
     };
-    GetDanhSach_KhachHang_QuanTamOA = async (newToken: string) => {
+    GetDanhSach_KhachHang_QuanTamOA = async (access_token: string) => {
         const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getfollowers?data={"offset":0,"count":50}`, {
             headers: {
-                access_token: newToken,
+                access_token: access_token,
                 'Content-Type': 'application/json'
             }
         });
+        if (xx.data.error == 0) {
+            return xx.data.data;
+        }
+        return {
+            total: 0,
+            followers: []
+        };
     };
-    GuiTinTuVan = async () => {
+    GetInforUser_ofOA = async (access_token: string, user_id: string): Promise<IInforUserZOA> => {
+        const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getprofile?data={"user_id":"${user_id}"}`, {
+            headers: {
+                access_token: access_token
+            }
+        });
+        return xx.data.data;
+    };
+    GuiTinTuVan = async (access_token: string, userId = '6441788310775550433') => {
         const param = {
             recipient: {
-                user_id: '6441788310775550433'
+                user_id: userId
             },
             message: {
-                text: 'test send mes nhuongdt from app lucky beauty'
+                text: 'tin tuvan - nhuongdt test'
             }
         };
         const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/cs', param, {
             headers: {
-                access_token: process.env.REACT_APP_ZALO_ACCESS_TOKEN,
+                access_token: access_token,
                 'Content-Type': 'application/json'
             }
         });
         console.log('GuiTinTuVan ', result);
+    };
+    NguoiDung_ChiaSeThongTin_ChoOA = async (
+        accountZOA: InforZOA,
+        access_token: string,
+        userId = '6441788310775550433'
+    ) => {
+        const param = {
+            recipient: {
+                user_id: userId
+            },
+            message: {
+                attachment: {
+                    type: 'template',
+                    payload: {
+                        template_type: 'request_user_info',
+                        elements: [
+                            {
+                                title: `Chào mừng bạn đến với ${accountZOA?.name} trên Zalo`,
+                                subtitle: 'Đăng ký thành viên để nhận thông tin ưu đãi hấp dẫn',
+                                image_url: `https://s160-ava-talk.zadn.vn/5/e/8/3/1/160/8d29e3e630fce223d73a577f693e1235.jpg`
+                            }
+                        ]
+                    }
+                }
+            }
+        };
+        const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/cs', param, {
+            headers: {
+                access_token: access_token,
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('NguoiDung_ChiaSeThongTin_ChoOA ', result);
+    };
+
+    /// Db
+    GetTokenfromDB = async (): Promise<ZaloAuthorizationDto> => {
+        const xx = await http.get(`api/services/app/ZaloAuthorization/GetForEdit`);
+        return xx.data.result;
+    };
+    InsertCodeVerifier = async (input: ZaloAuthorizationDto): Promise<ZaloAuthorizationDto> => {
+        console.log('InsertCodeVerifier ', input);
+        const result = await http.post(`api/services/app/ZaloAuthorization/Insert`, input);
+        return result.data.result;
+    };
+    UpdateZaloToken = async (input: ZaloAuthorizationDto): Promise<ZaloAuthorizationDto> => {
+        console.log('UpdateZaloToken ', input);
+        const result = await http.post(`api/services/app/ZaloAuthorization/Update`, input);
+        return result.data.result;
+    };
+    XoaKetNoi = async (id: string): Promise<string> => {
+        const result = await http.get(`api/services/app/ZaloAuthorization/XoaKetNoi?id=${id}`);
+        return result.data.result;
+    };
+
+    DangKyThanhVienZOA = async (input: IMemberZOA): Promise<IMemberZOA> => {
+        const result = await http.post(`api/services/app/Zalo_KhachHangThanhVien/DangKyThanhVienZOA`, input);
+        return result.data.result;
     };
 }
 

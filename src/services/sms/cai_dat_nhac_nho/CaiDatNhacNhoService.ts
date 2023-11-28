@@ -4,7 +4,7 @@ import { CaiDatNhacNhoChiTietDto, CaiDatNhacNhoDto } from './cai_dat_nhac_nho_dt
 import { format } from 'date-fns';
 
 const objSMS = {
-    id: '',
+    idKhachHang: '',
     maKhachHang: 'KH001',
     tenKhachHang: 'Chị Mai Hương',
     soDienThoai: '0978005006',

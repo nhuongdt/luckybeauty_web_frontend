@@ -93,8 +93,27 @@ export class CustomerSMSDto extends CustomerBasicDto {
 
     sTrangThaiGuiTinNhan? = '';
 
-    constructor({ id = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
-        super({ id: id, maKhachHang: maKhachHang, tenKhachHang: tenKhachHang, soDienThoai: soDienThoai });
+    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '' }) {
+        super({
+            idKhachHang: idKhachHang,
+            maKhachHang: maKhachHang,
+            tenKhachHang: tenKhachHang,
+            soDienThoai: soDienThoai
+        });
+    }
+}
+
+export class CustomerZaloDto extends CustomerBasicDto {
+    zoaUserId: string;
+
+    constructor({ idKhachHang = '', maKhachHang = '', tenKhachHang = '', soDienThoai = '', zoaUserId = '' }) {
+        super({
+            idKhachHang: idKhachHang,
+            maKhachHang: maKhachHang,
+            tenKhachHang: tenKhachHang,
+            soDienThoai: soDienThoai
+        });
+        this.zoaUserId = zoaUserId;
     }
 }
 

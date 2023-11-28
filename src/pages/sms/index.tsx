@@ -46,6 +46,10 @@ import { MauTinSMSDto } from '../../services/sms/mau_tin_sms/mau_tin_dto';
 import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMService';
 import fileDowloadService from '../../services/file-dowload.service';
 import { FileDto, IFileDto } from '../../services/dto/FileDto';
+import ModalGuiTinNhanZalo from './components/modal_gui_tin_zalo';
+import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
+import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
+import { Guid } from 'guid-typescript';
 
 const styleListItem = createTheme({
     components: {
@@ -164,6 +168,7 @@ const TinNhanPage = () => {
 
     const [isShowModalAdd, setIsShowModalAdd] = useState(false);
     const [isShowModalAddMauTin, setIsShowModalAddMauTin] = useState(false);
+    const [isShowModalGuiTinZalo, setIsShowModalGuiTinZalo] = useState(false);
     const [tabActive, setTabActive] = useState(0);
     const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
     const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
@@ -172,7 +177,8 @@ const TinNhanPage = () => {
     const [lstBrandname, setLstBrandname] = useState<BrandnameDto[]>([]);
     const [lstAllMauTinSMS, setLstAllMauTinSMS] = useState<MauTinSMSDto[]>([]);
     const [pageSMS, setPageSMS] = useState<PagedResultSMSDto>(new PagedResultSMSDto({ items: [] }));
-
+    const [inforZOA, setInforZOA] = useState<InforZOA>({} as InforZOA);
+    const [zaloToken, setZaloToken] = useState<ZaloAuthorizationDto>(new ZaloAuthorizationDto({ id: Guid.EMPTY }));
     const [pageCutomerSMS, setPageCutomerSMS] = useState<PagedResultDto<CustomerSMSDto[]>>({
         items: [],
         totalCount: 0,
@@ -189,6 +195,71 @@ const TinNhanPage = () => {
     useEffect(() => {
         GetListColumn_DataGrid();
     }, [tabActive]);
+
+    useEffect(() => {
+        GetListBrandname();
+        GetAllMauTinSMS();
+        GetZaloTokenfromDB();
+    }, []);
+
+    const Always_CreateAccessToken = async (objAuthen: ZaloAuthorizationDto) => {
+        const objNewToken = await ZaloService.GetNewAccessToken_fromRefreshToken(objAuthen?.refreshToken);
+        if (objNewToken !== null) {
+            // insert to db
+            const codeVerifier = ZaloService.CreateCodeVerifier();
+            const codeChallenge = await ZaloService.GenerateCodeChallenge(codeVerifier);
+
+            const newToken = new ZaloAuthorizationDto({
+                id: Guid.EMPTY,
+                codeVerifier: codeVerifier,
+                codeChallenge: codeChallenge,
+                accessToken: objNewToken.access_token,
+                refreshToken: objNewToken.refresh_token,
+                expiresToken: objNewToken.expires_in
+            });
+
+            const dataDB = await ZaloService.InsertCodeVerifier(new ZaloAuthorizationDto(newToken));
+            newToken.id = dataDB.id;
+
+            const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(newToken?.accessToken);
+            setInforZOA(newOA);
+        }
+    };
+
+    const GetZaloTokenfromDB = async () => {
+        const objAuthen = await ZaloService.GetTokenfromDB();
+        if (objAuthen !== null) {
+            // await Always_CreateAccessToken(objAuthen);
+            if (objAuthen.isExpiresAccessToken) {
+                const objNewToken = await ZaloService.GetNewAccessToken_fromRefreshToken(objAuthen?.refreshToken);
+                if (objNewToken !== null) {
+                    // insert to db
+                    const codeVerifier = ZaloService.CreateCodeVerifier();
+                    const codeChallenge = await ZaloService.GenerateCodeChallenge(codeVerifier);
+
+                    const newToken = new ZaloAuthorizationDto({
+                        id: Guid.EMPTY,
+                        codeVerifier: codeVerifier,
+                        codeChallenge: codeChallenge,
+                        accessToken: objNewToken.access_token,
+                        refreshToken: objNewToken.refresh_token,
+                        expiresToken: objNewToken.expires_in
+                    });
+
+                    const dataDB = await ZaloService.InsertCodeVerifier(new ZaloAuthorizationDto(newToken));
+                    newToken.id = dataDB.id;
+
+                    const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(newToken?.accessToken);
+                    setInforZOA(newOA);
+                }
+            } else {
+                setZaloToken(objAuthen);
+
+                const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(objAuthen?.accessToken);
+                setInforZOA(newOA);
+            }
+        }
+    };
 
     const GetListBrandname = async () => {
         let tenantId = parseInt(Cookies.get('Abp.TenantId') ?? '1') ?? 1;
@@ -221,11 +292,6 @@ const TinNhanPage = () => {
             setPageCutomerSMS({ items: [...data.items], totalCount: data.totalCount, totalPage: 1 });
         }
     };
-
-    useEffect(() => {
-        GetListBrandname();
-        GetAllMauTinSMS();
-    }, []);
 
     useEffect(() => {
         LoadData_byTabActive();
@@ -625,6 +691,15 @@ const TinNhanPage = () => {
                 onClose={() => setIsShowModalAdd(false)}
                 onSaveOK={saveSMSOK}
             />
+            <ModalGuiTinNhanZalo
+                accountZOA={inforZOA}
+                zaloToken={zaloToken}
+                lstMauTinSMS={lstAllMauTinSMS}
+                isShow={isShowModalGuiTinZalo}
+                idTinNhan={''}
+                onClose={() => setIsShowModalGuiTinZalo(false)}
+                onSaveOK={saveSMSOK}
+            />
             <ModalSmsTemplate
                 visiable={isShowModalAddMauTin}
                 onCancel={() => setIsShowModalAddMauTin(false)}
@@ -709,6 +784,18 @@ const TinNhanPage = () => {
                                 className="btnNhapXuat btn-outline-hover"
                                 sx={{ bgcolor: '#fff!important', color: '#666466' }}>
                                 Xuất
+                            </Button>
+                            <Button
+                                size="small"
+                                variant="contained"
+                                sx={{
+                                    minWidth: '143px',
+
+                                    fontSize: '14px'
+                                }}
+                                startIcon={<Add />}
+                                onClick={() => setIsShowModalGuiTinZalo(true)}>
+                                Gửi tin Zalo
                             </Button>
                             <Button
                                 size="small"
