@@ -1,3 +1,4 @@
+import utils from '../../../utils/utils';
 import http from '../../httpService';
 import { CustomerSMSDto } from '../gui_tin_nhan/gui_tin_nhan_dto';
 import { CaiDatNhacNhoChiTietDto, CaiDatNhacNhoDto } from './cai_dat_nhac_nho_dto';
@@ -17,15 +18,24 @@ const objSMS = {
 } as CustomerSMSDto;
 
 class CaiDatNhacNhoService {
+    objSMS = objSMS;
     ReplaceBienSMS = (input: string): string => {
         let txt = input;
-        txt = txt.replace('{TenKhachHang}', objSMS?.tenKhachHang);
-        txt = txt.replace('{NgaySinh}', format(objSMS?.ngaySinh as Date, 'dd/MM/yyyy'));
-        txt = txt.replace('{BookingDate}', format(objSMS?.bookingDate as Date, 'dd/MM/yyyy'));
-        txt = txt.replace('{ThoiGianHen}', objSMS?.thoiGianHen ?? '');
-        txt = txt.replace('{MaHoaDon}', objSMS?.maHoaDon ?? '');
-        txt = txt.replace('{NgayLapHoaDon}', format(objSMS?.ngayLapHoaDon as Date, 'dd/MM/yyyy'));
-        txt = txt.replace('{TenHangHoa}', objSMS?.tenDichVu ?? '');
+        txt = txt.replace('{TenKhachHang}', this.objSMS?.tenKhachHang);
+        if (!utils.checkNull(this.objSMS?.ngaySinh as unknown as string)) {
+            txt = txt.replace('{NgaySinh}', format(this.objSMS?.ngaySinh as Date, 'dd/MM/yyyy'));
+        } else {
+            txt = txt.replace('{NgaySinh}', '');
+        }
+        if (!utils.checkNull(this.objSMS?.bookingDate as unknown as string)) {
+            txt = txt.replace('{BookingDate}', format(this.objSMS?.bookingDate as Date, 'dd/MM/yyyy'));
+        }
+        txt = txt.replace('{ThoiGianHen}', this.objSMS?.thoiGianHen ?? '');
+        txt = txt.replace('{MaHoaDon}', this.objSMS?.maHoaDon ?? '');
+        if (!utils.checkNull(this.objSMS?.ngayLapHoaDon as unknown as string)) {
+            txt = txt.replace('{NgayLapHoaDon}', format(this.objSMS?.ngayLapHoaDon as Date, 'dd/MM/yyyy'));
+        }
+        txt = txt.replace('{TenHangHoa}', this.objSMS?.tenDichVu ?? '');
         txt = txt.replace('{TenCuaHang}', 'Nail salon HN');
         txt = txt.replace('{SDTCuaHang}', '0243.933.033');
         return txt;
