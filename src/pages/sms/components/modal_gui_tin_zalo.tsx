@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
 import {
     CreateOrEditSMSDto,
+    CustomerSMSDto,
     CustomerZaloDto,
     ESMSDto,
     NhatKyGuiTinSMSDto
@@ -21,6 +22,8 @@ import {
     Autocomplete,
     Box
 } from '@mui/material';
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+
 import DialogButtonClose from '../../../components/Dialog/ButtonClose';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
@@ -38,6 +41,7 @@ import { IDataAutocomplete } from '../../../services/dto/IDataAutocomplete';
 import { RequestFromToDto } from '../../../services/dto/ParamSearchDto';
 import { PagedKhachHangResultRequestDto } from '../../../services/khach-hang/dto/PagedKhachHangResultRequestDto';
 import khachHangService from '../../../services/khach-hang/khachHangService';
+import CaiDatNhacNhoService from '../../../services/sms/cai_dat_nhac_nho/CaiDatNhacNhoService';
 
 export function AutocompleteCustomerZalo({ handleChoseItem, lstOption, helperText, err }: any) {
     const [lstChosed, setLstChosed] = useState<IInforUserZOA[]>([]);
@@ -146,51 +150,71 @@ export default function ModalGuiTinNhanZalo({
                 pageSize: 100
             });
 
-            switch (newSMS?.idLoaiTin) {
-                case 1:
-                    {
-                        const param = {
-                            keyword: '',
-                            loaiDoiTuong: 1,
-                            skipCount: 0,
-                            maxResultCount: 50
-                        } as PagedKhachHangResultRequestDto;
-                        let data = await khachHangService.jqAutoCustomer(param);
-                        if (data !== null && data.length > 0) {
-                            // only get customer has ZOA
-                            data = data.filter((x: any) => !utils.checkNull(x.zoaUserId));
-                            for (let i = 0; i < data.length; i++) {
-                                const itFor = data[i];
-                                const user = await ZaloService.GetInforUser_ofOA(
-                                    zaloToken?.accessToken,
-                                    itFor.zoaUserId
-                                );
-                                user.idKhachHang = itFor.id;
-                                arr.push(user);
-                            }
+            // get all user (todo get webhook)
+            const xx = true;
+            if (xx) {
+                const allUser = await ZaloService.GetDanhSach_KhachHang_QuanTamOA(zaloToken?.accessToken);
+                if (allUser.total > 0) {
+                    for (let i = 0; i < allUser.followers.length; i++) {
+                        const itFor = allUser.followers[i];
+                        const user = await ZaloService.GetInforUser_ofOA(zaloToken?.accessToken, itFor.user_id);
+                        if (user != null) {
+                            user.idKhachHang = itFor.id;
+                            arr.push(user);
                         }
                     }
-                    break;
-                default:
-                    {
-                        let data = await HeThongSMSServices.JqAutoCustomer_byIdLoaiTin(param, newSMS?.idLoaiTin);
-                        if (data !== null && data.length > 0) {
-                            // only get customer has ZOA
-                            data = data.filter((x: CustomerZaloDto) => !utils.checkNull(x.zoaUserId));
-                            for (let i = 0; i < data.length; i++) {
-                                const itFor = data[i];
-                                const user = await ZaloService.GetInforUser_ofOA(
-                                    zaloToken?.accessToken,
-                                    itFor.zoaUserId
-                                );
-                                user.idKhachHang = itFor.idKhachHang;
-                                arr.push(user);
+                }
+            } else {
+                switch (newSMS?.idLoaiTin) {
+                    case 1:
+                        {
+                            const param = {
+                                keyword: '',
+                                loaiDoiTuong: 1,
+                                skipCount: 0,
+                                maxResultCount: 50
+                            } as PagedKhachHangResultRequestDto;
+                            const data = await khachHangService.jqAutoCustomer(param);
+                            if (data !== null && data.length > 0) {
+                                // only get customer has ZOA
+                                // data = data.filter((x: any) => !utils.checkNull(x.zoaUserId));
+                                for (let i = 0; i < data.length; i++) {
+                                    const itFor = data[i];
+                                    const user = await ZaloService.GetInforUser_ofOA(
+                                        zaloToken?.accessToken,
+                                        itFor.zoaUserId
+                                    );
+                                    if (user != null) {
+                                        user.idKhachHang = itFor.id;
+                                        arr.push(user);
+                                    }
+                                }
                             }
                         }
-                    }
-                    break;
+                        break;
+                    default:
+                        {
+                            const data = await HeThongSMSServices.JqAutoCustomer_byIdLoaiTin(param, newSMS?.idLoaiTin);
+                            if (data !== null && data.length > 0) {
+                                // only get customer has ZOA
+                                // data = data.filter((x: CustomerZaloDto) => !utils.checkNull(x.zoaUserId));
+                                for (let i = 0; i < data.length; i++) {
+                                    const itFor = data[i];
+                                    const user = await ZaloService.GetInforUser_ofOA(
+                                        zaloToken?.accessToken,
+                                        itFor.zoaUserId
+                                    );
+                                    if (user != null) {
+                                        user.idKhachHang = itFor.idKhachHang;
+                                        arr.push(user);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
             }
-
+            console.log('arr ', arr);
             setAllKhachHangOA(arr);
             setLstcustomerByLoaiTin(arr);
         }
@@ -255,7 +279,7 @@ export default function ModalGuiTinNhanZalo({
                             break;
                     }
                     // get customer by loaitin
-                    setLstcustomerByLoaiTin(allKhachHangOA.filter((x: IInforUserZOA) => x.birth_date === 1));
+                    // setLstcustomerByLoaiTin(allKhachHangOA.filter((x: IInforUserZOA) => x.birth_date === 1));
                 }
                 break;
             case LoaiTin.TIN_GIAO_DICH:
@@ -336,16 +360,33 @@ export default function ModalGuiTinNhanZalo({
     };
 
     const saveDraft = async (params: CreateOrEditSMSDto) => {
-        const noiDungTin = params.noiDungTin;
-
-        // await ZaloService.GuiTinTuVan(zaloToken?.accessToken);
-        await ZaloService.NguoiDung_ChiaSeThongTin_ChoOA(accountZOA, zaloToken?.accessToken);
-
+        await GuiTinZalo(params);
+        setObjAlert({ ...objAlert, mes: 'Gửi tin thành công', show: true });
         onSaveOK(1);
     };
 
-    const saveSMS = async (params: CreateOrEditSMSDto) => {
+    const GuiTinZalo = async (params: CreateOrEditSMSDto) => {
         const noiDungTin = params.noiDungTin;
+        for (let i = 0; i < lstCustomerChosed.length; i++) {
+            const cusItem = lstCustomerChosed[i];
+            CaiDatNhacNhoService.objSMS = {
+                idKhachHang: '',
+                tenKhachHang: cusItem.display_name,
+                maKhachHang: '',
+                soDienThoai: '',
+                tenDichVu: 'ABC- test',
+                thoiGianHen: '16:00',
+                bookingDate: new Date()
+            } as CustomerSMSDto;
+            const noiDungNew = CaiDatNhacNhoService.ReplaceBienSMS(noiDungTin);
+            await ZaloService.GuiTinTuVan(zaloToken?.accessToken, cusItem.user_id, noiDungNew);
+        }
+    };
+
+    const saveSMS = async (params: CreateOrEditSMSDto) => {
+        await GuiTinZalo(params);
+        setObjAlert({ ...objAlert, mes: 'Gửi tin thành công', show: true });
+        onSaveOK(1);
         // only get customer has phone
     };
     return (
@@ -503,18 +544,19 @@ export default function ModalGuiTinNhanZalo({
                                     </Button>
                                 ) : (
                                     <>
-                                        <Button
+                                        {/* <Button
                                             variant="contained"
                                             sx={{ bgcolor: 'var(--color-main)!important' }}
                                             onClick={() => saveDraft(values)}
                                             className="btn-container-hover">
                                             Lưu
-                                        </Button>
+                                        </Button> */}
                                         <Button
                                             variant="contained"
                                             sx={{ bgcolor: 'var(--color-main)!important' }}
                                             type="submit"
-                                            className="btn-container-hover">
+                                            className="btn-container-hover"
+                                            startIcon={<SendOutlinedIcon />}>
                                             Gửi
                                         </Button>
                                     </>
