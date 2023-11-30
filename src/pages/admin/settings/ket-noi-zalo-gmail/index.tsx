@@ -1,27 +1,22 @@
-import { useEffect, useState } from 'react';
-import React, { ChangeEvent, Component, ReactNode } from 'react';
-import { Grid, Stack, Box, Tab, Tabs, Button, Typography, Link, Modal, Dialog, DialogContent } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Grid, Stack, Box, Tab, Tabs, Button, Typography, Link } from '@mui/material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import { ReactComponent as ZaloIcon } from '../../../../images/icons/zalo-icon-nen-trang.svg';
 import { ReactComponent as ZaloIconOffical } from '../../../../images/icons/zalo-icon-nen-xanh.svg';
-import { useNavigate, Route, Navigate } from 'react-router-dom';
 import ZaloService from '../../../../services/sms/gui_tin_nhan/ZaloService';
-import { useParams } from 'react-router-dom';
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
-import LinkOffOutlinedIcon from '@mui/icons-material/LinkOffOutlined';
 import { InforZOA, ZaloAuthorizationDto } from '../../../../services/sms/gui_tin_nhan/zalo_dto';
 import utils from '../../../../utils/utils';
 import { Guid } from 'guid-typescript';
+import SnackbarAlert from '../../../../components/AlertDialog/SnackbarAlert';
 
 export default function ThietLapKetNoiZaloGmail({ xx }: any) {
     const [tabActive, setTabActive] = useState('2');
-    const [openZaloLogin, setOpenZaloLogin] = useState(false);
-    const [url, setUrl] = useState('');
     const [inforZOA, setInforZOA] = useState<InforZOA>({} as InforZOA);
     const [zaloToken, setZaloToken] = useState<ZaloAuthorizationDto>(new ZaloAuthorizationDto({ id: Guid.EMPTY }));
+    const [objAlert, setObjAlert] = useState({ show: false, type: 1, mes: '' });
 
     useEffect(() => {
         GetTokenfromDB();
@@ -44,9 +39,12 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
         const objnew = { ...zaloToken };
         objnew.codeVerifier = ZaloService.CreateCodeVerifier();
         objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
+        setZaloToken({ ...zaloToken, codeVerifier: objnew.codeVerifier, codeChallenge: objnew.codeChallenge });
         await ZaloService.InsertCodeVerifier(objnew);
+
         const iframe = document.createElement('iframe');
-        iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings%2Fket-noi-zalo-gmail&code_challenge=${objnew.codeChallenge}`;
+        iframe.src = `https://oauth.zaloapp.com/v4/oa/permission?app_id=${process.env.REACT_APP_ZALO_APP_ID}&redirect_uri=${process.env.REACT_APP_APP_BASE_URL}/settings/ket-noi-zalo-gmail`;
+        console.log('iframe.src ', iframe.src);
         iframe.id = 'iframe';
         iframe.style.position = 'absolute';
         iframe.style.zIndex = '999';
@@ -59,29 +57,23 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
         document.body.style.overflow = 'hidden';
     };
 
-    const CreateConnectZOA2 = async () => {
-        setOpenZaloLogin(true);
-
-        // save code verifier , code challenge to db
-        const objnew = { ...zaloToken };
-        objnew.codeVerifier = ZaloService.CreateCodeVerifier();
-        objnew.codeChallenge = await ZaloService.GenerateCodeChallenge(objnew.codeVerifier);
-        const data = await ZaloService.InsertCodeVerifier(objnew);
-        console.log('InsertCodeVerifier ', data, 'objnew ', objnew);
-
-        window.open(
-            `https://oauth.zaloapp.com/v4/oa/permission?app_id=1575833233908225704&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fsettings%2Fket-noi-zalo-gmail&code_challenge=${objnew.codeChallenge}`
-        );
-    };
+    // useEffect(() => {
+    //     window.addEventListener('close-iframe', function (event) {
+    //         const frameToRemove = document.getElementById('iframe');
+    //         if (frameToRemove != null) {
+    //             frameToRemove?.parentNode?.removeChild(frameToRemove);
+    //             document.body.style.overflow = 'inherit';
+    //             console.log('frameToRemove33 ', frameToRemove);
+    //         }
+    //     });
+    // }, []);
 
     const GetAuthenCode = async (codeVerifier: string, zaloToken: ZaloAuthorizationDto) => {
         // check exist db or create new
         const params = new URLSearchParams(window.location.search);
-        console.log('GetAuthenCode', params);
         if (params.size > 0) {
             const authenCode = params.get('code');
             if (authenCode !== null) {
-                // setAuthenCode(authenCode); // todo save db
                 if (!utils.checkNull(codeVerifier)) {
                     const dataAccessToken = await ZaloService.GetAccessToken_fromAuthorizationCode(
                         authenCode,
@@ -117,12 +109,10 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
         }
     };
 
-    const onClickXoaKetNoi = () => {
-        // delete in DB
-        setZaloToken({ ...zaloToken, authorizationCode: '' });
-        // const data = await ZaloService.XoaKetNoi(zaloToken?.id);
-        // if(data=='')
-        // setobj
+    const onClickXoaKetNoi = async () => {
+        setZaloToken({ ...zaloToken, authorizationCode: '', accessToken: '' });
+        await ZaloService.XoaKetNoi(zaloToken?.id);
+        setObjAlert({ ...objAlert, show: true, mes: 'Bạn vừa ngắt kết nối tới Zalo' });
     };
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -141,6 +131,11 @@ export default function ThietLapKetNoiZaloGmail({ xx }: any) {
 
     return (
         <>
+            <SnackbarAlert
+                showAlert={objAlert.show}
+                type={objAlert.type}
+                title={objAlert.mes}
+                handleClose={() => setObjAlert({ show: false, mes: '', type: 1 })}></SnackbarAlert>
             <Grid container>
                 <Grid item xs={12}>
                     <TabContext value={tabActive}>
