@@ -40,7 +40,10 @@ class ZaloService {
         return encoded;
     };
     GenerateCodeChallenge = async (code_verifier: string) => {
-        const hashArray = await crypto.subtle.digest({ name: 'SHA-256' }, new TextEncoder().encode(code_verifier));
+        const hashArray = await globalThis.crypto.subtle.digest(
+            { name: 'SHA-256' },
+            new TextEncoder().encode(code_verifier)
+        );
         const uIntArray = new Uint8Array(hashArray);
         const numberArray = Array.from(uIntArray);
         const hashString = String.fromCharCode.apply(null, numberArray);
