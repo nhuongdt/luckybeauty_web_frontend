@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Box, IconButton } from '@mui/material';
 import './forgotPassword.css';
-import logo from '../../../images/logoNew.svg';
+import logo from '../../../images/Logo_Lucky_Beauty.svg';
 import { Link } from 'react-router-dom';
 import ChangeTenantModal from '../../../components/AlertDialog/ChangeTenantModel';
 import { Cookie } from '@mui/icons-material';

@@ -7,7 +7,7 @@ import LoginModel from '../../../models/Login/loginModel';
 import LoginService from '../../../services/login/loginService';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
-import logo from '../../../images/logoNew.svg';
+import logo from '../../../images/Logo_Lucky_Beauty.svg';
 import { Link } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 const LoginScreen: React.FC = () => {
@@ -202,9 +202,12 @@ const LoginScreen: React.FC = () => {
                                 <Grid xs={12} item>
                                     <p className="text-register">
                                         Bạn chưa có tài khoản?{' '}
-                                        <Link className="a quenMk" to="/register">
+                                        {/* <Link className="a quenMk" to="/register">
                                             Đăng ký
-                                        </Link>
+                                        </Link> */}
+                                        <a className="a quenMk" href="http://192.168.1.63:1121/">
+                                            Đăng ký
+                                        </a>
                                     </p>
                                 </Grid>
                             </Grid>
