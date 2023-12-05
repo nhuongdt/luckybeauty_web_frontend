@@ -68,7 +68,6 @@ class ZaloService {
                 access_token: access_token
             }
         });
-        console.log('GetInfor_ZaloOfficialAccount ', xx);
         if (xx.data.error === 0) {
             const dataOA = xx.data.data;
             return {
@@ -198,21 +197,24 @@ class ZaloService {
             followers: []
         };
     };
-    GetInforUser_ofOA = async (access_token: string, user_id: string): Promise<IInforUserZOA> => {
+    GetInforUser_ofOA = async (access_token: string, user_id: string): Promise<IInforUserZOA | null> => {
         const xx = await axios.get(`https://openapi.zalo.me/v2.0/oa/getprofile?data={"user_id":"${user_id}"}`, {
             headers: {
                 access_token: access_token
             }
         });
-        return xx.data.data;
+        if (xx.data.error === 0) {
+            return xx.data.data;
+        }
+        return null;
     };
-    GuiTinTuVan = async (access_token: string, userId = '6441788310775550433') => {
+    GuiTinTuVan = async (access_token: string, userId = '6441788310775550433', noiDungTin = '') => {
         const param = {
             recipient: {
                 user_id: userId
             },
             message: {
-                text: 'tin tuvan - nhuongdt test'
+                text: noiDungTin
             }
         };
         const result = await axios.post('https://openapi.zalo.me/v3.0/oa/message/cs', param, {

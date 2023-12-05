@@ -444,6 +444,7 @@ const TinNhanPage = () => {
 
     const saveSMSOK = (type: number) => {
         setIsShowModalAdd(false);
+        setIsShowModalGuiTinZalo(false);
         LoadData_byTabActive();
     };
 
