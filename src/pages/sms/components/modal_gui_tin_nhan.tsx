@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
 import SnackbarAlert from '../../../components/AlertDialog/SnackbarAlert';
-import { CreateOrEditSMSDto, ESMSDto, NhatKyGuiTinSMSDto } from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
+import {
+    CreateOrEditSMSDto,
+    CustomerSMSDto,
+    ESMSDto,
+    NhatKyGuiTinSMSDto
+} from '../../../services/sms/gui_tin_nhan/gui_tin_nhan_dto';
 import utils from '../../../utils/utils';
 import {
     Dialog,
@@ -29,7 +34,16 @@ import HeThongSMSServices from '../../../services/sms/gui_tin_nhan/he_thong_sms_
 import { MauTinSMSDto } from '../../../services/sms/mau_tin_sms/mau_tin_dto';
 import LichSuNap_ChuyenTienService from '../../../services/sms/lich_su_nap_tien/LichSuNap_ChuyenTienService';
 
-export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, idTinNhan, onClose, onSaveOK }: any) {
+export default function ModalGuiTinNhan({
+    lstBrandname,
+    lstMauTinSMS,
+    isShow,
+    idTinNhan,
+    onClose,
+    onSaveOK,
+    lstRowSelect, // lstRowSelect,idLoaiTin:  nếu chọn từ danh sách (giaodịch, sinhnhat,..) và click gửi tin
+    idLoaiTin
+}: any) {
     const appContext = useContext(AppContext);
     const chinhanh = appContext.chinhanhCurrent;
     const idChiNhanh = chinhanh.id;
@@ -43,15 +57,26 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
     const [dateType, setDateType] = useState<string>(DateType.HOM_NAY);
     const [dateTypeText, setDateTypeText] = useState<string>('Hôm nay');
     const [soduTaiKhoan, setSoDuTaiKhoan] = useState(0);
+    const [lstIdCustomer, setLstIdCustomer] = useState<any[]>([]);
 
     useEffect(() => {
         if (isShow) {
+            console.log('idLoaiTin ', idLoaiTin);
             if (utils.checkNull(idTinNhan)) {
-                setNewSMS({ ...newSMS, id: '', idLoaiTin: 1, soTinGui: 0 });
+                setNewSMS({ ...newSMS, id: '', idLoaiTin: idLoaiTin ?? 1, soTinGui: 0 });
             } else {
                 // get data from db
             }
             GetBrandnameBalance_byUserLogin();
+            if (lstRowSelect != null && lstRowSelect !== undefined) {
+                const arrIdCustomer = lstRowSelect.map((x: CustomerSMSDto) => {
+                    return x.idKhachHang;
+                });
+                const arrUnique = Array.from(new Set(arrIdCustomer));
+                setLstIdCustomer(arrUnique);
+            } else {
+                setLstIdCustomer([]);
+            }
         }
         console.log('modetinnhan');
     }, [isShow]);
@@ -76,7 +101,21 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
 
     useEffect(() => {
         onApplyFilterDate(fromDate, toDate, dateType, dateTypeText);
-        setLstCustomerChosed([]); //?? chưa reset dược khách hàng đã chọn
+        setLstCustomerChosed([]);
+        switch (newSMS?.idLoaiTin) {
+            case LoaiTin.TIN_SINH_NHAT:
+                setLblLoaiKhach('Khách sinh nhật');
+                break;
+            case LoaiTin.TIN_GIAO_DICH:
+                setLblLoaiKhach('Khách giao dịch');
+                break;
+            case LoaiTin.TIN_LICH_HEN:
+                setLblLoaiKhach('Khách có hẹn');
+                break;
+            case LoaiTin.TIN_THUONG:
+                setLblLoaiKhach('');
+                break;
+        }
     }, [newSMS?.idLoaiTin]);
 
     const onApplyFilterDate = (fromDate: string, toDate: string, dateType: string, dateTypeText = '') => {
@@ -198,21 +237,6 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
         }
     };
 
-    const saveNhatKyGuiTin = async (idHeThongSMS: string, idKhachHang: string, idLoaiTin: number) => {
-        if (idLoaiTin !== 1) {
-            const nky = new NhatKyGuiTinSMSDto();
-            nky.idHeThongSMS = idHeThongSMS;
-            nky.idChiNhanh = idChiNhanh;
-            nky.idKhachHang = idKhachHang;
-            nky.idLoaiTin = idLoaiTin;
-            nky.thoiGianTu = fromDate;
-            nky.thoiGianDen = toDate;
-
-            // lưu nháp: vẫn lưu nhật ký, để check trangthai gửi tin
-            await HeThongSMSServices.ThemMoi_NhatKyGuiTin(nky);
-        }
-    };
-
     const saveDraft = async (params: CreateOrEditSMSDto) => {
         const noiDungTin = params.noiDungTin;
         if (lstCustomerChosed.length > 0) {
@@ -229,7 +253,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                 objSMS.trangThai = TrangThaiSMS.DRAFT;
                 objSMS.giaTienMoiTinNhan = 950;
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
-                await saveNhatKyGuiTin(htSMS.id, itFor.id, params?.idLoaiTin);
+                await saveNhatKyGuiTin(htSMS.id, htSMS.idKhachHang, htSMS?.idLoaiTin);
             }
         } else {
             // only save hethong sms
@@ -244,6 +268,54 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
             await HeThongSMSServices.Insert_HeThongSMS(objSMS);
         }
         onSaveOK(1);
+    };
+
+    const saveNhatKyGuiTin = async (idHeThongSMS: string, idKhachHang: string, idLoaiTin: number) => {
+        let idHoaDon = null,
+            idBooking = null;
+        let from = '',
+            to = '';
+
+        const nkyGuiTin = new NhatKyGuiTinSMSDto({
+            idHeThongSMS: idHeThongSMS,
+            idKhachHang: idKhachHang,
+            idChiNhanh: idChiNhanh,
+            idLoaiTin: idLoaiTin,
+            thoiGianTu: fromDate,
+            thoiGianDen: toDate
+        });
+
+        if (lstRowSelect != null && lstRowSelect !== undefined) {
+            // find customer has chosed
+            const rowChosed = lstRowSelect.filter((x: CustomerSMSDto) => x.idKhachHang === idKhachHang);
+            if (rowChosed.length > 0) {
+                switch (idLoaiTin) {
+                    case 2: // sinhnhat
+                        break;
+                    case 3: // lichhhen
+                        {
+                            idBooking = rowChosed[0].id;
+                            from = format(new Date(rowChosed[0].bookingDate), 'yyyy-MM-dd');
+                            to = format(new Date(rowChosed[0].bookingDate), 'yyyy-MM-dd');
+                        }
+                        break;
+                    case 4: // giaodich
+                        {
+                            idHoaDon = rowChosed[0].id;
+                            from = format(new Date(rowChosed[0].ngayLapHoaDon), 'yyyy-MM-dd');
+                            to = format(new Date(rowChosed[0].ngayLapHoaDon), 'yyyy-MM-dd');
+                        }
+                        break;
+                }
+            }
+            nkyGuiTin.idHoaDon = idHoaDon;
+            nkyGuiTin.idBooking = idBooking;
+            nkyGuiTin.thoiGianTu = from;
+            nkyGuiTin.thoiGianDen = to;
+            await HeThongSMSServices.ThemMoi_NhatKyGuiTinSMS(nkyGuiTin);
+        } else {
+            await HeThongSMSServices.ThemMoi_NhatKyGuiTin_TrongKhoangThoiGian(nkyGuiTin);
+        }
     };
 
     const saveSMS = async (params: CreateOrEditSMSDto) => {
@@ -283,7 +355,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                 objSMS.sTrangThaiGuiTinNhan = trangThaiTin.length > 0 ? trangThaiTin[0].text : '';
 
                 const htSMS = await HeThongSMSServices.Insert_HeThongSMS(objSMS);
-                await saveNhatKyGuiTin(htSMS.id, itFor.id, params?.idLoaiTin);
+                await saveNhatKyGuiTin(htSMS.id, htSMS.idKhachHang, htSMS?.idLoaiTin);
                 onSaveOK(1);
             }
         }
@@ -317,24 +389,10 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                         <SelectWithData
                                             label="Loại tin"
                                             data={AppConsts.smsLoaiTin}
-                                            idChosed={values.idLoaiTin ?? 1}
+                                            idChosed={values.idLoaiTin}
                                             handleChange={(item: ISelect) => {
                                                 setFieldValue('idLoaiTin', item.value);
                                                 setNewSMS({ ...newSMS, idLoaiTin: item.value as number });
-                                                switch (item.value) {
-                                                    case LoaiTin.TIN_SINH_NHAT:
-                                                        setLblLoaiKhach('Khách sinh nhật');
-                                                        break;
-                                                    case LoaiTin.TIN_GIAO_DICH:
-                                                        setLblLoaiKhach('Khách giao dịch');
-                                                        break;
-                                                    case LoaiTin.TIN_LICH_HEN:
-                                                        setLblLoaiKhach('Khách có hẹn');
-                                                        break;
-                                                    case LoaiTin.TIN_THUONG:
-                                                        setLblLoaiKhach('');
-                                                        break;
-                                                }
                                             }}
                                         />
                                     </Grid>
@@ -345,7 +403,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                                     type={values?.idLoaiTin}
                                                     label="Gửi đến"
                                                     paramFilter={{ idLoaiTin: values?.idLoaiTin }}
-                                                    arrIdChosed={[]}
+                                                    arrIdChosed={lstIdCustomer}
                                                     handleChoseItem={(lst: IDataAutocomplete[]) => {
                                                         choseCustomer(lst);
                                                         setFieldValue('lstCustomer', lst);
@@ -353,7 +411,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                                     error={touched.lstCustomer && Boolean(errors?.lstCustomer)}
                                                     helperText={touched.lstCustomer && errors.lstCustomer}
                                                 />
-                                                <MenuIcon className="btnIcon" />
+                                                {/* <MenuIcon className="btnIcon" /> */}
                                             </Stack>
                                         ) : (
                                             <Stack spacing={2}>
@@ -376,7 +434,7 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                                 <AutocompleteMultipleCustomerFromDB
                                                     type={values?.idLoaiTin}
                                                     label="Gửi đến"
-                                                    arrIdChosed={[]}
+                                                    arrIdChosed={lstIdCustomer}
                                                     paramFilter={{
                                                         idLoaiTin: values?.idLoaiTin,
                                                         IdChiNhanhs: [idChiNhanh],
@@ -457,26 +515,13 @@ export default function ModalGuiTinNhan({ lstBrandname, lstMauTinSMS, isShow, id
                                     Hủy
                                 </Button>
                                 {isSubmitting ? (
-                                    <Button
-                                        variant="contained"
-                                        sx={{ bgcolor: 'var(--color-main)!important' }}
-                                        className="btn-container-hover">
-                                        Đang lưu
-                                    </Button>
+                                    <Button variant="contained">Đang lưu</Button>
                                 ) : (
                                     <>
-                                        <Button
-                                            variant="contained"
-                                            sx={{ bgcolor: 'var(--color-main)!important' }}
-                                            onClick={() => saveDraft(values)}
-                                            className="btn-container-hover">
+                                        <Button variant="contained" onClick={() => saveDraft(values)}>
                                             Lưu nháp
                                         </Button>
-                                        <Button
-                                            variant="contained"
-                                            sx={{ bgcolor: 'var(--color-main)!important' }}
-                                            type="submit"
-                                            className="btn-container-hover">
+                                        <Button variant="contained" type="submit">
                                             Lưu
                                         </Button>
                                     </>
