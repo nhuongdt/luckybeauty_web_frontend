@@ -15,6 +15,8 @@ import {
     Stack
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
+
 import { ReactComponent as UploadIcon } from '../../images/upload.svg';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -45,11 +47,13 @@ import ModalSmsTemplate from './mau_tin_nhan/components/modal_sms_template';
 import { MauTinSMSDto } from '../../services/sms/mau_tin_sms/mau_tin_dto';
 import MauTinSMService from '../../services/sms/mau_tin_sms/MauTinSMService';
 import fileDowloadService from '../../services/file-dowload.service';
-import { FileDto, IFileDto } from '../../services/dto/FileDto';
+import { IFileDto } from '../../services/dto/FileDto';
 import ModalGuiTinNhanZalo from './components/modal_gui_tin_zalo';
 import ZaloService from '../../services/sms/gui_tin_nhan/ZaloService';
 import { InforZOA, ZaloAuthorizationDto } from '../../services/sms/gui_tin_nhan/zalo_dto';
 import { Guid } from 'guid-typescript';
+import ActionRowSelect from '../../components/DataGrid/ActionRowSelect';
+import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined';
 
 const styleListItem = createTheme({
     components: {
@@ -126,7 +130,7 @@ const TinNhanPage = () => {
             headerName: 'Thời gian',
             headerAlign: 'center',
             align: 'center',
-            flex: 0.8,
+            flex: 0.6,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => <CellDate date={params.value} dateType="dd/MM/yyyy HH:mm" />
         },
@@ -134,7 +138,7 @@ const TinNhanPage = () => {
             field: 'tenKhachHang',
             headerName: 'Khách hàng',
             minWidth: 118,
-            flex: 1.2,
+            flex: 1,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => <Box title={params.value}>{params.value}</Box>
         },
@@ -143,7 +147,7 @@ const TinNhanPage = () => {
             headerName: 'Số điện thoại',
             headerAlign: 'center',
             minWidth: 118,
-            flex: 1,
+            flex: 0.5,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
             renderCell: (params) => (
                 <Box title={params.value} width="100%" textAlign="center">
@@ -154,14 +158,29 @@ const TinNhanPage = () => {
         {
             field: 'loaiTin',
             headerName: 'Loại tin',
-            flex: 1,
-            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+            flex: 0.5,
+            renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+            renderCell: (params) => (
+                <Box
+                    sx={{
+                        color:
+                            params.row.idLoaiTin === 2
+                                ? '#800AC7 '
+                                : params.row.idLoaiTin === 3
+                                ? '#FF7DA1'
+                                : params.row.idLoaiTin === 4
+                                ? '#50CD89'
+                                : ''
+                    }}>
+                    {params.value}
+                </Box>
+            )
         },
         {
             field: 'noiDungTin',
             headerName: 'Nội dung',
             minWidth: 350,
-            flex: 1,
+            flex: 2,
             renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
         }
     ];
@@ -179,11 +198,11 @@ const TinNhanPage = () => {
     const [pageSMS, setPageSMS] = useState<PagedResultSMSDto>(new PagedResultSMSDto({ items: [] }));
     const [inforZOA, setInforZOA] = useState<InforZOA>({} as InforZOA);
     const [zaloToken, setZaloToken] = useState<ZaloAuthorizationDto>(new ZaloAuthorizationDto({ id: Guid.EMPTY }));
-    const [pageCutomerSMS, setPageCutomerSMS] = useState<PagedResultDto<CustomerSMSDto[]>>({
+    const [pageCutomerSMS, setPageCutomerSMS] = useState<PagedResultDto<CustomerSMSDto>>({
         items: [],
         totalCount: 0,
         totalPage: 0
-    } as PagedResultDto<CustomerSMSDto[]>);
+    } as PagedResultDto<CustomerSMSDto>);
     const [paramSearch, setParamSearch] = useState<RequestFromToDto>({
         textSearch: '',
         trangThais: [TrangThaiSMS.SUCCESS],
@@ -191,6 +210,8 @@ const TinNhanPage = () => {
         toDate: format(endOfMonth(new Date()), 'yyyy-MM-dd')
     } as RequestFromToDto);
     const [columnGrid, setColumnGrid] = useState<GridColDef[]>(columns);
+    const [lstRowSelect, setLstRowSelect] = useState<CustomerSMSDto[]>([]);
+    const [idLoaiTin, setIdLoaiTin] = useState(1);
 
     useEffect(() => {
         GetListColumn_DataGrid();
@@ -201,30 +222,6 @@ const TinNhanPage = () => {
         GetAllMauTinSMS();
         GetZaloTokenfromDB();
     }, []);
-
-    const Always_CreateAccessToken = async (objAuthen: ZaloAuthorizationDto) => {
-        const objNewToken = await ZaloService.GetNewAccessToken_fromRefreshToken(objAuthen?.refreshToken);
-        if (objNewToken !== null) {
-            // insert to db
-            const codeVerifier = ZaloService.CreateCodeVerifier();
-            const codeChallenge = await ZaloService.GenerateCodeChallenge(codeVerifier);
-
-            const newToken = new ZaloAuthorizationDto({
-                id: Guid.EMPTY,
-                codeVerifier: codeVerifier,
-                codeChallenge: codeChallenge,
-                accessToken: objNewToken.access_token,
-                refreshToken: objNewToken.refresh_token,
-                expiresToken: objNewToken.expires_in
-            });
-
-            const dataDB = await ZaloService.InsertCodeVerifier(new ZaloAuthorizationDto(newToken));
-            newToken.id = dataDB.id;
-
-            const newOA = await ZaloService.GetInfor_ZaloOfficialAccount(newToken?.accessToken);
-            setInforZOA(newOA);
-        }
-    };
 
     const GetZaloTokenfromDB = async () => {
         const objAuthen = await ZaloService.GetTokenfromDB();
@@ -345,9 +342,6 @@ const TinNhanPage = () => {
             LoadData_byTabActive();
         }
     };
-    const choseRow = (item: any) => {
-        // setBrandChosed(item?.row);
-    };
 
     const DataGrid_handleAction = async (item: any) => {
         switch (parseInt(item.id)) {
@@ -438,6 +432,53 @@ const TinNhanPage = () => {
                     show: true,
                     mes: `Bạn có chắc chắn muốn xóa brandname ${item.brandname} này không?`
                 });
+                break;
+        }
+    };
+
+    const onClickGuiLai = async () => {
+        switch (tabActive) {
+            case 0:
+                {
+                    // xuat excel
+                }
+                break;
+            case 1:
+            case 2:
+                {
+                    console.log(rowSelectionModel);
+                    if (lstBrandname.length > 0) {
+                        const data = await HeThongSMServices.GuiLai_TinNhan_ThatBai(
+                            rowSelectionModel,
+                            lstBrandname[0].brandname
+                        );
+                        if (data > 0) {
+                            setObjAlert({ mes: `Gửi lại thành công ${data} tin nhắn`, show: true, type: 1 });
+                        }
+                    }
+                }
+                break;
+        }
+    };
+    const choseRow = (item: any) => {
+        console.log('item ', item);
+    };
+
+    const onRowSelect_GuiTin = async () => {
+        // get list customer by row chosed
+        const lstRowSelect = pageCutomerSMS?.items?.filter((x: CustomerSMSDto) => rowSelectionModel.includes(x.id));
+        setLstRowSelect(lstRowSelect);
+        setIsShowModalAdd(true);
+
+        switch (tabActive) {
+            case 3:
+                setIdLoaiTin(4);
+                break;
+            case 4:
+                setIdLoaiTin(3);
+                break;
+            case 5:
+                setIdLoaiTin(2);
                 break;
         }
     };
@@ -578,7 +619,19 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 1,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderCell: (params) => (
+                            <Box
+                                sx={{
+                                    fontSize: '12px',
+                                    padding: '4px 8px',
+                                    borderRadius: '1000px',
+                                    // backgroundColor: '#F1FAFF',
+                                    color: params.row?.trangThai !== 100 ? '#b16827' : '#009EF7'
+                                }}>
+                                {params.value || ''}
+                            </Box>
+                        )
                     }
                 ];
                 break;
@@ -633,7 +686,19 @@ const TinNhanPage = () => {
                         headerAlign: 'center',
                         align: 'center',
                         flex: 0.8,
-                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>
+                        renderHeader: (params) => <Box>{params.colDef.headerName}</Box>,
+                        renderCell: (params) => (
+                            <Box
+                                sx={{
+                                    fontSize: '12px',
+                                    padding: '4px 8px',
+                                    borderRadius: '1000px',
+                                    // backgroundColor: '#F1FAFF',
+                                    color: params.row?.trangThai !== 100 ? '#b16827' : '#009EF7'
+                                }}>
+                                {params.value || ''}
+                            </Box>
+                        )
                     }
                 ];
                 break;
@@ -691,6 +756,8 @@ const TinNhanPage = () => {
                 idTinNhan={''}
                 onClose={() => setIsShowModalAdd(false)}
                 onSaveOK={saveSMSOK}
+                lstRowSelect={lstRowSelect}
+                idLoaiTin={idLoaiTin}
             />
             <ModalGuiTinNhanZalo
                 accountZOA={inforZOA}
@@ -824,6 +891,8 @@ const TinNhanPage = () => {
                                     variant="contained"
                                     onClick={() => {
                                         setIsShowModalAdd(true);
+                                        setIdLoaiTin(1);
+                                        setLstRowSelect([]);
                                     }}
                                     startIcon={<Add />}>
                                     Tin nhắn mới
@@ -892,45 +961,94 @@ const TinNhanPage = () => {
                         </Grid>
                         <Grid item xs={8} sm={8} md={9.5}>
                             <Box bgcolor={'#FFF'} height={'100%'} borderRadius={'8px'}>
-                                {[0, 1, 2].includes(tabActive) && (
-                                    <DataGrid
-                                        disableRowSelectionOnClick
-                                        className={
-                                            rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
-                                        }
-                                        rowHeight={46}
-                                        autoHeight={pageSMS.items.length === 0}
-                                        columns={columnGrid}
-                                        rows={pageSMS.items}
-                                        hideFooter
-                                        checkboxSelection
-                                        onRowClick={(item) => choseRow(item)}
-                                        localeText={TextTranslate}
-                                        onRowSelectionModelChange={(newRowSelectionModel) => {
-                                            setRowSelectionModel(newRowSelectionModel);
-                                        }}
-                                        rowSelectionModel={rowSelectionModel}
-                                    />
-                                )}
-                                {[3, 4, 5].includes(tabActive) && (
-                                    <DataGrid
-                                        disableRowSelectionOnClick
-                                        className={
-                                            rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
-                                        }
-                                        rowHeight={46}
-                                        autoHeight={pageCutomerSMS.items.length === 0}
-                                        columns={columnGrid}
-                                        rows={pageCutomerSMS.items}
-                                        hideFooter
-                                        checkboxSelection
-                                        onRowClick={(item) => choseRow(item)}
-                                        localeText={TextTranslate}
-                                        onRowSelectionModelChange={(newRowSelectionModel) => {
-                                            setRowSelectionModel(newRowSelectionModel);
-                                        }}
-                                        rowSelectionModel={rowSelectionModel}
-                                    />
+                                {[0, 1, 2].includes(tabActive) ? (
+                                    <>
+                                        {rowSelectionModel.length > 0 && (
+                                            <Button
+                                                variant="contained"
+                                                onClick={onClickGuiLai}
+                                                startIcon={
+                                                    tabActive != 0 ? <SendIcon style={{ width: 20 }} /> : <UploadIcon />
+                                                }>
+                                                {tabActive == 1 ? 'Gửi tin' : tabActive == 2 ? 'Gửi lại' : 'Xuất excel'}
+                                            </Button>
+                                        )}
+                                        <DataGrid
+                                            sx={{ marginTop: rowSelectionModel.length > 0 ? 2 : 0 }}
+                                            disableRowSelectionOnClick
+                                            className={
+                                                rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
+                                            }
+                                            rowHeight={46}
+                                            autoHeight={pageSMS.items.length === 0}
+                                            columns={columnGrid}
+                                            rows={pageSMS.items}
+                                            hideFooter
+                                            checkboxSelection
+                                            onRowClick={(item) => choseRow(item)}
+                                            localeText={TextTranslate}
+                                            onRowSelectionModelChange={(newRowSelectionModel) => {
+                                                setRowSelectionModel(newRowSelectionModel);
+                                            }}
+                                            rowSelectionModel={rowSelectionModel}
+                                        />
+                                    </>
+                                ) : (
+                                    <>
+                                        {rowSelectionModel.length > 0 && (
+                                            // <ActionRowSelect
+                                            //     lstOption={[
+                                            //         {
+                                            //             id: '1',
+                                            //             text: 'Chuyển nhóm khách'
+                                            //         },
+                                            //         {
+                                            //             id: '2',
+                                            //             text: 'Xóa khách hàng'
+                                            //         },
+                                            //         {
+                                            //             id: '3',
+                                            //             text: 'Xuất danh sách'
+                                            //         }
+                                            //     ]}
+                                            //     countRowSelected={rowSelectionModel.length}
+                                            //     title={
+                                            //         tabActive == 3
+                                            //             ? 'Giao dịch'
+                                            //             : tabActive == 4
+                                            //             ? 'Lịch hẹn'
+                                            //             : 'Khách hàng'
+                                            //     }
+                                            //     choseAction={DataGrid_handleAction}
+                                            //     removeItemChosed={() => {
+                                            //         setRowSelectionModel([]);
+                                            //     }}
+                                            // />
+                                            <Button variant="contained" onClick={onRowSelect_GuiTin}>
+                                                Gửi tin
+                                            </Button>
+                                        )}
+
+                                        <DataGrid
+                                            disableRowSelectionOnClick
+                                            sx={{ marginTop: rowSelectionModel.length > 0 ? 2 : 0 }}
+                                            className={
+                                                rowSelectionModel.length > 0 ? 'data-grid-row-chosed' : 'data-grid-row'
+                                            }
+                                            rowHeight={46}
+                                            autoHeight={pageCutomerSMS.items.length === 0}
+                                            columns={columnGrid}
+                                            rows={pageCutomerSMS.items}
+                                            hideFooter
+                                            checkboxSelection
+                                            onRowClick={(item) => choseRow(item)}
+                                            localeText={TextTranslate}
+                                            onRowSelectionModelChange={(newRowSelectionModel) => {
+                                                setRowSelectionModel(newRowSelectionModel);
+                                            }}
+                                            rowSelectionModel={rowSelectionModel}
+                                        />
+                                    </>
                                 )}
 
                                 <CustomTablePagination
