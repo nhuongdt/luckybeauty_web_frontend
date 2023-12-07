@@ -197,6 +197,10 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                                             handleChoseItem={(item: IDataAutocomplete) => {
                                                 setFieldValue('idMauTin', item?.id);
                                                 setFieldValue('noiDungTin', item?.text2);
+                                                setFieldValue(
+                                                    'noiDungXemTruoc',
+                                                    CaiDatNhacNhoService.ReplaceBienSMS(item?.text2 as string)
+                                                );
                                             }}
                                         />
                                     </Grid>
@@ -207,7 +211,14 @@ const ModalCaiDatNhacNho = ({ visiable, onCancel, lstMauTinSMS, idLoaiTin, idSet
                                             rows={3}
                                             label="Nội dung tin"
                                             value={values?.noiDungTin}
-                                            onChange={handleChange}
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                setFieldValue('noiDungTin', value);
+                                                setFieldValue(
+                                                    'noiDungXemTruoc',
+                                                    CaiDatNhacNhoService.ReplaceBienSMS(value)
+                                                );
+                                            }}
                                             size="small"
                                             fullWidth
                                             helperText={
